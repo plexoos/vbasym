@@ -180,8 +180,8 @@ void StVecBosMaker::tag_Z_boson()
    float lowMass   = 70.;
    float highMass  = 140.;
    //select specific jet-type
-   mJets = getJets(mJetTreeBranch);
-   if (mJetTreeChain) mJets = getJetsTreeAnalysis(mJetTreeBranch);
+   mJets = GetJets(mJetTreeBranch);
+   if (mJetTreeChain) mJets = GetJetsTreeAnalysis(mJetTreeBranch);
 
    //form invariant mass from lepton candidate and jet
    for (uint iv = 0; iv < wEve->vertex.size(); iv++) { //vertex loop
@@ -200,7 +200,7 @@ void StVecBosMaker::tag_Z_boson()
             if (jetVec.Pt() < par_jetPt) continue; //remove low pt jets
 
             //electron like cut on jets
-            StJet *jet = getJet(i_jet);  float maxCluster = 0.;
+            StJet *jet = GetJet(i_jet);  float maxCluster = 0.;
             int totTowers = jet->nBtowers + jet->nEtowers;
             for (int itow = 0; itow < totTowers; itow++) { //loop over towers
                if (jet->tower(itow)->detectorId() == 13) //drop endcap towers
@@ -245,11 +245,11 @@ void StVecBosMaker::findPtBalance()
          if (T.isMatch2Cl == false) continue;
 
          //****loop over branch with EEMC****
-         mJets = getJets(mJetTreeBranch);
-         if (mJetTreeChain) mJets = getJetsTreeAnalysis(mJetTreeBranch);
+         mJets = GetJets(mJetTreeBranch);
+         if (mJetTreeChain) mJets = GetJetsTreeAnalysis(mJetTreeBranch);
          int nJetsWE = nJets;
          for (int i_jet = 0; i_jet < nJetsWE; i_jet++) { //loop over jets
-            StJet *jet = getJet(i_jet);
+            StJet *jet = GetJet(i_jet);
             TVector3 jetVec; //vector for jet momentum
             jetVec.SetPtEtaPhi(jet->Pt(), jet->Eta(), jet->Phi());
             if (jetVec.DeltaR(T.primP) > par_nearDeltaR)
@@ -262,12 +262,12 @@ void StVecBosMaker::findPtBalance()
          if (T.ptBalance.Dot(clustPt) < 0) T.sPtBalance *= -1.;
 
          //****loop over branch without EEMC****
-         mJets = getJets(mJetTreeBranch_noEEMC);
-         if (mJetTreeChain) mJets = getJetsTreeAnalysis(mJetTreeBranch_noEEMC);
+         mJets = GetJets(mJetTreeBranch_noEEMC);
+         if (mJetTreeChain) mJets = GetJetsTreeAnalysis(mJetTreeBranch_noEEMC);
          int nJetsNE = nJets;
 
          for (int i_jet = 0; i_jet < nJetsNE; i_jet++) { //loop over jets
-            StJet *jet = getJet(i_jet);
+            StJet *jet = GetJet(i_jet);
             TVector3 jetVec; //vector for jet momentum
             jetVec.SetPtEtaPhi(jet->Pt(), jet->Eta(), jet->Phi());
             if (jetVec.DeltaR(T.primP) > par_nearDeltaR)

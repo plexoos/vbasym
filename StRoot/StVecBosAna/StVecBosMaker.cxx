@@ -389,11 +389,11 @@ Int_t StVecBosMaker::Make()
       if ( btowStat && etowStat ) return kStOK; //skip event w/o energy in BTOW && ETOW
 
       if (mJetReaderMaker) { // just QA plots for jets
-         mJets = getJets(mJetTreeBranch); //get input jet info
+         mJets = GetJets(mJetTreeBranch); //get input jet info
 
          for (int i_jet = 0; i_jet < nJets; ++i_jet) {
-            StJet *jet = getJet(i_jet);
-            float jet_pt = jet->Pt();
+            StJet *jet    = GetJet(i_jet);
+            float jet_pt  = jet->Pt();
             float jet_eta = jet->Eta();
             float jet_phi = jet->Phi();
             hA[117]->Fill(jet_eta, jet_phi);
@@ -446,10 +446,10 @@ Int_t StVecBosMaker::Make()
       if (wEve->bemc.maxAdc < par_maxADC && wEve->etow.maxAdc < par_maxADC) return kStOK; //skip event w/o energy in BTOW && ETOW
 
       if (mJetTreeChain) { // just QA plots for jets
-         mJets = getJetsTreeAnalysis(mJetTreeBranch); //get input jet info
+         mJets = GetJetsTreeAnalysis(mJetTreeBranch); //get input jet info
 
          for (int i_jet = 0; i_jet < nJets; ++i_jet) {
-            StJet *jet    = getJet(i_jet);
+            StJet *jet    = GetJet(i_jet);
             float jet_pt  = jet->Pt();
             float jet_eta = jet->Eta();
             float jet_phi = jet->Phi();
@@ -618,22 +618,30 @@ void StVecBosMaker::fillNorm()
 }
 
 
-TClonesArray * StVecBosMaker::getJets(TString branchName)
+/** */
+TClonesArray* StVecBosMaker::GetJets(TString branchName)
 {
    if (mJetReaderMaker == 0) {
       nJets = -1;
       return 0;
    }
 
-   assert(mJetReaderMaker->getStJets(branchName)->eventId() == wEve->id);
-   assert(mJetReaderMaker->getStJets(branchName)->runId() == wEve->runNo);
+   //assert(mJetReaderMaker->getStJets(branchName)->eventId() == wEve->id);
+   if (mJetReaderMaker->getStJets(branchName)->eventId() != wEve->id)
+      Error("GetJets", "Jet and W event ids do not match: %12d, %12d", mJetReaderMaker->getStJets(branchName)->eventId(), wEve->id);
+
+   //assert(mJetReaderMaker->getStJets(branchName)->runId() == wEve->runNo);
+   if (mJetReaderMaker->getStJets(branchName)->runId() != wEve->runNo)
+      Error("GetJets", "Jet and W run ids do not match: %12d, %12d", mJetReaderMaker->getStJets(branchName)->runId(), wEve->runNo);
+
    nJets = mJetReaderMaker->getStJets(branchName)->nJets();
+
    return mJetReaderMaker->getStJets(branchName)->jets();
 }
 
 
 // Below is only used for Tree analysis
-TClonesArray * StVecBosMaker::getJetsTreeAnalysis(TString branchName)
+TClonesArray * StVecBosMaker::GetJetsTreeAnalysis(TString branchName)
 {
    if (mJetTreeChain == 0) {
       nJets = -1; return 0;
@@ -641,11 +649,11 @@ TClonesArray * StVecBosMaker::getJetsTreeAnalysis(TString branchName)
 
    //cout<<"looking for matching jet event"<<endl;
 
-   StJets *jetTmp = getStJetsCopy(branchName);
+   StJets *jetTmp = GetStJetsCopy(branchName);
 
    while (jetTmp->eventId() != wEve->id || jetTmp->runId() != wEve->runNo) {
       mJetTreeChain->GetEntry(indexJet++);
-      jetTmp = getStJetsCopy(branchName);
+      jetTmp = GetStJetsCopy(branchName);
    }
 
    //cout<<"found matching jet event"<<endl;
@@ -657,7 +665,7 @@ TClonesArray * StVecBosMaker::getJetsTreeAnalysis(TString branchName)
 }
 
 // ----------------------------------------------------------------------------
-StJets * StVecBosMaker::getStJetsCopy(TString branchName)
+StJets * StVecBosMaker::GetStJetsCopy(TString branchName)
 {
    TBranch *branch = mJetTreeChain->GetBranch(branchName);
    return branch ? *(StJets **)branch->GetAddress() : 0;

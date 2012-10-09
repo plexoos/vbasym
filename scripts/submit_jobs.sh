@@ -1,6 +1,6 @@
 #!/bin/sh
 mxEve=500000
-codePath=/star/u/smirnovd/wana_head/
+codePath=/star/u/smirnovd/vbasym_cvs/
 #inpPath=/star/u/smirnovd/lists
 #inpPath=/star/data05/scratch/smirnovd/lists
 #outPath=/star/data05/scratch/smirnovd/

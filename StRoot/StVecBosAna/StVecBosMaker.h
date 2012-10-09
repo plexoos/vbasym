@@ -176,10 +176,10 @@ private:
    void  esmdAnalysis();
 
    // jets
-   StJet *getJet(int i) {return (StJet *)mJets->At(i);}
-   TClonesArray *getJets(TString branchName);
-   StJets *getStJetsCopy(TString branchName);
-   TClonesArray *getJetsTreeAnalysis(TString branchName);
+   StJet*        GetJet(int i) {return (StJet *)mJets->At(i);}
+   TClonesArray* GetJets(TString branchName);
+   StJets*       GetStJetsCopy(TString branchName);
+   TClonesArray* GetJetsTreeAnalysis(TString branchName);
 
    // tools
    float sumTpcCone( int vertID, TVector3 refAxis, int flag, int pointTowId);
@@ -240,7 +240,7 @@ protected:
 
    /// Displayed on session exit, leave it as-is please ...
    virtual const char *GetCVS() const {
-      static const char cvs[] = "Tag $Name:  $ $Id: StVecBosMaker.h,v 1.1 2012/10/09 15:21:20 smirnovd Exp $ built "__DATE__" "__TIME__ ;
+      static const char cvs[] = "Tag $Name:  $ $Id: StVecBosMaker.h,v 1.2 2012/10/09 19:24:01 smirnovd Exp $ built "__DATE__" "__TIME__ ;
       return cvs;
    }
 
