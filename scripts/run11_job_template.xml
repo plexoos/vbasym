@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<job filesPerHour="60" maxFilesPerProcess="500" fileListSyntax="xrootd" inputOrder="runnumber" simulateSubmission="false" name="&runNumber;">
+   <ResourceUsage>
+      <StorageSpace>
+         <MinStorage>20</MinStorage>
+      </StorageSpace>
+   </ResourceUsage>
+
+   <Generator>
+      <Location>./sums/</Location>
+   </Generator>
+
+   <command>
+      starver &STAR_VER;
+      #stardev
+      echo
+      echo "STAR:      " $STAR
+      echo "runNumber: " &runNumber;
+      echo "codePath:  " &codePath;
+      echo "FILELIST:  " $FILELIST
+      echo "SCRATCH:   " $SCRATCH
+      echo "pwd:       " `pwd`
+      ln -s &codePath;/.sl53_gcc432
+      ln -s &codePath;/stana
+      ln -s &codePath;/R12043044_local.lis
+      ls -al
+      cp $FILELIST &outPath;/lists_run11/R&runNumber;.lis
+      setenv filename `ls &outPath;/lists_run11/R&runNumber;.lis`
+      echo "work on: " $filename
+
+      # no spaces between arguments!
+      #root4star -b -q stana.C\(&n1;,\"$filename\"\)
+
+
+      #./stana -f &outPath;/lists_run11/R&runNumber;.lis -j
+
+      ln -s &outPath;/jets_run11/jets_R&runNumber;.root
+      ls -al
+      ./stana -f &outPath;/lists_run11/R&runNumber;.lis
+
+
+      #@ nFile=0
+      #while ( $nFile &lt; $INPUTFILECOUNT )
+      #   eval set filename = '$INPUTFILE'$nFile 
+      #   
+      #   # put your script here, with filename as input file
+      #   echo "filename:  " $filename 
+      #   root4star -b -q stana.C\(&n1;,\"$filename\"\)
+      #   
+      #   @ nFile++
+      #end
+
+   </command>
+
+   <output fromScratch="R*hist.root"  toURL="file:&outPath;/data_run11/"/>
+   <output fromScratch="jets*.root"   toURL="file:&outPath;/jets_run11/"/>
+   <output fromScratch="R*Wtree.root" toURL="file:&outPath;/wtree_run11/"/>
+   <output fromScratch="*.ps"         toURL="file:&outPath;/ps_run11/"/>
+   <stdout URL="file:&outPath;/log_run11/R&runNumber;.log"/>
+   <stderr URL="file:&outPath;/log_run11/R&runNumber;.log"/>
+
+   <SandBox>
+       <Package>
+          <File>file:&codePath;/.sl53_gcc432</File>
+       </Package>
+   </SandBox>
+
+   <input URL="catalog:star.bnl.gov?filename~st_W,production=P11id,filetype=daq_reco_mudst,storage=hpss,runnumber~&runNumber;%" nFiles="all" />
+   <!--<input URL="catalog:star.bnl.gov?filename~st_W,library=SL11id,filetype=daq_reco_mudst,storage=nfs,runnumber=&runNumber;" nFiles="all" />-->
+   <!--<input URL="catalog:star.bnl.gov?filename~st_W,production=P09ig,filetype=daq_reco_mudst,runnumber=&runNumber;" nFiles="all" />-->
+</job>
