@@ -63,8 +63,8 @@ St2011pubMcMaker::doWanalysis()
    //has access to whole W-algo-maker data via pointer 'wMK'
 
    // run through W cuts to fill other histos............
-   for (uint iv = 0; iv < wMK->wEve->vertex.size(); iv++) {
-      WEventVertex &V = wMK->wEve->vertex[iv];
+   for (uint iv = 0; iv < wMK->mWEvent->vertex.size(); iv++) {
+      WEventVertex &V = wMK->mWEvent->vertex[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
@@ -207,7 +207,7 @@ St2011pubMcMaker::doWefficiency()
    hA[66]->Fill(detEle.Eta(), mElectronP.Perp());
 
    //trigger efficiency
-   if (!wMK->wEve->l2bitET) return;
+   if (!wMK->mWEvent->l2bitET) return;
    //good trig
    hA[51]->Fill(mElectronP.Perp());
    hA[55]->Fill(mElectronP.Eta());
@@ -218,7 +218,7 @@ St2011pubMcMaker::doWefficiency()
    hA[67]->Fill(detEle.Eta(), mElectronP.Perp());
 
    //vertex efficiency
-   if (wMK->wEve->vertex.size() <= 0) return;
+   if (wMK->mWEvent->vertex.size() <= 0) return;
    //vertex rank>0 and |z|<100
    hA[52]->Fill(mElectronP.Perp());
    hA[56]->Fill(mElectronP.Eta());
@@ -227,12 +227,12 @@ St2011pubMcMaker::doWefficiency()
 
    hA[70]->Fill(mElectronP.Perp());//forJoe
 
-   //float diff=wMK->wEve->vertex[0].z - mVertex.Z();
+   //float diff=wMK->mWEvent->vertex[0].z - mVertex.Z();
    //cout<<"diff="<<diff<<endl;
 
    //reco efficiency
-   for (uint iv = 0; iv < wMK->wEve->vertex.size(); iv++) {
-      WEventVertex &V = wMK->wEve->vertex[iv];
+   for (uint iv = 0; iv < wMK->mWEvent->vertex.size(); iv++) {
+      WEventVertex &V = wMK->mWEvent->vertex[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;

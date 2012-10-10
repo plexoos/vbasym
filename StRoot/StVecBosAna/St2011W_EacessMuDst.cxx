@@ -1,8 +1,3 @@
-// $Id: St2011W_EacessMuDst.cxx,v 1.1 2012/10/09 15:21:19 smirnovd Exp $
-//
-//*-- Author : Jan Balewski, MIT
-//*-- Author for Endcap: Justin Stevens, IUCF
-
 //MuDst
 #include <StMuDSTMaker/COMMON/StMuDstMaker.h>
 #include <StMuDSTMaker/COMMON/StMuDst.h>
@@ -16,15 +11,14 @@
 
 #include "StVecBosMaker.h"
 
+
 //--------------------------------------
-//--------------------------------------
-int
-StVecBosMaker::accessEndcapTrig()  // return non-zero on abort
+int StVecBosMaker::accessEndcapTrig()  // return non-zero on abort
 {
    if (isMC) {
-      if (wEve->etow.maxAdc < 10. / 60.*4096) return -1; //L2 is HT
+      if (mWEvent->etow.maxAdc < 10. / 60.*4096) return -1; //L2 is HT
       hE[0]->Fill("L2ewET", 1.);
-      wEve->l2EbitET = true;
+      mWEvent->l2EbitET = true;
       return 0;
    }
 
@@ -58,61 +52,61 @@ StVecBosMaker::accessEndcapTrig()  // return non-zero on abort
    const int EEMCW_off = 35; // valid only for 2011 run
 
    L2weResult2011 *l2algo = ( L2weResult2011 *) &l2res[EEMCW_off];
-   wEve->l2EbitET = (l2algo->trigger & 2) > 0; // bit1=ET>thr
-   wEve->l2EbitRnd = (l2algo->trigger & 1) > 0; // bit0=rnd,
+   mWEvent->l2EbitET = (l2algo->trigger & 2) > 0; // bit1=ET>thr
+   mWEvent->l2EbitRnd = (l2algo->trigger & 1) > 0; // bit0=rnd,
 
 #if 0
    if (l2algo->trigger == 0) return -3;
    printf(" L2-jet online results below:\n");
    for (int k = 0; k < 64; k++)
       if (l2res[k]) printf("k=%2d  val=0x%04x\n", k, l2res[k]);
-   printf("L2WE_Result 4-bytes: trg bitET=%d,  bitRnd=%d, highets:  ET/GeV=%.2f,  RDO=%d  hex=0x%08x\n", wEve->l2EbitET, wEve->l2EbitRnd, l2algo->highestEt / 256.*60, l2algo->highestRDO, l2res[EEMCW_off]);
+   printf("L2WE_Result 4-bytes: trg bitET=%d,  bitRnd=%d, highets:  ET/GeV=%.2f,  RDO=%d  hex=0x%08x\n", mWEvent->l2EbitET, mWEvent->l2EbitRnd, l2algo->highestEt / 256.*60, l2algo->highestRDO, l2res[EEMCW_off]);
 #endif
 
-
-   //  hack to make the code work also for run 9 and early run 12
+   // XXX:ds hack to make the code work also for run 9 and early run 12
    if (mRunNo < 11000111 || mRunNo > 13000000) {
-      wEve->l2EbitET = 1;
-      wEve->l2EbitRnd = 1;
+      mWEvent->l2EbitET = 1;
+      mWEvent->l2EbitRnd = 1;
    }
 
-   if ( (wEve->l2EbitRnd || wEve->l2EbitET) == 0) return -3; // L2W-algo did not accept this event
+   if ( (mWEvent->l2EbitRnd || mWEvent->l2EbitET) == 0) return -3; // L2W-algo did not accept this event
+
    hE[0]->Fill("L2ewBits", 1.); // confirmation bits were set properly
 
-   if (wEve->l2EbitRnd) {
+   if (mWEvent->l2EbitRnd) {
       hE[0]->Fill("L2ewRnd", 1.);
       for (int m = 0; m < 90; m++) {
          int val = muEve->emcTriggerDetector().highTowerEndcap(m);
          hE[7]->Fill(val);
       }
-      hE[61]->Fill(wEve->bx7);
+      hE[61]->Fill(mWEvent->bx7);
    }
 
-   if (!wEve->l2EbitET)  return -3; // drop L2W-random accepts
-   if (wEve->l2EbitET) hE[0]->Fill("L2ewET", 1.);
+   if (!mWEvent->l2EbitET) return -3; // drop L2W-random accepts
+   if (mWEvent->l2EbitET) hE[0]->Fill("L2ewET", 1.);
 
-   //.... only monitor below ....
-   hE[2]->Fill(wEve->bx48);
-   hE[3]->Fill(wEve->bx7);
+   // only monitor below
+   hE[2]->Fill(mWEvent->bx48);
+   hE[3]->Fill(mWEvent->bx7);
 
    // access L0-HT data
    int mxVal = -1;
    for (int m = 0; m < 90; m++)	{
       int val = muEve->emcTriggerDetector().highTowerEndcap(m);
       if (mxVal < val) mxVal = val;
-      if (wEve->l2EbitET) hE[6]->Fill(val);
+      if (mWEvent->l2EbitET) hE[6]->Fill(val);
       if (val < parE_DsmThres) continue;
-      if (wEve->l2EbitET) hE[8]->Fill(m);
+      if (mWEvent->l2EbitET) hE[8]->Fill(m);
       //printf("Fired L0 EHT m=%d val=%d\n",m,val);
    }
-   wEve->etow.maxHtDsm = mxVal;
+
+   mWEvent->etow.maxHtDsm = mxVal;
    return 0;
 }
 
+
 //________________________________________________
-//________________________________________________
-int
-StVecBosMaker::accessETOW()
+int StVecBosMaker::accessETOW()
 {
 
    StMuEmcCollection *emc = mMuDstMaker->muDst()->muEmcCollection();
@@ -120,7 +114,7 @@ StVecBosMaker::accessETOW()
       LOG_WARN << "No EMC data for this event" << endm;    return -4;
    }
 
-   wEve->etow.etowIn = 1; //tag usable ETOW data
+   mWEvent->etow.etowIn = 1; //tag usable ETOW data
    const char *maxIdName = 0;
    double maxADC = 0, adcSum = 0;
    int maxSec = -1, maxSub = -1, maxEta = -1;
@@ -144,23 +138,23 @@ StVecBosMaker::accessETOW()
       float adc = rawAdc - x->ped; // ped subtracted ADC
       if (adc < par_kSigPed * x->sigPed) continue;
 
-      wEve->etow.adc[isec * mxEtowSub + isub][ieta] = adc;
+      mWEvent->etow.adc[isec * mxEtowSub + isub][ieta] = adc;
 
       if (x->gain <= 0) continue; // drop channels w/o gains
       float ene = adc / x->gain;
 
       //method for shifting energy scale
       ene *= par_etowScale; //(default is par_etowScale=1)
-      wEve->etow.ene[isec * mxEtowSub + isub][ieta] = ene;
-      wEve->etow.stat[isec * mxEtowSub + isub][ieta] = 0;
+      mWEvent->etow.ene[isec * mxEtowSub + isub][ieta] = ene;
+      mWEvent->etow.stat[isec * mxEtowSub + isub][ieta] = 0;
 
       if (maxADC < adc) { maxIdName = x->name; maxADC = adc; maxSec = isec; maxSub = isub; maxEta = ieta;}
       adcSum += adc;
 
    }
 
-   wEve->etow.maxAdc = maxADC;
-   wEve->etow.maxSec = maxSec; wEve->etow.maxSub = maxSub; wEve->etow.maxEta = maxEta;
+   mWEvent->etow.maxAdc = maxADC;
+   mWEvent->etow.maxSec = maxSec; mWEvent->etow.maxSub = maxSub; mWEvent->etow.maxEta = maxEta;
    hE[31]->Fill(maxADC);
    hE[32]->Fill(adcSum);
 
@@ -169,10 +163,9 @@ StVecBosMaker::accessETOW()
    return 0;
 }
 
+
 //________________________________________________
-//________________________________________________
-void
-StVecBosMaker::accessEPRS()
+void StVecBosMaker::accessEPRS()
 {
    StMuEmcCollection *emc = mMuDstMaker->muDst()->muEmcCollection();
    if (!emc) {
@@ -204,20 +197,19 @@ StVecBosMaker::accessEPRS()
       float adc = rawAdc - x->ped; // ped subtracted ADC
       if (adc < par_kSigPed * x->sigPed) continue;
 
-      wEve->eprs.adc[iphi][ieta][ipre] = adc;
+      mWEvent->eprs.adc[iphi][ieta][ipre] = adc;
 
       if (x->gain <= 0) continue; // drop channels w/o gains
 
-      wEve->eprs.ene[isec * mxEtowSub + isub][ieta][ipre] = adc / x->gain;
-      wEve->eprs.stat[isec * mxEtowSub + isub][ieta][ipre] = 0;
+      mWEvent->eprs.ene[isec * mxEtowSub + isub][ieta][ipre] = adc / x->gain;
+      mWEvent->eprs.stat[isec * mxEtowSub + isub][ieta][ipre] = 0;
 
    }
 }
 
+
 //________________________________________________
-//________________________________________________
-void
-StVecBosMaker::accessESMD()
+void StVecBosMaker::accessESMD()
 {
    StMuEmcCollection *emc = mMuDstMaker->muDst()->muEmcCollection();
    if (!emc) {
@@ -252,37 +244,8 @@ StVecBosMaker::accessESMD()
          if (x->gain <= 0)continue; // drop channels w/o gains
          if (adc < par_kSigPed * sigPed) continue; //drop noise
 
-         wEve->esmd.adc[isec][iuv][istr] = adc;
-         wEve->esmd.ene[isec][iuv][istr] = adc / x->gain;
+         mWEvent->esmd.adc[isec][iuv][istr] = adc;
+         mWEvent->esmd.ene[isec][iuv][istr] = adc / x->gain;
       }
    }
 }
-
-
-//$Log: St2011W_EacessMuDst.cxx,v $
-//Revision 1.1  2012/10/09 15:21:19  smirnovd
-//*** empty log message ***
-//
-//Revision 1.6  2012/07/12 20:49:21  balewski
-//added spin info(star: bx48, bx7, spin4) and maxHtDSM & BTOW to Wtree
-//removed dependence of spinSortingMaker from muDst
-//Now Wtree can be spin-sorted w/o DB
-//rdMu.C & readWtree.C macros modified
-//tested so far on real data run 11
-//lot of misc. code shuffling
-//
-//Revision 1.5  2012/06/26 20:30:23  stevens4
-//Updates ZMaker for mixing barrel and endcap arms
-//
-//Revision 1.4  2012/06/18 18:28:00  stevens4
-//Updates for Run 9+11+12 AL analysis
-//
-//Revision 1.3  2011/02/25 06:03:37  stevens4
-//addes some histos and enabled running on MC
-//
-//Revision 1.2  2011/02/14 01:36:17  stevens4
-//*** empty log message ***
-//
-//Revision 1.1  2011/02/10 20:33:22  balewski
-//start
-//

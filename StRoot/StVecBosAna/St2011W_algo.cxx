@@ -12,18 +12,18 @@
 
 void StVecBosMaker::find_W_boson()
 {
-   if (!wEve->l2bitET) return;
+   if (!mWEvent->l2bitET) return;
 
    //printf("========= find_W_boson() \n");
    int nNoNear = 0, nNoAway = 0, nEta1 = 0, nGoldW = 0, nGoldWp = 0, nGoldWn = 0;
 
    //remove events tagged as Zs
-   if (wEve->zTag) return;
+   if (mWEvent->zTag) return;
 
    // search for  Ws
-   for (uint iv = 0; iv < wEve->vertex.size(); iv++)
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
    {
-      WEventVertex &V = wEve->vertex[iv];
+      WEventVertex &V = mWEvent->vertex[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++)
       {
          WeveEleTrack &T = V.eleTrack[it];
@@ -118,7 +118,7 @@ void StVecBosMaker::find_W_boson()
          if (T.sPtBalance > par_ptBalance) { /***************************/
             printf("\n WWWWWWWWWWWWWWWWWWWWW  Barrel \n");
             wDisaply->exportEvent( "WB", V, T, iv);
-            wEve->print();
+            mWEvent->print();
          }/***************************/
 
 
@@ -184,8 +184,8 @@ void StVecBosMaker::tag_Z_boson()
    if (mJetTreeChain) mJets = GetJetsTreeAnalysis(mJetTreeBranch);
 
    //form invariant mass from lepton candidate and jet
-   for (uint iv = 0; iv < wEve->vertex.size(); iv++) { //vertex loop
-      WEventVertex &V = wEve->vertex[iv];
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) { //vertex loop
+      WEventVertex &V = mWEvent->vertex[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) { // select track
          WeveEleTrack &T1 = V.eleTrack[it];
          if (T1.isMatch2Cl == false) continue;
@@ -227,7 +227,7 @@ void StVecBosMaker::tag_Z_boson()
             float invM = sqrt(sum * sum);
             if (maxCluster / jet->jetPt < 0.5) continue;
             if (invM > lowMass && invM < highMass)
-               wEve->zTag = true;
+               mWEvent->zTag = true;
          }
       }
    }
@@ -236,9 +236,9 @@ void StVecBosMaker::tag_Z_boson()
 
 void StVecBosMaker::findPtBalance()
 {
-   for (uint iv = 0; iv < wEve->vertex.size(); iv++)
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
    {
-      WEventVertex &V = wEve->vertex[iv];
+      WEventVertex &V = mWEvent->vertex[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++)
       {
          WeveEleTrack &T = V.eleTrack[it];
@@ -284,10 +284,10 @@ void StVecBosMaker::findPtBalance()
 
 void StVecBosMaker::findAwayJet()
 {
-   // printf("\n******* find AwayJet() nVert=%d\n",wEve->vertex.size());
-   //wEve->print();
-   for (uint iv = 0; iv < wEve->vertex.size(); iv++) {
-      WEventVertex &V = wEve->vertex[iv];
+   // printf("\n******* find AwayJet() nVert=%d\n",mWEvent->vertex.size());
+   //mWEvent->print();
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
+      WEventVertex &V = mWEvent->vertex[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
@@ -312,10 +312,10 @@ void StVecBosMaker::findAwayJet()
 
 void StVecBosMaker::findNearJet()
 {
-   //printf("\n******* findNearJet() nVert=%d\n",wEve->vertex.size());
+   //printf("\n******* findNearJet() nVert=%d\n",mWEvent->vertex.size());
 
-   for (uint iv = 0; iv < wEve->vertex.size(); iv++) {
-      WEventVertex &V = wEve->vertex[iv];
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
+      WEventVertex &V = mWEvent->vertex[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
@@ -382,7 +382,7 @@ float StVecBosMaker::sumBtowCone( float zVert,  TVector3 refAxis, int flag)
 
    //.... process BTOW hits
    for (int i = 0; i < mxBtow; i++) {
-      float ene = wEve->bemc.eneTile[kBTow][i];
+      float ene = mWEvent->bemc.eneTile[kBTow][i];
       if (ene <= 0) continue;
       TVector3 primP = positionBtow[i] - TVector3(0, 0, zVert);
       primP.SetMag(ene); // it is 3D momentum in the event ref frame
@@ -406,10 +406,10 @@ float StVecBosMaker::sumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, 
    // flag=2 use 2D cut, 1= only delta phi
 
    assert(vertID >= 0);
-   assert(vertID < (int)wEve->vertex.size());
+   assert(vertID < (int)mWEvent->vertex.size());
 
    double ptSum = 0;
-   WEventVertex &V = wEve->vertex[vertID];
+   WEventVertex &V = mWEvent->vertex[vertID];
    for (uint it = 0; it < V.prTrList.size(); it++) {
       StMuTrack *prTr = V.prTrList[it];
       if (prTr->flag() <= 0) continue;
@@ -444,12 +444,12 @@ float StVecBosMaker::sumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, 
 // ************* Barrel Code ************ //
 int StVecBosMaker::extendTrack2Barrel() // return # of extended tracks
 {
-   //printf("******* extendTracks() nVert=%d\n",wEve->vertex.size());
-   if (!wEve->l2bitET) return 0; //fire barrel trigger
+   //printf("******* extendTracks() nVert=%d\n",mWEvent->vertex.size());
+   if (!mWEvent->l2bitET) return 0; //fire barrel trigger
 
    int nTrB = 0;
-   for (uint iv = 0; iv < wEve->vertex.size(); iv++) {
-      WEventVertex &V = wEve->vertex[iv];
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
+      WEventVertex &V = mWEvent->vertex[iv];
       if (V.rank < 0) continue; //remove vertex for endcap algo only
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
@@ -503,11 +503,11 @@ int StVecBosMaker::extendTrack2Barrel() // return # of extended tracks
 
 int StVecBosMaker::matchTrack2BtowCluster()
 { //{{{
-   // printf("******* matchCluster() nVert=%d\n",wEve->vertex.size());
+   // printf("******* matchCluster() nVert=%d\n",mWEvent->vertex.size());
    int nTr = 0;
    float Rcylinder = mBtowGeom->Radius();
-   for (uint iv = 0; iv < wEve->vertex.size(); iv++) {
-      WEventVertex &V = wEve->vertex[iv];
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
+      WEventVertex &V = mWEvent->vertex[iv];
       float zVert = V.z;
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
@@ -593,7 +593,7 @@ WeveCluster StVecBosMaker::maxBtow2x2(int iEta, int iPhi, float zVert)
 
 WeveCluster StVecBosMaker::sumBtowPatch(int iEta, int iPhi, int Leta, int  Lphi, float zVert)
 {
-   //printf("  eveID=%d btowSquare seed iEta=%d[+%d] iPhi=%d[+%d] zVert=%.0f \n",wEve->id,iEta,Leta, iPhi,Lphi,zVert);
+   //printf("  eveID=%d btowSquare seed iEta=%d[+%d] iPhi=%d[+%d] zVert=%.0f \n",mWEvent->id,iEta,Leta, iPhi,Lphi,zVert);
    WeveCluster CL; // object is small, not to much overhead in creating it
    CL.iEta = iEta;
    CL.iPhi = iPhi;
@@ -610,9 +610,9 @@ WeveCluster StVecBosMaker::sumBtowPatch(int iEta, int iPhi, int Leta, int  Lphi,
          int jj = (j + mxBTphiBin) % mxBTphiBin; // keep it always positive
          //if(L<5) printf("n=%2d  i=%d jj=%d\n",CL.nTower,i,jj);
          int softID = mapBtowIJ2ID[ i + jj * mxBTetaBin];
-         float ene = wEve->bemc.eneTile[kBTow][softID - 1];
+         float ene = mWEvent->bemc.eneTile[kBTow][softID - 1];
          if (ene <= 0) continue; // skip towers w/o energy
-         float adc = wEve->bemc.adcTile[kBTow][softID - 1];
+         float adc = mWEvent->bemc.adcTile[kBTow][softID - 1];
          float delZ = positionBtow[softID - 1].z() - zVert;
          float e2et = Rcylinder / sqrt(Rcylinder2 + delZ * delZ);
          float ET = ene * e2et;

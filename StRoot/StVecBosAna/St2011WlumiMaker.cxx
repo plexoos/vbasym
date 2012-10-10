@@ -1,4 +1,4 @@
-// $Id: St2011WlumiMaker.cxx,v 1.1 2012/10/09 15:21:19 smirnovd Exp $
+// $Id: St2011WlumiMaker.cxx,v 1.2 2012/10/10 22:39:35 smirnovd Exp $
 //
 //*-- Author : Ross Corliss, MIT
 
@@ -127,7 +127,7 @@ void
 St2011WlumiMaker::getActiveTowers(){
   //count the number of good towers:
   nActiveTowers=0;
-  WeveBEMC *barrel=&(wMK->wEve->bemc);
+  WeveBEMC *barrel=&(wMK->mWEvent->bemc);
   for (int i=0;i<4800;i++)
     if (barrel->statTile[0][i]==0)//[0]=kBtow
       nActiveTowers++;
@@ -162,7 +162,7 @@ St2011WlumiMaker::sortTrigger(){
 
   //printf("sortTrigger()\n");
   //has access to whole W-algo-maker data via pointer 'wMK'
-  WEvent *weve=wMK->wEve;
+  WEvent *weve=wMK->mWEvent;
 
   if (weve->l2bitET) {
     //printf("ET\n");
@@ -214,6 +214,9 @@ St2011WlumiMaker::getAbortGapCounts(int angle, int *n1, int* n2){
 }
 
 // $Log: St2011WlumiMaker.cxx,v $
+// Revision 1.2  2012/10/10 22:39:35  smirnovd
+// *** empty log message ***
+//
 // Revision 1.1  2012/10/09 15:21:19  smirnovd
 // *** empty log message ***
 //

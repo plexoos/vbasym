@@ -33,7 +33,8 @@
 
 ClassImp(StVecBosMaker)
 
-//
+
+/** */
 StVecBosMaker::StVecBosMaker(const char *name): StMaker(name),
    mMuDstMaker(0),
    Tfirst(numeric_limits<int>::max()), Tlast(numeric_limits<int>::min())
@@ -71,7 +72,7 @@ StVecBosMaker::StVecBosMaker(const char *name): StMaker(name),
 
    nInpEve = nTrigEve = nAccEve = 0;
 
-   //... MC trigger simulator
+   // MC trigger simulator
    par_l0emulAdcThresh     = 30;
    par_l2emulSeedThresh    = 5.0;
    par_l2emulClusterThresh = 12.0;
@@ -154,8 +155,8 @@ Int_t StVecBosMaker::Init()
    }
    else {
       //setup for reading in tree
-      wEve = new WEvent();
-      mTreeChain-> SetBranchAddress("wEve", &wEve);
+      mWEvent = new WEvent();
+      mTreeChain-> SetBranchAddress("mWEvent", &mWEvent);
    }
 
    mBtowGeom       = StEmcGeom::instance("bemc");
@@ -170,14 +171,14 @@ Int_t StVecBosMaker::Init()
 
    if (isMC) par_minPileupVert = 1;
 
-   //tree only written during MuDst analysis
+   // tree only written during MuDst analysis
    if (mMuDstMaker) {
       mTreeFile = new TFile(mTreeName, "recreate");
       mTreeFile->cd();
 
-      wEve = new WEvent();
+      mWEvent = new WEvent();
       mWtree = new TTree("mWtree", "W candidate Events");
-      mWtree->Branch("wEve", "WEvent", &wEve);
+      mWtree->Branch("mWEvent", "WEvent", &mWEvent);
    }
 
    return StMaker::Init();
@@ -196,27 +197,39 @@ Int_t StVecBosMaker::InitRun(int runNo)
       mRunNo = runNo;
    }
    else {
-      mRunNo = wEve->runNo;
+      mRunNo = mWEvent->runNo;
    }
 
    //barrel algo params
-   LOG_INFO << Form("::InitRun(%d) %s done\n Barrel W-algo params: trigID L2BW=%d isMC=%d\n TPC: nPileupVert>%d, vertex |Z|<%.1fcm, primEleTrack: nFit>%d, hitFrac>%.2f Rin<%.1fcm, Rout>%.1fcm, PT>%.1fGeV/c\n BTOW ADC: kSigPed=%d AdcThr>%d maxAdc>%.0f clustET>%.1f GeV  ET2x2/ET4x4>%0.2f  ET2x2/nearTotET>%0.2f\n dist(track-clust)<%.1fcm, nearDelR<%.1f\n W selection highET>%.1f awayDelPhi<%.1frad  ptBalance>%.1fGeV  %.1f<leptonEta<%.1f ",
-                    mRunNo, coreTitle.Data(), par_l2bwTrgID, isMC,
-                    par_minPileupVert, par_vertexZ,
-                    par_nFitPts, par_nHitFrac,  par_trackRin,  par_trackRout, par_trackPt,
-                    par_kSigPed, par_AdcThres, par_maxADC, par_clustET, par_clustFrac24, par_nearTotEtFrac,
-                    par_delR3D, par_nearDeltaR,
-                    par_highET, par_awayDeltaPhi, par_ptBalance, par_leptonEtaLow, par_leptonEtaHigh
-                   ) << endm;
+   LOG_INFO << Form("::InitRun(%d) %s done\n
+      Barrel W-algo params: trigID L2BW=%d isMC=%d\n
+      TPC: nPileupVert>%d, vertex |Z|<%.1fcm, primEleTrack: nFit>%d, hitFrac>%.2f Rin<%.1fcm, Rout>%.1fcm, PT>%.1fGeV/c\n
+      BTOW ADC: kSigPed=%d AdcThr>%d maxAdc>%.0f clustET>%.1f GeV  ET2x2/ET4x4>%0.2f  ET2x2/nearTotET>%0.2f\n
+      dist(track-clust)<%.1fcm, nearDelR<%.1f\n
+      W selection highET>%.1f awayDelPhi<%.1frad  ptBalance>%.1fGeV  %.1f<leptonEta<%.1f ",
+      mRunNo, coreTitle.Data(), par_l2bwTrgID, isMC,
+      par_minPileupVert, par_vertexZ,
+      par_nFitPts, par_nHitFrac,  par_trackRin,  par_trackRout, par_trackPt,
+      par_kSigPed, par_AdcThres, par_maxADC, par_clustET, par_clustFrac24, par_nearTotEtFrac,
+      par_delR3D, par_nearDeltaR,
+      par_highET, par_awayDeltaPhi, par_ptBalance, par_leptonEtaLow, par_leptonEtaHigh
+      ) << endm;
+
    //endcap algo params
-   cout << Form("\n Endcap W-algo params: trigID: L2EW=%d isMC=%d\n TPC: nPileupVert>%d, vertex |Z|<%.1fcm, primEleTrack: nFit>%d, hitFrac>%.2f Rin<%.1fcm, Rout>%.1fcm, PT>%.1fGeV/c\n ETOW ADC: kSigPed=%d AdcThr>%d maxAdc>%.0f clustET>%.1f GeV  ET2x1/ET4x4>%0.2f  ET2x1/nearTotET>%0.2f\n dist(track-clust)<%.1fcm, nearDelR<%.1f\n W selection highET>%.1f awayDelPhi<%.1frad  ptBalance>%.1fGeV ",
-                parE_l2ewTrgID, isMC,
-                par_minPileupVert, par_vertexZ,
-                parE_nFitPts, parE_nHitFrac, parE_trackRin, parE_trackRout, parE_trackPt,
-                par_kSigPed, par_AdcThres, par_maxADC, parE_clustET, parE_clustFrac24, parE_nearTotEtFrac,
-                parE_delR3D, par_nearDeltaR,
-                par_highET, par_awayDeltaPhi, parE_ptBalance
-               ) << endl;
+   cout << Form("\n
+   Endcap W-algo params: trigID: L2EW=%d isMC=%d\n
+   TPC: nPileupVert>%d, vertex |Z|<%.1fcm, primEleTrack: nFit>%d, hitFrac>%.2f Rin<%.1fcm, Rout>%.1fcm, PT>%.1fGeV/c\n
+   ETOW ADC: kSigPed=%d AdcThr>%d maxAdc>%.0f clustET>%.1f GeV  ET2x1/ET4x4>%0.2f  ET2x1/nearTotET>%0.2f\n
+   dist(track-clust)<%.1fcm, nearDelR<%.1f\n
+   W selection highET>%.1f awayDelPhi<%.1frad  ptBalance>%.1fGeV ",
+   parE_l2ewTrgID, isMC,
+   par_minPileupVert, par_vertexZ,
+   parE_nFitPts, parE_nHitFrac, parE_trackRin, parE_trackRout, parE_trackPt,
+   par_kSigPed, par_AdcThres, par_maxADC, parE_clustET, parE_clustFrac24, parE_nearTotEtFrac,
+   parE_delR3D, par_nearDeltaR,
+   par_highET, par_awayDeltaPhi, parE_ptBalance
+   ) << endl;
+
    cout << Form("\n EtowScaleFact=%.2f  BtowScaleFacor=%.2f" , par_etowScale, par_btowScale) << endl;
 
    if (mMuDstMaker) {
@@ -280,7 +293,8 @@ Int_t StVecBosMaker::InitRun(int runNo)
       spinDb->print(0); // 0=short, 1=huge
 
       for (int bx = 0; bx < 120; bx++) {
-         if (spinDb->isBXfilledUsingInternalBX(bx))  hbxIdeal->Fill(bx);
+         if (spinDb->isBXfilledUsingInternalBX(bx))
+            hbxIdeal->Fill(bx);
       }
    }
 
@@ -288,7 +302,6 @@ Int_t StVecBosMaker::InitRun(int runNo)
 }
 
 
-//________________________________________________
 //________________________________________________
 Int_t StVecBosMaker::Finish()
 {
@@ -320,7 +333,7 @@ Int_t StVecBosMaker::FinishRun(int runNo)
 //________________________________________________
 void StVecBosMaker::Clear(const Option_t *)
 {
-   wEve->clear();
+   mWEvent->clear();
 }
 
 
@@ -330,20 +343,21 @@ Int_t StVecBosMaker::Make()
    nInpEve++;
 
    if (mMuDstMaker) { // standard MuDst analysis
-      wEve->id      = mMuDstMaker->muDst()->event()->eventId();
-      wEve->runNo   = mMuDstMaker->muDst()->event()->runId();
-      wEve->time    = mMuDstMaker->muDst()->event()->eventInfo().time();
-      wEve->zdcRate = mMuDstMaker->muDst()->event()->runInfo().zdcCoincidenceRate();
+      mWEvent->id      = mMuDstMaker->muDst()->event()->eventId();
+      mWEvent->runNo   = mMuDstMaker->muDst()->event()->runId();
+      mWEvent->time    = mMuDstMaker->muDst()->event()->eventInfo().time();
+      mWEvent->zdcRate = mMuDstMaker->muDst()->event()->runInfo().zdcCoincidenceRate();
 
-      int T = wEve->time;
+      int T = mWEvent->time;
 
       Tlast  = (Tlast  < T) ? T : Tlast;
       Tfirst = (Tfirst > T) ? T : Tfirst;
 
       const char *afile = mMuDstMaker->GetFile();
 
-      //printf("inpEve=%d eveID=%d daqFile=%s\n",nInpEve, wEve->id,afile);
-      if (nInpEve % 200 == 1) printf("\n-----in---- %s, muDst nEve: inp=%d trig=%d accpt=%d daqFile=%s\n", GetName(), nInpEve, nTrigEve, nAccEve, afile);
+      //printf("inpEve=%d eveID=%d daqFile=%s\n",nInpEve, mWEvent->id,afile);
+      if (nInpEve % 200 == 1)
+         printf("\n-----in---- %s, muDst nEve: inp=%d trig=%d accpt=%d daqFile=%s\n", GetName(), nInpEve, nTrigEve, nAccEve, afile);
 
       hA[0]->Fill("inp", 1.);
       hE[0]->Fill("inp", 1.);
@@ -351,8 +365,8 @@ Int_t StVecBosMaker::Make()
       int btowStat = accessBTOW(); // get energy in BTOW
       int etowStat = accessETOW(); // get energy in ETOW
 
-      int btrig = accessBarrelTrig();
-      int etrig = accessEndcapTrig();
+      int btrig    = accessBarrelTrig();
+      int etrig    = accessEndcapTrig();
 
       if ( btrig && etrig )  { mWtree->Fill(); return kStOK; } //skip event w/o valid trig ID
 
@@ -375,16 +389,16 @@ Int_t StVecBosMaker::Make()
 
       if ( accessTracks()) { mWtree->Fill(); return kStOK; } //skip event w/o ~any highPt track
 
-      accessBSMD();// get energy in BSMD
-      accessESMD();// get energy in ESMD
-      accessEPRS();// get energy in EPRS
+      accessBSMD(); // get energy in BSMD
+      accessESMD(); // get energy in ESMD
+      accessEPRS(); // get energy in EPRS
 
       mWtree->Fill(); //write all events w/ pt>10 track to tree
 
-      if (wEve->l2bitET  && wEve->bemc.tileIn[0] == 1) hA[0]->Fill("B-in", 1.0);
-      if (wEve->l2EbitET && wEve->etow.etowIn == 1)    hE[0]->Fill("E-in", 1.0);
-      if (wEve->l2bitET  && !btowStat)                 hA[0]->Fill("B200", 1.0);
-      if (wEve->l2EbitET && !etowStat)                 hE[0]->Fill("E200", 1.0);
+      if (mWEvent->l2bitET  && mWEvent->bemc.tileIn[0] == 1) hA[0]->Fill("B-in", 1.0);
+      if (mWEvent->l2EbitET && mWEvent->etow.etowIn == 1)    hE[0]->Fill("E-in", 1.0);
+      if (mWEvent->l2bitET  && !btowStat)                    hA[0]->Fill("B200", 1.0);
+      if (mWEvent->l2EbitET && !etowStat)                    hE[0]->Fill("E200", 1.0);
 
       if ( btowStat && etowStat ) return kStOK; //skip event w/o energy in BTOW && ETOW
 
@@ -401,11 +415,13 @@ Int_t StVecBosMaker::Make()
          }
       }
    }
-   else { //analysis of W tree
-      if (getEvent(index++, indexJet++) == kStEOF) return kStEOF; //get next event from W and jet tree
+   else { // analysis of W tree
+
+      if (getEvent(index++, indexJet++) == kStEOF)
+         return kStEOF; //get next event from W and jet tree
 
       //allow for manual scale adjustment of BTOW energy (careful!)
-      for (int i = 0; i < 4800; i++) wEve->bemc.eneTile[0][i] *= par_btowScale;
+      for (int i = 0; i < 4800; i++) mWEvent->bemc.eneTile[0][i] *= par_btowScale;
 
       if (nInpEve % 200 == 1) printf("\n-----in---- %s, W-Tree  nEve: inp=%d \n", GetName(), nInpEve); //,nTrigEve, nAccEve,afile);
 
@@ -414,36 +430,36 @@ Int_t StVecBosMaker::Make()
       hE[0]->Fill("inp", 1.);
 
       //fill trigger bins for counter histos
-      if (wEve->l2bitET)   hA[0]->Fill("L2bwET", 1.);
-      if (wEve->l2bitRnd)  hA[0]->Fill("L2bwRnd", 1.);
-      if (wEve->l2EbitET)  hE[0]->Fill("L2ewET", 1.);
-      if (wEve->l2EbitRnd) hE[0]->Fill("L2ewRnd", 1.);
+      if (mWEvent->l2bitET)   hA[0]->Fill("L2bwET", 1.);
+      if (mWEvent->l2bitRnd)  hA[0]->Fill("L2bwRnd", 1.);
+      if (mWEvent->l2EbitET)  hE[0]->Fill("L2ewET", 1.);
+      if (mWEvent->l2EbitRnd) hE[0]->Fill("L2ewRnd", 1.);
 
-      if (!wEve->l2bitET && !wEve->l2EbitET) return kStOK; //skip event w/o valid trig ID
+      if (!mWEvent->l2bitET && !mWEvent->l2EbitET) return kStOK; //skip event w/o valid trig ID
 
       nTrigEve++;
 
       //fill tpc bins
       int nVerR = 0; int nTrOK = 0;
 
-      for (uint iv = 0; iv < wEve->vertex.size(); iv++) {
-         if (wEve->vertex[iv].rank > 0)            nVerR++;
-         if (wEve->vertex[iv].eleTrack.size() > 0) nTrOK++;
+      for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
+         if (mWEvent->vertex[iv].rank > 0)            nVerR++;
+         if (mWEvent->vertex[iv].eleTrack.size() > 0) nTrOK++;
       }
 
-      if (wEve->l2bitET && nVerR > 0) hA[0]->Fill("vertZ", 1.);
-      if (wEve->l2EbitET && wEve->vertex.size() > 0) hE[0]->Fill("vertZ", 1.);
-      if (wEve->l2bitET && nTrOK > 0) hA[0]->Fill("Pt10", 1.);
-      if (wEve->l2EbitET && nTrOK > 0) hE[0]->Fill("Pt10", 1.);
+      if (mWEvent->l2bitET && nVerR > 0) hA[0]->Fill("vertZ", 1.);
+      if (mWEvent->l2EbitET && mWEvent->vertex.size() > 0) hE[0]->Fill("vertZ", 1.);
+      if (mWEvent->l2bitET && nTrOK > 0) hA[0]->Fill("Pt10", 1.);
+      if (mWEvent->l2EbitET && nTrOK > 0) hE[0]->Fill("Pt10", 1.);
 
       if (nTrOK <= 0) return kStOK;
 
       //fill some B/ETOW bins
-      if (wEve->l2bitET && wEve->bemc.tileIn[0] == 1)       hA[0]->Fill("B-in", 1.0);
-      if (wEve->l2EbitET && wEve->etow.etowIn == 1)         hE[0]->Fill("E-in", 1.0);
-      if (wEve->l2bitET && wEve->bemc.maxAdc > par_maxADC)  hA[0]->Fill("B200", 1.0);
-      if (wEve->l2EbitET && wEve->etow.maxAdc > par_maxADC) hE[0]->Fill("E200", 1.0);
-      if (wEve->bemc.maxAdc < par_maxADC && wEve->etow.maxAdc < par_maxADC) return kStOK; //skip event w/o energy in BTOW && ETOW
+      if (mWEvent->l2bitET && mWEvent->bemc.tileIn[0] == 1)       hA[0]->Fill("B-in", 1.0);
+      if (mWEvent->l2EbitET && mWEvent->etow.etowIn == 1)         hE[0]->Fill("E-in", 1.0);
+      if (mWEvent->l2bitET && mWEvent->bemc.maxAdc > par_maxADC)  hA[0]->Fill("B200", 1.0);
+      if (mWEvent->l2EbitET && mWEvent->etow.maxAdc > par_maxADC) hE[0]->Fill("E200", 1.0);
+      if (mWEvent->bemc.maxAdc < par_maxADC && mWEvent->etow.maxAdc < par_maxADC) return kStOK; //skip event w/o energy in BTOW && ETOW
 
       if (mJetTreeChain) { // just QA plots for jets
          mJets = GetJetsTreeAnalysis(mJetTreeBranch); //get input jet info
@@ -463,7 +479,7 @@ Int_t StVecBosMaker::Make()
    extendTrack2Barrel();
    int bmatch = matchTrack2BtowCluster();
 
-   //find endcap candidates
+   // find endcap candidates
    extendTrack2Endcap();
    int ematch = matchTrack2EtowCluster();
 
@@ -482,17 +498,16 @@ Int_t StVecBosMaker::Make()
       if (!bmatch) tag_Z_boson();
    }
 
-   //endcap specific analysis
+   // endcap specific analysis
    if (!ematch) {
       analyzeESMD();
       analyzeEPRS();
    }
 
    if (!bmatch) find_W_boson();
-
    if (!ematch) findEndcap_W_boson();
 
-   if (nAccEve < 2 || nAccEve % 1000 == 1 ) wEve->print(0x0, isMC);
+   if (nAccEve < 2 || nAccEve % 1000 == 1 ) mWEvent->print(0x0, isMC);
 
    return kStOK;
 }
@@ -574,37 +589,37 @@ int StVecBosMaker::L2algoEtaPhi2IJ(float etaF, float phiF, int &iEta, int &iPhi)
 void StVecBosMaker::fillNorm()
 {
    //fill max BTOW clustET vs z-vertex distribution for events with positive rank vertex
-   if (wEve->l2bitET && wEve->vertex.size() > 0)
+   if (mWEvent->l2bitET && mWEvent->vertex.size() > 0)
    {
-      if (wEve->vertex[0].rank > 0) {
+      if (mWEvent->vertex[0].rank > 0) {
          float maxBtowET = 0;
 
          for (int i = 0; i < mxBtow; i++)
-            if (wEve->bemc.statTile[0][i] == 0) { //zero means good
+            if (mWEvent->bemc.statTile[0][i] == 0) { //zero means good
                int ieta = -1; int iphi = -1;
                float etaF = positionBtow[i].Eta();
                float phiF = positionBtow[i].Phi();
                L2algoEtaPhi2IJ(etaF, phiF, ieta, iphi);
-               WeveCluster c = maxBtow2x2(ieta, iphi, wEve->vertex[0].z);
+               WeveCluster c = maxBtow2x2(ieta, iphi, mWEvent->vertex[0].z);
 
                if (c.ET > maxBtowET) maxBtowET = c.ET;
             }
 
-         hA[13]->Fill(wEve->vertex[0].z, maxBtowET);
+         hA[13]->Fill(mWEvent->vertex[0].z, maxBtowET);
       }
    }
 
    //fill max ETOW towerET vs z-vertex distribution for events with positive rank vertex
-   if (wEve->l2EbitET && wEve->vertex.size() > 0)
+   if (mWEvent->l2EbitET && mWEvent->vertex.size() > 0)
    {
-      if (wEve->vertex[0].rank > 0) {
+      if (mWEvent->vertex[0].rank > 0) {
          float maxEtowET = 0;
 
          for (int isec = 0; isec < mxEtowSec; isec++) {
             for (int isub = 0; isub < mxEtowSub; isub++) {
                for (int ieta = 0; ieta < mxEtowEta; ieta++) {
-                  if (wEve->etow.stat[isec * mxEtowSub + isub][ieta] == 0) {
-                     WeveCluster c = sumEtowPatch(ieta, isec * mxEtowSub + isub, 1, 1, wEve->vertex[0].z);
+                  if (mWEvent->etow.stat[isec * mxEtowSub + isub][ieta] == 0) {
+                     WeveCluster c = sumEtowPatch(ieta, isec * mxEtowSub + isub, 1, 1, mWEvent->vertex[0].z);
 
                      if (c.ET > maxEtowET) maxEtowET = c.ET;
                   }
@@ -612,7 +627,7 @@ void StVecBosMaker::fillNorm()
             }
          }
 
-         hE[13]->Fill(wEve->vertex[0].z, maxEtowET);
+         hE[13]->Fill(mWEvent->vertex[0].z, maxEtowET);
       }
    }
 }
@@ -626,13 +641,13 @@ TClonesArray* StVecBosMaker::GetJets(TString branchName)
       return 0;
    }
 
-   //assert(mJetReaderMaker->getStJets(branchName)->eventId() == wEve->id);
-   if (mJetReaderMaker->getStJets(branchName)->eventId() != wEve->id)
-      Error("GetJets", "Jet and W event ids do not match: %12d, %12d", mJetReaderMaker->getStJets(branchName)->eventId(), wEve->id);
+   //assert(mJetReaderMaker->getStJets(branchName)->eventId() == mWEvent->id);
+   if (mJetReaderMaker->getStJets(branchName)->eventId() != mWEvent->id)
+      Error("GetJets", "Jet and W event ids do not match: %12d, %12d", mJetReaderMaker->getStJets(branchName)->eventId(), mWEvent->id);
 
-   //assert(mJetReaderMaker->getStJets(branchName)->runId() == wEve->runNo);
-   if (mJetReaderMaker->getStJets(branchName)->runId() != wEve->runNo)
-      Error("GetJets", "Jet and W run ids do not match: %12d, %12d", mJetReaderMaker->getStJets(branchName)->runId(), wEve->runNo);
+   //assert(mJetReaderMaker->getStJets(branchName)->runId() == mWEvent->runNo);
+   if (mJetReaderMaker->getStJets(branchName)->runId() != mWEvent->runNo)
+      Error("GetJets", "Jet and W run ids do not match: %12d, %12d", mJetReaderMaker->getStJets(branchName)->runId(), mWEvent->runNo);
 
    nJets = mJetReaderMaker->getStJets(branchName)->nJets();
 
@@ -644,22 +659,23 @@ TClonesArray* StVecBosMaker::GetJets(TString branchName)
 TClonesArray * StVecBosMaker::GetJetsTreeAnalysis(TString branchName)
 {
    if (mJetTreeChain == 0) {
-      nJets = -1; return 0;
+      nJets = -1;
+      return 0;
    }
 
    //cout<<"looking for matching jet event"<<endl;
 
    StJets *jetTmp = GetStJetsCopy(branchName);
 
-   while (jetTmp->eventId() != wEve->id || jetTmp->runId() != wEve->runNo) {
+   while (jetTmp->eventId() != mWEvent->id || jetTmp->runId() != mWEvent->runNo) {
       mJetTreeChain->GetEntry(indexJet++);
       jetTmp = GetStJetsCopy(branchName);
    }
 
    //cout<<"found matching jet event"<<endl;
 
-   assert(jetTmp->eventId() == wEve->id);
-   assert(jetTmp->runId() == wEve->runNo);
+   assert(jetTmp->eventId() == mWEvent->id);
+   assert(jetTmp->runId() == mWEvent->runNo);
    nJets = jetTmp->nJets();
    return jetTmp->jets();
 }
@@ -674,7 +690,7 @@ StJets * StVecBosMaker::GetStJetsCopy(TString branchName)
 // ----------------------------------------------------------------------------
 Int_t StVecBosMaker::getEvent(Int_t i, Int_t ijet)
 {
-   Int_t stat = mTreeChain->GetEntry(i);
+   Int_t stat    = mTreeChain->GetEntry(i);
    Int_t statJet = mJetTreeChain->GetEntry(ijet);
 
    if (!stat && !statJet) return kStEOF;

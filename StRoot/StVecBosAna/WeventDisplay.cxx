@@ -272,8 +272,8 @@ WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  WEven
             for (int k = 0; k < 288; k++) { //loop all strips
                const StructEEmcStrip *stripPtr = wMK->geoSmd->getStripPtr(k, iuv, secLoop[isec]); //myTr.esmdStripId[iuv][k]
                if (!stripPtr) continue;
-               if (wMK->wEve->esmd.ene[secLoop[isec]][iuv][k] * 1e3 < 10.) continue;
-               int nColor = (int) (wMK->wEve->esmd.ene[secLoop[isec]][iuv][k] * 1e3) / 20;
+               if (wMK->mWEvent->esmd.ene[secLoop[isec]][iuv][k] * 1e3 < 10.) continue;
+               int nColor = (int) (wMK->mWEvent->esmd.ene[secLoop[isec]][iuv][k] * 1e3) / 20;
                int nSub = -10;
                if (nColor == 0) nSub = 10;
                if (nColor == 1) nSub = 8;
@@ -286,7 +286,7 @@ WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  WEven
                tline = new TLine(end1.X(), end1.Y(), end2.X(), end2.Y());
                if (iuv == 0) tline->SetLineColor(kBlue - nSub);
                if (iuv == 1) tline->SetLineColor(kGreen - nSub);
-               if (wMK->wEve->esmd.ene[secLoop[isec]][iuv][k] * 1e3 > 100) tline->SetLineColor(2);
+               if (wMK->mWEvent->esmd.ene[secLoop[isec]][iuv][k] * 1e3 > 100) tline->SetLineColor(2);
                tline->Draw(); Lx->Add(tline);
             }
          }
@@ -361,8 +361,8 @@ void WeventDisplay::exportEvent( const char *tit, WEventVertex myV, WeveEleTrack
    if (maxEve <= 0) return;
    clear();
 
-   int eveId = wMK->wEve->id; //wMK->mMuDstMaker->muDst()->event()->eventId();
-   int runNo = wMK->wEve->runNo; //wMK->mMuDstMaker->muDst()->event()->runId();
+   int eveId = wMK->mWEvent->id; //wMK->mMuDstMaker->muDst()->event()->eventId();
+   int runNo = wMK->mWEvent->runNo; //wMK->mMuDstMaker->muDst()->event()->runId();
 
    const char *afile = ""; //wMK->mMuDstMaker->GetFile();
    int len    = strlen(afile);
@@ -375,7 +375,7 @@ void WeventDisplay::exportEvent( const char *tit, WEventVertex myV, WeveEleTrack
    //printf("#xcheck-%s run=%d daqSeq=%d eveID=%7d vertID=%2d zVert=%.1f prTrID=%4d  prTrEta=%.3f prTrPhi/deg=%.1f globPT=%.1f hitTwId=%4d twAdc=%.1f clEta=%.3f clPhi/deg=%.1f  clET=%.1f\n",tit,
    //	 runNo,daqSeq,eveId,myV.id,myV.z,
    //	 myTr.prMuTrack->id(),myTr.prMuTrack->eta(),myTr.prMuTrack->phi()/3.1416*180.,myTr.glMuTrack->pt(),
-   //	 myTr.pointTower.id,wMK->wEve->bemc.adcTile[kBTow][myTr.pointTower.id-1],
+   //	 myTr.pointTower.id,wMK->mWEvent->bemc.adcTile[kBTow][myTr.pointTower.id-1],
    //	 rTw.Eta(),rTw.Phi()/3.1416*180.,myTr.cluster.ET);
 
    float zVert = myV.z;
@@ -383,7 +383,7 @@ void WeventDisplay::exportEvent( const char *tit, WEventVertex myV, WeveEleTrack
 
    //.... process BTOW hits
    for (int i = 0; i < mxBtow; i++) {
-      float ene = wMK->wEve->bemc.eneTile[kBTow][i];
+      float ene = wMK->mWEvent->bemc.eneTile[kBTow][i];
       if (ene <= 0) continue;
       TVector3 primP = wMK->positionBtow[i] - TVector3(0, 0, zVert);
       primP.SetMag(ene); // it is 3D momentum in the event ref frame
@@ -397,7 +397,7 @@ void WeventDisplay::exportEvent( const char *tit, WEventVertex myV, WeveEleTrack
    //.... store ETOW hits
    for (int i = 0; i < mxEtowPhiBin; i++) {
       for (int j = 0; j < mxEtowEta; j++) {
-         float ene = wMK->wEve->etow.ene[i][j];
+         float ene = wMK->mWEvent->etow.ene[i][j];
          if (ene <= 0) continue;
          TVector3 primP = wMK->positionEtow[i][j] - TVector3(0, 0, zVert);
          primP.SetMag(ene); // it is 3D momentum in the event ref frame
@@ -438,7 +438,7 @@ void WeventDisplay::exportEvent( const char *tit, WEventVertex myV, WeveEleTrack
    for (int iep = 0; iep < mxBSmd; iep++) {
       hBsmdAdc[iep]->SetMinimum(30); hBsmdAdc[iep]->SetMaximum(999);
       for (int i = 0; i < mxBStrips; i++) {
-         float adc = wMK->wEve->bemc.adcBsmd[iep][i];
+         float adc = wMK->mWEvent->bemc.adcBsmd[iep][i];
          if (adc <= 0) continue;
          TVector3 r = wMK->positionBsmd[iep][i];
          float z1 = r.z() - zVert;
@@ -500,9 +500,9 @@ void WeventDisplay::getPrimTracksFromTree(int vertID, int pointTowId)
    // flag=2 use 2D cut, 1= only delta phi
 
    assert(vertID >= 0);
-   assert(vertID < (int)wMK->wEve->vertex.size());
+   assert(vertID < (int)wMK->mWEvent->vertex.size());
 
-   WEventVertex &V = wMK->wEve->vertex[vertID];
+   WEventVertex &V = wMK->mWEvent->vertex[vertID];
    for (uint it = 0; it < V.prTrList.size(); it++) {
       StMuTrack *prTr = V.prTrList[it];
       if (prTr->flag() <= 0) continue;
@@ -554,7 +554,7 @@ WeventDisplay::export2sketchup(  const char *tit, WEventVertex myV, WeveEleTrack
    //........DUMP BTOW towers
    float Rcylinder = wMK->mBtowGeom->Radius(), Rcylinder2 = Rcylinder * Rcylinder;
    for (int i = 0; i < mxBtow; i++) {
-      float ene = wMK->wEve->bemc.eneTile[kBTow][i];
+      float ene = wMK->mWEvent->bemc.eneTile[kBTow][i];
       if (ene <= 0) continue;
       float delZ = wMK->positionBtow[i].z() - myV.z;
       float e2et = Rcylinder / sqrt(Rcylinder2 + delZ * delZ);
@@ -568,7 +568,7 @@ WeventDisplay::export2sketchup(  const char *tit, WEventVertex myV, WeveEleTrack
    //........DUMP BSMD  hits
    for (int iep = 0; iep < mxBSmd; iep++) {
       for (int i = 0; i < mxBStrips; i++) {
-         float adc = wMK->wEve->bemc.adcBsmd[iep][i];
+         float adc = wMK->mWEvent->bemc.adcBsmd[iep][i];
          if (adc <= 0) continue;
          TVector3 r = wMK->positionBsmd[iep][i];
          fprintf(fd, "bsmd%c V %.1f %.3f %.3f  adc:detEta:detPhi %.3f %.3f  %.3f\n", cPlane[iep], rV.x(), rV.y(), rV.z(), adc, r.Eta(), r.Phi() );
@@ -578,7 +578,7 @@ WeventDisplay::export2sketchup(  const char *tit, WEventVertex myV, WeveEleTrack
    //........DUMP ETOW towers
    for (int iphi = 0; iphi < mxEtowPhiBin; iphi++) {
       for (int ieta = 0; ieta < mxEtowEta; ieta++) { //sum all eta rings
-         float ene = wMK->wEve->etow.ene[iphi][ieta];
+         float ene = wMK->mWEvent->etow.ene[iphi][ieta];
          if (ene <= 0) continue; //skip towers with no energy
          TVector3 detP = wMK->positionEtow[iphi][ieta];
          TVector3 primP = detP - TVector3(0, 0, myV.z);

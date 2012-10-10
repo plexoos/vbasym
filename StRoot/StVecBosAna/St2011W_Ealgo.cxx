@@ -12,14 +12,14 @@
 
 void StVecBosMaker::findEndcap_W_boson()
 {
-   if (!wEve->l2EbitET) return;
+   if (!mWEvent->l2EbitET) return;
 
    //printf("========= findEndcap_W_boson() \n");
    int nNoNear = 0, nNoAway = 0, nGoldW = 0;
 
    // search for  Ws ............
-   for (uint iv = 0; iv < wEve->vertex.size(); iv++) {
-      WEventVertex &V = wEve->vertex[iv];
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
+      WEventVertex &V = mWEvent->vertex[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          if (T.pointTower.id >= 0) continue; //skip barrel towers
@@ -82,7 +82,7 @@ void StVecBosMaker::findEndcap_W_boson()
          if (T.sPtBalance > parE_ptBalance) { /***************************/
             printf("\n WWWWWWWWWWWWWWWWWWWWW  Endcap \n");
             wDisaply->exportEvent( "WE", V, T, iv);
-            wEve->print();
+            mWEvent->print();
          }/***************************/
 
          //put final W cut here
@@ -136,11 +136,11 @@ void StVecBosMaker::findEndcap_W_boson()
 void
 StVecBosMaker::analyzeESMD()
 {
-   if (!wEve->l2EbitET) return;
+   if (!mWEvent->l2EbitET) return;
 
    //printf("========= analyzeESMD \n");
-   for (uint iv = 0; iv < wEve->vertex.size(); iv++) {
-      WEventVertex &V = wEve->vertex[iv];
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
+      WEventVertex &V = mWEvent->vertex[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          if (T.pointTower.id >= 0) continue; //skip barrel towers
@@ -151,8 +151,8 @@ StVecBosMaker::analyzeESMD()
          int hitStrip[2] = { -1, -1}; int hitStripGlob[2] = { -1, -1};
          //initialize shower shape histograms
          TH1F *esmdShowerHist[2];
-         esmdShowerHist[0] = new TH1F(Form("esmdU%d", wEve->id), "esmdU", 41, -10.25, 10.25);
-         esmdShowerHist[1] = new TH1F(Form("esmdV%d", wEve->id), "esmdV", 41, -10.25, 10.25);
+         esmdShowerHist[0] = new TH1F(Form("esmdU%d", mWEvent->id), "esmdU", 41, -10.25, 10.25);
+         esmdShowerHist[1] = new TH1F(Form("esmdV%d", mWEvent->id), "esmdV", 41, -10.25, 10.25);
 
          for (int iuv = 0; iuv < 2; iuv++) { //loop over planes
             Float_t dca; //primary extrapolation to smd plane
@@ -176,7 +176,7 @@ StVecBosMaker::analyzeESMD()
             int str1 = stripId - parE_nSmdStrip; if (str1 < 1) str1 = 1;
             int str2 = stripId + parE_nSmdStrip; if (str2 > 288) str2 = 288;
             for (int istrip = str1; istrip <= str2; istrip++) {
-               float ene = wEve->esmd.ene[sectorId - 1][iuv][istrip - 1] * 1e3;
+               float ene = mWEvent->esmd.ene[sectorId - 1][iuv][istrip - 1] * 1e3;
                esmdShowerHist[iuv]->SetBinContent(istrip - stripId + parE_nSmdStrip + 1, ene);
                T.esmdShower[iuv][istrip - stripId + parE_nSmdStrip] = ene;
                if (ene > maxE) { maxStripId = istrip; maxE = ene; }
@@ -214,11 +214,11 @@ StVecBosMaker::analyzeESMD()
 void
 StVecBosMaker::analyzeEPRS()
 {
-   if (!wEve->l2EbitET) return;
+   if (!mWEvent->l2EbitET) return;
 
    //printf("========= analyzeEPRS \n");
-   for (uint iv = 0; iv < wEve->vertex.size(); iv++) {
-      WEventVertex &V = wEve->vertex[iv];
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
+      WEventVertex &V = mWEvent->vertex[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          if (T.pointTower.id >= 0) continue; //skip barrel towers
@@ -245,7 +245,7 @@ StVecBosMaker::sumEtowCone(float zVert, TVector3 refAxis, int flag)
    //....loop over all phi bins
    for (int iphi = 0; iphi < mxEtowPhiBin; iphi++) {
       for (int ieta = 0; ieta < mxEtowEta; ieta++) { //sum all eta rings
-         float ene = wEve->etow.ene[iphi][ieta];
+         float ene = mWEvent->etow.ene[iphi][ieta];
          if (ene <= 0) continue; //skip towers with no energy
          TVector3 primP = positionEtow[iphi][ieta] - TVector3(0, 0, zVert);
          primP.SetMag(ene); // it is 3D momentum in the event ref frame
@@ -273,13 +273,13 @@ StVecBosMaker::sumEtowCone(float zVert, TVector3 refAxis, int flag)
 int
 StVecBosMaker::extendTrack2Endcap() // return # of extended tracks
 {
-   //printf("******* extendTracksEndcap() nVert=%d\n",wEve.vertex.size());
-   if (!wEve->l2EbitET) return 0; //fire endcap trigger
+   //printf("******* extendTracksEndcap() nVert=%d\n",mWEvent.vertex.size());
+   if (!mWEvent->l2EbitET) return 0; //fire endcap trigger
 
    double parE_zSMD = geomE->getZSMD(); // (cm), smd depth
    int nTrE = 0;
-   for (uint iv = 0; iv < wEve->vertex.size(); iv++) {
-      WEventVertex &V = wEve->vertex[iv];
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
+      WEventVertex &V = mWEvent->vertex[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          if (T.prMuTrack->eta() < parE_trackEtaMin)
@@ -350,13 +350,13 @@ StVecBosMaker::extendTrack2Endcap() // return # of extended tracks
 int
 StVecBosMaker::matchTrack2EtowCluster()
 {
-   //printf("******* matchEtowCluster() nVert=%d\n",wEve.vertex.size());
+   //printf("******* matchEtowCluster() nVert=%d\n",mWEvent.vertex.size());
 
-   if (!wEve->l2EbitET) return 0;
+   if (!mWEvent->l2EbitET) return 0;
 
    int nTr = 0;
-   for (uint iv = 0; iv < wEve->vertex.size(); iv++) {
-      WEventVertex &V = wEve->vertex[iv];
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
+      WEventVertex &V = mWEvent->vertex[iv];
       float zVert = V.z;
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
@@ -479,7 +479,7 @@ StVecBosMaker::maxEtow2x2(int iEta, int iPhi, float zVert)
 WeveCluster
 StVecBosMaker::sumEtowPatch(int iEta, int iPhi, int Leta, int  Lphi, float zVert)
 {
-   //printf("     eveID=%d etowPatch seed iEta=%d[+%d] iPhi=%d[+%d] zVert=%.0f \n",wEve.id,iEta,Leta, iPhi,Lphi,zVert);
+   //printf("     eveID=%d etowPatch seed iEta=%d[+%d] iPhi=%d[+%d] zVert=%.0f \n",mWEvent.id,iEta,Leta, iPhi,Lphi,zVert);
    WeveCluster CL; // object is small, not to much overhead in creating it
    CL.iEta = iEta;
    CL.iPhi = iPhi;
@@ -493,9 +493,9 @@ StVecBosMaker::sumEtowPatch(int iEta, int iPhi, int Leta, int  Lphi, float zVert
          int jj = (j + mxEtowPhiBin) % mxEtowPhiBin; // keep it always positive
          //if(L<5) printf("n=%2d  i=%d jj=%d\n",CL.nTower,i,jj);
 
-         float ene = wEve->etow.ene[jj][i];
+         float ene = mWEvent->etow.ene[jj][i];
          if (ene <= 0) continue; // skip towers w/o energy
-         float adc = wEve->etow.adc[jj][i];
+         float adc = mWEvent->etow.adc[jj][i];
          float delZ = positionEtow[jj][i].z() - zVert;
          float Rxy = positionEtow[jj][i].Perp();
          float e2et = Rxy / sqrt(Rxy * Rxy + delZ * delZ);

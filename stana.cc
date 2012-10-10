@@ -289,7 +289,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       bool use2006TowerCuts = true;
 
       // 4p maker using 100% tower energy correction
-      StBET4pMaker *stBET4pMakerFrac100 = new StBET4pMaker("BET4pMakerFrac100", stMuDstMaker, doTowerSwapFix, new StjTowerEnergyCorrectionForTracksFraction(1.0));
+      StBET4pMaker* stBET4pMakerFrac100 = new StBET4pMaker("BET4pMakerFrac100", stMuDstMaker, doTowerSwapFix, new StjTowerEnergyCorrectionForTracksFraction(1.0));
       stBET4pMakerFrac100->setUse2003Cuts(use2003TowerCuts);
       stBET4pMakerFrac100->setUseEndcap(true);
       stBET4pMakerFrac100->setUse2006Cuts(use2006TowerCuts);
@@ -304,8 +304,8 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       StJetMaker *stJetMaker = new StJetMaker("stJetMaker", stMuDstMaker, jetFile);
       //StJetSkimEventMaker* skimEventMaker = new StJetSkimEventMaker("StJetSkimEventMaker", stMuDstMaker,outSkimFile);
 
-      //set the analysis cuts: (see StJetMaker/StppJetAnalyzer.h -> class StppAnaPars )
-      StppAnaPars *stppAnaPars = new StppAnaPars();
+      // set the analysis cuts: (see StJetMaker/StppJetAnalyzer.h -> class StppAnaPars )
+      StppAnaPars* stppAnaPars = new StppAnaPars();
       stppAnaPars->setFlagMin(0);     // track->flag() > 0
       stppAnaPars->setNhits(12);      // track->nHitsFit()>12
       stppAnaPars->setCutPtMin(0.2);  // track->pt() > 0.2
@@ -315,13 +315,13 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       stppAnaPars->setJetEtaMin(0);
       stppAnaPars->setJetNmin(0);
 
-      //Setup the cone finder (See StJetFinder/StConeJetFinder.h -> class StConePars)
-      StConePars *stConePars = new StConePars();
+      // Setup the cone finder (See StJetFinder/StConeJetFinder.h -> class StConePars)
+      StConePars* stConePars = new StConePars();
       stConePars->setGridSpacing(105, -3.0, 3.0, 120, -TMath::Pi(), TMath::Pi());  //include EEMC
-      stConePars->setConeRadius(0.7); // default=0.7
+      stConePars->setConeRadius(0.7);    // default=0.7
       stConePars->setSeedEtMin(0.5);
       stConePars->setAssocEtMin(0.1);
-      stConePars->setSplitFraction(0.5); //default=0.5. if 0.3 less split?
+      stConePars->setSplitFraction(0.5); // default=0.5. if 0.3 less split?
       stConePars->setPerformMinimization(true);
       stConePars->setAddMidpoints(true);
       stConePars->setRequireStableMidpoints(true);
@@ -378,46 +378,46 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    if (useJetFinder == 2) {
       cout << "Configure to read jet trees " << endl;
-      StJetReader *stJetReader = new StJetReader();
+      StJetReader* stJetReader = new StJetReader();
       stJetReader->InitFile(jetFile);
    }
 
    // W reconstruction code
-   StVecBosMaker *st2011WMaker = new StVecBosMaker();
+   StVecBosMaker *stVecBosMaker = new StVecBosMaker();
 
    if (isMC) { // MC specific
-      st2011WMaker->setMC(isMC); //pass "version" of MC to maker
-      //st2011WMaker->setJetNeutScaleMC(1.0);
-      //st2011WMaker->setJetChrgScaleMC(1.0);
+      stVecBosMaker->setMC(isMC); //pass "version" of MC to maker
+      //stVecBosMaker->setJetNeutScaleMC(1.0);
+      //stVecBosMaker->setJetChrgScaleMC(1.0);
    }
    else { // real data
-      st2011WMaker->setTrigID(idL2BWtrg, idL2EWtrg);
+      stVecBosMaker->setTrigID(idL2BWtrg, idL2EWtrg);
    }
 
    TString treeFileName = wtreeDir;
    treeFileName += outF;
    treeFileName += ".Wtree.root";
 
-   st2011WMaker->setTreeName(treeFileName);
+   stVecBosMaker->setTreeName(treeFileName);
 
    if (useJetFinder == 2)
-      st2011WMaker->setJetTreeBranch("ConeJets12_100", "ConeJets12_100_noEEMC"); //select jet tree braches used
+      stVecBosMaker->setJetTreeBranch("ConeJets12_100", "ConeJets12_100_noEEMC"); //select jet tree braches used
 
-   st2011WMaker->setMaxDisplayEve(100); // only first N events will get displayed
+   stVecBosMaker->setMaxDisplayEve(100); // only first N events will get displayed
    //set energy scale (works for data and MC - be careful!)
-   //st2011WMaker->setBtowScale(1.0);
-   //st2011WMaker->setEtowScale(1.0);
+   //stVecBosMaker->setBtowScale(1.0);
+   //stVecBosMaker->setEtowScale(1.0);
 
    /* evaluation of result, has full acess to W-algo internal data
       including overwrite - be careful */
 
-   St2011pubWanaMaker *st2011pubWanaMaker = new St2011pubWanaMaker();
-   st2011pubWanaMaker->attachWalgoMaker(st2011WMaker);
+   St2011pubWanaMaker* st2011pubWanaMaker = new St2011pubWanaMaker();
+   st2011pubWanaMaker->attachWalgoMaker(stVecBosMaker);
 
    //Collect all output histograms
    //already defined this above:  TObjArray* HList=new TObjArray;
-   st2011WMaker->setHList(HList);
-   st2011WMaker->setHListTpc(HListTpc);
+   stVecBosMaker->setHList(HList);
+   stVecBosMaker->setHListTpc(HListTpc);
    st2011pubWanaMaker->setHList(HList);
 
    if (spinSort) {
@@ -430,7 +430,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
          sprintf(ttx, "%cspin", 'A' + kk);
          printf("add spinMaker %s %d \n", ttx, kk);
          spinMkA[kk] = new St2011pubSpinMaker(ttx);
-         spinMkA[kk]->attachWalgoMaker(st2011WMaker);
+         spinMkA[kk]->attachWalgoMaker(stVecBosMaker);
          //spinMkA[kk]->attachSpinDb(stSpinDbMaker);
          spinMkA[kk]->setHList(HList);
 
@@ -443,13 +443,13 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    if (geant) {
       St2011pubMcMaker *pubMcMk = new St2011pubMcMaker("pubMc");
-      pubMcMk->attachWalgoMaker(st2011WMaker);
+      pubMcMk->attachWalgoMaker(stVecBosMaker);
       pubMcMk->setHList(HList);
    }
 
    if (findZ) {
       StZBosMaker *st2011ZMaker = new StZBosMaker("Z");
-      st2011ZMaker->attachWalgoMaker(st2011WMaker);
+      st2011ZMaker->attachWalgoMaker(stVecBosMaker);
       st2011ZMaker->setHList(HList);
       st2011ZMaker->setNearEtFrac(0.88);
       st2011ZMaker->setClusterMinEt(15);
@@ -520,7 +520,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       printf("\n Failed to open Histo-file -->%s<, continue\n", histFileName.Data());
    }
 
-   //st2011WMaker->Finish();
+   //stVecBosMaker->Finish();
 
    return 2;
 }

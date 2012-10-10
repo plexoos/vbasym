@@ -54,7 +54,7 @@ private:
    TString        mJetTreeBranch;
    TString        mJetTreeBranch_noEEMC;
    TClonesArray  *mJets;
-   WEvent        *wEve;
+   WEvent        *mWEvent;
    TTree         *mWtree;
    TString        mTreeName;
    TFile         *mTreeFile;
@@ -240,7 +240,7 @@ protected:
 
    /// Displayed on session exit, leave it as-is please ...
    virtual const char *GetCVS() const {
-      static const char cvs[] = "Tag $Name:  $ $Id: StVecBosMaker.h,v 1.2 2012/10/09 19:24:01 smirnovd Exp $ built "__DATE__" "__TIME__ ;
+      static const char cvs[] = "Tag $Name:  $ $Id: StVecBosMaker.h,v 1.3 2012/10/10 22:39:35 smirnovd Exp $ built "__DATE__" "__TIME__ ;
       return cvs;
    }
 

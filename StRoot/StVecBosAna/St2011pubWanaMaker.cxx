@@ -59,8 +59,8 @@ void St2011pubWanaMaker::evalWeleTrackSign()
    //has access to whole W-algo-maker data via pointer 'wMK'
 
    // search for Ws
-   for (uint iv = 0; iv < wMK->wEve->vertex.size(); iv++) {
-      WEventVertex &V = wMK->wEve->vertex[iv];
+   for (uint iv = 0; iv < wMK->mWEvent->vertex.size(); iv++) {
+      WEventVertex &V = wMK->mWEvent->vertex[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
@@ -164,24 +164,24 @@ void St2011pubWanaMaker::evalWeleTrackSign()
 void St2011pubWanaMaker::scanCrateRate()
 {
    //has access to whole W-algo-maker data via pointer 'wMK'
-   // printf("crateScan: eveID=%d\n",wMK->wEve->id);
+   // printf("crateScan: eveID=%d\n",wMK->mWEvent->id);
 
    // search for  Ws ............
-   for (uint iv = 0; iv < wMK->wEve->vertex.size(); iv++)
+   for (uint iv = 0; iv < wMK->mWEvent->vertex.size(); iv++)
    {
-      WEventVertex &V = wMK->wEve->vertex[iv];
+      WEventVertex &V = wMK->mWEvent->vertex[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          // T.pointTower.print();
          int softID = T.pointTower.id;
          if (softID <= 0) continue;
-         if (wMK->wEve->bemc.statTile[kBTow][softID - 1]) continue; // skip masked towers
+         if (wMK->mWEvent->bemc.statTile[kBTow][softID - 1]) continue; // skip masked towers
 
          int RDO, CR, CHAN;
          assert(mMappB->GetDaqIdFromTowerId(softID, RDO) == 1); // is good range
          assert(mMappB->GetTowerCrateFromDaqId(RDO, CR, CHAN) == 1);
 
-         float adc = wMK->wEve->bemc.adcTile[kBTow][softID - 1];
+         float adc = wMK->mWEvent->bemc.adcTile[kBTow][softID - 1];
          hA[1]->Fill(adc, CR);
          // printf("soft=%d DRO=%d CR=%d CHAN=%d adc=%.0f\n",softID,RDO,CR,CHAN,adc);
       }
@@ -192,9 +192,9 @@ void St2011pubWanaMaker::scanCrateRate()
 //
 void St2011pubWanaMaker::varyCuts4backgStudy()
 {
-   for (uint iv = 0; iv < wMK->wEve->vertex.size(); iv++)
+   for (uint iv = 0; iv < wMK->mWEvent->vertex.size(); iv++)
    {
-      WEventVertex &V = wMK->wEve->vertex[iv];
+      WEventVertex &V = wMK->mWEvent->vertex[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;

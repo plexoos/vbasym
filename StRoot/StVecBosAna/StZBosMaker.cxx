@@ -57,7 +57,7 @@ void StZBosMaker::printJan(WeveEleTrack *T)
    WevePointTower poiTw = T->pointTower;
    WeveCluster cl = T->cluster;
    int id = poiTw.id;
-   float adc = wMK->wEve->bemc.adcTile[ibp][id - 1];
+   float adc = wMK->mWEvent->bemc.adcTile[ibp][id - 1];
    float frac = adc / 4096 * 60 / cl.ET;
    printf("Ztower Q=%d pointTw: id=%d ADC=%.0f  2x2ET=%.1f frac=%.2f\n", T->prMuTrack->charge(), id, adc, cl.ET, frac);
 }
@@ -66,16 +66,16 @@ void StZBosMaker::printJan(WeveEleTrack *T)
 //
 void StZBosMaker::findEndcap_Z_boson()
 {
-   WEvent *wEve = wMK->wEve;
+   WEvent *mWEvent = wMK->mWEvent;
    // printf("========= findEndcap_Z_boson() \n");
 
    hA[50]->Fill("inp", 1.); hA[60]->Fill("inp", 1.);
 
    // search for  Zs ............
-   for (uint iv = 0; iv < wEve->vertex.size(); iv++)
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
    {
       hA[50]->Fill("vert", 1.); hA[60]->Fill("vert", 1.);
-      WEventVertex &V = wEve->vertex[iv];
+      WEventVertex &V = mWEvent->vertex[iv];
 
       //first loop over good barrel tracks
       for (uint it = 0; it < V.eleTrack.size(); it++) {
@@ -216,17 +216,17 @@ void StZBosMaker::findEndcap_Z_boson()
 //
 void StZBosMaker::find_Z_boson()
 {
-   WEvent *wEve = wMK->wEve;
+   WEvent *mWEvent = wMK->mWEvent;
    // printf("========= find_Z_boson() \n");
 
-   hA[31]->Fill(wEve->vertex.size());
+   hA[31]->Fill(mWEvent->vertex.size());
    hA[0]->Fill("inp", 1.);
 
    // search for  Zs
-   for (uint iv = 0; iv < wEve->vertex.size(); iv++)
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
    {
       hA[0]->Fill("vert", 1.);
-      WEventVertex &V = wEve->vertex[iv];
+      WEventVertex &V = mWEvent->vertex[iv];
       hA[32]->Fill(V.eleTrack.size());
       if (V.eleTrack.size() < 2) continue;
       hA[0]->Fill("TT", 1.); // at least 2 isolated tracks exist
@@ -318,14 +318,14 @@ void StZBosMaker::find_Z_boson()
             printJan(&T2);
 
 
-            if (!wMK->isMC || (wMK->isMC && wEve->id < 500) ) {
+            if (!wMK->isMC || (wMK->isMC && mWEvent->id < 500) ) {
                printf("\n ZZZZZZZZZZZZZZZZZZZ\n");
                if (mass < par_minMassZ)
                   wMK->wDisaply->exportEvent("Zlow", V, T1);
                else
                   wMK->wDisaply->exportEvent("Zgood", V, T1);
                printf("RCC:  Found Z w/ invmass=%f\n", mass);
-               wEve->print();
+               mWEvent->print();
             }
 #endif
 

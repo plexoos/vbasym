@@ -1,4 +1,4 @@
-// $Id: St2011pubSpinMaker.cxx,v 1.1 2012/10/09 15:21:20 smirnovd Exp $
+// $Id: St2011pubSpinMaker.cxx,v 1.2 2012/10/10 22:39:35 smirnovd Exp $
 //
 //*-- Author : Jan Balewski, MIT
 //
@@ -74,13 +74,13 @@ void St2011pubSpinMaker::bXingSort()
 
    hA[0]->Fill("inp", 1.);
 
-   if (wMK->wEve->vertex.size() <= 0) return;
+   if (wMK->mWEvent->vertex.size() <= 0) return;
    //......... require: L2W-trig (ET or rnd) & vertex is reasonable .......
 
-   int bx48     = wMK->wEve->bx48;
-   int bx7      = wMK->wEve->bx7;
-   int bxStar48 = wMK->wEve->bxStar48;
-   int bxStar7  = wMK->wEve->bxStar7;
+   int bx48     = wMK->mWEvent->bx48;
+   int bx7      = wMK->mWEvent->bx7;
+   int bxStar48 = wMK->mWEvent->bxStar48;
+   int bxStar7  = wMK->mWEvent->bxStar7;
 
    if (bxStar48 != bxStar7) {
       printf("BAD bx7=%d bx48=%d del=%d\n", bx7, bx48, bxStar48 - bxStar7);
@@ -89,7 +89,7 @@ void St2011pubSpinMaker::bXingSort()
    }
 
    //remove events tagged as Zs
-   if (wMK->wEve->zTag) return;
+   if (wMK->mWEvent->zTag) return;
    hA[0]->Fill("noZ", 1.);
 
    hA[1]->Fill(bx48);
@@ -98,26 +98,26 @@ void St2011pubSpinMaker::bXingSort()
    hA[3]->Fill(bxStar48);
    hA[4]->Fill(bxStar7);
 
-   int spin4 = wMK->wEve->spin4;
+   int spin4 = wMK->mWEvent->spin4;
    hA[5]->Fill(bxStar7, spin4);
 
    float par_maxDsmThr = 58;
    float par_myET = 25; // monitoring cut
 
-   if ( wMK->wEve->l2bitRnd) { // lumi monitor BHT3-random
+   if ( wMK->mWEvent->l2bitRnd) { // lumi monitor BHT3-random
       // avoid too much energy - can be W-events (1/milion :)
-      if (wMK-> wEve->bemc.maxHtDsm < par_maxDsmThr)  {
+      if (wMK-> mWEvent->bemc.maxHtDsm < par_maxDsmThr)  {
          hA[6]->Fill(spin4);  hA[0]->Fill("BG1", 1.);
       }
       return; // LOGICAL ERROR - FIX IT LATER
    }
 
-   if ( wMK->wEve->l2bitET == 0) return;
+   if ( wMK->mWEvent->l2bitET == 0) return;
    //..... it is guaranteed ..... L2W-ET>13 did fired  ......
 
    // search for  Ws ............
-   for (uint iv = 0; iv < wMK->wEve->vertex.size(); iv++) {
-      WEventVertex &V = wMK->wEve->vertex[iv];
+   for (uint iv = 0; iv < wMK->mWEvent->vertex.size(); iv++) {
+      WEventVertex &V = wMK->mWEvent->vertex[iv];
 
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];

@@ -30,7 +30,7 @@ int StVecBosMaker::accessBarrelTrig()
 
       hA[0]->Fill("L2bwET", 1.);
 
-      wEve->l2bitET = true;
+      mWEvent->l2bitET = true;
       return 0; // we haven't set everything, but it should be good enough for simu.
    }
 
@@ -70,9 +70,9 @@ int StVecBosMaker::accessBarrelTrig()
       totalSum += myT;
    }
 
-   for (int i = 0; i < 16; i++)  wEve->trigAwaySum[i] = awaySum[i];
+   for (int i = 0; i < 16; i++)  mWEvent->trigAwaySum[i] = awaySum[i];
 
-   wEve->trigTotalSum = totalSum;
+   mWEvent->trigTotalSum = totalSum;
 
    StMuTriggerIdCollection *tic = &(muEve->triggerIdCollection());
    assert(tic);
@@ -91,22 +91,22 @@ int StVecBosMaker::accessBarrelTrig()
 
    //get bX info
    StL0Trigger *trig = &(muEve->l0Trigger());
-   wEve->bx48 = trig->bunchCrossingId();
-   wEve->bx7 = trig->bunchCrossingId7bit(mRunNo);
+   mWEvent->bx48 = trig->bunchCrossingId();
+   mWEvent->bx7 = trig->bunchCrossingId7bit(mRunNo);
 
    // store spin info
    int bxStar48 = -2, bxStar7 = -2, spin4 = -2;
 
    if (spinDb && spinDb->isValid() && // all 3 DB records exist
          spinDb->isPolDirLong()) {  // you do not want mix Long & Trans by accident
-      bxStar48 = spinDb->BXstarUsingBX48(wEve->bx48);
-      bxStar7  = spinDb->BXstarUsingBX7(wEve->bx7);
-      spin4    = spinDb->spin4usingBX48(wEve->bx48);
+      bxStar48 = spinDb->BXstarUsingBX48(mWEvent->bx48);
+      bxStar7  = spinDb->BXstarUsingBX7(mWEvent->bx7);
+      spin4    = spinDb->spin4usingBX48(mWEvent->bx48);
    }
 
-   wEve->bxStar48 = bxStar48;
-   wEve->bxStar7 = bxStar7;
-   wEve->spin4 = spin4;
+   mWEvent->bxStar48 = bxStar48;
+   mWEvent->bxStar7 = bxStar7;
+   mWEvent->spin4 = spin4;
 
    //check trigger ID
    if (!tic->nominal().isTrigger(par_l2bwTrgID)) return -2;
@@ -131,14 +131,14 @@ int StVecBosMaker::accessBarrelTrig()
    L2wResult2009_print(l2algo);
 #endif
 
-   wEve->l2bitET = (l2algo->trigger & 2) > 0; // bit1=ET>thr
-   wEve->l2bitRnd = (l2algo->trigger & 1) > 0; // bit0=rnd,
+   mWEvent->l2bitET = (l2algo->trigger & 2) > 0; // bit1=ET>thr
+   mWEvent->l2bitRnd = (l2algo->trigger & 1) > 0; // bit0=rnd,
 
-   if ( (wEve->l2bitRnd || wEve->l2bitET) == 0) return -3; // L2W-algo did not accept this event
+   if ( (mWEvent->l2bitRnd || mWEvent->l2bitET) == 0) return -3; // L2W-algo did not accept this event
 
    hA[0]->Fill("L2bwBits", 1.); // confirmation bits were set properly
 
-   if (wEve->l2bitRnd) {
+   if (mWEvent->l2bitRnd) {
       hA[0]->Fill("L2bwRnd", 1.);
 
       for (int m = 0; m < 300; m++) {
@@ -146,16 +146,16 @@ int StVecBosMaker::accessBarrelTrig()
          hA[7]->Fill(val);
       }
 
-      hA[61]->Fill(wEve->bx7);
+      hA[61]->Fill(mWEvent->bx7);
    }
 
-   if (!wEve->l2bitET)  return -3; // drop L2W-random accepts
+   if (!mWEvent->l2bitET)  return -3; // drop L2W-random accepts
 
-   if (wEve->l2bitET) hA[0]->Fill("L2bwET", 1.);
+   if (mWEvent->l2bitET) hA[0]->Fill("L2bwET", 1.);
 
    //.... only monitor below ....
-   hA[2]->Fill(wEve->bx48);
-   hA[3]->Fill(wEve->bx7);
+   hA[2]->Fill(mWEvent->bx48);
+   hA[3]->Fill(mWEvent->bx7);
 
    // access L0-HT data
    int mxVal = -1;
@@ -165,16 +165,16 @@ int StVecBosMaker::accessBarrelTrig()
 
       if (mxVal < val) mxVal = val;
 
-      if (wEve->l2bitET) hA[6]->Fill(val);
+      if (mWEvent->l2bitET) hA[6]->Fill(val);
 
       if (val < par_DsmThres) continue;
 
-      if (wEve->l2bitET) hA[8]->Fill(m);
+      if (mWEvent->l2bitET) hA[8]->Fill(m);
 
       //printf("Fired L0 HT m=%d val=%d\n",m,val);
    }
 
-   wEve->bemc.maxHtDsm = mxVal;
+   mWEvent->bemc.maxHtDsm = mxVal;
    return 0;
 } //}}}
 
@@ -187,8 +187,8 @@ int StVecBosMaker::accessVertex()
    if (nInpPrimV < par_minPileupVert) return -1;
 
    //separate histos for barrel and endcap triggers
-   if (wEve->l2bitET)  hA[0]->Fill("tpcOn", 1.);
-   if (wEve->l2EbitET) hE[0]->Fill("tpcOn", 1.);
+   if (mWEvent->l2bitET)  hA[0]->Fill("tpcOn", 1.);
+   if (mWEvent->l2EbitET) hE[0]->Fill("tpcOn", 1.);
 
    int nVer  = 0;
    int nVerR = 0;
@@ -206,8 +206,8 @@ int StVecBosMaker::accessVertex()
       else if (rank > 0) funnyR = log(rank);
       else               funnyR = log(rank + 1e6) - 10;
 
-      if (wEve->l2bitET)  hA[10]->Fill(funnyR);
-      if (wEve->l2EbitET) hE[10]->Fill(funnyR);
+      if (mWEvent->l2bitET)  hA[10]->Fill(funnyR);
+      if (mWEvent->l2EbitET) hE[10]->Fill(funnyR);
 
       //keep some neg. rank vertices for endcap if matched to ETOW
       if (rank <= 0 && V->nEEMCMatch() <= 0) continue;
@@ -215,9 +215,9 @@ int StVecBosMaker::accessVertex()
       const StThreeVectorF &r = V->position();
 
       // StThreeVectorF &er=V->posError();
-      if (wEve->l2bitET && rank > 0) hA[11]->Fill(r.z());
+      if (mWEvent->l2bitET && rank > 0) hA[11]->Fill(r.z());
 
-      if (wEve->l2EbitET) hE[11]->Fill(r.z());
+      if (mWEvent->l2EbitET) hE[11]->Fill(r.z());
 
       nVer++; // count valid vertices
 
@@ -231,21 +231,21 @@ int StVecBosMaker::accessVertex()
       wv.rank = rank;
       wv.funnyRank = funnyR;
       wv.nEEMCMatch = V->nEEMCMatch();
-      wEve->vertex.push_back(wv);
+      mWEvent->vertex.push_back(wv);
    }
 
    if (nVer <= 0) return -2;
 
-   if (wEve->l2bitET && nVerR > 0) {
+   if (mWEvent->l2bitET && nVerR > 0) {
       hA[0]->Fill("primVert", 1.);
-      hA[4]->Fill(wEve->bx48);
-      hA[5]->Fill(wEve->bx7);
+      hA[4]->Fill(mWEvent->bx48);
+      hA[5]->Fill(mWEvent->bx7);
    }
 
-   if (wEve->l2EbitET) {
+   if (mWEvent->l2EbitET) {
       hE[0]->Fill("primVert", 1.);
-      hE[4]->Fill(wEve->bx48);
-      hE[5]->Fill(wEve->bx7);
+      hE[4]->Fill(mWEvent->bx48);
+      hE[5]->Fill(mWEvent->bx7);
    }
 
    // access L0-HT data
@@ -256,7 +256,7 @@ int StVecBosMaker::accessVertex()
 
       if (val < par_DsmThres) continue;
 
-      if (wEve->l2bitET && nVerR > 0) hA[9]->Fill(m);
+      if (mWEvent->l2bitET && nVerR > 0) hA[9]->Fill(m);
    }
 
    for (int m = 0; m < 90; m++)	{
@@ -264,18 +264,18 @@ int StVecBosMaker::accessVertex()
 
       if (val < parE_DsmThres) continue;
 
-      if (wEve->l2EbitET) hE[9]->Fill(m);
+      if (mWEvent->l2EbitET) hE[9]->Fill(m);
    }
 
-   if (wEve->l2bitET) hA[12]->Fill(nVerR);
+   if (mWEvent->l2bitET) hA[12]->Fill(nVerR);
 
-   if (wEve->l2EbitET) hE[12]->Fill(nVer);
+   if (mWEvent->l2EbitET) hE[12]->Fill(nVer);
 
-   if (wEve->vertex.size() <= 0) return -3;
+   if (mWEvent->vertex.size() <= 0) return -3;
 
-   if (wEve->l2bitET && nVerR > 0) hA[0]->Fill("vertZ", 1.);
+   if (mWEvent->l2bitET && nVerR > 0) hA[0]->Fill("vertZ", 1.);
 
-   if (wEve->l2EbitET) hE[0]->Fill("vertZ", 1.);
+   if (mWEvent->l2EbitET) hE[0]->Fill("vertZ", 1.);
 
    return 0;
 } //}}}
@@ -283,12 +283,12 @@ int StVecBosMaker::accessVertex()
 
 
 int StVecBosMaker::accessTracks()  // return non-zero on abort
-{
+{ //{{{
    int nTrOK = 0;
 
-   // printf("\n nInp=%d eveID=%d nPVer=%d nAnyV= %d\n",nInpEve,mMuDstMaker->muDst()->event()->eventId(),wEve->vertex.size(),mMuDstMaker->muDst()->numberOfPrimaryVertices());
-   for (uint iv = 0; iv < wEve->vertex.size(); iv++) {
-      uint vertID = wEve->vertex[iv].id;
+   // printf("\n nInp=%d eveID=%d nPVer=%d nAnyV= %d\n",nInpEve,mMuDstMaker->muDst()->event()->eventId(),mWEvent->vertex.size(),mMuDstMaker->muDst()->numberOfPrimaryVertices());
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
+      uint vertID = mWEvent->vertex[iv].id;
       assert(vertID < mMuDstMaker->muDst()->numberOfPrimaryVertices());
       assert(vertID >= 0);
       StMuPrimaryVertex *V = mMuDstMaker->muDst()->primaryVertex(vertID);
@@ -308,26 +308,26 @@ int StVecBosMaker::accessTracks()  // return non-zero on abort
          if (glTr == 0) continue; // see the reason at the end of this method
 
          //keep list of all tracks for TPC cone sum in tree ana
-         wEve->vertex[iv].prTrList.push_back(prTr);
+         mWEvent->vertex[iv].prTrList.push_back(prTr);
          StThreeVectorF ro = glTr->lastPoint();
 
          // TPC+prim vertex tracks and short EEMC tracks
          if (prTr->flag() != 301 && prTr->flag() != 311) continue;
 
-         if (wEve->l2bitET && rank > 0 && prTr->flag() == 301)
+         if (mWEvent->l2bitET && rank > 0 && prTr->flag() == 301)
             hA[20]->Fill("flag", 1.);
 
-         if (wEve->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin)
+         if (mWEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin)
             hE[20]->Fill("flag", 1.);
 
          float pt = prTr->pt();
 
          if (pt < 1.0) continue;
 
-         if (wEve->l2bitET && rank > 0 && prTr->flag() == 301)
+         if (mWEvent->l2bitET && rank > 0 && prTr->flag() == 301)
             hA[20]->Fill("pt1", 1.);
 
-         if (wEve->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin)
+         if (mWEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin)
             hE[20]->Fill("pt1", 1.);
 
          //accepted tracks......
@@ -338,7 +338,7 @@ int StVecBosMaker::accessTracks()  // return non-zero on abort
          float dedx = prTr->dEdx() * 1e6;
 
          //barrel algo track monitors
-         if (wEve->l2bitET && rank > 0 && prTr->flag() == 301) {
+         if (mWEvent->l2bitET && rank > 0 && prTr->flag() == 301) {
             hA[21]->Fill(prTr->nHitsFit());
             hA[22]->Fill(hitFrac);
             hA[23]->Fill(ri.perp());
@@ -381,7 +381,7 @@ int StVecBosMaker::accessTracks()  // return non-zero on abort
          }
 
          //endcap algo track monitors
-         if (wEve->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin) {
+         if (mWEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin) {
             hE[20]->Fill("#eta>0.7", 1.);
             hE[21]->Fill(prTr->nHitsFit());
             hE[22]->Fill(hitFrac);
@@ -412,11 +412,11 @@ int StVecBosMaker::accessTracks()  // return non-zero on abort
          }
 
 
-         bool barrelTrack = (wEve->l2bitET && rank > 0 && prTr->flag() == 301 && pt > par_trackPt);
+         bool barrelTrack = (mWEvent->l2bitET && rank > 0 && prTr->flag() == 301 && pt > par_trackPt);
 
          if (barrelTrack) hA[20]->Fill("ptOK", 1.); //good barrel candidate
 
-         bool endcapTrack = (wEve->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin && pt > parE_trackPt);
+         bool endcapTrack = (mWEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin && pt > parE_trackPt);
 
          if (endcapTrack) hE[20]->Fill("ptOK", 1.); //good endcap candidate
 
@@ -431,18 +431,18 @@ int StVecBosMaker::accessTracks()  // return non-zero on abort
          StThreeVectorF prPvect = prTr->p();
          wTr.primP = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
 
-         wEve->vertex[iv].eleTrack.push_back(wTr);
+         mWEvent->vertex[iv].eleTrack.push_back(wTr);
       }// loop over tracks
    }// loop over vertices
 
    if (nTrOK <= 0) return -1;
 
-   if (wEve->l2bitET) hA[0]->Fill("Pt10", 1.);
+   if (mWEvent->l2bitET) hA[0]->Fill("Pt10", 1.);
 
-   if (wEve->l2EbitET) hE[0]->Fill("Pt10", 1.);
+   if (mWEvent->l2EbitET) hE[0]->Fill("Pt10", 1.);
 
    return 0;
-}
+} //}}}
 
 /* from Pibero:
    It looks like your global track is null. See this post:
@@ -495,7 +495,7 @@ int StVecBosMaker::accessTracks()  // return non-zero on abort
 
 //
 int StVecBosMaker::accessBTOW()
-{
+{ //{{{
    StMuEmcCollection *emc = mMuDstMaker->muDst()->muEmcCollection();
 
    if (!emc) {
@@ -520,21 +520,21 @@ int StVecBosMaker::accessBTOW()
       mBarrelTables->getStatus(jBP, softID, statGain, "calib");
 
       if (statPed != 1) {
-         wEve->bemc.statTile[ibp][softID - 1] = 1;
+         mWEvent->bemc.statTile[ibp][softID - 1] = 1;
          n1++; continue;
       }
 
       if (statOfl != 1) {
-         wEve->bemc.statTile[ibp][softID - 1] = 2;
+         mWEvent->bemc.statTile[ibp][softID - 1] = 2;
          n2++; continue;
       }
 
       if (statGain != 1) {
-         wEve->bemc.statTile[ibp][softID - 1] = 4;
+         mWEvent->bemc.statTile[ibp][softID - 1] = 4;
          n3++; continue;
       }
 
-      wEve->bemc.statTile[ibp][softID - 1] = 0 ;
+      mWEvent->bemc.statTile[ibp][softID - 1] = 0 ;
 
       float ped, sigPed, gain;
       int capID = 0; // just one value for btow
@@ -558,8 +558,8 @@ int StVecBosMaker::accessBTOW()
       if (adc < par_AdcThres)         continue;
 
       n5++;
-      wEve->bemc.adcTile[ibp][softID - 1] = adc;
-      wEve->bemc.eneTile[ibp][softID - 1] = adc * gain;
+      mWEvent->bemc.adcTile[ibp][softID - 1] = adc;
+      mWEvent->bemc.eneTile[ibp][softID - 1] = adc * gain;
 
       if (maxADC < adc) { maxID = softID; maxADC = adc;}
 
@@ -569,11 +569,11 @@ int StVecBosMaker::accessBTOW()
    //printf("NNN %d %d %d %d %d %d id=%d\n",n0,n1,n2,n3,n4,n5,maxID);
    if (n0 == mxBtow) return -1 ; // BTOW was not present in this events
 
-   wEve->bemc.tileIn[ibp] = 1; //tag usable data
+   mWEvent->bemc.tileIn[ibp] = 1; //tag usable data
 
    if (nInpEve % 5000 == 1) {
       LOG_INFO << Form("unpackMuBTOW() dataIn=%d, nBbad: ped=%d stat=%d gain=%d ; nAdc: %d>0, %d>thres\n    maxADC=%.0f softID=%d adcSum=%.0f",
-                       wEve->bemc.tileIn[ibp], n1, n2, n3, n4, n5,
+                       mWEvent->bemc.tileIn[ibp], n1, n2, n3, n4, n5,
                        maxADC, maxID, adcSum
                       ) << endm;
    }
@@ -581,7 +581,7 @@ int StVecBosMaker::accessBTOW()
    hA[31]->Fill(maxADC);
    hA[32]->Fill(adcSum);
 
-   wEve->bemc.maxAdc = maxADC;
+   mWEvent->bemc.maxAdc = maxADC;
 
    if (maxID <= 2400) hA[195]->Fill(maxADC);
    else hA[196]->Fill(maxADC);
@@ -589,18 +589,18 @@ int StVecBosMaker::accessBTOW()
    if (maxADC < par_maxADC)  return -2 ; // not enough energy
 
    return 0;
-}
+} //}}}
 
 
 void StVecBosMaker::fillTowHit(bool vert)
-{
-   if (!wEve->l2bitET) return; //only barrel triggers
+{ //{{{
+   if (!mWEvent->l2bitET) return; //only barrel triggers
 
    //find highest rank vertex
    float maxRank = 0; uint maxRankId = 0;
 
-   for (uint iv = 0; iv < wEve->vertex.size(); iv++) {
-      float rank = wEve->vertex[iv].rank;
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
+      float rank = mWEvent->vertex[iv].rank;
 
       if (rank < 0) continue;
 
@@ -610,7 +610,7 @@ void StVecBosMaker::fillTowHit(bool vert)
       }
    }
 
-   int bx7 = wEve->bx7; int bxBin = -1;
+   int bx7 = mWEvent->bx7; int bxBin = -1;
 
    if (bx7 >= 0 && bx7 < 30)
       bxBin = 0;
@@ -625,7 +625,7 @@ void StVecBosMaker::fillTowHit(bool vert)
 
    //loop barrel towers and fill histo
    for (int i = 0; i < mxBtow; i++) {
-      float adc = wEve->bemc.adcTile[kBTow][i];
+      float adc = mWEvent->bemc.adcTile[kBTow][i];
       bool fillAdc = false;
 
       if (adc > 10) fillAdc = true; //~150 MeV threshold for tower firing
@@ -633,8 +633,8 @@ void StVecBosMaker::fillTowHit(bool vert)
       if (vert) {
          if (fillAdc) hA[215 + bxBin]->Fill(positionBtow[i].Eta(), positionBtow[i].Phi());
 
-         float ene = wEve->bemc.eneTile[kBTow][i];
-         float delZ = positionBtow[i].z() - wEve->vertex[maxRankId].z;
+         float ene = mWEvent->bemc.eneTile[kBTow][i];
+         float delZ = positionBtow[i].z() - mWEvent->vertex[maxRankId].z;
          float e2et = Rcylinder / sqrt(Rcylinder2 + delZ * delZ);
          float ET = ene * e2et;
 
@@ -648,7 +648,7 @@ void StVecBosMaker::fillTowHit(bool vert)
       for (int isub = 0; isub < mxEtowSub; isub++) {
          for (int ieta = 0; ieta < mxEtowEta; ieta++) {
             int iPhi = isec * mxEtowSub + isub;
-            float adc = wEve->etow.adc[iPhi][ieta];
+            float adc = mWEvent->etow.adc[iPhi][ieta];
             bool fillAdc = false;
 
             if (adc > 10) fillAdc = true; //~150 MeV threshold for tower firing
@@ -656,8 +656,8 @@ void StVecBosMaker::fillTowHit(bool vert)
             if (vert) {
                if (fillAdc) hA[227 + bxBin]->Fill(ieta, iPhi);
 
-               float ene = wEve->etow.ene[iPhi][ieta];
-               float delZ = positionEtow[iPhi][ieta].z() - wEve->vertex[maxRankId].z;
+               float ene = mWEvent->etow.ene[iPhi][ieta];
+               float delZ = positionEtow[iPhi][ieta].z() - mWEvent->vertex[maxRankId].z;
                float Rxy = positionEtow[iPhi][ieta].Perp();
                float e2et = Rxy / sqrt(Rxy * Rxy + delZ * delZ);
                float ET = ene * e2et;
@@ -668,14 +668,14 @@ void StVecBosMaker::fillTowHit(bool vert)
          }
       }
    }
-}
+} //}}}
 
 
 float StVecBosMaker::sumTpcCone(int vertID, TVector3 refAxis, int flag, int pointTowId)
-{
+{ //{{{
    // flag=2 use 2D cut, 1= only delta phi
 
-   // printf("******* sumTpcCone, flag=%d eveId=%d vertID=%d  eta0=%.2f phi0/rad=%.2f  \n",flag,wEve->id,vertID,refAxis.PseudoRapidity() ,refAxis.Phi());
+   // printf("******* sumTpcCone, flag=%d eveId=%d vertID=%d  eta0=%.2f phi0/rad=%.2f  \n",flag,mWEvent->id,vertID,refAxis.PseudoRapidity() ,refAxis.Phi());
 
    assert(vertID >= 0);
    assert(vertID < (int) mMuDstMaker->muDst()->numberOfPrimaryVertices());
@@ -727,13 +727,14 @@ float StVecBosMaker::sumTpcCone(int vertID, TVector3 refAxis, int flag, int poin
    }
 
    return ptSum;
-}
+} //}}}
 
 
 
 void StVecBosMaker::accessBSMD()
-{
-   const char cPlane[ mxBSmd] = {'E', 'P'};
+{ //{{{
+   const char cPlane[mxBSmd] = {'E', 'P'};
+
    // Access to muDst
    StMuEmcCollection *emc = mMuDstMaker->muDst()->muEmcCollection();
 
@@ -741,10 +742,11 @@ void StVecBosMaker::accessBSMD()
       gMessMgr->Warning() << "No EMC data for this muDst event" << endm;    return;
    }
 
-   //....................... B S M D .........................
-   for (int iEP = bsmde; iEP <= bsmdp; iEP++) { // official BSMD plane IDs
+   // BSMD
+   for (int iEP = bsmde; iEP <= bsmdp; iEP++)
+   { // official BSMD plane IDs
       int iep = iEP - 3;
-       assert(bsmde == 3); // what a hack
+      assert(bsmde == 3); // what a hack
       int nh = emc->getNSmdHits(iEP);
       //printf("muDst BSMD-%c nHit=%d\n",cPlane[iep],nh);
       int n5 = 0, n1 = 0, n2 = 0, n3 = 0, n4 = 0;
@@ -760,22 +762,23 @@ void StVecBosMaker::accessBSMD()
          mBarrelTables->getStatus(iEP, softID, statGain, "calib");
 
          if (statPed != 1) {
-            wEve->bemc.statBsmd[iep][softID - 1] = 1;
+            mWEvent->bemc.statBsmd[iep][softID - 1] = 1;
             n1++; continue;
          }
 
          if (statOfl != 1) {
-            wEve->bemc.statBsmd[iep][softID - 1] = 2;
+            mWEvent->bemc.statBsmd[iep][softID - 1] = 2;
             n2++; continue;
          }
 
          if (statGain < 1 || statGain > 19) {
-            wEve->bemc.statBsmd[iep][softID - 1] = 4;
+            mWEvent->bemc.statBsmd[iep][softID - 1] = 4;
             n3++; continue;
          }
 
          float pedRes, sigPed, gain;
          int capID = 0; // just one value for ped residua in pp500, 2009 run
+
          mBarrelTables->getPedestal(iEP, softID, capID, pedRes, sigPed);
          mBarrelTables->getCalib(iEP, softID, 1, gain);
 
@@ -788,14 +791,13 @@ void StVecBosMaker::accessBSMD()
             adc -= pedRes;
 
             if (adc > 0) n4++;
-
             if (adc < par_kSigPed * sigPed) continue;
          }
 
          n5++;
          assert(softID >= 1);      assert(softID <= mxBStrips);
          int id0 = softID - 1;
-         wEve->bemc.adcBsmd[ iep][id0] = adc;
+         mWEvent->bemc.adcBsmd[ iep][id0] = adc;
          hA[70 + 10 * iep]->Fill(adc);
 
          //if(nInpEve<3 || i <20 )printf("  i=%d, smd%c id=%d, m=%d adc=%.3f pedRes=%.1f, sigP=%.1f stat: O=%d P=%d G=%d  gain=%.2f\n",i,cPlane[iep],softID,1+id0/150,adc,pedRes,sigPed, statOfl,statPed,statGain, gain);
@@ -805,4 +807,4 @@ void StVecBosMaker::accessBSMD()
          LOG_INFO << Form("unpackMuBSMD-%c() nBbad: ped=%d stat=%d gain=%d ; nAdc: %d>0, %d>thres", cPlane[iep], n1, n2, n3, n4, n5) << endm;
       }
    } // end of E-, P-plane loop
-}
+} //}}}

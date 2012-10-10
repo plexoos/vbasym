@@ -104,8 +104,7 @@ int WtpcFilter::getTpcSec(float phiRad, float etaDet)  // finds TPC sector for h
 
 //--------------------------------------
 //--------------------------------------
-void
-WtpcFilter::initHistos(bool barrel)
+void WtpcFilter::initHistos(bool barrel)
 {
    int myCol = 2 + secID % 6;
 

@@ -1,4 +1,4 @@
-// $Id: St2011W_trigger.cxx,v 1.1 2012/10/09 15:21:19 smirnovd Exp $
+// $Id: St2011W_trigger.cxx,v 1.2 2012/10/10 22:39:35 smirnovd Exp $
 //
 //*-- Author : Ross Corliss, MIT
 
@@ -33,8 +33,8 @@ StVecBosMaker::passes_L2(){
     from the macro if a different value is needed.
   */
   for (int i=0;i<mxBtow;i++)
-    if (wEve->bemc.statTile[0][i]==0)//zero means good
-      if (wEve->bemc.eneTile[0][i]>par_l2emulSeedThresh){
+    if (mWEvent->bemc.statTile[0][i]==0)//zero means good
+      if (mWEvent->bemc.eneTile[0][i]>par_l2emulSeedThresh){
 	int ieta=-1; int iphi=-1;
 	float etaF=positionBtow[i].Eta();
 	float phiF=positionBtow[i].Phi();
@@ -71,6 +71,9 @@ StVecBosMaker::passes_L2(){
  }
 
 //$Log: St2011W_trigger.cxx,v $
+//Revision 1.2  2012/10/10 22:39:35  smirnovd
+//*** empty log message ***
+//
 //Revision 1.1  2012/10/09 15:21:19  smirnovd
 //*** empty log message ***
 //
