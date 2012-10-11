@@ -94,8 +94,9 @@ int main(int argc, char *argv[])
    anaInfo.VerifyOptions();
 
    int useJetFinder = anaInfo.fDoReconstructJets ? 1 : 2;
+   bool isMC = anaInfo.fThisisMC; 
 
-   return analyzeMuDst(anaInfo.fMaxEventsUser, anaInfo.GetListName(), false, useJetFinder, 330801, 330851, "", "", "", "", false, false, false);
+   return analyzeMuDst(anaInfo.fMaxEventsUser, anaInfo.GetListName(), isMC, useJetFinder, 330801, 330851, "", "", "", "", false, false, false);
 }
 
 

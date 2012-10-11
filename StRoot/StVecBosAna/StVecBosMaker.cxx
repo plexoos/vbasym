@@ -216,9 +216,9 @@ Int_t StVecBosMaker::InitRun(int runNo)
       ) << endm;
 
    //endcap algo params
-   cout << Form("\n
-   Endcap W-algo params: trigID: L2EW=%d isMC=%d\n
-   TPC: nPileupVert>%d, vertex |Z|<%.1fcm, primEleTrack: nFit>%d, hitFrac>%.2f Rin<%.1fcm, Rout>%.1fcm, PT>%.1fGeV/c\n
+   cout << Form("\n   
+   Endcap W-algo params: trigID: L2EW=%d isMC=%d\n    
+   TPC: nPileupVert>%d, vertex |Z|<%.1fcm, primEleTrack: nFit>%d, hitFrac>%.2f Rin<%.1fcm,Rout>%.1fcm, PT>%.1fGeV/c\n
    ETOW ADC: kSigPed=%d AdcThr>%d maxAdc>%.0f clustET>%.1f GeV  ET2x1/ET4x4>%0.2f  ET2x1/nearTotET>%0.2f\n
    dist(track-clust)<%.1fcm, nearDelR<%.1f\n
    W selection highET>%.1f awayDelPhi<%.1frad  ptBalance>%.1fGeV ",

@@ -114,7 +114,7 @@ WANA_DICT_HDR = $(WANA_DICT_SRC:.cxx=.h)
 WANA_DICT_OBJ = $(WANA_DICT_SRC:.cxx=.o)
 WANA_DICT     = $(WANA_DICT_SRC) $(WANA_DICT_HDR) $(WANA_DICT_OBJ)
 
-BIN     = wana
+BIN     = stana
 #BIN     = wana stana
 BIN_SRC = $(BIN:=.cc)
 BIN_OBJ = $(BIN:=.o)

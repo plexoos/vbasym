@@ -21,6 +21,7 @@ AnaInfo::AnaInfo() : TObject(),
    fSuffix(""),
    fModes(0),
    fDoReconstructJets(kFALSE),
+   fThisisMC(kFALSE),
    fAnaDateTime(0),
    fAnaTimeReal(0),
    fAnaTimeCpu (0),
@@ -120,12 +121,13 @@ void AnaInfo::ProcessOptions(int argc, char **argv)
       {"sfx",                 required_argument,   0,   AnaInfo::OPTION_SUFFIX},
       {"list",                required_argument,   0,   'f'},
       {"jets",                no_argument,         0,   'j'},
+      {"MC",                  no_argument,         0,   'm'},
       {0, 0, 0, 0}
    };
 
    int c;
 
-   while ((c = getopt_long(argc, argv, "?hl::r:f:jn:", long_options, &option_index)) != -1)
+   while ((c = getopt_long(argc, argv, "?hl::r:f:jnm:", long_options, &option_index)) != -1)
    {
       switch (c) {
 
@@ -149,6 +151,10 @@ void AnaInfo::ProcessOptions(int argc, char **argv)
 
       case 'n':
          fMaxEventsUser = atoi(optarg);
+         break;
+
+      case 'm':
+         fThisisMC = kTRUE;
          break;
 
       default:
