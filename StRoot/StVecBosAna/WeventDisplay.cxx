@@ -13,7 +13,7 @@
 #include <TEllipse.h>
 #include <stdio.h>
 
-//MuDst
+// MuDst
 #include <StMuDSTMaker/COMMON/StMuDstMaker.h>
 #include <StMuDSTMaker/COMMON/StMuDst.h>
 #include <StMuDSTMaker/COMMON/StMuTriggerIdCollection.h>
@@ -22,7 +22,7 @@
 #include <StMuDSTMaker/COMMON/StMuPrimaryVertex.h>
 #include "StEmcUtil/geometry/StEmcGeom.h"
 
-//Esmd geometry for plots
+// Esmd geometry for plots
 #include "StEEmcUtil/EEmcGeom/EEmcGeomSimple.h"
 #include "StEEmcUtil/StEEmcSmd/EEmcSmdGeom.h"
 
@@ -31,7 +31,6 @@
 #include "WeventDisplay.h"
 
 
-//-----------------------------
 WeventDisplay::WeventDisplay( StVecBosMaker *mk, int mxEv)
 {
    maxEve = mxEv;
@@ -85,11 +84,7 @@ WeventDisplay::WeventDisplay( StVecBosMaker *mk, int mxEv)
 }
 
 
-
-//-----------------------------
-//-----------------------------
-void
-WeventDisplay::clear()
+void WeventDisplay::clear()
 {
    hEmcET->Reset();
    hTpcET->Reset();
@@ -99,10 +94,8 @@ WeventDisplay::clear()
 
 }
 
-//-----------------------------
-//-----------------------------
-void
-WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  WEventVertex myV, WeveEleTrack myTr)
+
+void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  WEventVertex myV, WeveEleTrack myTr)
 {
    if (maxEve <= 0) return;
    maxEve--;
@@ -270,7 +263,7 @@ WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  WEven
       for (int iuv = 0; iuv < mxEsmdPlane; iuv++) {
          for (int isec = 0; isec < 3; isec++) {
             for (int k = 0; k < 288; k++) { //loop all strips
-               const StructEEmcStrip *stripPtr = wMK->geoSmd->getStripPtr(k, iuv, secLoop[isec]); //myTr.esmdStripId[iuv][k]
+               const StructEEmcStrip *stripPtr = wMK->mGeomSmd->getStripPtr(k, iuv, secLoop[isec]); //myTr.esmdStripId[iuv][k]
                if (!stripPtr) continue;
                if (wMK->mWEvent->esmd.ene[secLoop[isec]][iuv][k] * 1e3 < 10.) continue;
                int nColor = (int) (wMK->mWEvent->esmd.ene[secLoop[isec]][iuv][k] * 1e3) / 20;
@@ -351,11 +344,9 @@ WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  WEven
 
    pvt->Draw();
    c0->Print();
-
 }
 
 
-//-----------------------------
 void WeventDisplay::exportEvent( const char *tit, WEventVertex myV, WeveEleTrack myTr, int vertexIndex)
 {
    if (maxEve <= 0) return;
@@ -463,10 +454,8 @@ void WeventDisplay::exportEvent( const char *tit, WEventVertex myV, WeveEleTrack
    //export2sketchup(tit,myV, myTr);
 }
 
-//-----------------------------
-//-----------------------------
-void
-WeventDisplay::getPrimTracks( int vertID, int pointTowId)
+
+void WeventDisplay::getPrimTracks( int vertID, int pointTowId)
 {
    assert(vertID >= 0);
    assert(vertID < (int)wMK->mStMuDstMaker->muDst()->numberOfPrimaryVertices());
@@ -493,8 +482,6 @@ WeventDisplay::getPrimTracks( int vertID, int pointTowId)
 }
 
 
-//-----------------------------
-//-----------------------------
 void WeventDisplay::getPrimTracksFromTree(int vertID, int pointTowId)
 {
    // flag=2 use 2D cut, 1= only delta phi
@@ -519,10 +506,7 @@ void WeventDisplay::getPrimTracksFromTree(int vertID, int pointTowId)
 }
 
 
-//-----------------------------
-//-----------------------------
-void
-WeventDisplay::export2sketchup(  const char *tit, WEventVertex myV, WeveEleTrack myTr)
+void WeventDisplay::export2sketchup(  const char *tit, WEventVertex myV, WeveEleTrack myTr)
 {
    int eveId = wMK->mStMuDstMaker->muDst()->event()->eventId();
    int runNo = wMK->mStMuDstMaker->muDst()->event()->runId();

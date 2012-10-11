@@ -1,4 +1,3 @@
-//------- W-reco event container
 #ifndef W_EVENT_2011_HH
 #define W_EVENT_2011_HH
 
@@ -12,7 +11,7 @@
 #include "WEventVertex.h"
 
 
-
+// W-reco event container
 class WeveBEMC   // info about BEMC
 {
 public:
@@ -76,7 +75,6 @@ public:
 class WeveETOW   // info about ETOW
 {
 public:
-
    //raw ETOW hit
    int etowIn;
    float adc[mxEtowSec *mxEtowSub][mxEtowEta]; //[phibin][etabin]
@@ -95,17 +93,13 @@ public:
       maxHtDsm = -1;
    }
 
-private:
-protected:
    ClassDef(WeveETOW, 2);
-
 };
 
-//--------------
+
 class WeveEPRS   // info about EPRS
 {
 public:
-
    //raw EPRS hit
    int eprsIn;
    float adc[mxEtowSec *mxEtowSub][mxEtowEta][mxPrs]; //[phibin][etabin][layer]
@@ -118,22 +112,18 @@ public:
       memset(stat, -1, sizeof(stat)); // default all dead
    }
 
-private:
-protected:
    ClassDef(WeveEPRS, 1);
-
 };
 
-//--------------
+
 class WeveESMD   // info about ESMD
 {
 public:
-
    //raw ESMD hit
-   int esmdIn;
+   int   esmdIn;
    float adc[mxEtowSec][mxEsmdPlane][mxEsmdStrip]; //[phibin][etabin]
    float ene[mxEtowSec][mxEsmdPlane][mxEsmdStrip];
-   int stat[mxEtowSec][mxEsmdPlane][mxEsmdStrip];
+   int   stat[mxEtowSec][mxEsmdPlane][mxEsmdStrip];
 
    void clear() {
       memset(adc, 0, sizeof(adc));
@@ -141,30 +131,29 @@ public:
       memset(stat, -1, sizeof(stat)); // default all dead
    }
 
-private:
-protected:
    ClassDef(WeveESMD, 1);
-
 };
 
 
-//---------------
 class WEvent : public TObject
 {
 public:
-   // variables
-   int l2bitET, l2bitRnd;
-   int l2EbitET, l2EbitRnd;
-   int trigAwaySum[16]; //for lumi
-   int trigTotalSum;  //for lumi
-
-   int id; // eventID
-   int runNo;
-   int time;
+   int   l2bitET;
+   int   l2bitRnd;
+   int   l2EbitET;
+   int   l2EbitRnd;
+   int   trigAwaySum[16];   //for lumi
+   int   trigTotalSum;      //for lumi
+   int   id;                // eventID
+   int   runNo;
+   int   time;
    float zdcRate;
-   int bx7, bx48; // raw from muDst
-   int bxStar7, bxStar48, spin4; // using spinDb or -1 if failed
-   bool zTag;
+   int   bx7;
+   int   bx48;              // raw from muDst
+   int   bxStar7;
+   int   bxStar48;
+   int   spin4;             // using spinDb or -1 if failed
+   bool  zTag;
    vector <WEventVertex> vertex;
    WeveBEMC bemc;
    WeveETOW etow;

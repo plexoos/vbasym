@@ -1,37 +1,32 @@
-// $Id: St2011W_trigger.cxx,v 1.3 2012/10/11 16:06:24 smirnovd Exp $
-//
-//*-- Author : Ross Corliss, MIT
-
 #include "StVecBosMaker.h"
 #include <StMuDSTMaker/COMMON/StMuDstMaker.h>
 
-//________________________________________________
-//________________________________________________
-bool
-StVecBosMaker::passes_L0(){
-  /*
+
+/**
     In 2011, L2W fed off the BHT3 L0 trigger, which required a single
     high tower to have an ADC of greater than 30.  This is the default
     threshold, but can be set from the macro if a different value is
     needed.
-  */
-
+*/
+bool StVecBosMaker::passes_L0()
+{
   StMuEvent* muEve = mStMuDstMaker->muDst()->event();
-  for (int m=0;m<300;m++)
-    if(muEve->emcTriggerDetector().highTower(m)>par_l0emulAdcThresh) return true;
+
+  for (int m=0; m<300; m++)
+    if (muEve->emcTriggerDetector().highTower(m) > par_l0emulAdcThresh) return true;
+
   return false;
 }
 
-//________________________________________________
-//________________________________________________
-bool
-StVecBosMaker::passes_L2(){
-  /*
+
+/**
     In 2011, the L2W trigger required a 2x2 patch of barrel towers
     where one tower has more than 5.0GeV and the sum of all four is
     E_T>12.0GeV.  These thresholds are the defaults, but can be set
     from the macro if a different value is needed.
-  */
+*/
+bool StVecBosMaker::passes_L2()
+{
   for (int i=0;i<mxBtow;i++)
     if (mWEvent->bemc.statTile[0][i]==0)//zero means good
       if (mWEvent->bemc.eneTile[0][i]>par_l2emulSeedThresh){
@@ -45,9 +40,11 @@ StVecBosMaker::passes_L2(){
   return false;
 }
 
- void 
- StVecBosMaker::patchToEtaPhi(int patch, int*eta, int*phi)
- {
+
+
+/** */
+void StVecBosMaker::patchToEtaPhi(int patch, int*eta, int*phi)
+{
    if (patch<0 || patch>299)
      {
        printf("patchToEtaPhi p=%d, out of range. Eta phi not defined.\n",patch);
@@ -68,21 +65,4 @@ StVecBosMaker::passes_L2(){
        *phi=1-n%2+m*2;
      }
    return;
- }
-
-//$Log: St2011W_trigger.cxx,v $
-//Revision 1.3  2012/10/11 16:06:24  smirnovd
-//*** empty log message ***
-//
-//Revision 1.2  2012/10/10 22:39:35  smirnovd
-//*** empty log message ***
-//
-//Revision 1.1  2012/10/09 15:21:19  smirnovd
-//*** empty log message ***
-//
-//Revision 1.2  2011/02/25 06:03:52  stevens4
-//addes some histos and enabled running on MC
-//
-//Revision 1.1  2011/02/10 20:33:23  balewski
-//start
-//
+}

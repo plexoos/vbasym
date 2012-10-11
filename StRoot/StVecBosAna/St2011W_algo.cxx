@@ -23,107 +23,109 @@ void StVecBosMaker::find_W_boson()
    // search for  Ws
    for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
    {
-      WEventVertex &V = mWEvent->vertex[iv];
-      for (uint it = 0; it < V.eleTrack.size(); it++)
+      WEventVertex &vertex = mWEvent->vertex[iv];
+      for (uint it = 0; it < vertex.eleTrack.size(); it++)
       {
-         WeveEleTrack &T = V.eleTrack[it];
-         if (T.pointTower.id <= 0) continue; //skip endcap towers
-         if (T.isMatch2Cl == false) continue;
-         assert(T.cluster.nTower > 0); // internal logical error
-         assert(T.nearTotET > 0); // internal logical error
+         WeveEleTrack &track = vertex.eleTrack[it];
+         if (track.pointTower.id <= 0) continue; //skip endcap towers
+         if (track.isMatch2Cl == false) continue;
 
-         //make cut on lepton eta
-         if (T.primP.Eta() < par_leptonEtaLow || T.primP.Eta() > par_leptonEtaHigh) continue;
+         assert(track.cluster.nTower > 0); // internal logical error
+         assert(track.nearTotET > 0);      // internal logical error
+
+         // make cut on lepton eta
+         if (track.primP.Eta() < par_leptonEtaLow || track.primP.Eta() > par_leptonEtaHigh) continue;
+
          hA[20]->Fill("eta1", 1.);
          nEta1++;
 
          //signal plots w/o EEMC in veto
-         if (T.cluster.ET / T.nearTotET_noEEMC > par_nearTotEtFrac) {
-            if (T.sPtBalance_noEEMC > par_ptBalance ) { //only signed ptBalance cut
-               hA[140]->Fill(T.cluster.ET);
-               hA[240]->Fill(T.prMuTrack->eta(), T.cluster.ET);
-               if (T.prMuTrack->charge() < 0) {
-                  hA[184 + 3]->Fill(T.cluster.ET);
-               }
-               else if (T.prMuTrack->charge() > 0) {
-                  hA[184 + 4]->Fill(T.cluster.ET);
+         if (track.cluster.ET / track.nearTotET_noEEMC > par_nearTotEtFrac) {
+            if (track.sPtBalance_noEEMC > par_ptBalance ) { //only signed ptBalance cut
+               hA[140]->Fill(track.cluster.ET);
+               hA[240]->Fill(track.prMuTrack->eta(), track.cluster.ET);
+
+               if (track.prMuTrack->charge() < 0) {
+                  hA[184 + 3]->Fill(track.cluster.ET);
+               } else if (track.prMuTrack->charge() > 0) {
+                  hA[184 + 4]->Fill(track.cluster.ET);
                }
             }
          }
 
-         //fill plot for background
-         if (T.cluster.ET > par_highET) {
-            if (T.prMuTrack->charge() > 0) hA[251]->Fill(T.cluster.ET / T.nearTotET, T.sPtBalance);
-            else if (T.prMuTrack->charge() < 0) hA[252]->Fill(T.cluster.ET / T.nearTotET, T.sPtBalance);
+         // fill plot for background
+         if (track.cluster.ET > par_highET) {
+            if (track.prMuTrack->charge() > 0)      hA[251]->Fill(track.cluster.ET / track.nearTotET, track.sPtBalance);
+            else if (track.prMuTrack->charge() < 0) hA[252]->Fill(track.cluster.ET / track.nearTotET, track.sPtBalance);
          }
 
-         if (T.cluster.ET / T.nearTotET < par_nearTotEtFrac) continue; // too large nearET
+         if (track.cluster.ET / track.nearTotET < par_nearTotEtFrac) continue; // too large nearET
 
          hA[20]->Fill("noNear", 1.);
          nNoNear++;
-         hA[112]->Fill( T.cluster.ET); // for Joe
-         hA[50]->Fill(T.awayTpcPT);
-         hA[51]->Fill(T.awayBtowET);
-         hA[54]->Fill(T.awayTotET);
-         hA[52]->Fill(T.cluster.ET, T.awayTotET);
-         hA[53]->Fill(T.cluster.ET, T.awayEmcET);
-         hA[55]->Fill(T.awayEtowET);
-         hA[60]->Fill(T.cluster.ET, T.awayTpcPT);
+         hA[112]->Fill(track.cluster.ET);
+         hA[50]->Fill(track.awayTpcPT);
+         hA[51]->Fill(track.awayBtowET);
+         hA[54]->Fill(track.awayTotET);
+         hA[52]->Fill(track.cluster.ET, track.awayTotET);
+         hA[53]->Fill(track.cluster.ET, track.awayEmcET);
+         hA[55]->Fill(track.awayEtowET);
+         hA[60]->Fill(track.cluster.ET, track.awayTpcPT);
 
-         hA[132]->Fill(T.cluster.ET, T.ptBalance.Perp());
-         hA[133]->Fill(T.awayTotET, T.ptBalance.Perp());
-         hA[134]->Fill(T.cluster.ET, T.sPtBalance);
-         hA[135]->Fill(T.awayTotET, T.sPtBalance);
-         hA[209]->Fill(T.cluster.position.PseudoRapidity(), T.cluster.ET);
+         hA[132]->Fill(track.cluster.ET, track.ptBalance.Perp());
+         hA[133]->Fill(track.awayTotET, track.ptBalance.Perp());
+         hA[134]->Fill(track.cluster.ET, track.sPtBalance);
+         hA[135]->Fill(track.awayTotET, track.sPtBalance);
+         hA[209]->Fill(track.cluster.position.PseudoRapidity(), track.cluster.ET);
 
          for (int i = 0; i <= 20; i++) {
             //  float awayTot_cut = 10.+2.*((float) i);
             for (int j = 0; j <= 20; j++) {
                float pTBal_cut = 5. + ((float) j);
-               if (T.sPtBalance < pTBal_cut) {
-                  if (T.prMuTrack->charge() < 0) {
-                     hA[142 + i]->Fill(T.cluster.ET, j);
+               if (track.sPtBalance < pTBal_cut) {
+                  if (track.prMuTrack->charge() < 0) {
+                     hA[142 + i]->Fill(track.cluster.ET, j);
                   }
-                  else if (T.prMuTrack->charge() > 0) {
-                     hA[163 + i]->Fill(T.cluster.ET, j);
+                  else if (track.prMuTrack->charge() > 0) {
+                     hA[163 + i]->Fill(track.cluster.ET, j);
                   }
                }
             }
          }
 
          //plots for backg sub yield
-         if (T.sPtBalance > par_ptBalance ) {
-            hA[136]->Fill(T.cluster.ET);//signal
-            hA[241]->Fill(T.prMuTrack->eta(), T.cluster.ET);
-            hA[62]->Fill(T.pointTower.iEta , T.cluster.energy);
-            if (T.prMuTrack->charge() < 0) {
-               hA[184 + 1]->Fill(T.cluster.ET);
+         if (track.sPtBalance > par_ptBalance ) {
+            hA[136]->Fill(track.cluster.ET);//signal
+            hA[241]->Fill(track.prMuTrack->eta(), track.cluster.ET);
+            hA[62]->Fill(track.pointTower.iEta , track.cluster.energy);
+            if (track.prMuTrack->charge() < 0) {
+               hA[184 + 1]->Fill(track.cluster.ET);
             }
-            else if (T.prMuTrack->charge() > 0) {
-               hA[184 + 2]->Fill(T.cluster.ET);
+            else if (track.prMuTrack->charge() > 0) {
+               hA[184 + 2]->Fill(track.cluster.ET);
             }
          }
          else {
-            hA[137]->Fill(T.cluster.ET);//background
-            if (T.prMuTrack->charge() < 0) {
-               hA[184 + 5]->Fill(T.cluster.ET);
+            hA[137]->Fill(track.cluster.ET);//background
+            if (track.prMuTrack->charge() < 0) {
+               hA[184 + 5]->Fill(track.cluster.ET);
             }
-            else if (T.prMuTrack->charge() > 0) {
-               hA[184 + 6]->Fill(T.cluster.ET);
+            else if (track.prMuTrack->charge() > 0) {
+               hA[184 + 6]->Fill(track.cluster.ET);
             }
-            hA[202]->Fill(T.cluster.position.PseudoRapidity(), T.prMuTrack->pt());
-            hA[204]->Fill(T.cluster.position.PseudoRapidity(), T.cluster.energy / T.prMuTrack->p().mag());
+            hA[202]->Fill(track.cluster.position.PseudoRapidity(), track.prMuTrack->pt());
+            hA[204]->Fill(track.cluster.position.PseudoRapidity(), track.cluster.energy / track.prMuTrack->p().mag());
          }
 
-         if (T.sPtBalance > par_ptBalance) { /***************************/
-            printf("\n WWWWWWWWWWWWWWWWWWWWW  Barrel \n");
-            wDisaply->exportEvent( "WB", V, T, iv);
+         if (track.sPtBalance > par_ptBalance) {
+            Info("find_W_boson", "WWWWWWWWWWWWWWWWWWWWW  Barrel");
+            wDisaply->exportEvent( "WB", vertex, track, iv);
             mWEvent->print();
-         }/***************************/
-
+         }
 
          //put final W cut here
-         if (T.sPtBalance < par_ptBalance)  continue;
+         if (track.sPtBalance < par_ptBalance)  continue;
+
          hA[20]->Fill("noAway", 1.0);
          nNoAway++;
 
@@ -131,44 +133,47 @@ void StVecBosMaker::find_W_boson()
          //:::::accepted W events for x-section :::::::::::
          //::::::::::::::::::::::::::::::::::::::::::::::::
 
-         hA[113]->Fill( T.cluster.ET);//for Joe
+         hA[113]->Fill( track.cluster.ET);//for Joe
 
-         hA[90]->Fill( T.cluster.ET);
-         hA[92]->Fill( T.cluster.ET, T.glMuTrack->dEdx() * 1e6);
-         //hA[93]->Fill( T.cluster.ET,T.glMuTrack->dca(V.id).mag());
-         int k = 0; if (T.prMuTrack->charge() < 0) k = 1;
-         hA[94 + k]->Fill( T.cluster.ET, T.glMuTrack->dcaD());
+         hA[90]->Fill( track.cluster.ET);
+         hA[92]->Fill( track.cluster.ET, track.glMuTrack->dEdx() * 1e6);
+         //hA[93]->Fill( track.cluster.ET,track.glMuTrack->dca(vertex.id).mag());
+         int k = 0;
+         if (track.prMuTrack->charge() < 0) k = 1;
+         hA[94 + k]->Fill( track.cluster.ET, track.glMuTrack->dcaD());
          // h95 used above
 
-         //plots to investigate east/west yield diff
-         hA[200]->Fill(T.cluster.position.PseudoRapidity(), T.cluster.ET);
-         hA[201]->Fill(T.cluster.position.PseudoRapidity(), T.prMuTrack->pt());
-         hA[203]->Fill(T.cluster.position.PseudoRapidity(), T.cluster.energy / T.prMuTrack->p().mag());
-         hA[205]->Fill(T.prMuTrack->lastPoint().pseudoRapidity(), T.prMuTrack->lastPoint().phi());
+         // plots to investigate east/west yield diff
+         hA[200]->Fill(track.cluster.position.PseudoRapidity(), track.cluster.ET);
+         hA[201]->Fill(track.cluster.position.PseudoRapidity(), track.prMuTrack->pt());
+         hA[203]->Fill(track.cluster.position.PseudoRapidity(), track.cluster.energy / track.prMuTrack->p().mag());
+         hA[205]->Fill(track.prMuTrack->lastPoint().pseudoRapidity(), track.prMuTrack->lastPoint().phi());
 
-         //Q/pT plot
-         hA[100]->Fill(T.cluster.ET, T.glMuTrack->charge() / T.glMuTrack->pt());
-         hA[101]->Fill(T.cluster.ET, T.prMuTrack->charge() / T.prMuTrack->pt());
+         // Q/pT plot
+         hA[100]->Fill(track.cluster.ET, track.glMuTrack->charge() / track.glMuTrack->pt());
+         hA[101]->Fill(track.cluster.ET, track.prMuTrack->charge() / track.prMuTrack->pt());
 
-         if (T.cluster.ET < par_highET) continue; // very likely Ws
-         hA[91]->Fill(T.cluster.position.PseudoRapidity(), T.cluster.position.Phi());
-         hA[96]->Fill(V.id);
-         hA[97]->Fill(V.funnyRank);
-         hA[98]->Fill(V.z);
-         hA[99]->Fill(T.prMuTrack->eta());
-         hA[190 + k]->Fill(T.prMuTrack->eta(), T.cluster.ET);
+         if (track.cluster.ET < par_highET) continue; // very likely Ws
+
+         hA[91]->Fill(track.cluster.position.PseudoRapidity(), track.cluster.position.Phi());
+         hA[96]->Fill(vertex.id);
+         hA[97]->Fill(vertex.funnyRank);
+         hA[98]->Fill(vertex.z);
+         hA[99]->Fill(track.prMuTrack->eta());
+         hA[190 + k]->Fill(track.prMuTrack->eta(), track.cluster.ET);
 
          hA[20]->Fill("goldW", 1.);
          nGoldW++;
-         if (T.prMuTrack->charge() > 0) nGoldWp++;
-         else if (T.prMuTrack->charge() < 0) nGoldWn++;
 
+         if (track.prMuTrack->charge() > 0)      nGoldWp++;
+         else if (track.prMuTrack->charge() < 0) nGoldWn++;
       } // loop over tracks
    } // loop over vertices
+
    if (nNoNear > 0) hA[0]->Fill("noNear", 1.);
    if (nNoAway > 0) hA[0]->Fill("noAway", 1.);
-   if (nEta1 > 0) hA[0]->Fill("eta1", 1.);
-   if (nGoldW > 0) hA[0]->Fill("goldW", 1.);
+   if (nEta1   > 0) hA[0]->Fill("eta1",   1.);
+   if (nGoldW  > 0) hA[0]->Fill("goldW",  1.);
    if (nGoldWp > 0) hA[0]->Fill("goldW+", 1.);
    if (nGoldWn > 0) hA[0]->Fill("goldW-", 1.);
 }
@@ -184,18 +189,22 @@ void StVecBosMaker::tag_Z_boson()
    if (mJetTreeChain) mJets = GetJetsTreeAnalysis(mJetTreeBranch);
 
    //form invariant mass from lepton candidate and jet
-   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) { //vertex loop
-      WEventVertex &V = mWEvent->vertex[iv];
-      for (uint it = 0; it < V.eleTrack.size(); it++) { // select track
-         WeveEleTrack &T1 = V.eleTrack[it];
+   //vertex loop
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
+   {
+      WEventVertex &vertex = mWEvent->vertex[iv];
+      for (uint it = 0; it < vertex.eleTrack.size(); it++) // select track
+      {
+         WeveEleTrack &T1 = vertex.eleTrack[it];
          if (T1.isMatch2Cl == false) continue;
          assert(T1.cluster.nTower > 0); // internal logical error
          assert(T1.nearTotET > 0); // internal logical error
+
          if (T1.cluster.ET / T1.nearTotET < par_nearTotEtFrac) continue; // too large nearET
 
          //match lepton candidate with jet
          TLorentzVector jetVec;
-         for (int i_jet = 0; i_jet < nJets; i_jet++) { //jet loop
+         for (int i_jet = 0; i_jet < mNJets; i_jet++) { //jet loop
             jetVec = *((StJet *)mJets->At(i_jet));
             if (jetVec.Pt() < par_jetPt) continue; //remove low pt jets
 
@@ -219,7 +228,7 @@ void StVecBosMaker::tag_Z_boson()
             if (jetVec3.DeltaR(T1.primP) < par_nearDeltaR)
                continue;//skip jets in candidate phi isolation'cone'
 
-            //form invM
+            // form invM
             float e1 = T1.cluster.energy;
             TVector3 p1 = T1.primP; p1.SetMag(e1);
             TLorentzVector ele1(p1, e1); //lepton candidate 4- mom
@@ -238,45 +247,55 @@ void StVecBosMaker::findPtBalance()
 {
    for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
    {
-      WEventVertex &V = mWEvent->vertex[iv];
-      for (uint it = 0; it < V.eleTrack.size(); it++)
+      WEventVertex &vertex = mWEvent->vertex[iv];
+      for (uint it = 0; it < vertex.eleTrack.size(); it++)
       {
-         WeveEleTrack &T = V.eleTrack[it];
-         if (T.isMatch2Cl == false) continue;
+         WeveEleTrack &track = vertex.eleTrack[it];
 
-         //****loop over branch with EEMC****
+         if (track.isMatch2Cl == false) continue;
+
+         // Loop over branch with EEMC
          mJets = GetJets(mJetTreeBranch);
          if (mJetTreeChain) mJets = GetJetsTreeAnalysis(mJetTreeBranch);
-         int nJetsWE = nJets;
-         for (int i_jet = 0; i_jet < nJetsWE; i_jet++) { //loop over jets
-            StJet *jet = GetJet(i_jet);
+
+         // Add up all jets outside of nearDeltaR cone around the electron track
+         for (int iJet = 0; iJet<mNJets; iJet++) { //loop over jets
+            StJet *jet = GetJet(iJet);
             TVector3 jetVec; //vector for jet momentum
             jetVec.SetPtEtaPhi(jet->Pt(), jet->Eta(), jet->Phi());
-            if (jetVec.DeltaR(T.primP) > par_nearDeltaR)
-               T.ptBalance += jetVec;
-         }
-         TVector3 clustPt(T.primP.X(), T.primP.Y(), 0);
-         clustPt.SetMag(T.cluster.ET);
-         T.ptBalance += clustPt;
-         T.sPtBalance = T.ptBalance.Perp();
-         if (T.ptBalance.Dot(clustPt) < 0) T.sPtBalance *= -1.;
 
-         //****loop over branch without EEMC****
+            if (jetVec.DeltaR(track.primP) > par_nearDeltaR)
+               track.ptBalance += jetVec;
+         }
+
+         TVector3 clustPt(track.primP.X(), track.primP.Y(), 0);
+         clustPt.SetMag(track.cluster.ET);
+
+         // Add electron energy. XXX:ds: Why is the energy transverse only?
+         track.ptBalance  += clustPt;
+         track.sPtBalance  = track.ptBalance.Perp();
+
+         if (track.ptBalance.Dot(clustPt) < 0)
+            track.sPtBalance *= -1.;
+
+         // Loop over branch without EEMC
          mJets = GetJets(mJetTreeBranch_noEEMC);
          if (mJetTreeChain) mJets = GetJetsTreeAnalysis(mJetTreeBranch_noEEMC);
-         int nJetsNE = nJets;
 
-         for (int i_jet = 0; i_jet < nJetsNE; i_jet++) { //loop over jets
-            StJet *jet = GetJet(i_jet);
+         for (int iJet = 0; iJet < mNJets; iJet++) { //loop over jets
+            StJet *jet = GetJet(iJet);
             TVector3 jetVec; //vector for jet momentum
             jetVec.SetPtEtaPhi(jet->Pt(), jet->Eta(), jet->Phi());
-            if (jetVec.DeltaR(T.primP) > par_nearDeltaR)
-               T.ptBalance_noEEMC += jetVec;
+
+            if (jetVec.DeltaR(track.primP) > par_nearDeltaR)
+               track.ptBalance_noEEMC += jetVec;
          }
 
-         T.ptBalance_noEEMC += clustPt;
-         T.sPtBalance_noEEMC = T.ptBalance_noEEMC.Perp();
-         if (T.ptBalance_noEEMC.Dot(clustPt) < 0) T.sPtBalance_noEEMC *= -1.;
+         track.ptBalance_noEEMC += clustPt;
+         track.sPtBalance_noEEMC = track.ptBalance_noEEMC.Perp();
+
+         if (track.ptBalance_noEEMC.Dot(clustPt) < 0)
+            track.sPtBalance_noEEMC *= -1.;
       } // end of loop over tracks
    } // end of loop over vertices
 }
@@ -284,108 +303,131 @@ void StVecBosMaker::findPtBalance()
 
 void StVecBosMaker::findAwayJet()
 {
-   // printf("\n******* find AwayJet() nVert=%d\n",mWEvent->vertex.size());
+   // printf("\n******* find AwayJet() nVert=%d\n", mWEvent->vertex.size());
    //mWEvent->print();
-   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
-      WEventVertex &V = mWEvent->vertex[iv];
-      for (uint it = 0; it < V.eleTrack.size(); it++) {
-         WeveEleTrack &T = V.eleTrack[it];
-         if (T.isMatch2Cl == false) continue;
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
+   {
+      WEventVertex &vertex = mWEvent->vertex[iv];
 
-         // .... sum opposite in phi EMC components
-         T.awayBtowET = sumBtowCone(V.z, -T.primP, 1); // '1'= only cut on delta phi
-         T.awayEmcET = T.awayBtowET;
-         T.awayEtowET = sumEtowCone(V.z, -T.primP, 1);
-         T.awayEmcET += T.awayEtowET;
+      for (uint it = 0; it < vertex.eleTrack.size(); it++)
+      {
+         WeveEleTrack &track = vertex.eleTrack[it];
 
-         //..... add TPC ET
-         if (mStMuDstMaker) T.awayTpcPT = sumTpcCone(V.id, -T.primP, 1, T.pointTower.id);
-         else T.awayTpcPT = sumTpcConeFromTree(iv, -T.primP, 1, T.pointTower.id);
-         T.awayTotET = T.awayEmcET + T.awayTpcPT;
-         T.awayTotET_noEEMC = T.awayBtowET + T.awayTpcPT;
-         //printf("\n*** in   awayTpc=%.1f awayEmc=%.1f\n  ",T.awayTpcPT,T.awayEmcET); T.print();
+         if (track.isMatch2Cl == false) continue;
 
-      }// end of loop over tracks
-   }// end of loop over vertices
+         // sum opposite in phi EMC components
+         track.awayBtowET  = sumBtowCone(vertex.z, -track.primP, 1); // '1' = only cut on delta phi
+         track.awayEmcET   = track.awayBtowET;
+         track.awayEtowET  = sumEtowCone(vertex.z, -track.primP, 1);
+         track.awayEmcET  += track.awayEtowET;
+
+         // add TPC ET
+         if (mStMuDstMaker)
+            track.awayTpcPT = sumTpcCone(vertex.id, -track.primP, 1, track.pointTower.id);
+         else
+            track.awayTpcPT = sumTpcConeFromTree(iv, -track.primP, 1, track.pointTower.id);
+
+         track.awayTotET = track.awayEmcET + track.awayTpcPT;
+         track.awayTotET_noEEMC = track.awayBtowET + track.awayTpcPT;
+
+         //printf("\n*** in   awayTpc=%.1f awayEmc=%.1f\n  ",track.awayTpcPT,track.awayEmcET); track.print();
+      }
+   }
 }
 
 
+/**
+ * Calculates the energy in the cone around the electron.
+ * XXX:ds: The total includes the EMC and TPC energies. Isn't it doble counting?
+ */
 void StVecBosMaker::findNearJet()
 {
    //printf("\n******* findNearJet() nVert=%d\n",mWEvent->vertex.size());
 
-   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
-      WEventVertex &V = mWEvent->vertex[iv];
-      for (uint it = 0; it < V.eleTrack.size(); it++) {
-         WeveEleTrack &T = V.eleTrack[it];
-         if (T.isMatch2Cl == false) continue;
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
+   {
+      WEventVertex &vertex = mWEvent->vertex[iv];
 
-         // .... sum EMC-jet component
-         T.nearBtowET = sumBtowCone(V.z, T.primP, 2); // '2'=2D cone
-         T.nearEmcET += T.nearBtowET;
-         T.nearEtowET = sumEtowCone(V.z, T.primP, 2);
-         T.nearEmcET += T.nearEtowET;
-         // .... sum TPC-near component
-         if (mStMuDstMaker) T.nearTpcPT = sumTpcCone(V.id, T.primP, 2, T.pointTower.id); // '2'=2D cone
-         else T.nearTpcPT = sumTpcConeFromTree(iv, T.primP, 2, T.pointTower.id);
-         float nearSum = T.nearEmcET + T.nearTpcPT;
+      for (uint it = 0; it < vertex.eleTrack.size(); it++)
+      {
+         WeveEleTrack &track = vertex.eleTrack[it];
+         if (track.isMatch2Cl == false) continue;
 
-         //fill histos separately for 2 types of events
-         if (T.pointTower.id > 0) { //only barrel towers
+         // sum EMC-jet component
+         track.nearBtowET  = sumBtowCone(vertex.z, track.primP, 2); // '2'=2D cone
+         track.nearEmcET  += track.nearBtowET;
+         track.nearEtowET  = sumEtowCone(vertex.z, track.primP, 2);
+         track.nearEmcET  += track.nearEtowET;
+
+         // sum TPC-near component
+         if (mStMuDstMaker)
+            track.nearTpcPT = sumTpcCone(vertex.id, track.primP, 2, track.pointTower.id); // '2'=2D cone
+         else
+            track.nearTpcPT = sumTpcConeFromTree(iv, track.primP, 2, track.pointTower.id);
+
+         float nearSum = track.nearEmcET + track.nearTpcPT; // XXX:ds: double counting?
+
+         // fill histos separately for 2 types of events
+         if (track.pointTower.id > 0) { //only barrel towers
             /* correct for double counting of electron track in near cone rarely primTrPT<10 GeV & globPT>10 - handle this here */
-            if (T.primP.Pt() > par_trackPt) nearSum -= par_trackPt;
-            else  nearSum -= T.primP.Pt();
-            T.nearTotET = nearSum;
-            T.nearTotET_noEEMC = nearSum - T.nearEtowET;
-            float nearTotETfrac = T.cluster.ET / T.nearTotET;
+            if (track.primP.Pt() > par_trackPt) nearSum -= par_trackPt;
+            else  nearSum -= track.primP.Pt();
+            track.nearTotET        = nearSum;
+            track.nearTotET_noEEMC = nearSum - track.nearEtowET;
+            float nearTotETfrac    = track.cluster.ET / track.nearTotET;
 
-            hA[40]->Fill(T.nearEmcET);
-            hA[41]->Fill(T.cluster.ET, T.nearEmcET - T.cluster.ET);
+            hA[40]->Fill(track.nearEmcET);
+            hA[41]->Fill(track.cluster.ET, track.nearEmcET - track.cluster.ET);
             hA[42]->Fill(nearTotETfrac);
-            hA[47]->Fill(T.nearTpcPT);
-            hA[48]->Fill(T.nearEmcET, T.nearTpcPT);
+            hA[47]->Fill(track.nearTpcPT);
+            hA[48]->Fill(track.nearEmcET, track.nearTpcPT);
             hA[49]->Fill(nearSum);
-            hA[250]->Fill(T.cluster.ET, nearTotETfrac);
+            hA[250]->Fill(track.cluster.ET, nearTotETfrac);
 
             // check east/west yield diff
-            hA[210]->Fill(T.cluster.position.PseudoRapidity(), T.nearEtowET);
-            if (T.cluster.position.PseudoRapidity() > 0) hA[211]->Fill(T.cluster.position.Phi(), T.nearEtowET);
-            else hA[212]->Fill(T.cluster.position.Phi(), T.nearEtowET);
+            hA[210]->Fill(track.cluster.position.PseudoRapidity(), track.nearEtowET);
+            if (track.cluster.position.PseudoRapidity() > 0) hA[211]->Fill(track.cluster.position.Phi(), track.nearEtowET);
+            else hA[212]->Fill(track.cluster.position.Phi(), track.nearEtowET);
 
-         }
-         else if (T.pointTower.id < 0) { //only endcap towers
+         } else if (track.pointTower.id < 0) { //only endcap towers
             /* correct for double counting of electron track in near cone rarely primTrPT<10 GeV & globPT>10 - handle this here */
-            if (T.primP.Pt() > parE_trackPt) nearSum -= parE_trackPt;
-            else  nearSum -= T.primP.Pt();
-            T.nearTotET = nearSum;
-            T.nearTotET_noEEMC = nearSum - T.nearEtowET;
-            float nearTotETfrac = T.cluster.ET / T.nearTotET;
+            if (track.primP.Pt() > parE_trackPt) nearSum -= parE_trackPt;
+            else  nearSum -= track.primP.Pt();
+            track.nearTotET = nearSum;
+            track.nearTotET_noEEMC = nearSum - track.nearEtowET;
+            float nearTotETfrac = track.cluster.ET / track.nearTotET;
 
-            hE[40]->Fill(T.nearEmcET);
-            hE[41]->Fill(T.cluster.ET, T.nearEmcET - T.cluster.ET);
+            hE[40]->Fill(track.nearEmcET);
+            hE[41]->Fill(track.cluster.ET, track.nearEmcET - track.cluster.ET);
             hE[42]->Fill(nearTotETfrac);
-            hE[47]->Fill(T.nearTpcPT);
-            hE[48]->Fill(T.nearEmcET, T.nearTpcPT);
+            hE[47]->Fill(track.nearTpcPT);
+            hE[48]->Fill(track.nearEmcET, track.nearTpcPT);
             hE[49]->Fill(nearSum);
          }
-
-      } // end of loop over tracks
-   }// end of loop over vertices
+      }
+   }
 }
 
 
-float StVecBosMaker::sumBtowCone( float zVert,  TVector3 refAxis, int flag)
+/**
+ * Returns the sum of all towers withing par_nearDeltaR around the track
+ * refAxis.
+ */
+float StVecBosMaker::sumBtowCone(float zVert, TVector3 refAxis, int flag)
 {
    /* flag=1 : only delta phi cut;  flag=2 use 2D cut */
    assert(flag == 1 || flag == 2);
    double ptSum = 0;
 
-   //.... process BTOW hits
-   for (int i = 0; i < mxBtow; i++) {
+   // process BTOW hits
+   for (int i=0; i<mxBtow; i++)
+   {
       float ene = mWEvent->bemc.eneTile[kBTow][i];
       if (ene <= 0) continue;
+
       TVector3 primP = positionBtow[i] - TVector3(0, 0, zVert);
       primP.SetMag(ene); // it is 3D momentum in the event ref frame
+
       if (flag == 1) {
          float deltaPhi = refAxis.DeltaPhi(primP);
          if (fabs(deltaPhi) > par_awayDeltaPhi) continue;
@@ -394,6 +436,7 @@ float StVecBosMaker::sumBtowCone( float zVert,  TVector3 refAxis, int flag)
          float deltaR = refAxis.DeltaR(primP);
          if (deltaR > par_nearDeltaR) continue;
       }
+
       ptSum += primP.Perp();
    }
 
@@ -409,9 +452,9 @@ float StVecBosMaker::sumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, 
    assert(vertID < (int)mWEvent->vertex.size());
 
    double ptSum = 0;
-   WEventVertex &V = mWEvent->vertex[vertID];
-   for (uint it = 0; it < V.prTrList.size(); it++) {
-      StMuTrack *prTr = V.prTrList[it];
+   WEventVertex &vertex = mWEvent->vertex[vertID];
+   for (uint it = 0; it < vertex.prTrList.size(); it++) {
+      StMuTrack *prTr = vertex.prTrList[it];
       if (prTr->flag() <= 0) continue;
       if (prTr->flag() != 301 && pointTowId > 0) continue; // TPC-only regular tracks for barrel candidate
       if (prTr->flag() != 301 && prTr->flag() != 311 && pointTowId < 0) continue; // TPC regular and short EEMC tracks for endcap candidate
@@ -444,33 +487,40 @@ float StVecBosMaker::sumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, 
 // ************* Barrel Code ************ //
 int StVecBosMaker::extendTrack2Barrel() // return # of extended tracks
 {
-   //printf("******* extendTracks() nVert=%d\n",mWEvent->vertex.size());
+   //printf("******* extendTracks() nVert=%d\n", mWEvent->vertex.size());
    if (!mWEvent->l2bitET) return 0; //fire barrel trigger
 
    int nTrB = 0;
-   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
-      WEventVertex &V = mWEvent->vertex[iv];
-      if (V.rank < 0) continue; //remove vertex for endcap algo only
-      for (uint it = 0; it < V.eleTrack.size(); it++) {
-         WeveEleTrack &T = V.eleTrack[it];
-         if (T.prMuTrack->flag() != 301) continue; //remove track for endcap algo only
 
-         //do eta sorting at track level (tree analysis)
-         if (T.primP.Eta() < par_leptonEtaLow || T.primP.Eta() > par_leptonEtaHigh) continue;
+   // loop over vertices
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
+   {
+      WEventVertex &vertex = mWEvent->vertex[iv];
+      if (vertex.rank < 0) continue; //remove vertex for endcap algo only
 
-         //.... extrapolate track to the barrel @ R=entrance....
-         const StPhysicalHelixD TrkHlx = T.prMuTrack->outerHelix();
+      // loop over tracks
+      for (uint it = 0; it < vertex.eleTrack.size(); it++)
+      {
+         WeveEleTrack &track = vertex.eleTrack[it];
+
+         if (track.prMuTrack->flag() != 301) continue; //remove track for endcap algo only
+
+         // Apply eta cuts at track level (tree analysis)
+         if (track.primP.Eta() < par_leptonEtaLow || track.primP.Eta() > par_leptonEtaHigh) continue;
+
+         // extrapolate track to the barrel @ R=entrance
+         const StPhysicalHelixD TrkHlx = track.prMuTrack->outerHelix();
          float Rcylinder = mBtowGeom->Radius();
-         pairD  d2;
-         d2 = TrkHlx.pathLength(Rcylinder);
+         pairD d2 = TrkHlx.pathLength(Rcylinder);
          //printf(" R=%.1f path 1=%f, 2=%f, period=%f, R=%f\n",Rctb,d2.first ,d2.second,TrkHlx.period(),1./TrkHlx.curvature());
 
-         // assert(d2.first<0); // propagate backwards
-         // assert(d2.second>0); // propagate forwards
+         // assert(d2.first  < 0); // propagate backwards
+         // assert(d2.second > 0); // propagate forwards
          if (d2.first >= 0 || d2.second <= 0) {
-            LOG_WARN << Form("MatchTrk , unexpected solution for track crossing CTB\n  d2.firts=%f, second=%f, swap them",  d2.first, d2.second) << endm;
-            float xx = d2.first;
-            d2.first = d2.second;
+            LOG_WARN << Form("MatchTrk , unexpected solution for track crossing CTB\n" \
+                             "d2.first=%f, d2.second=%f, swap them", d2.first, d2.second) << endm;
+            float xx  = d2.first;
+            d2.first  = d2.second;
             d2.second = xx;
          }
 
@@ -481,19 +531,20 @@ int StVecBosMaker::extendTrack2Barrel() // return # of extended tracks
          float phiF = posR.phi();
          int iEta, iPhi;
          if ( L2algoEtaPhi2IJ(etaF, phiF, iEta, iPhi)) continue;
+
          nTrB++;
          hA[20]->Fill("@B", 1.);
          //printf(" phi=%.0f deg,  eta=%.2f, iEta=%d, iPhi=%d\n",posCTB.phi()/3.1416*180.,posCTB. pseudoRapidity(),iEta, iPhi);
          int twID = mapBtowIJ2ID[ iEta + iPhi * mxBTetaBin];
          // printf("hit Tower ID=%d\n",twID);
 
-         T.pointTower.id = twID;
-         T.pointTower.R = TVector3(posR.x(), posR.y(), posR.z());
-         T.pointTower.iEta = iEta;
-         T.pointTower.iPhi = iPhi;
-         //T.print();
+         track.pointTower.id   = twID;
+         track.pointTower.R    = TVector3(posR.x(), posR.y(), posR.z());
+         track.pointTower.iEta = iEta;
+         track.pointTower.iPhi = iPhi;
+         //track.print();
       }
-   }// end of loop over vertices
+   }
 
    if (nTrB <= 0) return -1;
    hA[0]->Fill("TrB", 1.0);
@@ -507,59 +558,59 @@ int StVecBosMaker::matchTrack2BtowCluster()
    int nTr = 0;
    float Rcylinder = mBtowGeom->Radius();
    for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
-      WEventVertex &V = mWEvent->vertex[iv];
-      float zVert = V.z;
-      for (uint it = 0; it < V.eleTrack.size(); it++) {
-         WeveEleTrack &T = V.eleTrack[it];
-         if (T.pointTower.id <= 0) continue; //skip endcap towers
+      WEventVertex &vertex = mWEvent->vertex[iv];
+      float zVert = vertex.z;
+      for (uint it = 0; it < vertex.eleTrack.size(); it++) {
+         WeveEleTrack &track = vertex.eleTrack[it];
+         if (track.pointTower.id <= 0) continue; //skip endcap towers
 
-         float trackPT = T.prMuTrack->momentum().perp();
-         T.cluster = maxBtow2x2( T.pointTower.iEta, T.pointTower.iPhi, zVert);
-         hA[33]->Fill( T.cluster.ET);
-         hA[34]->Fill(T.cluster.adcSum, trackPT);
-         hA[110]->Fill( T.cluster.ET);
+         float trackPT = track.prMuTrack->momentum().perp();
+         track.cluster = maxBtow2x2( track.pointTower.iEta, track.pointTower.iPhi, zVert);
+         hA[33]->Fill( track.cluster.ET);
+         hA[34]->Fill(track.cluster.adcSum, trackPT);
+         hA[110]->Fill( track.cluster.ET);
 
          // ........compute surroinding cluster energy
-         int iEta = T.cluster.iEta;
-         int iPhi = T.cluster.iPhi;
-         T.cl4x4 = sumBtowPatch(iEta - 1, iPhi - 1, 4, 4, zVert); // needed for lumi monitor
+         int iEta = track.cluster.iEta;
+         int iPhi = track.cluster.iPhi;
+         track.cl4x4 = sumBtowPatch(iEta - 1, iPhi - 1, 4, 4, zVert); // needed for lumi monitor
 
-         if (T.cluster.ET < par_clustET) continue; // too low energy
+         if (track.cluster.ET < par_clustET) continue; // too low energy
          hA[20]->Fill("CL", 1.);
 
-         hA[206]->Fill(T.cluster.position.PseudoRapidity(), T.cluster.ET);
+         hA[206]->Fill(track.cluster.position.PseudoRapidity(), track.cluster.ET);
 
-         hA[37]->Fill( T.cl4x4.ET);
-         hA[38]->Fill(T.cluster.energy, T.cl4x4.energy - T.cluster.energy);
+         hA[37]->Fill( track.cl4x4.ET);
+         hA[38]->Fill(track.cluster.energy, track.cl4x4.energy - track.cluster.energy);
 
-         float frac24 = T.cluster.ET / (T.cl4x4.ET);
+         float frac24 = track.cluster.ET / (track.cl4x4.ET);
          hA[39]->Fill(frac24);
          if (frac24 < par_clustFrac24) continue;
 
          hA[20]->Fill("fr24", 1.);
 
          //.. spacial separation (track - cluster)
-         TVector3 D = T.pointTower.R - T.cluster.position;
+         TVector3 D = track.pointTower.R - track.cluster.position;
 
-         hA[43]->Fill( T.cluster.energy, D.Mag());
-         hA[44]->Fill( T.cluster.position.z(), D.z());
-         float delPhi = T.pointTower.R.DeltaPhi(T.cluster.position);
+         hA[43]->Fill( track.cluster.energy, D.Mag());
+         hA[44]->Fill( track.cluster.position.z(), D.z());
+         float delPhi = track.pointTower.R.DeltaPhi(track.cluster.position);
          //   printf("aaa %f %f %f   phi=%f\n",D.x(),D.y(),D.z(),delPhi);
-         hA[45]->Fill( T.cluster.energy, Rcylinder * delPhi); // wrong?
+         hA[45]->Fill( track.cluster.energy, Rcylinder * delPhi); // wrong?
          hA[46]->Fill( D.Mag());
-         hA[199]->Fill(T.cluster.position.PseudoRapidity(), D.Mag());
-         hA[207]->Fill(T.cluster.position.PseudoRapidity(), T.cluster.ET);
+         hA[199]->Fill(track.cluster.position.PseudoRapidity(), D.Mag());
+         hA[207]->Fill(track.cluster.position.PseudoRapidity(), track.cluster.ET);
 
          if (D.Mag() > par_delR3D) continue;
-         T.isMatch2Cl = true; // cluster is matched to TPC track
+         track.isMatch2Cl = true; // cluster is matched to TPC track
          hA[20]->Fill("#Delta R", 1.);
-         hA[111]->Fill( T.cluster.ET);
+         hA[111]->Fill( track.cluster.ET);
 
-         hA[208]->Fill(T.cluster.position.PseudoRapidity(), T.cluster.ET);
+         hA[208]->Fill(track.cluster.position.PseudoRapidity(), track.cluster.ET);
 
          nTr++;
-      }// end of one vertex
-   }// end of vertex loop
+      } // end of one vertex
+   } // end of vertex loop
 
    if (nTr <= 0) return -1;
    hA[0]->Fill("Tr2Cl", 1.0);

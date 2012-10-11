@@ -72,8 +72,7 @@ bool WtpcFilter::accept( const StMuTrack*  prTr)
 }
 
 
-//--------------------------------------
-//--------------------------------------
+/** */
 int WtpcFilter::getTpcSec(float phiRad, float etaDet)  // finds TPC sector for hit(phi,eta)
 {
    const float PI = TMath::Pi();
@@ -102,8 +101,7 @@ int WtpcFilter::getTpcSec(float phiRad, float etaDet)  // finds TPC sector for h
 }
 
 
-//--------------------------------------
-//--------------------------------------
+/** */
 void WtpcFilter::initHistos(bool barrel)
 {
    int myCol = 2 + secID % 6;

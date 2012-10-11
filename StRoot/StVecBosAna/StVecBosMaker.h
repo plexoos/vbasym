@@ -50,7 +50,7 @@ class StVecBosMaker : public StMaker
 private:
    StMuDstMaker  *mStMuDstMaker;
    StJetReader   *mJetReaderMaker;
-   int            nJets;
+   int            mNJets;
    TString        mJetTreeBranch;
    TString        mJetTreeBranch_noEEMC;
    TClonesArray  *mJets;
@@ -137,14 +137,14 @@ private:
 
    StBemcTables *mBarrelTables; //used to access EMC status and ped info
    StEmcGeom  *mBtowGeom, * mBSmdGeom[mxBSmd];
-   int mapBtowIJ2ID[mxBTetaBin *mxBTphiBin]; // vs. (iEta, iPhi)
+   int mapBtowIJ2ID[mxBTetaBin*mxBTphiBin]; // vs. (iEta, iPhi)
    TVector3 positionBtow[mxBtow]; // vs. tower ID
    TVector3 positionBsmd[mxBSmd][mxBStrips]; // vs. strip ID
 
-   StEEmcDb        *mDbE; // access to EEMC database
-   StSpinDbMaker   *spinDb; // access spin information
-   EEmcGeomSimple  *geomE;// access to EEMC geometry
-   EEmcSmdGeom     *geoSmd;// access to ESMD geometry
+   StEEmcDb       *mDbE;       // access to EEMC database
+   StSpinDbMaker  *spinDb;     // access spin information
+   EEmcGeomSimple *mGeomEmc;   // access to EEMC geometry
+   EEmcSmdGeom    *mGeomSmd;   // access to ESMD geometry
    TVector3 positionEtow[mxEtowSec *mxEtowSub][mxEtowEta];
 
    int   accessBarrelTrig();
@@ -240,7 +240,7 @@ protected:
 
    /// Displayed on session exit, leave it as-is please ...
    virtual const char *GetCVS() const {
-      static const char cvs[] = "Tag $Name:  $ $Id: StVecBosMaker.h,v 1.4 2012/10/11 16:06:24 smirnovd Exp $ built "__DATE__" "__TIME__ ;
+      static const char cvs[] = "Tag $Name:  $ $Id: StVecBosMaker.h,v 1.5 2012/10/11 23:22:41 smirnovd Exp $ built "__DATE__" "__TIME__ ;
       return cvs;
    }
 

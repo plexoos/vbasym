@@ -15,9 +15,10 @@
 
 #include "StVecBosMaker.h"
 
+
 // returns non-zero on abort
 int StVecBosMaker::accessBarrelTrig()
-{ //{{{
+{
    if (isMC) {
       /*
         When the trigger emulator is ready, this should hook into that
@@ -53,7 +54,8 @@ int StVecBosMaker::accessBarrelTrig()
    int awaySum[16];
    int totalSum = 0;
 
-   for (int i = 0; i < 16; i++) awaySum[i] = 0;
+   for (int i = 0; i < 16; i++)
+      awaySum[i] = 0;
 
    patchToEtaPhi(highestM, &tempEta, &highestPhi);
 
@@ -61,11 +63,12 @@ int StVecBosMaker::accessBarrelTrig()
       int myT = muEve->emcTriggerDetector().highTower(m);
       patchToEtaPhi(m, &tempEta, &tempPhi);
 
-      for (int away_width = 0; away_width < 16; away_width++)
+      for (int away_width = 0; away_width < 16; away_width++) {
          if ((highestPhi + 30 - tempPhi) % 30 > (15 - away_width) && (highestPhi + 30 - tempPhi) % 30 < (15 + away_width)) {
             //printf("==> adding %d to awaySum",myT);
             awaySum[away_width] += myT;
          }
+      }
 
       totalSum += myT;
    }
@@ -74,7 +77,7 @@ int StVecBosMaker::accessBarrelTrig()
 
    mWEvent->trigTotalSum = totalSum;
 
-   StMuTriggerIdCollection *tic = &(muEve->triggerIdCollection());
+   StMuTriggerIdCollection* tic = &(muEve->triggerIdCollection());
    assert(tic);
    const StTriggerId &l1 = tic->l1();
    vector<unsigned int> idL = l1.triggerIds();
@@ -97,8 +100,9 @@ int StVecBosMaker::accessBarrelTrig()
    // store spin info
    int bxStar48 = -2, bxStar7 = -2, spin4 = -2;
 
-   if (spinDb && spinDb->isValid() && // all 3 DB records exist
-         spinDb->isPolDirLong()) {  // you do not want mix Long & Trans by accident
+   // all 3 DB records exist
+   if (spinDb && spinDb->isValid() && spinDb->isPolDirLong())
+   {  // you do not want mix Long & Trans by accident
       bxStar48 = spinDb->BXstarUsingBX48(mWEvent->bx48);
       bxStar7  = spinDb->BXstarUsingBX7(mWEvent->bx7);
       spin4    = spinDb->spin4usingBX48(mWEvent->bx48);
@@ -115,12 +119,13 @@ int StVecBosMaker::accessBarrelTrig()
 
    TArrayI &l2Array = muEve->L2Result();
    LOG_DEBUG << Form("AccessL2Decision() from regular muDst: L2Ar-size=%d", l2Array.GetSize()) << endm;
-   unsigned int *l2res = (unsigned int *)l2Array.GetArray();
+
+   unsigned int* l2res = (unsigned int*) l2Array.GetArray();
    const int BEMCW_off = 20; // valid only for 2009 & 2011 run
-   L2wResult2009 *l2algo = ( L2wResult2009 *) &l2res[BEMCW_off];
+
+   L2wResult2009* l2algo = (L2wResult2009*) &l2res[BEMCW_off];
 
 #if 0
-
    if (l2algo->trigger == 0) return -3;
 
    printf(" L2-jet online results below:\n");
@@ -131,8 +136,8 @@ int StVecBosMaker::accessBarrelTrig()
    L2wResult2009_print(l2algo);
 #endif
 
-   mWEvent->l2bitET = (l2algo->trigger & 2) > 0; // bit1=ET>thr
-   mWEvent->l2bitRnd = (l2algo->trigger & 1) > 0; // bit0=rnd,
+   mWEvent->l2bitET  = (l2algo->trigger & 2) > 0; // bit1=ET>thr
+   mWEvent->l2bitRnd = (l2algo->trigger & 1) > 0; // bit0=rnd
 
    if ( (mWEvent->l2bitRnd || mWEvent->l2bitET) == 0) return -3; // L2W-algo did not accept this event
 
@@ -176,17 +181,17 @@ int StVecBosMaker::accessBarrelTrig()
 
    mWEvent->bemc.maxHtDsm = mxVal;
    return 0;
-} //}}}
+}
 
 
 // returns non-zero on abort
 int StVecBosMaker::accessVertex()
-{ //{{{
+{
    int nInpPrimV = mStMuDstMaker->muDst()->numberOfPrimaryVertices();
 
    if (nInpPrimV < par_minPileupVert) return -1;
 
-   //separate histos for barrel and endcap triggers
+   // separate histos for barrel and endcap triggers
    if (mWEvent->l2bitET)  hA[0]->Fill("tpcOn", 1.);
    if (mWEvent->l2EbitET) hE[0]->Fill("tpcOn", 1.);
 
@@ -195,11 +200,11 @@ int StVecBosMaker::accessVertex()
 
    for (int iv = 0; iv < nInpPrimV; iv++)
    {
-      StMuPrimaryVertex *V = mStMuDstMaker->muDst()->primaryVertex(iv);
-      assert(V);
+      StMuPrimaryVertex *vertex = mStMuDstMaker->muDst()->primaryVertex(iv);
+      assert(vertex);
       mStMuDstMaker->muDst()->setVertexIndex(iv);
 
-      float rank   = V->ranking();
+      float rank   = vertex->ranking();
       float funnyR = 999;
 
       if (rank > 1e6)    funnyR = log(rank - 1e6) + 10;
@@ -210,11 +215,11 @@ int StVecBosMaker::accessVertex()
       if (mWEvent->l2EbitET) hE[10]->Fill(funnyR);
 
       //keep some neg. rank vertices for endcap if matched to ETOW
-      if (rank <= 0 && V->nEEMCMatch() <= 0) continue;
+      if (rank <= 0 && vertex->nEEMCMatch() <= 0) continue;
 
-      const StThreeVectorF &r = V->position();
+      const StThreeVectorF &r = vertex->position();
 
-      // StThreeVectorF &er=V->posError();
+      // StThreeVectorF &er=vertex->posError();
       if (mWEvent->l2bitET && rank > 0) hA[11]->Fill(r.z());
 
       if (mWEvent->l2EbitET) hE[11]->Fill(r.z());
@@ -230,7 +235,7 @@ int StVecBosMaker::accessVertex()
       wv.z = r.z();
       wv.rank = rank;
       wv.funnyRank = funnyR;
-      wv.nEEMCMatch = V->nEEMCMatch();
+      wv.nEEMCMatch = vertex->nEEMCMatch();
       mWEvent->vertex.push_back(wv);
    }
 
@@ -259,7 +264,7 @@ int StVecBosMaker::accessVertex()
       if (mWEvent->l2bitET && nVerR > 0) hA[9]->Fill(m);
    }
 
-   for (int m = 0; m < 90; m++)	{
+   for (int m = 0; m<90; m++)	{
       int val = muEve->emcTriggerDetector().highTowerEndcap(m);
 
       if (val < parE_DsmThres) continue;
@@ -267,19 +272,15 @@ int StVecBosMaker::accessVertex()
       if (mWEvent->l2EbitET) hE[9]->Fill(m);
    }
 
-   if (mWEvent->l2bitET) hA[12]->Fill(nVerR);
-
+   if (mWEvent->l2bitET)  hA[12]->Fill(nVerR);
    if (mWEvent->l2EbitET) hE[12]->Fill(nVer);
 
    if (mWEvent->vertex.size() <= 0) return -3;
-
    if (mWEvent->l2bitET && nVerR > 0) hA[0]->Fill("vertZ", 1.);
-
    if (mWEvent->l2EbitET) hE[0]->Fill("vertZ", 1.);
 
    return 0;
-} //}}}
-
+}
 
 
 int StVecBosMaker::accessTracks()  // return non-zero on abort
@@ -287,18 +288,21 @@ int StVecBosMaker::accessTracks()  // return non-zero on abort
    int nTrOK = 0;
 
    // printf("\n nInp=%d eveID=%d nPVer=%d nAnyV= %d\n",nInpEve,mStMuDstMaker->muDst()->event()->eventId(),mWEvent->vertex.size(),mStMuDstMaker->muDst()->numberOfPrimaryVertices());
-   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
+
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
+   {
       uint vertID = mWEvent->vertex[iv].id;
       assert(vertID < mStMuDstMaker->muDst()->numberOfPrimaryVertices());
       assert(vertID >= 0);
-      StMuPrimaryVertex *V = mStMuDstMaker->muDst()->primaryVertex(vertID);
-      assert(V);
+      StMuPrimaryVertex *vertex = mStMuDstMaker->muDst()->primaryVertex(vertID);
+      assert(vertex);
       mStMuDstMaker->muDst()->setVertexIndex(vertID);
-      float rank = V->ranking();
-      assert(rank > 0 || (rank < 0 && V->nEEMCMatch()));
+      float rank = vertex->ranking();
+      assert(rank > 0 || (rank < 0 && vertex->nEEMCMatch()));
       Int_t nPrimTrAll = mStMuDstMaker->muDst()->GetNPrimaryTrack();
 
-      for (int itr = 0; itr < nPrimTrAll; itr++) {
+      for (int itr = 0; itr < nPrimTrAll; itr++)
+      {
          StMuTrack *prTr = mStMuDstMaker->muDst()->primaryTracks(itr);
 
          if (prTr->flag() <= 0) continue;
@@ -432,17 +436,17 @@ int StVecBosMaker::accessTracks()  // return non-zero on abort
          wTr.primP = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
 
          mWEvent->vertex[iv].eleTrack.push_back(wTr);
-      }// loop over tracks
-   }// loop over vertices
+      } // loop over tracks
+   } // loop over vertices
 
    if (nTrOK <= 0) return -1;
 
-   if (mWEvent->l2bitET) hA[0]->Fill("Pt10", 1.);
-
+   if (mWEvent->l2bitET)  hA[0]->Fill("Pt10", 1.);
    if (mWEvent->l2EbitET) hE[0]->Fill("Pt10", 1.);
 
    return 0;
 } //}}}
+
 
 /* from Pibero:
    It looks like your global track is null. See this post:
@@ -460,7 +464,6 @@ int StVecBosMaker::accessTracks()  // return non-zero on abort
    I guess you could also request S&C to change ITTF/MuDst not to drop
    the global track for every good primary track regardless of chi2.
 */
-
 
 
 /* $STAR/StRoot/StEvent/StTrack.h
@@ -493,9 +496,8 @@ int StVecBosMaker::accessTracks()  // return non-zero on abort
 */
 
 
-//
 int StVecBosMaker::accessBTOW()
-{ //{{{
+{
    StMuEmcCollection *emc = mStMuDstMaker->muDst()->muEmcCollection();
 
    if (!emc) {
@@ -504,11 +506,11 @@ int StVecBosMaker::accessBTOW()
 
    int ibp = kBTow; // my index for tower & preshower set to BTOW
    int jBP = BTOW; // official BTOW detector ID
-   int n5 = 0, n0 = 0, n1 = 0, n2 = 0, n3 = 0, n4 = 0;
+   int n5  = 0, n0 = 0, n1 = 0, n2 = 0, n3 = 0, n4 = 0;
    int maxID = 0;
    double maxADC = 0, adcSum = 0;
 
-   for (int softID = 1; softID <= mxBtow ; softID++)
+   for (int softID=1; softID<=mxBtow; softID++)
    {
       float rawAdc = emc->getTowerADC(softID);
 
@@ -589,7 +591,7 @@ int StVecBosMaker::accessBTOW()
    if (maxADC < par_maxADC)  return -2 ; // not enough energy
 
    return 0;
-} //}}}
+}
 
 
 void StVecBosMaker::fillTowHit(bool vert)
@@ -671,8 +673,14 @@ void StVecBosMaker::fillTowHit(bool vert)
 } //}}}
 
 
+/**
+ * Returns the sum of all track P_T's inside the cone around the refAxis track.
+ *
+ * XXX:ds: Do we want to count the refAxis P_T?
+ * The calculated sum is scalar. We probably want a vector sum.
+ */
 float StVecBosMaker::sumTpcCone(int vertID, TVector3 refAxis, int flag, int pointTowId)
-{ //{{{
+{
    // flag=2 use 2D cut, 1= only delta phi
 
    // printf("******* sumTpcCone, flag=%d eveId=%d vertID=%d  eta0=%.2f phi0/rad=%.2f  \n",flag,mWEvent->id,vertID,refAxis.PseudoRapidity() ,refAxis.Phi());
@@ -680,11 +688,13 @@ float StVecBosMaker::sumTpcCone(int vertID, TVector3 refAxis, int flag, int poin
    assert(vertID >= 0);
    assert(vertID < (int) mStMuDstMaker->muDst()->numberOfPrimaryVertices());
 
-   StMuPrimaryVertex *V = mStMuDstMaker->muDst()->primaryVertex(vertID);
-   assert(V);
+   StMuPrimaryVertex* vertex = mStMuDstMaker->muDst()->primaryVertex(vertID);
+   assert(vertex);
    mStMuDstMaker->muDst()->setVertexIndex(vertID);
-   float rank = V->ranking();
-   assert(rank > 0 || (rank < 0 && V->nEEMCMatch()));
+
+   float rank = vertex->ranking();
+   assert(rank > 0 || (rank < 0 && vertex->nEEMCMatch()));
+
    double ptSum = 0;
    Int_t nPrimTrAll = mStMuDstMaker->muDst()->GetNPrimaryTrack();
 
@@ -697,7 +707,7 @@ float StVecBosMaker::sumTpcCone(int vertID, TVector3 refAxis, int flag, int poin
 
       if (prTr->flag() != 301 && prTr->flag() != 311 && pointTowId < 0) continue; // TPC regular and short EEMC tracks for endcap candidate
 
-      float hitFrac = 1.*prTr->nHitsFit() / prTr->nHitsPoss();
+      float hitFrac = float(prTr->nHitsFit()) / prTr->nHitsPoss();
 
       if (hitFrac < par_nHitFrac) continue;
 
@@ -718,17 +728,16 @@ float StVecBosMaker::sumTpcCone(int vertID, TVector3 refAxis, int flag, int poin
       }
 
       float pT = prTr->pt();
-      //    printf(" passed pt=%.1f\n",pT);
+      //printf(" passed pt=%.1f\n",pT);
 
       //separate quench for barrel and endcap candidates
-      if (pT > par_trackPt && pointTowId > 0) ptSum += par_trackPt;
+      if      (pT > par_trackPt  && pointTowId > 0) ptSum += par_trackPt;
       else if (pT > parE_trackPt && pointTowId < 0) ptSum += parE_trackPt;
       else  ptSum += pT;
    }
 
    return ptSum;
-} //}}}
-
+}
 
 
 void StVecBosMaker::accessBSMD()

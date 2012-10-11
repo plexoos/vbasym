@@ -156,12 +156,12 @@ StVecBosMaker::analyzeESMD()
 
          for (int iuv = 0; iuv < 2; iuv++) { //loop over planes
             Float_t dca; //primary extrapolation to smd plane
-            const StructEEmcStrip *stripPtr = geoSmd->getDca2Strip(iuv, T.pointTower.R, &dca); // find pointed strip
+            const StructEEmcStrip *stripPtr = mGeomSmd->getDca2Strip(iuv, T.pointTower.R, &dca); // find pointed strip
             if (!stripPtr) {cout << "No Strip found" << endl; continue;}
             if (fabs(dca) > 0.5 /*cm*/) {cout << "DCA to big" << endl; continue;}
 
             Float_t dcaGlob; //global extrapolation to smd plane
-            const StructEEmcStrip *stripPtrGlob = geoSmd->getDca2Strip(iuv, T.pointTower.Rglob, &dcaGlob); // find pointed strip
+            const StructEEmcStrip *stripPtrGlob = mGeomSmd->getDca2Strip(iuv, T.pointTower.Rglob, &dcaGlob); // find pointed strip
 
             int maxStripId = -1; float maxE = -1;
 
@@ -194,7 +194,7 @@ StVecBosMaker::analyzeESMD()
             T.esmdShowerWidth[iuv] = f->GetParameter(2);
 
             //get shower x-point from hitStrip + centroid of fit
-            T.esmdXPcentroid = geoSmd->getIntersection(T.hitSector - 1, hitStrip[0] - 1 + (int)T.esmdShowerCentroid[0], hitStrip[1] - 1 + (int)T.esmdShowerCentroid[1]);
+            T.esmdXPcentroid = mGeomSmd->getIntersection(T.hitSector - 1, hitStrip[0] - 1 + (int)T.esmdShowerCentroid[0], hitStrip[1] - 1 + (int)T.esmdShowerCentroid[1]);
 
             //histos for each plane
 
@@ -276,7 +276,7 @@ StVecBosMaker::extendTrack2Endcap() // return # of extended tracks
    //printf("******* extendTracksEndcap() nVert=%d\n",mWEvent.vertex.size());
    if (!mWEvent->l2EbitET) return 0; //fire endcap trigger
 
-   double parE_zSMD = geomE->getZSMD(); // (cm), smd depth
+   double parE_zSMD = mGeomEmc->getZSMD(); // (cm), smd depth
    int nTrE = 0;
    for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
       WEventVertex &V = mWEvent->vertex[iv];
@@ -310,7 +310,7 @@ StVecBosMaker::extendTrack2Endcap() // return # of extended tracks
          int isec, isubSec, ietaBin;
          Float_t epsPhi, epsEta;
          TVector3 rCross(r.x(), r.y(), r.z());
-         bool inEtow = geomE->getTower(rCross, isec, isubSec, ietaBin, epsPhi, epsEta);
+         bool inEtow = mGeomEmc->getTower(rCross, isec, isubSec, ietaBin, epsPhi, epsEta);
          if (!inEtow) continue;
          hE[20]->Fill("@E", 1.);
          //printf("trk points EEMC tower isec=%d isub=%d ieta=%d epsPhi=%f epsEta=%f  trkPT=%f\n", isec,isubSec,ietaBin,epsPhi,epsEta,T.prMuTrack->pt());
@@ -385,7 +385,7 @@ StVecBosMaker::matchTrack2EtowCluster()
          hE[20]->Fill("fr24", 1.);
 
          //set logE weighted cluster position vector at SMD z depth
-         float newMag = geomE->getZSMD() / TMath::Cos(T.cluster.position.Theta());
+         float newMag = mGeomEmc->getZSMD() / TMath::Cos(T.cluster.position.Theta());
          T.cluster.position.SetMag(newMag);
 
          //.. spacial separation (track - cluster) only use 2D X-Y distance for endcap (ie. D.Perp())

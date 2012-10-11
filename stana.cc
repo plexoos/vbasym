@@ -18,9 +18,6 @@ root4star -b -q 'analyzeMuDst.C(2e3,"st_W_12037041_raw_1400001.MuDst.root",0,1,5
 
 #include "TObject.h"
 #include "TString.h"
-#include "TSystem.h"
-#include "TApplication.h"
-//#include "TRint.h"
 
 //#include "St_base/StObject.h"
 #include "St_base/StMessMgr.h"
@@ -55,7 +52,6 @@ root4star -b -q 'analyzeMuDst.C(2e3,"st_W_12037041_raw_1400001.MuDst.root",0,1,5
 #include "StVecBosAna/St2011pubSpinMaker.h"
 #include "StVecBosAna/AnaInfo.h"
 
-//extern TSystem* gSystem;
 
 using namespace std;
 
@@ -80,15 +76,6 @@ int analyzeMuDst(
 
 int main(int argc, char *argv[])
 {
-   //TApplication theApp("App", &argc, argv);
-   //gSystem->Load("St_base");
-   //gROOT = new TROOT("myroot", "My root session");
-   //TRint *theApp = new TRint("mystandaloneroot", &argc, argv, 0, 0);
-   //gROOT->LoadMacro("/afs/rhic.bnl.gov/star/packages/SL11d/StRoot/StMuDSTMaker/COMMON/macros/loadSharedLibraries.C");
-   //StMuDstMaker *stMuDstMaker = new StMuDstMaker(0, 0, "./", "list_R12059009_nfs.lis", ".", 100);
-   //StMuDstMaker *stMuDstMaker = new StMuDstMaker(0, 0, "./", "list_R13109025_nfs.lis", ".", 100);
-   //exit(0);
-
    AnaInfo anaInfo;
    anaInfo.ProcessOptions(argc, argv);
    anaInfo.VerifyOptions();
@@ -235,7 +222,6 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 #endif
 
    if (geant) {
-   //{{{
       StMcEventMaker *mcEventMaker = new StMcEventMaker();
       mcEventMaker->doPrintEventInfo  = false;
       mcEventMaker->doPrintMemoryInfo = false;
@@ -264,7 +250,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
          simuTrig->useBemc();
          simuTrig->bemc->setConfig(2);
       }
-   } //}}}
+   }
 
    TString jetFile = jetDir;
 
@@ -296,13 +282,13 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       stBET4pMakerFrac100->setUse2006Cuts(use2006TowerCuts);
 
       // 4p maker using 100% tower energy correction (no endcap)
-      StBET4pMaker *stBET4pMakerFrac100_noEEMC = new StBET4pMaker("BET4pMakerFrac100_noEEMC", stMuDstMaker, doTowerSwapFix, new StjTowerEnergyCorrectionForTracksFraction(1.0));
+      StBET4pMaker* stBET4pMakerFrac100_noEEMC = new StBET4pMaker("BET4pMakerFrac100_noEEMC", stMuDstMaker, doTowerSwapFix, new StjTowerEnergyCorrectionForTracksFraction(1.0));
       stBET4pMakerFrac100_noEEMC->setUse2003Cuts(use2003TowerCuts);
       stBET4pMakerFrac100_noEEMC->setUseEndcap(false);
       stBET4pMakerFrac100_noEEMC->setUse2006Cuts(use2006TowerCuts);
 
       // Instantiate the JetMaker and SkimEventMaker
-      StJetMaker *stJetMaker = new StJetMaker("stJetMaker", stMuDstMaker, jetFile);
+      StJetMaker* stJetMaker = new StJetMaker("stJetMaker", stMuDstMaker, jetFile);
       //StJetSkimEventMaker* skimEventMaker = new StJetSkimEventMaker("StJetSkimEventMaker", stMuDstMaker,outSkimFile);
 
       // set the analysis cuts: (see StJetMaker/StppJetAnalyzer.h -> class StppAnaPars )
@@ -377,6 +363,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    // the jet reconstruction ends above
 
+
    if (useJetFinder == 2) {
       cout << "Configure to read jet trees " << endl;
       StJetReader* stJetReader = new StJetReader();
@@ -409,8 +396,8 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    //stVecBosMaker->setBtowScale(1.0);
    //stVecBosMaker->setEtowScale(1.0);
 
-   /* evaluation of result, has full acess to W-algo internal data
-      including overwrite - be careful */
+   // evaluation of result, has full acess to W-algo internal data including
+   // overwrite - be careful
 
    St2011pubWanaMaker* st2011pubWanaMaker = new St2011pubWanaMaker();
    st2011pubWanaMaker->attachWalgoMaker(stVecBosMaker);
@@ -424,6 +411,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    if (spinSort) {
       StSpinDbMaker *stSpinDbMaker = new StSpinDbMaker("spinDb");
       enum {mxSM = 5}; // to study eta-cuts, drop Q/PT cut
+
       St2011pubSpinMaker *spinMkA[mxSM];
 
       for (int kk = 0; kk < mxSM; kk++) {
