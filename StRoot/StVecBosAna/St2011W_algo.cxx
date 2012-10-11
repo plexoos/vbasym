@@ -299,7 +299,7 @@ void StVecBosMaker::findAwayJet()
          T.awayEmcET += T.awayEtowET;
 
          //..... add TPC ET
-         if (mMuDstMaker) T.awayTpcPT = sumTpcCone(V.id, -T.primP, 1, T.pointTower.id);
+         if (mStMuDstMaker) T.awayTpcPT = sumTpcCone(V.id, -T.primP, 1, T.pointTower.id);
          else T.awayTpcPT = sumTpcConeFromTree(iv, -T.primP, 1, T.pointTower.id);
          T.awayTotET = T.awayEmcET + T.awayTpcPT;
          T.awayTotET_noEEMC = T.awayBtowET + T.awayTpcPT;
@@ -326,7 +326,7 @@ void StVecBosMaker::findNearJet()
          T.nearEtowET = sumEtowCone(V.z, T.primP, 2);
          T.nearEmcET += T.nearEtowET;
          // .... sum TPC-near component
-         if (mMuDstMaker) T.nearTpcPT = sumTpcCone(V.id, T.primP, 2, T.pointTower.id); // '2'=2D cone
+         if (mStMuDstMaker) T.nearTpcPT = sumTpcCone(V.id, T.primP, 2, T.pointTower.id); // '2'=2D cone
          else T.nearTpcPT = sumTpcConeFromTree(iv, T.primP, 2, T.pointTower.id);
          float nearSum = T.nearEmcET + T.nearTpcPT;
 

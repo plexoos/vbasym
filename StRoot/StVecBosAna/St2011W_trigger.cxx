@@ -1,4 +1,4 @@
-// $Id: St2011W_trigger.cxx,v 1.2 2012/10/10 22:39:35 smirnovd Exp $
+// $Id: St2011W_trigger.cxx,v 1.3 2012/10/11 16:06:24 smirnovd Exp $
 //
 //*-- Author : Ross Corliss, MIT
 
@@ -16,7 +16,7 @@ StVecBosMaker::passes_L0(){
     needed.
   */
 
-  StMuEvent* muEve = mMuDstMaker->muDst()->event();
+  StMuEvent* muEve = mStMuDstMaker->muDst()->event();
   for (int m=0;m<300;m++)
     if(muEve->emcTriggerDetector().highTower(m)>par_l0emulAdcThresh) return true;
   return false;
@@ -71,6 +71,9 @@ StVecBosMaker::passes_L2(){
  }
 
 //$Log: St2011W_trigger.cxx,v $
+//Revision 1.3  2012/10/11 16:06:24  smirnovd
+//*** empty log message ***
+//
 //Revision 1.2  2012/10/10 22:39:35  smirnovd
 //*** empty log message ***
 //

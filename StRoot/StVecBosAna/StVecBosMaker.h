@@ -48,7 +48,7 @@ class StVecBosMaker : public StMaker
    friend class StZBosMaker;
 
 private:
-   StMuDstMaker  *mMuDstMaker;
+   StMuDstMaker  *mStMuDstMaker;
    StJetReader   *mJetReaderMaker;
    int            nJets;
    TString        mJetTreeBranch;
@@ -240,7 +240,7 @@ protected:
 
    /// Displayed on session exit, leave it as-is please ...
    virtual const char *GetCVS() const {
-      static const char cvs[] = "Tag $Name:  $ $Id: StVecBosMaker.h,v 1.3 2012/10/10 22:39:35 smirnovd Exp $ built "__DATE__" "__TIME__ ;
+      static const char cvs[] = "Tag $Name:  $ $Id: StVecBosMaker.h,v 1.4 2012/10/11 16:06:24 smirnovd Exp $ built "__DATE__" "__TIME__ ;
       return cvs;
    }
 

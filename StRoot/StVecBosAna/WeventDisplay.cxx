@@ -361,10 +361,10 @@ void WeventDisplay::exportEvent( const char *tit, WEventVertex myV, WeveEleTrack
    if (maxEve <= 0) return;
    clear();
 
-   int eveId = wMK->mWEvent->id; //wMK->mMuDstMaker->muDst()->event()->eventId();
-   int runNo = wMK->mWEvent->runNo; //wMK->mMuDstMaker->muDst()->event()->runId();
+   int eveId = wMK->mWEvent->id; //wMK->mStMuDstMaker->muDst()->event()->eventId();
+   int runNo = wMK->mWEvent->runNo; //wMK->mStMuDstMaker->muDst()->event()->runId();
 
-   const char *afile = ""; //wMK->mMuDstMaker->GetFile();
+   const char *afile = ""; //wMK->mStMuDstMaker->GetFile();
    int len    = strlen(afile);
    int daqSeq = atoi(afile + (len - 18));
    //  printf("DDD %s len=%d %d =%s=\n",afile,len,daqSeq,afile+(len-15));
@@ -430,7 +430,7 @@ void WeventDisplay::exportEvent( const char *tit, WEventVertex myV, WeveEleTrack
 
    //... TPC
    hTpcET->SetMinimum(0.3); hTpcET->SetMaximum(10.);
-   if (wMK->mMuDstMaker) getPrimTracks( myV.id, myTr.pointTower.id);
+   if (wMK->mStMuDstMaker) getPrimTracks( myV.id, myTr.pointTower.id);
    else getPrimTracksFromTree(vertexIndex, myTr.pointTower.id);
 
    //.... BSMD-Eta, -Phi
@@ -469,16 +469,16 @@ void
 WeventDisplay::getPrimTracks( int vertID, int pointTowId)
 {
    assert(vertID >= 0);
-   assert(vertID < (int)wMK->mMuDstMaker->muDst()->numberOfPrimaryVertices());
-   StMuPrimaryVertex *V = wMK-> mMuDstMaker->muDst()->primaryVertex(vertID);
+   assert(vertID < (int)wMK->mStMuDstMaker->muDst()->numberOfPrimaryVertices());
+   StMuPrimaryVertex *V = wMK-> mStMuDstMaker->muDst()->primaryVertex(vertID);
    assert(V);
-   wMK-> mMuDstMaker->muDst()->setVertexIndex(vertID);
+   wMK-> mStMuDstMaker->muDst()->setVertexIndex(vertID);
    float rank = V->ranking();
    assert(rank > 0 || (rank < 0 && V->nEEMCMatch()));
 
-   Int_t nPrimTrAll = wMK->mMuDstMaker->muDst()->GetNPrimaryTrack();
+   Int_t nPrimTrAll = wMK->mStMuDstMaker->muDst()->GetNPrimaryTrack();
    for (int itr = 0; itr < nPrimTrAll; itr++) {
-      StMuTrack *prTr = wMK->mMuDstMaker->muDst()->primaryTracks(itr);
+      StMuTrack *prTr = wMK->mStMuDstMaker->muDst()->primaryTracks(itr);
       if (prTr->flag() <= 0) continue;
       if (prTr->flag() != 301 && pointTowId > 0) continue; // TPC-only regular tracks for barrel candidate
       if (prTr->flag() != 301 && prTr->flag() != 311 && pointTowId < 0) continue; // TPC regular and short EEMC tracks for endcap candidate
@@ -524,8 +524,8 @@ void WeventDisplay::getPrimTracksFromTree(int vertID, int pointTowId)
 void
 WeventDisplay::export2sketchup(  const char *tit, WEventVertex myV, WeveEleTrack myTr)
 {
-   int eveId = wMK->mMuDstMaker->muDst()->event()->eventId();
-   int runNo = wMK->mMuDstMaker->muDst()->event()->runId();
+   int eveId = wMK->mStMuDstMaker->muDst()->event()->eventId();
+   int runNo = wMK->mStMuDstMaker->muDst()->event()->runId();
    char txt[1000];
    sprintf(txt, "display3D-%s_run%d.eventId%05d_vert%d.txt", tit, runNo, eveId, myV.id);
    FILE *fd = fopen(txt, "w"); assert(fd);
@@ -533,16 +533,16 @@ WeventDisplay::export2sketchup(  const char *tit, WEventVertex myV, WeveEleTrack
    //........ DUMP PRIM TRACKS..........
    int vertID = myV.id;
    assert(vertID >= 0);
-   assert(vertID < (int)wMK->mMuDstMaker->muDst()->numberOfPrimaryVertices());
-   StMuPrimaryVertex *V = wMK-> mMuDstMaker->muDst()->primaryVertex(vertID);
+   assert(vertID < (int)wMK->mStMuDstMaker->muDst()->numberOfPrimaryVertices());
+   StMuPrimaryVertex *V = wMK-> mStMuDstMaker->muDst()->primaryVertex(vertID);
    assert(V);
-   wMK-> mMuDstMaker->muDst()->setVertexIndex(vertID);
+   wMK-> mStMuDstMaker->muDst()->setVertexIndex(vertID);
    float rank = V->ranking();
    assert(rank > 0 || (rank < 0 && V->nEEMCMatch()));
    const StThreeVectorF &rV = V->position();
-   Int_t nPrimTrAll = wMK->mMuDstMaker->muDst()->GetNPrimaryTrack();
+   Int_t nPrimTrAll = wMK->mStMuDstMaker->muDst()->GetNPrimaryTrack();
    for (int itr = 0; itr < nPrimTrAll; itr++) {
-      StMuTrack *prTr = wMK->mMuDstMaker->muDst()->primaryTracks(itr);
+      StMuTrack *prTr = wMK->mStMuDstMaker->muDst()->primaryTracks(itr);
       if (prTr->flag() <= 0) continue;
       if (prTr->flag() != 301) continue; // TPC-only regular tracks
       float hitFrac = 1.*prTr->nHitsFit() / prTr->nHitsPoss();

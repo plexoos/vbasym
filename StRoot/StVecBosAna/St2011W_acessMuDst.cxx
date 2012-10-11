@@ -34,7 +34,7 @@ int StVecBosMaker::accessBarrelTrig()
       return 0; // we haven't set everything, but it should be good enough for simu.
    }
 
-   StMuEvent *muEve = mMuDstMaker->muDst()->event();
+   StMuEvent *muEve = mStMuDstMaker->muDst()->event();
 
    //collect info for the luminosity monitor
    int highestT = 0;
@@ -182,7 +182,7 @@ int StVecBosMaker::accessBarrelTrig()
 // returns non-zero on abort
 int StVecBosMaker::accessVertex()
 { //{{{
-   int nInpPrimV = mMuDstMaker->muDst()->numberOfPrimaryVertices();
+   int nInpPrimV = mStMuDstMaker->muDst()->numberOfPrimaryVertices();
 
    if (nInpPrimV < par_minPileupVert) return -1;
 
@@ -195,9 +195,9 @@ int StVecBosMaker::accessVertex()
 
    for (int iv = 0; iv < nInpPrimV; iv++)
    {
-      StMuPrimaryVertex *V = mMuDstMaker->muDst()->primaryVertex(iv);
+      StMuPrimaryVertex *V = mStMuDstMaker->muDst()->primaryVertex(iv);
       assert(V);
-      mMuDstMaker->muDst()->setVertexIndex(iv);
+      mStMuDstMaker->muDst()->setVertexIndex(iv);
 
       float rank   = V->ranking();
       float funnyR = 999;
@@ -249,7 +249,7 @@ int StVecBosMaker::accessVertex()
    }
 
    // access L0-HT data
-   StMuEvent *muEve = mMuDstMaker->muDst()->event();
+   StMuEvent *muEve = mStMuDstMaker->muDst()->event();
 
    for (int m = 0; m < 300; m++)	{
       int val = muEve->emcTriggerDetector().highTower(m);
@@ -286,20 +286,20 @@ int StVecBosMaker::accessTracks()  // return non-zero on abort
 { //{{{
    int nTrOK = 0;
 
-   // printf("\n nInp=%d eveID=%d nPVer=%d nAnyV= %d\n",nInpEve,mMuDstMaker->muDst()->event()->eventId(),mWEvent->vertex.size(),mMuDstMaker->muDst()->numberOfPrimaryVertices());
+   // printf("\n nInp=%d eveID=%d nPVer=%d nAnyV= %d\n",nInpEve,mStMuDstMaker->muDst()->event()->eventId(),mWEvent->vertex.size(),mStMuDstMaker->muDst()->numberOfPrimaryVertices());
    for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
       uint vertID = mWEvent->vertex[iv].id;
-      assert(vertID < mMuDstMaker->muDst()->numberOfPrimaryVertices());
+      assert(vertID < mStMuDstMaker->muDst()->numberOfPrimaryVertices());
       assert(vertID >= 0);
-      StMuPrimaryVertex *V = mMuDstMaker->muDst()->primaryVertex(vertID);
+      StMuPrimaryVertex *V = mStMuDstMaker->muDst()->primaryVertex(vertID);
       assert(V);
-      mMuDstMaker->muDst()->setVertexIndex(vertID);
+      mStMuDstMaker->muDst()->setVertexIndex(vertID);
       float rank = V->ranking();
       assert(rank > 0 || (rank < 0 && V->nEEMCMatch()));
-      Int_t nPrimTrAll = mMuDstMaker->muDst()->GetNPrimaryTrack();
+      Int_t nPrimTrAll = mStMuDstMaker->muDst()->GetNPrimaryTrack();
 
       for (int itr = 0; itr < nPrimTrAll; itr++) {
-         StMuTrack *prTr = mMuDstMaker->muDst()->primaryTracks(itr);
+         StMuTrack *prTr = mStMuDstMaker->muDst()->primaryTracks(itr);
 
          if (prTr->flag() <= 0) continue;
 
@@ -496,7 +496,7 @@ int StVecBosMaker::accessTracks()  // return non-zero on abort
 //
 int StVecBosMaker::accessBTOW()
 { //{{{
-   StMuEmcCollection *emc = mMuDstMaker->muDst()->muEmcCollection();
+   StMuEmcCollection *emc = mStMuDstMaker->muDst()->muEmcCollection();
 
    if (!emc) {
       gMessMgr->Warning() << "No EMC data for this event" << endm;    return -4;
@@ -678,18 +678,18 @@ float StVecBosMaker::sumTpcCone(int vertID, TVector3 refAxis, int flag, int poin
    // printf("******* sumTpcCone, flag=%d eveId=%d vertID=%d  eta0=%.2f phi0/rad=%.2f  \n",flag,mWEvent->id,vertID,refAxis.PseudoRapidity() ,refAxis.Phi());
 
    assert(vertID >= 0);
-   assert(vertID < (int) mMuDstMaker->muDst()->numberOfPrimaryVertices());
+   assert(vertID < (int) mStMuDstMaker->muDst()->numberOfPrimaryVertices());
 
-   StMuPrimaryVertex *V = mMuDstMaker->muDst()->primaryVertex(vertID);
+   StMuPrimaryVertex *V = mStMuDstMaker->muDst()->primaryVertex(vertID);
    assert(V);
-   mMuDstMaker->muDst()->setVertexIndex(vertID);
+   mStMuDstMaker->muDst()->setVertexIndex(vertID);
    float rank = V->ranking();
    assert(rank > 0 || (rank < 0 && V->nEEMCMatch()));
    double ptSum = 0;
-   Int_t nPrimTrAll = mMuDstMaker->muDst()->GetNPrimaryTrack();
+   Int_t nPrimTrAll = mStMuDstMaker->muDst()->GetNPrimaryTrack();
 
    for (int itr = 0; itr < nPrimTrAll; itr++) {
-      StMuTrack *prTr = mMuDstMaker->muDst()->primaryTracks(itr);
+      StMuTrack *prTr = mStMuDstMaker->muDst()->primaryTracks(itr);
 
       if (prTr->flag() <= 0) continue;
 
@@ -736,7 +736,7 @@ void StVecBosMaker::accessBSMD()
    const char cPlane[mxBSmd] = {'E', 'P'};
 
    // Access to muDst
-   StMuEmcCollection *emc = mMuDstMaker->muDst()->muEmcCollection();
+   StMuEmcCollection *emc = mStMuDstMaker->muDst()->muEmcCollection();
 
    if (!emc) {
       gMessMgr->Warning() << "No EMC data for this muDst event" << endm;    return;
