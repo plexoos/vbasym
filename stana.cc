@@ -123,12 +123,12 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    }
    else { //  new  MC w/ working time stamp
       //assert(2==5); M-C not unpacking not implemented
-      char *file1 = strstr(inMuDstFileListName.c_str(), "cn100");
-      assert(file1);
-      file1--;
-      printf("file1: %s\n", file1);
-      outF = file1;
-      //outF.ReplaceAll(".MuDst.root","");
+      //// char *file1 = strstr(inMuDstFileListName.c_str(), "cn100");
+      //// assert(file1);
+      //// file1--;
+      //// printf("file1: %s\n", file1);
+      //// outF = file1;
+      //// outF.ReplaceAll(".MuDst.root","");
       fileG = inMuDstFileListName.c_str();
       fileG.ReplaceAll("MuDst", "geant");
    }

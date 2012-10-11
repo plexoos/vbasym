@@ -127,7 +127,7 @@ void AnaInfo::ProcessOptions(int argc, char **argv)
 
    int c;
 
-   while ((c = getopt_long(argc, argv, "?hl::r:f:jnm:", long_options, &option_index)) != -1)
+   while ((c = getopt_long(argc, argv, "?hl::r:f:jn:m", long_options, &option_index)) != -1)
    {
       switch (c) {
 
