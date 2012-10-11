@@ -203,8 +203,8 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       dbMk->SetFlavor("sim",    "eemcPMTcal"); // use ideal gains for 2011 real data as well
    }
    else {
-      printf("???? unforeseen MC flag, ABORT\n");
-      assert(1 == 2);
+      // printf("???? unforeseen MC flag, ABORT\n");
+      // assert(1 == 2);
    }
 
    // Load EEMC database
