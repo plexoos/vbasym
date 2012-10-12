@@ -1,4 +1,4 @@
-// $Id: StZBosMaker.h,v 1.1 2012/10/09 15:21:20 smirnovd Exp $
+// $Id: StZBosMaker.h,v 1.2 2012/10/12 19:30:01 smirnovd Exp $
 
 #ifndef STAR_StZBosMaker
 #define STAR_StZBosMaker
@@ -35,9 +35,9 @@ private:
    enum {mxHA = 100};
 
    StVecBosMaker *wMK;      // W-algo maker with all data
-   StMuDstMaker *muMK;
-   TObjArray    *HList;    // histograms
-   TH1          *hA[mxHA];
+   StMuDstMaker  *muMK;
+   TObjArray     *HList;    // histograms
+   TH1           *hA[mxHA];
 
    void initHistos();
    void find_Z_boson();
@@ -57,16 +57,16 @@ public:
    void setMinZMass(float x)               { par_minMassZ = x; return;}
    void setMaxZMass(float x)               { par_maxMassZ = x; return;}
    void printJan(WeveEleTrack *T);
-   virtual Int_t InitRun(int runnumber); // Overload empty StMaker::InitRun
+   virtual Int_t InitRun(int runnumber);   // Overload empty StMaker::InitRun
    virtual Int_t FinishRun(int runnumber); // Overload empty StMaker::FinishRun
 
    // Displayed on session exit, leave it as-is please ...
    virtual const char *GetCVS() const {
-      static const char cvs[] = "Tag $Name:  $ $Id: StZBosMaker.h,v 1.1 2012/10/09 15:21:20 smirnovd Exp $ built "__DATE__" "__TIME__ ;
+      static const char cvs[] = "";
       return cvs;
    }
 
-   ClassDef(StZBosMaker, 0)  //StAF chain virtual base class for Makers
+   ClassDef(StZBosMaker, 0)
 };
 
 #endif

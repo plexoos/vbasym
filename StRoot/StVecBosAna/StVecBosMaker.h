@@ -49,7 +49,7 @@ class StVecBosMaker : public StMaker
 
 private:
    StMuDstMaker  *mStMuDstMaker;
-   StJetReader   *mJetReaderMaker;
+   StJetReader   *mStJetReader;
    int            mNJets;
    TString        mJetTreeBranch;
    TString        mJetTreeBranch_noEEMC;
@@ -93,8 +93,8 @@ private:
    float parE_trackEtaMin;
    int   parE_nSmdStrip;
 
-   float par_etowScale;
-   float par_btowScale;
+   float mParETOWScale;
+   float mParBTOWScale;
 
    char *gains_file;
    int   use_gains_file;
@@ -120,12 +120,14 @@ public: // to overwrite default params from .C macro
       par_kSigPed = ksp; par_maxADC = madc; par_clustET = clet;
       par_clustFrac24 = fr1;
    }
-   void setEtowScale(float x) { par_etowScale = x; }
-   void setBtowScale(float x) { par_btowScale = x; }
+   void SetEtowScale(float x) { mParETOWScale = x; }
+   void SetBtowScale(float x) { mParBTOWScale = x; }
    void setL0AdcThresh(int x) { par_l0emulAdcThresh = x; }
    void setL2ClusterThresh(float x) { par_l2emulClusterThresh = x; }
    void setL2SeedThresh(float x) { par_l2emulSeedThresh = x; }
-   void setJetTreeBranch(TString jetTreeBranch, TString jetTreeBranch_noEEMC) { mJetTreeBranch = jetTreeBranch; mJetTreeBranch_noEEMC = jetTreeBranch_noEEMC; }
+   void setJetTreeBranch(TString jetTreeBranch, TString jetTreeBranch_noEEMC) {
+      mJetTreeBranch = jetTreeBranch; mJetTreeBranch_noEEMC = jetTreeBranch_noEEMC;
+   }
 
    void setGainsFile(char *x) {gains_file = x; use_gains_file = 1;}
    void setTreeName(TString x) { mTreeName = x; }
@@ -147,15 +149,15 @@ private:
    EEmcSmdGeom    *mGeomSmd;   // access to ESMD geometry
    TVector3 positionEtow[mxEtowSec *mxEtowSub][mxEtowEta];
 
-   int   accessBarrelTrig();
-   int   accessEndcapTrig();
-   int   accessVertex();
+   int   ReadBarrelTrigInfo();
+   int   ReadEndcapTrigInfo();
+   int   ReadVertexInfo();
    void  fillTowHit(bool vert);
    void  fillNorm();
    int   accessTracks();
-   int   accessBTOW();
+   int   ReadBTOWInfo();
    void  accessBSMD();
-   int   accessETOW();
+   int   ReadETOWInfo();
    void  accessEPRS();
    void  accessESMD();
    void  analyzeESMD();
@@ -172,7 +174,8 @@ private:
    int   matchTrack2EtowCluster();
    void  findNearJet();
    void  findAwayJet();
-   void  findPtBalance();
+   void  CalcPtBalance();
+   void  CalcMissingET();
    void  esmdAnalysis();
 
    // jets
@@ -191,7 +194,7 @@ private:
    WeveCluster maxEtow2x1(int iEta, int iPhi, float zVert);
    WeveCluster maxEtow2x2(int iEta, int iPhi, float zVert);
    WeveCluster sumEtowPatch(int iEta, int iPhi, int Leta, int  Lphi, float zVert);
-   void patchToEtaPhi(int patch, int *eta, int *phi);
+   void PatchToEtaPhi(int patch, int *eta, int *phi);
 
 
    // histograms
@@ -240,7 +243,7 @@ protected:
 
    /// Displayed on session exit, leave it as-is please ...
    virtual const char *GetCVS() const {
-      static const char cvs[] = "Tag $Name:  $ $Id: StVecBosMaker.h,v 1.5 2012/10/11 23:22:41 smirnovd Exp $ built "__DATE__" "__TIME__ ;
+      static const char cvs[] = "";
       return cvs;
    }
 

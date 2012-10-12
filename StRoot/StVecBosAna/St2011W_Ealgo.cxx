@@ -44,7 +44,7 @@ void StVecBosMaker::findEndcap_W_boson()
 
          hE[20]->Fill("noNear", 1.);
          nNoNear++;
-         hE[112]->Fill( T.cluster.ET); // for Joe
+         hE[112]->Fill(T.cluster.ET); // for Joe
          hE[50]->Fill(T.awayTpcPT);
          hE[51]->Fill(T.awayBtowET);
          hE[54]->Fill(T.awayTotET);

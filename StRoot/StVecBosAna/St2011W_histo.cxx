@@ -9,8 +9,6 @@
 
 void StVecBosMaker::initHistos()
 {
-   const float PI = TMath::Pi();
-
    // data histograms
    memset(hA, 0, sizeof(hA));
 
@@ -20,7 +18,7 @@ void StVecBosMaker::initHistos()
    char txt[1000], txt0[100];
    int  nCase = 20;
 
-   hA[0] = h = new TH1F("muStatEve", Form("Barrel W-algo: event count : %s", coreTitle.Data()), nCase, 0, nCase);
+   hA[0] = h = new TH1F("hEventStat", Form("Barrel W-algo: event count : %s", coreTitle.Data()), nCase, 0, nCase);
    h->GetXaxis()->SetTitleOffset(0.4);
    h->GetXaxis()->SetLabelSize(0.06);
    h->GetXaxis()->SetTitleSize(0.05);
@@ -34,7 +32,7 @@ void StVecBosMaker::initHistos()
 
    for (int i = 0; i < 19; i++) h->Fill(key[i], 0.); // preset the order of keys
 
-   hA[1] = h = new TH1F("muInTrg", "mu Barrel W input triggers, WARN: scrambled if manyruns are combined by hadd.C; trigID (random order)", nCase, 0, nCase);
+   hA[1] = h = new TH1F("muInTrg", "mu Barrel W input triggers, WARN: scrambled if many runs are combined by hadd.C; trigID (random order)", nCase, 0, nCase);
    h->GetXaxis()->SetLabelSize(0.06);
 
    hA[2] = h = new TH1F("mubX48", "L2WB-ET events vs. bXing; bXing= raw bx48", 128, -0.5, 127.5);
@@ -43,18 +41,21 @@ void StVecBosMaker::initHistos()
    hA[3] = h = new TH1F("mubX7", "L2WB-ET events vs. bXing; bXing= raw bx7", 128, -0.5, 127.5);
    h->SetFillColor(kBlue);
 
-   hA[4] = new TH1F("mubX48v", "L2WB-ET & primVertex  vs. bXing; bXing= raw bx48", 128, -0.5, 127.5);
+   hA[4] = h = new TH1F("mubX48v", "L2WB-ET & primVertex  vs. bXing; bXing= raw bx48", 128, -0.5, 127.5);
    hA[5] = h = new TH1F("mubX7v", "L2WB-ET & primVertex; bXing= raw bx7", 128, -0.5, 127.5);
    h->SetFillColor(kBlue);
 
    // DMS data
    hA[6] = h = new TH1F("muDsm1", "L2WB-ET events DMS spectrum; DSM value", 64, -0.5, 63.5);
    h->SetMinimum(0.8);
+
    hA[7] = h = new TH1F("muDsm2", "L2WB-Rnd events DMS spectrum; DSM value", 64, -0.5, 63.5);
    h->SetMinimum(0.8);
-   sprintf(txt, "L2WB-ET events w/ DMS>%d vs.BTOW TP ID bXing; Hanks' TP ID", par_DsmThres);
+   sprintf(txt, "L2WB-ET events w/ DMS>%d vs. BTOW TP ID bXing; Hanks' TP ID", par_DsmThres);
+
    hA[8] = new TH1F("muDsm3", txt, 300, -0.5, 299.5);
-   sprintf(txt, "L2WB-ET events w/ DMS>%d & primVertexvs.BTOW TP ID bXing; Hanks' TP ID", par_DsmThres);
+   sprintf(txt, "L2WB-ET events w/ DMS>%d & primVertex vs. BTOW TP ID bXing; Hanks' TP ID", par_DsmThres);
+
    hA[9] = h = new TH1F("muDsm4", txt, 300, -0.5, 299.5);
    h->SetFillColor(kBlue); h->SetLineColor(kBlue);
 
@@ -173,7 +174,7 @@ void StVecBosMaker::initHistos()
    hA[54] = h = new TH1F("muAwayTotEt", "Barrel: away-cone TPC+EMC ET sum ; away ET (GeV)", 200, 0, 100);
    hA[55] = h = new TH1F("muEwayET", "Barrel: ETOW away-cone ET sum;   ET (GeV)", 100, 0, 100); // away side energy
 
-   hA[57] = h = new TH2F("muTr2D1pt5", "Barrel: lastHit on track (pt > 5); detector eta ; detector phi (rad)", 100, -1.1, 1.1, 240, -PI, PI);
+   hA[57] = h = new TH2F("muTr2D1pt5", "Barrel: lastHit on track (pt > 5); detector eta ; detector phi (rad)", 100, -1.1, 1.1, 240, -M_PI, M_PI);
    hA[58] = new TH1F("muTrch2West", "Barrel: track glob chi2/dof  West TPC ; chi2/dof", 100, 0, 5);
    hA[59] = new TH1F("muTrch2East", "Barrel: track glob chi2/dof  East TPC ; chi2/dof", 100, 0, 5);
 
@@ -200,10 +201,10 @@ void StVecBosMaker::initHistos()
    ln = new TLine(par_highET, 0, par_highET, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
 
    sprintf(txt, "Barrel W: Final selection, ET>%.0f GeV 'goldenW'; detector eta ; detector phi (rad)", par_highET);
-   hA[91] = new TH2F("muW2D1", txt, 10, -1.0, 1.0, 24, -PI, PI);
+   hA[91] = new TH2F("muW2D1", txt, 10, -1.0, 1.0, 24, -M_PI, M_PI);
 
-   hA[92] = new TH2F("muWdedx", "Barrel W: Track dEdx, final selection; 2x2 ET (GeV); dEdx (keV)", 100, 0, 100, 100, 0, 10);
-   hA[93] = new TH2F("muWglDca", "Barrel W: Track glob vertex abs(DCA), final selection ; 2x2 ET (GeV); |DCA| (cm)", 100, 0, 100, 100, 0, 5);
+   hA[92] = new TH2F("muWdedx",    "Barrel W: Track dEdx, final selection; 2x2 ET (GeV); dEdx (keV)", 100, 0, 100, 100, 0, 10);
+   hA[93] = new TH2F("muWglDca",   "Barrel W: Track glob vertex abs(DCA), final selection ; 2x2 ET (GeV); |DCA| (cm)", 100, 0, 100, 100, 0, 5);
    hA[94] = new TH2F("muWglDcaSP", "Barrel W: Track prim POSITIVE glob signed DCA, final selection; 2x2 ET (GeV); sDCA (cm)", 100, 0, 100, 100, -5, 5);
    hA[95] = new TH2F("muWglDcaSN", "Barrel W: Track prim NEGATIVE glob signed DCA, final selection ; 2x2 ET (GeV); sDCA (cm)", 100, 0, 100, 100, -5, 5);
 
@@ -242,11 +243,11 @@ void StVecBosMaker::initHistos()
 
    //free 114-131
 
-   hA[117] = h = new TH2F("mujetQAeta_phi", "Input Jet phi vs eta ;  eta ; phi ", 50, -3, 3, 63, -PI, PI);
-   hA[118] = h = new TH1F("mujetQApt", "Input Jet pt; pt;", 100, 0, 100);
+   hA[117] = h = new TH2F("jetEtaVsPhi", "Input Jet phi vs eta ;  eta ; phi ", 50, -3, 3, 63, -M_PI, M_PI);
+   hA[118] = h = new TH1F("jetPT", "Input Jet pt; pt;", 100, 0, 100);
 
-   hA[132] = h = new TH2F("muptBalance_clust", "ptBalance vs cluster ET; 2x2 Cluster ET; ptBalance", 100, 0, 100, 100, 0, 100);
-   hA[133] = h = new TH2F("muptBalance_awayTot", "ptBalance vs awayside PT; awayside PT; ptBalance", 100, 0, 100, 100, 0, 100);
+   hA[132] = h = new TH2F("ptBalance_clust",   "ptBalance vs cluster ET; 2x2 Cluster ET; ptBalance", 100, 0, 100, 100, 0, 100);
+   hA[133] = h = new TH2F("ptBalance_awayTot", "ptBalance vs awayside PT; awayside PT; ptBalance", 100, 0, 100, 100, 0, 100);
 
    hA[134] = h = new TH2F("musPtBalance_clust", "Barrel: sPtBalance vs cluster ET; 2x2 Cluster ET (GeV); signed Pt balance (GeV)", 100, 0, 100, 100, -100, 100);
    Lx = h->GetListOfFunctions();
@@ -285,7 +286,7 @@ void StVecBosMaker::initHistos()
 
    hA[195] = h = new TH1F("muEtaLT0_maxTowADC", "max tower ADC for eta < 0", 4096, 0, 4096);
    hA[196] = h = new TH1F("muEtaGT0_maxTowADC", "max tower ADC for eta > 0", 4096, 0, 4096);
-   hA[197] = h = new TH2F("muTr2D1pt10", "lastHit on track (pt > 10); detector eta ; detector phi (rad)", 100, -1.1, 1.1, 240, -PI, PI);
+   hA[197] = h = new TH2F("muTr2D1pt10", "lastHit on track (pt > 10); detector eta ; detector phi (rad)", 100, -1.1, 1.1, 240, -M_PI, M_PI);
    hA[198] = h = new TH2F("muTrPt_eta", "Track PT vs lastHit eta; detector eta ; prim track pt (GeV)", 100, -1.1, 1.1, 100, 0, 100);
    hA[199] = h = new TH2F("muBdist5", "Barrel: 3D Distance(track-cluster) vs. cluster eta; cluster eta; | distance | (cm)", 100, -1., 1., 50, 0, 25);
    hA[200] = h = new TH2F("muWClustET_eta", "W: 2x2 cluster ET vs. cluster eta; cluster detector eta; 2x2 cluster ET", 100, -1., 1., 60, 0, 60);
@@ -293,7 +294,7 @@ void StVecBosMaker::initHistos()
    hA[202] = h = new TH2F("muBTrPT_eta", "Background: Track PT vs. cluster eta; cluster detector eta; Track PT", 100, -1., 1., 100, 0, 100);
    hA[203] = h = new TH2F("muWE2P_eta", "W: E/P vs. cluster eta; cluster detector eta; E/P", 100, -1., 1., 15, 0, 3);
    hA[204] = h = new TH2F("muBE2P_eta", "Background: E/P vs. cluster eta; cluster detector eta; E/P", 100, -1., 1., 15, 0, 3);
-   hA[205] = h = new TH2F("muWTr2D1", "lastHit on track (W candidate); detector eta ; detector phi (rad)", 100, -1.1, 1.1, 240, -PI, PI);
+   hA[205] = h = new TH2F("muWTr2D1", "lastHit on track (W candidate); detector eta ; detector phi (rad)", 100, -1.1, 1.1, 240, -M_PI, M_PI);
    hA[206] = h = new TH2F("muWClustET_eta_clgt14", "2x2 cluster ET vs. cluster eta (Cluster ET > 14); cluster detector eta; 2x2 cluster ET", 100, -1., 1., 60, 0, 60);
    hA[207] = h = new TH2F("muWClustET_eta_towerIso", "2x2 cluster ET vs. cluster eta (2x2/4x4 frac); cluster detector eta; 2x2 cluster ET", 100, -1., 1., 60, 0, 60);
    hA[208] = h = new TH2F("muWClustET_eta_delR", "2x2 cluster ET vs. cluster eta (track-clust match); cluster detector eta; 2x2 cluster ET", 100, -1., 1., 60, 0, 60);
@@ -301,15 +302,15 @@ void StVecBosMaker::initHistos()
 
    //check ETOW near cone sum
    hA[210] = h = new TH2F("muETOWnearET_eta_tr2cl", "ETOW near cone ET vs. cluster eta; cluster detector eta; ETOW near ET", 100, -1., 1., 20, 0, 20);
-   hA[211] = h = new TH2F("muETOWnearET_phi_etaGT0_tr2cl", "ETOW near cone ET vs. cluster phi (cluster eta > 0); cluster detector phi; ETOW near ET", 240, -PI, PI, 20, 0, 20);
-   hA[212] = h = new TH2F("muETOWnearET_phi_etaLT0_tr2cl", "ETOW near cone ET vs. cluster phi (cluster eta < 0); cluster detector phi; ETOW near ET", 240, -PI, PI, 20, 0, 20);
+   hA[211] = h = new TH2F("muETOWnearET_phi_etaGT0_tr2cl", "ETOW near cone ET vs. cluster phi (cluster eta > 0); cluster detector phi; ETOW near ET", 240, -M_PI, M_PI, 20, 0, 20);
+   hA[212] = h = new TH2F("muETOWnearET_phi_etaLT0_tr2cl", "ETOW near cone ET vs. cluster phi (cluster eta < 0); cluster detector phi; ETOW near ET", 240, -M_PI, M_PI, 20, 0, 20);
 
    //hit towers for beam background tests
    string bx7name[4] = {"[0,30]", "[30,40]", "[40,110]", "[110,120]"};
    for (int i = 0; i < 4; i++) {
-      hA[215 + i] = h = new TH2F(Form("muBTOW_adcGT10goodVer_7bx%d", i), Form("BTOW tower ADC > 10 (after good vertex found) bx7=%s; detector eta; detector phi", bx7name[i].data()), 40, -1, 1, 120, -PI, PI);
-      hA[219 + i] = h = new TH2F(Form("muBTOW_etGT2goodVer_7bx%d", i), Form("BTOW tower ET > 2.0 GeV (after good vertex found) bx7=%s; detector eta; detector phi", bx7name[i].data()), 40, -1, 1, 120, -PI, PI);
-      hA[223 + i] = h = new TH2F(Form("muBTOW_adcGT10noVer_7bx%d", i), Form("BTOW tower ADC > 10 (no rank>0 vertex found) bx7=%s; detector eta; detector phi", bx7name[i].data()), 40, -1, 1, 120, -PI, PI);
+      hA[215 + i] = h = new TH2F(Form("muBTOW_adcGT10goodVer_7bx%d", i), Form("BTOW tower ADC > 10 (after good vertex found) bx7=%s; detector eta; detector phi", bx7name[i].data()), 40, -1, 1, 120, -M_PI, M_PI);
+      hA[219 + i] = h = new TH2F(Form("muBTOW_etGT2goodVer_7bx%d", i), Form("BTOW tower ET > 2.0 GeV (after good vertex found) bx7=%s; detector eta; detector phi", bx7name[i].data()), 40, -1, 1, 120, -M_PI, M_PI);
+      hA[223 + i] = h = new TH2F(Form("muBTOW_adcGT10noVer_7bx%d", i), Form("BTOW tower ADC > 10 (no rank>0 vertex found) bx7=%s; detector eta; detector phi", bx7name[i].data()), 40, -1, 1, 120, -M_PI, M_PI);
       hA[227 + i] = h = new TH2F(Form("muETOW_adcGT10goodVer_7bx%d", i), Form("ETOW tower ADC > 10 (after good vertex found) bx7=%s; detector eta bin; detector phi bin", bx7name[i].data()), 12, 0, 12, 60, 0, 60);
       hA[231 + i] = h = new TH2F(Form("muETOW_etGT2goodVer_7bx%d", i), Form("ETOW tower ET > 2.0 GeV (after good vertex found) bx7=%s; detector eta bin; detector phi bin", bx7name[i].data()), 12, 0, 12, 60, 0, 60);
       hA[235 + i] = h = new TH2F(Form("muETOW_adcGT10noVer_7bx%d", i), Form("ETOW tower ADC > 10 (no rank>0 vertex found) bx7=%s; detector eta bin; detector phi bin", bx7name[i].data()), 12, 0, 12, 60, 0, 60);
@@ -333,6 +334,6 @@ void StVecBosMaker::initHistos()
       HList->Add( hA[i]);
    }
 
-   //  HList->ls();
+   //HList->ls();
    LOG_INFO << Form("%s::initHistos done", GetName()) << endm;
 }

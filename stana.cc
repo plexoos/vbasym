@@ -393,8 +393,8 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    stVecBosMaker->setMaxDisplayEve(100); // only first N events will get displayed
    //set energy scale (works for data and MC - be careful!)
-   //stVecBosMaker->setBtowScale(1.0);
-   //stVecBosMaker->setEtowScale(1.0);
+   //stVecBosMaker->SetBtowScale(1.0);
+   //stVecBosMaker->SetEtowScale(1.0);
 
    // evaluation of result, has full acess to W-algo internal data including
    // overwrite - be careful

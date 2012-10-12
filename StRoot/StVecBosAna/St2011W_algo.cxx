@@ -243,7 +243,66 @@ void StVecBosMaker::tag_Z_boson()
 }
 
 
-void StVecBosMaker::findPtBalance()
+void StVecBosMaker::CalcPtBalance()
+{
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
+   {
+      WEventVertex &vertex = mWEvent->vertex[iv];
+
+      for (uint it = 0; it < vertex.eleTrack.size(); it++)
+      {
+         WeveEleTrack &track = vertex.eleTrack[it];
+
+         if (track.isMatch2Cl == false) continue;
+
+         // Loop over branch with EEMC
+         mJets = GetJets(mJetTreeBranch);
+         if (mJetTreeChain) mJets = GetJetsTreeAnalysis(mJetTreeBranch);
+
+         // Add up all jets outside of nearDeltaR cone around the electron track
+         for (int iJet = 0; iJet<mNJets; iJet++) { //loop over jets
+            StJet *jet = GetJet(iJet);
+            TVector3 jetVec; //vector for jet momentum
+            jetVec.SetPtEtaPhi(jet->Pt(), jet->Eta(), jet->Phi());
+
+            if (jetVec.DeltaR(track.primP) > par_nearDeltaR)
+               track.ptBalance += jetVec;
+         }
+
+         TVector3 clustPt(track.primP.X(), track.primP.Y(), 0);
+         clustPt.SetMag(track.cluster.ET);
+
+         // Add electron energy. XXX:ds: Why is the energy transverse only?
+         track.ptBalance  += clustPt;
+         track.sPtBalance  = track.ptBalance.Perp();
+
+         if (track.ptBalance.Dot(clustPt) < 0)
+            track.sPtBalance *= -1.;
+
+         // Loop over branch without EEMC
+         mJets = GetJets(mJetTreeBranch_noEEMC);
+         if (mJetTreeChain) mJets = GetJetsTreeAnalysis(mJetTreeBranch_noEEMC);
+
+         for (int iJet = 0; iJet < mNJets; iJet++) { //loop over jets
+            StJet *jet = GetJet(iJet);
+            TVector3 jetVec; //vector for jet momentum
+            jetVec.SetPtEtaPhi(jet->Pt(), jet->Eta(), jet->Phi());
+
+            if (jetVec.DeltaR(track.primP) > par_nearDeltaR)
+               track.ptBalance_noEEMC += jetVec;
+         }
+
+         track.ptBalance_noEEMC += clustPt;
+         track.sPtBalance_noEEMC = track.ptBalance_noEEMC.Perp();
+
+         if (track.ptBalance_noEEMC.Dot(clustPt) < 0)
+            track.sPtBalance_noEEMC *= -1.;
+      } // end of loop over tracks
+   } // end of loop over vertices
+}
+
+
+void StVecBosMaker::CalcMissingET()
 {
    for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
    {
