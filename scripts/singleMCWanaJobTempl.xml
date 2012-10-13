@@ -25,13 +25,18 @@
                 setenv filename `cat $FILELIST`
                 echo "work on:"$filename 
  
-                ./stana -f $filename -j -m
-             
+                # ./stana -f $filename -j -m
+ 
+                ln -s &outPath;/jets_run11/jets_&fillNo;.root 
+                ls -al
+                ./stana -f $filename 
+            
                 ## root4star -b -q rdMuWana.C\(&n1;,\"\",\"$filename\",5000,&isMC;,1\)  
  	        ## root4star -b -q rdMuWana.C\(&n1;,\"\",\"$filename\",5000,&isMC;,2\)	
        </command>
          <output fromScratch="jets*.root" toURL="file:&outPath;/jets_run11/"/>
          <output fromScratch="*hist.root" toURL="file:&outPath;/data_run11/"/>
+         <output fromScratch="*Wtree.root" toURL="file:&outPath;/wtree_run11/"/>
          <output fromScratch="*.ps" toURL="file:&outPath;/data_run11/"/>
          <stdout URL="file:&outPath;/log_run11/$FILEBASENAME.out"/>
          <stderr URL="file:&outPath;/log_run11/$FILEBASENAME.err"/>
