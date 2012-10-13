@@ -46,12 +46,12 @@ St2011pubMcMaker::Make()
 {
    //printf("-----------in %s\n", GetName());
    //only get geant particle info for W MC
-   if (wMK->isMC == 8 || wMK->isMC == 30 || wMK->isMC == 20) {
+   ////if (wMK->isMC == 8 || wMK->isMC == 30 || wMK->isMC == 20) { //S.F. oct 12, 2012 
       if (doMCanalysis()) {
          doWanalysis();
          doWefficiency();
       }
-   }
+   ////  }
    return kStOK;
 }
 

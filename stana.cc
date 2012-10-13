@@ -243,7 +243,8 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
          //Get TriggerMaker
          StTriggerSimuMaker *simuTrig = new StTriggerSimuMaker("StarTrigSimu");
          simuTrig->setHList(HList);
-         simuTrig->setMC(isMC); // must be before individual detectors, to be passed
+         // simuTrig->setMC(isMC); // must be before individual detectors, to be passed
+         simuTrig->setMC(2); // must be before individual detectors, to be passed
          simuTrig->useBbc();
          simuTrig->useEemc(0);//default=0:just process ADC, 1,2:comp w/trgData,see .
          simuTrig->eemc->setSetupPath((char *) eemcSetupPath.c_str());
@@ -374,7 +375,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    StVecBosMaker *stVecBosMaker = new StVecBosMaker();
 
    if (isMC) { // MC specific
-      stVecBosMaker->setMC(isMC); //pass "version" of MC to maker
+      stVecBosMaker->setMC(2); //pass "version" of MC to maker
       //stVecBosMaker->setJetNeutScaleMC(1.0);
       //stVecBosMaker->setJetChrgScaleMC(1.0);
    }
@@ -393,8 +394,8 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    stVecBosMaker->setMaxDisplayEve(100); // only first N events will get displayed
    //set energy scale (works for data and MC - be careful!)
-   //stVecBosMaker->SetBtowScale(1.0);
-   //stVecBosMaker->SetEtowScale(1.0);
+   //stVecBosMaker->setBtowScale(1.0);
+   //stVecBosMaker->setEtowScale(1.0);
 
    // evaluation of result, has full acess to W-algo internal data including
    // overwrite - be careful
@@ -458,7 +459,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    for (UInt_t iev = 0; iev < nEntries; iev++)
    {
-      //Info("main()", "Analyzing event %d", iev);
+      Info("main()", "Analyzing event %d", iev);
 
       if (maxEventsUser > 0 && nProcEvents >= maxEventsUser) break;
 

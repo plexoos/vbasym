@@ -725,10 +725,10 @@ void StVecBosMaker::chainJetFile( const Char_t *file )
 int StVecBosMaker::ReadEndcapTrigInfo()
 {
    if (isMC) {
-      if (mWEvent->etow.maxAdc < 10. / 60.*4096) return -1; //L2 is HT
-      hE[0]->Fill("L2ewET", 1.);
-      mWEvent->l2EbitET = true;
-      return 0;
+     //// if (mWEvent->etow.maxAdc < 10. / 60.*4096) return -1; //L2 is HT
+     ////  hE[0]->Fill("L2ewET", 1.);
+     ////  mWEvent->l2EbitET = true;
+     ////  return 0;
    }
 
    StMuEvent *muEve = mStMuDstMaker->muDst()->event();
@@ -978,12 +978,12 @@ int StVecBosMaker::ReadBarrelTrigInfo()
       // L0 and L2, and set the l2bitET flag to true if so.
 
       //if (!passes_L0()) return -1;
-      if (!passes_L2()) return -2;
+      //// if (!passes_L2()) return -2;
 
-      hA[0]->Fill("L2bwET", 1.);
+      //// hA[0]->Fill("L2bwET", 1.);
 
-      mWEvent->l2bitET = true;
-      return 0; // we haven't set everything, but it should be good enough for simu.
+      //// mWEvent->l2bitET = true;
+      //// return 0; // we haven't set everything, but it should be good enough for simu.
    }
 
    StMuEvent *stMuEvent = mStMuDstMaker->muDst()->event();
