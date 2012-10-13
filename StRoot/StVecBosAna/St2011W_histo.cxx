@@ -61,9 +61,11 @@ void StVecBosMaker::initHistos()
 
 
    // vertex histograms
-   hA[10] = h = new TH1F("muVRf", "L2WB: PPV Vertex rank, funny X-axis; X=Log10(rank)+offset", 150, -9, 25);
+   hA[10] = new TH1I("hVertexRankLog", "; Vertex Rank, X=Log10(rank)+offset", 150, -9, 25);
    Lx = h->GetListOfFunctions();
    ln = new TLine(0, 0, 0, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
+
+   hA[14] = new TH1I("hVertexRank", "; Vertex Rank", 100, -1000, 1000);
 
 
    hA[11] = h = new TH1F("muZv", "L2WB: Z of any vertex w/ rank>0;Z-vertex (cm)", 100, -200, 200);
@@ -234,7 +236,7 @@ void StVecBosMaker::initHistos()
 
    // free 102-109
 
-   //..... series of electron ET plots after succesive cuts
+   // A set of electron ET plots after succesive cuts
    char tt2[][200] = {"max 2x2", "track matched", "no near ET", "no away ET"};
    for (int i = 0; i < 4; i++) {
       sprintf(txt, "Barrel electron candidate, cut=%s; 2x2 ET (GeV)", tt2[i]);
@@ -244,9 +246,9 @@ void StVecBosMaker::initHistos()
 
    //free 114-131
 
-   hA[117] = h = new TH2F("jetEtaVsPhi", "Input Jet phi vs eta ;  eta ; phi ", 50, -3, 3, 63, -M_PI, M_PI);
-   hA[118] = h = new TH1F("jetPT", "Input Jet pt; pt;", 100, 0, 100);
-   hA[119] = h = new TH1F("jetCount", "; Num. of Jets; Events", 40, 0, 40);
+   hA[116] = new TH1I("jetCount", "; Num. of Jets; Events", 20, 0, 20);
+   hA[117] = new TH2I("jetEtaVsPhi", "; Jet #eta; Jet #phi; Events", 50, -3, 3, 63, -M_PI, M_PI);
+   hA[118] = new TH1I("jetPT", "; Jet P_{T}; Events", 100, 0, 100);
 
    hA[132] = h = new TH2F("ptBalance_clust",   "ptBalance vs cluster ET; 2x2 Cluster ET; ptBalance", 100, 0, 100, 100, 0, 100);
    hA[133] = h = new TH2F("ptBalance_awayTot", "ptBalance vs awayside PT; awayside PT; ptBalance", 100, 0, 100, 100, 0, 100);

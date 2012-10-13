@@ -401,7 +401,7 @@ Int_t StVecBosMaker::Make()
       if (mStJetReader) { // just QA plots for jets
          mJets = GetJets(mJetTreeBranch); //get input jet info
 
-         hA[119]->Fill(mNJets); // save jet count in this event
+         hA[116]->Fill(mNJets); // save jet count in this event
 
          for (int i_jet = 0; i_jet < mNJets; ++i_jet) {
             StJet *jet     = GetJet(i_jet);
@@ -728,10 +728,10 @@ void StVecBosMaker::chainJetFile( const Char_t *file )
 int StVecBosMaker::ReadEndcapTrigInfo()
 {
    if (isMC) {
-     //// if (mWEvent->etow.maxAdc < 10. / 60.*4096) return -1; //L2 is HT
-     ////  hE[0]->Fill("L2ewET", 1.);
-     ////  mWEvent->l2EbitET = true;
-     ////  return 0;
+      if (mWEvent->etow.maxAdc < 10. / 60.*4096) return -1; //L2 is HT
+      hE[0]->Fill("L2ewET", 1.);
+      mWEvent->l2EbitET = true;
+      return 0;
    }
 
    StMuEvent *stMuEvent = mStMuDstMaker->muDst()->event();
@@ -981,12 +981,12 @@ int StVecBosMaker::ReadBarrelTrigInfo()
       // L0 and L2, and set the l2bitET flag to true if so.
 
       //if (!passes_L0()) return -1;
-      //// if (!passes_L2()) return -2;
+      if (!passes_L2()) return -2;
 
-      //// hA[0]->Fill("L2bwET", 1.);
+      hA[0]->Fill("L2bwET", 1.);
 
-      //// mWEvent->l2bitET = true;
-      //// return 0; // we haven't set everything, but it should be good enough for simu.
+      mWEvent->l2bitET = true;
+      return 0; // we haven't set everything, but it should be good enough for simu.
    }
 
    StMuEvent *stMuEvent = mStMuDstMaker->muDst()->event();
@@ -1169,7 +1169,7 @@ int StVecBosMaker::ReadVertexInfo()
       else if (rank > 0) funnyR = log(rank);
       else               funnyR = log(rank + 1e6) - 10;
 
-      if (mWEvent->l2bitET)  hA[10]->Fill(funnyR);
+      if (mWEvent->l2bitET)  { hA[10]->Fill(funnyR); hA[14]->Fill(rank); }
       if (mWEvent->l2EbitET) hE[10]->Fill(funnyR);
 
       //keep some neg. rank vertices for endcap if matched to ETOW

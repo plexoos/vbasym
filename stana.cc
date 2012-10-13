@@ -146,7 +146,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    // create chain
    StChain *stChain = new StChain("StChain");
 
-   // create histogram storage array  (everybody needs it):
+   // Create "global" histogram storage array
    TObjArray *HList    = new TObjArray();
    TObjArray *HListTpc = new TObjArray();
 
