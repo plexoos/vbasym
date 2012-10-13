@@ -612,24 +612,31 @@ int StVecBosMaker::extendTrack2Barrel() // return # of extended tracks
 
 
 int StVecBosMaker::matchTrack2BtowCluster()
-{ //{{{
+{
    // printf("******* matchCluster() nVert=%d\n",mWEvent->vertex.size());
    int nTr = 0;
    float Rcylinder = mBtowGeom->Radius();
-   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
+
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
+   {
       WEventVertex &vertex = mWEvent->vertex[iv];
       float zVert = vertex.z;
-      for (uint it = 0; it < vertex.eleTrack.size(); it++) {
+
+      for (uint it = 0; it < vertex.eleTrack.size(); it++)
+      {
          WeveEleTrack &track = vertex.eleTrack[it];
          if (track.pointTower.id <= 0) continue; //skip endcap towers
 
          float trackPT = track.prMuTrack->momentum().perp();
-         track.cluster = maxBtow2x2( track.pointTower.iEta, track.pointTower.iPhi, zVert);
-         hA[33]->Fill( track.cluster.ET);
-         hA[34]->Fill(track.cluster.adcSum, trackPT);
-         hA[110]->Fill( track.cluster.ET);
 
-         // ........compute surroinding cluster energy
+         // Choose 2x2 cluster with maximum ET
+         track.cluster = maxBtow2x2( track.pointTower.iEta, track.pointTower.iPhi, zVert);
+
+         hA[33]->Fill(track.cluster.ET);
+         hA[34]->Fill(track.cluster.adcSum, trackPT);
+         hA[110]->Fill(track.cluster.ET);
+
+         // Compute surroinding cluster energy
          int iEta = track.cluster.iEta;
          int iPhi = track.cluster.iPhi;
          track.cl4x4 = sumBtowPatch(iEta - 1, iPhi - 1, 4, 4, zVert); // needed for lumi monitor
@@ -653,6 +660,7 @@ int StVecBosMaker::matchTrack2BtowCluster()
 
          hA[43]->Fill( track.cluster.energy, D.Mag());
          hA[44]->Fill( track.cluster.position.z(), D.z());
+
          float delPhi = track.pointTower.R.DeltaPhi(track.cluster.position);
          //   printf("aaa %f %f %f   phi=%f\n",D.x(),D.y(),D.z(),delPhi);
          hA[45]->Fill( track.cluster.energy, Rcylinder * delPhi); // wrong?
@@ -674,77 +682,91 @@ int StVecBosMaker::matchTrack2BtowCluster()
    if (nTr <= 0) return -1;
    hA[0]->Fill("Tr2Cl", 1.0);
    return 0;
-} //}}}
+}
 
 
-WeveCluster StVecBosMaker::maxBtow2x2(int iEta, int iPhi, float zVert)
+/**
+ * For a given eta-phi bin considers all combinations of 2x2 bin clusters around it
+ * and returns the one with the maximum ET.
+ */
+WeveCluster StVecBosMaker::maxBtow2x2(int etaBin, int phiBin, float zVert)
 {
-   //printf("   maxBtow2x2  seed iEta=%d iPhi=%d \n",iEta, iPhi);
+   //printf("maxBtow2x2  seed etaBin=%d phiBin=%d \n",etaBin, phiBin);
    const int L = 2; // size of the summed square
 
    WeveCluster maxCL;
+
    // just 4 cases of 2x2 clusters
    float maxET = 0;
-   int I0 = iEta - 1;
-   int J0 = iPhi - 1;
-   for (int I = I0; I <= I0 + 1; I++) {
-      for (int J = J0; J <= J0 + 1; J++) {
-         WeveCluster CL = sumBtowPatch(I, J, L, L, zVert);
+
+   for (int iEta=etaBin-1; iEta<=etaBin; iEta++)
+   {
+      for (int iPhi=phiBin-1; iPhi<=phiBin; iPhi++)
+      {
+         WeveCluster CL = sumBtowPatch(iEta, iPhi, L, L, zVert);
          if (maxET > CL.ET) continue;
          maxET = CL.ET;
          maxCL = CL;
-         // printf("   newMaxETSum=%.1f iEta=%d iPhi=%d \n",maxET, I,J);
+         // printf("   newMaxETSum=%.1f etaBin=%d iPhi=%d \n",maxET, I,J);
       }
-   }// 4 combinations done
+   }
+
    //printf(" final inpEve=%d SumET2x2=%.1f \n",nInpEve,maxET);
    return maxCL;
 }
 
 
-WeveCluster StVecBosMaker::sumBtowPatch(int iEta, int iPhi, int Leta, int  Lphi, float zVert)
+WeveCluster StVecBosMaker::sumBtowPatch(int etaBin, int phiBin, int etaWidth, int  phiWidth, float zVert)
 {
-   //printf("  eveID=%d btowSquare seed iEta=%d[+%d] iPhi=%d[+%d] zVert=%.0f \n",mWEvent->id,iEta,Leta, iPhi,Lphi,zVert);
+   //printf("  eveID=%d btowSquare seed etaBin=%d[+%d] phiBin=%d[+%d] zVert=%.0f \n",mWEvent->id,etaBin,etaWidth, phiBin,phiWidth,zVert);
    WeveCluster CL; // object is small, not to much overhead in creating it
-   CL.iEta = iEta;
-   CL.iPhi = iPhi;
+   CL.iEta = etaBin;
+   CL.iPhi = phiBin;
    TVector3 R;
    double sumW = 0;
    float Rcylinder  = mBtowGeom->Radius();
    float Rcylinder2 = Rcylinder *Rcylinder;
 
-   for (int i = iEta; i < iEta + Leta; i++)
-   { // trim in eta-direction
-      if (i < 0) continue;
-      if (i >= mxBTetaBin) continue;
-      for (int j = iPhi; j < iPhi + Lphi; j++) { // wrap up in the phi-direction
-         int jj = (j + mxBTphiBin) % mxBTphiBin; // keep it always positive
-         //if(L<5) printf("n=%2d  i=%d jj=%d\n",CL.nTower,i,jj);
-         int softID = mapBtowIJ2ID[ i + jj * mxBTetaBin];
-         float ene = mWEvent->bemc.eneTile[kBTow][softID - 1];
-         if (ene <= 0) continue; // skip towers w/o energy
-         float adc = mWEvent->bemc.adcTile[kBTow][softID - 1];
-         float delZ = positionBtow[softID - 1].z() - zVert;
-         float e2et = Rcylinder / sqrt(Rcylinder2 + delZ * delZ);
-         float ET = ene * e2et;
-         float logET = log10(ET + 0.5);
+   for (int iEta = etaBin; iEta < etaBin + etaWidth; iEta++) // trim in eta-direction
+   {
+      if (iEta < 0) continue;
+      if (iEta >= mxBTetaBin) continue;
+
+      for (int iPhi = phiBin; iPhi < phiBin + phiWidth; iPhi++)
+      {
+         // wrap up in the phi-direction
+         int   iPhi_p = (iPhi + mxBTphiBin) % mxBTphiBin;         // keep it always positive
+         int   softID = mapBtowIJ2ID[ iEta + iPhi_p*mxBTetaBin];
+         float energy = mWEvent->bemc.eneTile[kBTow][softID - 1];
+
+         //if (L<5) printf("n=%2d  iEta=%d iPhi_p=%d\n",CL.nTower,iEta,iPhi_p);
+
+         if (energy <= 0) continue; // skip towers w/o energy
+
+         float adc    = mWEvent->bemc.adcTile[kBTow][softID - 1];
+         float delZ   = positionBtow[softID - 1].z() - zVert;
+         float cosine = Rcylinder / sqrt(Rcylinder2 + delZ *delZ);
+         float ET     = energy * cosine;
+         float logET  = log10(ET + 0.5);
+
          CL.nTower++;
-         CL.energy += ene;
-         CL.ET += ET;
+         CL.energy += energy;
+         CL.ET     += ET;
          CL.adcSum += adc;
+
          if (logET > 0) {
-            R += logET * positionBtow[softID - 1];
+            R    += logET * positionBtow[softID - 1];
             sumW += logET;
          }
-         //if(Leta==2) printf("      iEta=%d iPhi=%d  ET=%.1f  ene=%.1f   sum=%.1f logET=%f sumW=%f\n",i,j,ET,ene,CL.energy,logET,sumW);
+         // if(etaWidth==2)
+         //    printf("etaBin=%d phiBin=%d  ET=%.1f  energy=%.1f   sum=%.1f logET=%f sumW=%f\n",iEta,iPhi,ET,energy,CL.energy,logET,sumW);
       }
 
-      // printf(" end btowSquare: iEta=%d  nTw=%d, ET=%.1f adc=%.1f\n",i,CL.nTower,CL.ET,CL.adcSum);
-      if (sumW > 0) {
+      // printf(" end btowSquare: etaBin=%d  nTw=%d, ET=%.1f adc=%.1f\n",iEta,CL.nTower,CL.ET,CL.adcSum);
+      if (sumW > 0)
          CL.position = 1. / sumW * R; // weighted cluster position
-      }
-      else {
+      else
          CL.position = TVector3(0, 0, 999);
-      }
    }
 
    return CL;

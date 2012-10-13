@@ -74,7 +74,8 @@ void StVecBosMaker::initHistos()
    hA[12] = new TH1F("muNV", "L2WB: # vertices per event, rank>0 & Z in range; # of vertices", 10, 0, 10);
 
    // intended for QCD MC normalization
-   hA[13] = h = new TH2F("muBtowMaxCl_Zv", "L2WB: BTOW max 2x2 cluster ET vs Z of any vertex w/ rank>0; Z-vertex (cm); max BTOW 2x2 Cluster ET", 100, -100, 100, 100, 0, 100);
+   hA[13] = h = new TH2F("BtowMaxCl_Zv",
+      "L2WB: BTOW max 2x2 cluster ET vs Z of any vertex w/ rank>0; Z-vertex (cm); max BTOW 2x2 Cluster ET", 100, -100, 100, 100, 0, 100);
 
    //..... Tracks....
    hA[20] = h = new TH1F("muStatTrk", "Barrel W-algo: track  count; cases", nCase, 0, nCase);
@@ -245,6 +246,7 @@ void StVecBosMaker::initHistos()
 
    hA[117] = h = new TH2F("jetEtaVsPhi", "Input Jet phi vs eta ;  eta ; phi ", 50, -3, 3, 63, -M_PI, M_PI);
    hA[118] = h = new TH1F("jetPT", "Input Jet pt; pt;", 100, 0, 100);
+   hA[119] = h = new TH1F("jetCount", "; Num. of Jets; Events", 40, 0, 40);
 
    hA[132] = h = new TH2F("ptBalance_clust",   "ptBalance vs cluster ET; 2x2 Cluster ET; ptBalance", 100, 0, 100, 100, 0, 100);
    hA[133] = h = new TH2F("ptBalance_awayTot", "ptBalance vs awayside PT; awayside PT; ptBalance", 100, 0, 100, 100, 0, 100);

@@ -381,7 +381,7 @@ Int_t StVecBosMaker::Make()
       fillTowHit(true);
 
       // add plots for QCD normalization
-      fillNorm();
+      FillNormHists();
 
       if (accessTracks()) { mWtree->Fill(); return kStOK; } //skip event w/o ~any highPt track
 
@@ -400,6 +400,8 @@ Int_t StVecBosMaker::Make()
 
       if (mStJetReader) { // just QA plots for jets
          mJets = GetJets(mJetTreeBranch); //get input jet info
+
+         hA[119]->Fill(mNJets); // save jet count in this event
 
          for (int i_jet = 0; i_jet < mNJets; ++i_jet) {
             StJet *jet     = GetJet(i_jet);
@@ -582,49 +584,50 @@ int StVecBosMaker::L2algoEtaPhi2IJ(float etaF, float phiF, int &iEta, int &iPhi)
 
 
 // intended for normalization of filtered QCD MC
-void StVecBosMaker::fillNorm()
+void StVecBosMaker::FillNormHists()
 {
-   //fill max BTOW clustET vs z-vertex distribution for events with positive rank vertex
-   if (mWEvent->l2bitET && mWEvent->vertex.size() > 0)
+   // fill max BTOW clustET vs z-vertex distribution for events with positive
+   // rank vertex
+   if (mWEvent->l2bitET && mWEvent->vertex.size() > 0 && mWEvent->vertex[0].rank > 0)
    {
-      if (mWEvent->vertex[0].rank > 0) {
-         float maxBtowET = 0;
+      float maxBtowET = 0;
 
-         for (int i = 0; i < mxBtow; i++)
-            if (mWEvent->bemc.statTile[0][i] == 0) { //zero means good
-               int ieta = -1; int iphi = -1;
-               float etaF = positionBtow[i].Eta();
-               float phiF = positionBtow[i].Phi();
-               L2algoEtaPhi2IJ(etaF, phiF, ieta, iphi);
-               WeveCluster c = maxBtow2x2(ieta, iphi, mWEvent->vertex[0].z);
+      for (int i = 0; i < mxBtow; i++) {
+         if (mWEvent->bemc.statTile[0][i] != 0) continue; //zero means good
 
-               if (c.ET > maxBtowET) maxBtowET = c.ET;
-            }
+         int   ieta = -1;
+         int   iphi = -1;
+         float etaF = positionBtow[i].Eta();
+         float phiF = positionBtow[i].Phi();
 
-         hA[13]->Fill(mWEvent->vertex[0].z, maxBtowET);
+         L2algoEtaPhi2IJ(etaF, phiF, ieta, iphi);
+         WeveCluster c = maxBtow2x2(ieta, iphi, mWEvent->vertex[0].z);
+
+         if (c.ET > maxBtowET) maxBtowET = c.ET;
       }
+
+      hA[13]->Fill(mWEvent->vertex[0].z, maxBtowET);
    }
 
-   //fill max ETOW towerET vs z-vertex distribution for events with positive rank vertex
-   if (mWEvent->l2EbitET && mWEvent->vertex.size() > 0)
+   // fill max ETOW towerET vs z-vertex distribution for events with positive
+   // rank vertex
+   if (mWEvent->l2EbitET && mWEvent->vertex.size() > 0 && mWEvent->vertex[0].rank > 0)
    {
-      if (mWEvent->vertex[0].rank > 0) {
-         float maxEtowET = 0;
+      float maxEtowET = 0;
 
-         for (int isec = 0; isec < mxEtowSec; isec++) {
-            for (int isub = 0; isub < mxEtowSub; isub++) {
-               for (int ieta = 0; ieta < mxEtowEta; ieta++) {
-                  if (mWEvent->etow.stat[isec * mxEtowSub + isub][ieta] == 0) {
-                     WeveCluster c = sumEtowPatch(ieta, isec * mxEtowSub + isub, 1, 1, mWEvent->vertex[0].z);
+      for (int isec = 0; isec < mxEtowSec; isec++) {
+         for (int isub = 0; isub < mxEtowSub; isub++) {
+            for (int ieta = 0; ieta < mxEtowEta; ieta++) {
+               if (mWEvent->etow.stat[isec * mxEtowSub + isub][ieta] == 0) {
+                  WeveCluster c = sumEtowPatch(ieta, isec * mxEtowSub + isub, 1, 1, mWEvent->vertex[0].z);
 
-                     if (c.ET > maxEtowET) maxEtowET = c.ET;
-                  }
+                  if (c.ET > maxEtowET) maxEtowET = c.ET;
                }
             }
          }
-
-         hE[13]->Fill(mWEvent->vertex[0].z, maxEtowET);
       }
+
+      hE[13]->Fill(mWEvent->vertex[0].z, maxEtowET);
    }
 }
 
@@ -652,7 +655,7 @@ TClonesArray* StVecBosMaker::GetJets(TString branchName)
 
 
 // Below is only used for Tree analysis
-TClonesArray * StVecBosMaker::GetJetsTreeAnalysis(TString branchName)
+TClonesArray* StVecBosMaker::GetJetsTreeAnalysis(TString branchName)
 {
    if (mJetTreeChain == 0) {
       mNJets = -1;
@@ -731,8 +734,8 @@ int StVecBosMaker::ReadEndcapTrigInfo()
      ////  return 0;
    }
 
-   StMuEvent *muEve = mStMuDstMaker->muDst()->event();
-   StMuTriggerIdCollection *tic = &(muEve->triggerIdCollection());
+   StMuEvent *stMuEvent = mStMuDstMaker->muDst()->event();
+   StMuTriggerIdCollection *tic = &(stMuEvent->triggerIdCollection());
 
    assert(tic);
 
@@ -750,29 +753,29 @@ int StVecBosMaker::ReadEndcapTrigInfo()
    if (!tic->nominal().isTrigger(parE_l2ewTrgID)) return -2;
    hE[0]->Fill("L2ewId", 1.);
 
-   //need to get offset for 2011 run for EEMC, done, hacked by Jan
+   // need to get offset for 2011 run for EEMC
    struct  L2weResult2011 {
       unsigned char  trigger;     // bit0=rnd, bit1=ET>thr
       unsigned char  highestEt;   // cluster Et with 60Gev Max.  bits=Et*256/60
       unsigned short highestRDO;
    };
 
-   TArrayI &l2Array = muEve->L2Result();
+   TArrayI &l2Array = stMuEvent->L2Result();
    LOG_DEBUG << Form("AccessL2Decision() from regular muDst: L2Array-size=%d", l2Array.GetSize()) << endm;
 
-   unsigned int *l2res = (unsigned int*) l2Array.GetArray();
-   const int EEMCW_off = 35; // valid only for 2011 run
+   unsigned int* trigL2Chunk = (unsigned int*) l2Array.GetArray();
+   const int EEMCW_offset = 35; // valid only for 2011 run
 
-   L2weResult2011 *l2algo = (L2weResult2011*) &l2res[EEMCW_off];
-   mWEvent->l2EbitET  = (l2algo->trigger & 2) > 0; // bit1=ET>thr
-   mWEvent->l2EbitRnd = (l2algo->trigger & 1) > 0; // bit0=rnd,
+   L2weResult2011 *l2weResult2011 = (L2weResult2011*) &trigL2Chunk[EEMCW_offset];
+   mWEvent->l2EbitET  = (l2weResult2011->trigger & 2) > 0; // bit1=ET>thr
+   mWEvent->l2EbitRnd = (l2weResult2011->trigger & 1) > 0; // bit0=rnd,
 
 #if 0
-   if (l2algo->trigger == 0) return -3;
+   if (l2weResult2011->trigger == 0) return -3;
    printf(" L2-jet online results below:\n");
    for (int k = 0; k < 64; k++)
-      if (l2res[k]) printf("k=%2d  val=0x%04x\n", k, l2res[k]);
-   printf("L2WE_Result 4-bytes: trg bitET=%d,  bitRnd=%d, highets:  ET/GeV=%.2f,  RDO=%d  hex=0x%08x\n", mWEvent->l2EbitET, mWEvent->l2EbitRnd, l2algo->highestEt / 256.*60, l2algo->highestRDO, l2res[EEMCW_off]);
+      if (trigL2Chunk[k]) printf("k=%2d  val=0x%04x\n", k, trigL2Chunk[k]);
+   printf("L2WE_Result 4-bytes: trg bitET=%d,  bitRnd=%d, highets:  ET/GeV=%.2f,  RDO=%d  hex=0x%08x\n", mWEvent->l2EbitET, mWEvent->l2EbitRnd, l2weResult2011->highestEt / 256.*60, l2weResult2011->highestRDO, trigL2Chunk[EEMCW_offset]);
 #endif
 
    // hack to make the code work also for run 9 and early run 12
@@ -789,7 +792,7 @@ int StVecBosMaker::ReadEndcapTrigInfo()
    if (mWEvent->l2EbitRnd) {
       hE[0]->Fill("L2ewRnd", 1.);
       for (int m = 0; m < 90; m++) {
-         int val = muEve->emcTriggerDetector().highTowerEndcap(m);
+         int val = stMuEvent->emcTriggerDetector().highTowerEndcap(m);
          hE[7]->Fill(val);
       }
 
@@ -806,7 +809,7 @@ int StVecBosMaker::ReadEndcapTrigInfo()
    // access L0-HT data
    int mxVal = -1;
    for (int m = 0; m < 90; m++)  {
-      int val = muEve->emcTriggerDetector().highTowerEndcap(m);
+      int val = stMuEvent->emcTriggerDetector().highTowerEndcap(m);
       if (mxVal < val) mxVal = val;
       if (mWEvent->l2EbitET) hE[6]->Fill(val);
       if (val < parE_DsmThres) continue;
@@ -1006,12 +1009,12 @@ int StVecBosMaker::ReadBarrelTrigInfo()
    int awaySum[16];
    int totalSum = 0;
 
-   for (int i = 0; i < 16; i++)
-      awaySum[i] = 0;
+   memset(awaySum, 0, sizeof(awaySum));
 
    PatchToEtaPhi(highestM, &tempEta, &highestPhi);
 
-   for (int m = 0; m < 300; m++) {
+   for (int m = 0; m < 300; m++)
+   {
       int myT = stMuEvent->emcTriggerDetector().highTower(m);
       PatchToEtaPhi(m, &tempEta, &tempPhi);
 
@@ -1025,7 +1028,8 @@ int StVecBosMaker::ReadBarrelTrigInfo()
       totalSum += myT;
    }
 
-   for (int i = 0; i < 16; i++)  mWEvent->trigAwaySum[i] = awaySum[i];
+   for (int i = 0; i < 16; i++)
+      mWEvent->trigAwaySum[i] = awaySum[i];
 
    mWEvent->trigTotalSum = totalSum;
 
@@ -1063,35 +1067,35 @@ int StVecBosMaker::ReadBarrelTrigInfo()
    }
 
    mWEvent->bxStar48 = bxStar48;
-   mWEvent->bxStar7 = bxStar7;
-   mWEvent->spin4 = spin4;
+   mWEvent->bxStar7  = bxStar7;
+   mWEvent->spin4    = spin4;
 
-   //check trigger ID
-   if (!tic->nominal().isTrigger(par_l2bwTrgID)) return -2;
+   // Check trigger ID exists = fired
+   if ( !tic->nominal().isTrigger(par_l2bwTrgID) ) return -2;
 
    hA[0]->Fill("L2bwId", 1.);
 
    TArrayI &l2Array = stMuEvent->L2Result();
-   LOG_DEBUG << Form("AccessL2Decision() from regular muDst: L2Ar-size=%d", l2Array.GetSize()) << endm;
+   LOG_DEBUG << Form("AccessL2Decision() from regular muDst: L2Array-size=%d", l2Array.GetSize()) << endm;
 
-   unsigned int* l2res = (unsigned int*) l2Array.GetArray();
-   const int BEMCW_off = 20; // valid only for 2009 & 2011 run
+   unsigned int* trigL2Chunk = (unsigned int*) l2Array.GetArray();
+   const int BEMCW_offset = 20; // valid only for 2009 & 2011 run
 
-   L2wResult2009* l2algo = (L2wResult2009*) &l2res[BEMCW_off];
+   L2wResult2009* l2wResult2009 = (L2wResult2009*) &trigL2Chunk[BEMCW_offset];
 
 #if 0
-   if (l2algo->trigger == 0) return -3;
+   if (l2wResult2009->trigger == 0) return -3;
 
    printf(" L2-jet online results below:\n");
 
    for (int k = 0; k < 64; k++)
-      if (l2res[k]) printf("k=%2d  val=0x%04x\n", k, l2res[k]);
+      if (trigL2Chunk[k]) printf("k=%2d  val=0x%04x\n", k, trigL2Chunk[k]);
 
-   L2wResult2009_print(l2algo);
+   L2wResult2009_print(l2wResult2009);
 #endif
 
-   mWEvent->l2bitET  = (l2algo->trigger & 2) > 0; // bit1=ET>thr
-   mWEvent->l2bitRnd = (l2algo->trigger & 1) > 0; // bit0=rnd
+   mWEvent->l2bitET  = (l2wResult2009->trigger & 2) > 0; // bit1=ET>thr
+   mWEvent->l2bitRnd = (l2wResult2009->trigger & 1) > 0; // bit0=rnd
 
    if ( (mWEvent->l2bitRnd || mWEvent->l2bitET) == 0) return -3; // L2W-algo did not accept this event
 
@@ -1112,7 +1116,7 @@ int StVecBosMaker::ReadBarrelTrigInfo()
 
    if (mWEvent->l2bitET) hA[0]->Fill("L2bwET", 1.);
 
-   //.... only monitor below ....
+   // only monitor below 
    hA[2]->Fill(mWEvent->bx48);
    hA[3]->Fill(mWEvent->bx7);
 
@@ -1185,10 +1189,10 @@ int StVecBosMaker::ReadVertexInfo()
       if (rank > 0) nVerR++; //count vertices with rank>0
 
       WEventVertex wv;
-      wv.id = iv;
-      wv.z = r.z();
-      wv.rank = rank;
-      wv.funnyRank = funnyR;
+      wv.id         = iv;
+      wv.z          = r.z();
+      wv.rank       = rank;
+      wv.funnyRank  = funnyR;
       wv.nEEMCMatch = vertex->nEEMCMatch();
       mWEvent->vertex.push_back(wv);
    }
@@ -1208,10 +1212,10 @@ int StVecBosMaker::ReadVertexInfo()
    }
 
    // access L0-HT data
-   StMuEvent *muEve = mStMuDstMaker->muDst()->event();
+   StMuEvent *stMuEvent = mStMuDstMaker->muDst()->event();
 
    for (int m = 0; m < 300; m++)	{
-      int val = muEve->emcTriggerDetector().highTower(m);
+      int val = stMuEvent->emcTriggerDetector().highTower(m);
 
       if (val < par_DsmThres) continue;
 
@@ -1219,7 +1223,7 @@ int StVecBosMaker::ReadVertexInfo()
    }
 
    for (int m = 0; m<90; m++)	{
-      int val = muEve->emcTriggerDetector().highTowerEndcap(m);
+      int val = stMuEvent->emcTriggerDetector().highTowerEndcap(m);
 
       if (val < parE_DsmThres) continue;
 
@@ -1535,13 +1539,14 @@ int StVecBosMaker::ReadBTOWInfo()
 
 
 void StVecBosMaker::fillTowHit(bool vert)
-{ //{{{
+{
    if (!mWEvent->l2bitET) return; //only barrel triggers
 
    //find highest rank vertex
    float maxRank = 0; uint maxRankId = 0;
 
-   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
+   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
+   {
       float rank = mWEvent->vertex[iv].rank;
 
       if (rank < 0) continue;
@@ -1554,16 +1559,13 @@ void StVecBosMaker::fillTowHit(bool vert)
 
    int bx7 = mWEvent->bx7; int bxBin = -1;
 
-   if (bx7 >= 0 && bx7 < 30)
-      bxBin = 0;
-   else if (bx7 < 40)
-      bxBin = 1;
-   else if (bx7 < 110)
-      bxBin = 2;
-   else if (bx7 < 120)
-      bxBin = 3;
+   if (bx7 >= 0 && bx7 < 30) bxBin = 0;
+   else if (bx7 < 40)        bxBin = 1;
+   else if (bx7 < 110)       bxBin = 2;
+   else if (bx7 < 120)       bxBin = 3;
 
-   float Rcylinder = mBtowGeom->Radius(), Rcylinder2 = Rcylinder * Rcylinder;
+   float Rcylinder  = mBtowGeom->Radius();
+   float Rcylinder2 = Rcylinder*Rcylinder;
 
    //loop barrel towers and fill histo
    for (int i = 0; i < mxBtow; i++) {
@@ -1610,7 +1612,7 @@ void StVecBosMaker::fillTowHit(bool vert)
          }
       }
    }
-} //}}}
+}
 
 
 /**
@@ -1767,10 +1769,10 @@ void StVecBosMaker::accessBSMD()
 */
 bool StVecBosMaker::passes_L0()
 {
-   StMuEvent *muEve = mStMuDstMaker->muDst()->event();
+   StMuEvent *stMuEvent = mStMuDstMaker->muDst()->event();
 
    for (int m = 0; m < 300; m++)
-      if (muEve->emcTriggerDetector().highTower(m) > par_l0emulAdcThresh) return true;
+      if (stMuEvent->emcTriggerDetector().highTower(m) > par_l0emulAdcThresh) return true;
 
    return false;
 }
@@ -1784,28 +1786,34 @@ bool StVecBosMaker::passes_L0()
 */
 bool StVecBosMaker::passes_L2()
 {
-   for (int i = 0; i < mxBtow; i++)
-      if (mWEvent->bemc.statTile[0][i] == 0) //zero means good
-         if (mWEvent->bemc.eneTile[0][i] > par_l2emulSeedThresh) {
-            int ieta = -1; int iphi = -1;
-            float etaF = positionBtow[i].Eta();
-            float phiF = positionBtow[i].Phi();
-            L2algoEtaPhi2IJ(etaF, phiF, ieta, iphi);
-            WeveCluster c = maxBtow2x2(ieta, iphi, 0);
-            if (c.ET > par_l2emulClusterThresh) return true;
-         }
+   for (int i = 0; i < mxBtow; i++) {
+      //zero means good
+      if (mWEvent->bemc.statTile[0][i] != 0 || mWEvent->bemc.eneTile[0][i] <= par_l2emulSeedThresh)
+         continue;
+
+      int   ieta = -1;
+      int   iphi = -1;
+      float etaF = positionBtow[i].Eta();
+      float phiF = positionBtow[i].Phi();
+
+      L2algoEtaPhi2IJ(etaF, phiF, ieta, iphi);
+      WeveCluster c = maxBtow2x2(ieta, iphi, 0);
+
+      if (c.ET > par_l2emulClusterThresh) return true;
+   }
+
    return false;
 }
 
 
-
-/** */
+/** Converts patch index to eta-phi bins? */
 void StVecBosMaker::PatchToEtaPhi(int patch, int *eta, int *phi)
 {
    if (patch < 0 || patch > 299) {
       Error("PatchToEtaPhi", "PatchToEtaPhi p=%d, out of range. Eta phi not defined.\n", patch);
       return;
    }
+
    if (patch < 150) {
       int m = 14 - patch / 10;
       int n = patch % 10;
@@ -1818,5 +1826,4 @@ void StVecBosMaker::PatchToEtaPhi(int patch, int *eta, int *phi)
       *eta = 4 - n / 2;
       *phi = 1 - n % 2 + m * 2;
    }
-   return;
 }

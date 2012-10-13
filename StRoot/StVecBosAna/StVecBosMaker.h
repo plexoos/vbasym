@@ -153,7 +153,7 @@ private:
    int   ReadEndcapTrigInfo();
    int   ReadVertexInfo();
    void  fillTowHit(bool vert);
-   void  fillNorm();
+   void  FillNormHists();
    int   accessTracks();
    int   ReadBTOWInfo();
    void  accessBSMD();
@@ -222,7 +222,7 @@ public:
    virtual void Clear(const Option_t* = "");
    virtual Int_t FinishRun(int runumber);
 
-   void setTrigID(  int l2bw, int l2ew) { par_l2bwTrgID = l2bw; parE_l2ewTrgID = l2ew; }
+   void setTrigID(int l2bw, int l2ew) { par_l2bwTrgID = l2bw; parE_l2ewTrgID = l2ew; }
 
    void setHList(TObjArray *x) {HList = x;}
    void setHListTpc(TObjArray *x) {HListTpc = x;}

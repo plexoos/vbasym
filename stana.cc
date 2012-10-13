@@ -375,7 +375,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    StVecBosMaker *stVecBosMaker = new StVecBosMaker();
 
    if (isMC) { // MC specific
-      stVecBosMaker->setMC(2); //pass "version" of MC to maker
+      stVecBosMaker->setMC(isMC); // pass "version" of MC to maker
       //stVecBosMaker->setJetNeutScaleMC(1.0);
       //stVecBosMaker->setJetChrgScaleMC(1.0);
    }
