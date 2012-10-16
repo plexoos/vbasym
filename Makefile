@@ -30,6 +30,11 @@ STAR_INC_DIRS = -IStRoot -I.sl53_gcc432/include -I/afs/rhic.bnl.gov/star/package
 STAR_LIB_DIRS = -L.sl53_gcc432/lib -L/afs/rhic.bnl.gov/star/packages/SL11d/.sl53_gcc432/lib \
                 -L/afs/rhic.bnl.gov/star/packages/SL11d/.sl53_gcc432/LIB
 
+MYSQLLIBDIR = -L/usr/lib/mysql
+MYSQLLIB = -lmysqlclient
+UTILSLIBDIR = -L/star/u/smirnovd/rootmacros/utils
+UTILSLIB = -lutils
+
 # if you plan to do a whole lot of debugging, remove '-O' switch(es)
 #CXXFLAGS      = -ggdb -Wall -fPIC -I.
 #CXXFLAGS      = -O2
@@ -49,14 +54,11 @@ LIBS          = $(ROOTLIBS) -lTable -lMinuit -lTreePlayer -lGeom -lrt
 
 LDFLAGS      += $(shell root-config --ldflags)
 #LDFLAGS      += -Wl,-rpath,.sl53_gcc432/lib:/afs/rhic.bnl.gov/star/packages/SL12d/.sl53_gcc432/lib:/afs/rhic.bnl.gov/star/ROOT/5.22.00/.sl53_gcc432/rootdeb/lib,--warn-unresolved-symbols
-LDFLAGS      += -Wl,-Bdynamic -Wl,--warn-unresolved-symbols
+LDFLAGS      += -Wl,-Bdynamic -Wl,--warn-unresolved-symbols -Wl,-rpath,/star/u/smirnovd/rootmacros/utils
 
 #------------------------------------------------------------------------------
 
 WANA_LIB      = $(LIB_DIR)/libwana.so
-
-MYSQLLIBDIR = -L/usr/lib/mysql
-MYSQLLIB = -lmysqlclient
 
 STAR_LIBS     = -lSt_base \
                 -lStChain \
@@ -136,7 +138,7 @@ wana: $(WANA_LIB) wana.o
 	@echo "$@ done"
 
 stana: stana.o
-	$(LD) $(LDFLAGS) $(STAR_LIB_DIRS) stana.o $(STAR_LIBS) $(MYSQLLIBDIR) $(MYSQLLIB) $(LIBS) -o $@
+	$(LD) $(LDFLAGS) $(STAR_LIB_DIRS) stana.o $(STAR_LIBS) $(MYSQLLIBDIR) $(MYSQLLIB) $(UTILSLIBDIR) $(UTILSLIB) $(LIBS) -o $@
 	@echo "$@ done"
 
 $(WANA_LIB): $(OBJS) $(WANA_DICT_OBJ)

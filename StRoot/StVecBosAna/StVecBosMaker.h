@@ -15,6 +15,8 @@
 
 #include "WEvent.h"
 #include "WtpcFilter.h"
+#include "VecBosRootFile.h"
+
 
 class  TObjArray;
 class  TH1I;
@@ -48,27 +50,29 @@ class StVecBosMaker : public StMaker
    friend class StZBosMaker;
 
 private:
-   StMuDstMaker  *mStMuDstMaker;
-   StJetReader   *mStJetReader;
-   int            mNJets;
-   TString        mJetTreeBranch;
-   TString        mJetTreeBranch_noEEMC;
-   TClonesArray  *mJets;
-   WEvent        *mWEvent;
-   TTree         *mWtree;
-   TString        mTreeName;
-   TFile         *mTreeFile;
-   WeventDisplay *wDisaply;
-   WtpcFilter     mTpcFilter[mxTpcSec];    //allows sector dependent filter
-   WtpcFilter     mTpcFilterE[mxTpcSec];   //allows sector dependent filter for endcap tracks
-   int            nInpEve;
-   int            nTrigEve;
-   int            nAccEve;                 // event counters
-   int            mRunNo;
-   int            nRun;
-   int            isMC;                    //0 for real data
-   int            Tfirst;
-   int            Tlast;
+  
+   StMuDstMaker   *mStMuDstMaker;
+   StJetReader    *mStJetReader;
+   VecBosRootFile *mVecBosRootFile;
+   int             mNJets;
+   TString         mJetTreeBranch;
+   TString         mJetTreeBranch_noEEMC;
+   TClonesArray   *mJets;
+   WEvent         *mWEvent;
+   TTree          *mWtree;
+   TString         mTreeName;
+   TFile          *mTreeFile;
+   WeventDisplay  *wDisaply;
+   WtpcFilter      mTpcFilter[mxTpcSec];    //allows sector dependent filter
+   WtpcFilter      mTpcFilterE[mxTpcSec];   //allows sector dependent filter for endcap tracks
+   int             nInpEve;
+   int             nTrigEve;
+   int             nAccEve;                 // event counters
+   int             mRunNo;
+   int             nRun;
+   int             isMC;                    //0 for real data
+   int             Tfirst;
+   int             Tlast;
 
    // internal params
    int   par_l0emulAdcThresh;
@@ -103,6 +107,7 @@ private:
    TString coreTitle;
 
 public: // to overwrite default params from .C macro
+
    void setVertexCuts(float zm, int npv) {
       par_vertexZ = zm; par_minPileupVert = npv;
    }
@@ -133,6 +138,7 @@ public: // to overwrite default params from .C macro
    void setTreeName(TString x) { mTreeName = x; }
 
 private:
+
    //.... not used in the algo
    int par_DsmThres, parE_DsmThres;
    int par_maxDisplEve;
@@ -212,7 +218,8 @@ private:
    int  L2algoEtaPhi2IJ(float etaF, float phiF, int &kEta, int &kPhi);
 
 public:
-   StVecBosMaker(const char *name = "2011Walgo");
+
+   StVecBosMaker(const char *name = "StVecBosMaker", VecBosRootFile *vbFile = 0);
    virtual  ~StVecBosMaker() {};
    virtual Int_t Init();
    virtual Int_t Make();

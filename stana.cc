@@ -51,6 +51,7 @@ root4star -b -q 'analyzeMuDst.C(2e3,"st_W_12037041_raw_1400001.MuDst.root",0,1,5
 #include "StVecBosAna/St2011pubWanaMaker.h"
 #include "StVecBosAna/St2011pubSpinMaker.h"
 #include "StVecBosAna/AnaInfo.h"
+#include "StVecBosAna/VecBosRootFile.h"
 
 
 using namespace std;
@@ -115,6 +116,13 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    TString outF = inputFile;
    outF = outF.ReplaceAll(".MuDst.root", "");
    outF = outF.ReplaceAll(".lis", "");
+
+   TString histFileName = histDir + outF + ".wana.hist.root";
+
+   cout << "Output histo file " << histFileName << endl;
+
+   VecBosRootFile vecBosRootFile(histFileName, "recreate"); 
+
    TString fileG;
 
    if (!isMC) {
@@ -372,7 +380,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    }
 
    // W reconstruction code
-   StVecBosMaker *stVecBosMaker = new StVecBosMaker();
+   StVecBosMaker *stVecBosMaker = new StVecBosMaker("StVecBosMaker", &vecBosRootFile);
 
    if (isMC) { // MC specific
       stVecBosMaker->setMC(isMC); // pass "version" of MC to maker
@@ -488,20 +496,15 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    printf("#sorting %s done %d of maxEventsUser = %d, CPU rate= %.1f Hz, total time %.1f minute(s) \n\n", inMuDstFileListName.c_str(), nProcEvents, nEntries, rate, tMnt);
 
+   //vecBosRootFile.Write();
 
-   TString histFileName = histDir;
-   histFileName += outF;
-   histFileName += ".wana.hist.root";
-
-   cout << "Output histo file " << histFileName << endl;
-
-   TFile *hf = new TFile(histFileName, "recreate");
-
-   if (hf->IsOpen()) {
+   if (vecBosRootFile.IsOpen()) {
+      TDirectory *old = vecBosRootFile.mkdir("old");
+      old->cd();
       //HList->ls();
       HList->Write();
       //write TPC histos to new directory
-      TDirectory *tpc = hf->mkdir("tpc");
+      TDirectory *tpc = vecBosRootFile.mkdir("tpc");
       tpc->cd();
       HListTpc->Write();
       printf("\n Histo saved -->%s<\n", histFileName.Data());
@@ -509,6 +512,9 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    else {
       printf("\n Failed to open Histo-file -->%s<, continue\n", histFileName.Data());
    }
+
+   vecBosRootFile.Print();
+   vecBosRootFile.Close();
 
    //stVecBosMaker->Finish();
 

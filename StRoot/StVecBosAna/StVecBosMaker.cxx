@@ -39,8 +39,8 @@ ClassImp(StVecBosMaker)
 
 
 /** */
-StVecBosMaker::StVecBosMaker(const char *name): StMaker(name),
-   mStMuDstMaker(0),
+StVecBosMaker::StVecBosMaker(const char *name, VecBosRootFile *vbFile): StMaker(name),
+   mStMuDstMaker(0), mStJetReader(0), mVecBosRootFile(vbFile),
    Tfirst(numeric_limits<int>::max()), Tlast(numeric_limits<int>::min()),
    mParETOWScale(1.0), mParBTOWScale(1.0)   // for old the Endcap geometr you need ~1.3
 {
@@ -402,6 +402,7 @@ Int_t StVecBosMaker::Make()
          mJets = GetJets(mJetTreeBranch); //get input jet info
 
          hA[116]->Fill(mNJets); // save jet count in this event
+         ((TH1*) mVecBosRootFile->GetHists()->d["kinema"]->o["hJetCount"])->Fill(mNJets);
 
          for (int i_jet = 0; i_jet < mNJets; ++i_jet) {
             StJet *jet     = GetJet(i_jet);
@@ -680,7 +681,7 @@ TClonesArray* StVecBosMaker::GetJetsTreeAnalysis(TString branchName)
 }
 
 
-StJets * StVecBosMaker::GetStJetsCopy(TString branchName)
+StJets* StVecBosMaker::GetStJetsCopy(TString branchName)
 {
    TBranch *branch = mJetTreeChain->GetBranch(branchName);
    return branch ? *(StJets **)branch->GetAddress() : 0;
