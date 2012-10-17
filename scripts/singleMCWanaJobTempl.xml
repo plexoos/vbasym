@@ -29,7 +29,8 @@
  
                 ln -s &outPath;/jets_run11/jets_&fillNo;.root 
                 ls -al
-                ./stana -f $filename 
+                ./stana -f $filename -m 
+                ###./stana -f /star/data56/reco/pp500/pythia6_422/Wplus_enu/perugia320/y2009a/gheisha_on/p09ig/rcf10010_1005_1000evts.MuDst.root -m 
             
                 ## root4star -b -q rdMuWana.C\(&n1;,\"\",\"$filename\",5000,&isMC;,1\)  
  	        ## root4star -b -q rdMuWana.C\(&n1;,\"\",\"$filename\",5000,&isMC;,2\)	
@@ -39,7 +40,7 @@
          <output fromScratch="*Wtree.root" toURL="file:&outPath;/wtree_run11/"/>
          <output fromScratch="*.ps" toURL="file:&outPath;/data_run11/"/>
          <stdout URL="file:&outPath;/log_run11/$FILEBASENAME.out"/>
-         <stderr URL="file:&outPath;/log_run11/$FILEBASENAME.err"/>
+         <stderr URL="file:&outPath;/log_run11/$FILEBASENAME.out"/>
 	<SandBox>
             <Package>
                <File>file:&codePath;/.sl53_gcc432</File>
