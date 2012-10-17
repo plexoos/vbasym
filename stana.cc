@@ -429,15 +429,14 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    stVecBosMaker->setHListTpc(HListTpc);
    st2011pubWanaMaker->setHList(HList);
 
-
-  // S.F. - added 16 Oct. 2012 - 
-  // calculate lumi from runs
-  if(!isMC) {
-    St2011WlumiMaker *WlumiMk = new St2011WlumiMaker("lumi"); 
-    WlumiMk->attachWalgoMaker(stVecBosMaker); 
-    WlumiMk->attachMuMaker(stMuDstMaker);
-    WlumiMk->setHList(HList);
-  }
+   //// S.F. - added 16 Oct. 2012 - 
+   //// calculate lumi from runs
+   //if(!isMC) {
+   //  St2011WlumiMaker *WlumiMk = new St2011WlumiMaker("lumi"); 
+   //  WlumiMk->attachWalgoMaker(stVecBosMaker); 
+   //  WlumiMk->attachMuMaker(stMuDstMaker);
+   //  WlumiMk->setHList(HList);
+   //}
 
    if (spinSort) {
       StSpinDbMaker *stSpinDbMaker = new StSpinDbMaker("spinDb");
