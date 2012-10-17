@@ -51,11 +51,8 @@ root4star -b -q 'analyzeMuDst.C(2e3,"st_W_12037041_raw_1400001.MuDst.root",0,1,5
 #include "StVecBosAna/St2011pubWanaMaker.h"
 #include "StVecBosAna/St2011pubSpinMaker.h"
 #include "StVecBosAna/AnaInfo.h"
-<<<<<<< stana.cc
 #include "StVecBosAna/St2011WlumiMaker.h"
-=======
 #include "StVecBosAna/VecBosRootFile.h"
->>>>>>> 1.11
 
 
 using namespace std;
@@ -436,7 +433,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
   // S.F. - added 16 Oct. 2012 - 
   // calculate lumi from runs
   if(!isMC) {
-      St2011WlumiMaker *WlumiMk=new St2011WlumiMaker("lumi"); 
+    St2011WlumiMaker *WlumiMk = new St2011WlumiMaker("lumi"); 
     WlumiMk->attachWalgoMaker(stVecBosMaker); 
     WlumiMk->attachMuMaker(stMuDstMaker);
     WlumiMk->setHList(HList);
