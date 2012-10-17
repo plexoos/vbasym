@@ -23,8 +23,8 @@ mkdir -p $outPath/jets_run11/
 mkdir -p $outPath/data_run11/
 mkdir -p $outPath/log_run11/
  
-for fillNo in Wplus0 Wplus1 Wplus2 Wplus3 Wplus4 Wplus5 Wplus6 Wplus7 Wplus8 Wplus9 Wplus10 Wminus0 Wminus1 Wminus2 Wminus3 Wminus4 Wminus5 Wminus6 Wminus7 Wminus8 Wminus9 Wminus10; do 
-# for fillNo in Wplus0 Wplus1 Wplus2 Wplus3 Wplus4 Wplus5 Wplus6 Wplus7 Wplus8 Wplus9 Wplus10; do 
+#for fillNo in Wplus0 Wplus1 Wplus2 Wplus3 Wplus4 Wplus5 Wplus6 Wplus7 Wplus8 Wplus9 Wplus10 Wminus0 Wminus1 Wminus2 Wminus3 Wminus4 Wminus5 Wminus6 Wminus7 Wminus8 Wminus9 Wminus10; do 
+for fillNo in Wplus0 Wplus1 Wplus2 Wplus3 Wplus4 Wplus5 Wplus6 Wplus7 Wplus8 Wplus9 Wplus10; do 
 #for fillNo in Wminus0 Wminus1 Wminus2 Wminus3 Wminus4 Wminus5 Wminus6 Wminus7 Wminus8 Wminus9 Wminus10; do 
 # for fillNo in Wplus5; do 
     isMC=350

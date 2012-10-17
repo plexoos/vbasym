@@ -240,8 +240,8 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    if (geant) {
       StMcEventMaker *mcEventMaker = new StMcEventMaker();
-      mcEventMaker->doPrintEventInfo  = false;
-      mcEventMaker->doPrintMemoryInfo = false;
+   ////s.f.-test      mcEventMaker->doPrintEventInfo  = false;
+   ////s.f.-test      mcEventMaker->doPrintMemoryInfo = false;
 
       if (useJetFinder != 1) { // only use trigger simulator in W algo
          //don't need geant for trigger simu

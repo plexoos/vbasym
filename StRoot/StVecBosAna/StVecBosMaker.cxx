@@ -170,6 +170,14 @@ Int_t StVecBosMaker::Init()
 
    wDisaply = new WeventDisplay(this, par_maxDisplEve);
 
+  if(isMC){ // load vertex reweighting histo
+    // TString filename="/star/u/stevens4/wAnalysis/efficXsec/zVertReweight.root";
+    TString filename="/star/u/fazio/offline/users/fazio/vbasym/zVertReweight.root";
+    TFile* reweightFile = new TFile(filename);
+    cout<<"Re-weighting vertex z distribution with '"<<nameReweight<<"' histo from file "<<endl<<filename<<endl;
+    hReweight = (TH1F*) reweightFile->Get(nameReweight);
+  }   
+
    if (isMC) par_minPileupVert = 1;
 
    // tree only written during MuDst analysis
