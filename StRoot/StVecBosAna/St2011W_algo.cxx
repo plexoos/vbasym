@@ -21,9 +21,9 @@ void StVecBosMaker::find_W_boson()
    if (mWEvent->zTag) return;
 
    // search for  Ws
-   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
+   for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++)
    {
-      WEventVertex &vertex = mWEvent->vertex[iv];
+      WEventVertex &vertex = mWEvent->mVertices[iv];
       for (uint it = 0; it < vertex.eleTrack.size(); it++)
       {
          WeveEleTrack &track = vertex.eleTrack[it];
@@ -190,9 +190,9 @@ void StVecBosMaker::tag_Z_boson()
 
    //form invariant mass from lepton candidate and jet
    //vertex loop
-   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
+   for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++)
    {
-      WEventVertex &vertex = mWEvent->vertex[iv];
+      WEventVertex &vertex = mWEvent->mVertices[iv];
       for (uint it = 0; it < vertex.eleTrack.size(); it++) // select track
       {
          WeveEleTrack &T1 = vertex.eleTrack[it];
@@ -204,12 +204,12 @@ void StVecBosMaker::tag_Z_boson()
 
          //match lepton candidate with jet
          TLorentzVector jetVec;
-         for (int i_jet = 0; i_jet < mNJets; i_jet++) { //jet loop
-            jetVec = *((StJet *)mJets->At(i_jet));
+         for (uint iJet = 0; iJet < mWEvent->mNJets; iJet++) { //jet loop
+            jetVec = *((StJet *)mJets->At(iJet));
             if (jetVec.Pt() < par_jetPt) continue; //remove low pt jets
 
             //electron like cut on jets
-            StJet *jet = GetJet(i_jet);  float maxCluster = 0.;
+            StJet *jet = GetJet(iJet);  float maxCluster = 0.;
             int totTowers = jet->nBtowers + jet->nEtowers;
             for (int itow = 0; itow < totTowers; itow++) { //loop over towers
                if (jet->tower(itow)->detectorId() == 13) //drop endcap towers
@@ -245,9 +245,9 @@ void StVecBosMaker::tag_Z_boson()
 
 void StVecBosMaker::CalcPtBalance()
 {
-   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
+   for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++)
    {
-      WEventVertex &vertex = mWEvent->vertex[iv];
+      WEventVertex &vertex = mWEvent->mVertices[iv];
 
       for (uint it = 0; it < vertex.eleTrack.size(); it++)
       {
@@ -260,7 +260,7 @@ void StVecBosMaker::CalcPtBalance()
          if (mJetTreeChain) mJets = GetJetsTreeAnalysis(mJetTreeBranch);
 
          // Add up all jets outside of nearDeltaR cone around the electron track
-         for (int iJet = 0; iJet<mNJets; iJet++) { //loop over jets
+         for (int iJet = 0; iJet<mWEvent->mNJets; iJet++) { //loop over jets
             StJet *jet = GetJet(iJet);
             TVector3 jetVec; //vector for jet momentum
             jetVec.SetPtEtaPhi(jet->Pt(), jet->Eta(), jet->Phi());
@@ -283,7 +283,7 @@ void StVecBosMaker::CalcPtBalance()
          mJets = GetJets(mJetTreeBranch_noEEMC);
          if (mJetTreeChain) mJets = GetJetsTreeAnalysis(mJetTreeBranch_noEEMC);
 
-         for (int iJet = 0; iJet < mNJets; iJet++) { //loop over jets
+         for (int iJet = 0; iJet < mWEvent->mNJets; iJet++) { //loop over jets
             StJet *jet = GetJet(iJet);
             TVector3 jetVec; //vector for jet momentum
             jetVec.SetPtEtaPhi(jet->Pt(), jet->Eta(), jet->Phi());
@@ -304,9 +304,9 @@ void StVecBosMaker::CalcPtBalance()
 
 void StVecBosMaker::CalcMissingET()
 {
-   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
+   for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++)
    {
-      WEventVertex &vertex = mWEvent->vertex[iv];
+      WEventVertex &vertex = mWEvent->mVertices[iv];
       for (uint it = 0; it < vertex.eleTrack.size(); it++)
       {
          WeveEleTrack &track = vertex.eleTrack[it];
@@ -318,7 +318,7 @@ void StVecBosMaker::CalcMissingET()
          if (mJetTreeChain) mJets = GetJetsTreeAnalysis(mJetTreeBranch);
 
          // Add up all jets outside of nearDeltaR cone around the electron track
-         for (int iJet = 0; iJet<mNJets; iJet++) { //loop over jets
+         for (int iJet = 0; iJet<mWEvent->mNJets; iJet++) { //loop over jets
             StJet *jet = GetJet(iJet);
             TVector3 jetVec; //vector for jet momentum
             jetVec.SetPtEtaPhi(jet->Pt(), jet->Eta(), jet->Phi());
@@ -341,7 +341,7 @@ void StVecBosMaker::CalcMissingET()
          mJets = GetJets(mJetTreeBranch_noEEMC);
          if (mJetTreeChain) mJets = GetJetsTreeAnalysis(mJetTreeBranch_noEEMC);
 
-         for (int iJet = 0; iJet < mNJets; iJet++) { //loop over jets
+         for (int iJet = 0; iJet < mWEvent->mNJets; iJet++) { //loop over jets
             StJet *jet = GetJet(iJet);
             TVector3 jetVec; //vector for jet momentum
             jetVec.SetPtEtaPhi(jet->Pt(), jet->Eta(), jet->Phi());
@@ -362,11 +362,11 @@ void StVecBosMaker::CalcMissingET()
 
 void StVecBosMaker::findAwayJet()
 {
-   // printf("\n******* find AwayJet() nVert=%d\n", mWEvent->vertex.size());
+   // printf("\n******* find AwayJet() nVert=%d\n", mWEvent->mVertices.size());
    //mWEvent->print();
-   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
+   for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++)
    {
-      WEventVertex &vertex = mWEvent->vertex[iv];
+      WEventVertex &vertex = mWEvent->mVertices[iv];
 
       for (uint it = 0; it < vertex.eleTrack.size(); it++)
       {
@@ -401,11 +401,11 @@ void StVecBosMaker::findAwayJet()
  */
 void StVecBosMaker::findNearJet()
 {
-   //printf("\n******* findNearJet() nVert=%d\n",mWEvent->vertex.size());
+   //printf("\n******* findNearJet() nVert=%d\n",mWEvent->mVertices.size());
 
-   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
+   for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++)
    {
-      WEventVertex &vertex = mWEvent->vertex[iv];
+      WEventVertex &vertex = mWEvent->mVertices[iv];
 
       for (uint it = 0; it < vertex.eleTrack.size(); it++)
       {
@@ -508,10 +508,10 @@ float StVecBosMaker::sumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, 
    // flag=2 use 2D cut, 1= only delta phi
 
    assert(vertID >= 0);
-   assert(vertID < (int)mWEvent->vertex.size());
+   assert(vertID < (int)mWEvent->mVertices.size());
 
    double ptSum = 0;
-   WEventVertex &vertex = mWEvent->vertex[vertID];
+   WEventVertex &vertex = mWEvent->mVertices[vertID];
    for (uint it = 0; it < vertex.prTrList.size(); it++) {
       StMuTrack *prTr = vertex.prTrList[it];
       if (prTr->flag() <= 0) continue;
@@ -546,21 +546,21 @@ float StVecBosMaker::sumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, 
 // ************* Barrel Code ************ //
 int StVecBosMaker::extendTrack2Barrel() // return # of extended tracks
 {
-   //printf("******* extendTracks() nVert=%d\n", mWEvent->vertex.size());
+   //printf("******* extendTracks() nVert=%d\n", mWEvent->mVertices.size());
    if (!mWEvent->l2bitET) return 0; //fire barrel trigger
 
    int nTrB = 0;
 
    // loop over vertices
-   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
+   for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++)
    {
-      WEventVertex &vertex = mWEvent->vertex[iv];
+      WEventVertex &vertex = mWEvent->mVertices[iv];
       if (vertex.rank < 0) continue; //remove vertex for endcap algo only
 
       // loop over tracks
-      for (uint it = 0; it < vertex.eleTrack.size(); it++)
+      for (uint iTrack = 0; iTrack < vertex.eleTrack.size(); iTrack++)
       {
-         WeveEleTrack &track = vertex.eleTrack[it];
+         WeveEleTrack &track = vertex.eleTrack[iTrack];
 
          if (track.prMuTrack->flag() != 301) continue; //remove track for endcap algo only
 
@@ -613,13 +613,13 @@ int StVecBosMaker::extendTrack2Barrel() // return # of extended tracks
 
 int StVecBosMaker::matchTrack2BtowCluster()
 {
-   // printf("******* matchCluster() nVert=%d\n",mWEvent->vertex.size());
+   // printf("******* matchCluster() nVert=%d\n",mWEvent->mVertices.size());
    int nTr = 0;
    float Rcylinder = mBtowGeom->Radius();
 
-   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++)
+   for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++)
    {
-      WEventVertex &vertex = mWEvent->vertex[iv];
+      WEventVertex &vertex = mWEvent->mVertices[iv];
       float zVert = vertex.z;
 
       for (uint it = 0; it < vertex.eleTrack.size(); it++)

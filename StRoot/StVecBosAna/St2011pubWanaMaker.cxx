@@ -59,8 +59,8 @@ void St2011pubWanaMaker::evalWeleTrackSign()
    //has access to whole W-algo-maker data via pointer 'wMK'
 
    // search for Ws
-   for (uint iv = 0; iv < wMK->mWEvent->vertex.size(); iv++) {
-      WEventVertex &V = wMK->mWEvent->vertex[iv];
+   for (uint iv = 0; iv < wMK->mWEvent->mVertices.size(); iv++) {
+      WEventVertex &V = wMK->mWEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
@@ -167,9 +167,9 @@ void St2011pubWanaMaker::scanCrateRate()
    // printf("crateScan: eveID=%d\n",wMK->mWEvent->id);
 
    // search for  Ws ............
-   for (uint iv = 0; iv < wMK->mWEvent->vertex.size(); iv++)
+   for (uint iv = 0; iv < wMK->mWEvent->mVertices.size(); iv++)
    {
-      WEventVertex &V = wMK->mWEvent->vertex[iv];
+      WEventVertex &V = wMK->mWEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          // T.pointTower.print();
@@ -192,9 +192,9 @@ void St2011pubWanaMaker::scanCrateRate()
 //
 void St2011pubWanaMaker::varyCuts4backgStudy()
 {
-   for (uint iv = 0; iv < wMK->mWEvent->vertex.size(); iv++)
+   for (uint iv = 0; iv < wMK->mWEvent->mVertices.size(); iv++)
    {
-      WEventVertex &V = wMK->mWEvent->vertex[iv];
+      WEventVertex &V = wMK->mWEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;

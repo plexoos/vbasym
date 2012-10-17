@@ -54,7 +54,6 @@ private:
    StMuDstMaker   *mStMuDstMaker;
    StJetReader    *mStJetReader;
    VecBosRootFile *mVecBosRootFile;
-   int             mNJets;
    TString         mJetTreeBranch;
    TString         mJetTreeBranch_noEEMC;
    TClonesArray   *mJets;
@@ -155,17 +154,17 @@ private:
    EEmcSmdGeom    *mGeomSmd;   // access to ESMD geometry
    TVector3 positionEtow[mxEtowSec *mxEtowSub][mxEtowEta];
 
-   int   ReadBarrelTrigInfo();
-   int   ReadEndcapTrigInfo();
-   int   ReadVertexInfo();
-   void  fillTowHit(bool vert);
+   int   ReadMuDstBTOW();
+   int   ReadMuDstETOW();
+   int   ReadMuDstBarrelTrig();
+   int   ReadMuDstEndcapTrig();
+   int   ReadMuDstVertex();
+   int   ReadMuDstTrack();
+   void  ReadMuDstBSMD();
+   void  ReadMuDstEPRS();
+   void  ReadMuDstESMD();
+   void  FillTowHit(bool hasVertices);
    void  FillNormHists();
-   int   accessTracks();
-   int   ReadBTOWInfo();
-   void  accessBSMD();
-   int   ReadETOWInfo();
-   void  accessEPRS();
-   void  accessESMD();
    void  analyzeESMD();
    void  analyzeEPRS();
 

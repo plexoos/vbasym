@@ -18,8 +18,8 @@ void StVecBosMaker::findEndcap_W_boson()
    int nNoNear = 0, nNoAway = 0, nGoldW = 0;
 
    // search for  Ws ............
-   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
-      WEventVertex &V = mWEvent->vertex[iv];
+   for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++) {
+      WEventVertex &V = mWEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          if (T.pointTower.id >= 0) continue; //skip barrel towers
@@ -139,8 +139,8 @@ StVecBosMaker::analyzeESMD()
    if (!mWEvent->l2EbitET) return;
 
    //printf("========= analyzeESMD \n");
-   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
-      WEventVertex &V = mWEvent->vertex[iv];
+   for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++) {
+      WEventVertex &V = mWEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          if (T.pointTower.id >= 0) continue; //skip barrel towers
@@ -217,8 +217,8 @@ StVecBosMaker::analyzeEPRS()
    if (!mWEvent->l2EbitET) return;
 
    //printf("========= analyzeEPRS \n");
-   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
-      WEventVertex &V = mWEvent->vertex[iv];
+   for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++) {
+      WEventVertex &V = mWEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          if (T.pointTower.id >= 0) continue; //skip barrel towers
@@ -278,8 +278,8 @@ StVecBosMaker::extendTrack2Endcap() // return # of extended tracks
 
    double parE_zSMD = mGeomEmc->getZSMD(); // (cm), smd depth
    int nTrE = 0;
-   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
-      WEventVertex &V = mWEvent->vertex[iv];
+   for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++) {
+      WEventVertex &V = mWEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          if (T.prMuTrack->eta() < parE_trackEtaMin)
@@ -355,8 +355,8 @@ StVecBosMaker::matchTrack2EtowCluster()
    if (!mWEvent->l2EbitET) return 0;
 
    int nTr = 0;
-   for (uint iv = 0; iv < mWEvent->vertex.size(); iv++) {
-      WEventVertex &V = mWEvent->vertex[iv];
+   for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++) {
+      WEventVertex &V = mWEvent->mVertices[iv];
       float zVert = V.z;
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];

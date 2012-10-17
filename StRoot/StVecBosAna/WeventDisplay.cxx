@@ -487,9 +487,9 @@ void WeventDisplay::getPrimTracksFromTree(int vertID, int pointTowId)
    // flag=2 use 2D cut, 1= only delta phi
 
    assert(vertID >= 0);
-   assert(vertID < (int)wMK->mWEvent->vertex.size());
+   assert(vertID < (int)wMK->mWEvent->mVertices.size());
 
-   WEventVertex &V = wMK->mWEvent->vertex[vertID];
+   WEventVertex &V = wMK->mWEvent->mVertices[vertID];
    for (uint it = 0; it < V.prTrList.size(); it++) {
       StMuTrack *prTr = V.prTrList[it];
       if (prTr->flag() <= 0) continue;

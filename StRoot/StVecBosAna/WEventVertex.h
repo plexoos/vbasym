@@ -1,9 +1,17 @@
 #ifndef WEventVertex_h
 #define WEventVertex_h
 
+#include <vector>
+
 #include <StMuDSTMaker/COMMON/StMuTrack.h>
 
 #include "WEventEleTrack.h"
+
+
+class WEventVertex;
+
+typedef std::vector<WEventVertex> VBVertexVec;
+typedef VBVertexVec::iterator     VBVertexVecIter;
 
 
 // info about vertex
@@ -20,8 +28,12 @@ public:
    vector<StMuTrack*>    prTrList;
 
    void clear() {
-      id = -999; z = -999; funnyRank = -9999; rank = -9999;
-      eleTrack.clear(); nEEMCMatch = -999;
+      id                = -999;
+      z                 = -999;
+      funnyRank         = -9999;
+      rank              = -9999;
+      nEEMCMatch        = -999;
+      eleTrack.clear();
    }
 
    void print( int flag = 0) {

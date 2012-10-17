@@ -1,11 +1,7 @@
-// $Id: St2011pubSpinMaker.cxx,v 1.2 2012/10/10 22:39:35 smirnovd Exp $
-//
-//*-- Author : Jan Balewski, MIT
-//
+#include "St2011pubSpinMaker.h"
 
 #include "StVecBosMaker.h"
 
-#include "St2011pubSpinMaker.h"
 
 ClassImp(St2011pubSpinMaker)
 
@@ -74,8 +70,8 @@ void St2011pubSpinMaker::bXingSort()
 
    hA[0]->Fill("inp", 1.);
 
-   if (wMK->mWEvent->vertex.size() <= 0) return;
-   //......... require: L2W-trig (ET or rnd) & vertex is reasonable .......
+   if (wMK->mWEvent->mVertices.size() <= 0) return;
+   // require: L2W-trig (ET or rnd) & vertex is reasonable
 
    int bx48     = wMK->mWEvent->bx48;
    int bx7      = wMK->mWEvent->bx7;
@@ -116,8 +112,8 @@ void St2011pubSpinMaker::bXingSort()
    //..... it is guaranteed ..... L2W-ET>13 did fired  ......
 
    // search for  Ws ............
-   for (uint iv = 0; iv < wMK->mWEvent->vertex.size(); iv++) {
-      WEventVertex &V = wMK->mWEvent->vertex[iv];
+   for (uint iv = 0; iv < wMK->mWEvent->mVertices.size(); iv++) {
+      WEventVertex &V = wMK->mWEvent->mVertices[iv];
 
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];

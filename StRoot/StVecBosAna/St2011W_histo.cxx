@@ -140,10 +140,10 @@ void StVecBosMaker::initHistos()
    hA[36] = new TH2F("muTrch2b", "Barrel: track glob chi2/dof; chi2/dof  X-Y; last hit eta", 30, 0, 5., 30, -1, 1);
 
    // 4x4 cluster
-   hA[37] = h = new TH1F("muBclET24", "matched BTOW 4x4 cluster ET ;cluster 4x4  ET (GeV)", 100, 0, 100);
+   hA[37] = h = new TH1F("muBclET24", "matched BTOW 4x4 cluster ET; cluster 4x4  ET (GeV)", 100, 0, 100);
    hA[38] = h = new TH2F("muBclE242D", "Barrel: Excess energy in 4x4 cluster vs. 2x2 E;2x2 cluster E (GeV); E(4x4)-E(2x2)  E (GeV)", 50, 0, 80, 50, 0, 60);
 
-   hA[39] = h = new TH1F("muBclET24R", "Barrel: ratio (2x2/4x4) cluster ET ; fraction: cluster ET 2x2/ 4x4 ET", 100, 0, 1.2);
+   hA[39] = h = new TH1F("muBclET24R", "Barrel: ratio (2x2/4x4) cluster ET; fraction: cluster ET 2x2/ 4x4 ET", 100, 0, 1.2);
    Lx = h->GetListOfFunctions();
    ln = new TLine(par_clustFrac24, 0, par_clustFrac24, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
 
@@ -246,7 +246,7 @@ void StVecBosMaker::initHistos()
 
    //free 114-131
 
-   hA[116] = new TH1I("jetCount", "; Num. of Jets; Events", 20, 0, 20);
+   //hA[116] = new TH1I("jetCount", "; Num. of Jets; Events", 20, 0, 20);
    hA[117] = new TH2I("jetEtaVsPhi", "; Jet #eta; Jet #phi; Events", 50, -3, 3, 63, -M_PI, M_PI);
    hA[118] = new TH1I("jetPT", "; Jet P_{T}; Events", 100, 0, 100);
 

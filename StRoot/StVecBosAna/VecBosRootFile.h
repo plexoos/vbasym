@@ -1,12 +1,19 @@
 #ifndef VecBosRootFile_h
 #define VecBosRootFile_h
 
+#include <map>
+#include <set>
 #include <string>
 
 #include "TFile.h"
 
 #include "utils/PlotHelper.h"
 
+
+enum ECut {kCUT_UNKNOWN, kCUT_NOCUT, kCUT_VERTEX, kCUT_ELERACK};
+
+typedef std::map<ECut, std::set<PlotHelper*> >   Cut2PlotHelperMap;
+typedef Cut2PlotHelperMap::iterator        Cut2PlotHelperMapIter;
 
 
 class VecBosRootFile : public TFile
@@ -30,6 +37,7 @@ public:
 
    PlotHelper* GetHists();
    void SetHists(PlotHelper &hists);
+   void Fill(ProtoEvent &ev);
    //void SetAnaGlobResult(AnaGlobResult *agr);
    void SaveAs(std::string pattern, std::string dir);
    //void UpdMinMax(EventConfig &mm);

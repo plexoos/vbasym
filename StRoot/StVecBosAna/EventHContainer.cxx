@@ -3,39 +3,39 @@
  *                                                                           *
  *****************************************************************************/
 
-#include "KinemaHContainer.h"
+#include "EventHContainer.h"
 
 #include "TF1.h"
 
 #include "WEvent.h"
 
 
-ClassImp(KinemaHContainer)
+ClassImp(EventHContainer)
 
 using namespace std;
 
 
 /** Default constructor. */
-KinemaHContainer::KinemaHContainer() : PlotHelper()
+EventHContainer::EventHContainer() : PlotHelper()
 {
    BookHists();
 }
 
 
-KinemaHContainer::KinemaHContainer(TDirectory *dir) : PlotHelper(dir)
+EventHContainer::EventHContainer(TDirectory *dir) : PlotHelper(dir)
 {
    BookHists();
 }
 
 
 /** Default destructor. */
-KinemaHContainer::~KinemaHContainer()
+EventHContainer::~EventHContainer()
 {
 }
 
 
 /** */
-void KinemaHContainer::BookHists()
+void EventHContainer::BookHists()
 {
    string shName;
    TH1*   hist;
@@ -47,8 +47,14 @@ void KinemaHContainer::BookHists()
    ((TH1*) o[shName])->SetTitle("; Mass; Events;");
    ((TH1*) o[shName])->SetOption("E1");
 
-   o["hJetCount"] = hist = new TH1I("hJetCount", "; Num. of Jets; Events", 20, 0, 20);
-   //hist->SetOption("");
+   o["hNumJets"] = hist = new TH1I("hNumJets", "; Num. of Jets; Events", 20, 0, 20);
+   hist->SetOption("hist GRIDX");
+
+   o["hNumVertices"] = hist = new TH1I("hNumVertices", "; Num. of Vertices; Events", 10, 0, 10);
+   hist->SetOption("hist GRIDX");
+
+   o["hNumTracks"] = hist = new TH1I("hNumTracks", "; Num. of Tracks; Events", 50, 0, 150);
+   hist->SetOption("hist GRIDX");
 
    //shName = "hMassFitChi2ByChannel";
    //o[shName] = new TH1F(shName.c_str(), shName.c_str(), N_SILICON_CHANNELS, 0.5, N_SILICON_CHANNELS+0.5);
@@ -104,16 +110,18 @@ void KinemaHContainer::BookHists()
 
 
 /** */
-void KinemaHContainer::Fill(ProtoEvent &ev)
+void EventHContainer::Fill(ProtoEvent &ev)
 {
    WEvent& wEvent = (WEvent&) ev;
 
-   ((TH1*) o["hJetCount"])->Fill(wEvent.mNJets);
+   ((TH1*) o["hNumJets"])->Fill(wEvent.mNJets);
+   ((TH1*) o["hNumVertices"])->Fill(wEvent.mVertices.size());
+   ((TH1*) o["hNumTracks"])->Fill(wEvent.GetNumTracks());
 }
 
 
 /** */
-void KinemaHContainer::FillDerived()
+void EventHContainer::FillDerived()
 {
    Info("FillDerived()", "Called");
 
@@ -129,12 +137,11 @@ void KinemaHContainer::FillDerived()
    //   TH1* hPseudoMass_ch = (TH1*) oc->o["hPseudoMass_ch" + sChId];
    //   hPseudoMass->Add(hPseudoMass_ch);
    //}
-
 }
 
 
 /** */
-void KinemaHContainer::PostFill()
+void EventHContainer::PostFill()
 {
    Info("PostFill", "Called");
 

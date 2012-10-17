@@ -24,12 +24,9 @@ St2011pubMcMaker::St2011pubMcMaker(const char *name): StMaker(name)
 //_______________________________________________________
 St2011pubMcMaker::~St2011pubMcMaker()
 {
-   //
 }
 
 
-//_______________________________________________________
-//_______________________________________________________
 Int_t St2011pubMcMaker::Init()
 {
    assert(wMK);
@@ -39,10 +36,7 @@ Int_t St2011pubMcMaker::Init()
 }
 
 
-//_______________________________________________________
-//_______________________________________________________
-Int_t
-St2011pubMcMaker::Make()
+Int_t St2011pubMcMaker::Make()
 {
    //printf("-----------in %s\n", GetName());
    //only get geant particle info for W MC
@@ -55,16 +49,14 @@ St2011pubMcMaker::Make()
    return kStOK;
 }
 
-//_______________________________________________________
-//_______________________________________________________
-void
-St2011pubMcMaker::doWanalysis()
+
+void St2011pubMcMaker::doWanalysis()
 {
    //has access to whole W-algo-maker data via pointer 'wMK'
 
    // run through W cuts to fill other histos............
-   for (uint iv = 0; iv < wMK->mWEvent->vertex.size(); iv++) {
-      WEventVertex &V = wMK->mWEvent->vertex[iv];
+   for (uint iv = 0; iv < wMK->mWEvent->mVertices.size(); iv++) {
+      WEventVertex &V = wMK->mWEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
@@ -218,7 +210,7 @@ St2011pubMcMaker::doWefficiency()
    hA[67]->Fill(detEle.Eta(), mElectronP.Perp());
 
    //vertex efficiency
-   if (wMK->mWEvent->vertex.size() <= 0) return;
+   if (wMK->mWEvent->mVertices.size() <= 0) return;
    //vertex rank>0 and |z|<100
    hA[52]->Fill(mElectronP.Perp());
    hA[56]->Fill(mElectronP.Eta());
@@ -227,12 +219,13 @@ St2011pubMcMaker::doWefficiency()
 
    hA[70]->Fill(mElectronP.Perp());//forJoe
 
-   //float diff=wMK->mWEvent->vertex[0].z - mVertex.Z();
+   //float diff=wMK->mWEvent->mVertices[0].z - mVertex.Z();
    //cout<<"diff="<<diff<<endl;
 
    //reco efficiency
-   for (uint iv = 0; iv < wMK->mWEvent->vertex.size(); iv++) {
-      WEventVertex &V = wMK->mWEvent->vertex[iv];
+   for (uint iv = 0; iv < wMK->mWEvent->mVertices.size(); iv++)
+   {
+      WEventVertex &V = wMK->mWEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
