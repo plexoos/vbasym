@@ -16,7 +16,7 @@ using namespace std;
 
 
 VecBosRootFile::VecBosRootFile() : TFile(),
-   fHists(0),
+   fHists(0), fHistCuts(),
    fMinFill(UINT_MAX), fMaxFill(0),
    fMinTime(UINT_MAX), fMaxTime(0)
    //fFilePhp(0)
@@ -30,7 +30,7 @@ VecBosRootFile::VecBosRootFile() : TFile(),
 
 VecBosRootFile::VecBosRootFile(const char* fname, Option_t* option, const char* ftitle, Int_t compress) :
    TFile(fname, option, ftitle, compress),
-   fHists(0),
+   fHists(0), fHistCuts(),
    fMinFill(UINT_MAX), fMaxFill(0),
    fMinTime(UINT_MAX), fMaxTime(0)
    //fFilePhp(anaInfo.GetAnaInfoFile())
@@ -52,13 +52,21 @@ VecBosRootFile::~VecBosRootFile()
 
 void VecBosRootFile::BookHists()
 {
+   PlotHelper *ph;
+
    fHists = new PlotHelper(this);
 
-   fHists->d["event"]  = new EventHContainer(new TDirectoryFile("event", "event", "", this));
-   fHists->d["kinema"] = new KinemaHContainer(new TDirectoryFile("kinema", "kinema", "", this));
+   fHists->d["event"]     = ph = new EventHContainer(new TDirectoryFile("event", "event", "", this));
+   fHistCuts[kCUT_NOCUT].insert(ph);
+
+   fHists->d["event_cut"] = ph = new EventHContainer(new TDirectoryFile("event_cut", "event_cut", "", this));
+   fHistCuts[kCUT_CUT].insert(ph);
+
+   fHists->d["kinema"]    = ph = new KinemaHContainer(new TDirectoryFile("kinema", "kinema", "", this));
 
    this->cd();
 }
+
 
 PlotHelper* VecBosRootFile::GetHists() { return fHists; }
 void VecBosRootFile::SetHists(PlotHelper &hists) { fHists = &hists; }
@@ -68,6 +76,18 @@ void VecBosRootFile::SetHists(PlotHelper &hists) { fHists = &hists; }
 void VecBosRootFile::Fill(ProtoEvent &ev)
 {
    fHists->Fill(ev);
+}
+
+
+/** */
+void VecBosRootFile::Fill(ProtoEvent &ev, ECut cut)
+{
+   PlotHelperSet hists  = fHistCuts[cut];
+   PlotHelperSetIter hi = hists.begin();
+
+   for ( ; hi!=hists.end(); ++hi) {
+      (*hi)->Fill(ev);
+   }
 }
 
 

@@ -170,13 +170,13 @@ Int_t StVecBosMaker::Init()
 
    wDisaply = new WeventDisplay(this, par_maxDisplEve);
 
-  if(isMC){ // load vertex reweighting histo
-    // TString filename="/star/u/stevens4/wAnalysis/efficXsec/zVertReweight.root";
-    TString filename="/star/u/fazio/offline/users/fazio/vbasym/zVertReweight.root";
-    TFile* reweightFile = new TFile(filename);
-    cout<<"Re-weighting vertex z distribution with '"<<nameReweight<<"' histo from file "<<endl<<filename<<endl;
-    hReweight = (TH1F*) reweightFile->Get(nameReweight);
-  }   
+   if(isMC){ // load vertex reweighting histo
+      // TString filename="/star/u/stevens4/wAnalysis/efficXsec/zVertReweight.root";
+      TString filename="/star/u/fazio/offline/users/fazio/vbasym/zVertReweight.root";
+      TFile* reweightFile = new TFile(filename);
+      cout<<"Re-weighting vertex z distribution with '"<<nameReweight<<"' histo from file "<<endl<<filename<<endl;
+      hReweight = (TH1F*) reweightFile->Get(nameReweight);
+   }
 
    if (isMC) par_minPileupVert = 1;
 
@@ -397,6 +397,7 @@ Int_t StVecBosMaker::Make()
       ReadMuDstEPRS(); // get energy in EPRS
 
       mWtree->Fill(); //write all events w/ pt>10 track to tree
+      mVecBosRootFile->Fill(*mWEvent, kCUT_NOCUT);
 
       if (mWEvent->l2bitET  && mWEvent->bemc.tileIn[0] == 1) hA[0]->Fill("B-in", 1.0);
       if (mWEvent->l2EbitET && mWEvent->etow.etowIn == 1)    hE[0]->Fill("E-in", 1.0);
@@ -422,7 +423,7 @@ Int_t StVecBosMaker::Make()
       }
 
       // At this point all of mWEvent properties should be set
-      mVecBosRootFile->Fill(*mWEvent);
+      mVecBosRootFile->Fill(*mWEvent, kCUT_CUT);
    }
    else { // analysis of W tree
       Info("Make", "Never called");

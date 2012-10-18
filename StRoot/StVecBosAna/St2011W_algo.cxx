@@ -260,7 +260,7 @@ void StVecBosMaker::CalcPtBalance()
          if (mJetTreeChain) mJets = GetJetsTreeAnalysis(mJetTreeBranch);
 
          // Add up all jets outside of nearDeltaR cone around the electron track
-         for (int iJet = 0; iJet<mWEvent->mNJets; iJet++) { //loop over jets
+         for (uint iJet = 0; iJet<mWEvent->mNJets; iJet++) { //loop over jets
             StJet *jet = GetJet(iJet);
             TVector3 jetVec; //vector for jet momentum
             jetVec.SetPtEtaPhi(jet->Pt(), jet->Eta(), jet->Phi());
@@ -283,7 +283,7 @@ void StVecBosMaker::CalcPtBalance()
          mJets = GetJets(mJetTreeBranch_noEEMC);
          if (mJetTreeChain) mJets = GetJetsTreeAnalysis(mJetTreeBranch_noEEMC);
 
-         for (int iJet = 0; iJet < mWEvent->mNJets; iJet++) { //loop over jets
+         for (uint iJet = 0; iJet < mWEvent->mNJets; iJet++) { //loop over jets
             StJet *jet = GetJet(iJet);
             TVector3 jetVec; //vector for jet momentum
             jetVec.SetPtEtaPhi(jet->Pt(), jet->Eta(), jet->Phi());
@@ -318,7 +318,7 @@ void StVecBosMaker::CalcMissingET()
          if (mJetTreeChain) mJets = GetJetsTreeAnalysis(mJetTreeBranch);
 
          // Add up all jets outside of nearDeltaR cone around the electron track
-         for (int iJet = 0; iJet<mWEvent->mNJets; iJet++) { //loop over jets
+         for (uint iJet = 0; iJet<mWEvent->mNJets; iJet++) { //loop over jets
             StJet *jet = GetJet(iJet);
             TVector3 jetVec; //vector for jet momentum
             jetVec.SetPtEtaPhi(jet->Pt(), jet->Eta(), jet->Phi());
@@ -341,7 +341,7 @@ void StVecBosMaker::CalcMissingET()
          mJets = GetJets(mJetTreeBranch_noEEMC);
          if (mJetTreeChain) mJets = GetJetsTreeAnalysis(mJetTreeBranch_noEEMC);
 
-         for (int iJet = 0; iJet < mWEvent->mNJets; iJet++) { //loop over jets
+         for (uint iJet = 0; iJet < mWEvent->mNJets; iJet++) { //loop over jets
             StJet *jet = GetJet(iJet);
             TVector3 jetVec; //vector for jet momentum
             jetVec.SetPtEtaPhi(jet->Pt(), jet->Eta(), jet->Phi());

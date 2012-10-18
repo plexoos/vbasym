@@ -161,19 +161,19 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    if (geant) {
       // get geant file
-   ////s.f.-test      StIOMaker *ioMaker = new StIOMaker();
-   ////s.f.-test      printf("\n %s \n\n", fileG.Data());
-   ////s.f.-test      StIOMaker *ioMaker = new StIOMaker();
-   ////s.f.-test      printf("\n %s \n\n", inMuDstFileListName.c_str());
-   ////s.f.-test      cout << " test Salvo " << endl;
-   ////s.f.-test      printf("\n %s \n\n", "/home/starreco/reco/pp500/pythia6_422/Wplus_enu/perugia320/y2009a/gheisha_on/p09ig/rcf10010_1005_1000evts.geant.root");
-   ////s.f.-test      ioMaker->SetFile(fileG.Data());
-   ////s.f.-test      ioMaker->SetFile("/home/starreco/reco/pp500/pythia6_422/Wplus_enu/perugia320/y2009a/gheisha_on/p09ig/rcf10010_1005_1000evts.geant.root");
-   ////s.f.-test      ioMaker->SetIOMode("r");
-   ////s.f.-test      ioMaker->SetBranch("*", 0, "1"); //deactivate all branches
-   ////s.f.-test      ioMaker->SetBranch("geantBranch", 0, "r"); //activate geant Branch
-   ////s.f.-test      ioMaker->SetBranch("minimcBranch", 0, "r"); //activate geant Branch
-   ////s.f.-test      cout << " test Salvo 2" << endl;
+      ////s.f.-test      StIOMaker *ioMaker = new StIOMaker();
+      ////s.f.-test      printf("\n %s \n\n", fileG.Data());
+      ////s.f.-test      StIOMaker *ioMaker = new StIOMaker();
+      ////s.f.-test      printf("\n %s \n\n", inMuDstFileListName.c_str());
+      ////s.f.-test      cout << " test Salvo " << endl;
+      ////s.f.-test      printf("\n %s \n\n", "/home/starreco/reco/pp500/pythia6_422/Wplus_enu/perugia320/y2009a/gheisha_on/p09ig/rcf10010_1005_1000evts.geant.root");
+      ////s.f.-test      ioMaker->SetFile(fileG.Data());
+      ////s.f.-test      ioMaker->SetFile("/home/starreco/reco/pp500/pythia6_422/Wplus_enu/perugia320/y2009a/gheisha_on/p09ig/rcf10010_1005_1000evts.geant.root");
+      ////s.f.-test      ioMaker->SetIOMode("r");
+      ////s.f.-test      ioMaker->SetBranch("*", 0, "1"); //deactivate all branches
+      ////s.f.-test      ioMaker->SetBranch("geantBranch", 0, "r"); //activate geant Branch
+      ////s.f.-test      ioMaker->SetBranch("minimcBranch", 0, "r"); //activate geant Branch
+      ////s.f.-test      cout << " test Salvo 2" << endl;
    }
 
    // Now we add Makers to the chain...
