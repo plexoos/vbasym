@@ -129,7 +129,7 @@ void StVecBosMaker::initHistos()
    hA[32] = h = new TH1F("muBtotAdc", "Barrel: BTOW sum of ADC>thres , in-selection;ADC sum/event", 120, 0, 12000.);
 
    hA[33] = h = new TH1F("muBclET", "matched BTOW 2x2 cluster ET  ;cluster  ET (GeV)", 100, 0, 100);
-   ln = new TLine(par_clustET, 0, par_clustET, 1.e6);
+   ln = new TLine(mMinBClusterEnergy, 0, mMinBClusterEnergy, 1.e6);
    ln->SetLineColor(kRed);
    Lx = h->GetListOfFunctions();
    Lx->Add(ln);
@@ -145,7 +145,7 @@ void StVecBosMaker::initHistos()
 
    hA[39] = h = new TH1F("muBclET24R", "Barrel: ratio (2x2/4x4) cluster ET; fraction: cluster ET 2x2/ 4x4 ET", 100, 0, 1.2);
    Lx = h->GetListOfFunctions();
-   ln = new TLine(par_clustFrac24, 0, par_clustFrac24, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
+   ln = new TLine(mMinBClusterEnergyIsoRatio, 0, mMinBClusterEnergyIsoRatio, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
 
    // jet energy fraction
    hA[40] = h = new TH1F("muBjetET", "Barrel: near 'EM jet' ET ; 'EM jet'  ET (GeV)", 100, 0, 100);

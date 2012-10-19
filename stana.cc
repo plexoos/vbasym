@@ -528,12 +528,12 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       TDirectory *tpc = vecBosRootFile.mkdir("tpc");
       tpc->cd();
       HListTpc->Write();
-      printf("\n Histo saved -->%s<\n", histFileName.Data());
    }
    else {
       printf("\n Failed to open Histo-file -->%s<, continue\n", histFileName.Data());
    }
 
+   //vecBosRootFile.SaveAs((string) "^.*$", (string) "../vbasym_results/images_test/");
    vecBosRootFile.Print();
    vecBosRootFile.Close();
 

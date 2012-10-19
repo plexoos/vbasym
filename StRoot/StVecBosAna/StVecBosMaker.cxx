@@ -92,8 +92,8 @@ StVecBosMaker::StVecBosMaker(const char *name, VecBosRootFile *vbFile): StMaker(
    par_maxADC              = 200.; // (adc chan) on the highest tower in events
 
    //... Barrel Algo
-   par_clustET             = 14.;  // (GeV/c) 2x2 cluster ET
-   par_clustFrac24         = 0.95; // ET ratio 2x2/4x4 cluster
+   mMinBClusterEnergy      = 14.;  // (GeV/c) 2x2 cluster ET
+   mMinBClusterEnergyIsoRatio = 0.95; // ET ratio 2x2/4x4 cluster
    par_nearTotEtFrac       = 0.88; // ratio 2x2/near Tot ET
    par_delR3D              = 7.;   // cm, dist between projected track and center of cluster
    mCutTrackEtaMin         = -1.5; // bracket acceptance
@@ -219,7 +219,7 @@ Int_t StVecBosMaker::InitRun(int runNo)
       mRunNo, coreTitle.Data(), par_l2bwTrgID, isMC,
       mMinNumPileupVertices, mCutVertexZ,
       par_nFitPts, par_nHitFrac,  par_trackRin,  par_trackRout, par_trackPt,
-      par_kSigPed, par_AdcThres, par_maxADC, par_clustET, par_clustFrac24, par_nearTotEtFrac,
+      par_kSigPed, par_AdcThres, par_maxADC, mMinBClusterEnergy, mMinBClusterEnergyIsoRatio, par_nearTotEtFrac,
       par_delR3D, par_nearDeltaR,
       par_highET, par_awayDeltaPhi, par_ptBalance, mCutTrackEtaMin, mCutTrackEtaMax
    ) << endm;

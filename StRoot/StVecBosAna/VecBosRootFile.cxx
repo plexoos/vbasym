@@ -101,8 +101,7 @@ void VecBosRootFile::Fill(ProtoEvent &ev, ECut cut)
 /** */
 void VecBosRootFile::SaveAs(string pattern, string dir)
 {
-
-   TCanvas canvas("canvas", "canvas", 1400, 600);
+   TCanvas canvas("canvas", "canvas", 1000, 600);
    canvas.UseCurrentStyle();
 
    stringstream ssSignature("signature not defined");
@@ -112,7 +111,7 @@ void VecBosRootFile::SaveAs(string pattern, string dir)
    tm *ltime = localtime( &currentTime );
    strftime(strAnaTime, 25, "%c", ltime);
 
-   ssSignature << "Fills " << fMinFill << "--" << fMaxFill << ", Analyzed " << strAnaTime;
+   //ssSignature << "Fills " << fMinFill << "--" << fMaxFill << ", Analyzed " << strAnaTime;
    //ssSignature << ", Version " << fAnaInfo->fAsymVersion << ", " << fAnaInfo->fUserGroup.fUser;
 
    fHists->SetSignature(ssSignature.str());
@@ -172,5 +171,6 @@ void VecBosRootFile::PrintAsPhp(FILE *f) const
 void VecBosRootFile::Close(Option_t* option)
 {
    fHists->Write();
+   Info("Close", "%s", GetName());
    TFile::Close(option);
 }

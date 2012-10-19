@@ -87,11 +87,11 @@ StZBosMaker::initHistos(){
 
   hA[29]=h=new TH1F(core+"et1iso","Track-1 4x4 ET fract; 2x2ET / 4x4 ET",105,0,1.05);
   Lx=h->GetListOfFunctions();
-  ln=new TLine(wMK->par_clustFrac24,0,wMK->par_clustFrac24,yMax);  ln->SetLineColor(kMagenta);  ln->SetLineStyle(2); Lx->Add(ln);
+  ln=new TLine(wMK->mMinBClusterEnergyIsoRatio,0,wMK->mMinBClusterEnergyIsoRatio,yMax);  ln->SetLineColor(kMagenta);  ln->SetLineStyle(2); Lx->Add(ln);
 
   hA[30]=h=new TH1F(core+"et2iso","Track-2 4x4 ET fract; 2x2ET / 4x4 ET",105,0,1.05);
   Lx=h->GetListOfFunctions();
-  ln=new TLine(wMK->par_clustFrac24,0,wMK->par_clustFrac24,yMax);  ln->SetLineColor(kMagenta);  ln->SetLineStyle(2); Lx->Add(ln);
+  ln=new TLine(wMK->mMinBClusterEnergyIsoRatio,0,wMK->mMinBClusterEnergyIsoRatio,yMax);  ln->SetLineColor(kMagenta);  ln->SetLineStyle(2); Lx->Add(ln);
 
 
   //event/vertex details:
@@ -120,7 +120,7 @@ StZBosMaker::initHistos(){
 
    hA[51]=h=new TH1F(core+"Eet1iso","Track-1 4x4 ET fract; 2x2ET / 4x4 ET",105,0,1.05);
   Lx=h->GetListOfFunctions();
-  ln=new TLine(wMK->par_clustFrac24,0,wMK->par_clustFrac24,yMax);  ln->SetLineColor(kMagenta);  ln->SetLineStyle(2); Lx->Add(ln);
+  ln=new TLine(wMK->mMinBClusterEnergyIsoRatio,0,wMK->mMinBClusterEnergyIsoRatio,yMax);  ln->SetLineColor(kMagenta);  ln->SetLineStyle(2); Lx->Add(ln);
   hA[52]=h=new TH1F(core+"Eet1val","Track-1 ET before cuts; 2x2ET (GeV)",100,0,100);
   Lx=h->GetListOfFunctions();
   ln=new TLine(par_clusterEtZ,0,par_clusterEtZ,yMax);  ln->SetLineColor(kMagenta);  Lx->Add(ln);

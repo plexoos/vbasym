@@ -87,8 +87,8 @@ private:
    float parE_nHitFrac, parE_trackRin,  parE_trackRout, parE_trackPt;
 
    int   par_kSigPed, par_AdcThres;
-   float par_maxADC, par_clustET, parE_clustET;
-   float par_clustFrac24, par_nearTotEtFrac;
+   float par_maxADC, mMinBClusterEnergy, parE_clustET;
+   float mMinBClusterEnergyIsoRatio, par_nearTotEtFrac;
    float parE_clustFrac24, parE_nearTotEtFrac;
    float par_nearDeltaR, par_awayDeltaPhi;
    float par_delR3D, parE_delR3D, par_highET, parE_highET,  par_ptBalance, parE_ptBalance;
@@ -123,8 +123,8 @@ public: // to overwrite default params from .C macro
       parE_highET = a; parE_nearTotEtFrac = fr2;  parE_ptBalance = bal;  parE_leptonEtaLow = etaLow; parE_leptonEtaHigh = etaHigh;
    }
    void setEmcCuts(int ksp , float madc, float clet, float fr1, float dr) {
-      par_kSigPed = ksp; par_maxADC = madc; par_clustET = clet;
-      par_clustFrac24 = fr1;
+      par_kSigPed = ksp; par_maxADC = madc; mMinBClusterEnergy = clet;
+      mMinBClusterEnergyIsoRatio = fr1;
    }
    void SetEtowScale(float x) { mParETOWScale = x; }
    void SetBtowScale(float x) { mParBTOWScale = x; }

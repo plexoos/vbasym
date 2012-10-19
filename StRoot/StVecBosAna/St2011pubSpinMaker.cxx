@@ -122,7 +122,7 @@ void St2011pubSpinMaker::bXingSort()
          // Collect QCD background for lumi monitors
          float frac24 = T.cluster.ET / (T.cl4x4.ET);
 
-         if (iv == 0 && it == 0 && frac24 < wMK->par_clustFrac24) {
+         if (iv == 0 && it == 0 && frac24 < wMK->mMinBClusterEnergyIsoRatio) {
             hA[31]->Fill(T.cluster.ET);
             if ( T.cluster.ET < 20. ) { hA[7]->Fill(spin4);  hA[0]->Fill("BG2", 1.);}
          }

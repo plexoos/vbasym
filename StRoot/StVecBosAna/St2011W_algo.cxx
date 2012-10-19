@@ -642,7 +642,7 @@ bool StVecBosMaker::matchTrack2BtowCluster()
          int iPhi = track.cluster.iPhi;
          track.cl4x4 = sumBtowPatch(iEta - 1, iPhi - 1, 4, 4, vertexZ); // needed for lumi monitor
 
-         if (track.cluster.ET < par_clustET) continue; // too low energy
+         if (track.cluster.ET < mMinBClusterEnergy) continue; // too low energy
 
          hA[20] ->Fill("CL", 1.);
          hA[206]->Fill(track.cluster.position.PseudoRapidity(), track.cluster.ET);
@@ -651,7 +651,7 @@ bool StVecBosMaker::matchTrack2BtowCluster()
 
          float frac24 = track.cluster.ET / (track.cl4x4.ET);
          hA[39]->Fill(frac24);
-         if (frac24 < par_clustFrac24) continue;
+         if (frac24 < mMinBClusterEnergyIsoRatio) continue;
 
          hA[20]->Fill("fr24", 1.);
 

@@ -59,6 +59,27 @@ void EventHContainer::BookHists()
    o["hNumTracksWithBCluster"] = hist = new TH1I("hNumTracksWithBCluster", "; Num. of Tracks with Barrel Cluster; Events", 50, 0, 150);
    hist->SetOption("hist GRIDX");
 
+   o["hTrackFlag"] = hist = new TH1I("hTrackFlag", "; Track Flag; Num. of Tracks", 60, 280, 340);
+   hist->SetOption("hist GRIDX GRIDY");
+
+   o["hTrackEta"] = hist = new TH1I("hTrackEta", "; Track #eta; Num. of Tracks", 60, -3, 3);
+   hist->SetOption("hist GRIDX GRIDY");
+
+   o["hTrackPhi"] = hist = new TH1I("hTrackPhi", "; Track #phi; Num. of Tracks", 60, -M_PI, M_PI);
+   hist->SetOption("hist GRIDX GRIDY");
+
+   o["hTrackBTowerId"] = hist = new TH1I("hTrackBTowerId", "; Track Extrapolated Barrel Tower Id; Num. of Tracks", 4800, 0, 4800);
+   hist->SetOption("hist GRIDX GRIDY");
+
+   o["hTrackBClusterEnergy"] = hist = new TH1I("hTrackBClusterEnergy", "; Barrel Cluster Energy; Num. of Tracks", 70, 0, 70);
+   hist->SetOption("hist GRIDX GRIDY");
+
+   o["hTrackBCluster44Energy"] = hist = new TH1I("hTrackBCluster44Energy", "; Barrel Cluster (4x4) Energy; Num. of Tracks", 70, 0, 70);
+   hist->SetOption("hist GRIDX GRIDY");
+
+   o["hTrackBClusterEnergyIsoRatio"] = hist = new TH1I("hTrackBClusterEnergyIsoRatio", "; Barrel Cluster Energy Iso Ratio; Num. of Tracks", 70, 0, 70);
+   hist->SetOption("hist GRIDX GRIDY");
+
    //shName = "hMassFitChi2ByChannel";
    //o[shName] = new TH1F(shName.c_str(), shName.c_str(), N_SILICON_CHANNELS, 0.5, N_SILICON_CHANNELS+0.5);
    //((TH1*) o[shName])->SetTitle("; Channel Id; #chi^{2};");
@@ -121,6 +142,26 @@ void EventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hNumVertices"])->Fill(wEvent.mVertices.size());
    ((TH1*) o["hNumTracks"])->Fill(wEvent.GetNumTracks());
    ((TH1*) o["hNumTracksWithBCluster"])->Fill(wEvent.GetNumTracksWithBCluster());
+
+
+   VBVertexVecIter iVertex = wEvent.mVertices.begin();
+
+   for ( ; iVertex!=wEvent.mVertices.end(); ++iVertex)
+   {
+      //VBTrackVecIter iTrack = iVertex->eleTrack.begin();
+      vector<WeveEleTrack>::iterator iTrack = iVertex->eleTrack.begin();
+
+      for ( ; iTrack!=iVertex->eleTrack.end(); ++iTrack)
+      {
+         ((TH1*) o["hTrackFlag"])->Fill(iTrack->prMuTrack->flag());
+         ((TH1*) o["hTrackEta"])->Fill(iTrack->primP.Eta());
+         ((TH1*) o["hTrackPhi"])->Fill(iTrack->primP.Phi());
+         ((TH1*) o["hTrackBTowerId"])->Fill(iTrack->pointTower.id);
+         ((TH1*) o["hTrackBClusterEnergy"])->Fill(iTrack->cluster.ET);
+         ((TH1*) o["hTrackBCluster44Energy"])->Fill(iTrack->cl4x4.ET);
+         ((TH1*) o["hTrackBClusterEnergyIsoRatio"])->Fill(iTrack->cluster.ET/iTrack->cl4x4.ET);
+      }
+   }
 }
 
 

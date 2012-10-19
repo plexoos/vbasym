@@ -41,7 +41,7 @@ public:
    void Fill(ProtoEvent &ev);
    void Fill(ProtoEvent &ev, ECut cut);
    //void SetAnaGlobResult(AnaGlobResult *agr);
-   void SaveAs(std::string pattern, std::string dir);
+   void SaveAs(std::string pattern="^.*$", std::string dir=".");
    //void UpdMinMax(EventConfig &mm);
 	void UpdMinMaxFill(UInt_t fillId);
 	void UpdMinMaxTime(time_t time);
