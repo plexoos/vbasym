@@ -36,9 +36,9 @@ class WevePointTower
 public:
    TVector3 R;     // extrapolated position of primary track
    TVector3 Rglob; // extrapolated position of global track
-   int id;         // BTOW tower id, not used for ETOW
+   int id;         // BTOW tower id (!= 0), not used for ETOW
    int iEta;
-   int iPhi;   // eta x phi bin using L2 indexing convention
+   int iPhi;       // eta x phi bin using L2 indexing convention
 
    void clear() { id = 0; R = TVector3(0, 0, 0); Rglob = TVector3(0, 0, 0); iEta = iPhi = 9999; }
    void print(int flag = 0) {

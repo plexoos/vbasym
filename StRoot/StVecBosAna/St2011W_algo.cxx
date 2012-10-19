@@ -34,14 +34,14 @@ void StVecBosMaker::find_W_boson()
          assert(track.nearTotET > 0);      // internal logical error
 
          // make cut on lepton eta
-         if (track.primP.Eta() < par_leptonEtaLow || track.primP.Eta() > par_leptonEtaHigh) continue;
+         if (track.primP.Eta() < mCutTrackEtaMin || track.primP.Eta() > mCutTrackEtaMax) continue;
 
          hA[20]->Fill("eta1", 1.);
          nEta1++;
 
          //signal plots w/o EEMC in veto
          if (track.cluster.ET / track.nearTotET_noEEMC > par_nearTotEtFrac) {
-            if (track.sPtBalance_noEEMC > par_ptBalance ) { //only signed ptBalance cut
+            if (track.sPtBalance_noEEMC > par_ptBalance ) { // only signed ptBalance cut
                hA[140]->Fill(track.cluster.ET);
                hA[240]->Fill(track.prMuTrack->eta(), track.cluster.ET);
 
@@ -123,7 +123,7 @@ void StVecBosMaker::find_W_boson()
             mWEvent->print();
          }
 
-         //put final W cut here
+         // put final W cut here
          if (track.sPtBalance < par_ptBalance)  continue;
 
          hA[20]->Fill("noAway", 1.0);
@@ -205,7 +205,7 @@ void StVecBosMaker::tag_Z_boson()
          //match lepton candidate with jet
          TLorentzVector jetVec;
          for (uint iJet = 0; iJet < mWEvent->mNJets; iJet++) { //jet loop
-            jetVec = *((StJet *)mJets->At(iJet));
+            jetVec = *((StJet*) mJets->At(iJet));
             if (jetVec.Pt() < par_jetPt) continue; //remove low pt jets
 
             //electron like cut on jets
@@ -215,11 +215,13 @@ void StVecBosMaker::tag_Z_boson()
                if (jet->tower(itow)->detectorId() == 13) //drop endcap towers
                   continue;
 
-               int softId = jet->tower(itow)->towerId();
+               int towerId = jet->tower(itow)->towerId();
                //find highest 2x2 BTOW cluster in jet
-               TVector3 pos = positionBtow[softId - 1]; int iEta, iPhi;
-               if ( L2algoEtaPhi2IJ(pos.Eta(), pos.Phi(), iEta, iPhi))
-                  continue;
+               TVector3 pos = positionBtow[towerId - 1];
+
+               int iEta, iPhi;
+               if ( !ConvertEtaPhi2Bins(pos.Eta(), pos.Phi(), iEta, iPhi) ) continue;
+
                float cluster = maxBtow2x2(iEta, iPhi, jet->zVertex).ET;
                if (cluster > maxCluster) maxCluster = cluster;
             }
@@ -424,13 +426,15 @@ void StVecBosMaker::findNearJet()
          else
             track.nearTpcPT = sumTpcConeFromTree(iv, track.primP, 2, track.pointTower.id);
 
-         float nearSum = track.nearEmcET + track.nearTpcPT; // XXX:ds: double counting?
+         float nearSum = track.nearEmcET + track.nearTpcPT; // XXX:ds: double counting? yes, see correction below
 
          // fill histos separately for 2 types of events
          if (track.pointTower.id > 0) { //only barrel towers
-            /* correct for double counting of electron track in near cone rarely primTrPT<10 GeV & globPT>10 - handle this here */
+
+            // correct for double counting of electron track in near cone rarely primTrPT<10 GeV & globPT>10 - handle this here
             if (track.primP.Pt() > par_trackPt) nearSum -= par_trackPt;
-            else  nearSum -= track.primP.Pt();
+            else                                nearSum -= track.primP.Pt();
+
             track.nearTotET        = nearSum;
             track.nearTotET_noEEMC = nearSum - track.nearEtowET;
             float nearTotETfrac    = track.cluster.ET / track.nearTotET;
@@ -445,11 +449,12 @@ void StVecBosMaker::findNearJet()
 
             // check east/west yield diff
             hA[210]->Fill(track.cluster.position.PseudoRapidity(), track.nearEtowET);
+
             if (track.cluster.position.PseudoRapidity() > 0) hA[211]->Fill(track.cluster.position.Phi(), track.nearEtowET);
             else hA[212]->Fill(track.cluster.position.Phi(), track.nearEtowET);
 
          } else if (track.pointTower.id < 0) { //only endcap towers
-            /* correct for double counting of electron track in near cone rarely primTrPT<10 GeV & globPT>10 - handle this here */
+            // correct for double counting of electron track in near cone rarely primTrPT<10 GeV & globPT>10 - handle this here
             if (track.primP.Pt() > parE_trackPt) nearSum -= parE_trackPt;
             else  nearSum -= track.primP.Pt();
             track.nearTotET = nearSum;
@@ -543,13 +548,11 @@ float StVecBosMaker::sumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, 
 }
 
 
-// ************* Barrel Code ************ //
-int StVecBosMaker::extendTrack2Barrel() // return # of extended tracks
+/** */
+void StVecBosMaker::extendTrack2Barrel()
 {
    //printf("******* extendTracks() nVert=%d\n", mWEvent->mVertices.size());
-   if (!mWEvent->l2bitET) return 0; //fire barrel trigger
-
-   int nTrB = 0;
+   if (!mWEvent->l2bitET) return; //fire barrel trigger
 
    // loop over vertices
    for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++)
@@ -565,7 +568,7 @@ int StVecBosMaker::extendTrack2Barrel() // return # of extended tracks
          if (track.prMuTrack->flag() != 301) continue; //remove track for endcap algo only
 
          // Apply eta cuts at track level (tree analysis)
-         if (track.primP.Eta() < par_leptonEtaLow || track.primP.Eta() > par_leptonEtaHigh) continue;
+         if (track.primP.Eta() < mCutTrackEtaMin || track.primP.Eta() > mCutTrackEtaMax) continue;
 
          // extrapolate track to the barrel @ R=entrance
          const StPhysicalHelixD TrkHlx = track.prMuTrack->outerHelix();
@@ -586,18 +589,18 @@ int StVecBosMaker::extendTrack2Barrel() // return # of extended tracks
          // extrapolate track to cylinder
          StThreeVectorD posR = TrkHlx.at(d2.second);
          //printf(" punch2 x,y,z=%.1f, %.1f, %.1f, Rxy=%.1f\n",posCTB.x(),posCTB.y(),posCTB.z(),xmagn);
-         float etaF = posR.pseudoRapidity();
-         float phiF = posR.phi();
-         int iEta, iPhi;
-         if ( L2algoEtaPhi2IJ(etaF, phiF, iEta, iPhi)) continue;
+         float eta = posR.pseudoRapidity();
+         float phi = posR.phi();
 
-         nTrB++;
+         int iEta, iPhi;
+         if ( !ConvertEtaPhi2Bins(eta, phi, iEta, iPhi) ) continue;
+
          hA[20]->Fill("@B", 1.);
          //printf(" phi=%.0f deg,  eta=%.2f, iEta=%d, iPhi=%d\n",posCTB.phi()/3.1416*180.,posCTB. pseudoRapidity(),iEta, iPhi);
-         int twID = mapBtowIJ2ID[ iEta + iPhi * mxBTetaBin];
-         // printf("hit Tower ID=%d\n",twID);
+         int towerId = mapBtowIJ2ID[ iEta + iPhi * mxBTetaBin];
+         // printf("hit Tower ID=%d\n",towerId);
 
-         track.pointTower.id   = twID;
+         track.pointTower.id   = towerId;
          track.pointTower.R    = TVector3(posR.x(), posR.y(), posR.z());
          track.pointTower.iEta = iEta;
          track.pointTower.iPhi = iPhi;
@@ -605,32 +608,30 @@ int StVecBosMaker::extendTrack2Barrel() // return # of extended tracks
       }
    }
 
-   if (nTrB <= 0) return -1;
    hA[0]->Fill("TrB", 1.0);
-   return 0;
 }
 
 
-int StVecBosMaker::matchTrack2BtowCluster()
+bool StVecBosMaker::matchTrack2BtowCluster()
 {
    // printf("******* matchCluster() nVert=%d\n",mWEvent->mVertices.size());
-   int nTr = 0;
+   int   numMatchedTracks = 0;
    float Rcylinder = mBtowGeom->Radius();
 
    for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++)
    {
       WEventVertex &vertex = mWEvent->mVertices[iv];
-      float zVert = vertex.z;
+      float vertexZ = vertex.z;
 
       for (uint it = 0; it < vertex.eleTrack.size(); it++)
       {
          WeveEleTrack &track = vertex.eleTrack[it];
-         if (track.pointTower.id <= 0) continue; //skip endcap towers
+         if (track.pointTower.id <= 0) continue; // skip endcap towers
 
          float trackPT = track.prMuTrack->momentum().perp();
 
          // Choose 2x2 cluster with maximum ET
-         track.cluster = maxBtow2x2( track.pointTower.iEta, track.pointTower.iPhi, zVert);
+         track.cluster = maxBtow2x2( track.pointTower.iEta, track.pointTower.iPhi, vertexZ);
 
          hA[33]->Fill(track.cluster.ET);
          hA[34]->Fill(track.cluster.adcSum, trackPT);
@@ -639,15 +640,14 @@ int StVecBosMaker::matchTrack2BtowCluster()
          // Compute surroinding cluster energy
          int iEta = track.cluster.iEta;
          int iPhi = track.cluster.iPhi;
-         track.cl4x4 = sumBtowPatch(iEta - 1, iPhi - 1, 4, 4, zVert); // needed for lumi monitor
+         track.cl4x4 = sumBtowPatch(iEta - 1, iPhi - 1, 4, 4, vertexZ); // needed for lumi monitor
 
          if (track.cluster.ET < par_clustET) continue; // too low energy
-         hA[20]->Fill("CL", 1.);
 
+         hA[20] ->Fill("CL", 1.);
          hA[206]->Fill(track.cluster.position.PseudoRapidity(), track.cluster.ET);
-
-         hA[37]->Fill( track.cl4x4.ET);
-         hA[38]->Fill(track.cluster.energy, track.cl4x4.energy - track.cluster.energy);
+         hA[37] ->Fill(track.cl4x4.ET);
+         hA[38] ->Fill(track.cluster.energy, track.cl4x4.energy - track.cluster.energy);
 
          float frac24 = track.cluster.ET / (track.cl4x4.ET);
          hA[39]->Fill(frac24);
@@ -655,39 +655,43 @@ int StVecBosMaker::matchTrack2BtowCluster()
 
          hA[20]->Fill("fr24", 1.);
 
-         //.. spacial separation (track - cluster)
+         // spacial separation (track - cluster)
          TVector3 D = track.pointTower.R - track.cluster.position;
 
          hA[43]->Fill( track.cluster.energy, D.Mag());
          hA[44]->Fill( track.cluster.position.z(), D.z());
 
          float delPhi = track.pointTower.R.DeltaPhi(track.cluster.position);
-         //   printf("aaa %f %f %f   phi=%f\n",D.x(),D.y(),D.z(),delPhi);
+         // printf("aaa %f %f %f   phi=%f\n",D.x(),D.y(),D.z(),delPhi);
          hA[45]->Fill( track.cluster.energy, Rcylinder * delPhi); // wrong?
          hA[46]->Fill( D.Mag());
          hA[199]->Fill(track.cluster.position.PseudoRapidity(), D.Mag());
          hA[207]->Fill(track.cluster.position.PseudoRapidity(), track.cluster.ET);
 
          if (D.Mag() > par_delR3D) continue;
+
          track.isMatch2Cl = true; // cluster is matched to TPC track
+
          hA[20]->Fill("#Delta R", 1.);
-         hA[111]->Fill( track.cluster.ET);
+         hA[111]->Fill(track.cluster.ET);
 
          hA[208]->Fill(track.cluster.position.PseudoRapidity(), track.cluster.ET);
 
-         nTr++;
-      } // end of one vertex
-   } // end of vertex loop
+         numMatchedTracks++;
+      }
+   }
 
-   if (nTr <= 0) return -1;
+   if (!numMatchedTracks) return false;
+
    hA[0]->Fill("Tr2Cl", 1.0);
-   return 0;
+
+   return true;
 }
 
 
 /**
  * For a given eta-phi bin considers all combinations of 2x2 bin clusters around it
- * and returns the one with the maximum ET.
+ * and returns one with the maximum ET.
  */
 WeveCluster StVecBosMaker::maxBtow2x2(int etaBin, int phiBin, float zVert)
 {
@@ -736,15 +740,15 @@ WeveCluster StVecBosMaker::sumBtowPatch(int etaBin, int phiBin, int etaWidth, in
       {
          // wrap up in the phi-direction
          int   iPhi_p = (iPhi + mxBTphiBin) % mxBTphiBin;         // keep it always positive
-         int   softID = mapBtowIJ2ID[ iEta + iPhi_p*mxBTetaBin];
-         float energy = mWEvent->bemc.eneTile[kBTow][softID - 1];
+         int   towerId = mapBtowIJ2ID[ iEta + iPhi_p*mxBTetaBin];
+         float energy = mWEvent->bemc.eneTile[kBTow][towerId - 1];
 
          //if (L<5) printf("n=%2d  iEta=%d iPhi_p=%d\n",CL.nTower,iEta,iPhi_p);
 
          if (energy <= 0) continue; // skip towers w/o energy
 
-         float adc    = mWEvent->bemc.adcTile[kBTow][softID - 1];
-         float delZ   = positionBtow[softID - 1].z() - zVert;
+         float adc    = mWEvent->bemc.adcTile[kBTow][towerId - 1];
+         float delZ   = positionBtow[towerId - 1].z() - zVert;
          float cosine = Rcylinder / sqrt(Rcylinder2 + delZ *delZ);
          float ET     = energy * cosine;
          float logET  = log10(ET + 0.5);
@@ -755,7 +759,7 @@ WeveCluster StVecBosMaker::sumBtowPatch(int etaBin, int phiBin, int etaWidth, in
          CL.adcSum += adc;
 
          if (logET > 0) {
-            R    += logET * positionBtow[softID - 1];
+            R    += logET * positionBtow[towerId - 1];
             sumW += logET;
          }
          // if(etaWidth==2)

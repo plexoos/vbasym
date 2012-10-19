@@ -345,10 +345,7 @@ StVecBosMaker::extendTrack2Endcap() // return # of extended tracks
 }
 
 
-//________________________________________________
-//________________________________________________
-int
-StVecBosMaker::matchTrack2EtowCluster()
+int StVecBosMaker::matchTrack2EtowCluster()
 {
    //printf("******* matchEtowCluster() nVert=%d\n",mWEvent.vertex.size());
 
@@ -369,7 +366,7 @@ StVecBosMaker::matchTrack2EtowCluster()
          hE[33]->Fill(T.cluster.ET);
          hE[34]->Fill(T.cluster.adcSum, trackPT);
 
-         // ........compute surrounding cluster energy
+         // Compute surrounding cluster energy
          int iEta = T.cluster.iEta;
          int iPhi = T.cluster.iPhi;
          T.cl4x4 = sumEtowPatch(iEta - 1, iPhi - 1, 4, 4, zVert);

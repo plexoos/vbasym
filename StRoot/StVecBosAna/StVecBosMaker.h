@@ -65,7 +65,7 @@ private:
    WtpcFilter      mTpcFilter[mxTpcSec];    //allows sector dependent filter
    WtpcFilter      mTpcFilterE[mxTpcSec];   //allows sector dependent filter for endcap tracks
    int             nInpEve;
-   int             nTrigEve;
+   int             mNumTrigEvents;
    int             nAccEve;                 // event counters
    int             mRunNo;
    int             nRun;
@@ -79,8 +79,8 @@ private:
 
    int   par_l2bwTrgID;
    int   parE_l2ewTrgID;
-   float par_vertexZ;
-   int   par_minPileupVert;
+   float mCutVertexZ;
+   int   mMinNumPileupVertices;
 
    int   par_nFitPts, parE_nFitPts;
    float par_nHitFrac, par_trackRin,  par_trackRout, par_trackPt;
@@ -92,7 +92,7 @@ private:
    float parE_clustFrac24, parE_nearTotEtFrac;
    float par_nearDeltaR, par_awayDeltaPhi;
    float par_delR3D, parE_delR3D, par_highET, parE_highET,  par_ptBalance, parE_ptBalance;
-   float par_leptonEtaLow, par_leptonEtaHigh, parE_leptonEtaLow, parE_leptonEtaHigh; //bracket acceptance
+   float mCutTrackEtaMin, mCutTrackEtaMax, parE_leptonEtaLow, parE_leptonEtaHigh; //bracket acceptance
    float parE_trackEtaMin;
    int   parE_nSmdStrip;
 
@@ -110,14 +110,14 @@ private:
 public: // to overwrite default params from .C macro
 
    void setVertexCuts(float zm, int npv) {
-      par_vertexZ = zm; par_minPileupVert = npv;
+      mCutVertexZ = zm; mMinNumPileupVertices = npv;
    }
    void setEleTrackCuts(int nfp, int hfr, float rin, float rout, float mpt) {
       par_nFitPts = nfp;  par_nHitFrac = hfr;
       par_trackRin = rin;  par_trackRout = rout; par_trackPt = mpt;
    }
    void setWbosonCuts(float a, float fr2,  float bal, float etaLow, float etaHigh) {
-      par_highET = a; par_nearTotEtFrac = fr2;  par_ptBalance = bal;  par_leptonEtaLow = etaLow; par_leptonEtaHigh = etaHigh;
+      par_highET = a; par_nearTotEtFrac = fr2;  par_ptBalance = bal;  mCutTrackEtaMin = etaLow; mCutTrackEtaMax = etaHigh;
    }
    void setE_WbosonCuts(float a, float fr2,  float bal, float etaLow, float etaHigh) {
       parE_highET = a; parE_nearTotEtFrac = fr2;  parE_ptBalance = bal;  parE_leptonEtaLow = etaLow; parE_leptonEtaHigh = etaHigh;
@@ -145,11 +145,12 @@ private:
    int par_DsmThres, parE_DsmThres;
    int par_maxDisplEve;
 
-   StBemcTables *mBarrelTables; //used to access EMC status and ped info
-   StEmcGeom  *mBtowGeom, * mBSmdGeom[mxBSmd];
-   int mapBtowIJ2ID[mxBTetaBin*mxBTphiBin]; // vs. (iEta, iPhi)
-   TVector3 positionBtow[mxBtow]; // vs. tower ID
-   TVector3 positionBsmd[mxBSmd][mxBStrips]; // vs. strip ID
+   StBemcTables *mBarrelTables;                          //used to access EMC status and ped info
+   StEmcGeom    *mBtowGeom;
+   StEmcGeom    *mBSmdGeom[mxBSmd];
+   int           mapBtowIJ2ID[mxBTetaBin * mxBTphiBin];  // vs. (iEta, iPhi)
+   TVector3      positionBtow[mxBtow];                   // vs. tower ID
+   TVector3      positionBsmd[mxBSmd][mxBStrips];        // vs. strip ID
 
    StEEmcDb       *mDbE;       // access to EEMC database
    StSpinDbMaker  *spinDb;     // access spin information
@@ -161,11 +162,11 @@ private:
    int   ReadMuDstETOW();
    int   ReadMuDstBarrelTrig();
    int   ReadMuDstEndcapTrig();
-   int   ReadMuDstVertex();
-   int   ReadMuDstTrack();
+   void  ReadMuDstVertex();
+   void  ReadMuDstTrack();
    void  ReadMuDstBSMD();
-   void  ReadMuDstEPRS();
    void  ReadMuDstESMD();
+   void  ReadMuDstEPRS();
    void  FillTowHit(bool hasVertices);
    void  FillNormHists();
    void  analyzeESMD();
@@ -176,8 +177,8 @@ private:
    void  find_W_boson();
    void  findEndcap_W_boson();
    void  tag_Z_boson();
-   int   extendTrack2Barrel();
-   int   matchTrack2BtowCluster();
+   void  extendTrack2Barrel();
+   bool   matchTrack2BtowCluster();
    int   extendTrack2Endcap();
    int   matchTrack2EtowCluster();
    void  findNearJet();
@@ -217,7 +218,7 @@ private:
    void initHistos();
    void initEHistos();
    void initGeom();
-   int  L2algoEtaPhi2IJ(float etaF, float phiF, int &kEta, int &kPhi);
+   bool ConvertEtaPhi2Bins(float etaF, float phiF, int &kEta, int &kPhi);
 
 public:
 

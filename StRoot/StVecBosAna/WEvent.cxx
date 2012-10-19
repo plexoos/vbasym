@@ -13,6 +13,12 @@ WEvent::WEvent() : ProtoEvent(),
 }
 
 
+UInt_t WEvent::GetNumVertices()
+{
+   return mVertices.size();
+}
+
+
 UInt_t WEvent::GetNumTracks()
 {
    UInt_t nTracks = 0;
@@ -20,6 +26,26 @@ UInt_t WEvent::GetNumTracks()
 
    for ( ; iVertex!=mVertices.end(); ++iVertex)
       nTracks += iVertex->prTrList.size();
+
+   return nTracks;
+}
+
+
+UInt_t WEvent::GetNumTracksWithBCluster()
+{
+   UInt_t nTracks = 0;
+   VBVertexVecIter iVertex = mVertices.begin();
+
+   for ( ; iVertex!=mVertices.end(); ++iVertex)
+   {
+      //VBTrackVecIter iTrack = iVertex->eleTrack.begin();
+      vector<WeveEleTrack>::iterator iTrack = iVertex->eleTrack.begin();
+
+      for ( ; iTrack!=iVertex->eleTrack.end(); ++iTrack)
+      {
+         if (iTrack->isMatch2Cl) nTracks++;
+      }
+   }
 
    return nTracks;
 }

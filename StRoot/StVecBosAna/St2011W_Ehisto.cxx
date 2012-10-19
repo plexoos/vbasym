@@ -61,8 +61,8 @@ void StVecBosMaker::initEHistos()
 
    hE[11] = h = new TH1F("muEZv", "L2WE: Z of any vertex w/ rank>0;Z-vertex (cm)", 100, -200, 200);
    Lx = h->GetListOfFunctions();
-   ln = new TLine(par_vertexZ, 0, par_vertexZ, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
-   ln = new TLine(-par_vertexZ, 0, -par_vertexZ, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
+   ln = new TLine(mCutVertexZ, 0, mCutVertexZ, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
+   ln = new TLine(-mCutVertexZ, 0, -mCutVertexZ, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
 
    hE[12] = new TH1F("muENV", "L2WE: # vertices per event, (rank>0 or matched track to ETOW) && Z in range; # of vertices", 10, 0, 10);
 

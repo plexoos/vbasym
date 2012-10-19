@@ -1,5 +1,5 @@
-#ifndef WANA_CONST_HH
-#define WANA_CONST_HH
+#ifndef WanaConst_h
+#define WanaConst_h
 
 // bsmd indexes needed for calibration
 enum {mxBStrips=18000, mxBSmd=2, kBSE=0, kBSP=1}; 

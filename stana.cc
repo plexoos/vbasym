@@ -276,14 +276,13 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    if (useJetFinder > 0)  {
       //ds TString jetFile = jetDir;
       //ds jetFile+="jets_"+outF+".root";
-      jetFile += "jets_";
-      jetFile += outF + ".root";
-      cout << "BEGIN: running jet finder/reader =" << jetFile << "=" << endl;
+      jetFile += "jets_" + outF + ".root";
+      cout << "BEGIN: running jet finder/reader on " << jetFile << endl;
    }
 
 
    if (useJetFinder == 1) {
-      //{{{ // run jet finder
+      // run jet finder
       // Makers for clusterfinding
       StSpinDbMaker    *stSpinDbMaker    = new StSpinDbMaker("spinDb");
       StEmcADCtoEMaker *stEmcADCtoEMaker = new StEmcADCtoEMaker();
@@ -377,7 +376,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       delete stChain;
 
       return 1;
-   } //}}}
+   } 
 
    // the jet reconstruction ends above
 
@@ -401,9 +400,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       stVecBosMaker->setTrigID(idL2BWtrg, idL2EWtrg);
    }
 
-   TString treeFileName = wtreeDir;
-   treeFileName += outF;
-   treeFileName += ".Wtree.root";
+   TString treeFileName = wtreeDir + outF + ".Wtree.root";
 
    stVecBosMaker->setTreeName(treeFileName);
 
@@ -460,9 +457,9 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    }
 
    if (geant) {
-   ////s.f.-test      St2011pubMcMaker *pubMcMk = new St2011pubMcMaker("pubMc");
-   ////s.f.-test      pubMcMk->attachWalgoMaker(stVecBosMaker);
-   ////s.f.-test      pubMcMk->setHList(HList);
+      ////s.f.-test      St2011pubMcMaker *pubMcMk = new St2011pubMcMaker("pubMc");
+      ////s.f.-test      pubMcMk->attachWalgoMaker(stVecBosMaker);
+      ////s.f.-test      pubMcMk->setHList(HList);
    }
 
    if (findZ) {

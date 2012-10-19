@@ -70,8 +70,8 @@ void StVecBosMaker::initHistos()
 
    hA[11] = h = new TH1F("muZv", "L2WB: Z of any vertex w/ rank>0;Z-vertex (cm)", 100, -200, 200);
    Lx = h->GetListOfFunctions();
-   ln = new TLine(par_vertexZ, 0, par_vertexZ, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
-   ln = new TLine(-par_vertexZ, 0, -par_vertexZ, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
+   ln = new TLine(mCutVertexZ, 0, mCutVertexZ, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
+   ln = new TLine(-mCutVertexZ, 0, -mCutVertexZ, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
 
    hA[12] = new TH1F("muNV", "L2WB: # vertices per event, rank>0 & Z in range; # of vertices", 10, 0, 10);
 

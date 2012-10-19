@@ -167,7 +167,9 @@ public:
 
    WEvent();
 
+   UInt_t GetNumVertices();
    UInt_t GetNumTracks();
+   UInt_t GetNumTracksWithBCluster();
    void   clear();
    void   print(int flag = 0, int isMC = 0);
    void   getGmt_day_hour(int &yyyymmdd, int &hhmmss);

@@ -12,6 +12,8 @@ class WEventVertex;
 
 typedef std::vector<WEventVertex> VBVertexVec;
 typedef VBVertexVec::iterator     VBVertexVecIter;
+//typedef std::vector<WeveEleTrack> VBTrackVec;
+//typedef VBTrackVec::iterator      VBTrackVecIter;
 
 
 // info about vertex
