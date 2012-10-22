@@ -122,7 +122,9 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    cout << "Output histo file " << histFileName << endl;
 
-   VecBosRootFile vecBosRootFile(histFileName, "recreate"); 
+   //if (useJetFinder == 2) {
+      VecBosRootFile vecBosRootFile(histFileName, "recreate"); 
+      //}
 
    TString fileG;
 

@@ -80,6 +80,8 @@ void EventHContainer::BookHists()
    o["hTrackBClusterEnergyIsoRatio"] = hist = new TH1I("hTrackBClusterEnergyIsoRatio", "; Barrel Cluster Energy Iso Ratio; Num. of Tracks", 70, 0, 70);
    hist->SetOption("hist GRIDX GRIDY");
 
+   o["hChargePrimaryTrack"] = hist = new TH1I("hChargePrimaryTrack", "; Charge of the primary track; Num. of Tracks", 10, -2, 2);
+
    //shName = "hMassFitChi2ByChannel";
    //o[shName] = new TH1F(shName.c_str(), shName.c_str(), N_SILICON_CHANNELS, 0.5, N_SILICON_CHANNELS+0.5);
    //((TH1*) o[shName])->SetTitle("; Channel Id; #chi^{2};");
@@ -160,6 +162,7 @@ void EventHContainer::Fill(ProtoEvent &ev)
          ((TH1*) o["hTrackBClusterEnergy"])->Fill(iTrack->cluster.ET);
          ((TH1*) o["hTrackBCluster44Energy"])->Fill(iTrack->cl4x4.ET);
          ((TH1*) o["hTrackBClusterEnergyIsoRatio"])->Fill(iTrack->cluster.ET/iTrack->cl4x4.ET);
+         ((TH1*) o["hChargePrimaryTrack"])->Fill(iTrack->prMuTrack->charge());
       }
    }
 }
