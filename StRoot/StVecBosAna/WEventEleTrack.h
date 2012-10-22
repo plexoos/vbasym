@@ -26,8 +26,8 @@ public:
    WevePointTower   pointTower;
    const StMuTrack *glMuTrack;
    const StMuTrack *prMuTrack;
-   WeveCluster      cluster;
-   WeveCluster      cl4x4;
+   WeveCluster      mCluster2x2;
+   WeveCluster      mCluster4x4;
    TVector3         primP;              // primary momentum vector
    float            nearTpcPT;
    float            nearEmcET;

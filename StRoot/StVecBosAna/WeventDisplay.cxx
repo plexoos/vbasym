@@ -112,7 +112,7 @@ void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  
    string detector = tit;
 
    if (detector.compare("WB") == 0) { //barrel event display
-      sprintf(txt, "display-%s%.0f_run%d.eventId%05dvert%d", tit, myTr.cluster.ET, runNo, eveID, myV.id);
+      sprintf(txt, "display-%s%.0f_run%d.eventId%05dvert%d", tit, myTr.mCluster2x2.ET, runNo, eveID, myV.id);
       TFile hf(Form("%s.root", txt), "recreate"); //TFile hf(txt,"recreate");
       c0 = new TCanvas(txt, txt, 850, 600);
       c0->cd();
@@ -169,7 +169,7 @@ void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  
       printf("WeventDisplay::Event TPC  %s\n", txt);
       pvt->AddText(txt);
 
-      sprintf(txt, "BTOW ET/GeV: 2x2=%.1f   near= %.1f   away= %.1f", myTr.cluster.ET, myTr.nearBtowET, myTr.awayBtowET);
+      sprintf(txt, "BTOW ET/GeV: 2x2=%.1f   near= %.1f   away= %.1f", myTr.mCluster2x2.ET, myTr.nearBtowET, myTr.awayBtowET);
       printf("WeventDisplay:: BTOW  %s\n", txt);
       pvt->AddText(txt);
 
@@ -189,7 +189,7 @@ void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  
       }
    }
    else if (detector.compare("WE") == 0) { //endcap event display
-      sprintf(txt, "display-%s%.0f_run%d.eventId%05dvert%d", tit, myTr.cluster.ET, runNo, eveID, myV.id);
+      sprintf(txt, "display-%s%.0f_run%d.eventId%05dvert%d", tit, myTr.mCluster2x2.ET, runNo, eveID, myV.id);
       TFile hf(Form("%s.root", txt), "recreate");
       c0 = new TCanvas(txt, txt, 1750, 1300);
       c0->cd();
@@ -313,7 +313,7 @@ void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  
       printf("WeventDisplay::Event %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
 
-      sprintf(txt, "ETOW ET/GeV: 2x2=%.1f  EMC: near= %.1f   away= %.1f ", myTr.cluster.ET, myTr.nearEmcET, myTr.awayEmcET);
+      sprintf(txt, "ETOW ET/GeV: 2x2=%.1f  EMC: near= %.1f   away= %.1f ", myTr.mCluster2x2.ET, myTr.nearEmcET, myTr.awayEmcET);
       printf("WeventDisplay:: %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
 
@@ -360,14 +360,14 @@ void WeventDisplay::exportEvent( const char *tit, WEventVertex myV, WeveEleTrack
    int daqSeq = atoi(afile + (len - 18));
    //  printf("DDD %s len=%d %d =%s=\n",afile,len,daqSeq,afile+(len-15));
 
-   TVector3 rTw = myTr.cluster.position;
+   TVector3 rTw = myTr.mCluster2x2.position;
    rTw.SetZ(rTw.z() - myV.z);
 
    //printf("#xcheck-%s run=%d daqSeq=%d eveID=%7d vertID=%2d zVert=%.1f prTrID=%4d  prTrEta=%.3f prTrPhi/deg=%.1f globPT=%.1f hitTwId=%4d twAdc=%.1f clEta=%.3f clPhi/deg=%.1f  clET=%.1f\n",tit,
    //	 runNo,daqSeq,eveId,myV.id,myV.z,
    //	 myTr.prMuTrack->id(),myTr.prMuTrack->eta(),myTr.prMuTrack->phi()/3.1416*180.,myTr.glMuTrack->pt(),
    //	 myTr.pointTower.id,wMK->mWEvent->bemc.adcTile[kBTow][myTr.pointTower.id-1],
-   //	 rTw.Eta(),rTw.Phi()/3.1416*180.,myTr.cluster.ET);
+   //	 rTw.Eta(),rTw.Phi()/3.1416*180.,myTr.mCluster2x2.ET);
 
    float zVert = myV.z;
    printf("WeventDisplay-%s::export run=%d eve=%d\n", tit, runNo, eveId);
@@ -572,7 +572,7 @@ void WeventDisplay::export2sketchup(  const char *tit, WEventVertex myV, WeveEle
    }
 
    //.... DUMP reco electron ...
-   float eleET = myTr.cluster.ET;
+   float eleET = myTr.mCluster2x2.ET;
    fprintf(fd, "recoElectron V %.1f %.3f %.3f  ET:detEta:detPhi %.3f %.3f  %.3f\n", rV.x(), rV.y(), rV.z() , eleET, myTr.pointTower.R.Eta(), myTr.pointTower.R.Phi());
 
    //... close event file

@@ -60,10 +60,10 @@ void St2011pubMcMaker::doWanalysis()
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
-         assert(T.cluster.nTower > 0); // internal logical error
+         assert(T.mCluster2x2.nTower > 0); // internal logical error
          assert(T.nearTotET > 0); // internal logical error
 
-         if (T.cluster.ET / T.nearTotET < wMK->par_nearTotEtFrac) continue; // too large nearET
+         if (T.mCluster2x2.ET / T.nearTotET < wMK->par_nearTotEtFrac) continue; // too large nearET
          if (T.awayTotET > 30.) continue; // too large awayET , Jan
          //Full W cuts applied at this point
 
@@ -94,12 +94,12 @@ void St2011pubMcMaker::doWanalysis()
 
          //electron reco and from geant record
          hA[9]->Fill(mElectronP.Perp());
-         hA[10]->Fill(T.cluster.ET);
-         hA[11]->Fill(mElectronP.Perp(), T.cluster.ET);
-         hA[12]->Fill(mElectronP.Perp(), mElectronP.Perp() - T.cluster.ET);
+         hA[10]->Fill(T.mCluster2x2.ET);
+         hA[11]->Fill(mElectronP.Perp(), T.mCluster2x2.ET);
+         hA[12]->Fill(mElectronP.Perp(), mElectronP.Perp() - T.mCluster2x2.ET);
 
-         TVector3 electronPt(T.cluster.position.X(), T.cluster.position.Y(), 0); //transvers momentum vector
-         electronPt.SetMag(T.cluster.ET);
+         TVector3 electronPt(T.mCluster2x2.position.X(), T.mCluster2x2.position.Y(), 0); //transvers momentum vector
+         electronPt.SetMag(T.mCluster2x2.ET);
 
          //neutrino reco and from geant record
          TVector3 neutrinoPt = -1 * (hadronicPt + electronPt);
@@ -116,20 +116,20 @@ void St2011pubMcMaker::doWanalysis()
          hA[18]->Fill(geantDeltaPhi, recoDeltaPhi);
          hA[19]->Fill(cos(geantDeltaPhi) - cos(recoDeltaPhi));
 
-         float Mt = sqrt(2 * T.cluster.ET * neutrinoPt.Perp() * (1 - cos(recoDeltaPhi))); //real data
+         float Mt = sqrt(2 * T.mCluster2x2.ET * neutrinoPt.Perp() * (1 - cos(recoDeltaPhi))); //real data
          float gMt = sqrt(2 * mElectronP.Perp() * mNeutrinoP.Perp() * (1 - cos(geantDeltaPhi)));
 
          hA[20]->Fill(Mt);
          hA[21]->Fill(gMt);
 
-         hA[22]->Fill(Mt, T.cluster.ET);
+         hA[22]->Fill(Mt, T.mCluster2x2.ET);
          hA[23]->Fill(gMt - Mt);
 
          //Kinematics
          //reconstruct W pL from reconstructed quantities
          float trueWpL = mWP.z();
          float eleTheta = T.primP.Theta();
-         float ratioE = T.cluster.energy / 40.0;
+         float ratioE = T.mCluster2x2.energy / 40.0;
          float pLRecoPlus = 80.0 * (ratioE) * ((cos(eleTheta)) + sqrt(cos(eleTheta) * cos(eleTheta) + sin(eleTheta) * sin(eleTheta) * (1 - ratioE * ratioE))) / (ratioE * ratioE * sin(eleTheta) * sin(eleTheta)); //+ sqrt solution
          float pLRecoMinus = 80.0 * (ratioE) * ((cos(eleTheta)) - sqrt(cos(eleTheta) * cos(eleTheta) + sin(eleTheta) * sin(eleTheta) * (1 - ratioE * ratioE))) / (ratioE * ratioE * sin(eleTheta) * sin(eleTheta)); //- sqrt solution
          hA[29]->Fill(pLRecoPlus);
@@ -155,19 +155,19 @@ void St2011pubMcMaker::doWanalysis()
             hA[38]->Fill(trueWpL, pLRecoPlus);
          }
 
-         if (T.cluster.ET < 30) continue; //only W's we find in data
+         if (T.mCluster2x2.ET < 30) continue; //only W's we find in data
          //Correlate W pL with electron E in 3 electron eta ranges
          if (eleEta < -0.8) {
-            hA[39]->Fill(mWP.z(), T.cluster.energy);
-            hA[42]->Fill(T.cluster.energy);
+            hA[39]->Fill(mWP.z(), T.mCluster2x2.energy);
+            hA[42]->Fill(T.mCluster2x2.energy);
          }
          if (eleEta > 0.8) {
-            hA[40]->Fill(mWP.z(), T.cluster.energy);
-            hA[43]->Fill(T.cluster.energy);
+            hA[40]->Fill(mWP.z(), T.mCluster2x2.energy);
+            hA[43]->Fill(T.mCluster2x2.energy);
          }
          if (eleEta > -0.1 && eleEta < 0.1) {
-            hA[41]->Fill(mWP.z(), T.cluster.energy);
-            hA[44]->Fill(T.cluster.energy);
+            hA[41]->Fill(mWP.z(), T.mCluster2x2.energy);
+            hA[44]->Fill(T.mCluster2x2.energy);
          }
 
       }
@@ -229,10 +229,10 @@ St2011pubMcMaker::doWefficiency()
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
-         assert(T.cluster.nTower > 0); // internal logical error
+         assert(T.mCluster2x2.nTower > 0); // internal logical error
          assert(T.nearTotET > 0); // internal logical error
 
-         if (T.cluster.ET / T.nearTotET < wMK->par_nearTotEtFrac)
+         if (T.mCluster2x2.ET / T.nearTotET < wMK->par_nearTotEtFrac)
             continue; // too large nearET
          if (T.ptBalance.Perp() < wMK->par_ptBalance || T.awayTotET > 30.) //Jan
             continue;

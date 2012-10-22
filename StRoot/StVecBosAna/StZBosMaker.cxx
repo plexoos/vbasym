@@ -55,7 +55,7 @@ void StZBosMaker::printJan(WeveEleTrack *T)
 {
    int ibp = kBTow;
    WevePointTower poiTw = T->pointTower;
-   WeveCluster cl = T->cluster;
+   WeveCluster cl = T->mCluster2x2;
    int id = poiTw.id;
    float adc = wMK->mWEvent->bemc.adcTile[ibp][id - 1];
    float frac = adc / 4096 * 60 / cl.ET;
@@ -82,18 +82,18 @@ void StZBosMaker::findEndcap_Z_boson()
          WeveEleTrack &TB = V.eleTrack[it];
          if (TB.pointTower.id <= 0) continue; //skip endcap towers
          if (TB.isMatch2Cl == false) continue;
-         assert(TB.cluster.nTower > 0); // internal logical error
+         assert(TB.mCluster2x2.nTower > 0); // internal logical error
          assert(TB.nearTotET > 0); // internal logical error
 
          //place cuts on reco track first (both barrel and endcap tracks allowed)
-         float isoET1 = TB.cluster.ET / TB.cl4x4.ET;
+         float isoET1 = TB.mCluster2x2.ET / TB.mCluster4x4.ET;
          hA[51]->Fill(isoET1);
-         hA[52]->Fill(TB.cluster.ET);
+         hA[52]->Fill(TB.mCluster2x2.ET);
          hA[50]->Fill("trB", 1.); hA[60]->Fill("trB", 1.);
-         if (TB.cluster.ET < par_clusterEtZ) continue;
+         if (TB.mCluster2x2.ET < par_clusterEtZ) continue;
          hA[50]->Fill("etB", 1.); hA[60]->Fill("etB", 1.);
 
-         float fracET1 = TB.cluster.ET / TB.nearTotET;
+         float fracET1 = TB.mCluster2x2.ET / TB.nearTotET;
          hA[53]->Fill(fracET1);
          if (fracET1 < par_nearTotEtFracZ) continue;
          hA[50]->Fill("conB", 1.); hA[60]->Fill("conB", 1.);
@@ -104,23 +104,23 @@ void StZBosMaker::findEndcap_Z_boson()
             WeveEleTrack &TE = V.eleTrack[it];
             if (TE.pointTower.id >= 0) continue; //skip barrel towers
             if (TE.isMatch2Cl == false) continue;
-            assert(TE.cluster.nTower > 0); // internal logical error
+            assert(TE.mCluster2x2.nTower > 0); // internal logical error
             assert(TE.nearTotET > 0); // internal logical error
 
-            float isoET2 = TE.cluster.ET / TE.cl4x4.ET;
+            float isoET2 = TE.mCluster2x2.ET / TE.mCluster4x4.ET;
             hA[71]->Fill(isoET2);
-            hA[72]->Fill(TE.cluster.ET);
+            hA[72]->Fill(TE.mCluster2x2.ET);
             hA[70]->Fill("trE", 1.);
-            if (TE.cluster.ET < par_clusterEtZ) continue;
+            if (TE.mCluster2x2.ET < par_clusterEtZ) continue;
             hA[70]->Fill("etE", 1.);
 
-            float fracET2 = TE.cluster.ET / TE.nearTotET;
+            float fracET2 = TE.mCluster2x2.ET / TE.nearTotET;
             hA[73]->Fill(fracET2);
             if (fracET2 < par_nearTotEtFracZ) continue;
             hA[70]->Fill("conE", 1.);
 
-            float e1 = TB.cluster.energy;
-            float e2 = TE.cluster.energy;
+            float e1 = TB.mCluster2x2.energy;
+            float e2 = TE.mCluster2x2.energy;
             TVector3 p1 = TB.primP; p1.SetMag(e1); //cluster.position;
             TVector3 p2 = TE.primP; p2.SetMag(e2); //cluster.position;
 
@@ -144,16 +144,16 @@ void StZBosMaker::findEndcap_Z_boson()
             int Q1Q2 = TB.prMuTrack->charge() * TE.prMuTrack->charge();
             if (Q1Q2 == 1) { //..  same sign , can't be Z-> e+ e-
                hA[76]->Fill(mass);
-               hA[80]->Fill(TE.cluster.ET, TE.prMuTrack->charge() / TE.prMuTrack->pt());	  continue;
+               hA[80]->Fill(TE.mCluster2x2.ET, TE.prMuTrack->charge() / TE.prMuTrack->pt());	  continue;
             }
 
             //..... now only opposite sign
             hA[70]->Fill("QQ", 1.);
             hA[75]->Fill(mass);
-            hA[81]->Fill(TE.cluster.ET, TE.prMuTrack->charge() / TE.prMuTrack->pt());
+            hA[81]->Fill(TE.mCluster2x2.ET, TE.prMuTrack->charge() / TE.prMuTrack->pt());
          }
 
-         // 2) use highest ET endcap cluster with no track requirement
+         // 2) use highest ET endcap mCluster2x2 with no track requirement
          float maxET = 0;
          WeveCluster maxCluster;
          for (int iEta = 0; iEta < 12; iEta++) { //loop over eta bins
@@ -172,9 +172,9 @@ void StZBosMaker::findEndcap_Z_boson()
          if (maxCluster.ET <= 1.0) continue; //remove low E clusters
 
          //apply cuts to max ETOW cluster and isolation sums
-         WeveCluster cl4x4 = wMK->sumEtowPatch(maxCluster.iEta - 1, maxCluster.iPhi - 1, 4, 4, V.z);
-         hA[54]->Fill(maxCluster.ET / cl4x4.ET);
-         if (maxCluster.ET / cl4x4.ET < wMK->parE_clustFrac24) continue;
+         WeveCluster mCluster4x4 = wMK->sumEtowPatch(maxCluster.iEta - 1, maxCluster.iPhi - 1, 4, 4, V.z);
+         hA[54]->Fill(maxCluster.ET / mCluster4x4.ET);
+         if (maxCluster.ET / mCluster4x4.ET < wMK->parE_clustFrac24) continue;
          hA[55]->Fill(maxCluster.ET);
          hA[50]->Fill("trE", 1.);
          if (maxCluster.ET < par_clusterEtZ) continue;
@@ -189,7 +189,7 @@ void StZBosMaker::findEndcap_Z_boson()
          hA[50]->Fill("conE", 1.);
 
          //add plots of good candidates
-         float e1 = TB.cluster.energy;
+         float e1 = TB.mCluster2x2.energy;
          float e2 = maxCluster.energy;
          TVector3 p1 = TB.primP; p1.SetMag(e1);
          TVector3 p2 = maxCluster.position; p2.SetMag(e2);
@@ -239,18 +239,18 @@ void StZBosMaker::find_Z_boson()
          WeveEleTrack &T1 = V.eleTrack[it];
          if (T1.pointTower.id <= 0) continue; //skip endcap towers
          if (T1.isMatch2Cl == false) continue;
-         assert(T1.cluster.nTower > 0); // internal logical error
+         assert(T1.mCluster2x2.nTower > 0); // internal logical error
          assert(T1.nearTotET > 0); // internal logical error
 
-         float isoET1 = T1.cluster.ET / T1.cl4x4.ET;
+         float isoET1 = T1.mCluster2x2.ET / T1.mCluster4x4.ET;
          hA[29]->Fill(isoET1);
 
-         hA[23]->Fill(T1.cluster.ET);
+         hA[23]->Fill(T1.mCluster2x2.ET);
          hA[0]->Fill("tr1", 1.);
-         if (T1.cluster.ET < par_clusterEtZ) continue;
+         if (T1.mCluster2x2.ET < par_clusterEtZ) continue;
          hA[0]->Fill("et1", 1.);
 
-         float fracET1 = T1.cluster.ET / T1.nearTotET;
+         float fracET1 = T1.mCluster2x2.ET / T1.nearTotET;
          hA[24]->Fill(fracET1);
          if (fracET1 < par_nearTotEtFracZ) continue;
          hA[0]->Fill("con1", 1.);
@@ -260,24 +260,24 @@ void StZBosMaker::find_Z_boson()
             WeveEleTrack &T2 = V.eleTrack[it2];
             if (T2.pointTower.id <= 0) continue; //skip endcap towers
             if (T2.isMatch2Cl == false) continue;
-            assert(T2.cluster.nTower > 0); // internal logical error
+            assert(T2.mCluster2x2.nTower > 0); // internal logical error
             assert(T2.nearTotET > 0); // internal logical error
 
-            float isoET2 = T2.cluster.ET / T2.cl4x4.ET;
+            float isoET2 = T2.mCluster2x2.ET / T2.mCluster4x4.ET;
             hA[30]->Fill(isoET2);
 
-            hA[25]->Fill(T2.cluster.ET);
+            hA[25]->Fill(T2.mCluster2x2.ET);
             hA[0]->Fill("tr2", 1.);
-            if (T2.cluster.ET < par_clusterEtZ) continue;
+            if (T2.mCluster2x2.ET < par_clusterEtZ) continue;
             hA[0]->Fill("et2", 1.);
 
-            float fracET2 = T2.cluster.ET / T2.nearTotET;
+            float fracET2 = T2.mCluster2x2.ET / T2.nearTotET;
             hA[26]->Fill(fracET2);
             if (fracET2 < par_nearTotEtFracZ) continue;
             hA[0]->Fill("con2", 1.);
 
-            float e1 = T1.cluster.energy;
-            float e2 = T2.cluster.energy;
+            float e1 = T1.mCluster2x2.energy;
+            float e2 = T2.mCluster2x2.energy;
             TVector3 p1 = T1.primP; p1.SetMag(e1); //cluster.position;
             TVector3 p2 = T2.primP; p2.SetMag(e2); //cluster.position;
 
@@ -304,10 +304,10 @@ void StZBosMaker::find_Z_boson()
             // now only opposite sign
             hA[0]->Fill("QQ", 1.);
             hA[15]->Fill(mass);
-            hA[33]->Fill(T1.cluster.ET, T1.prMuTrack->charge() / T1.prMuTrack->pt());
-            hA[33]->Fill(T2.cluster.ET, T2.prMuTrack->charge() / T2.prMuTrack->pt());
-            hA[34]->Fill(T1.pointTower.iEta , T1.cluster.energy);
-            hA[34]->Fill(T2.pointTower.iEta , T2.cluster.energy);
+            hA[33]->Fill(T1.mCluster2x2.ET, T1.prMuTrack->charge() / T1.prMuTrack->pt());
+            hA[33]->Fill(T2.mCluster2x2.ET, T2.prMuTrack->charge() / T2.prMuTrack->pt());
+            hA[34]->Fill(T1.pointTower.iEta , T1.mCluster2x2.energy);
+            hA[34]->Fill(T2.pointTower.iEta , T2.mCluster2x2.energy);
             hA[35]->Fill(p1.Eta(), p2.Eta());
             hA[36]->Fill(psum.Eta());
             hA[37]->Fill(psum.Pt());
@@ -337,11 +337,11 @@ void StZBosMaker::find_Z_boson()
 
             // **** I stoped changes here, Jan
 
-            float fmax1 = T1.cluster.ET / T1.cl4x4.ET;
-            float fmax2 = T2.cluster.ET / T2.cl4x4.ET;
+            float fmax1 = T1.mCluster2x2.ET / T1.mCluster4x4.ET;
+            float fmax2 = T2.mCluster2x2.ET / T2.mCluster4x4.ET;
 
             hA[21]->Fill(fmax1, fmax2);
-            hA[22]->Fill(T1.cluster.ET, T2.cluster.ET);
+            hA[22]->Fill(T1.mCluster2x2.ET, T2.mCluster2x2.ET);
 
             hA[1]->Fill(mass);
             hA[2]->Fill(T1.prMuTrack->charge(), T2.prMuTrack->charge());
@@ -350,7 +350,7 @@ void StZBosMaker::find_Z_boson()
             hA[5]->Fill(del_phi);
             hA[6]->Fill(mass, T1.prMuTrack->charge() / T1.primP.Perp()*T2.prMuTrack->charge() / T1.primP.Perp());
             hA[7]->Fill(mass, T1.prMuTrack->charge()*T2.prMuTrack->charge());
-            hA[8]->Fill(T1.cluster.ET);
+            hA[8]->Fill(T1.mCluster2x2.ET);
             if (T1.prMuTrack->charge() > 0) {
                hA[9]->Fill(p1.Eta(), p1.Phi());
                hA[10]->Fill(p2.Eta(), p2.Phi());
@@ -361,7 +361,7 @@ void StZBosMaker::find_Z_boson()
             }
 
             hA[11]->Fill(fmax1, fmax2);
-            hA[12]->Fill(T1.cluster.ET, T2.cluster.ET);
+            hA[12]->Fill(T1.mCluster2x2.ET, T2.mCluster2x2.ET);
             hA[13]->Fill(mass, del_phi);
          }
       } // loop over first track

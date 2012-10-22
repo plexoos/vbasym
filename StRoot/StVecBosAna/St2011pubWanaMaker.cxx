@@ -64,11 +64,11 @@ void St2011pubWanaMaker::evalWeleTrackSign()
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
-         assert(T.cluster.nTower > 0); // internal logical error
+         assert(T.mCluster2x2.nTower > 0); // internal logical error
          assert(T.nearTotET > 0); // internal logical error
 
          // work with W-track
-         float ET = T.cluster.ET;
+         float ET = T.mCluster2x2.ET;
          const StMuTrack *glTr = T.glMuTrack; assert(glTr);
          const StMuTrack *prTr = T.prMuTrack; assert(prTr);
          float PT = glTr->pt();
@@ -83,53 +83,53 @@ void St2011pubWanaMaker::evalWeleTrackSign()
          if (fabs(T.primP.Eta()) > 1) continue;
 
          float absEta = fabs(T.primP.Eta());
-         if (T.cluster.ET / T.nearTotET_noEEMC > wMK->par_nearTotEtFrac) {
+         if (T.mCluster2x2.ET / T.nearTotET_noEEMC > wMK->par_nearTotEtFrac) {
             if (T.sPtBalance_noEEMC > wMK->par_ptBalance) { //signal w/o endcap in veto
                //charge sorted
                if (p_ipn == 0)
-                  hA[43]->Fill(T.cluster.ET);
+                  hA[43]->Fill(T.mCluster2x2.ET);
                else
-                  hA[46]->Fill(T.cluster.ET);
+                  hA[46]->Fill(T.mCluster2x2.ET);
                //eta sorted
                if (absEta > 0.6 && absEta < 1)
-                  hA[38]->Fill(T.cluster.ET);
+                  hA[38]->Fill(T.mCluster2x2.ET);
                if (absEta > 0.3 && absEta < 0.6)
-                  hA[39]->Fill(T.cluster.ET);
+                  hA[39]->Fill(T.mCluster2x2.ET);
                if (absEta > 0.0 && absEta < 0.3)
-                  hA[40]->Fill(T.cluster.ET);
+                  hA[40]->Fill(T.mCluster2x2.ET);
             }
          }
 
-         if (T.cluster.ET / T.nearTotET < wMK->par_nearTotEtFrac) continue; // too large nearET
+         if (T.mCluster2x2.ET / T.nearTotET < wMK->par_nearTotEtFrac) continue; // too large nearET
 
          //xSec binned
          if (T.sPtBalance > wMK->par_ptBalance ) { //signal
             //charge sorted
             if (p_ipn == 0)
-               hA[41]->Fill(T.cluster.ET);
+               hA[41]->Fill(T.mCluster2x2.ET);
             else
-               hA[44]->Fill(T.cluster.ET);
+               hA[44]->Fill(T.mCluster2x2.ET);
             //eta sorted
             if (absEta > 0.6 && absEta < 1)
-               hA[32]->Fill(T.cluster.ET);
+               hA[32]->Fill(T.mCluster2x2.ET);
             if (absEta > 0.3 && absEta < 0.6)
-               hA[33]->Fill(T.cluster.ET);
+               hA[33]->Fill(T.mCluster2x2.ET);
             if (absEta > 0.0 && absEta < 0.3)
-               hA[34]->Fill(T.cluster.ET);
+               hA[34]->Fill(T.mCluster2x2.ET);
          }
          else {//background
             //charge sorted
             if (p_ipn == 0)
-               hA[42]->Fill(T.cluster.ET);
+               hA[42]->Fill(T.mCluster2x2.ET);
             else
-               hA[45]->Fill(T.cluster.ET);
+               hA[45]->Fill(T.mCluster2x2.ET);
             //eta sorted
             if (absEta > 0.6 && absEta < 1)
-               hA[35]->Fill(T.cluster.ET);
+               hA[35]->Fill(T.mCluster2x2.ET);
             if (absEta > 0.3 && absEta < 0.6)
-               hA[36]->Fill(T.cluster.ET);
+               hA[36]->Fill(T.mCluster2x2.ET);
             if (absEta > 0.0 && absEta < 0.3)
-               hA[37]->Fill(T.cluster.ET);
+               hA[37]->Fill(T.mCluster2x2.ET);
          }
 
          if (T.sPtBalance < wMK->par_ptBalance )  continue;
@@ -198,12 +198,12 @@ void St2011pubWanaMaker::varyCuts4backgStudy()
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
-         assert(T.cluster.nTower > 0); // internal logical error
+         assert(T.mCluster2x2.nTower > 0); // internal logical error
          assert(T.nearTotET > 0); // internal logical error
 
-         float nearR = T.cluster.ET / T.nearTotET;
+         float nearR = T.mCluster2x2.ET / T.nearTotET;
          float awayET = T.awayTotET;
-         float ET =	T.cluster.ET;
+         float ET =	T.mCluster2x2.ET;
 
          // .... logic of histos .....
          if (nearR > 0.9) {

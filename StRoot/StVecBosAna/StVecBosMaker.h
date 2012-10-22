@@ -91,7 +91,7 @@ private:
    float mMinBClusterEnergyIsoRatio, par_nearTotEtFrac;
    float parE_clustFrac24, parE_nearTotEtFrac;
    float par_nearDeltaR, par_awayDeltaPhi;
-   float par_delR3D, parE_delR3D, par_highET, parE_highET,  par_ptBalance, parE_ptBalance;
+   float mMaxTrackClusterDist, parE_delR3D, par_highET, parE_highET,  par_ptBalance, parE_ptBalance;
    float mCutTrackEtaMin, mCutTrackEtaMax, parE_leptonEtaLow, parE_leptonEtaHigh; //bracket acceptance
    float parE_trackEtaMin;
    int   parE_nSmdStrip;

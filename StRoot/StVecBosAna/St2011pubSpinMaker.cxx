@@ -120,24 +120,24 @@ void St2011pubSpinMaker::bXingSort()
          if (T.pointTower.id == 0) continue;
 
          // Collect QCD background for lumi monitors
-         float frac24 = T.cluster.ET / (T.cl4x4.ET);
+         float frac24 = T.mCluster2x2.ET / (T.mCluster4x4.ET);
 
          if (iv == 0 && it == 0 && frac24 < wMK->mMinBClusterEnergyIsoRatio) {
-            hA[31]->Fill(T.cluster.ET);
-            if ( T.cluster.ET < 20. ) { hA[7]->Fill(spin4);  hA[0]->Fill("BG2", 1.);}
+            hA[31]->Fill(T.mCluster2x2.ET);
+            if ( T.mCluster2x2.ET < 20. ) { hA[7]->Fill(spin4);  hA[0]->Fill("BG2", 1.);}
          }
 
          if (T.isMatch2Cl == false) continue;
-         assert(T.cluster.nTower > 0); // internal logical error
+         assert(T.mCluster2x2.nTower > 0); // internal logical error
          assert(T.nearTotET > 0); // internal logical error
 
          int iQ = 0; // plus
          float p_Q = T.prMuTrack->charge();
          if ( p_Q < 0 ) iQ = 1; // minus
-         float ET = T.cluster.ET;
+         float ET = T.mCluster2x2.ET;
 
          //put final W cut here
-         bool isW = T.cluster.ET / T.nearTotET > wMK->par_nearTotEtFrac; // near cone
+         bool isW = T.mCluster2x2.ET / T.nearTotET > wMK->par_nearTotEtFrac; // near cone
 
          if (par_useNoEEMC)
             isW = isW && T.sPtBalance_noEEMC > wMK->par_ptBalance; // awayET

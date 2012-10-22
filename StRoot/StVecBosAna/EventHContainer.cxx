@@ -71,13 +71,13 @@ void EventHContainer::BookHists()
    o["hTrackBTowerId"] = hist = new TH1I("hTrackBTowerId", "; Track Extrapolated Barrel Tower Id; Num. of Tracks", 4800, 0, 4800);
    hist->SetOption("hist GRIDX GRIDY");
 
-   o["hTrackBClusterEnergy"] = hist = new TH1I("hTrackBClusterEnergy", "; Barrel Cluster Energy; Num. of Tracks", 70, 0, 70);
+   o["hTrackBClusterEnergy2x2"] = hist = new TH1I("hTrackBClusterEnergy2x2", "; Barrel Cluster Energy; Num. of Tracks", 70, 0, 70);
    hist->SetOption("hist GRIDX GRIDY");
 
-   o["hTrackBCluster44Energy"] = hist = new TH1I("hTrackBCluster44Energy", "; Barrel Cluster (4x4) Energy; Num. of Tracks", 70, 0, 70);
+   o["hTrackBClusterEnergy4x4"] = hist = new TH1I("hTrackBClusterEnergy4x4", "; Barrel Cluster (4x4) Energy; Num. of Tracks", 70, 0, 70);
    hist->SetOption("hist GRIDX GRIDY");
 
-   o["hTrackBClusterEnergyIsoRatio"] = hist = new TH1I("hTrackBClusterEnergyIsoRatio", "; Barrel Cluster Energy Iso Ratio; Num. of Tracks", 70, 0, 70);
+   o["hTrackBClusterEnergyIsoRatio"] = hist = new TH1I("hTrackBClusterEnergyIsoRatio", "; Barrel Cluster Energy Iso Ratio; Num. of Tracks", 100, 0, 1);
    hist->SetOption("hist GRIDX GRIDY");
 
    o["hChargePrimaryTrack"] = hist = new TH1I("hChargePrimaryTrack", "; Charge of the primary track; Num. of Tracks", 10, -2, 2);
@@ -159,10 +159,12 @@ void EventHContainer::Fill(ProtoEvent &ev)
          ((TH1*) o["hTrackEta"])->Fill(iTrack->primP.Eta());
          ((TH1*) o["hTrackPhi"])->Fill(iTrack->primP.Phi());
          ((TH1*) o["hTrackBTowerId"])->Fill(iTrack->pointTower.id);
-         ((TH1*) o["hTrackBClusterEnergy"])->Fill(iTrack->cluster.ET);
-         ((TH1*) o["hTrackBCluster44Energy"])->Fill(iTrack->cl4x4.ET);
-         ((TH1*) o["hTrackBClusterEnergyIsoRatio"])->Fill(iTrack->cluster.ET/iTrack->cl4x4.ET);
+         ((TH1*) o["hTrackBClusterEnergy2x2"])->Fill(iTrack->mCluster2x2.ET);
+         ((TH1*) o["hTrackBClusterEnergy4x4"])->Fill(iTrack->mCluster4x4.ET);
+         ((TH1*) o["hTrackBClusterEnergyIsoRatio"])->Fill(iTrack->mCluster2x2.ET/iTrack->mCluster4x4.ET);
          ((TH1*) o["hChargePrimaryTrack"])->Fill(iTrack->prMuTrack->charge());
+
+         //printf("hasMatchedCluster: %d\n", iTrack->isMatch2Cl);
       }
    }
 }

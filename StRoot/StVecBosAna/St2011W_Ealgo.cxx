@@ -24,58 +24,58 @@ void StVecBosMaker::findEndcap_W_boson()
          WeveEleTrack &T = V.eleTrack[it];
          if (T.pointTower.id >= 0) continue; //skip barrel towers
          if (T.isMatch2Cl == false) continue;
-         assert(T.cluster.nTower > 0); // internal logical error
+         assert(T.mCluster2x2.nTower > 0); // internal logical error
          assert(T.nearTotET > 0); // internal logical error
 
          //signal plots w/o EEMC in veto
-         if (T.cluster.ET / T.nearTotET_noEEMC > parE_nearTotEtFrac) {
+         if (T.mCluster2x2.ET / T.nearTotET_noEEMC > parE_nearTotEtFrac) {
             if (T.sPtBalance_noEEMC > parE_ptBalance ) { //only signed ptBalance cut
-               hE[140]->Fill(T.cluster.ET);
+               hE[140]->Fill(T.mCluster2x2.ET);
                if (T.prMuTrack->charge() < 0) {
-                  hE[184 + 3]->Fill(T.cluster.ET);
+                  hE[184 + 3]->Fill(T.mCluster2x2.ET);
                }
                else if (T.prMuTrack->charge() > 0) {
-                  hE[184 + 4]->Fill(T.cluster.ET);
+                  hE[184 + 4]->Fill(T.mCluster2x2.ET);
                }
             }
          }
 
-         if (T.cluster.ET / T.nearTotET < parE_nearTotEtFrac) continue; // too large nearET
+         if (T.mCluster2x2.ET / T.nearTotET < parE_nearTotEtFrac) continue; // too large nearET
 
          hE[20]->Fill("noNear", 1.);
          nNoNear++;
-         hE[112]->Fill(T.cluster.ET); // for Joe
+         hE[112]->Fill(T.mCluster2x2.ET); // for Joe
          hE[50]->Fill(T.awayTpcPT);
          hE[51]->Fill(T.awayBtowET);
          hE[54]->Fill(T.awayTotET);
-         hE[52]->Fill(T.cluster.ET, T.awayTotET);
-         hE[53]->Fill(T.cluster.ET, T.awayEmcET);
+         hE[52]->Fill(T.mCluster2x2.ET, T.awayTotET);
+         hE[53]->Fill(T.mCluster2x2.ET, T.awayEmcET);
          hE[55]->Fill(T.awayEtowET);
-         hE[60]->Fill(T.cluster.ET, T.awayTpcPT);
+         hE[60]->Fill(T.mCluster2x2.ET, T.awayTpcPT);
 
-         hE[132]->Fill(T.cluster.ET, T.ptBalance.Perp());
+         hE[132]->Fill(T.mCluster2x2.ET, T.ptBalance.Perp());
          hE[133]->Fill(T.awayTotET, T.ptBalance.Perp());
-         hE[134]->Fill(T.cluster.ET, T.sPtBalance);
+         hE[134]->Fill(T.mCluster2x2.ET, T.sPtBalance);
          hE[135]->Fill(T.awayTotET, T.sPtBalance);
 
          //plots for backg sub yield
          if (T.sPtBalance > parE_ptBalance ) {
-            hE[136]->Fill(T.cluster.ET);//signal
-            hE[62]->Fill(T.pointTower.iEta , T.cluster.energy);
+            hE[136]->Fill(T.mCluster2x2.ET);//signal
+            hE[62]->Fill(T.pointTower.iEta , T.mCluster2x2.energy);
             if (T.prMuTrack->charge() < 0) {
-               hE[184 + 1]->Fill(T.cluster.ET);
+               hE[184 + 1]->Fill(T.mCluster2x2.ET);
             }
             else if (T.prMuTrack->charge() > 0) {
-               hE[184 + 2]->Fill(T.cluster.ET);
+               hE[184 + 2]->Fill(T.mCluster2x2.ET);
             }
          }
          else {
-            hE[137]->Fill(T.cluster.ET);//background
+            hE[137]->Fill(T.mCluster2x2.ET);//background
             if (T.prMuTrack->charge() < 0) {
-               hE[184 + 5]->Fill(T.cluster.ET);
+               hE[184 + 5]->Fill(T.mCluster2x2.ET);
             }
             else if (T.prMuTrack->charge() > 0) {
-               hE[184 + 6]->Fill(T.cluster.ET);
+               hE[184 + 6]->Fill(T.mCluster2x2.ET);
             }
          }
 
@@ -93,17 +93,17 @@ void StVecBosMaker::findEndcap_W_boson()
 
          hE[20]->Fill("noAway", 1.0);
          nNoAway++;
-         hE[113]->Fill( T.cluster.ET);//for Joe
+         hE[113]->Fill( T.mCluster2x2.ET);//for Joe
 
-         hE[90]->Fill( T.cluster.ET);
-         hE[92]->Fill( T.cluster.ET, T.glMuTrack->dEdx() * 1e6);
-         //hE[93]->Fill( T.cluster.ET,T.glMuTrack->dca().mag());
+         hE[90]->Fill( T.mCluster2x2.ET);
+         hE[92]->Fill( T.mCluster2x2.ET, T.glMuTrack->dEdx() * 1e6);
+         //hE[93]->Fill( T.mCluster2x2.ET,T.glMuTrack->dca().mag());
          int k = 0; if (T.prMuTrack->charge() < 0) k = 1;
-         hE[94 + k]->Fill( T.cluster.ET, T.glMuTrack->dcaD());
+         hE[94 + k]->Fill( T.mCluster2x2.ET, T.glMuTrack->dcaD());
          // h95 used above
 
          // do charge sign plot
-         float ET = T.cluster.ET;
+         float ET = T.mCluster2x2.ET;
          const StMuTrack *glTr = T.glMuTrack; assert(glTr);
          const StMuTrack *prTr = T.prMuTrack; assert(prTr);
          float g_chrg = glTr->charge();
@@ -111,14 +111,14 @@ void StVecBosMaker::findEndcap_W_boson()
          hE[200]->Fill(ET, g_chrg / glTr->pt());
          hE[201]->Fill(ET, p_chrg / prTr->pt());
 
-         if (T.cluster.ET < par_highET) continue; // very likely Ws
-         hE[91]->Fill(T.cluster.position.PseudoRapidity(), T.cluster.position.Phi());
+         if (T.mCluster2x2.ET < par_highET) continue; // very likely Ws
+         hE[91]->Fill(T.mCluster2x2.position.PseudoRapidity(), T.mCluster2x2.position.Phi());
          hE[96]->Fill(V.id);
          hE[97]->Fill(V.funnyRank);
          hE[98]->Fill(V.z);
          hE[99]->Fill( T.prMuTrack->eta());
          hE[100]->Fill(T.pointTower.R.X(), T.pointTower.R.Y());
-         hE[190 + k]->Fill(T.prMuTrack->eta(), T.cluster.ET);
+         hE[190 + k]->Fill(T.prMuTrack->eta(), T.mCluster2x2.ET);
          hE[20]->Fill("goldW", 1.);
          nGoldW++;
 
@@ -145,7 +145,7 @@ StVecBosMaker::analyzeESMD()
          WeveEleTrack &T = V.eleTrack[it];
          if (T.pointTower.id >= 0) continue; //skip barrel towers
          if (T.isMatch2Cl == false) continue;
-         assert(T.cluster.nTower > 0); // internal logical error
+         assert(T.mCluster2x2.nTower > 0); // internal logical error
 
          //id of strips pointed by prim and glob tracks in each plane
          int hitStrip[2] = { -1, -1}; int hitStripGlob[2] = { -1, -1};
@@ -223,7 +223,7 @@ StVecBosMaker::analyzeEPRS()
          WeveEleTrack &T = V.eleTrack[it];
          if (T.pointTower.id >= 0) continue; //skip barrel towers
          if (T.isMatch2Cl == false) continue;
-         assert(T.cluster.nTower > 0); // internal logical error
+         assert(T.mCluster2x2.nTower > 0); // internal logical error
 
          //do some clustering of EPRS deposits and plot histos
 
@@ -361,44 +361,44 @@ int StVecBosMaker::matchTrack2EtowCluster()
 
          float trackPT = T.prMuTrack->momentum().perp();
          //need to decide on 2x2 or 2x1 for cluster size
-         T.cluster = maxEtow2x2(T.pointTower.iEta, T.pointTower.iPhi, zVert);
-         hE[110]->Fill( T.cluster.ET);
-         hE[33]->Fill(T.cluster.ET);
-         hE[34]->Fill(T.cluster.adcSum, trackPT);
+         T.mCluster2x2 = maxEtow2x2(T.pointTower.iEta, T.pointTower.iPhi, zVert);
+         hE[110]->Fill( T.mCluster2x2.ET);
+         hE[33]->Fill(T.mCluster2x2.ET);
+         hE[34]->Fill(T.mCluster2x2.adcSum, trackPT);
 
-         // Compute surrounding cluster energy
-         int iEta = T.cluster.iEta;
-         int iPhi = T.cluster.iPhi;
-         T.cl4x4 = sumEtowPatch(iEta - 1, iPhi - 1, 4, 4, zVert);
+         // Compute surrounding mCluster2x2 energy
+         int iEta = T.mCluster2x2.iEta;
+         int iPhi = T.mCluster2x2.iPhi;
+         T.mCluster4x4 = sumEtowPatch(iEta - 1, iPhi - 1, 4, 4, zVert);
 
-         if (T.cluster.ET < parE_clustET) continue; // too low energy
+         if (T.mCluster2x2.ET < parE_clustET) continue; // too low energy
          hE[20]->Fill("CL", 1.);
-         hE[37]->Fill(T.cl4x4.ET);
-         hE[38]->Fill(T.cluster.energy, T.cl4x4.energy - T.cluster.energy);
+         hE[37]->Fill(T.mCluster4x4.ET);
+         hE[38]->Fill(T.mCluster2x2.energy, T.mCluster4x4.energy - T.mCluster2x2.energy);
 
-         float frac24 = T.cluster.ET / (T.cl4x4.ET);
+         float frac24 = T.mCluster2x2.ET / (T.mCluster4x4.ET);
          hE[39]->Fill(frac24);
          if (frac24 < parE_clustFrac24) continue;
          hE[20]->Fill("fr24", 1.);
 
          //set logE weighted cluster position vector at SMD z depth
-         float newMag = mGeomEmc->getZSMD() / TMath::Cos(T.cluster.position.Theta());
-         T.cluster.position.SetMag(newMag);
+         float newMag = mGeomEmc->getZSMD() / TMath::Cos(T.mCluster2x2.position.Theta());
+         T.mCluster2x2.position.SetMag(newMag);
 
          //.. spacial separation (track - cluster) only use 2D X-Y distance for endcap (ie. D.Perp())
-         TVector3 D = T.pointTower.R - T.cluster.position;
-         hE[43]->Fill(T.cluster.energy, D.Perp());
-         float delPhi = T.pointTower.R.DeltaPhi(T.cluster.position);
-         float Rxy = T.cluster.position.Perp();
+         TVector3 D = T.pointTower.R - T.mCluster2x2.position;
+         hE[43]->Fill(T.mCluster2x2.energy, D.Perp());
+         float delPhi = T.pointTower.R.DeltaPhi(T.mCluster2x2.position);
+         float Rxy = T.mCluster2x2.position.Perp();
 
-         hE[44]->Fill( T.cluster.position.Phi(), Rxy * delPhi);
-         hE[45]->Fill( T.cluster.energy, Rxy * delPhi); // wrong?
+         hE[44]->Fill( T.mCluster2x2.position.Phi(), Rxy * delPhi);
+         hE[45]->Fill( T.mCluster2x2.energy, Rxy * delPhi); // wrong?
          hE[46]->Fill( D.Perp());
 
-         if (D.Perp() > par_delR3D) continue;
+         if (D.Perp() > mMaxTrackClusterDist) continue;
          T.isMatch2Cl = true; // cluster is matched to TPC track
          hE[20]->Fill("#Delta R", 1.);
-         hE[111]->Fill( T.cluster.ET);
+         hE[111]->Fill( T.mCluster2x2.ET);
 
          nTr++;
       }// end of one vertex
