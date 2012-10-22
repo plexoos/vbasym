@@ -214,7 +214,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       dbMk->SetFlavor("sim",    "eemcPMTcal"); // use ideal gains for 2011 real data as well
    }
    else { // embedding samples
-      dbMk->SetMaxEntryTime(20101215,0); // keep the same DB snap-shot as used in BFC for embedding
+      dbMk->SetMaxEntryTime(20101215, 0); // keep the same DB snap-shot as used in BFC for embedding
       dbMk->SetFlavor("Wbose2","bsmdpCalib");
       dbMk->SetFlavor("Wbose2","bsmdeCalib");
       // printf("???? unforeseen MC flag, ABORT\n");
@@ -257,12 +257,14 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
          //Get TriggerMaker
          StTriggerSimuMaker *simuTrig = new StTriggerSimuMaker("StarTrigSimu");
+         assert(simuTrig);
          simuTrig->setHList(HList);
          // simuTrig->setMC(isMC); // must be before individual detectors, to be passed
          simuTrig->setMC(2); // must be before individual detectors, to be passed
          simuTrig->useBbc();
          simuTrig->useEemc(0);//default=0:just process ADC, 1,2:comp w/trgData,see .
-         simuTrig->eemc->setSetupPath((char *) eemcSetupPath.c_str());
+         assert(simuTrig->eemc);
+         //simuTrig->eemc->setSetupPath((char *) eemcSetupPath.c_str());
          simuTrig->useBemc();
          simuTrig->bemc->setConfig(2);
       }

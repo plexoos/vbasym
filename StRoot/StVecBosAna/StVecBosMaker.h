@@ -190,6 +190,8 @@ private:
    // jets
    StJet*        GetJet(int i) {return (StJet *)mJets->At(i);}
    TClonesArray* GetJets(TString branchName);
+   StJets*       GetStJets(int i) const;              // to make it backward compatible with SL09g
+   StJets*       GetStJets(const char* bname) const;  // to make it backward compatible with SL09g
    StJets*       GetStJetsCopy(TString branchName);
    TClonesArray* GetJetsTreeAnalysis(TString branchName);
 

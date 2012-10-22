@@ -600,17 +600,31 @@ TClonesArray* StVecBosMaker::GetJets(TString branchName)
       return 0;
    }
 
-   //assert(mStJetReader->getStJets(branchName)->eventId() == mWEvent->id);
-   if (mStJetReader->getStJets(branchName)->eventId() != mWEvent->id)
-      Error("GetJets", "Jet and W event ids do not match: %12d, %12d", mStJetReader->getStJets(branchName)->eventId(), mWEvent->id);
+   //if (mStJetReader->getStJets(branchName)->eventId() != mWEvent->id)
+   if (GetStJets(branchName)->eventId() != mWEvent->id)
+      Error("GetJets", "Jet and W event ids do not match: %12d, %12d", GetStJets(branchName)->eventId(), mWEvent->id);
 
-   //assert(mStJetReader->getStJets(branchName)->runId() == mWEvent->runNo);
-   if (mStJetReader->getStJets(branchName)->runId() != mWEvent->runNo)
-      Error("GetJets", "Jet and W run ids do not match: %12d, %12d", mStJetReader->getStJets(branchName)->runId(), mWEvent->runNo);
+   //if (mStJetReader->getStJets(branchName)->runId() != mWEvent->runNo)
+   if (GetStJets(branchName)->runId() != mWEvent->runNo)
+      Error("GetJets", "Jet and W run ids do not match: %12d, %12d", GetStJets(branchName)->runId(), mWEvent->runNo);
 
-   mWEvent->mNJets = mStJetReader->getStJets(branchName)->nJets();
+   mWEvent->mNJets = GetStJets(branchName)->nJets();
 
-   return mStJetReader->getStJets(branchName)->jets();
+   return GetStJets(branchName)->jets();
+}
+
+
+StJets* StVecBosMaker::GetStJets(int i) const
+{
+  TBranch* branch = (TBranch*) mStJetReader->tree()->GetListOfBranches()->At(i);
+  return branch ? *(StJets**)branch->GetAddress() : 0;
+}
+
+
+StJets* StVecBosMaker::GetStJets(const char* bname) const
+{
+  TBranch* branch = mStJetReader->tree()->GetBranch(bname);
+  return branch ? *(StJets**)branch->GetAddress() : 0;
 }
 
 
