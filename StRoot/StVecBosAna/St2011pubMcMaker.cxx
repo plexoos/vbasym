@@ -250,10 +250,7 @@ St2011pubMcMaker::doWefficiency()
 }
 
 
-//________________________________________________
-//________________________________________________
-bool
-St2011pubMcMaker::doMCanalysis()
+bool St2011pubMcMaker::doMCanalysis()
 {
    StMcEvent *mMcEvent = 0;
    mMcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");

@@ -124,7 +124,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    //if (useJetFinder == 2) {
       VecBosRootFile vecBosRootFile(histFileName, "recreate"); 
-      //}
+   //}
 
    TString fileG;
 
@@ -164,17 +164,13 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    if (geant) {
       // get geant file
-      ////s.f.-test      StIOMaker *ioMaker = new StIOMaker();
-      ////s.f.-test      printf("\n geant file %s \n\n", fileG.Data());
-      ////s.f.-test      cout << " test Salvo " << endl;
-      ////s.f.-test      printf("\n %s \n\n", "/home/starreco/reco/pp500/pythia6_422/Wplus_enu/perugia320/y2009a/gheisha_on/p09ig/rcf10010_1005_1000evts.geant.root");
-      ////s.f.-test      ioMaker->SetFile(fileG.Data());
-      ////s.f.-test      ioMaker->SetFile("/home/starreco/reco/pp500/pythia6_422/Wplus_enu/perugia320/y2009a/gheisha_on/p09ig/rcf10010_1005_1000evts.geant.root");
-      ////s.f.-test      ioMaker->SetIOMode("r");
-      ////s.f.-test      ioMaker->SetBranch("*", 0, "1"); //deactivate all branches
-      ////s.f.-test      ioMaker->SetBranch("geantBranch", 0, "r"); //activate geant Branch
-      ////s.f.-test      ioMaker->SetBranch("minimcBranch", 0, "r"); //activate geant Branch
-      cout << " test Salvo 2" << endl;
+      StIOMaker *ioMaker = new StIOMaker();
+      //ioMaker->SetFile(fileG.Data());
+      ioMaker->SetFile("/star/data56/reco/pp500/pythia6_422/Wplus_enu/perugia320/y2009a/gheisha_on/p09ig/rcf10010_1000_1000evts.geant.root");
+      ioMaker->SetIOMode("r");
+      ioMaker->SetBranch("*", 0, "1"); //deactivate all branches
+      ioMaker->SetBranch("geantBranch", 0, "r"); //activate geant Branch
+      ioMaker->SetBranch("minimcBranch", 0, "r"); //activate geant Branch
    }
 
    // Now we add Makers to the chain...
@@ -393,7 +389,9 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    StVecBosMaker *stVecBosMaker = new StVecBosMaker("StVecBosMaker", &vecBosRootFile);
 
    if (isMC) { // MC specific
-     // S.F. - Here version does nothing (just pass .true.), but it was used in 2009 for calling reweighting files that are depending on the MC type and even run dependent
+      // S.F. - Here version does nothing (just pass .true.), but it was used
+      // in 2009 for calling reweighting files that are depending on the MC type and
+      // even run dependent
       stVecBosMaker->setMC(isMC); // pass "version" of MC to maker
       //stVecBosMaker->setJetNeutScaleMC(1.0);
       //stVecBosMaker->setJetChrgScaleMC(1.0);
@@ -459,9 +457,9 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    }
 
    if (geant) {
-      ////s.f.-test      St2011pubMcMaker *pubMcMk = new St2011pubMcMaker("pubMc");
-      ////s.f.-test      pubMcMk->attachWalgoMaker(stVecBosMaker);
-      ////s.f.-test      pubMcMk->setHList(HList);
+      St2011pubMcMaker *pubMcMk = new St2011pubMcMaker("pubMc");
+      pubMcMk->attachWalgoMaker(stVecBosMaker);
+      pubMcMk->setHList(HList);
    }
 
    if (findZ) {
@@ -492,7 +490,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
       stChain->Clear();
       int stat = stChain->Make();
-
+      
       if (stat != kStOk && stat != kStSkip) break; // EOF or input error
 
       nProcEvents++;

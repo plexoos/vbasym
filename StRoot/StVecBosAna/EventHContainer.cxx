@@ -56,7 +56,7 @@ void EventHContainer::BookHists()
    o["hNumTracks"] = hist = new TH1I("hNumTracks", "; Num. of Tracks; Events", 50, 0, 150);
    hist->SetOption("hist GRIDX");
 
-   o["hNumTracksWithBCluster"] = hist = new TH1I("hNumTracksWithBCluster", "; Num. of Tracks with Barrel Cluster; Events", 50, 0, 150);
+   o["hNumTracksWithBCluster"] = hist = new TH1I("hNumTracksWithBCluster", "; Num. of Tracks with Barrel Cluster; Events", 5, 0, 5);
    hist->SetOption("hist GRIDX");
 
    o["hTrackFlag"] = hist = new TH1I("hTrackFlag", "; Track Flag; Num. of Tracks", 60, 280, 340);
@@ -77,10 +77,11 @@ void EventHContainer::BookHists()
    o["hTrackBClusterEnergy4x4"] = hist = new TH1I("hTrackBClusterEnergy4x4", "; Barrel Cluster (4x4) Energy; Num. of Tracks", 70, 0, 70);
    hist->SetOption("hist GRIDX GRIDY");
 
-   o["hTrackBClusterEnergyIsoRatio"] = hist = new TH1I("hTrackBClusterEnergyIsoRatio", "; Barrel Cluster Energy Iso Ratio; Num. of Tracks", 100, 0, 1);
+   o["hTrackBClusterEnergyIsoRatio"] = hist = new TH1I("hTrackBClusterEnergyIsoRatio", "; Barrel Cluster Energy Iso Ratio; Num. of Tracks", 55, 0, 1.1);
    hist->SetOption("hist GRIDX GRIDY");
 
    o["hChargePrimaryTrack"] = hist = new TH1I("hChargePrimaryTrack", "; Charge of the primary track; Num. of Tracks", 10, -2, 2);
+   o["hTrackDistanceToCluster"] = hist = new TH1I("hTrackDistanceToCluster", "; Distance(Track-Cluster), cm; Num. of Tracks", 50, 0, 50);
 
    //shName = "hMassFitChi2ByChannel";
    //o[shName] = new TH1F(shName.c_str(), shName.c_str(), N_SILICON_CHANNELS, 0.5, N_SILICON_CHANNELS+0.5);
@@ -162,6 +163,7 @@ void EventHContainer::Fill(ProtoEvent &ev)
          ((TH1*) o["hTrackBClusterEnergy2x2"])->Fill(iTrack->mCluster2x2.ET);
          ((TH1*) o["hTrackBClusterEnergy4x4"])->Fill(iTrack->mCluster4x4.ET);
          ((TH1*) o["hTrackBClusterEnergyIsoRatio"])->Fill(iTrack->mCluster2x2.ET/iTrack->mCluster4x4.ET);
+         ((TH1*) o["hTrackDistanceToCluster"])->Fill(iTrack->CalcDistanceToMatchedCluster().Mag());
          ((TH1*) o["hChargePrimaryTrack"])->Fill(iTrack->prMuTrack->charge());
 
          //printf("hasMatchedCluster: %d\n", iTrack->isMatch2Cl);

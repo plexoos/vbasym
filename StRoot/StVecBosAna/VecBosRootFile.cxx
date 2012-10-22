@@ -62,7 +62,13 @@ void VecBosRootFile::BookHists()
    fHists->d["event_cut"] = ph = new EventHContainer(new TDirectoryFile("event_cut", "event_cut", "", this));
    fHistCuts[kCUT_CUT].insert(ph);
 
-   fHists->d["kinema"]    = ph = new KinemaHContainer(new TDirectoryFile("kinema", "kinema", "", this));
+   fHists->d["tracks_barrel"] = ph = new EventHContainer(new TDirectoryFile("tracks_barrel", "tracks_barrel", "", this));
+   fHistCuts[kCUT_BARREL].insert(ph);
+
+   fHists->d["tracks_endcap"] = ph = new EventHContainer(new TDirectoryFile("tracks_endcap", "tracks_endcap", "", this));
+   fHistCuts[kCUT_ENDCAP].insert(ph);
+
+   //fHists->d["kinema"]    = ph = new KinemaHContainer(new TDirectoryFile("kinema", "kinema", "", this));
 
    this->cd();
 }

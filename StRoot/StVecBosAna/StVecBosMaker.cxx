@@ -438,6 +438,7 @@ Int_t StVecBosMaker::Make()
    int noMatchedEtowCluster = matchTrack2EtowCluster();
 
    if (!hasMatchedTrack2BarrelCluster && noMatchedEtowCluster) return kStOK; //no matched BTOW or ETOW clusters
+   //if (!hasMatchedTrack2BarrelCluster) return kStOK; //no matched BTOW or ETOW clusters
 
    nAccEve++;
 

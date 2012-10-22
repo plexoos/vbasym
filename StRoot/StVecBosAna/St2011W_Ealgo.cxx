@@ -131,10 +131,8 @@ void StVecBosMaker::findEndcap_W_boson()
 
 }
 
-//________________________________________________
-//________________________________________________
-void
-StVecBosMaker::analyzeESMD()
+
+void StVecBosMaker::analyzeESMD()
 {
    if (!mWEvent->l2EbitET) return;
 
@@ -195,15 +193,9 @@ StVecBosMaker::analyzeESMD()
 
             //get shower x-point from hitStrip + centroid of fit
             T.esmdXPcentroid = mGeomSmd->getIntersection(T.hitSector - 1, hitStrip[0] - 1 + (int)T.esmdShowerCentroid[0], hitStrip[1] - 1 + (int)T.esmdShowerCentroid[1]);
-
             //histos for each plane
-
-
          } //end plane loop
-
          //histos for track candidate
-
-
       } //end track loop
    } //end vertex loop
 }
@@ -352,62 +344,63 @@ int StVecBosMaker::matchTrack2EtowCluster()
    if (!mWEvent->l2EbitET) return 0;
 
    int nTr = 0;
-   for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++) {
+   for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++)
+   {
       WEventVertex &V = mWEvent->mVertices[iv];
       float zVert = V.z;
-      for (uint it = 0; it < V.eleTrack.size(); it++) {
-         WeveEleTrack &T = V.eleTrack[it];
-         if (T.pointTower.id >= 0) continue; //skip barrel towers
+      for (uint it = 0; it < V.eleTrack.size(); it++)
+      {
+         WeveEleTrack &track = V.eleTrack[it];
+         if (track.pointTower.id >= 0) continue; //skip barrel towers
 
-         float trackPT = T.prMuTrack->momentum().perp();
+         float trackPT = track.prMuTrack->momentum().perp();
          //need to decide on 2x2 or 2x1 for cluster size
-         T.mCluster2x2 = maxEtow2x2(T.pointTower.iEta, T.pointTower.iPhi, zVert);
-         hE[110]->Fill( T.mCluster2x2.ET);
-         hE[33]->Fill(T.mCluster2x2.ET);
-         hE[34]->Fill(T.mCluster2x2.adcSum, trackPT);
+         track.mCluster2x2 = maxEtow2x2(track.pointTower.iEta, track.pointTower.iPhi, zVert);
+         hE[110]->Fill( track.mCluster2x2.ET);
+         hE[33]->Fill(track.mCluster2x2.ET);
+         hE[34]->Fill(track.mCluster2x2.adcSum, trackPT);
 
          // Compute surrounding mCluster2x2 energy
-         int iEta = T.mCluster2x2.iEta;
-         int iPhi = T.mCluster2x2.iPhi;
-         T.mCluster4x4 = sumEtowPatch(iEta - 1, iPhi - 1, 4, 4, zVert);
+         int iEta = track.mCluster2x2.iEta;
+         int iPhi = track.mCluster2x2.iPhi;
+         track.mCluster4x4 = sumEtowPatch(iEta - 1, iPhi - 1, 4, 4, zVert);
 
-         if (T.mCluster2x2.ET < parE_clustET) continue; // too low energy
+         if (track.mCluster2x2.ET < parE_clustET) continue; // too low energy
          hE[20]->Fill("CL", 1.);
-         hE[37]->Fill(T.mCluster4x4.ET);
-         hE[38]->Fill(T.mCluster2x2.energy, T.mCluster4x4.energy - T.mCluster2x2.energy);
+         hE[37]->Fill(track.mCluster4x4.ET);
+         hE[38]->Fill(track.mCluster2x2.energy, track.mCluster4x4.energy - track.mCluster2x2.energy);
 
-         float frac24 = T.mCluster2x2.ET / (T.mCluster4x4.ET);
+         float frac24 = track.mCluster2x2.ET / (track.mCluster4x4.ET);
          hE[39]->Fill(frac24);
          if (frac24 < parE_clustFrac24) continue;
          hE[20]->Fill("fr24", 1.);
 
          //set logE weighted cluster position vector at SMD z depth
-         float newMag = mGeomEmc->getZSMD() / TMath::Cos(T.mCluster2x2.position.Theta());
-         T.mCluster2x2.position.SetMag(newMag);
+         float newMag = mGeomEmc->getZSMD() / TMath::Cos(track.mCluster2x2.position.Theta());
+         track.mCluster2x2.position.SetMag(newMag);
 
          //.. spacial separation (track - cluster) only use 2D X-Y distance for endcap (ie. D.Perp())
-         TVector3 D = T.pointTower.R - T.mCluster2x2.position;
-         hE[43]->Fill(T.mCluster2x2.energy, D.Perp());
-         float delPhi = T.pointTower.R.DeltaPhi(T.mCluster2x2.position);
-         float Rxy = T.mCluster2x2.position.Perp();
+         TVector3 D = track.pointTower.R - track.mCluster2x2.position;
+         hE[43]->Fill(track.mCluster2x2.energy, D.Perp());
+         float delPhi = track.pointTower.R.DeltaPhi(track.mCluster2x2.position);
+         float Rxy = track.mCluster2x2.position.Perp();
 
-         hE[44]->Fill( T.mCluster2x2.position.Phi(), Rxy * delPhi);
-         hE[45]->Fill( T.mCluster2x2.energy, Rxy * delPhi); // wrong?
+         hE[44]->Fill( track.mCluster2x2.position.Phi(), Rxy * delPhi);
+         hE[45]->Fill( track.mCluster2x2.energy, Rxy * delPhi); // wrong?
          hE[46]->Fill( D.Perp());
 
          if (D.Perp() > mMaxTrackClusterDist) continue;
-         T.isMatch2Cl = true; // cluster is matched to TPC track
+         track.isMatch2Cl = true; // cluster is matched to TPC track
          hE[20]->Fill("#Delta R", 1.);
-         hE[111]->Fill( T.mCluster2x2.ET);
+         hE[111]->Fill( track.mCluster2x2.ET);
 
          nTr++;
-      }// end of one vertex
-   }// end of vertex loop
+      }
+   }
 
    if (nTr <= 0) return -1;
    hE[0]->Fill("Tr2Cl", 1.0);
    return 0;
-
 }
 
 

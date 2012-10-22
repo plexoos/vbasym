@@ -64,6 +64,8 @@ public:
 
    void clear();
    void print( int flag = 0);
+   TVector3 CalcDistanceToMatchedCluster();
+
 
    ClassDef(WeveEleTrack, 1);
 };

@@ -55,3 +55,9 @@ void WeveEleTrack::clear()
 
    esmdXPcentroid = TVector3(0, 0, 0);
 }
+
+
+TVector3 WeveEleTrack::CalcDistanceToMatchedCluster()
+{
+   return pointTower.R - mCluster2x2.position;
+}

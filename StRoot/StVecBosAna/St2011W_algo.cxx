@@ -649,7 +649,7 @@ bool StVecBosMaker::matchTrack2BtowCluster()
          hA[37] ->Fill(track.mCluster4x4.ET);
          hA[38] ->Fill(track.mCluster2x2.energy, track.mCluster4x4.energy - track.mCluster2x2.energy);
 
-         float frac24 = track.mCluster2x2.ET / (track.mCluster4x4.ET);
+         float frac24 = track.mCluster2x2.ET / track.mCluster4x4.ET;
          hA[39]->Fill(frac24);
          if (frac24 < mMinBClusterEnergyIsoRatio) continue;
 
