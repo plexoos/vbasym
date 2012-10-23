@@ -255,13 +255,30 @@ be more perceptible through the addition of systematic effects.
 $\missET = - \sum \left( \vv E_e + \vv E_\text{jet} +  \vv E_\text{uncl} \right)$
 
 
-\section{Monte Carlo studies}
+\section{Preliminary Sensitivity Studies}
 
-W used PYTHIA 6.8 which simulates $W^{+-} \rightarrow e^{+-}(\mu)\nu_e(\nu_{\mu})$ to the LO with unpolarized beams. 
 
-The W is produced at STAR (run 11) with small $P_T$, as in Fig.~\ref{fig:MC_W_Pt}.
+The W is produced at STAR (run 11) with small $P_T$, as in
+Fig.~\ref{fig:MC_W_Pt}.
 
-The expected kinematic distribution of the leptons coming from the W decay is shown in fig.~\ref{fig:MC_W_eta}.
+The expected kinematic distribution of the leptons coming from the W decay is
+shown in fig.~\ref{fig:MC_W_eta}.
+
+For this study we used the total yields of $N_{W/Z} = N_\text{obs} -
+N_\text{bkg}$ events from the run 9 analysis \cite{WCrossSecRun9} which
+corresponds to luminosity of $\approx 13~\text{pb}^{-1}$:
+%
+\begin{align*}
+N_{W^+} &= 496 - 37 = 459,\\
+N_{W^-} &= 148 - 26 = 125,\\
+N_Z &= 13 - 0 = 13.
+\end{align*}
+%
+For the expected luminosity of $300~\text{pb}^{-1}$ the above numbers should be
+multiplied by 23. The relative vector boson yields in rapidity bins were
+obtained from a PYTHIA sample. We used PYTHIA 6.8 to simulate $W^{+,-}
+\rightarrow e^{+,-}\nu_e$ to the LO with unpolarized beams. 
+
 
 \begin{figure}[tbhp]
 \begin{center}
@@ -277,7 +294,8 @@ The expected kinematic distribution of the leptons coming from the W decay is sh
 \caption{\label{fig:MC_W_eta} W mass; polar angles and pseudo rapidity distributions od the produced W, the decay leptons and the recoil tracks.}
 \end{figure}
 
-Most of the recoil tracks in the BARREL region are expected to carry a very small fraction of the energy as shown in fig.~\ref{fig:MC_recoil_Efrac}.
+Most of the recoil tracks in the BARREL region are expected to carry a very
+small fraction of the energy as shown in fig.~\ref{fig:MC_recoil_Efrac}.
 
 \begin{figure}[tbhp]
 \begin{center}
@@ -286,9 +304,14 @@ Most of the recoil tracks in the BARREL region are expected to carry a very smal
 \caption{\label{fig:MC_recoil_Efrac} Fraction of energy carried by recoil particles within the BARREL region ($|\eta|<1$).}
 \end{figure}
 
-We can use MC to correct for the missing $P_{T}$ in the recoil tracks due to the limited acceptance of the STAR detector. Such a procedure will introduce a model-dependent systematic which will grow with the value of the correction.   Some bla bla bla... we need not more than 30-40\% correction.
+We can use MC to correct for the missing $P_{T}$ in the recoil tracks due to the
+limited acceptance of the STAR detector. Such a procedure will introduce a
+model-dependent systematic which will grow with the value of the correction.
+Some bla bla bla... we need not more than 30-40\% correction.
 
-The expected statistical power of the $A_N$ analysis in bins of W-rapidity was estimated and is shown in fig.~\ref{fig:MC_Wmeas_stat} for $W^+$ and $W^-$ respectively. bla, bla, bla....
+The expected statistical power of the $A_N$ analysis in bins of W-rapidity was
+estimated and is shown in fig.~\ref{fig:MC_Wmeas_stat} for $W^+$ and $W^-$
+respectively. bla, bla, bla....
 
 \begin{figure}[tbhp]
 \begin{center}
@@ -297,5 +320,15 @@ The expected statistical power of the $A_N$ analysis in bins of W-rapidity was e
 \end{center}
 \caption{\label{fig:MC_Wmeas_stat} Expected statistical power for a $A_N$ asymmetry measurement for W leptonic decay at STAR as a function of W-rapidity.}
 \end{figure}
+
+
+
+\begin{thebibliography}{9}
+
+\bibitem{WCrossSecRun9}
+"Measurement of the W and Z Production Cross Sections at Mid-rapidity in
+Proton-Proton Collisions at $\sqrt{s} = 500$~GeV in Run~9", STAR Note 0546
+
+\end{thebibliography}
 
 \end{document}
