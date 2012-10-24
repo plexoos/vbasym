@@ -145,7 +145,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    }
 
    printf("Output file: %s\n", outF.Data());
-   printf("geant file: %s\n", fileG.Data());
+   ////printf("geant file: %s\n", fileG.Data());
 
    printf("TRIG ID: L2BW=%d, L2EW=%d   isMC=%d  useJetFinder=%d\n", idL2BWtrg, idL2EWtrg, isMC, useJetFinder );
 
@@ -260,7 +260,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
          assert(simuTrig);
          simuTrig->setHList(HList);
          // simuTrig->setMC(isMC); // must be before individual detectors, to be passed
-         simuTrig->setMC(2); // must be before individual detectors, to be passed
+         simuTrig->setMC(2); // must be before individual detectors, to be passed 
          simuTrig->useBbc();
          simuTrig->useEemc(0);//default=0:just process ADC, 1,2:comp w/trgData,see .
          assert(simuTrig->eemc);
