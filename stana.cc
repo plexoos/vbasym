@@ -248,7 +248,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
          StEmcADCtoEMaker *bemcAdc   = new StEmcADCtoEMaker();    // for real data this sets calibration and status
 
-         //EEMC simulator:
+         // EEMC simulator:
          StEEmcDbMaker* stEEmcDbMaker = new StEEmcDbMaker("eemcDb");
          StEEmcSlowMaker *slowSim = new StEEmcSlowMaker("slowSim");
          //slowSim->setSamplingFraction(0.0384); // effectively scales all Tower energies with a factor of 1.3 (for old private filtered simu only!)

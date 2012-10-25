@@ -31,7 +31,8 @@ void WeveEleTrack::print(int flag)
 void WeveEleTrack::clear()
 {
    pointTower.clear();
-   mCluster2x2.clear(); mCluster4x4.clear();
+   mCluster2x2.clear();
+   mCluster4x4.clear();
    isMatch2Cl = false;
    primP = TVector3(0, 0, 0);
    prMuTrack = glMuTrack = 0;

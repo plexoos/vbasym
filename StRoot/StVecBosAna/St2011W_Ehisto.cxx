@@ -130,15 +130,15 @@ void StVecBosMaker::initEHistos()
    hE[36] = new TH2F("muETrch2b", "Endcap: track glob chi2/dof; chi2/dof  X-Y; last hit eta", 30, 0, 5., 30, -0.2, 1.8);
 
 
-   //.... 4x4 cluster
+   // 4x4 cluster
    hE[37] = h = new TH1F("muEclET24", "matched ETOW 4x4 cluster ET ;cluster 4x4  ET (GeV)", 100, 0, 100);
    hE[38] = h = new TH2F("muEclE242D", "Endcap: Excess energy in ETOW 4x4 cluster vs. 2x2 cluster E;2x2 cluster E (GeV); E(4x4)-E(2x2)  E (GeV)", 60, 0, 120, 30, 0, 30);
 
    hE[39] = h = new TH1F("muEclET24R", "Endcap: ratio (2x2/4x4) cluster ET ; fraction: cluster ET 2x2/ 4x4 ET", 100, 0, 1.2);
    Lx = h->GetListOfFunctions();
-   ln = new TLine(parE_clustFrac24, 0, parE_clustFrac24, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
+   ln = new TLine(mMinEClusterEnergyIsoRatio, 0, mMinEClusterEnergyIsoRatio, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
 
-   //..... jet energy , fraction
+   // jet energy , fraction
 
    hE[40] = h = new TH1F("muEEMCjetET", "Endcap: near 'EM jet' ET ; 'EM jet'  ET (GeV)", 100, 0, 100);
 

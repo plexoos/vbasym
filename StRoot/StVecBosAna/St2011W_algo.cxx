@@ -399,7 +399,6 @@ void StVecBosMaker::findAwayJet()
 
 /**
  * Calculates the energy in the cone around the electron.
- * XXX:ds: The total includes the EMC and TPC energies. Isn't it doble counting?
  */
 void StVecBosMaker::findNearJet()
 {
@@ -412,7 +411,8 @@ void StVecBosMaker::findNearJet()
       for (uint it = 0; it < vertex.eleTrack.size(); it++)
       {
          WeveEleTrack &track = vertex.eleTrack[it];
-         if (track.isMatch2Cl == false) continue;
+
+         if (!track.isMatch2Cl) continue;
 
          // sum EMC-jet component
          track.nearBtowET  = sumBtowCone(vertex.z, track.primP, 2); // '2'=2D cone
@@ -457,8 +457,10 @@ void StVecBosMaker::findNearJet()
             // correct for double counting of electron track in near cone rarely primTrPT<10 GeV & globPT>10 - handle this here
             if (track.primP.Pt() > parE_trackPt) nearSum -= parE_trackPt;
             else  nearSum -= track.primP.Pt();
+
             track.nearTotET = nearSum;
             track.nearTotET_noEEMC = nearSum - track.nearEtowET;
+
             float nearTotETfrac = track.mCluster2x2.ET / track.nearTotET;
 
             hE[40]->Fill(track.nearEmcET);
@@ -479,7 +481,7 @@ void StVecBosMaker::findNearJet()
  */
 float StVecBosMaker::sumBtowCone(float zVert, TVector3 refAxis, int flag)
 {
-   /* flag=1 : only delta phi cut;  flag=2 use 2D cut */
+   // flag=1 : only delta phi cut;  flag=2 use 2D cut
    assert(flag == 1 || flag == 2);
    double ptSum = 0;
 
@@ -614,7 +616,10 @@ void StVecBosMaker::extendTrack2Barrel()
 
 bool StVecBosMaker::matchTrack2BtowCluster()
 {
-   // printf("******* matchCluster() nVert=%d\n",mWEvent->mVertices.size());
+   // First, find barrel candidates
+   extendTrack2Barrel();
+
+   //printf("******* matchCluster() nVert=%d\n",mWEvent->mVertices.size());
    int   numMatchedTracks = 0;
    float Rcylinder = mBtowGeom->Radius();
 
@@ -650,7 +655,9 @@ bool StVecBosMaker::matchTrack2BtowCluster()
          hA[38] ->Fill(track.mCluster2x2.energy, track.mCluster4x4.energy - track.mCluster2x2.energy);
 
          float frac24 = track.mCluster2x2.ET / track.mCluster4x4.ET;
+
          hA[39]->Fill(frac24);
+
          if (frac24 < mMinBClusterEnergyIsoRatio) continue;
 
          hA[20]->Fill("fr24", 1.);
@@ -662,6 +669,7 @@ bool StVecBosMaker::matchTrack2BtowCluster()
          hA[44]->Fill( track.mCluster2x2.position.z(), D.z());
 
          float delPhi = track.pointTower.R.DeltaPhi(track.mCluster2x2.position);
+
          // printf("aaa %f %f %f   phi=%f\n",D.x(),D.y(),D.z(),delPhi);
          hA[45]->Fill( track.mCluster2x2.energy, Rcylinder * delPhi); // wrong?
          hA[46]->Fill( D.Mag());

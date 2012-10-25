@@ -110,7 +110,7 @@ StVecBosMaker::StVecBosMaker(const char *name, VecBosRootFile *vbFile): StMaker(
    //... Endcap Algo
    parE_trackEtaMin        = 0.7;  // avoid bad extrapolation to ESMD
    parE_clustET            = 14.;  // (GeV/c) 2x1 cluster ET
-   parE_clustFrac24        = 0.90; // ET ratio 2x2/4x4 cluster
+   mMinEClusterEnergyIsoRatio        = 0.90; // ET ratio 2x2/4x4 cluster
    parE_nearTotEtFrac      = 0.85; // ratio 2x2/near Tot ET
    parE_delR3D             = 10.;  // cm, dist between projected track and center of cluster
    parE_leptonEtaLow       = 0.7;  // bracket acceptance
@@ -234,7 +234,7 @@ Int_t StVecBosMaker::InitRun(int runNo)
       parE_l2ewTrgID, isMC,
       mMinNumPileupVertices, mCutVertexZ,
       parE_nFitPts, parE_nHitFrac, parE_trackRin, parE_trackRout, parE_trackPt,
-      par_kSigPed, par_AdcThres, par_maxADC, parE_clustET, parE_clustFrac24, parE_nearTotEtFrac,
+      par_kSigPed, par_AdcThres, par_maxADC, parE_clustET, mMinEClusterEnergyIsoRatio, parE_nearTotEtFrac,
       parE_delR3D, par_nearDeltaR,
       par_highET, par_awayDeltaPhi, parE_ptBalance
    ) << endl;
@@ -427,18 +427,15 @@ Int_t StVecBosMaker::Make()
    // At this point all of mWEvent properties should be set
    mVecBosRootFile->Fill(*mWEvent, kCUT_NOCUT);
 
-   // find barrel candidates
-   extendTrack2Barrel();
-   // Add info to the event. Match tracks to energy clusters in the barrel
-   bool hasMatchedTrack2BarrelCluster = matchTrack2BtowCluster();
+   // Add tracks to the event and atch tracks to energy clusters in the barrel
+   // and endcap
+   bool hasMatchedTrack2BCluster = matchTrack2BtowCluster();
+   bool hasMatchedTrack2ECluster = matchTrack2EtowCluster();
 
-   // find endcap candidates
-   extendTrack2Endcap();
-   // Add info to the event. Match tracks to energy clusters in the endcap
-   int noMatchedEtowCluster = matchTrack2EtowCluster();
+   if (hasMatchedTrack2BCluster) mVecBosRootFile->Fill(*mWEvent, kCUT_BARREL);
+   if (hasMatchedTrack2ECluster) mVecBosRootFile->Fill(*mWEvent, kCUT_ENDCAP);
 
-   if (!hasMatchedTrack2BarrelCluster && noMatchedEtowCluster) return kStOK; //no matched BTOW or ETOW clusters
-   //if (!hasMatchedTrack2BarrelCluster) return kStOK; //no matched BTOW or ETOW clusters
+   if (!hasMatchedTrack2BCluster && !hasMatchedTrack2ECluster) return kStOK; //no matched BTOW or ETOW clusters
 
    nAccEve++;
 
@@ -449,17 +446,17 @@ Int_t StVecBosMaker::Make()
    CalcPtBalance();
    //CalcMissingET();
 
-   if (hasMatchedTrack2BarrelCluster) tag_Z_boson();
+   if (hasMatchedTrack2BCluster) tag_Z_boson();
 
    // endcap specific analysis
-   if (!noMatchedEtowCluster) {
+   if (hasMatchedTrack2ECluster) {
       analyzeESMD();
       analyzeEPRS();
    }
 
    // Fill final histograms
-   if (hasMatchedTrack2BarrelCluster) find_W_boson();
-   if (!noMatchedEtowCluster) findEndcap_W_boson();
+   if (hasMatchedTrack2BCluster) find_W_boson();
+   if (hasMatchedTrack2ECluster) findEndcap_W_boson();
 
    mVecBosRootFile->Fill(*mWEvent, kCUT_CUT);
 
@@ -1272,7 +1269,7 @@ void StVecBosMaker::ReadMuDstTrack()
 
          // Victor: in reality mChiSqXY is a normal Xi2 for track and mChiSqZ is Xi2 of fit to  primary vertex
          float globChi2dof = globalTrack->chi2();
-         float dedx = primaryTrack->dEdx() * 1e6;
+         float dedx        = primaryTrack->dEdx() * 1e6;
 
          // barrel algo track monitors
          if (mWEvent->l2bitET && rank > 0 && primaryTrack->flag() == 301)
@@ -1315,7 +1312,7 @@ void StVecBosMaker::ReadMuDstTrack()
             hA[198]->Fill(ro.pseudoRapidity(), primaryTrack->pt());
          }
 
-         //endcap algo track monitors
+         // endcap algo track monitors
          if (mWEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin)
          {
             hE[20]->Fill("#eta>0.7", 1.);
@@ -1618,13 +1615,12 @@ float StVecBosMaker::sumTpcCone(int vertID, TVector3 refAxis, int flag, int poin
    double ptSum = 0;
    Int_t nPrimaryTracks = mStMuDstMaker->muDst()->GetNPrimaryTrack();
 
-   for (int iTrack = 0; iTrack < nPrimaryTracks; iTrack++) {
+   for (int iTrack = 0; iTrack < nPrimaryTracks; iTrack++)
+   {
       StMuTrack *primaryTrack = mStMuDstMaker->muDst()->primaryTracks(iTrack);
 
       if (primaryTrack->flag() <= 0) continue;
-
       if (primaryTrack->flag() != 301 && pointTowId > 0) continue; // TPC-only regular tracks for barrel candidate
-
       if (primaryTrack->flag() != 301 && primaryTrack->flag() != 311 && pointTowId < 0) continue; // TPC regular and short EEMC tracks for endcap candidate
 
       float hitFrac = float(primaryTrack->nHitsFit()) / primaryTrack->nHitsPoss();
@@ -1650,7 +1646,7 @@ float StVecBosMaker::sumTpcCone(int vertID, TVector3 refAxis, int flag, int poin
       float pT = primaryTrack->pt();
       //printf(" passed pt=%.1f\n",pT);
 
-      //separate quench for barrel and endcap candidates
+      // separate quench for barrel and endcap candidates
       if      (pT > par_trackPt  && pointTowId > 0) ptSum += par_trackPt;
       else if (pT > parE_trackPt && pointTowId < 0) ptSum += parE_trackPt;
       else  ptSum += pT;

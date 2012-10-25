@@ -337,77 +337,89 @@ StVecBosMaker::extendTrack2Endcap() // return # of extended tracks
 }
 
 
-int StVecBosMaker::matchTrack2EtowCluster()
+bool StVecBosMaker::matchTrack2EtowCluster()
 {
+   // find endcap candidates
+   extendTrack2Endcap();
+
    //printf("******* matchEtowCluster() nVert=%d\n",mWEvent.vertex.size());
+   if (!mWEvent->l2EbitET) return false;
 
-   if (!mWEvent->l2EbitET) return 0;
+   int numMatchedTracks = 0;
 
-   int nTr = 0;
    for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++)
    {
-      WEventVertex &V = mWEvent->mVertices[iv];
-      float zVert = V.z;
-      for (uint it = 0; it < V.eleTrack.size(); it++)
+      WEventVertex &vertex = mWEvent->mVertices[iv];
+      float vertexZ = vertex.z;
+
+      for (uint it = 0; it < vertex.eleTrack.size(); it++)
       {
-         WeveEleTrack &track = V.eleTrack[it];
+         WeveEleTrack &track = vertex.eleTrack[it];
          if (track.pointTower.id >= 0) continue; //skip barrel towers
 
          float trackPT = track.prMuTrack->momentum().perp();
+
          //need to decide on 2x2 or 2x1 for cluster size
-         track.mCluster2x2 = maxEtow2x2(track.pointTower.iEta, track.pointTower.iPhi, zVert);
-         hE[110]->Fill( track.mCluster2x2.ET);
+         track.mCluster2x2 = maxEtow2x2(track.pointTower.iEta, track.pointTower.iPhi, vertexZ);
+
          hE[33]->Fill(track.mCluster2x2.ET);
          hE[34]->Fill(track.mCluster2x2.adcSum, trackPT);
+         hE[110]->Fill(track.mCluster2x2.ET);
 
          // Compute surrounding mCluster2x2 energy
          int iEta = track.mCluster2x2.iEta;
          int iPhi = track.mCluster2x2.iPhi;
-         track.mCluster4x4 = sumEtowPatch(iEta - 1, iPhi - 1, 4, 4, zVert);
+         track.mCluster4x4 = sumEtowPatch(iEta - 1, iPhi - 1, 4, 4, vertexZ);
 
          if (track.mCluster2x2.ET < parE_clustET) continue; // too low energy
+
          hE[20]->Fill("CL", 1.);
          hE[37]->Fill(track.mCluster4x4.ET);
          hE[38]->Fill(track.mCluster2x2.energy, track.mCluster4x4.energy - track.mCluster2x2.energy);
 
          float frac24 = track.mCluster2x2.ET / (track.mCluster4x4.ET);
+
          hE[39]->Fill(frac24);
-         if (frac24 < parE_clustFrac24) continue;
+
+         if (frac24 < mMinEClusterEnergyIsoRatio) continue;
+
          hE[20]->Fill("fr24", 1.);
 
-         //set logE weighted cluster position vector at SMD z depth
+         // set logE weighted cluster position vector at SMD z depth
          float newMag = mGeomEmc->getZSMD() / TMath::Cos(track.mCluster2x2.position.Theta());
          track.mCluster2x2.position.SetMag(newMag);
 
-         //.. spacial separation (track - cluster) only use 2D X-Y distance for endcap (ie. D.Perp())
+         // spacial separation (track - cluster) only use 2D X-Y distance for endcap (ie. D.Perp())
          TVector3 D = track.pointTower.R - track.mCluster2x2.position;
          hE[43]->Fill(track.mCluster2x2.energy, D.Perp());
+
          float delPhi = track.pointTower.R.DeltaPhi(track.mCluster2x2.position);
-         float Rxy = track.mCluster2x2.position.Perp();
+         float Rxy    = track.mCluster2x2.position.Perp();
 
          hE[44]->Fill( track.mCluster2x2.position.Phi(), Rxy * delPhi);
          hE[45]->Fill( track.mCluster2x2.energy, Rxy * delPhi); // wrong?
          hE[46]->Fill( D.Perp());
 
          if (D.Perp() > mMaxTrackClusterDist) continue;
+
          track.isMatch2Cl = true; // cluster is matched to TPC track
+
          hE[20]->Fill("#Delta R", 1.);
          hE[111]->Fill( track.mCluster2x2.ET);
 
-         nTr++;
+         numMatchedTracks++;
       }
    }
 
-   if (nTr <= 0) return -1;
+   if (numMatchedTracks <= 0) return false;
+
    hE[0]->Fill("Tr2Cl", 1.0);
-   return 0;
+
+   return true;
 }
 
 
-//________________________________________________
-//________________________________________________
-WeveCluster
-StVecBosMaker::maxEtow2x1(int iEta, int iPhi, float zVert)
+WeveCluster StVecBosMaker::maxEtow2x1(int iEta, int iPhi, float zVert)
 {
    //printf("   maxEtow2x1  seed iEta=%d iPhi=%d \n",iEta, iPhi);
 
@@ -436,10 +448,7 @@ StVecBosMaker::maxEtow2x1(int iEta, int iPhi, float zVert)
 }
 
 
-//________________________________________________
-//________________________________________________
-WeveCluster
-StVecBosMaker::maxEtow2x2(int iEta, int iPhi, float zVert)
+WeveCluster StVecBosMaker::maxEtow2x2(int iEta, int iPhi, float zVert)
 {
    //printf("   maxEtow2x1  seed iEta=%d iPhi=%d \n",iEta, iPhi);
    const int L = 2; // size of the summed square
@@ -464,10 +473,7 @@ StVecBosMaker::maxEtow2x2(int iEta, int iPhi, float zVert)
 }
 
 
-//________________________________________________
-//________________________________________________
-WeveCluster
-StVecBosMaker::sumEtowPatch(int iEta, int iPhi, int Leta, int  Lphi, float zVert)
+WeveCluster StVecBosMaker::sumEtowPatch(int iEta, int iPhi, int Leta, int  Lphi, float zVert)
 {
    //printf("     eveID=%d etowPatch seed iEta=%d[+%d] iPhi=%d[+%d] zVert=%.0f \n",mWEvent.id,iEta,Leta, iPhi,Lphi,zVert);
    WeveCluster CL; // object is small, not to much overhead in creating it

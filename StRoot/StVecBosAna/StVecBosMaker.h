@@ -89,7 +89,7 @@ private:
    int   par_kSigPed, par_AdcThres;
    float par_maxADC, mMinBClusterEnergy, parE_clustET;
    float mMinBClusterEnergyIsoRatio, par_nearTotEtFrac;
-   float parE_clustFrac24, parE_nearTotEtFrac;
+   float mMinEClusterEnergyIsoRatio, parE_nearTotEtFrac;
    float par_nearDeltaR, par_awayDeltaPhi;
    float mMaxTrackClusterDist, parE_delR3D, par_highET, parE_highET,  par_ptBalance, parE_ptBalance;
    float mCutTrackEtaMin, mCutTrackEtaMax, parE_leptonEtaLow, parE_leptonEtaHigh; //bracket acceptance
@@ -180,7 +180,7 @@ private:
    void  extendTrack2Barrel();
    bool   matchTrack2BtowCluster();
    int   extendTrack2Endcap();
-   int   matchTrack2EtowCluster();
+   bool  matchTrack2EtowCluster();
    void  findNearJet();
    void  findAwayJet();
    void  CalcPtBalance();

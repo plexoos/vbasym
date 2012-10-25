@@ -77,7 +77,7 @@ void StZBosMaker::findEndcap_Z_boson()
       hA[50]->Fill("vert", 1.); hA[60]->Fill("vert", 1.);
       WEventVertex &V = mWEvent->mVertices[iv];
 
-      //first loop over good barrel tracks
+      // first loop over good barrel tracks
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          WeveEleTrack &TB = V.eleTrack[it];
          if (TB.pointTower.id <= 0) continue; //skip endcap towers
@@ -174,7 +174,7 @@ void StZBosMaker::findEndcap_Z_boson()
          //apply cuts to max ETOW cluster and isolation sums
          WeveCluster mCluster4x4 = wMK->sumEtowPatch(maxCluster.iEta - 1, maxCluster.iPhi - 1, 4, 4, V.z);
          hA[54]->Fill(maxCluster.ET / mCluster4x4.ET);
-         if (maxCluster.ET / mCluster4x4.ET < wMK->parE_clustFrac24) continue;
+         if (maxCluster.ET / mCluster4x4.ET < wMK->mMinEClusterEnergyIsoRatio) continue;
          hA[55]->Fill(maxCluster.ET);
          hA[50]->Fill("trE", 1.);
          if (maxCluster.ET < par_clusterEtZ) continue;
