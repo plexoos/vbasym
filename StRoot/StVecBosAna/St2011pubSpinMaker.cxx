@@ -116,7 +116,7 @@ void St2011pubSpinMaker::bXingSort()
       WEventVertex &V = wMK->mWEvent->mVertices[iv];
 
       for (uint it = 0; it < V.eleTrack.size(); it++) {
-         WeveEleTrack &T = V.eleTrack[it];
+         VecBosTrack &T = V.eleTrack[it];
          if (T.pointTower.id == 0) continue;
 
          // Collect QCD background for lumi monitors

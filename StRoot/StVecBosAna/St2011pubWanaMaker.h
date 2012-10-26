@@ -43,11 +43,11 @@ public:
 
    /// Displayed on session exit, leave it as-is please ...
    virtual const char *GetCVS() const {
-      static const char cvs[] = "Tag $Name:  $ $Id: St2011pubWanaMaker.h,v 1.1 2012/10/09 15:21:20 smirnovd Exp $ built "__DATE__" "__TIME__ ;
+      static const char cvs[] = "Tag $Name:  $ $Id: St2011pubWanaMaker.h,v 1.2 2012/10/26 00:07:44 smirnovd Exp $ built "__DATE__" "__TIME__ ;
       return cvs;
    }
 
-   ClassDef(St2011pubWanaMaker, 0)  //StAF chain virtual base class for Makers
+   ClassDef(St2011pubWanaMaker, 0)
 };
 
 #endif

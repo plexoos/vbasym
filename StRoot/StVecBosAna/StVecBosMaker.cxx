@@ -379,6 +379,7 @@ Int_t StVecBosMaker::Make()
    mNumTrigEvents++;
 
    // Check the vertex quality and save them in the event
+   // Saves vertices with (rank>0 or EEMC matched) && z pos < mCutVertexZ
    ReadMuDstVertex();
 
    if (mWEvent->GetNumVertices())
@@ -388,7 +389,7 @@ Int_t StVecBosMaker::Make()
 
    FillNormHists();  // add plots for QCD normalization
 
-   // Add tracks in the event
+   // Add tracks in the event. See the function for the cuts imposed on the track quality
    ReadMuDstTrack();
 
    // Skip event w/o high Pt tracks
@@ -1112,7 +1113,7 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
 
 
 /**
- * Saves vertices with (rank>0 or (rank<0 && EEMC matched)) && z pos < mCutVertexZ
+ * Saves vertices with (rank>0 or EEMC matched) && z pos < mCutVertexZ
  */
 void StVecBosMaker::ReadMuDstVertex()
 {
@@ -1124,8 +1125,8 @@ void StVecBosMaker::ReadMuDstVertex()
    if (mWEvent->l2bitET)  hA[0]->Fill("tpcOn", 1.);
    if (mWEvent->l2EbitET) hE[0]->Fill("tpcOn", 1.);
 
-   int nVer  = 0;
-   int nVerR = 0;
+   int nVertices        = 0;
+   int nVerticesPosRank = 0;
 
    for (int iVertex=0; iVertex<numOfPrimaryVertices; iVertex++)
    {
@@ -1154,11 +1155,11 @@ void StVecBosMaker::ReadMuDstVertex()
       if (mWEvent->l2bitET && rank > 0) hA[11]->Fill(vertexPosition.z());
       if (mWEvent->l2EbitET)            hE[11]->Fill(vertexPosition.z());
 
-      nVer++; // count valid vertices
+      nVertices++; // count valid vertices
 
       if (fabs(vertexPosition.z()) > mCutVertexZ) continue;
 
-      if (rank > 0) nVerR++; //count vertices with rank>0
+      if (rank > 0) nVerticesPosRank++; //count vertices with rank>0
 
       WEventVertex wv;
       wv.id         = iVertex;
@@ -1170,9 +1171,9 @@ void StVecBosMaker::ReadMuDstVertex()
       mWEvent->mVertices.push_back(wv);
    }
 
-   if (nVer <= 0) return;
+   if (nVertices <= 0) return;
 
-   if (mWEvent->l2bitET && nVerR > 0) {
+   if (mWEvent->l2bitET && nVerticesPosRank > 0) {
       hA[0]->Fill("primVert", 1.);
       hA[4]->Fill(mWEvent->bx48);
       hA[5]->Fill(mWEvent->bx7);
@@ -1192,7 +1193,7 @@ void StVecBosMaker::ReadMuDstVertex()
 
       if (val < par_DsmThres) continue;
 
-      if (mWEvent->l2bitET && nVerR > 0) hA[9]->Fill(m);
+      if (mWEvent->l2bitET && nVerticesPosRank > 0) hA[9]->Fill(m);
    }
 
    for (int m=0; m<90; m++) {
@@ -1203,16 +1204,27 @@ void StVecBosMaker::ReadMuDstVertex()
       if (mWEvent->l2EbitET) hE[9]->Fill(m);
    }
 
-   if (mWEvent->l2bitET)  hA[12]->Fill(nVerR);
-   if (mWEvent->l2EbitET) hE[12]->Fill(nVer);
+   if (mWEvent->l2bitET)  hA[12]->Fill(nVerticesPosRank);
+   if (mWEvent->l2EbitET) hE[12]->Fill(nVertices);
 
    if (mWEvent->GetNumVertices() <= 0) return;
 
-   if (mWEvent->l2bitET && nVerR > 0)  hA[0]->Fill("vertZ", 1.);
+   if (mWEvent->l2bitET && nVerticesPosRank > 0)  hA[0]->Fill("vertZ", 1.);
    if (mWEvent->l2EbitET)              hE[0]->Fill("vertZ", 1.);
 }
 
 
+/**
+ * Saves tracks if
+ * (flag > 0) &&
+ * (primary track has a global track) &&
+ * (flag == 301 || 311) &&
+ * track P_T >= 1
+ *
+ * Tracks which do not pass cuts on individual sectors, that is min number of
+ * hits, fract of hits, min and max radius in transverse plane
+ *
+ */
 void StVecBosMaker::ReadMuDstTrack()
 {
    // printf("\n nInp=%d eveID=%d nPVer=%d nAnyV=
@@ -1282,9 +1294,9 @@ void StVecBosMaker::ReadMuDstTrack()
             //TPC sector dependent filter
             int secID = WtpcFilter::getTpcSec(ro.phi(), ro.pseudoRapidity());
 
-            if (mTpcFilter[secID - 1].accept(primaryTrack) == false) continue;
-
             if (secID == 20) continue; //poorly calibrated sector for Run 9+11+12?
+
+            if (mTpcFilter[secID - 1].accept(primaryTrack) == false) continue;
 
             hA[25]->Fill(globalTrack->p().perp());
 
@@ -1355,7 +1367,7 @@ void StVecBosMaker::ReadMuDstTrack()
          if (!barrelTrack && !endcapTrack) continue;
 
          // keep all tracks in one container
-         WeveEleTrack myTrack;
+         VecBosTrack myTrack;
 
          myTrack.prMuTrack = primaryTrack;
          myTrack.glMuTrack = globalTrack;

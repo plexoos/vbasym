@@ -140,8 +140,8 @@ public:
 
 class WEvent : public ProtoEvent
 {
-
 public:
+
    int         l2bitET;
    int         l2bitRnd;
    int         l2EbitET;
@@ -164,6 +164,8 @@ public:
    WeveETOW    etow;
    WeveEPRS    eprs;
    WeveESMD    esmd;
+   set<VecBosTrack*>  mLeptonBTracks;   // Set of lepton track candidates, i.e. good tracks with energy in barrel
+   set<VecBosTrack*>  mLeptonETracks;   // Set of lepton track candidates, i.e. good tracks with energy in endcap
 
    WEvent();
 

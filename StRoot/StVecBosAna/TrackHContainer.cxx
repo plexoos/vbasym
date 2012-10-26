@@ -81,7 +81,7 @@ void TrackHContainer::Fill(ProtoEvent &ev)
    for ( ; iVertex!=wEvent.mVertices.end(); ++iVertex)
    {
       //VBTrackVecIter iTrack = iVertex->eleTrack.begin();
-      vector<WeveEleTrack>::iterator iTrack = iVertex->eleTrack.begin();
+      vector<VecBosTrack>::iterator iTrack = iVertex->eleTrack.begin();
 
       for ( ; iTrack!=iVertex->eleTrack.end(); ++iTrack)
       {

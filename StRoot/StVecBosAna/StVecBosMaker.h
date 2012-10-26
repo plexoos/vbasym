@@ -177,9 +177,9 @@ private:
    void  find_W_boson();
    void  findEndcap_W_boson();
    void  tag_Z_boson();
-   void  extendTrack2Barrel();
-   bool   matchTrack2BtowCluster();
-   int   extendTrack2Endcap();
+   void  ExtendTrack2Barrel();
+   bool  matchTrack2BtowCluster();
+   int   ExtendTrack2Endcap();
    bool  matchTrack2EtowCluster();
    void  findNearJet();
    void  findAwayJet();

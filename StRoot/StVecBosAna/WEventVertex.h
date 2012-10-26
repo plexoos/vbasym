@@ -12,7 +12,7 @@ class WEventVertex;
 
 typedef std::vector<WEventVertex> VBVertexVec;
 typedef VBVertexVec::iterator     VBVertexVecIter;
-//typedef std::vector<WeveEleTrack> VBTrackVec;
+//typedef std::vector<VecBosTrack> VBTrackVec;
 //typedef VBTrackVec::iterator      VBTrackVecIter;
 
 
@@ -26,7 +26,7 @@ public:
    float funnyRank;
    int   nEEMCMatch;   //# of matched endcap towers
 
-   vector<WeveEleTrack>  eleTrack;
+   vector<VecBosTrack>  eleTrack;
    vector<StMuTrack*>    prTrList;
 
    void clear() {

@@ -62,7 +62,7 @@ void St2011pubWanaMaker::evalWeleTrackSign()
    for (uint iv = 0; iv < wMK->mWEvent->mVertices.size(); iv++) {
       WEventVertex &V = wMK->mWEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
-         WeveEleTrack &T = V.eleTrack[it];
+         VecBosTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
          assert(T.mCluster2x2.nTower > 0); // internal logical error
          assert(T.nearTotET > 0); // internal logical error
@@ -171,7 +171,7 @@ void St2011pubWanaMaker::scanCrateRate()
    {
       WEventVertex &V = wMK->mWEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
-         WeveEleTrack &T = V.eleTrack[it];
+         VecBosTrack &T = V.eleTrack[it];
          // T.pointTower.print();
          int softID = T.pointTower.id;
          if (softID <= 0) continue;
@@ -195,8 +195,9 @@ void St2011pubWanaMaker::varyCuts4backgStudy()
    for (uint iv = 0; iv < wMK->mWEvent->mVertices.size(); iv++)
    {
       WEventVertex &V = wMK->mWEvent->mVertices[iv];
-      for (uint it = 0; it < V.eleTrack.size(); it++) {
-         WeveEleTrack &T = V.eleTrack[it];
+      for (uint it = 0; it < V.eleTrack.size(); it++)
+      {
+         VecBosTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
          assert(T.mCluster2x2.nTower > 0); // internal logical error
          assert(T.nearTotET > 0); // internal logical error
@@ -205,7 +206,7 @@ void St2011pubWanaMaker::varyCuts4backgStudy()
          float awayET = T.awayTotET;
          float ET =	T.mCluster2x2.ET;
 
-         // .... logic of histos .....
+         // logic of histos
          if (nearR > 0.9) {
             hA[27] -> Fill(ET, awayET);
             if (awayET < 8.) {
@@ -237,7 +238,6 @@ void St2011pubWanaMaker::varyCuts4backgStudy()
          if (awayET < 8.) {
             hA[26]->Fill(nearR);
          }
-
-      } // end of loop over tracks
+      }
    }
 }

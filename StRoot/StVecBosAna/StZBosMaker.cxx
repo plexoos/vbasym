@@ -51,7 +51,7 @@ Int_t StZBosMaker::Make()
 }
 
 //============================
-void StZBosMaker::printJan(WeveEleTrack *T)
+void StZBosMaker::printJan(VecBosTrack *T)
 {
    int ibp = kBTow;
    WevePointTower poiTw = T->pointTower;
@@ -79,7 +79,7 @@ void StZBosMaker::findEndcap_Z_boson()
 
       // first loop over good barrel tracks
       for (uint it = 0; it < V.eleTrack.size(); it++) {
-         WeveEleTrack &TB = V.eleTrack[it];
+         VecBosTrack &TB = V.eleTrack[it];
          if (TB.pointTower.id <= 0) continue; //skip endcap towers
          if (TB.isMatch2Cl == false) continue;
          assert(TB.mCluster2x2.nTower > 0); // internal logical error
@@ -101,7 +101,7 @@ void StZBosMaker::findEndcap_Z_boson()
          // 1) try to find candidate track in the endcap
          for (uint it = 0; it < V.eleTrack.size(); it++)
          {
-            WeveEleTrack &TE = V.eleTrack[it];
+            VecBosTrack &TE = V.eleTrack[it];
             if (TE.pointTower.id >= 0) continue; //skip barrel towers
             if (TE.isMatch2Cl == false) continue;
             assert(TE.mCluster2x2.nTower > 0); // internal logical error
@@ -236,7 +236,7 @@ void StZBosMaker::find_Z_boson()
       //eventually, but for now, just try all of them.
       for (uint it = 0; it < V.eleTrack.size() - 1; it++)
       { // select first track:
-         WeveEleTrack &T1 = V.eleTrack[it];
+         VecBosTrack &T1 = V.eleTrack[it];
          if (T1.pointTower.id <= 0) continue; //skip endcap towers
          if (T1.isMatch2Cl == false) continue;
          assert(T1.mCluster2x2.nTower > 0); // internal logical error
@@ -257,7 +257,7 @@ void StZBosMaker::find_Z_boson()
 
          for (uint it2 = it + 1; it2 < V.eleTrack.size(); it2++)
          { // select second track:
-            WeveEleTrack &T2 = V.eleTrack[it2];
+            VecBosTrack &T2 = V.eleTrack[it2];
             if (T2.pointTower.id <= 0) continue; //skip endcap towers
             if (T2.isMatch2Cl == false) continue;
             assert(T2.mCluster2x2.nTower > 0); // internal logical error

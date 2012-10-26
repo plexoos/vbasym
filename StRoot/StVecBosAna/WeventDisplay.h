@@ -1,19 +1,19 @@
-//------- W-event Display container
-#ifndef W_EVENT_Diplay_HH
-#define W_EVENT_Display_HH
+#ifndef WeventDisplay_h
+#define WeventDisplay_h
 
 #include "TBox.h"
+#include "TH1F.h"
+#include "TH2F.h"
+#include "TLine.h"
 
 #include "WanaConst.h"
 #include "WEventVertex.h"
 
 
-class TH2F;
-class TH1F;
 class StVecBosMaker;
-class TLine;
 
 
+// W-event Display container
 class WeventDisplay
 {
 public:
@@ -36,11 +36,11 @@ public:
 
    WeventDisplay( StVecBosMaker *mk, int mxEv);
    void clear();
-   void exportEvent(  const char *tit, WEventVertex myV, WeveEleTrack myTr, int vertexIndex);
-   void export2sketchup(  const char *tit, WEventVertex myV, WeveEleTrack myTr);
+   void exportEvent(  const char *tit, WEventVertex myV, VecBosTrack myTr, int vertexIndex);
+   void export2sketchup(  const char *tit, WEventVertex myV, VecBosTrack myTr);
    void getPrimTracks(  int vertID, int pointTowId);
    void getPrimTracksFromTree(  int vertID, int pointTowId);
-   void draw( const char *tit, int eveID, int daqSeq, int runNo,  WEventVertex myV, WeveEleTrack myTr);
+   void draw( const char *tit, int eveID, int daqSeq, int runNo,  WEventVertex myV, VecBosTrack myTr);
 
 };
 

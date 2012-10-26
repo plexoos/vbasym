@@ -1,24 +1,13 @@
 #ifndef STAR_St2011pubSpinMaker
 #define STAR_St2011pubSpinMaker
 
-/*!
- *
- * \class  St2011pubSpinMaker
+#include "TString.h"
 
- * \author Jan Balewski, MIT
- * \date   August 2009
- * \brief  spin sorting of W's
- *
- *
- *
- */
-
-#ifndef StMaker_H
 #include "StMaker.h"
-#endif
-#include <TString.h>
+
 
 class StVecBosMaker;
+
 
 class St2011pubSpinMaker : public StMaker
 {
@@ -41,6 +30,7 @@ private:
    void bXingSort();
 
 public:
+
    St2011pubSpinMaker(const char *name = "2011pubSpin", const char *etaName = "Eta7");
    virtual       ~St2011pubSpinMaker() {};
    virtual Int_t  Init();
@@ -54,13 +44,13 @@ public:
    void attachWalgoMaker(StVecBosMaker *mk) { wMK = mk;}
    virtual Int_t FinishRun(int runumber);
 
-   /// Displayed on session exit, leave it as-is please ...
+   // Displayed on session exit, leave it as-is please ...
    virtual const char *GetCVS() const {
-      static const char cvs[] = "Tag $Name:  $ $Id: St2011pubSpinMaker.h,v 1.1 2012/10/09 15:21:20 smirnovd Exp $ built "__DATE__" "__TIME__ ;
+      static const char cvs[] = "Tag $Name:  $ $Id: St2011pubSpinMaker.h,v 1.2 2012/10/26 00:07:44 smirnovd Exp $ built "__DATE__" "__TIME__ ;
       return cvs;
    }
 
-   ClassDef(St2011pubSpinMaker, 0)  //StAF chain virtual base class for Makers
+   ClassDef(St2011pubSpinMaker, 0)
 };
 
 #endif

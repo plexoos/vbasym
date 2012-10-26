@@ -1,5 +1,5 @@
-#ifndef WeveEleTrack_h
-#define WeveEleTrack_h
+#ifndef VecBosTrack_h
+#define VecBosTrack_h
 
 #include <vector>
 
@@ -11,14 +11,14 @@
 #include "WEventCluster.h"
 
 
-class WeveEleTrack;
+class VecBosTrack;
 
-//typedef std::vector<WeveEleTrack> VBTrackVec;
+//typedef std::vector<VecBosTrack> VBTrackVec;
 //typedef VBTrackVec::iterator      VBTrackVecIter;
 
 
 // Track info
-class WeveEleTrack
+class VecBosTrack
 {
 public:
 
@@ -60,17 +60,17 @@ public:
    float    esmdShowerWidth[mxEsmdPlane];
    TVector3 esmdXPcentroid;
 
-   WeveEleTrack();
+   VecBosTrack();
 
    void clear();
    void print( int flag = 0);
    TVector3 CalcDistanceToMatchedCluster();
 
 
-   ClassDef(WeveEleTrack, 1);
+   ClassDef(VecBosTrack, 1);
 };
 
-typedef std::vector<WeveEleTrack> VBTrackVec;
+typedef std::vector<VecBosTrack> VBTrackVec;
 typedef VBTrackVec::iterator      VBTrackVecIter;
 
 #endif

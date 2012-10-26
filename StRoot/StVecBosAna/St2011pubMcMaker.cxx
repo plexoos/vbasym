@@ -58,7 +58,7 @@ void St2011pubMcMaker::doWanalysis()
    for (uint iv = 0; iv < wMK->mWEvent->mVertices.size(); iv++) {
       WEventVertex &V = wMK->mWEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
-         WeveEleTrack &T = V.eleTrack[it];
+         VecBosTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
          assert(T.mCluster2x2.nTower > 0); // internal logical error
          assert(T.nearTotET > 0); // internal logical error
@@ -227,7 +227,7 @@ St2011pubMcMaker::doWefficiency()
    {
       WEventVertex &V = wMK->mWEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
-         WeveEleTrack &T = V.eleTrack[it];
+         VecBosTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
          assert(T.mCluster2x2.nTower > 0); // internal logical error
          assert(T.nearTotET > 0); // internal logical error

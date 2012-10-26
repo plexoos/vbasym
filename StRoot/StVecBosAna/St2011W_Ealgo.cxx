@@ -21,7 +21,7 @@ void StVecBosMaker::findEndcap_W_boson()
    for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++) {
       WEventVertex &V = mWEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
-         WeveEleTrack &T = V.eleTrack[it];
+         VecBosTrack &T = V.eleTrack[it];
          if (T.pointTower.id >= 0) continue; //skip barrel towers
          if (T.isMatch2Cl == false) continue;
          assert(T.mCluster2x2.nTower > 0); // internal logical error
@@ -140,7 +140,7 @@ void StVecBosMaker::analyzeESMD()
    for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++) {
       WEventVertex &V = mWEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
-         WeveEleTrack &T = V.eleTrack[it];
+         VecBosTrack &T = V.eleTrack[it];
          if (T.pointTower.id >= 0) continue; //skip barrel towers
          if (T.isMatch2Cl == false) continue;
          assert(T.mCluster2x2.nTower > 0); // internal logical error
@@ -212,7 +212,7 @@ StVecBosMaker::analyzeEPRS()
    for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++) {
       WEventVertex &V = mWEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
-         WeveEleTrack &T = V.eleTrack[it];
+         VecBosTrack &T = V.eleTrack[it];
          if (T.pointTower.id >= 0) continue; //skip barrel towers
          if (T.isMatch2Cl == false) continue;
          assert(T.mCluster2x2.nTower > 0); // internal logical error
@@ -257,13 +257,8 @@ StVecBosMaker::sumEtowCone(float zVert, TVector3 refAxis, int flag)
 }
 
 
-// ************* Endcap Code ************ //
-// ************************************** //
-
-//________________________________________________
-//________________________________________________
-int
-StVecBosMaker::extendTrack2Endcap() // return # of extended tracks
+// return # of extended tracks
+int StVecBosMaker::ExtendTrack2Endcap()
 {
    //printf("******* extendTracksEndcap() nVert=%d\n",mWEvent.vertex.size());
    if (!mWEvent->l2EbitET) return 0; //fire endcap trigger
@@ -273,7 +268,7 @@ StVecBosMaker::extendTrack2Endcap() // return # of extended tracks
    for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++) {
       WEventVertex &V = mWEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
-         WeveEleTrack &T = V.eleTrack[it];
+         VecBosTrack &T = V.eleTrack[it];
          if (T.prMuTrack->eta() < parE_trackEtaMin)
             continue; // to avoid extrapolation nonsense
 
@@ -340,7 +335,7 @@ StVecBosMaker::extendTrack2Endcap() // return # of extended tracks
 bool StVecBosMaker::matchTrack2EtowCluster()
 {
    // find endcap candidates
-   extendTrack2Endcap();
+   ExtendTrack2Endcap();
 
    //printf("******* matchEtowCluster() nVert=%d\n",mWEvent.vertex.size());
    if (!mWEvent->l2EbitET) return false;
@@ -354,7 +349,7 @@ bool StVecBosMaker::matchTrack2EtowCluster()
 
       for (uint it = 0; it < vertex.eleTrack.size(); it++)
       {
-         WeveEleTrack &track = vertex.eleTrack[it];
+         VecBosTrack &track = vertex.eleTrack[it];
          if (track.pointTower.id >= 0) continue; //skip barrel towers
 
          float trackPT = track.prMuTrack->momentum().perp();

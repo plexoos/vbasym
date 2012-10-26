@@ -1,32 +1,20 @@
-// $Id: St2011pubMcMaker.h,v 1.1 2012/10/09 15:21:20 smirnovd Exp $
-//
-//*-- Author :  Justin Stevens, IUCF
+#ifndef St2011pubMcMaker_h
+#define St2011pubMcMaker_h
+
+#include "TH2.h"
+#include "TVector3.h"
 
 
-#ifndef STAR_St2011pubMcMaker
-#define STAR_St2011pubMcMaker
-
-/*!
- *
- * \class  St2011pubMcMaker
- * \author Justin Stevens, IUCF
- * \date   September 2009
- * \brief  maker to retrieve info from geant.root files for
- *         comparison with reco quantities from MC
- *
- * This commented block at the top of the header file is considered as
- * the class description to be present on the this class Web page.
- *
- *
- */
-
-#ifndef StMaker_H
+//#ifndef StMaker_H
 #include "StMaker.h"
-#endif
-#include <TH2.h>
-#include <TVector3.h>
+//#endif
+
+
 class StVecBosMaker;
 
+/**
+ *
+ */
 class St2011pubMcMaker : public StMaker
 {
 private:
@@ -48,6 +36,7 @@ private:
    TVector3 mVertex;
 
 public:
+
    St2011pubMcMaker(const char *name = "2011pubMc");
    virtual       ~St2011pubMcMaker();
    virtual Int_t  Init();
@@ -59,24 +48,13 @@ public:
    virtual Int_t InitRun  (int runumber) {return 0;}; // Overload empty StMaker::InitRun
    virtual Int_t FinishRun(int runumber) {return 0;}; // Overload empty StMaker::FinishRun
 
-
-
-   /// Displayed on session exit, leave it as-is please ...
+   // Displayed on session exit, leave it as-is please ...
    virtual const char *GetCVS() const {
-      static const char cvs[] = "Tag $Name:  $ $Id: St2011pubMcMaker.h,v 1.1 2012/10/09 15:21:20 smirnovd Exp $ built "__DATE__" "__TIME__ ;
+      static const char cvs[] = "Tag $Name:  $ $Id: St2011pubMcMaker.h,v 1.2 2012/10/26 00:07:44 smirnovd Exp $ built "__DATE__" "__TIME__ ;
       return cvs;
    }
 
-   ClassDef(St2011pubMcMaker, 0)  //StAF chain virtual base class for Makers
+   ClassDef(St2011pubMcMaker, 0)
 };
 
 #endif
-
-
-// $Log: St2011pubMcMaker.h,v $
-// Revision 1.1  2012/10/09 15:21:20  smirnovd
-// *** empty log message ***
-//
-// Revision 1.1  2011/02/10 20:33:25  balewski
-// start
-//

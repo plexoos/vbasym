@@ -1,16 +1,8 @@
-// $Id: StZBosMaker.h,v 1.2 2012/10/12 19:30:01 smirnovd Exp $
-
 #ifndef STAR_StZBosMaker
 #define STAR_StZBosMaker
 
 /*!
- *
- * \class  StZBosMaker
- * \author Ross
- * \date   December 2011
  * \brief  uses tree from W-algo to find Zs
- *
- *
  *
  */
 
@@ -19,7 +11,7 @@
 
 class StMuDstMaker;
 class WeventDisplay;
-class WeveEleTrack;
+class VecBosTrack;
 
 
 class StZBosMaker : public StMaker
@@ -56,7 +48,7 @@ public:
    void setPhi12Min(float x)               { par_delPhi12 = x; return;}
    void setMinZMass(float x)               { par_minMassZ = x; return;}
    void setMaxZMass(float x)               { par_maxMassZ = x; return;}
-   void printJan(WeveEleTrack *T);
+   void printJan(VecBosTrack *T);
    virtual Int_t InitRun(int runnumber);   // Overload empty StMaker::InitRun
    virtual Int_t FinishRun(int runnumber); // Overload empty StMaker::FinishRun
 

@@ -7,7 +7,8 @@ using namespace std;
 
 
 WEvent::WEvent() : ProtoEvent(),
-   mVertices()
+   mVertices(),
+   mLeptonBTracks(), mLeptonETracks()
 {
    clear();
 }
@@ -39,7 +40,7 @@ UInt_t WEvent::GetNumTracksWithBCluster()
    for ( ; iVertex!=mVertices.end(); ++iVertex)
    {
       //VBTrackVecIter iTrack = iVertex->eleTrack.begin();
-      vector<WeveEleTrack>::iterator iTrack = iVertex->eleTrack.begin();
+      vector<VecBosTrack>::iterator iTrack = iVertex->eleTrack.begin();
 
       for ( ; iTrack!=iVertex->eleTrack.end(); ++iTrack)
       {
@@ -67,6 +68,8 @@ void WEvent::clear()
    etow.clear();
    eprs.clear();
    esmd.clear();
+   mLeptonBTracks.clear();
+   mLeptonETracks.clear();
 }
 
 

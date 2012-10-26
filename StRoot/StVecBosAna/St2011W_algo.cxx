@@ -26,7 +26,7 @@ void StVecBosMaker::find_W_boson()
       WEventVertex &vertex = mWEvent->mVertices[iv];
       for (uint it = 0; it < vertex.eleTrack.size(); it++)
       {
-         WeveEleTrack &track = vertex.eleTrack[it];
+         VecBosTrack &track = vertex.eleTrack[it];
          if (track.pointTower.id <= 0) continue; //skip endcap towers
          if (track.isMatch2Cl == false) continue;
 
@@ -195,7 +195,7 @@ void StVecBosMaker::tag_Z_boson()
       WEventVertex &vertex = mWEvent->mVertices[iv];
       for (uint it = 0; it < vertex.eleTrack.size(); it++) // select track
       {
-         WeveEleTrack &T1 = vertex.eleTrack[it];
+         VecBosTrack &T1 = vertex.eleTrack[it];
          if (T1.isMatch2Cl == false) continue;
          assert(T1.mCluster2x2.nTower > 0); // internal logical error
          assert(T1.nearTotET > 0); // internal logical error
@@ -253,7 +253,7 @@ void StVecBosMaker::CalcPtBalance()
 
       for (uint it = 0; it < vertex.eleTrack.size(); it++)
       {
-         WeveEleTrack &track = vertex.eleTrack[it];
+         VecBosTrack &track = vertex.eleTrack[it];
 
          if (track.isMatch2Cl == false) continue;
 
@@ -311,7 +311,7 @@ void StVecBosMaker::CalcMissingET()
       WEventVertex &vertex = mWEvent->mVertices[iv];
       for (uint it = 0; it < vertex.eleTrack.size(); it++)
       {
-         WeveEleTrack &track = vertex.eleTrack[it];
+         VecBosTrack &track = vertex.eleTrack[it];
 
          if (track.isMatch2Cl == false) continue;
 
@@ -372,7 +372,7 @@ void StVecBosMaker::findAwayJet()
 
       for (uint it = 0; it < vertex.eleTrack.size(); it++)
       {
-         WeveEleTrack &track = vertex.eleTrack[it];
+         VecBosTrack &track = vertex.eleTrack[it];
 
          if (track.isMatch2Cl == false) continue;
 
@@ -410,7 +410,7 @@ void StVecBosMaker::findNearJet()
 
       for (uint it = 0; it < vertex.eleTrack.size(); it++)
       {
-         WeveEleTrack &track = vertex.eleTrack[it];
+         VecBosTrack &track = vertex.eleTrack[it];
 
          if (!track.isMatch2Cl) continue;
 
@@ -551,7 +551,7 @@ float StVecBosMaker::sumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, 
 
 
 /** */
-void StVecBosMaker::extendTrack2Barrel()
+void StVecBosMaker::ExtendTrack2Barrel()
 {
    //printf("******* extendTracks() nVert=%d\n", mWEvent->mVertices.size());
    if (!mWEvent->l2bitET) return; //fire barrel trigger
@@ -560,12 +560,12 @@ void StVecBosMaker::extendTrack2Barrel()
    for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++)
    {
       WEventVertex &vertex = mWEvent->mVertices[iv];
-      if (vertex.rank < 0) continue; //remove vertex for endcap algo only
+      if (vertex.rank < 0) continue; // remove vertex for endcap algo only
 
       // loop over tracks
       for (uint iTrack = 0; iTrack < vertex.eleTrack.size(); iTrack++)
       {
-         WeveEleTrack &track = vertex.eleTrack[iTrack];
+         VecBosTrack &track = vertex.eleTrack[iTrack];
 
          if (track.prMuTrack->flag() != 301) continue; //remove track for endcap algo only
 
@@ -617,7 +617,7 @@ void StVecBosMaker::extendTrack2Barrel()
 bool StVecBosMaker::matchTrack2BtowCluster()
 {
    // First, find barrel candidates
-   extendTrack2Barrel();
+   ExtendTrack2Barrel();
 
    //printf("******* matchCluster() nVert=%d\n",mWEvent->mVertices.size());
    int   numMatchedTracks = 0;
@@ -630,7 +630,7 @@ bool StVecBosMaker::matchTrack2BtowCluster()
 
       for (uint it = 0; it < vertex.eleTrack.size(); it++)
       {
-         WeveEleTrack &track = vertex.eleTrack[it];
+         VecBosTrack &track = vertex.eleTrack[it];
          if (track.pointTower.id <= 0) continue; // skip endcap towers
 
          float trackPT = track.prMuTrack->momentum().perp();
@@ -638,8 +638,8 @@ bool StVecBosMaker::matchTrack2BtowCluster()
          // Choose 2x2 cluster with maximum ET
          track.mCluster2x2 = maxBtow2x2( track.pointTower.iEta, track.pointTower.iPhi, vertexZ);
 
-         hA[33]->Fill(track.mCluster2x2.ET);
-         hA[34]->Fill(track.mCluster2x2.adcSum, trackPT);
+         hA[33] ->Fill(track.mCluster2x2.ET);
+         hA[34] ->Fill(track.mCluster2x2.adcSum, trackPT);
          hA[110]->Fill(track.mCluster2x2.ET);
 
          // Compute surroinding cluster energy
@@ -665,8 +665,8 @@ bool StVecBosMaker::matchTrack2BtowCluster()
          // spacial separation (track - cluster)
          TVector3 D = track.pointTower.R - track.mCluster2x2.position;
 
-         hA[43]->Fill( track.mCluster2x2.energy, D.Mag());
-         hA[44]->Fill( track.mCluster2x2.position.z(), D.z());
+         hA[43]->Fill(track.mCluster2x2.energy,       D.Mag());
+         hA[44]->Fill(track.mCluster2x2.position.z(), D.z());
 
          float delPhi = track.pointTower.R.DeltaPhi(track.mCluster2x2.position);
 

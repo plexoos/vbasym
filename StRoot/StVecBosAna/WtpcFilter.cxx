@@ -17,53 +17,56 @@ WtpcFilter::WtpcFilter()
    secID       = 0;
    HList       = 0;
    name        = "fixMe";
-   par_nFitPts = -1;
+   mMinNumHits = -1;
 }
 
 
 //
 void WtpcFilter::init(const char* core, int sec, TObjArray* HListX, bool barrel = true)
 {
-   HList = HListX;
-   secID = sec;
-   name = core; name += secID; name += "_";
+   HList  = HListX;
+   secID  = sec;
+   char tmpName[10];
+   sprintf(tmpName, "Sector%02d_", secID);
+   name   = tmpName;
    assert(HList);
    assert(secID);
-   assert(par_nFitPts > 0);
+   assert(mMinNumHits > 0);
 
-   LOG_INFO << Form("::InitTPC filter (sec=%d) done, name=%s=  nFit>%d, hitFrac>%.2f Rin<%.1fcm, Rout>%.1fcm", secID, name.Data(), par_nFitPts, par_nHitFrac, par_Rmin, par_Rmax) << endm;
+   LOG_INFO << Form("::InitTPC filter (sec=%d) done, name=%s=  nFit>%d, hitFrac>%.2f Rin<%.1fcm, Rout>%.1fcm",
+      secID, name.Data(), mMinNumHits, mMinHitFrac, mMinRadius, mMaxRadius) << endm;
 
    initHistos(barrel);
 }
 
 
 //
-bool WtpcFilter::accept( const StMuTrack*  prTr)
+bool WtpcFilter::accept(const StMuTrack* prTr)
 {
    hA[0]->Fill("inp", 1.);
    hA[2]->Fill(prTr->nHitsFit());
 
-   if (prTr->nHitsFit() <= par_nFitPts) return false;
+   if (prTr->nHitsFit() <= mMinNumHits) return false;
 
    hA[0]->Fill("nHit", 1.);
    float hitFrac = 1.*prTr->nHitsFit() / prTr->nHitsPoss();
    hA[3]->Fill(hitFrac);
 
-   if (hitFrac < par_nHitFrac)  return false;
+   if (hitFrac < mMinHitFrac) return false;
 
    hA[0]->Fill("Hfrac", 1.);
    StThreeVectorF ri = prTr->globalTrack()->firstPoint();
    hA[4]->Fill(ri.perp());
 
-   if (ri.perp() > par_Rmin)  return false;
+   if (ri.perp() > mMinRadius) return false;
 
    hA[0]->Fill("Rin", 1.);
    StThreeVectorF ro = prTr->globalTrack()->lastPoint();
    hA[5]->Fill(ro.perp());
 
-   if (ro.perp() < par_Rmax) return false;
+   if (ro.perp() < mMaxRadius) return false;
 
-   // accepted .......
+   // Accept track
    hA[0]->Fill("Rout", 1.);
    hA[1]->Fill(ro.pseudoRapidity(), ro.phi());
    float dedx = prTr->dEdx() * 1e6;
@@ -134,20 +137,20 @@ void WtpcFilter::initHistos(bool barrel)
 
    hA[2] = h = new TH1F(name + "TrNfit", "prim tr nFitP" + sufix + "; nFitPoints", 50, 0, 50);
    Lx = h->GetListOfFunctions();
-   ln = new TLine(par_nFitPts, 0, par_nFitPts, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
+   ln = new TLine(mMinNumHits, 0, mMinNumHits, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
 
 
    hA[3] = h = new TH1F(name + "TrFitFrac", "prim tr nFitFrac" + sufix + "; nFit/nPoss ", 50, 0, 1.1);
    Lx = h->GetListOfFunctions();
-   ln = new TLine(par_nHitFrac, 0, par_nHitFrac, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
+   ln = new TLine(mMinHitFrac, 0, mMinHitFrac, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
 
    hA[4] = h = new TH1F(name + "TrRxyIn", "prim tr 1st hit  filter" + sufix + "; Rxy (cm)", 60, 50, 170.);
    Lx = h->GetListOfFunctions();
-   ln = new TLine(par_Rmin, 0, par_Rmin, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
+   ln = new TLine(mMinRadius, 0, mMinRadius, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
 
    hA[5] = h = new TH1F(name + "TrRxyOut", "prim tr last hit filter" + sufix + "; Rxy (cm)", 60, 100, 220.);
    Lx = h->GetListOfFunctions();
-   ln = new TLine(par_Rmax, 0, par_Rmax, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
+   ln = new TLine(mMaxRadius, 0, mMaxRadius, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
 
    hA[6] = h = new TH2F(name + "TrdEdX", " dEdX vs. P, accpted " + sufix + "; track P (GeV); dE/dx (keV)", 20, 0, 10, 100, 0, 10);
 

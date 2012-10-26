@@ -2,18 +2,18 @@
 #include "WEventEleTrack.h"
 
 
-ClassImp(WeveEleTrack)
+ClassImp(VecBosTrack)
 
 using namespace std;
 
 
-WeveEleTrack::WeveEleTrack()
+VecBosTrack::VecBosTrack()
 {
    clear();
 }
 
 
-void WeveEleTrack::print(int flag)
+void VecBosTrack::print(int flag)
 {
    if (prMuTrack == 0) {  printf("   Track NULL pointer???\n"); return;}
    printf("   Track glPT=%.1f GeV/c   isMatch2Cl=%d, nearTotET=%.1f, awayTotET=%.1f primPT=%.1f\n",
@@ -28,7 +28,7 @@ void WeveEleTrack::print(int flag)
 }
 
 
-void WeveEleTrack::clear()
+void VecBosTrack::clear()
 {
    pointTower.clear();
    mCluster2x2.clear();
@@ -58,7 +58,7 @@ void WeveEleTrack::clear()
 }
 
 
-TVector3 WeveEleTrack::CalcDistanceToMatchedCluster()
+TVector3 VecBosTrack::CalcDistanceToMatchedCluster()
 {
    return pointTower.R - mCluster2x2.position;
 }
