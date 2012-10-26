@@ -679,6 +679,7 @@ bool StVecBosMaker::matchTrack2BtowCluster()
          if (D.Mag() > mMaxTrackClusterDist) continue;
 
          track.isMatch2Cl = true; // cluster is matched to TPC track
+         mWEvent->mLeptonBTracks.insert(&track);
 
          hA[20]->Fill("#Delta R", 1.);
          hA[111]->Fill(track.mCluster2x2.ET);
