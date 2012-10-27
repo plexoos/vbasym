@@ -29,6 +29,7 @@ private:
    void  varyCuts4backgStudy();
 
 public:
+
    St2011pubWanaMaker(const char *name = "2011pubWana");
    virtual       ~St2011pubWanaMaker() {};
    virtual Int_t  Init();
@@ -43,7 +44,7 @@ public:
 
    /// Displayed on session exit, leave it as-is please ...
    virtual const char *GetCVS() const {
-      static const char cvs[] = "Tag $Name:  $ $Id: St2011pubWanaMaker.h,v 1.2 2012/10/26 00:07:44 smirnovd Exp $ built "__DATE__" "__TIME__ ;
+      static const char cvs[] = "Tag $Name:  $ $Id: St2011pubWanaMaker.h,v 1.3 2012/10/27 01:47:23 smirnovd Exp $ built "__DATE__" "__TIME__ ;
       return cvs;
    }
 

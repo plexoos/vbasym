@@ -7,7 +7,7 @@ ClassImp(VecBosTrack)
 using namespace std;
 
 
-VecBosTrack::VecBosTrack()
+VecBosTrack::VecBosTrack() : mVecBosVertex(0)
 {
    clear();
 }
@@ -33,16 +33,19 @@ void VecBosTrack::clear()
    pointTower.clear();
    mCluster2x2.clear();
    mCluster4x4.clear();
-   isMatch2Cl = false;
-   primP = TVector3(0, 0, 0);
-   prMuTrack = glMuTrack = 0;
+   isMatch2Cl    = false;
+   primP         = TVector3(0, 0, 0);
+   prMuTrack     = 0;
+   glMuTrack     = 0;
+   mVecBosVertex = 0;
    awayTpcPT = nearTpcPT = nearTotET = awayTotET = nearEmcET = awayEmcET = 0;
    nearBtowET = awayBtowET = nearEtowET = awayEtowET = smallNearTpcPT = 0;
    nearTotET_noEEMC = awayTotET_noEEMC = 0;
 
-   ptBalance = TVector3(0, 0, 0);
-   ptBalance_noEEMC = TVector3(0, 0, 0);
-   sPtBalance = sPtBalance_noEEMC = 0;
+   ptBalance         = TVector3(0, 0, 0);
+   ptBalance_noEEMC  = TVector3(0, 0, 0);
+   sPtBalance        = 0;
+   sPtBalance_noEEMC = 0;
 
    hadronicRecoil = TVector3(0, 0, 0);
 

@@ -11,8 +11,7 @@
 
 ClassImp(St2011pubMcMaker)
 
-//_______________________________________________________
-//_______________________________________________________
+
 St2011pubMcMaker::St2011pubMcMaker(const char *name): StMaker(name)
 {
    wMK = 0; HList = 0;
@@ -20,8 +19,6 @@ St2011pubMcMaker::St2011pubMcMaker(const char *name): StMaker(name)
 }
 
 
-//_______________________________________________________
-//_______________________________________________________
 St2011pubMcMaker::~St2011pubMcMaker()
 {
 }
@@ -56,7 +53,7 @@ void St2011pubMcMaker::doWanalysis()
 
    // run through W cuts to fill other histos............
    for (uint iv = 0; iv < wMK->mWEvent->mVertices.size(); iv++) {
-      WEventVertex &V = wMK->mWEvent->mVertices[iv];
+      VecBosVertex &V = wMK->mWEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          VecBosTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
@@ -175,10 +172,7 @@ void St2011pubMcMaker::doWanalysis()
 }
 
 
-//_______________________________________________________
-//_______________________________________________________
-void
-St2011pubMcMaker::doWefficiency()
+void St2011pubMcMaker::doWefficiency()
 {
 
    //only count leptons in our eta range
@@ -225,7 +219,7 @@ St2011pubMcMaker::doWefficiency()
    //reco efficiency
    for (uint iv = 0; iv < wMK->mWEvent->mVertices.size(); iv++)
    {
-      WEventVertex &V = wMK->mWEvent->mVertices[iv];
+      VecBosVertex &V = wMK->mWEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          VecBosTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;

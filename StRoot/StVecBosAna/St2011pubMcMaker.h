@@ -5,9 +5,7 @@
 #include "TVector3.h"
 
 
-//#ifndef StMaker_H
 #include "StMaker.h"
-//#endif
 
 
 class StVecBosMaker;
@@ -50,7 +48,7 @@ public:
 
    // Displayed on session exit, leave it as-is please ...
    virtual const char *GetCVS() const {
-      static const char cvs[] = "Tag $Name:  $ $Id: St2011pubMcMaker.h,v 1.2 2012/10/26 00:07:44 smirnovd Exp $ built "__DATE__" "__TIME__ ;
+      static const char cvs[] = "Tag $Name:  $ $Id: St2011pubMcMaker.h,v 1.3 2012/10/27 01:47:23 smirnovd Exp $ built "__DATE__" "__TIME__ ;
       return cvs;
    }
 

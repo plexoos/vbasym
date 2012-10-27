@@ -60,7 +60,7 @@ void St2011pubWanaMaker::evalWeleTrackSign()
 
    // search for Ws
    for (uint iv = 0; iv < wMK->mWEvent->mVertices.size(); iv++) {
-      WEventVertex &V = wMK->mWEvent->mVertices[iv];
+      VecBosVertex &V = wMK->mWEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          VecBosTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
@@ -169,7 +169,7 @@ void St2011pubWanaMaker::scanCrateRate()
    // search for  Ws ............
    for (uint iv = 0; iv < wMK->mWEvent->mVertices.size(); iv++)
    {
-      WEventVertex &V = wMK->mWEvent->mVertices[iv];
+      VecBosVertex &V = wMK->mWEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          VecBosTrack &T = V.eleTrack[it];
          // T.pointTower.print();
@@ -194,7 +194,7 @@ void St2011pubWanaMaker::varyCuts4backgStudy()
 {
    for (uint iv = 0; iv < wMK->mWEvent->mVertices.size(); iv++)
    {
-      WEventVertex &V = wMK->mWEvent->mVertices[iv];
+      VecBosVertex &V = wMK->mWEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++)
       {
          VecBosTrack &T = V.eleTrack[it];

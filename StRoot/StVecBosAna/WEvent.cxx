@@ -8,9 +8,27 @@ using namespace std;
 
 WEvent::WEvent() : ProtoEvent(),
    mVertices(),
+   mTracks(),
    mLeptonBTracks(), mLeptonETracks()
 {
    clear();
+}
+
+
+void WEvent::AddTrack(UInt_t vertexId, StMuTrack* stMuTrack)
+{
+   mVertices[vertexId].prTrList.push_back(stMuTrack);
+
+   StThreeVectorF prPvect = stMuTrack->p();
+
+   VecBosTrack track;
+
+   track.prMuTrack     = stMuTrack;
+   track.glMuTrack     = stMuTrack->globalTrack();
+   track.mVecBosVertex = &mVertices[vertexId];
+   track.primP         = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
+
+   mTracks.push_back(track);
 }
 
 
@@ -39,8 +57,7 @@ UInt_t WEvent::GetNumTracksWithBCluster()
 
    for ( ; iVertex!=mVertices.end(); ++iVertex)
    {
-      //VBTrackVecIter iTrack = iVertex->eleTrack.begin();
-      vector<VecBosTrack>::iterator iTrack = iVertex->eleTrack.begin();
+      VecBosTrackVecIter iTrack = iVertex->eleTrack.begin();
 
       for ( ; iTrack!=iVertex->eleTrack.end(); ++iTrack)
       {
@@ -49,6 +66,12 @@ UInt_t WEvent::GetNumTracksWithBCluster()
    }
 
    return nTracks;
+}
+
+
+UInt_t WEvent::GetNumTracksWithBCluster2()
+{
+   return mLeptonBTracks.size();
 }
 
 
@@ -63,11 +86,12 @@ void WEvent::clear()
    zTag     = false;
    mNJets   = 0;
    bxStar7  = bxStar48  = spin4 = -1;
-   mVertices.clear();
    bemc.clear();
    etow.clear();
    eprs.clear();
    esmd.clear();
+   mVertices.clear();
+   mTracks.clear();
    mLeptonBTracks.clear();
    mLeptonETracks.clear();
 }

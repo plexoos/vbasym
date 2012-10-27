@@ -95,7 +95,7 @@ void WeventDisplay::clear()
 }
 
 
-void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  WEventVertex myV, VecBosTrack myTr)
+void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  VecBosVertex myV, VecBosTrack myTr)
 {
    if (maxEve <= 0) return;
    maxEve--;
@@ -347,7 +347,7 @@ void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  
 }
 
 
-void WeventDisplay::exportEvent( const char *tit, WEventVertex myV, VecBosTrack myTr, int vertexIndex)
+void WeventDisplay::exportEvent( const char *tit, VecBosVertex myV, VecBosTrack myTr, int vertexIndex)
 {
    if (maxEve <= 0) return;
    clear();
@@ -489,7 +489,7 @@ void WeventDisplay::getPrimTracksFromTree(int vertID, int pointTowId)
    assert(vertID >= 0);
    assert(vertID < (int)wMK->mWEvent->mVertices.size());
 
-   WEventVertex &V = wMK->mWEvent->mVertices[vertID];
+   VecBosVertex &V = wMK->mWEvent->mVertices[vertID];
    for (uint it = 0; it < V.prTrList.size(); it++) {
       StMuTrack *prTr = V.prTrList[it];
       if (prTr->flag() <= 0) continue;
@@ -506,7 +506,7 @@ void WeventDisplay::getPrimTracksFromTree(int vertID, int pointTowId)
 }
 
 
-void WeventDisplay::export2sketchup(  const char *tit, WEventVertex myV, VecBosTrack myTr)
+void WeventDisplay::export2sketchup(  const char *tit, VecBosVertex myV, VecBosTrack myTr)
 {
    int eveId = wMK->mStMuDstMaker->muDst()->event()->eventId();
    int runNo = wMK->mStMuDstMaker->muDst()->event()->runId();

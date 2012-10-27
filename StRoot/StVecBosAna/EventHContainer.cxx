@@ -42,11 +42,6 @@ void EventHContainer::BookHists()
 
    fDir->cd();
 
-   shName = "hPseudoMass";
-   o[shName] = new TH1F(shName.c_str(), shName.c_str(), 50, 0, 20);
-   ((TH1*) o[shName])->SetTitle("; Mass; Events;");
-   ((TH1*) o[shName])->SetOption("E1");
-
    o["hNumJets"] = hist = new TH1I("hNumJets", "; Num. of Jets; Events", 20, 0, 20);
    hist->SetOption("hist GRIDX");
 
@@ -57,6 +52,9 @@ void EventHContainer::BookHists()
    hist->SetOption("hist GRIDX");
 
    o["hNumTracksWithBCluster"] = hist = new TH1I("hNumTracksWithBCluster", "; Num. of Tracks with Barrel Cluster; Events", 5, 0, 5);
+   hist->SetOption("hist GRIDX");
+
+   o["hNumTracksWithBCluster2"] = hist = new TH1I("hNumTracksWithBCluster2", "; Num. of Tracks with Barrel Cluster; Events", 5, 0, 5);
    hist->SetOption("hist GRIDX");
 
    //shName = "hMassFitChi2ByChannel";
@@ -121,6 +119,7 @@ void EventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hNumVertices"])->Fill(wEvent.mVertices.size());
    ((TH1*) o["hNumTracks"])->Fill(wEvent.GetNumTracks());
    ((TH1*) o["hNumTracksWithBCluster"])->Fill(wEvent.GetNumTracksWithBCluster());
+   ((TH1*) o["hNumTracksWithBCluster2"])->Fill(wEvent.GetNumTracksWithBCluster2());
 }
 
 

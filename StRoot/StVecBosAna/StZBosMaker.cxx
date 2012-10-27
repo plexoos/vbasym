@@ -75,7 +75,7 @@ void StZBosMaker::findEndcap_Z_boson()
    for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++)
    {
       hA[50]->Fill("vert", 1.); hA[60]->Fill("vert", 1.);
-      WEventVertex &V = mWEvent->mVertices[iv];
+      VecBosVertex &V = mWEvent->mVertices[iv];
 
       // first loop over good barrel tracks
       for (uint it = 0; it < V.eleTrack.size(); it++) {
@@ -226,7 +226,7 @@ void StZBosMaker::find_Z_boson()
    for (uint iv = 0; iv < mWEvent->mVertices.size(); iv++)
    {
       hA[0]->Fill("vert", 1.);
-      WEventVertex &V = mWEvent->mVertices[iv];
+      VecBosVertex &V = mWEvent->mVertices[iv];
       hA[32]->Fill(V.eleTrack.size());
       if (V.eleTrack.size() < 2) continue;
       hA[0]->Fill("TT", 1.); // at least 2 isolated tracks exist

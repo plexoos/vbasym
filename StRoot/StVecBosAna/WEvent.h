@@ -10,7 +10,7 @@
 #include <StMuDSTMaker/COMMON/StMuTrack.h>
 
 #include "WanaConst.h"
-#include "WEventVertex.h"
+#include "VecBosVertex.h"
 #include "utils/ProtoEvent.h"
 
 
@@ -142,36 +142,39 @@ class WEvent : public ProtoEvent
 {
 public:
 
-   int         l2bitET;
-   int         l2bitRnd;
-   int         l2EbitET;
-   int         l2EbitRnd;
-   int         trigAwaySum[16];   //for lumi
-   int         trigTotalSum;      //for lumi
-   int         id;                // eventID
-   int         runNo;
-   int         time;
-   float       zdcRate;
-   int         bx7;
-   int         bx48;              // raw from muDst
-   int         bxStar7;
-   int         bxStar48;
-   int         spin4;             // using spinDb or -1 if failed
-   bool        zTag;
-   UInt_t      mNJets;
-   VBVertexVec mVertices;
-   WeveBEMC    bemc;
-   WeveETOW    etow;
-   WeveEPRS    eprs;
-   WeveESMD    esmd;
-   set<VecBosTrack*>  mLeptonBTracks;   // Set of lepton track candidates, i.e. good tracks with energy in barrel
-   set<VecBosTrack*>  mLeptonETracks;   // Set of lepton track candidates, i.e. good tracks with energy in endcap
+   int                l2bitET;
+   int                l2bitRnd;
+   int                l2EbitET;
+   int                l2EbitRnd;
+   int                trigAwaySum[16];   //for lumi
+   int                trigTotalSum;      //for lumi
+   int                id;                // eventID
+   int                runNo;
+   int                time;
+   float              zdcRate;
+   int                bx7;
+   int                bx48;              // raw from muDst
+   int                bxStar7;
+   int                bxStar48;
+   int                spin4;             // using spinDb or -1 if failed
+   bool               zTag;
+   UInt_t             mNJets;
+   WeveBEMC           bemc;
+   WeveETOW           etow;
+   WeveEPRS           eprs;
+   WeveESMD           esmd;
+   VecBosVertexVec    mVertices;
+   VecBosTrackVec     mTracks;
+   VecBosTrackPtrSet  mLeptonBTracks;   // Set of lepton track candidates, i.e. good tracks with energy in barrel
+   VecBosTrackPtrSet  mLeptonETracks;   // Set of lepton track candidates, i.e. good tracks with energy in endcap
 
    WEvent();
 
+   void   AddTrack(UInt_t vertexId, StMuTrack* stMuTrack);
    UInt_t GetNumVertices();
    UInt_t GetNumTracks();
    UInt_t GetNumTracksWithBCluster();
+   UInt_t GetNumTracksWithBCluster2();
    void   clear();
    void   print(int flag = 0, int isMC = 0);
    void   getGmt_day_hour(int &yyyymmdd, int &hhmmss);

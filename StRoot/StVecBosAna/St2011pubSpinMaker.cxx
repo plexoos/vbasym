@@ -113,7 +113,7 @@ void St2011pubSpinMaker::bXingSort()
 
    // search for  Ws ............
    for (uint iv = 0; iv < wMK->mWEvent->mVertices.size(); iv++) {
-      WEventVertex &V = wMK->mWEvent->mVertices[iv];
+      VecBosVertex &V = wMK->mWEvent->mVertices[iv];
 
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          VecBosTrack &T = V.eleTrack[it];
