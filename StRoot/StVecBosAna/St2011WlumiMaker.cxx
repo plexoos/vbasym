@@ -1,24 +1,21 @@
-// $Id: St2011WlumiMaker.cxx,v 1.2 2012/10/10 22:39:35 smirnovd Exp $
-//
-//*-- Author : Ross Corliss, MIT
-
 #include "StVecBosMaker.h"
 
 #include "St2011WlumiMaker.h"
 
+
 ClassImp(St2011WlumiMaker)
 
-//_____________________________________________________________________________
-//
-St2011WlumiMaker::St2011WlumiMaker(const char *name):StMaker(name){
-  wMK=0;muMK=0;HList=0;
 
+St2011WlumiMaker::St2011WlumiMaker(const char *name):StMaker(name)
+{
+  wMK   = 0;
+  muMK  = 0;
+  HList = 0;
 }
 
 
-//_____________________________________________________________________________
-//
-Int_t St2011WlumiMaker::Init(){
+Int_t St2011WlumiMaker::Init()
+{
   assert(wMK);
   assert(muMK);
   assert(HList);
@@ -27,9 +24,8 @@ Int_t St2011WlumiMaker::Init(){
 }
 
 
-//_____________________________________________________________________________
-//
-Int_t St2011WlumiMaker::InitRun  (int runumber){
+Int_t St2011WlumiMaker::InitRun  (int runumber)
+{
   towerInfoIsCurrent=false; // make sure we check the tower info on the first event.
   nActiveTowers=0;
   for (int i=0;i<16;i++)  nBHT3[i]=0;
@@ -42,10 +38,9 @@ Int_t St2011WlumiMaker::InitRun  (int runumber){
   return 0;
 }
 
-//_____________________________________________________________________________
-//
-Int_t St2011WlumiMaker::FinishRun  (int runnumber){
 
+Int_t St2011WlumiMaker::FinishRun(int runnumber)
+{
   printf("Finishing Run %d (lumi)\n",runnumber);
 
   char runName[9];
@@ -104,10 +99,9 @@ Int_t St2011WlumiMaker::FinishRun  (int runnumber){
 return 0;
 }
 
-//_____________________________________________________________________________
-//
-Int_t 
-St2011WlumiMaker::Make(){
+
+Int_t St2011WlumiMaker::Make()
+{
   //  printf("in %s\n", GetName());
   //hA[0]->Fill("",1.);
 
@@ -121,13 +115,12 @@ St2011WlumiMaker::Make(){
   return kStOK;
 }
 
-//_____________________________________________________________________________
-//
-void 
-St2011WlumiMaker::getActiveTowers(){
+
+void St2011WlumiMaker::getActiveTowers()
+{
   //count the number of good towers:
   nActiveTowers=0;
-  WeveBEMC *barrel=&(wMK->mWEvent->bemc);
+  WeveBEMC *barrel=&(wMK->mVecBosEvent->bemc);
   for (int i=0;i<4800;i++)
     if (barrel->statTile[0][i]==0)//[0]=kBtow
       nActiveTowers++;
@@ -135,34 +128,32 @@ St2011WlumiMaker::getActiveTowers(){
   //count good trigger patches?
   
   if (nActiveTowers>0)   towerInfoIsCurrent=true;
-  return;
 }
 
-//_____________________________________________________________________________
-//
-void 
-St2011WlumiMaker::sortTrigger(){
+
+void St2011WlumiMaker::sortTrigger()
+{
   int thresh[16];
-  thresh[0]=-1;
-  thresh[1]=14;
-  thresh[2]=36;
-  thresh[3]=56;
-  thresh[4]=78;
-  thresh[5]=98;
-  thresh[6]=119;
-  thresh[7]=139;
-  thresh[8]=161;
-  thresh[9]=181;
-  thresh[10]=201;
-  thresh[11]=222;
-  thresh[12]=243;
-  thresh[13]=263;
-  thresh[14]=283;
-  thresh[15]=306;
+  thresh[0]  = -1;
+  thresh[1]  = 14;
+  thresh[2]  = 36;
+  thresh[3]  = 56;
+  thresh[4]  = 78;
+  thresh[5]  = 98;
+  thresh[6]  = 119;
+  thresh[7]  = 139;
+  thresh[8]  = 161;
+  thresh[9]  = 181;
+  thresh[10] = 201;
+  thresh[11] = 222;
+  thresh[12] = 243;
+  thresh[13] = 263;
+  thresh[14] = 283;
+  thresh[15] = 306;
 
   //printf("sortTrigger()\n");
   //has access to whole W-algo-maker data via pointer 'wMK'
-  WEvent *weve=wMK->mWEvent;
+  VecBosEvent *weve=wMK->mVecBosEvent;
 
   if (weve->l2bitET) {
     //printf("ET\n");
@@ -192,17 +183,12 @@ St2011WlumiMaker::sortTrigger(){
 	  }
       }
   }
-
-
   //printf("out of sort\n");
-  return;
 }
 
-//_____________________________________________________________________________
-//
-void 
-St2011WlumiMaker::getAbortGapCounts(int angle, int *n1, int* n2){
 
+void St2011WlumiMaker::getAbortGapCounts(int angle, int *n1, int* n2)
+{
   //new, simple method:  count only over the last 8 bins of the gap.
   *n1=0;
   for (int i=32;i<=39;i++)
@@ -210,16 +196,4 @@ St2011WlumiMaker::getAbortGapCounts(int angle, int *n1, int* n2){
   *n2=0;
   for (int i=112;i<=119;i++)
     *n2+=nBx[angle][i];
-  return;
 }
-
-// $Log: St2011WlumiMaker.cxx,v $
-// Revision 1.2  2012/10/10 22:39:35  smirnovd
-// *** empty log message ***
-//
-// Revision 1.1  2012/10/09 15:21:19  smirnovd
-// *** empty log message ***
-//
-// Revision 1.1  2011/02/10 20:33:23  balewski
-// start
-//

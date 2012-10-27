@@ -7,7 +7,7 @@
 
 #include "TF1.h"
 
-#include "WEvent.h"
+#include "VecBosEvent.h"
 
 
 ClassImp(KinemaHContainer)
@@ -106,9 +106,9 @@ void KinemaHContainer::BookHists()
 /** */
 void KinemaHContainer::Fill(ProtoEvent &ev)
 {
-   WEvent& wEvent = (WEvent&) ev;
+   VecBosEvent& event = (VecBosEvent&) ev;
 
-   ((TH1*) o["hJetCount"])->Fill(wEvent.mNJets);
+   ((TH1*) o["hJetCount"])->Fill(event.mNJets);
 }
 
 

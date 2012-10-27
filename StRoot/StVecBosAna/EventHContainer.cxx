@@ -7,7 +7,7 @@
 
 #include "TF1.h"
 
-#include "WEvent.h"
+#include "VecBosEvent.h"
 
 
 ClassImp(EventHContainer)
@@ -113,13 +113,13 @@ void EventHContainer::BookHists()
 /** */
 void EventHContainer::Fill(ProtoEvent &ev)
 {
-   WEvent& wEvent = (WEvent&) ev;
+   VecBosEvent& event = (VecBosEvent&) ev;
 
-   ((TH1*) o["hNumJets"])->Fill(wEvent.mNJets);
-   ((TH1*) o["hNumVertices"])->Fill(wEvent.mVertices.size());
-   ((TH1*) o["hNumTracks"])->Fill(wEvent.GetNumTracks());
-   ((TH1*) o["hNumTracksWithBCluster"])->Fill(wEvent.GetNumTracksWithBCluster());
-   ((TH1*) o["hNumTracksWithBCluster2"])->Fill(wEvent.GetNumTracksWithBCluster2());
+   ((TH1*) o["hNumJets"])->Fill(event.mNJets);
+   ((TH1*) o["hNumVertices"])->Fill(event.mVertices.size());
+   ((TH1*) o["hNumTracks"])->Fill(event.GetNumTracks());
+   ((TH1*) o["hNumTracksWithBCluster"])->Fill(event.GetNumTracksWithBCluster());
+   ((TH1*) o["hNumTracksWithBCluster2"])->Fill(event.GetNumTracksWithBCluster2());
 }
 
 

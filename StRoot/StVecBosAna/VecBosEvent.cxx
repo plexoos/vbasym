@@ -1,12 +1,12 @@
-#include "WEvent.h"
+#include "VecBosEvent.h"
 
 
-ClassImp(WEvent)
+ClassImp(VecBosEvent)
 
 using namespace std;
 
 
-WEvent::WEvent() : ProtoEvent(),
+VecBosEvent::VecBosEvent() : ProtoEvent(),
    mVertices(),
    mTracks(),
    mLeptonBTracks(), mLeptonETracks()
@@ -15,7 +15,7 @@ WEvent::WEvent() : ProtoEvent(),
 }
 
 
-void WEvent::AddTrack(UInt_t vertexId, StMuTrack* stMuTrack)
+void VecBosEvent::AddTrack(UInt_t vertexId, StMuTrack* stMuTrack)
 {
    mVertices[vertexId].prTrList.push_back(stMuTrack);
 
@@ -32,16 +32,16 @@ void WEvent::AddTrack(UInt_t vertexId, StMuTrack* stMuTrack)
 }
 
 
-UInt_t WEvent::GetNumVertices()
+UInt_t VecBosEvent::GetNumVertices()
 {
    return mVertices.size();
 }
 
 
-UInt_t WEvent::GetNumTracks()
+UInt_t VecBosEvent::GetNumTracks()
 {
    UInt_t nTracks = 0;
-   VBVertexVecIter iVertex = mVertices.begin();
+   VecBosVertexVecIter iVertex = mVertices.begin();
 
    for ( ; iVertex!=mVertices.end(); ++iVertex)
       nTracks += iVertex->prTrList.size();
@@ -50,10 +50,10 @@ UInt_t WEvent::GetNumTracks()
 }
 
 
-UInt_t WEvent::GetNumTracksWithBCluster()
+UInt_t VecBosEvent::GetNumTracksWithBCluster()
 {
    UInt_t nTracks = 0;
-   VBVertexVecIter iVertex = mVertices.begin();
+   VecBosVertexVecIter iVertex = mVertices.begin();
 
    for ( ; iVertex!=mVertices.end(); ++iVertex)
    {
@@ -69,13 +69,39 @@ UInt_t WEvent::GetNumTracksWithBCluster()
 }
 
 
-UInt_t WEvent::GetNumTracksWithBCluster2()
+UInt_t VecBosEvent::GetNumTracksWithBCluster2()
 {
    return mLeptonBTracks.size();
 }
 
 
-void WEvent::clear()
+Bool_t VecBosEvent::HasGoodTrack()
+{
+   VecBosTrackVecIter iTrack = mTracks.begin();
+
+   for ( ; iTrack!=mTracks.end(); ++iTrack)
+   {
+      const StMuTrack* primaryTrack = iTrack->prMuTrack;
+      if (primaryTrack->flag() != 301 && primaryTrack->flag() != 311) continue;
+      if (primaryTrack->pt() < 1.0) continue;
+
+      return true;
+   }
+
+   return false;
+
+   //if (mVecBosEvent->l2bitET && rank > 0 && primaryTrack->flag() == 301)
+      //XXX:ds:if (secID == 20) continue; //poorly calibrated sector for Run 9+11+12?
+      //XXX:ds:if (mTpcFilter[secID - 1].accept(primaryTrack) == false) continue;
+
+   //if (mVecBosEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin)
+      //XXX:ds:if ( mTpcFilterE[secID - 1].accept(primaryTrack) == false) continue;
+
+   //XXX:ds:if (!barrelTrack && !endcapTrack) continue;
+}
+
+
+void VecBosEvent::clear()
 {
    //Info("clear", "");
    id       = runNo     = time  = 0;
@@ -97,7 +123,7 @@ void WEvent::clear()
 }
 
 
-void WEvent::print(int flag, int isMC)
+void VecBosEvent::print(int flag, int isMC)
 {
    Info("print", "");
 
@@ -110,7 +136,7 @@ void WEvent::print(int flag, int isMC)
 }
 
 
-void WEvent::getGmt_day_hour(int &yyyymmdd, int &hhmmss)
+void VecBosEvent::getGmt_day_hour(int &yyyymmdd, int &hhmmss)
 {
    time_t rawtime = this->time;
    struct tm *timeinfo = gmtime ( &rawtime );

@@ -10,7 +10,9 @@
 #include "utils/PlotHelper.h"
 
 
-enum ECut {kCUT_UNKNOWN, kCUT_NOCUT, kCUT_BARREL, kCUT_ENDCAP, kCUT_CUT, kCUT_VERTEX, kCUT_ELERACK};
+enum ECut {kCUT_UNKNOWN, kCUT_NOCUT, kCUT_TRACKS, kCUT_TRACKS_GOOD,
+           kCUT_BARREL, kCUT_ENDCAP, kCUT_CUT, kCUT_VERTEX,
+           kCUT_ELERACK};
 
 typedef std::map<ECut, std::set<PlotHelper*> >   Cut2PlotHelperMap;
 typedef Cut2PlotHelperMap::iterator              Cut2PlotHelperMapIter;

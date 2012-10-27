@@ -7,6 +7,7 @@
 #include "TROOT.h"
 
 #include "EventHContainer.h"
+#include "TrackHContainer.h"
 #include "KinemaHContainer.h"
 
 
@@ -61,6 +62,9 @@ void VecBosRootFile::BookHists()
 
    fHists->d["event_cut"] = ph = new EventHContainer(new TDirectoryFile("event_cut", "event_cut", "", this));
    fHistCuts[kCUT_CUT].insert(ph);
+
+   fHists->d["tracks"] = ph = new TrackHContainer(new TDirectoryFile("tracks", "tracks", "", this));
+   fHistCuts[kCUT_TRACKS].insert(ph);
 
    fHists->d["tracks_good"] = ph = new TrackHContainer(new TDirectoryFile("tracks_good", "tracks_good", "", this));
    fHistCuts[kCUT_TRACKS_GOOD].insert(ph);

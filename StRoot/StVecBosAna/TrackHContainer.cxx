@@ -7,7 +7,7 @@
 
 #include "TF1.h"
 
-#include "WEvent.h"
+#include "VecBosEvent.h"
 
 
 ClassImp(TrackHContainer)
@@ -54,6 +54,15 @@ void TrackHContainer::BookHists()
    o["hTrackPhi"] = hist = new TH1I("hTrackPhi", "; Track #phi; Num. of Tracks", 60, -M_PI, M_PI);
    hist->SetOption("hist GRIDX GRIDY");
 
+   o["hTrackPt"] = hist = new TH1I("hTrackPt", "; Track P_T; Num. of Tracks", 40, 0, 40);
+   hist->SetOption("hist GRIDX GRIDY XY");
+
+   o["hTrackHitsFit"] = hist = new TH1I("hTrackHitsFit", "; Track Num. of Fit Hits; Num. of Tracks", 80, 0, 80);
+   hist->SetOption("hist GRIDX GRIDY");
+
+   o["hTrackHitsPoss"] = hist = new TH1I("hTrackHitsPoss", "; Track Num. of Possible Hits; Num. of Tracks", 80, 0, 80);
+   hist->SetOption("hist GRIDX GRIDY");
+
    o["hTrackBTowerId"] = hist = new TH1I("hTrackBTowerId", "; Track Extrapolated Barrel Tower Id; Num. of Tracks", 4800, 0, 4800);
    hist->SetOption("hist GRIDX GRIDY");
 
@@ -74,29 +83,26 @@ void TrackHContainer::BookHists()
 /** */
 void TrackHContainer::Fill(ProtoEvent &ev)
 {
-   WEvent& wEvent = (WEvent&) ev;
+   VecBosEvent& event = (VecBosEvent&) ev;
 
-   VBVertexVecIter iVertex = wEvent.mVertices.begin();
+   VecBosTrackVecIter iTrack = event.mTracks.begin();
 
-   for ( ; iVertex!=wEvent.mVertices.end(); ++iVertex)
+   for ( ; iTrack!=event.mTracks.end(); ++iTrack)
    {
-      //VBTrackVecIter iTrack = iVertex->eleTrack.begin();
-      vector<VecBosTrack>::iterator iTrack = iVertex->eleTrack.begin();
+      ((TH1*) o["hTrackFlag"])->Fill(iTrack->prMuTrack->flag());
+      ((TH1*) o["hTrackEta"])->Fill(iTrack->primP.Eta());
+      ((TH1*) o["hTrackPhi"])->Fill(iTrack->primP.Phi());
+      ((TH1*) o["hTrackPt"])->Fill(iTrack->prMuTrack->pt());
+      ((TH1*) o["hTrackHitsFit"])->Fill(iTrack->prMuTrack->nHitsFit());
+      ((TH1*) o["hTrackHitsPoss"])->Fill(iTrack->prMuTrack->nHitsPoss());
+      ((TH1*) o["hTrackBTowerId"])->Fill(iTrack->pointTower.id);
+      ((TH1*) o["hTrackBClusterEnergy2x2"])->Fill(iTrack->mCluster2x2.ET);
+      ((TH1*) o["hTrackBClusterEnergy4x4"])->Fill(iTrack->mCluster4x4.ET);
+      ((TH1*) o["hTrackBClusterEnergyIsoRatio"])->Fill(iTrack->mCluster2x2.ET/iTrack->mCluster4x4.ET);
+      ((TH1*) o["hTrackDistanceToCluster"])->Fill(iTrack->CalcDistanceToMatchedCluster().Mag());
+      ((TH1*) o["hChargePrimaryTrack"])->Fill(iTrack->prMuTrack->charge());
 
-      for ( ; iTrack!=iVertex->eleTrack.end(); ++iTrack)
-      {
-         ((TH1*) o["hTrackFlag"])->Fill(iTrack->prMuTrack->flag());
-         ((TH1*) o["hTrackEta"])->Fill(iTrack->primP.Eta());
-         ((TH1*) o["hTrackPhi"])->Fill(iTrack->primP.Phi());
-         ((TH1*) o["hTrackBTowerId"])->Fill(iTrack->pointTower.id);
-         ((TH1*) o["hTrackBClusterEnergy2x2"])->Fill(iTrack->mCluster2x2.ET);
-         ((TH1*) o["hTrackBClusterEnergy4x4"])->Fill(iTrack->mCluster4x4.ET);
-         ((TH1*) o["hTrackBClusterEnergyIsoRatio"])->Fill(iTrack->mCluster2x2.ET/iTrack->mCluster4x4.ET);
-         ((TH1*) o["hTrackDistanceToCluster"])->Fill(iTrack->CalcDistanceToMatchedCluster().Mag());
-         ((TH1*) o["hChargePrimaryTrack"])->Fill(iTrack->prMuTrack->charge());
-
-         //printf("hasMatchedCluster: %d\n", iTrack->isMatch2Cl);
-      }
+      //printf("hasMatchedCluster: %d\n", iTrack->isMatch2Cl);
    }
 }
 

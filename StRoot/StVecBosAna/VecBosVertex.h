@@ -11,7 +11,7 @@
 class VecBosVertex;
 
 typedef std::vector<VecBosVertex>   VecBosVertexVec;
-typedef VecBosVertexVec::iterator   VBVertexVecIter;
+typedef VecBosVertexVec::iterator   VecBosVertexVecIter;
 
 
 // Info about vertex

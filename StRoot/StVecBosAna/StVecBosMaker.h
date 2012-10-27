@@ -13,7 +13,7 @@
 #include <TChain.h>
 #include <TRandom3.h>
 
-#include "WEvent.h"
+#include "VecBosEvent.h"
 #include "WtpcFilter.h"
 #include "VecBosRootFile.h"
 
@@ -57,7 +57,7 @@ private:
    TString         mJetTreeBranch;
    TString         mJetTreeBranch_noEEMC;
    TClonesArray   *mJets;
-   WEvent         *mWEvent;
+   VecBosEvent         *mVecBosEvent;
    TTree          *mWtree;
    TString         mTreeName;
    TFile          *mTreeFile;

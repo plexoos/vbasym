@@ -1,5 +1,5 @@
-#ifndef WEvent_h
-#define WEvent_h
+#ifndef VecBosEvent_h
+#define VecBosEvent_h
 
 #include <set>
 
@@ -138,7 +138,7 @@ public:
 };
 
 
-class WEvent : public ProtoEvent
+class VecBosEvent : public ProtoEvent
 {
 public:
 
@@ -168,18 +168,19 @@ public:
    VecBosTrackPtrSet  mLeptonBTracks;   // Set of lepton track candidates, i.e. good tracks with energy in barrel
    VecBosTrackPtrSet  mLeptonETracks;   // Set of lepton track candidates, i.e. good tracks with energy in endcap
 
-   WEvent();
+   VecBosEvent();
 
    void   AddTrack(UInt_t vertexId, StMuTrack* stMuTrack);
    UInt_t GetNumVertices();
    UInt_t GetNumTracks();
    UInt_t GetNumTracksWithBCluster();
    UInt_t GetNumTracksWithBCluster2();
+   Bool_t HasGoodTrack();
    void   clear();
    void   print(int flag = 0, int isMC = 0);
    void   getGmt_day_hour(int &yyyymmdd, int &hhmmss);
 
-   ClassDef(WEvent, 2);
+   ClassDef(VecBosEvent, 2);
 };
 
 #endif
