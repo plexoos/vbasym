@@ -369,7 +369,6 @@ Int_t StVecBosMaker::Make()
 
    int btowStat = ReadMuDstBTOW(); // get energy in BTOW
    int etowStat = ReadMuDstETOW(); // get energy in ETOW
-
    int btrig    = ReadMuDstBarrelTrig();
    int etrig    = ReadMuDstEndcapTrig();
 
@@ -381,6 +380,9 @@ Int_t StVecBosMaker::Make()
    // Saves vertices with (rank>0 or EEMC matched) && z pos < mCutVertexZ
    ReadMuDstVertex();
 
+   if (mVecBosEvent->HasGoodVertex())
+      mVecBosRootFile->Fill(*mVecBosEvent, kCUT_VERTICES_GOOD);
+
    if (mVecBosEvent->GetNumVertices())
       FillTowHit(true);  // fill 2D tower "hit" histos for vertex found and L2BW trigger (beam background analysis, remove any time JS)
    else
@@ -391,7 +393,7 @@ Int_t StVecBosMaker::Make()
    // Add tracks in the event. See the function for the cuts imposed on the track quality
    ReadMuDstTrack();
 
-   mVecBosRootFile->Fill(*mVecBosEvent, kCUT_TRACKS);
+   //mVecBosRootFile->Fill(*mVecBosEvent, kCUT_TRACKS);
 
    if (mVecBosEvent->HasGoodTrack())
       mVecBosRootFile->Fill(*mVecBosEvent, kCUT_TRACKS_GOOD);
@@ -550,7 +552,7 @@ void StVecBosMaker::FillNormHists()
 {
    // fill max BTOW clustET vs z-vertex distribution for events with positive
    // rank vertex
-   if (mVecBosEvent->l2bitET && mVecBosEvent->GetNumVertices() > 0 && mVecBosEvent->mVertices[0].rank > 0)
+   if (mVecBosEvent->l2bitET && mVecBosEvent->GetNumVertices() > 0 && mVecBosEvent->mVertices[0].mRank > 0)
    {
       float maxBtowET = 0;
 
@@ -573,7 +575,7 @@ void StVecBosMaker::FillNormHists()
 
    // fill max ETOW towerET vs z-vertex distribution for events with positive
    // rank vertex
-   if (mVecBosEvent->l2EbitET && mVecBosEvent->GetNumVertices() > 0 && mVecBosEvent->mVertices[0].rank > 0)
+   if (mVecBosEvent->l2EbitET && mVecBosEvent->GetNumVertices() > 0 && mVecBosEvent->mVertices[0].mRank > 0)
    {
       float maxEtowET = 0;
 
@@ -1117,13 +1119,14 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
 
 
 /**
- * Saves vertices with (rank>0 or EEMC matched) && z pos < mCutVertexZ
+ * Saves vertices with (mRank>0 or EEMC matched) && z pos < mCutVertexZ
  */
 void StVecBosMaker::ReadMuDstVertex()
 {
    int numOfPrimaryVertices = mStMuDstMaker->muDst()->numberOfPrimaryVertices();
 
-   if (numOfPrimaryVertices < mMinNumPileupVertices) return;
+   // XXX:ds: not sure I understand this cut
+   //if (numOfPrimaryVertices < mMinNumPileupVertices) return;
 
    // separate histos for barrel and endcap triggers
    if (mVecBosEvent->l2bitET)  hA[0]->Fill("tpcOn", 1.);
@@ -1151,7 +1154,7 @@ void StVecBosMaker::ReadMuDstVertex()
       if (mVecBosEvent->l2EbitET)   hE[10]->Fill(rankLog);
 
       // Keep some neg. rank vertices for endcap if matched to ETOW
-      if (rank <= 0 && vertex->nEEMCMatch() <= 0) continue;
+      // XXX:ds: if (rank <= 0 && vertex->nEEMCMatch() <= 0) continue;
 
       const StThreeVectorF &vertexPosition = vertex->position();
 
@@ -1161,18 +1164,19 @@ void StVecBosMaker::ReadMuDstVertex()
 
       nVertices++; // count valid vertices
 
-      if (fabs(vertexPosition.z()) > mCutVertexZ) continue;
+      // XXX:ds: if (fabs(vertexPosition.z()) > mCutVertexZ) continue;
 
       if (rank > 0) nVerticesPosRank++; //count vertices with rank>0
 
-      VecBosVertex wv;
-      wv.id         = iVertex;
-      wv.z          = vertexPosition.z();
-      wv.rank       = rank;
-      wv.funnyRank  = rankLog;
-      wv.nEEMCMatch = vertex->nEEMCMatch();
+      VecBosVertex vbVertex;
+      vbVertex.id         = iVertex;
+      vbVertex.z          = vertexPosition.z();
+      vbVertex.mRank      = rank;
+      vbVertex.mRankLog   = rankLog;
+      vbVertex.nEEMCMatch = vertex->nEEMCMatch();
+      vbVertex.SetPosition(vertexPosition);
 
-      mVecBosEvent->mVertices.push_back(wv);
+      mVecBosEvent->mVertices.push_back(vbVertex);
    }
 
    if (nVertices <= 0) return;
@@ -1213,8 +1217,8 @@ void StVecBosMaker::ReadMuDstVertex()
 
    if (mVecBosEvent->GetNumVertices() <= 0) return;
 
-   if (mVecBosEvent->l2bitET && nVerticesPosRank > 0)  hA[0]->Fill("vertZ", 1.);
-   if (mVecBosEvent->l2EbitET)              hE[0]->Fill("vertZ", 1.);
+   if (mVecBosEvent->l2bitET && nVerticesPosRank > 0) hA[0]->Fill("vertZ", 1.);
+   if (mVecBosEvent->l2EbitET)                        hE[0]->Fill("vertZ", 1.);
 }
 
 
@@ -1532,7 +1536,7 @@ void StVecBosMaker::FillTowHit(bool hasVertices)
 
    for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++)
    {
-      float rank = mVecBosEvent->mVertices[iv].rank;
+      float rank = mVecBosEvent->mVertices[iv].mRank;
 
       if (rank < 0) continue;
 
@@ -1966,7 +1970,7 @@ void StVecBosMaker::find_W_boson()
 
          hA[91]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mCluster2x2.position.Phi());
          hA[96]->Fill(vertex.id);
-         hA[97]->Fill(vertex.funnyRank);
+         hA[97]->Fill(vertex.mRankLog);
          hA[98]->Fill(vertex.z);
          hA[99]->Fill(track.prMuTrack->eta());
          hA[190 + k]->Fill(track.prMuTrack->eta(), track.mCluster2x2.ET);
@@ -2369,7 +2373,7 @@ void StVecBosMaker::ExtendTrack2Barrel()
    for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++)
    {
       VecBosVertex &vertex = mVecBosEvent->mVertices[iv];
-      if (vertex.rank < 0) continue; // remove vertex for endcap algo only
+      if (vertex.mRank < 0) continue; // remove vertex for endcap algo only
 
       // loop over tracks
       for (uint iTrack = 0; iTrack < vertex.eleTrack.size(); iTrack++)
@@ -2699,7 +2703,7 @@ void StVecBosMaker::findEndcap_W_boson()
          if (T.mCluster2x2.ET < par_highET) continue; // very likely Ws
          hE[91]->Fill(T.mCluster2x2.position.PseudoRapidity(), T.mCluster2x2.position.Phi());
          hE[96]->Fill(V.id);
-         hE[97]->Fill(V.funnyRank);
+         hE[97]->Fill(V.mRankLog);
          hE[98]->Fill(V.z);
          hE[99]->Fill( T.prMuTrack->eta());
          hE[100]->Fill(T.pointTower.R.X(), T.pointTower.R.Y());

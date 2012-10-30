@@ -75,6 +75,21 @@ UInt_t VecBosEvent::GetNumTracksWithBCluster2()
 }
 
 
+Bool_t VecBosEvent::HasGoodVertex()
+{
+   VecBosVertexVecIter iVertex = mVertices.begin();
+
+   for ( ; iVertex!=mVertices.end(); ++iVertex)
+   {
+      if (iVertex->mRank <= 0 && iVertex->nEEMCMatch <= 0) continue;
+      if (fabs(iVertex->mPosition.z()) > 100) continue;
+      return true;
+   }
+
+   return false;
+}
+
+
 Bool_t VecBosEvent::HasGoodTrack()
 {
    VecBosTrackVecIter iTrack = mTracks.begin();

@@ -175,6 +175,7 @@ public:
    UInt_t GetNumTracks();
    UInt_t GetNumTracksWithBCluster();
    UInt_t GetNumTracksWithBCluster2();
+   Bool_t HasGoodVertex();
    Bool_t HasGoodTrack();
    void   clear();
    void   print(int flag = 0, int isMC = 0);

@@ -8,6 +8,7 @@
 
 #include "EventHContainer.h"
 #include "TrackHContainer.h"
+#include "VertexHContainer.h"
 #include "KinemaHContainer.h"
 
 
@@ -63,8 +64,14 @@ void VecBosRootFile::BookHists()
    fHists->d["event_cut"] = ph = new EventHContainer(new TDirectoryFile("event_cut", "event_cut", "", this));
    fHistCuts[kCUT_CUT].insert(ph);
 
+   fHists->d["vertices"] = ph = new VertexHContainer(new TDirectoryFile("vertices", "vertices", "", this));
+   fHistCuts[kCUT_NOCUT].insert(ph);
+
+   fHists->d["vertices_good"] = ph = new VertexHContainer(new TDirectoryFile("vertices_good", "vertices_good", "", this));
+   fHistCuts[kCUT_VERTICES_GOOD].insert(ph);
+
    fHists->d["tracks"] = ph = new TrackHContainer(new TDirectoryFile("tracks", "tracks", "", this));
-   fHistCuts[kCUT_TRACKS].insert(ph);
+   fHistCuts[kCUT_NOCUT].insert(ph);
 
    fHists->d["tracks_good"] = ph = new TrackHContainer(new TDirectoryFile("tracks_good", "tracks_good", "", this));
    fHistCuts[kCUT_TRACKS_GOOD].insert(ph);
