@@ -1295,7 +1295,7 @@ void StVecBosMaker::ReadMuDstTrack()
       mStMuDstMaker->muDst()->setVertexIndex(vertID);
 
       float rank = vertex->ranking();
-      assert(rank > 0 || (rank < 0 && vertex->nEEMCMatch()));
+      // XXX:ds: assert(rank > 0 || (rank < 0 && vertex->nEEMCMatch()));
 
       Int_t nPrimaryTracks = mStMuDstMaker->muDst()->GetNPrimaryTrack();
 
