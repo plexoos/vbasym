@@ -1,6 +1,8 @@
 
 #include "VecBosTrack.h"
 
+#include "VecBosVertex.h"
+
 
 ClassImp(VecBosTrack)
 
@@ -10,6 +12,18 @@ using namespace std;
 VecBosTrack::VecBosTrack() : mVecBosVertex(0)
 {
    clear();
+}
+
+
+bool VecBosTrack::IsGood()
+{
+   // Good track must come from a good vertex
+   if (!mVecBosVertex || !mVecBosVertex->IsGood()) return false;
+
+   if ( (prMuTrack->flag() == 301 || prMuTrack->flag() == 311) &&
+         prMuTrack->pt() < 1.0) return true;
+
+   return false;
 }
 
 

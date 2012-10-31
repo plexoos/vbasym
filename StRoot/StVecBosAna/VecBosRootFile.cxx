@@ -10,6 +10,9 @@
 #include "TrackHContainer.h"
 #include "VertexHContainer.h"
 #include "KinemaHContainer.h"
+#include "VecBosEvent.h"
+#include "VecBosTrack.h"
+#include "VecBosVertex.h"
 
 
 ClassImp(VecBosRootFile)
@@ -68,13 +71,13 @@ void VecBosRootFile::BookHists()
    fHistCuts[kCUT_NOCUT].insert(ph);
 
    fHists->d["vertices_good"] = ph = new VertexHContainer(new TDirectoryFile("vertices_good", "vertices_good", "", this));
-   fHistCuts[kCUT_VERTICES_GOOD].insert(ph);
+   //fHistCuts[kCUT_VERTICES_GOOD].insert(ph);
 
    fHists->d["tracks"] = ph = new TrackHContainer(new TDirectoryFile("tracks", "tracks", "", this));
    fHistCuts[kCUT_NOCUT].insert(ph);
 
    fHists->d["tracks_good"] = ph = new TrackHContainer(new TDirectoryFile("tracks_good", "tracks_good", "", this));
-   fHistCuts[kCUT_TRACKS_GOOD].insert(ph);
+   //fHistCuts[kCUT_TRACKS_GOOD].insert(ph);
 
    fHists->d["tracks_barrel"] = ph = new TrackHContainer(new TDirectoryFile("tracks_barrel", "tracks_barrel", "", this));
    fHistCuts[kCUT_BARREL].insert(ph);
@@ -95,15 +98,38 @@ void VecBosRootFile::SetHists(PlotHelper &hists) { fHists = &hists; }
 /** */
 void VecBosRootFile::Fill(ProtoEvent &ev)
 {
-   fHists->Fill(ev);
+   // Fill hists on event basis
+   //fHists->Fill(ev);
+
+   VecBosEvent&        event   = (VecBosEvent&) ev;
+
+   // Save only good vertices
+   VecBosVertexVecIter iVertex = event.mVertices.begin();
+
+   for ( ; iVertex!=event.mVertices.end(); ++iVertex)
+   {
+      if ( !iVertex->IsGood() ) continue;
+
+      ((VertexHContainer*) fHists->d["vertices_good"])->Fill(*iVertex);
+   }
+
+   // Save only good tracks
+   VecBosTrackVecIter iTrack = event.mTracks.begin();
+
+   for ( ; iTrack!=event.mTracks.end(); ++iTrack)
+   {
+      if ( !iTrack->IsGood() ) continue;
+
+      ((TrackHContainer*) fHists->d["tracks_good"])->Fill(*iTrack);
+   }
 }
 
 
 /** */
 void VecBosRootFile::Fill(ProtoEvent &ev, ECut cut)
 {
-   PlotHelperSet hists  = fHistCuts[cut];
-   PlotHelperSetIter hi = hists.begin();
+   PlotHelperSet     hists = fHistCuts[cut];
+   PlotHelperSetIter hi    = hists.begin();
 
    for ( ; hi!=hists.end(); ++hi) {
       (*hi)->Fill(ev);

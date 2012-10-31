@@ -367,55 +367,63 @@ Int_t StVecBosMaker::Make()
    hA[0]->Fill("inp", 1.);
    hE[0]->Fill("inp", 1.);
 
+   // First access calorimeter data
    int btowStat = ReadMuDstBTOW(); // get energy in BTOW
    int etowStat = ReadMuDstETOW(); // get energy in ETOW
    int btrig    = ReadMuDstBarrelTrig();
    int etrig    = ReadMuDstEndcapTrig();
 
-   if ( btrig && etrig )  { mWtree->Fill(); return kStOK; } //skip event w/o valid trig ID
+   // Skip entire event if no energy in BTOW && ETOW
+   if ( btowStat != 0 && etowStat != 0 ) return kStOK;
+
+   // Skip entire event if no valid trig ID
+   if ( btrig != 0 && etrig != 0 ) { mWtree->Fill(); return kStOK; }
 
    mNumTrigEvents++;
 
-   // Check the vertex quality and save them in the event
-   // Saves vertices with (rank>0 or EEMC matched) && z pos < mCutVertexZ
+   // Access other detectors and save info in the event
+   ReadMuDstBSMD(); // get energy in BSMD
+   ReadMuDstESMD(); // get energy in ESMD
+   ReadMuDstEPRS(); // get energy in EPRS
+
+   // Save all vertices from MuDst into event
    ReadMuDstVertex();
 
-   if (mVecBosEvent->HasGoodVertex())
-      mVecBosRootFile->Fill(*mVecBosEvent, kCUT_VERTICES_GOOD);
+   //if (mVecBosEvent->HasGoodVertex())
+   //   mVecBosRootFile->Fill(*mVecBosEvent, kCUT_VERTICES_GOOD);
 
-   if (mVecBosEvent->GetNumVertices())
-      FillTowHit(true);  // fill 2D tower "hit" histos for vertex found and L2BW trigger (beam background analysis, remove any time JS)
-   else
-      FillTowHit(false); // fill 2D tower "hit" histos for _no_ vertex and L2BW trigger (beam background analysis, remove any time JS)
+   // XXX:ds: if (mVecBosEvent->GetNumVertices())
+   // XXX:ds:    FillTowHit(true);  // fill 2D tower "hit" histos for vertex found and L2BW trigger (beam background analysis, remove any time JS)
+   // XXX:ds: else
+   // XXX:ds:    FillTowHit(false); // fill 2D tower "hit" histos for _no_ vertex and L2BW trigger (beam background analysis, remove any time JS)
 
-   FillNormHists();  // add plots for QCD normalization
+   // XXX:ds: FillNormHists();  // add plots for QCD normalization
 
    // Add tracks in the event. See the function for the cuts imposed on the track quality
    ReadMuDstTrack();
 
    //mVecBosRootFile->Fill(*mVecBosEvent, kCUT_TRACKS);
 
-   if (mVecBosEvent->HasGoodTrack())
-      mVecBosRootFile->Fill(*mVecBosEvent, kCUT_TRACKS_GOOD);
+   //if (mVecBosEvent->HasGoodTrack())
+   //   mVecBosRootFile->Fill(*mVecBosEvent, kCUT_TRACKS_GOOD);
 
-   // Skip event w/o high Pt tracks
-   if (mVecBosEvent->GetNumTracks() <= 0) {
-      Info("Make", "No tracks found in the event. Skipping...");
-      return kStOK;
-   }
+   mVecBosRootFile->Fill(*mVecBosEvent);
 
-   ReadMuDstBSMD(); // get energy in BSMD
-   ReadMuDstESMD(); // get energy in ESMD
-   ReadMuDstEPRS(); // get energy in EPRS
+   // At this point all of mVecBosEvent properties should be set
+   mVecBosRootFile->Fill(*mVecBosEvent, kCUT_NOCUT);
 
-   mWtree->Fill(); //write all events w/ pt>10 track to tree
+   //XXX:ds: // Skip event w/o high Pt tracks
+   //XXX:ds: if (mVecBosEvent->GetNumTracks() <= 0) {
+   //XXX:ds:    Info("Make", "No tracks found in the event. Skipping...");
+   //XXX:ds:    return kStOK;
+   //XXX:ds: }
+
+   mWtree->Fill(); // write all events w/ pt>10 track to tree
 
    if (mVecBosEvent->l2bitET  && mVecBosEvent->bemc.tileIn[0] == 1) hA[0]->Fill("B-in", 1.0);
    if (mVecBosEvent->l2EbitET && mVecBosEvent->etow.etowIn == 1)    hE[0]->Fill("E-in", 1.0);
-   if (mVecBosEvent->l2bitET  && !btowStat)                    hA[0]->Fill("B200", 1.0);
-   if (mVecBosEvent->l2EbitET && !etowStat)                    hE[0]->Fill("E200", 1.0);
-
-   if ( btowStat && etowStat ) return kStOK; //skip event w/o energy in BTOW && ETOW
+   if (mVecBosEvent->l2bitET  && !btowStat)                         hA[0]->Fill("B200", 1.0);
+   if (mVecBosEvent->l2EbitET && !etowStat)                         hE[0]->Fill("E200", 1.0);
 
    mJets = GetJets(mJetTreeBranch); //get input jet info
 
@@ -427,12 +435,10 @@ Int_t StVecBosMaker::Make()
       float  jet_pt  = jet->Pt();
       float  jet_eta = jet->Eta();
       float  jet_phi = jet->Phi();
+
       hA[117]->Fill(jet_eta, jet_phi);
       hA[118]->Fill(jet_pt);
    }
-
-   // At this point all of mVecBosEvent properties should be set
-   mVecBosRootFile->Fill(*mVecBosEvent, kCUT_NOCUT);
 
    // Add tracks to the event and atch tracks to energy clusters in the barrel
    // and endcap
@@ -802,8 +808,10 @@ int StVecBosMaker::ReadMuDstEndcapTrig()
 int StVecBosMaker::ReadMuDstETOW()
 {
    StMuEmcCollection *emc = mStMuDstMaker->muDst()->muEmcCollection();
+
    if (!emc) {
-      LOG_WARN << "No EMC data for this event" << endm;    return -4;
+      LOG_WARN << "No EMC data for this event" << endm;
+      return -4;
    }
 
    mVecBosEvent->etow.etowIn = 1; //tag usable ETOW data
@@ -853,7 +861,7 @@ int StVecBosMaker::ReadMuDstETOW()
    hE[31]->Fill(maxADC);
    hE[32]->Fill(adcSum);
 
-   if (maxADC < par_maxADC)  return -2 ; // not enough energy
+   if (maxADC < par_maxADC) return -2 ; // not enough energy
 
    return 0;
 }
@@ -875,30 +883,30 @@ void StVecBosMaker::ReadMuDstESMD()
       for (int i = 0; i < nh; i++) {
          StMuEmcHit *hit = emc->getEndcapSmdHit(uv, i, sec, strip);
          float rawAdc = hit->getAdc();
-         const EEmcDbItem *x = mDbE->getByStrip(sec, uv, strip);
-         assert(x); // it should never happened for muDst
+         const EEmcDbItem *eEmcDbItem = mDbE->getByStrip(sec, uv, strip);
+         assert(eEmcDbItem); // it should never happened for muDst
 
-         if (x->fail )   continue; // drop broken channels
-         if (x->ped < 0) continue; // drop channels without peds
+         if (eEmcDbItem->fail )   continue; // drop broken channels
+         if (eEmcDbItem->ped < 0) continue; // drop channels without peds
 
-         float adc    = rawAdc - x->ped; // ped subtracted ADC
-         float sigPed = x->sigPed;
+         float adc    = rawAdc - eEmcDbItem->ped; // ped subtracted ADC
+         float sigPed = eEmcDbItem->sigPed;
 
          int isec     = sec - 1;
-         int iuv      = x->plane - 'U';
-         int istr     = x->strip - 1;
+         int iuv      = eEmcDbItem->plane - 'U';
+         int istr     = eEmcDbItem->strip - 1;
 
-         //x->print(); printf("adc=%f\n",adc);
+         //eEmcDbItem->print(); printf("adc=%f\n",adc);
 
          assert(isec >= 0 && isec < mxEtowSec); //never trust the input
          assert(iuv  >= 0 && iuv  < mxEsmdPlane);
          assert(istr >= 0 && istr < mxEsmdStrip);
 
-         if (x->gain <= 0) continue; // drop channels w/o gains
+         if (eEmcDbItem->gain <= 0) continue; // drop channels w/o gains
          if (adc < par_kSigPed * sigPed) continue; //drop noise
 
          mVecBosEvent->esmd.adc[isec][iuv][istr] = adc;
-         mVecBosEvent->esmd.ene[isec][iuv][istr] = adc / x->gain;
+         mVecBosEvent->esmd.ene[isec][iuv][istr] = adc / eEmcDbItem->gain;
       }
    }
 }
@@ -921,13 +929,13 @@ void StVecBosMaker::ReadMuDstEPRS()
       float rawAdc = hit->getAdc();
       //Db ranges: sec=1-12,sub=A-E,eta=1-12,type=T,P-R ; slow method
 
-      const EEmcDbItem *x = mDbE->getTile(sec, sub - 1 + 'A', eta, pre - 1 + 'P');
-      assert(x); // it should never happened for muDst
-      if (x->fail ) continue; // drop not working channels
+      const EEmcDbItem *eEmcDbItem = mDbE->getTile(sec, sub - 1 + 'A', eta, pre - 1 + 'P');
+      assert(eEmcDbItem); // it should never happened for muDst
+      if (eEmcDbItem->fail ) continue; // drop not working channels
 
-      int isec = x->sec - 1;
-      int isub = x->sub - 'A';
-      int ieta = x->eta - 1;
+      int isec = eEmcDbItem->sec - 1;
+      int isub = eEmcDbItem->sub - 'A';
+      int ieta = eEmcDbItem->eta - 1;
       int ipre = pre - 1;
       int iphi = isec * mxEtowSub + isub;
 
@@ -935,20 +943,20 @@ void StVecBosMaker::ReadMuDstEPRS()
       assert(isub >= 0 && isub < mxEtowSub);
       assert(ieta >= 0 && ieta < mxEtowEta);
 
-      float adc = rawAdc - x->ped; // ped subtracted ADC
-      if (adc < par_kSigPed * x->sigPed) continue;
+      float adc = rawAdc - eEmcDbItem->ped; // ped subtracted ADC
+      if (adc < par_kSigPed * eEmcDbItem->sigPed) continue;
 
       mVecBosEvent->eprs.adc[iphi][ieta][ipre] = adc;
 
-      if (x->gain <= 0) continue; // drop channels w/o gains
+      if (eEmcDbItem->gain <= 0) continue; // drop channels w/o gains
 
-      mVecBosEvent->eprs.ene[isec * mxEtowSub + isub][ieta][ipre] = adc / x->gain;
+      mVecBosEvent->eprs.ene[isec * mxEtowSub + isub][ieta][ipre] = adc / eEmcDbItem->gain;
       mVecBosEvent->eprs.stat[isec * mxEtowSub + isub][ieta][ipre] = 0;
    }
 }
 
 
-// returns non-zero on abort
+// Returns non-zero on abort
 int StVecBosMaker::ReadMuDstBarrelTrig()
 {
    if (isMC) {
@@ -1088,7 +1096,7 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
       hA[61]->Fill(mVecBosEvent->bx7);
    }
 
-   if (!mVecBosEvent->l2bitET)  return -3; // drop L2W-random accepts
+   if (!mVecBosEvent->l2bitET) return -3; // drop L2W-random accepts
 
    if (mVecBosEvent->l2bitET) hA[0]->Fill("L2bwET", 1.);
 
@@ -1119,7 +1127,7 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
 
 
 /**
- * Saves vertices with (mRank>0 or EEMC matched) && z pos < mCutVertexZ
+ * Saves all vertices. (Before: with (mRank>0 or EEMC matched) && z pos < mCutVertexZ)
  */
 void StVecBosMaker::ReadMuDstVertex()
 {
@@ -1267,7 +1275,9 @@ void StVecBosMaker::ReadMuDstVertex()
  *      = +x11 -> Short track pointing to EEMC
 */
 /**
- * Saves tracks if
+ * Saves all tracks
+ *
+ * Before: if
  * (flag > 0) &&
  * (primary track has a global track) &&
  * (flag == 301 || 311) &&
@@ -1329,13 +1339,13 @@ void StVecBosMaker::ReadMuDstTrack()
          if (mVecBosEvent->l2bitET  && rank > 0 && primaryTrack->flag() == 301) hA[20]->Fill("pt1", 1.);
          if (mVecBosEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin)  hE[20]->Fill("pt1", 1.);
 
-         // accepted tracks
-         float hitFrac = 1.*primaryTrack->nHitsFit() / primaryTrack->nHitsPoss();
-         StThreeVectorF ri = globalTrack->firstPoint();
-
+         // Accepted tracks
+         float hitFrac     = 1.*primaryTrack->nHitsFit() / primaryTrack->nHitsPoss();
          // Victor: in reality mChiSqXY is a normal Xi2 for track and mChiSqZ is Xi2 of fit to  primary vertex
          float globChi2dof = globalTrack->chi2();
          float dedx        = primaryTrack->dEdx() * 1e6;
+
+         StThreeVectorF ri = globalTrack->firstPoint();
 
          // barrel algo track monitors
          if (mVecBosEvent->l2bitET && rank > 0 && primaryTrack->flag() == 301)
@@ -1348,9 +1358,9 @@ void StVecBosMaker::ReadMuDstTrack()
             //TPC sector dependent filter
             int secID = WtpcFilter::getTpcSec(ro.phi(), ro.pseudoRapidity());
 
-            //XXX:ds:if (secID == 20) continue; //poorly calibrated sector for Run 9+11+12?
+            //XXX:ds: if (secID == 20) continue; //poorly calibrated sector for Run 9+11+12?
 
-            //XXX:ds:if (mTpcFilter[secID - 1].accept(primaryTrack) == false) continue;
+            //XXX:ds: if (mTpcFilter[secID - 1].accept(primaryTrack) == false) continue;
 
             hA[25]->Fill(globalTrack->p().perp());
 
@@ -1409,7 +1419,6 @@ void StVecBosMaker::ReadMuDstTrack()
             hE[28]->Fill(primaryTrack->p().mag(), dedx);
          }
 
-
          bool barrelTrack = (mVecBosEvent->l2bitET && rank > 0 && primaryTrack->flag() == 301 && pt > par_trackPt);
 
          if (barrelTrack) hA[20]->Fill("ptOK", 1.); //good barrel candidate
@@ -1421,13 +1430,13 @@ void StVecBosMaker::ReadMuDstTrack()
          //XXX:ds:if (!barrelTrack && !endcapTrack) continue;
 
          // Keep all tracks in one container
+         StThreeVectorF prPvect = primaryTrack->p();
+
          VecBosTrack vecBosTrack;
 
          vecBosTrack.prMuTrack = primaryTrack;
          vecBosTrack.glMuTrack = globalTrack;
-
-         StThreeVectorF prPvect = primaryTrack->p();
-         vecBosTrack.primP = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
+         vecBosTrack.primP     = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
 
          mVecBosEvent->mVertices[iv].eleTrack.push_back(vecBosTrack);
       }
@@ -1445,7 +1454,8 @@ int StVecBosMaker::ReadMuDstBTOW()
    StMuEmcCollection *emc = mStMuDstMaker->muDst()->muEmcCollection();
 
    if (!emc) {
-      gMessMgr->Warning() << "No EMC data for this event" << endm;    return -4;
+      gMessMgr->Warning() << "No EMC data for this event" << endm;
+      return -4;
    }
 
    int ibp = kBTow; // my index for tower & preshower set to BTOW
@@ -1630,7 +1640,8 @@ float StVecBosMaker::sumTpcCone(int vertID, TVector3 refAxis, int flag, int poin
    mStMuDstMaker->muDst()->setVertexIndex(vertID);
 
    float rank = vertex->ranking();
-   assert(rank > 0 || (rank < 0 && vertex->nEEMCMatch()));
+   // XXX:ds: assert(rank > 0 || (rank < 0 && vertex->nEEMCMatch()));
+   if (rank <= 0 && vertex->nEEMCMatch() <= 0)  return -1;
 
    double ptSum = 0;
    Int_t nPrimaryTracks = mStMuDstMaker->muDst()->GetNPrimaryTrack();
@@ -2614,7 +2625,8 @@ void StVecBosMaker::findEndcap_W_boson()
          if (T.pointTower.id >= 0) continue; //skip barrel towers
          if (T.isMatch2Cl == false) continue;
          assert(T.mCluster2x2.nTower > 0); // internal logical error
-         assert(T.nearTotET > 0); // internal logical error
+         // XXX:ds: assert(T.nearTotET > 0); // internal logical error
+         if (T.nearTotET < 0) continue; // internal logical error
 
          //signal plots w/o EEMC in veto
          if (T.mCluster2x2.ET / T.nearTotET_noEEMC > parE_nearTotEtFrac) {

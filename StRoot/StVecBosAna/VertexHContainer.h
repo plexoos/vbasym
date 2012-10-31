@@ -12,6 +12,8 @@
 #include "utils/PlotHelper.h"
 #include "utils/ProtoEvent.h"
 
+#include "VecBosVertex.h"
+
 
 /**
  *
@@ -33,6 +35,7 @@ public:
    using PlotHelper::PostFill;
 
    void Fill(ProtoEvent &ev);
+   void Fill(VecBosVertex &vertex);
    void FillDerived();
    void PostFill();
 

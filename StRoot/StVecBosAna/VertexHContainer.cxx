@@ -45,13 +45,19 @@ void VertexHContainer::BookHists()
    o["hVertexId"] = hist = new TH1I("hVertexId", "; Vertex Id; Num. of Vertices", 10, 0, 10);
    hist->SetOption("hist GRIDX GRIDY");
 
-   o["hVertexZPosition"] = hist = new TH1I("hVertexZPosition", "; Z Position, cm; Num. of Vertices", 120, 0, 120);
-   hist->SetOption("hist GRIDX");
-
-   o["hVertexRank"] = hist = new TH1I("hVertexRank", "; Vertex Rank; Num. of Vertices", 50, -10e7, 10e7);
+   o["hVertexRank"] = hist = new TH1I("hVertexRank", "; Vertex Rank; Num. of Vertices", 100, -1.2e6, 1.2e6);
    hist->SetOption("hist GRIDX GRIDY");
 
-   o["hVertexRankLog"] = hist = new TH1I("hVertexRankLog", "; Vertex LogRank; Num. of Vertices", 50, -100, 100);
+   o["hVertexRankLog"] = hist = new TH1I("hVertexRankLog", "; Vertex LogRank; Num. of Vertices", 60, -30, 30);
+   hist->SetOption("hist GRIDX GRIDY");
+
+   o["hVertexXPosition"] = hist = new TH1I("hVertexXPosition", "; X Position, cm; Num. of Vertices", 50, -1, 1);
+   hist->SetOption("hist GRIDX GRIDY");
+
+   o["hVertexYPosition"] = hist = new TH1I("hVertexYPosition", "; Y Position, cm; Num. of Vertices", 50, -1, 1);
+   hist->SetOption("hist GRIDX GRIDY");
+
+   o["hVertexZPosition"] = hist = new TH1I("hVertexZPosition", "; Z Position, cm; Num. of Vertices", 50, -200, 200);
    hist->SetOption("hist GRIDX GRIDY");
 }
 
@@ -65,11 +71,20 @@ void VertexHContainer::Fill(ProtoEvent &ev)
 
    for ( ; iVertex!=event.mVertices.end(); ++iVertex)
    {
-      ((TH1*) o["hVertexId"])->Fill(iVertex->id);
-      ((TH1*) o["hVertexZPosition"])->Fill(iVertex->z);
-      ((TH1*) o["hVertexRank"])->Fill(iVertex->mRank);
-      ((TH1*) o["hVertexRankLog"])->Fill(iVertex->mRankLog);
+      Fill(*iVertex);
    }
+}
+
+
+/** */
+void VertexHContainer::Fill(VecBosVertex &vertex)
+{
+   ((TH1*) o["hVertexId"])->Fill(vertex.id);
+   ((TH1*) o["hVertexRank"])->Fill(vertex.mRank);
+   ((TH1*) o["hVertexRankLog"])->Fill(vertex.mRankLog);
+   ((TH1*) o["hVertexXPosition"])->Fill(vertex.mPosition.x());
+   ((TH1*) o["hVertexYPosition"])->Fill(vertex.mPosition.y());
+   ((TH1*) o["hVertexZPosition"])->Fill(vertex.mPosition.z());
 }
 
 

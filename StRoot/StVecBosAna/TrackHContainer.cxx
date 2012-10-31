@@ -57,10 +57,10 @@ void TrackHContainer::BookHists()
    o["hTrackPt"] = hist = new TH1I("hTrackPt", "; Track P_T; Num. of Tracks", 40, 0, 40);
    hist->SetOption("hist GRIDX GRIDY XY");
 
-   o["hTrackHitsFit"] = hist = new TH1I("hTrackHitsFit", "; Track Num. of Fit Hits; Num. of Tracks", 80, 0, 80);
+   o["hTrackHitsFit"] = hist = new TH1I("hTrackHitsFit", "; Track Num. of Fit Hits; Num. of Tracks", 50, 0, 50);
    hist->SetOption("hist GRIDX GRIDY");
 
-   o["hTrackHitsPoss"] = hist = new TH1I("hTrackHitsPoss", "; Track Num. of Possible Hits; Num. of Tracks", 80, 0, 80);
+   o["hTrackHitsPoss"] = hist = new TH1I("hTrackHitsPoss", "; Track Num. of Possible Hits; Num. of Tracks", 50, 0, 50);
    hist->SetOption("hist GRIDX GRIDY");
 
    o["hTrackBTowerId"] = hist = new TH1I("hTrackBTowerId", "; Track Extrapolated Barrel Tower Id; Num. of Tracks", 4800, 0, 4800);
@@ -89,21 +89,28 @@ void TrackHContainer::Fill(ProtoEvent &ev)
 
    for ( ; iTrack!=event.mTracks.end(); ++iTrack)
    {
-      ((TH1*) o["hTrackFlag"])->Fill(iTrack->prMuTrack->flag());
-      ((TH1*) o["hTrackEta"])->Fill(iTrack->primP.Eta());
-      ((TH1*) o["hTrackPhi"])->Fill(iTrack->primP.Phi());
-      ((TH1*) o["hTrackPt"])->Fill(iTrack->prMuTrack->pt());
-      ((TH1*) o["hTrackHitsFit"])->Fill(iTrack->prMuTrack->nHitsFit());
-      ((TH1*) o["hTrackHitsPoss"])->Fill(iTrack->prMuTrack->nHitsPoss());
-      ((TH1*) o["hTrackBTowerId"])->Fill(iTrack->pointTower.id);
-      ((TH1*) o["hTrackBClusterEnergy2x2"])->Fill(iTrack->mCluster2x2.ET);
-      ((TH1*) o["hTrackBClusterEnergy4x4"])->Fill(iTrack->mCluster4x4.ET);
-      ((TH1*) o["hTrackBClusterEnergyIsoRatio"])->Fill(iTrack->mCluster2x2.ET/iTrack->mCluster4x4.ET);
-      ((TH1*) o["hTrackDistanceToCluster"])->Fill(iTrack->CalcDistanceToMatchedCluster().Mag());
-      ((TH1*) o["hChargePrimaryTrack"])->Fill(iTrack->prMuTrack->charge());
-
-      //printf("hasMatchedCluster: %d\n", iTrack->isMatch2Cl);
+      Fill(*iTrack);
    }
+}
+
+
+/** */
+void TrackHContainer::Fill(VecBosTrack &track)
+{
+   ((TH1*) o["hTrackFlag"])->Fill(track.prMuTrack->flag());
+   ((TH1*) o["hTrackEta"])->Fill(track.primP.Eta());
+   ((TH1*) o["hTrackPhi"])->Fill(track.primP.Phi());
+   ((TH1*) o["hTrackPt"])->Fill(track.prMuTrack->pt());
+   ((TH1*) o["hTrackHitsFit"])->Fill(track.prMuTrack->nHitsFit());
+   ((TH1*) o["hTrackHitsPoss"])->Fill(track.prMuTrack->nHitsPoss());
+   ((TH1*) o["hTrackBTowerId"])->Fill(track.pointTower.id);
+   ((TH1*) o["hTrackBClusterEnergy2x2"])->Fill(track.mCluster2x2.ET);
+   ((TH1*) o["hTrackBClusterEnergy4x4"])->Fill(track.mCluster4x4.ET);
+   ((TH1*) o["hTrackBClusterEnergyIsoRatio"])->Fill(track.mCluster2x2.ET/track.mCluster4x4.ET);
+   ((TH1*) o["hTrackDistanceToCluster"])->Fill(track.CalcDistanceToMatchedCluster().Mag());
+   ((TH1*) o["hChargePrimaryTrack"])->Fill(track.prMuTrack->charge());
+
+   //printf("hasMatchedCluster: %d\n", track.isMatch2Cl);
 }
 
 

@@ -10,8 +10,6 @@
 #include "VecBosTrack.h"
 
 
-class VecBosVertex;
-
 
 // Info about vertex
 class VecBosVertex
@@ -29,6 +27,7 @@ public:
 
    VecBosVertex();
    void SetPosition(const StThreeVectorF &vec);
+   bool IsGood() const;
    void clear();
    void print(int flag=0);
 

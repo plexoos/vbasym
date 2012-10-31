@@ -75,15 +75,14 @@ UInt_t VecBosEvent::GetNumTracksWithBCluster2()
 }
 
 
-Bool_t VecBosEvent::HasGoodVertex()
+/** Checks if at least one good vertex exist in the event. */
+bool VecBosEvent::HasGoodVertex()
 {
    VecBosVertexVecIter iVertex = mVertices.begin();
 
    for ( ; iVertex!=mVertices.end(); ++iVertex)
    {
-      if (iVertex->mRank <= 0 && iVertex->nEEMCMatch <= 0) continue;
-      if (fabs(iVertex->mPosition.z()) > 100) continue;
-      return true;
+      if ( iVertex->IsGood() ) return true;
    }
 
    return false;
@@ -96,11 +95,7 @@ Bool_t VecBosEvent::HasGoodTrack()
 
    for ( ; iTrack!=mTracks.end(); ++iTrack)
    {
-      const StMuTrack* primaryTrack = iTrack->prMuTrack;
-      if (primaryTrack->flag() != 301 && primaryTrack->flag() != 311) continue;
-      if (primaryTrack->pt() < 1.0) continue;
-
-      return true;
+      if (iTrack->IsGood() ) return true;
    }
 
    return false;

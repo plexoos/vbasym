@@ -16,6 +16,16 @@ void VecBosVertex::SetPosition(const StThreeVectorF &vec)
 }
 
 
+/** Checks the vertex paramteres against predefined cuts. */
+bool VecBosVertex::IsGood() const
+{
+   if ( (mRank > 0 || nEEMCMatch > 0) &&
+        fabs(mPosition.z()) <= 100) return true;
+
+   return false;
+}
+
+
 void VecBosVertex::clear()
 {
    id         = -999;

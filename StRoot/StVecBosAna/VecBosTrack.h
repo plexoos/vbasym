@@ -13,10 +13,6 @@
 
 
 class VecBosVertex;
-//class VecBosTrack;
-
-//typedef std::vector<VecBosTrack>   VecBosTrackVec;
-//typedef VecBosTrackVec::iterator   VecBosTrackVecIter;
 
 
 // Track info
@@ -65,6 +61,7 @@ public:
 
    VecBosTrack();
 
+   bool IsGood();
    void clear();
    void print( int flag = 0);
    TVector3 CalcDistanceToMatchedCluster();

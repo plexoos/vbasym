@@ -175,8 +175,8 @@ public:
    UInt_t GetNumTracks();
    UInt_t GetNumTracksWithBCluster();
    UInt_t GetNumTracksWithBCluster2();
-   Bool_t HasGoodVertex();
-   Bool_t HasGoodTrack();
+   bool   HasGoodVertex();
+   bool   HasGoodTrack();
    void   clear();
    void   print(int flag = 0, int isMC = 0);
    void   getGmt_day_hour(int &yyyymmdd, int &hhmmss);
