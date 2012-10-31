@@ -166,11 +166,11 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       // get geant file
       StIOMaker *ioMaker = new StIOMaker();
       //ioMaker->SetFile(fileG.Data());
-      ioMaker->SetFile("/star/data56/reco/pp500/pythia6_422/Wplus_enu/perugia320/y2009a/gheisha_on/p09ig/rcf10010_1000_1000evts.geant.root");
-      ioMaker->SetIOMode("r");
-      ioMaker->SetBranch("*", 0, "1"); //deactivate all branches
-      ioMaker->SetBranch("geantBranch", 0, "r"); //activate geant Branch
-      ioMaker->SetBranch("minimcBranch", 0, "r"); //activate geant Branch
+      // ioMaker->SetFile("/star/data56/reco/pp500/pythia6_422/Wplus_enu/perugia320/y2009a/gheisha_on/p09ig/rcf10010_1000_1000evts.geant.root");
+      // ioMaker->SetIOMode("r");
+      // ioMaker->SetBranch("*", 0, "1"); //deactivate all branches
+      // ioMaker->SetBranch("geantBranch", 0, "r"); //activate geant Branch
+      // ioMaker->SetBranch("minimcBranch", 0, "r"); //activate geant Branch
    }
 
    // Now we add Makers to the chain...
