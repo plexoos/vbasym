@@ -15,18 +15,23 @@
 class VecBosVertex
 {
 public:
-   int      id;           // as store do muDst list
-   float    z;            // cm
-   float    mRank;
-   float    mRankLog;
-   int      nEEMCMatch;   //# of matched endcap towers
-   TVector3 mPosition;
+
+   enum EVertexType {kUNKNOWN, kBAD, kGOOD};
+
+   EVertexType  mType;
+   int          id;           // as store do muDst list
+   float        z;            // cm
+   float        mRank;
+   float        mRankLog;
+   int          nEEMCMatch;   //# of matched endcap towers
+   TVector3     mPosition;
 
    VecBosTrackVec      eleTrack;
    vector<StMuTrack*>  prTrList;
 
    VecBosVertex();
    void SetPosition(const StThreeVectorF &vec);
+   bool IsGood();
    bool IsGood() const;
    void clear();
    void print(int flag=0);

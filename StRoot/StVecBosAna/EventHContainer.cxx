@@ -115,7 +115,7 @@ void EventHContainer::Fill(ProtoEvent &ev)
 {
    VecBosEvent& event = (VecBosEvent&) ev;
 
-   ((TH1*) o["hNumJets"])->Fill(event.mNJets);
+   ((TH1*) o["hNumJets"])->Fill(event.GetNumJets());
    ((TH1*) o["hNumVertices"])->Fill(event.mVertices.size());
    ((TH1*) o["hNumTracks"])->Fill(event.GetNumTracks());
    ((TH1*) o["hNumTracksWithBCluster"])->Fill(event.GetNumTracksWithBCluster());

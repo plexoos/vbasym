@@ -7,6 +7,8 @@ using namespace std;
 
 
 VecBosEvent::VecBosEvent() : ProtoEvent(),
+   mStJets(0),
+   mJets(),
    mVertices(),
    mTracks(),
    mLeptonBTracks(), mLeptonETracks()
@@ -30,6 +32,28 @@ void VecBosEvent::AddTrack(UInt_t vertexId, StMuTrack* stMuTrack)
 
    mTracks.push_back(track);
 }
+
+
+void VecBosEvent::AddStJets(StJets *stJets, StJets *stJetsNoEndcap)
+{
+   mStJets         = stJets;
+   mStJetsNoEndcap = stJetsNoEndcap;
+
+   TClonesArray *jets = mStJets->jets();
+   TIter         jetsIter(jets);
+   jetsIter.Reset();
+
+   while ( StJet *stJet = (StJet*) jetsIter() )
+   {
+      mJets.insert(stJet);
+   }
+}
+
+
+TClonesArray* VecBosEvent::GetJets()            { return mStJets         ? mStJets->jets() : 0; }
+TClonesArray* VecBosEvent::GetJetsNoEndcap()    { return mStJetsNoEndcap ? mStJetsNoEndcap->jets() : 0; }
+UInt_t        VecBosEvent::GetNumJets()         { return mStJets         ? mStJets->nJets() : 0; }
+UInt_t        VecBosEvent::GetNumJetsNoEndcap() { return mStJetsNoEndcap ? mStJetsNoEndcap->nJets() : 0; }
 
 
 UInt_t VecBosEvent::GetNumVertices()
@@ -120,12 +144,13 @@ void VecBosEvent::clear()
    l2EbitET = l2EbitRnd = 0;
    bx7      = bx48      = -1;
    zTag     = false;
-   mNJets   = 0;
+   mStJets  = 0;
    bxStar7  = bxStar48  = spin4 = -1;
    bemc.clear();
    etow.clear();
    eprs.clear();
    esmd.clear();
+   mJets.clear();
    mVertices.clear();
    mTracks.clear();
    mLeptonBTracks.clear();

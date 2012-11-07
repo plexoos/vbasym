@@ -7,6 +7,7 @@
 #include "TROOT.h"
 
 #include "EventHContainer.h"
+#include "JetHContainer.h"
 #include "TrackHContainer.h"
 #include "VertexHContainer.h"
 #include "KinemaHContainer.h"
@@ -67,6 +68,9 @@ void VecBosRootFile::BookHists()
    fHists->d["event_cut"] = ph = new EventHContainer(new TDirectoryFile("event_cut", "event_cut", "", this));
    fHistCuts[kCUT_CUT].insert(ph);
 
+   fHists->d["jets"] = ph = new JetHContainer(new TDirectoryFile("jets", "jets", "", this));
+   fHistCuts[kCUT_NOCUT].insert(ph);
+
    fHists->d["vertices"] = ph = new VertexHContainer(new TDirectoryFile("vertices", "vertices", "", this));
    fHistCuts[kCUT_NOCUT].insert(ph);
 
@@ -80,10 +84,10 @@ void VecBosRootFile::BookHists()
    //fHistCuts[kCUT_TRACKS_GOOD].insert(ph);
 
    fHists->d["tracks_barrel"] = ph = new TrackHContainer(new TDirectoryFile("tracks_barrel", "tracks_barrel", "", this));
-   fHistCuts[kCUT_BARREL].insert(ph);
+   //fHistCuts[kCUT_BARREL].insert(ph);
 
    fHists->d["tracks_endcap"] = ph = new TrackHContainer(new TDirectoryFile("tracks_endcap", "tracks_endcap", "", this));
-   fHistCuts[kCUT_ENDCAP].insert(ph);
+   //fHistCuts[kCUT_ENDCAP].insert(ph);
 
    //fHists->d["kinema"]    = ph = new KinemaHContainer(new TDirectoryFile("kinema", "kinema", "", this));
 
@@ -100,8 +104,9 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
 {
    // Fill hists on event basis
    //fHists->Fill(ev);
+   Fill(ev, kCUT_NOCUT);
 
-   VecBosEvent&        event   = (VecBosEvent&) ev;
+   VecBosEvent& event = (VecBosEvent&) ev;
 
    // Save only good vertices
    VecBosVertexVecIter iVertex = event.mVertices.begin();
@@ -109,7 +114,6 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
    for ( ; iVertex!=event.mVertices.end(); ++iVertex)
    {
       if ( !iVertex->IsGood() ) continue;
-
       ((VertexHContainer*) fHists->d["vertices_good"])->Fill(*iVertex);
    }
 
@@ -119,8 +123,15 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
    for ( ; iTrack!=event.mTracks.end(); ++iTrack)
    {
       if ( !iTrack->IsGood() ) continue;
-
       ((TrackHContainer*) fHists->d["tracks_good"])->Fill(*iTrack);
+
+      if ( !iTrack->HasBarrelMatched() ) {
+         ((TrackHContainer*) fHists->d["tracks_barrel"])->Fill(*iTrack);
+      }
+
+      if ( !iTrack->HasEndcapMatched() ) {
+         ((TrackHContainer*) fHists->d["tracks_endcap"])->Fill(*iTrack);
+      }
    }
 }
 

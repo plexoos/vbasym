@@ -54,10 +54,10 @@ private:
    StMuDstMaker   *mStMuDstMaker;
    StJetReader    *mStJetReader;
    VecBosRootFile *mVecBosRootFile;
-   TString         mJetTreeBranch;
-   TString         mJetTreeBranch_noEEMC;
+   TString         mJetTreeBranchName;
+   TString         mJetTreeBranchNameNoEndcap;
    TClonesArray   *mJets;
-   VecBosEvent         *mVecBosEvent;
+   VecBosEvent    *mVecBosEvent;
    TTree          *mWtree;
    TString         mTreeName;
    TFile          *mTreeFile;
@@ -83,14 +83,14 @@ private:
    int   mMinNumPileupVertices;
 
    int   par_nFitPts, parE_nFitPts;
-   float par_nHitFrac, par_trackRin,  par_trackRout, par_trackPt;
-   float parE_nHitFrac, parE_trackRin,  parE_trackRout, parE_trackPt;
+   float par_nHitFrac, par_trackRin,  par_trackRout, mMinBTrackPt;
+   float parE_nHitFrac, parE_trackRin,  parE_trackRout, mMinETrackPt;
 
    int   par_kSigPed, par_AdcThres;
    float par_maxADC, mMinBClusterEnergy, parE_clustET;
    float mMinBClusterEnergyIsoRatio, par_nearTotEtFrac;
    float mMinEClusterEnergyIsoRatio, parE_nearTotEtFrac;
-   float par_nearDeltaR, par_awayDeltaPhi;
+   float mTrackIsoDeltaR, mTrackIsoDeltaPhi;
    float mMaxTrackClusterDist, parE_delR3D, par_highET, parE_highET,  par_ptBalance, parE_ptBalance;
    float mCutTrackEtaMin, mCutTrackEtaMax, parE_leptonEtaLow, parE_leptonEtaHigh; //bracket acceptance
    float parE_trackEtaMin;
@@ -114,7 +114,7 @@ public: // to overwrite default params from .C macro
    }
    void setEleTrackCuts(int nfp, int hfr, float rin, float rout, float mpt) {
       par_nFitPts = nfp;  par_nHitFrac = hfr;
-      par_trackRin = rin;  par_trackRout = rout; par_trackPt = mpt;
+      par_trackRin = rin;  par_trackRout = rout; mMinBTrackPt = mpt;
    }
    void setWbosonCuts(float a, float fr2,  float bal, float etaLow, float etaHigh) {
       par_highET = a; par_nearTotEtFrac = fr2;  par_ptBalance = bal;  mCutTrackEtaMin = etaLow; mCutTrackEtaMax = etaHigh;
@@ -132,7 +132,7 @@ public: // to overwrite default params from .C macro
    void setL2ClusterThresh(float x) { par_l2emulClusterThresh = x; }
    void setL2SeedThresh(float x) { par_l2emulSeedThresh = x; }
    void setJetTreeBranch(TString jetTreeBranch, TString jetTreeBranch_noEEMC) {
-      mJetTreeBranch = jetTreeBranch; mJetTreeBranch_noEEMC = jetTreeBranch_noEEMC;
+      mJetTreeBranchName = jetTreeBranch; mJetTreeBranchNameNoEndcap = jetTreeBranch_noEEMC;
    }
 
    void setGainsFile(char *x) {gains_file = x; use_gains_file = 1;}
@@ -149,8 +149,8 @@ private:
    StEmcGeom    *mBtowGeom;
    StEmcGeom    *mBSmdGeom[mxBSmd];
    int           mapBtowIJ2ID[mxBTetaBin * mxBTphiBin];  // vs. (iEta, iPhi)
-   TVector3      positionBtow[mxBtow];                   // vs. tower ID
-   TVector3      positionBsmd[mxBSmd][mxBStrips];        // vs. strip ID
+   TVector3      mBCalTowerCoords[mxBtow];                   // vs. tower ID
+   TVector3      mBSmdStripCoords[mxBSmd][mxBStrips];        // vs. strip ID
 
    StEEmcDb       *mDbE;       // access to EEMC database
    StSpinDbMaker  *spinDb;     // access spin information
@@ -167,6 +167,7 @@ private:
    void  ReadMuDstBSMD();
    void  ReadMuDstESMD();
    void  ReadMuDstEPRS();
+   void  ReadMuDstJets();
    void  FillTowHit(bool hasVertices);
    void  FillNormHists();
    void  analyzeESMD();
@@ -174,32 +175,32 @@ private:
 
    bool  passes_L0();
    bool  passes_L2();
-   void  find_W_boson();
-   void  findEndcap_W_boson();
-   void  tag_Z_boson();
+   void  FindWBoson();
+   void  FindWBosonEndcap();
+   void  FindZBoson();
    void  ExtendTrack2Barrel();
-   bool  matchTrack2BtowCluster();
+   bool  MatchTrack2BtowCluster();
    int   ExtendTrack2Endcap();
    bool  matchTrack2EtowCluster();
-   void  findNearJet();
-   void  findAwayJet();
+   void  FindNearJet();
+   void  FindAwayJet();
    void  CalcPtBalance();
    void  CalcMissingET();
    void  esmdAnalysis();
 
    // jets
-   StJet*        GetJet(int i) {return (StJet *)mJets->At(i);}
-   TClonesArray* GetJets(TString branchName);
-   StJets*       GetStJets(int i) const;              // to make it backward compatible with SL09g
+   //StJets*       GetStJets(int i) const;              // to make it backward compatible with SL09g
    StJets*       GetStJets(const char* bname) const;  // to make it backward compatible with SL09g
-   StJets*       GetStJetsCopy(TString branchName);
+   StJets*       GetStJetsFromTree(TString branchName);
+   StJet*        GetJet(int i) { return (StJet*) mJets->At(i); }
+   TClonesArray* GetJets(TString branchName);
    TClonesArray* GetJetsTreeAnalysis(TString branchName);
 
    // tools
-   float sumTpcCone( int vertID, TVector3 refAxis, int flag, int pointTowId);
-   float sumBtowCone( float zVert,  TVector3 refAxis, int flag);
-   float sumEtowCone(float zVert, TVector3 refAxis, int flag);
-   float sumTpcConeFromTree( int vertID, TVector3 refAxis, int flag, int pointTowId); //uses track vector saved in tree
+   float SumBTowCone(float zVert, TVector3 refAxis, int flag);
+   float SumETowCone(float zVert, TVector3 refAxis, int flag);
+   float SumTpcCone(int vertID, TVector3 refAxis, int flag, int pointTowId);
+   float SumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, int pointTowId); //uses track vector saved in tree
    WeveCluster maxBtow2x2(int iEta, int iPhi, float zVert);
    WeveCluster sumBtowPatch(int iEta, int iPhi, int Leta, int  Lphi, float zVert);
    WeveCluster maxEtow2x1(int iEta, int iPhi, float zVert);

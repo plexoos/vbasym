@@ -31,9 +31,9 @@ Int_t St2011pubWanaMaker::Init()
 Int_t St2011pubWanaMaker::InitRun(int runNo)
 {
    int yyyymmdd = this->GetDBTime().GetDate();
-   int hhmmss = this->GetDBTime().GetTime();
+   int hhmmss   = this->GetDBTime().GetTime();
    // this is how BTOW mapping is accesible
-   //  assert( mMappB==0) ; // do not know how to destroy previous instance,JB
+   //assert( mMappB==0) ; // do not know how to destroy previous instance, JB
    mMappB = new StEmcDecoder(yyyymmdd, hhmmss);
    return kStOK;
 }
@@ -42,7 +42,7 @@ Int_t St2011pubWanaMaker::InitRun(int runNo)
 //
 Int_t St2011pubWanaMaker::Make()
 {
-   //  printf("in %s\n", GetName());
+   //printf("in %s\n", GetName());
    hA[0]->Fill("inp", 1.);
 
    evalWeleTrackSign();
@@ -55,84 +55,94 @@ Int_t St2011pubWanaMaker::Make()
 
 //
 void St2011pubWanaMaker::evalWeleTrackSign()
-{ //{{{
-   //has access to whole W-algo-maker data via pointer 'wMK'
+{
+   // has access to whole W-algo-maker data via pointer 'wMK'
 
    // search for Ws
-   for (uint iv = 0; iv < wMK->mVecBosEvent->mVertices.size(); iv++) {
+   for (uint iv = 0; iv < wMK->mVecBosEvent->mVertices.size(); iv++)
+   {
       VecBosVertex &V = wMK->mVecBosEvent->mVertices[iv];
-      for (uint it = 0; it < V.eleTrack.size(); it++) {
-         VecBosTrack &T = V.eleTrack[it];
-         if (T.isMatch2Cl == false) continue;
-         assert(T.mCluster2x2.nTower > 0); // internal logical error
-         assert(T.nearTotET > 0); // internal logical error
+
+      for (uint it = 0; it < V.eleTrack.size(); it++)
+      {
+         VecBosTrack &track = V.eleTrack[it];
+
+         if ( !track.isMatch2Cl ) continue;
+
+         assert(track.mCluster2x2.nTower > 0); // internal logical error
+         assert(track.nearTotET > 0); // internal logical error
 
          // work with W-track
-         float ET = T.mCluster2x2.ET;
-         const StMuTrack *glTr = T.glMuTrack; assert(glTr);
-         const StMuTrack *prTr = T.prMuTrack; assert(prTr);
-         float PT = glTr->pt();
+         float ET = track.mCluster2x2.ET;
+         const StMuTrack *glTr = track.glMuTrack; assert(glTr);
+         const StMuTrack *prTr = track.prMuTrack; assert(prTr);
+         float PT     = glTr->pt();
          float g_chrg = glTr->charge();
          float p_chrg = prTr->charge();
+
          //printf("aaa %f %f %f\n",ET,PT,chrg);
-         int g_ipn = 0, p_ipn = 0; // plus
+         int g_ipn = 0;
+         int p_ipn = 0; // plus
          if ( g_chrg < 0 ) g_ipn = 1; // minus
          if ( p_chrg < 0 ) p_ipn = 1; // minus
 
-         //make cut on lepton |eta| for cross section
-         if (fabs(T.primP.Eta()) > 1) continue;
+         // Make cut on lepton |eta| for cross section
+         if (fabs(track.primP.Eta()) > 1) continue;
 
-         float absEta = fabs(T.primP.Eta());
-         if (T.mCluster2x2.ET / T.nearTotET_noEEMC > wMK->par_nearTotEtFrac) {
-            if (T.sPtBalance_noEEMC > wMK->par_ptBalance) { //signal w/o endcap in veto
-               //charge sorted
+         float absEta = fabs(track.primP.Eta());
+
+         if (track.mCluster2x2.ET / track.nearTotET_noEEMC > wMK->par_nearTotEtFrac)
+         {
+            if (track.sPtBalance_noEEMC > wMK->par_ptBalance) { //signal w/o endcap in veto
+               // Charge sorted
                if (p_ipn == 0)
-                  hA[43]->Fill(T.mCluster2x2.ET);
+                  hA[43]->Fill(track.mCluster2x2.ET);
                else
-                  hA[46]->Fill(T.mCluster2x2.ET);
-               //eta sorted
+                  hA[46]->Fill(track.mCluster2x2.ET);
+
+               // eta sorted
                if (absEta > 0.6 && absEta < 1)
-                  hA[38]->Fill(T.mCluster2x2.ET);
+                  hA[38]->Fill(track.mCluster2x2.ET);
                if (absEta > 0.3 && absEta < 0.6)
-                  hA[39]->Fill(T.mCluster2x2.ET);
+                  hA[39]->Fill(track.mCluster2x2.ET);
                if (absEta > 0.0 && absEta < 0.3)
-                  hA[40]->Fill(T.mCluster2x2.ET);
+                  hA[40]->Fill(track.mCluster2x2.ET);
             }
          }
 
-         if (T.mCluster2x2.ET / T.nearTotET < wMK->par_nearTotEtFrac) continue; // too large nearET
+         if (track.mCluster2x2.ET / track.nearTotET < wMK->par_nearTotEtFrac) continue; // too large nearET
 
-         //xSec binned
-         if (T.sPtBalance > wMK->par_ptBalance ) { //signal
+         // xSec binned
+         if (track.sPtBalance > wMK->par_ptBalance ) { //signal
             //charge sorted
             if (p_ipn == 0)
-               hA[41]->Fill(T.mCluster2x2.ET);
+               hA[41]->Fill(track.mCluster2x2.ET);
             else
-               hA[44]->Fill(T.mCluster2x2.ET);
+               hA[44]->Fill(track.mCluster2x2.ET);
             //eta sorted
             if (absEta > 0.6 && absEta < 1)
-               hA[32]->Fill(T.mCluster2x2.ET);
+               hA[32]->Fill(track.mCluster2x2.ET);
             if (absEta > 0.3 && absEta < 0.6)
-               hA[33]->Fill(T.mCluster2x2.ET);
+               hA[33]->Fill(track.mCluster2x2.ET);
             if (absEta > 0.0 && absEta < 0.3)
-               hA[34]->Fill(T.mCluster2x2.ET);
+               hA[34]->Fill(track.mCluster2x2.ET);
          }
          else {//background
             //charge sorted
             if (p_ipn == 0)
-               hA[42]->Fill(T.mCluster2x2.ET);
+               hA[42]->Fill(track.mCluster2x2.ET);
             else
-               hA[45]->Fill(T.mCluster2x2.ET);
+               hA[45]->Fill(track.mCluster2x2.ET);
             //eta sorted
             if (absEta > 0.6 && absEta < 1)
-               hA[35]->Fill(T.mCluster2x2.ET);
+               hA[35]->Fill(track.mCluster2x2.ET);
             if (absEta > 0.3 && absEta < 0.6)
-               hA[36]->Fill(T.mCluster2x2.ET);
+               hA[36]->Fill(track.mCluster2x2.ET);
             if (absEta > 0.0 && absEta < 0.3)
-               hA[37]->Fill(T.mCluster2x2.ET);
+               hA[37]->Fill(track.mCluster2x2.ET);
          }
 
-         if (T.sPtBalance < wMK->par_ptBalance )  continue;
+         if (track.sPtBalance < wMK->par_ptBalance )  continue;
 
          hA[0]->Fill("acc", 1.);
 
@@ -142,11 +152,12 @@ void St2011pubWanaMaker::evalWeleTrackSign()
          if (g_chrg * p_chrg < -0.5) hA[14 + p_ipn]->Fill(ET); // charge flip
          hA[6]->Fill(ET, g_chrg / PT);
 
-         //Change in pT from global to primary
+         // Change in pT from global to primary
          float primPT = prTr->pt();
          float globPT = glTr->pt();
          hA[28]->Fill(primPT, globPT);
          hA[29]->Fill(globPT - primPT);
+
          if (fabs(globPT - primPT) > 1) hA[30]->Fill(ET);
          if (g_chrg * p_chrg < -0.5) hA[31]->Fill(globPT - primPT);
 
@@ -157,7 +168,7 @@ void St2011pubWanaMaker::evalWeleTrackSign()
          hA[16 + p_ipn]->Fill(prTr->eta());
       }
    }
-} //}}}
+}
 
 
 //
@@ -171,9 +182,9 @@ void St2011pubWanaMaker::scanCrateRate()
    {
       VecBosVertex &V = wMK->mVecBosEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
-         VecBosTrack &T = V.eleTrack[it];
-         // T.pointTower.print();
-         int softID = T.pointTower.id;
+         VecBosTrack &track = V.eleTrack[it];
+         // track.pointTower.print();
+         int softID = track.pointTower.id;
          if (softID <= 0) continue;
          if (wMK->mVecBosEvent->bemc.statTile[kBTow][softID - 1]) continue; // skip masked towers
 
@@ -195,16 +206,18 @@ void St2011pubWanaMaker::varyCuts4backgStudy()
    for (uint iv = 0; iv < wMK->mVecBosEvent->mVertices.size(); iv++)
    {
       VecBosVertex &V = wMK->mVecBosEvent->mVertices[iv];
+
       for (uint it = 0; it < V.eleTrack.size(); it++)
       {
-         VecBosTrack &T = V.eleTrack[it];
-         if (T.isMatch2Cl == false) continue;
-         assert(T.mCluster2x2.nTower > 0); // internal logical error
-         assert(T.nearTotET > 0); // internal logical error
+         VecBosTrack &track = V.eleTrack[it];
+         if (track.isMatch2Cl == false) continue;
 
-         float nearR = T.mCluster2x2.ET / T.nearTotET;
-         float awayET = T.awayTotET;
-         float ET =	T.mCluster2x2.ET;
+         assert(track.mCluster2x2.nTower > 0); // internal logical error
+         assert(track.nearTotET > 0); // internal logical error
+
+         float nearR  = track.mCluster2x2.ET / track.nearTotET;
+         float awayET = track.awayTotET;
+         float ET     = track.mCluster2x2.ET;
 
          // logic of histos
          if (nearR > 0.9) {

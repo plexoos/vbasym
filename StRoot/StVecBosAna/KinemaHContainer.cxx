@@ -108,7 +108,7 @@ void KinemaHContainer::Fill(ProtoEvent &ev)
 {
    VecBosEvent& event = (VecBosEvent&) ev;
 
-   ((TH1*) o["hJetCount"])->Fill(event.mNJets);
+   ((TH1*) o["hJetCount"])->Fill(event.GetNumJets());
 }
 
 

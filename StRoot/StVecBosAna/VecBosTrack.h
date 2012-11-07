@@ -20,6 +20,9 @@ class VecBosTrack
 {
 public:
 
+   enum ETrackType {kUNKNOWN=0x0000, kBAD=0x1000, kGOOD=0x0001, kBARREL=0x0011, kENDCAP=0x0021};
+
+   ETrackType           mType;
    int                  isMatch2Cl;         // result of cuts
    WevePointTower       pointTower;
    const StMuTrack*     glMuTrack;
@@ -62,6 +65,8 @@ public:
    VecBosTrack();
 
    bool IsGood();
+   bool HasBarrelMatched();
+   bool HasEndcapMatched();
    void clear();
    void print( int flag = 0);
    TVector3 CalcDistanceToMatchedCluster();

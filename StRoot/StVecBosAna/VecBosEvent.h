@@ -9,6 +9,9 @@
 #include <StTriggerUtilities/L2Emulator/L2wAlgo/L2wResult2009.h>
 #include <StMuDSTMaker/COMMON/StMuTrack.h>
 
+#include "StSpinPool/StJets/StJet.h"
+#include "StSpinPool/StJets/StJets.h"
+
 #include "WanaConst.h"
 #include "VecBosVertex.h"
 #include "utils/ProtoEvent.h"
@@ -138,6 +141,25 @@ public:
 };
 
 
+inline bool operator==(const StJet& lhs, const StJet& rhs) { return (TLorentzVector) lhs == (TLorentzVector) lhs; }
+inline bool operator!=(const StJet& lhs, const StJet& rhs) { return !operator==(lhs,rhs); } 
+inline bool operator< (const StJet& lhs, const StJet& rhs) { return lhs.E() < rhs.E(); }
+inline bool operator> (const StJet& lhs, const StJet& rhs) { return  operator< (rhs,lhs); } 
+inline bool operator<=(const StJet& lhs, const StJet& rhs) { return !operator> (lhs,rhs); } 
+inline bool operator>=(const StJet& lhs, const StJet& rhs) { return !operator< (lhs,rhs); }
+
+
+struct CompareStJets
+{
+   bool operator()(const StJet* lhs, const StJet* rhs) const { return (*lhs) < (*rhs); }
+};
+
+
+typedef std::set<StJet*, CompareStJets>             StJetPtrSet;
+typedef StJetPtrSet::iterator        StJetPtrSetIter;
+typedef StJetPtrSet::const_iterator  StJetPtrSetConstIter;
+
+
 class VecBosEvent : public ProtoEvent
 {
 public:
@@ -158,11 +180,13 @@ public:
    int                bxStar48;
    int                spin4;             // using spinDb or -1 if failed
    bool               zTag;
-   UInt_t             mNJets;
+   StJets            *mStJets;          //!
+   StJets            *mStJetsNoEndcap;  //! jets noEEMC
    WeveBEMC           bemc;
    WeveETOW           etow;
    WeveEPRS           eprs;
    WeveESMD           esmd;
+   StJetPtrSet        mJets;
    VecBosVertexVec    mVertices;
    VecBosTrackVec     mTracks;
    VecBosTrackPtrSet  mLeptonBTracks;   // Set of lepton track candidates, i.e. good tracks with energy in barrel
@@ -170,16 +194,21 @@ public:
 
    VecBosEvent();
 
-   void   AddTrack(UInt_t vertexId, StMuTrack* stMuTrack);
-   UInt_t GetNumVertices();
-   UInt_t GetNumTracks();
-   UInt_t GetNumTracksWithBCluster();
-   UInt_t GetNumTracksWithBCluster2();
-   bool   HasGoodVertex();
-   bool   HasGoodTrack();
-   void   clear();
-   void   print(int flag = 0, int isMC = 0);
-   void   getGmt_day_hour(int &yyyymmdd, int &hhmmss);
+   void          AddTrack(UInt_t vertexId, StMuTrack *stMuTrack);
+   void          AddStJets(StJets *stJets, StJets *stJetsNoEndcap);
+   TClonesArray* GetJets();
+   TClonesArray* GetJetsNoEndcap();
+   UInt_t        GetNumJets();
+   UInt_t        GetNumJetsNoEndcap();
+   UInt_t        GetNumVertices();
+   UInt_t        GetNumTracks();
+   UInt_t        GetNumTracksWithBCluster();
+   UInt_t        GetNumTracksWithBCluster2();
+   bool          HasGoodVertex();
+   bool          HasGoodTrack();
+   void          clear();
+   void          print(int flag = 0, int isMC = 0);
+   void          getGmt_day_hour(int &yyyymmdd, int &hhmmss);
 
    ClassDef(VecBosEvent, 2);
 };

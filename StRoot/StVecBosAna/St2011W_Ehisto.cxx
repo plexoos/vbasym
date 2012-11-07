@@ -99,7 +99,7 @@ void StVecBosMaker::initEHistos()
 
    hE[25] = h = new TH1F("muETrPt1", "Endcap: global track PT ; track PT (GeV/c)", 80, 0, 80);
    Lx = h->GetListOfFunctions();
-   ln = new TLine(parE_trackPt, 0, parE_trackPt, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln); h->SetFillColor(kYellow);
+   ln = new TLine(mMinETrackPt, 0, mMinETrackPt, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln); h->SetFillColor(kYellow);
 
 
    hE[26] = h = new TH2F("muETr2D1", "Endcap: lastHit on track; detector eta ; detector phi (rad)", 100, -0.2, 1.8, 200, -3.2, 3.2);

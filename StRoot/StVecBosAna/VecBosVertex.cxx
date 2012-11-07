@@ -2,7 +2,7 @@
 #include "VecBosVertex.h"
 
 
-VecBosVertex::VecBosVertex() : id(-1), z(-1), mRank(-1), mRankLog(-1),
+VecBosVertex::VecBosVertex() : mType(kUNKNOWN), id(-1), z(-1), mRank(-1), mRankLog(-1),
    nEEMCMatch(-1), mPosition(), eleTrack(), prTrList()
 {
 }
@@ -17,17 +17,31 @@ void VecBosVertex::SetPosition(const StThreeVectorF &vec)
 
 
 /** Checks the vertex paramteres against predefined cuts. */
+bool VecBosVertex::IsGood()
+{
+   if (mType == kGOOD) return true;
+
+   if ( (mRank > 0 || nEEMCMatch > 0) && fabs(mPosition.z()) <= 100)
+   {
+      mType = kGOOD;
+      return true;
+   }
+
+   mType = kBAD;
+   return false;
+}
+
+
 bool VecBosVertex::IsGood() const
 {
-   if ( (mRank > 0 || nEEMCMatch > 0) &&
-        fabs(mPosition.z()) <= 100) return true;
-
+   if (mType == kGOOD) return true;
    return false;
 }
 
 
 void VecBosVertex::clear()
 {
+   mType      = kUNKNOWN;
    id         = -999;
    z          = -999;
    mRank      = -9999;

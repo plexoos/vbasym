@@ -136,11 +136,11 @@ void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  
       te2->SetFillStyle(0); te2->SetLineStyle(3); te2->SetLineColor(kBlack);
 
       TVector3 rA = -rW; // away direction
-      bxT->SetY1(rA.Phi() - wMK->par_awayDeltaPhi);
-      bxT->SetY2(rA.Phi() + wMK->par_awayDeltaPhi);
+      bxT->SetY1(rA.Phi() - wMK->mTrackIsoDeltaPhi);
+      bxT->SetY2(rA.Phi() + wMK->mTrackIsoDeltaPhi);
 
-      bxE->SetY1(rA.Phi() - wMK->par_awayDeltaPhi);
-      bxE->SetY2(rA.Phi() + wMK->par_awayDeltaPhi);
+      bxE->SetY1(rA.Phi() - wMK->mTrackIsoDeltaPhi);
+      bxE->SetY2(rA.Phi() + wMK->mTrackIsoDeltaPhi);
 
 
       te1->Draw();   te2->Draw(); bxT->Draw("l");
@@ -217,11 +217,11 @@ void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  
       te2->SetFillStyle(0); te2->SetLineStyle(3); te2->SetLineColor(kBlack);
 
       TVector3 rA = -rW; // away direction
-      bxT->SetY1(rA.Phi() - wMK->par_awayDeltaPhi);
-      bxT->SetY2(rA.Phi() + wMK->par_awayDeltaPhi);
+      bxT->SetY1(rA.Phi() - wMK->mTrackIsoDeltaPhi);
+      bxT->SetY2(rA.Phi() + wMK->mTrackIsoDeltaPhi);
 
-      bxE->SetY1(rA.Phi() - wMK->par_awayDeltaPhi);
-      bxE->SetY2(rA.Phi() + wMK->par_awayDeltaPhi);
+      bxE->SetY1(rA.Phi() - wMK->mTrackIsoDeltaPhi);
+      bxE->SetY2(rA.Phi() + wMK->mTrackIsoDeltaPhi);
 
       te1->Draw();   te2->Draw(); bxT->Draw("l");
       etaBL_ln->Draw();  etaBR_ln->Draw(); etaEL_ln->Draw();
@@ -376,7 +376,7 @@ void WeventDisplay::exportEvent( const char *tit, VecBosVertex myV, VecBosTrack 
    for (int i = 0; i < mxBtow; i++) {
       float ene = wMK->mVecBosEvent->bemc.eneTile[kBTow][i];
       if (ene <= 0) continue;
-      TVector3 primP = wMK->positionBtow[i] - TVector3(0, 0, zVert);
+      TVector3 primP = wMK->mBCalTowerCoords[i] - TVector3(0, 0, zVert);
       primP.SetMag(ene); // it is 3D momentum in the event ref frame
       float ET = primP.Perp();
 
@@ -431,7 +431,7 @@ void WeventDisplay::exportEvent( const char *tit, VecBosVertex myV, VecBosTrack 
       for (int i = 0; i < mxBStrips; i++) {
          float adc = wMK->mVecBosEvent->bemc.adcBsmd[iep][i];
          if (adc <= 0) continue;
-         TVector3 r = wMK->positionBsmd[iep][i];
+         TVector3 r = wMK->mBSmdStripCoords[iep][i];
          float z1 = r.z() - zVert;
          r.SetZ(z1);
          hBsmdAdc[iep]->Fill(r.Eta(), r.Phi(), adc);
@@ -535,31 +535,31 @@ void WeventDisplay::export2sketchup(  const char *tit, VecBosVertex myV, VecBosT
       fprintf(fd, "track V %.1f %.3f %.3f  primP:PT:eta:phi:Q %.1f %.3f  %.3f  %d\n", rV.x(), rV.y(), rV.z(), prTr->p().perp(), prTr->p().pseudoRapidity(), prTr->p().phi(), prTr->charge());
    }
 
-   //........DUMP BTOW towers
+   // Dump BTOW towers
    float Rcylinder = wMK->mBtowGeom->Radius(), Rcylinder2 = Rcylinder * Rcylinder;
    for (int i = 0; i < mxBtow; i++) {
       float ene = wMK->mVecBosEvent->bemc.eneTile[kBTow][i];
       if (ene <= 0) continue;
-      float delZ = wMK->positionBtow[i].z() - myV.z;
+      float delZ = wMK->mBCalTowerCoords[i].z() - myV.z;
       float e2et = Rcylinder / sqrt(Rcylinder2 + delZ * delZ);
       float ET = ene * e2et;
-      float detEta = wMK->positionBtow[i].Eta();
-      float detPhi = wMK->positionBtow[i].Phi();
+      float detEta = wMK->mBCalTowerCoords[i].Eta();
+      float detPhi = wMK->mBCalTowerCoords[i].Phi();
       fprintf(fd, "btow V %.1f %.3f %.3f  eveET:detEta:detPhi %.3f %.3f  %.3f\n", rV.x(), rV.y(), rV.z(), ET, detEta, detPhi);
    }
 
    const char cPlane[ mxBSmd] = {'E', 'P'};
-   //........DUMP BSMD  hits
+   // Dump BSMD  hits
    for (int iep = 0; iep < mxBSmd; iep++) {
       for (int i = 0; i < mxBStrips; i++) {
          float adc = wMK->mVecBosEvent->bemc.adcBsmd[iep][i];
          if (adc <= 0) continue;
-         TVector3 r = wMK->positionBsmd[iep][i];
+         TVector3 r = wMK->mBSmdStripCoords[iep][i];
          fprintf(fd, "bsmd%c V %.1f %.3f %.3f  adc:detEta:detPhi %.3f %.3f  %.3f\n", cPlane[iep], rV.x(), rV.y(), rV.z(), adc, r.Eta(), r.Phi() );
       }
    }
 
-   //........DUMP ETOW towers
+   // Dump ETOW towers
    for (int iphi = 0; iphi < mxEtowPhiBin; iphi++) {
       for (int ieta = 0; ieta < mxEtowEta; ieta++) { //sum all eta rings
          float ene = wMK->mVecBosEvent->etow.ene[iphi][ieta];

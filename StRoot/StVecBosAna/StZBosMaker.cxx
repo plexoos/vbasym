@@ -66,14 +66,15 @@ void StZBosMaker::findEndcap_Z_boson()
 
    hA[50]->Fill("inp", 1.); hA[60]->Fill("inp", 1.);
 
-   // search for  Zs ............
+   // search for Zs
    for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++)
    {
       hA[50]->Fill("vert", 1.); hA[60]->Fill("vert", 1.);
       VecBosVertex &V = mVecBosEvent->mVertices[iv];
 
       // first loop over good barrel tracks
-      for (uint it = 0; it < V.eleTrack.size(); it++) {
+      for (uint it = 0; it < V.eleTrack.size(); it++)
+      {
          VecBosTrack &TB = V.eleTrack[it];
          if (TB.pointTower.id <= 0) continue; //skip endcap towers
          if (TB.isMatch2Cl == false) continue;
@@ -142,7 +143,7 @@ void StZBosMaker::findEndcap_Z_boson()
                hA[80]->Fill(TE.mCluster2x2.ET, TE.prMuTrack->charge() / TE.prMuTrack->pt());	  continue;
             }
 
-            //..... now only opposite sign
+            // now only opposite sign
             hA[70]->Fill("QQ", 1.);
             hA[75]->Fill(mass);
             hA[81]->Fill(TE.mCluster2x2.ET, TE.prMuTrack->charge() / TE.prMuTrack->pt());
@@ -176,8 +177,8 @@ void StZBosMaker::findEndcap_Z_boson()
          hA[50]->Fill("etE", 1.);
 
          //assume poor tracking effic so only towers in nearCone
-         float nearBtow = wMK->sumBtowCone(V.z, maxCluster.position, 2);
-         float nearEtow = wMK->sumEtowCone(V.z, maxCluster.position, 2);
+         float nearBtow = wMK->SumBTowCone(V.z, maxCluster.position, 2);
+         float nearEtow = wMK->SumETowCone(V.z, maxCluster.position, 2);
          float nearSum = nearBtow; nearSum += nearEtow;
          hA[56]->Fill(maxCluster.ET / nearSum);
          if (maxCluster.ET / nearSum < wMK->parE_nearTotEtFrac) continue;
@@ -203,8 +204,8 @@ void StZBosMaker::findEndcap_Z_boson()
          hA[59]->Fill(p1.Eta(), p2.Eta());
          hA[60]->Fill(psum.Eta());
          hA[61]->Fill(psum.Pt());
-      } //track loop
-   } //vertex loop
+      }
+   }
 }
 
 

@@ -9,7 +9,7 @@ ClassImp(VecBosTrack)
 using namespace std;
 
 
-VecBosTrack::VecBosTrack() : mVecBosVertex(0)
+VecBosTrack::VecBosTrack() : mType(kUNKNOWN), mVecBosVertex(0)
 {
    clear();
 }
@@ -17,6 +17,8 @@ VecBosTrack::VecBosTrack() : mVecBosVertex(0)
 
 bool VecBosTrack::IsGood()
 {
+   if ( (mType & kGOOD) == kGOOD) return true;
+
    // Good track must come from a good vertex
    if (!mVecBosVertex || !mVecBosVertex->IsGood()) return false;
 
@@ -44,24 +46,33 @@ void VecBosTrack::print(int flag)
 
 void VecBosTrack::clear()
 {
+   mType                = kUNKNOWN;
+   isMatch2Cl           = false;
    pointTower.clear();
+   glMuTrack            = 0;
+   prMuTrack            = 0;
+   mVecBosVertex        = 0;
    mCluster2x2.clear();
    mCluster4x4.clear();
-   isMatch2Cl    = false;
-   primP         = TVector3(0, 0, 0);
-   prMuTrack     = 0;
-   glMuTrack     = 0;
-   mVecBosVertex = 0;
-   awayTpcPT = nearTpcPT = nearTotET = awayTotET = nearEmcET = awayEmcET = 0;
-   nearBtowET = awayBtowET = nearEtowET = awayEtowET = smallNearTpcPT = 0;
-   nearTotET_noEEMC = awayTotET_noEEMC = 0;
-
-   ptBalance         = TVector3(0, 0, 0);
-   ptBalance_noEEMC  = TVector3(0, 0, 0);
-   sPtBalance        = 0;
-   sPtBalance_noEEMC = 0;
-
-   hadronicRecoil = TVector3(0, 0, 0);
+   primP                = TVector3(0, 0, 0);
+   awayTpcPT            = 0;
+   nearTpcPT            = 0;
+   nearTotET            = 0;
+   awayTotET            = 0;
+   nearEmcET            = 0;
+   awayEmcET            = 0;
+   nearBtowET           = 0;
+   awayBtowET           = 0;
+   nearEtowET           = 0;
+   awayEtowET           = 0;
+   smallNearTpcPT       = 0;
+   nearTotET_noEEMC     = 0;
+   awayTotET_noEEMC     = 0;
+   ptBalance            = TVector3(0, 0, 0);
+   ptBalance_noEEMC     = TVector3(0, 0, 0);
+   sPtBalance           = 0;
+   sPtBalance_noEEMC    = 0;
+   hadronicRecoil       = TVector3(0, 0, 0);
 
    memset(esmdGlobStrip, -999, sizeof(esmdGlobStrip));
    memset(esmdDca, -999., sizeof(esmdDca));
