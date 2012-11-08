@@ -386,8 +386,13 @@ Int_t StVecBosMaker::Make()
    ReadMuDstESMD(); // get energy in ESMD
    ReadMuDstEPRS(); // get energy in EPRS
 
-   // Save all vertices from MuDst into event
-   ReadMuDstVertex();
+   ReadMuDstVertex(); // Save all vertices from MuDst into event
+   ReadMuDstTrack();  // Add tracks in the event. See the function for the cuts imposed on the track quality
+   ReadMuDstJets();   // Get input jet info
+
+   mVecBosRootFile->Fill(*mVecBosEvent);
+
+   mWtree->Fill(); // write all events w/ pt>10 track to tree
 
    //if (mVecBosEvent->HasGoodVertex())
    //   mVecBosRootFile->Fill(*mVecBosEvent, kCUT_VERTICES_GOOD);
@@ -399,19 +404,11 @@ Int_t StVecBosMaker::Make()
 
    // XXX:ds: FillNormHists();  // add plots for QCD normalization
 
-   // Add tracks in the event. See the function for the cuts imposed on the track quality
-   ReadMuDstTrack();
-   ReadMuDstJets(); //get input jet info
-
-   mVecBosRootFile->Fill(*mVecBosEvent);
-
    //XXX:ds: // Skip event w/o high Pt tracks
    //XXX:ds: if (mVecBosEvent->GetNumTracks() <= 0) {
    //XXX:ds:    Info("Make", "No tracks found in the event. Skipping...");
    //XXX:ds:    return kStOK;
    //XXX:ds: }
-
-   mWtree->Fill(); // write all events w/ pt>10 track to tree
 
    if (mVecBosEvent->l2bitET  && mVecBosEvent->bemc.tileIn[0] == 1) hA[0]->Fill("B-in", 1.0);
    if (mVecBosEvent->l2EbitET && mVecBosEvent->etow.etowIn == 1)    hE[0]->Fill("E-in", 1.0);
@@ -809,11 +806,12 @@ int StVecBosMaker::ReadMuDstETOW()
 
    mVecBosEvent->etow.etowIn = 1; //tag usable ETOW data
    const char *maxIdName = 0;
-   double maxADC = 0, adcSum = 0;
-   int maxSec = -1, maxSub = -1, maxEta = -1;
+   double maxADC =  0, adcSum =  0;
+   int    maxSec = -1, maxSub = -1, maxEta = -1;
 
    //loop over all towers
-   for (int i = 0; i < emc->getNEndcapTowerADC(); i++) {
+   for (int i = 0; i < emc->getNEndcapTowerADC(); i++)
+   {
       int sec, eta, sub, rawAdc; //muDst  ranges:sec:1-12, sub:1-5, eta:1-12
       emc->getEndcapTowerADC(i, rawAdc, sec, sub, eta);
 
@@ -1460,6 +1458,7 @@ int StVecBosMaker::ReadMuDstBTOW()
       if (rawAdc == 0) n0++;
 
       int statPed, statOfl, statGain;
+
       mBarrelTables->getStatus(BTOW, softID, statPed, "pedestal"); // official BTOW detector ID
       mBarrelTables->getStatus(BTOW, softID, statOfl);
       mBarrelTables->getStatus(BTOW, softID, statGain, "calib");
@@ -1520,7 +1519,7 @@ int StVecBosMaker::ReadMuDstBTOW()
    if (maxID <= 2400) hA[195]->Fill(maxADC);
    else hA[196]->Fill(maxADC);
 
-   if (maxADC < par_maxADC)  return -2 ; // not enough energy
+   if (maxADC < par_maxADC) return -2 ; // not enough energy
 
    return 0;
 }
@@ -1639,20 +1638,9 @@ void StVecBosMaker::ReadMuDstBSMD()
          mBarrelTables->getStatus(iEP, softID, statOfl);
          mBarrelTables->getStatus(iEP, softID, statGain, "calib");
 
-         if (statPed != 1) {
-            mVecBosEvent->bemc.statBsmd[iep][softID - 1] = 1;
-            n1++; continue;
-         }
-
-         if (statOfl != 1) {
-            mVecBosEvent->bemc.statBsmd[iep][softID - 1] = 2;
-            n2++; continue;
-         }
-
-         if (statGain < 1 || statGain > 19) {
-            mVecBosEvent->bemc.statBsmd[iep][softID - 1] = 4;
-            n3++; continue;
-         }
+         if (statPed != 1) { mVecBosEvent->bemc.statBsmd[iep][softID - 1] = 1; n1++; continue; }
+         if (statOfl != 1) { mVecBosEvent->bemc.statBsmd[iep][softID - 1] = 2; n2++; continue; }
+         if (statGain < 1 || statGain > 19) { mVecBosEvent->bemc.statBsmd[iep][softID - 1] = 4; n3++; continue; }
 
          float pedRes, sigPed, gain;
          int capID = 0; // just one value for ped residua in pp500, 2009 run
@@ -1665,7 +1653,7 @@ void StVecBosMaker::ReadMuDstBSMD()
             float  de = hit->getEnergy();// Geant energy deposit (GeV)
             adc = de * par_bsmdAbsGain;
          }
-         else {   // correct for pedestal residua
+         else { // correct for pedestal residua
             adc -= pedRes;
 
             if (adc > 0) n4++;
@@ -2009,11 +1997,13 @@ void StVecBosMaker::CalcPtBalance()
          if (track.isMatch2Cl == false) continue;
 
          // Loop over branch with EEMC
-         mJets = GetJets(mJetTreeBranchName);
+         //mJets = GetJets(mJetTreeBranchName);
          //if (mJetTreeChain) mJets = GetJetsTreeAnalysis(mJetTreeBranchName);
 
          // Add up all jets outside of nearDeltaR cone around the electron track
-         for (uint iJet = 0; iJet<mVecBosEvent->GetNumJets(); iJet++) { //loop over jets
+         // Loop over jets
+         for (uint iJet = 0; iJet<mVecBosEvent->GetNumJets(); iJet++)
+         {
             StJet *jet = GetJet(iJet);
             TVector3 jetVec; //vector for jet momentum
             jetVec.SetPtEtaPhi(jet->Pt(), jet->Eta(), jet->Phi());
@@ -2036,9 +2026,10 @@ void StVecBosMaker::CalcPtBalance()
          //mJets = GetJets(mJetTreeBranchNameNoEndcap);
          //if (mJetTreeChain) mJets = GetJetsTreeAnalysis(mJetTreeBranchNameNoEndcap);
 
-         for (uint iJet = 0; iJet < mVecBosEvent->GetNumJets(); iJet++)
-         { //loop over jets
-            StJet *jet = GetJet(iJet);
+         // loop over jets
+         for (uint iJet = 0; iJet < mVecBosEvent->GetNumJetsNoEndcap(); iJet++)
+         {
+            StJet *jet = GetJet(iJet); // XXX:ds: Need different access method for noendcap jets
             TVector3 jetVec; //vector for jet momentum
             jetVec.SetPtEtaPhi(jet->Pt(), jet->Eta(), jet->Phi());
 

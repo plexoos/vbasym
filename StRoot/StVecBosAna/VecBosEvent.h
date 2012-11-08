@@ -155,9 +155,9 @@ struct CompareStJets
 };
 
 
-typedef std::set<StJet*, CompareStJets>             StJetPtrSet;
-typedef StJetPtrSet::iterator        StJetPtrSetIter;
-typedef StJetPtrSet::const_iterator  StJetPtrSetConstIter;
+typedef std::set<StJet*, CompareStJets>   StJetPtrSet;
+typedef StJetPtrSet::iterator             StJetPtrSetIter;
+typedef StJetPtrSet::const_iterator       StJetPtrSetConstIter;
 
 
 class VecBosEvent : public ProtoEvent

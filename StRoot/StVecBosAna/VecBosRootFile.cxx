@@ -125,13 +125,13 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
       if ( !iTrack->IsGood() ) continue;
       ((TrackHContainer*) fHists->d["tracks_good"])->Fill(*iTrack);
 
-      if ( !iTrack->HasBarrelMatched() ) {
-         ((TrackHContainer*) fHists->d["tracks_barrel"])->Fill(*iTrack);
-      }
+      //if ( !iTrack->HasBarrelMatched() ) {
+      //   ((TrackHContainer*) fHists->d["tracks_barrel"])->Fill(*iTrack);
+      //}
 
-      if ( !iTrack->HasEndcapMatched() ) {
-         ((TrackHContainer*) fHists->d["tracks_endcap"])->Fill(*iTrack);
-      }
+      //if ( !iTrack->HasEndcapMatched() ) {
+      //   ((TrackHContainer*) fHists->d["tracks_endcap"])->Fill(*iTrack);
+      //}
    }
 }
 
