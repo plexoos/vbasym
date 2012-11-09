@@ -26,9 +26,9 @@ public:
    ETrackType           mType;
    int                  isMatch2Cl;         // result of cuts
    WevePointTower       pointTower;
-   const StMuTrack*     glMuTrack;
-   const StMuTrack*     prMuTrack;
-   const VecBosVertex*  mVecBosVertex;      // pointer to mother vertex
+   const StMuTrack*     glMuTrack;          //!
+   const StMuTrack*     prMuTrack;          //!
+   const VecBosVertex*  mVecBosVertex;      //! pointer to mother vertex
    WeveCluster          mCluster2x2;
    WeveCluster          mCluster4x4;
    TVector3             primP;              // primary momentum vector

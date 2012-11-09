@@ -151,7 +151,6 @@ void VecBosTrack::ExtendTrack2Barrel()
    int iEta, iPhi;
    if ( !ConvertEtaPhi2Bins(eta, phi, iEta, iPhi) ) return;
 
-   //hA[20]->Fill("@B", 1.);
    //printf(" phi=%.0f deg,  eta=%.2f, iEta=%d, iPhi=%d\n",posCTB.phi()/3.1416*180.,posCTB. pseudoRapidity(),iEta, iPhi);
    // printf("hit Tower ID=%d\n",towerId);
 
