@@ -1,17 +1,18 @@
 #include <limits>
-#include <math.h>
+//#include <math.h>
 
-#include <TF1.h>
-#include <TH1.h>
-#include <TH2.h>
-#include <TTree.h>
+#include "TF1.h"
+#include "TH1.h"
+#include "TH2.h"
+#include "TTree.h"
 #include <TString.h>
 #include <StMessMgr.h>
 #include <StThreeVectorF.hh>
 
-#include <StMuDSTMaker/COMMON/StMuDstMaker.h>
-#include <StMuDSTMaker/COMMON/StMuDst.h>
-#include <StMuDSTMaker/COMMON/StMuEvent.h>
+#include "StMuDSTMaker/COMMON/StMuDstMaker.h"
+#include "StMuDSTMaker/COMMON/StMuDst.h"
+#include "StMuDSTMaker/COMMON/StMuEvent.h"
+#include "StTriggerUtilities/L2Emulator/L2wAlgo/L2wResult2009.h"
 
 #include "StEmcUtil/database/StBemcTables.h"
 #include "StEmcUtil/geometry/StEmcGeom.h"
@@ -22,7 +23,7 @@
 #include "StEEmcUtil/StEEmcSmd/EEmcSmdGeom.h"
 
 #include "StEmcRawMaker/defines.h"
-#include <StMuDSTMaker/COMMON/StMuPrimaryVertex.h>
+#include "StMuDSTMaker/COMMON/StMuPrimaryVertex.h"
 
 #include "StSpinPool/StJets/StJet.h"
 #include "StSpinPool/StJets/StJets.h"
@@ -31,6 +32,7 @@
 #include "StJetMaker/StJetReader.h"
 #include "StJetMaker/StJetSkimEventMaker.h"
 
+#include "Globals.h"
 #include "WeventDisplay.h"
 #include "StVecBosMaker.h"
 
@@ -77,67 +79,66 @@ StVecBosMaker::StVecBosMaker(const char *name, VecBosRootFile *vbFile): StMaker(
    nInpEve = mNumTrigEvents = nAccEve = 0;
 
    // MC trigger simulator
-   par_l0emulAdcThresh     = 30;
-   par_l2emulSeedThresh    = 5.0;
-   par_l2emulClusterThresh = 12.0;
+   par_l0emulAdcThresh          = 30;
+   par_l2emulSeedThresh         = 5.0;
+   par_l2emulClusterThresh      = 12.0;
 
    // vertex
-   mMinNumPileupVertices   = 3;    // to reject events w/o TPC, lower it for MC
-   mCutVertexZ             = 100;  // (cm)
+   mMinNumPileupVertices        = 3;    // to reject events w/o TPC, lower it for MC
+   mCutVertexZ                  = 100;  // (cm)
 
    // towers
-   par_kSigPed             = 3;    // rawADC-ped cut off
-   par_AdcThres            = 8;    // ADC threshold to avoid correlated noise
-   par_maxADC              = 200.; // (adc chan) on the highest tower in events
+   par_kSigPed                  = 3;    // rawADC-ped cut off
+   par_AdcThres                 = 8;    // ADC threshold to avoid correlated noise
+   par_maxADC                   = 200.; // (adc chan) on the highest tower in events
 
    //... Barrel Algo
-   mMinBClusterEnergy      = 14.;  // (GeV/c) 2x2 cluster ET
-   mMinBClusterEnergyIsoRatio = 0.95; // ET ratio 2x2/4x4 cluster
-   par_nearTotEtFrac       = 0.88; // ratio 2x2/near Tot ET
-   mMaxTrackClusterDist    = 7.;   // cm, dist between projected track and center of cluster
-   mCutTrackEtaMin         = -1.5; // bracket acceptance
-   mCutTrackEtaMax         = 1.5;  // bracket acceptance
-   par_ptBalance           = 14.;  // (GeV), ele cluster vector + jet sum vector
-   //... track
-   par_nFitPts             = 15;   // hits on the track
-   par_nHitFrac            = 0.51;
-   par_trackRin            = 90;   // cm
-   par_trackRout           = 160;  // cm
-   mMinBTrackPt            = 10.;  // GeV
-   par_highET              = 25.;  // (GeV), cut-off for final Barrel W-cluster
+   mMinBClusterEnergy           = 14.;  // GeV/c 2x2 cluster ET
+   mMinBClusterEnergyIsoRatio   = 0.95; // ET ratio 2x2/4x4 cluster
+   par_nearTotEtFrac            = 0.88; // ratio 2x2/near Tot ET
+   mMaxTrackClusterDist         = 7.;   // cm, dist between projected track and center of cluster
+   mMinBTrackEta                = -1.5; // bracket acceptance
+   mMaxBTrackEta                = 1.5;  // bracket acceptance
+   par_ptBalance                = 14.;  // GeV, ele cluster vector + jet sum vector
+   par_nFitPts                  = 15;   // hits on the track
+   par_nHitFrac                 = 0.51;
+   par_trackRin                 = 90;   // cm
+   par_trackRout                = 160;  // cm
+   mMinBTrackPt                 = 10.;  // GeV
+   par_highET                   = 25.;  // (GeV), cut-off for final Barrel W-cluster
 
-   //... Endcap Algo
-   parE_trackEtaMin        = 0.7;  // avoid bad extrapolation to ESMD
-   parE_clustET            = 14.;  // (GeV/c) 2x1 cluster ET
-   mMinEClusterEnergyIsoRatio        = 0.90; // ET ratio 2x2/4x4 cluster
-   parE_nearTotEtFrac      = 0.85; // ratio 2x2/near Tot ET
-   parE_delR3D             = 10.;  // cm, dist between projected track and center of cluster
-   parE_leptonEtaLow       = 0.7;  // bracket acceptance
-   parE_leptonEtaHigh      = 2.5;  // bracket acceptance
-   parE_ptBalance          = 14.;  // (GeV), ele cluster vector + jet sum vector
+   // Endcap Algo
+   parE_trackEtaMin             = 0.7;  // avoid bad extrapolation to ESMD
+   parE_clustET                 = 14.;  // (GeV/c) 2x1 cluster ET
+   mMinEClusterEnergyIsoRatio   = 0.90; // ET ratio 2x2/4x4 cluster
+   parE_nearTotEtFrac           = 0.85; // ratio 2x2/near Tot ET
+   parE_delR3D                  = 10.;  // cm, dist between projected track and center of cluster
+   mMinETrackEta                = 0.7;  // bracket acceptance
+   mMaxETrackEta                = 2.5;  // bracket acceptance
+   parE_ptBalance               = 14.;  // (GeV), ele cluster vector + jet sum vector
    //... track
-   parE_nFitPts            = 5;    // hits on the track
-   parE_nHitFrac           = 0.51;
-   parE_trackRin           = 120;
-   parE_trackRout          = 70;   // cm
-   mMinETrackPt            = 7.;   // GeV
-   parE_nSmdStrip          = 20;
-   parE_highET             = 25.;  // (GeV), cut-off for final Endcap W-cluster
+   parE_nFitPts                 = 5;    // hits on the track
+   parE_nHitFrac                = 0.51;
+   parE_trackRin                = 120;
+   parE_trackRout               = 70;   // cm
+   mMinETrackPt                 = 7.;   // GeV
+   parE_nSmdStrip               = 20;
+   parE_highET                  = 25.;  // (GeV), cut-off for final Endcap W-cluster
 
    // search for W's
-   mTrackIsoDeltaR         = 0.7;  // (rad) near-cone size
-   mTrackIsoDeltaPhi       = 0.7;  // (rad) away-'cone' size, approx. 40 deg.
+   mTrackIsoDeltaR              = 0.7;  // (rad) near-cone size
+   mTrackIsoDeltaPhi            = 0.7;  // (rad) away-'cone' size, approx. 40 deg.
 
-   mRunNo                  = 0;
-   nRun                    = 0;
-   hbxIdeal                = 0;
+   mRunNo                       = 0;
+   nRun                         = 0;
+   hbxIdeal                     = 0;
 
    // irrelevant for W analysis
-   par_DsmThres            = 31;   // only for monitoring
-   parE_DsmThres           = 31;   // only for monitoring
-   par_maxDisplEve         = 1;    // # of displayed selected events
+   par_DsmThres                 = 31;   // only for monitoring
+   parE_DsmThres                = 31;   // only for monitoring
+   par_maxDisplEve              = 1;    // # of displayed selected events
 
-   use_gains_file          = 0;
+   use_gains_file               = 0;
 }
 
 
@@ -220,7 +221,7 @@ Int_t StVecBosMaker::InitRun(int runNo)
       par_nFitPts, par_nHitFrac,  par_trackRin,  par_trackRout, mMinBTrackPt,
       par_kSigPed, par_AdcThres, par_maxADC, mMinBClusterEnergy, mMinBClusterEnergyIsoRatio, par_nearTotEtFrac,
       mMaxTrackClusterDist, mTrackIsoDeltaR,
-      par_highET, mTrackIsoDeltaPhi, par_ptBalance, mCutTrackEtaMin, mCutTrackEtaMax
+      par_highET, mTrackIsoDeltaPhi, par_ptBalance, mMinBTrackEta, mMaxBTrackEta
    ) << endm;
 
    // endcap algo params
@@ -386,9 +387,12 @@ Int_t StVecBosMaker::Make()
    ReadMuDstESMD(); // get energy in ESMD
    ReadMuDstEPRS(); // get energy in EPRS
 
-   ReadMuDstVertex(); // Save all vertices from MuDst into event
-   ReadMuDstTrack();  // Add tracks in the event. See the function for the cuts imposed on the track quality
+   // Save all vertices from MuDst into event. Add tracks in the event. See the
+   // function for the cuts imposed on the track quality
+   ReadMuDstVerticesTracks();
    ReadMuDstJets();   // Get input jet info
+
+   mVecBosEvent->Process();
 
    mVecBosRootFile->Fill(*mVecBosEvent);
 
@@ -431,7 +435,7 @@ Int_t StVecBosMaker::Make()
    // Add tracks to the event and atch tracks to energy clusters in the barrel
    // and endcap
    bool hasMatchedTrack2BCluster = MatchTrack2BtowCluster();
-   bool hasMatchedTrack2ECluster = matchTrack2EtowCluster();
+   bool hasMatchedTrack2ECluster = MatchTrack2EtowCluster();
 
    //if (hasMatchedTrack2BCluster) mVecBosRootFile->Fill(*mVecBosEvent, kCUT_BARREL);
    //if (hasMatchedTrack2ECluster) mVecBosRootFile->Fill(*mVecBosEvent, kCUT_ENDCAP);
@@ -512,32 +516,6 @@ void StVecBosMaker::initGeom()
          }
       }
    }
-}
-
-
-/**
- * Converts eta-phi real pair into (XXX:ds: preshower???) eta-phi bins.
- * Input eta range is from -0.99 to 0.99 only.
- * Returns true on success, false otherwise.
- */
-bool StVecBosMaker::ConvertEtaPhi2Bins(float eta, float phi, int &iEta, int &iPhi)
-{
-   if (phi < 0) phi += 2*M_PI; // I want phi in [0,2Pi]
-
-   if (fabs(eta) >= 0.99) return false;
-
-   // convention:  iPhi=[0,119], kEta=[1,40]
-   int kEta = 1 + (int)((eta + 1.) / 0.05);
-   iEta = kEta - 1;
-
-   iPhi  = 24 - (int)( phi/M_PI/2 * 120.);
-   iPhi += (iPhi < 0) ? 120 : 0;
-
-   //printf("IJ=%d %d\n",iEta,iPhi);
-   if (iEta < 0 || iEta >= mxBTetaBin) return false;
-   if (iPhi < 0 || iPhi >= mxBTphiBin) return false;
-
-   return true;
 }
 
 
@@ -1120,7 +1098,7 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
 /**
  * Saves all vertices. (Before: with (mRank>0 or EEMC matched) && z pos < mCutVertexZ)
  */
-void StVecBosMaker::ReadMuDstVertex()
+void StVecBosMaker::ReadMuDstVerticesTracks()
 {
    int numOfPrimaryVertices = mStMuDstMaker->muDst()->numberOfPrimaryVertices();
 
@@ -1131,18 +1109,17 @@ void StVecBosMaker::ReadMuDstVertex()
    if (mVecBosEvent->l2bitET)  hA[0]->Fill("tpcOn", 1.);
    if (mVecBosEvent->l2EbitET) hE[0]->Fill("tpcOn", 1.);
 
-   int nVertices        = 0;
    int nVerticesPosRank = 0;
 
    for (int iVertex=0; iVertex<numOfPrimaryVertices; iVertex++)
    {
-      StMuPrimaryVertex *vertex = mStMuDstMaker->muDst()->primaryVertex(iVertex);
-      assert(vertex);
+      StMuPrimaryVertex *stMuVertex = mStMuDstMaker->muDst()->primaryVertex(iVertex);
+      assert(stMuVertex);
 
       // Select current vertex
       mStMuDstMaker->muDst()->setVertexIndex(iVertex);
 
-      float rank    = vertex->ranking();
+      float rank    = stMuVertex->ranking();
       float rankLog = 999;
 
       if (rank > 1e6)    rankLog = log(rank - 1e6) + 10;
@@ -1153,32 +1130,24 @@ void StVecBosMaker::ReadMuDstVertex()
       if (mVecBosEvent->l2EbitET)   hE[10]->Fill(rankLog);
 
       // Keep some neg. rank vertices for endcap if matched to ETOW
-      // XXX:ds: if (rank <= 0 && vertex->nEEMCMatch() <= 0) continue;
+      // XXX:ds: if (rank <= 0 && stMuVertex->nEEMCMatch() <= 0) continue;
 
-      const StThreeVectorF &vertexPosition = vertex->position();
+      const StThreeVectorF &vertexPosition = stMuVertex->position();
 
-      // StThreeVectorF &er=vertex->posError();
+      // StThreeVectorF &er = stMuVertex->posError();
       if (mVecBosEvent->l2bitET && rank > 0) hA[11]->Fill(vertexPosition.z());
       if (mVecBosEvent->l2EbitET)            hE[11]->Fill(vertexPosition.z());
 
-      nVertices++; // count valid vertices
-
       // XXX:ds: if (fabs(vertexPosition.z()) > mCutVertexZ) continue;
 
-      if (rank > 0) nVerticesPosRank++; //count vertices with rank>0
+      if (rank > 0) nVerticesPosRank++; // count vertices with rank>0
 
-      VecBosVertex vbVertex;
-      vbVertex.id         = iVertex;
-      vbVertex.z          = vertexPosition.z();
-      vbVertex.mRank      = rank;
-      vbVertex.mRankLog   = rankLog;
-      vbVertex.nEEMCMatch = vertex->nEEMCMatch();
-      vbVertex.SetPosition(vertexPosition);
+      VecBosVertex *vecBosVertex = mVecBosEvent->AddVertex(*stMuVertex);
 
-      mVecBosEvent->mVertices.push_back(vbVertex);
+      ReadMuDstTracks(vecBosVertex);
    }
 
-   if (nVertices <= 0) return;
+   if (mVecBosEvent->GetNumVertices() <= 0) return;
 
    if (mVecBosEvent->l2bitET && nVerticesPosRank > 0) {
       hA[0]->Fill("primVert", 1.);
@@ -1212,7 +1181,7 @@ void StVecBosMaker::ReadMuDstVertex()
    }
 
    if (mVecBosEvent->l2bitET)  hA[12]->Fill(nVerticesPosRank);
-   if (mVecBosEvent->l2EbitET) hE[12]->Fill(nVertices);
+   if (mVecBosEvent->l2EbitET) hE[12]->Fill(mVecBosEvent->GetNumVertices());
 
    if (mVecBosEvent->GetNumVertices() <= 0) return;
 
@@ -1278,156 +1247,132 @@ void StVecBosMaker::ReadMuDstVertex()
  * hits, fract of hits, min and max radius in transverse plane
  *
  */
-void StVecBosMaker::ReadMuDstTrack()
+void StVecBosMaker::ReadMuDstTracks(VecBosVertex* vbVertex)
 {
    // printf("\n nInp=%d eveID=%d nPVer=%d nAnyV=
    //        %d\n",nInpEve,mStMuDstMaker->muDst()->event()->eventId(),mVecBosEvent->mVertices.size(),mStMuDstMaker->muDst()->numberOfPrimaryVertices());
+   //float rank = vertex->ranking();
+   // XXX:ds: assert(rank > 0 || (rank < 0 && vertex->nEEMCMatch()));
 
-   for (uint iv = 0; iv < mVecBosEvent->GetNumVertices(); iv++)
+   // Get tracks from the current vertex set in ReadMuDstVerticesTracks
+   Int_t nPrimaryTracks = mStMuDstMaker->muDst()->GetNPrimaryTrack();
+
+   for (int iTrack=0; iTrack<nPrimaryTracks; iTrack++)
    {
-      uint vertID = mVecBosEvent->mVertices[iv].id;
-      assert(vertID < mStMuDstMaker->muDst()->numberOfPrimaryVertices());
-      assert(vertID >= 0);
+      StMuTrack *primaryTrack = mStMuDstMaker->muDst()->primaryTracks(iTrack);
 
-      StMuPrimaryVertex *vertex = mStMuDstMaker->muDst()->primaryVertex(vertID);
-      assert(vertex);
+      mVecBosEvent->AddTrack(primaryTrack, vbVertex);
 
-      // Select current vertex
-      mStMuDstMaker->muDst()->setVertexIndex(vertID);
+      //XXX:ds:if (primaryTrack->flag() <= 0) continue;
 
-      float rank = vertex->ranking();
-      // XXX:ds: assert(rank > 0 || (rank < 0 && vertex->nEEMCMatch()));
+      const StMuTrack *globalTrack = primaryTrack->globalTrack();
 
-      Int_t nPrimaryTracks = mStMuDstMaker->muDst()->GetNPrimaryTrack();
+      if (globalTrack == 0) continue; // see the reason at the end of this method
 
-      for (int iTrack=0; iTrack<nPrimaryTracks; iTrack++)
+      // keep list of all tracks for TPC cone sum in tree ana
+      //mVecBosEvent->mVertices[iv].prTrList.push_back(primaryTrack);
+
+      StThreeVectorF ro = globalTrack->lastPoint();
+
+      // TPC+prim vertex tracks and short EEMC tracks
+      //XXX:ds:if (primaryTrack->flag() != 301 && primaryTrack->flag() != 311) continue;
+
+      if (mVecBosEvent->l2bitET  && vbVertex->mRank > 0 && primaryTrack->flag() == 301) hA[20]->Fill("flag", 1.);
+      if (mVecBosEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin)  hE[20]->Fill("flag", 1.);
+
+      float pt = primaryTrack->pt();
+
+      //XXX:ds:if (pt < 1.0) continue;
+
+      if (mVecBosEvent->l2bitET  && vbVertex->mRank > 0 && primaryTrack->flag() == 301) hA[20]->Fill("pt1", 1.);
+      if (mVecBosEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin)  hE[20]->Fill("pt1", 1.);
+
+      // Accepted tracks
+      float hitFrac     = 1.*primaryTrack->nHitsFit() / primaryTrack->nHitsPoss();
+      // Victor: in reality mChiSqXY is a normal Xi2 for track and mChiSqZ is Xi2 of fit to  primary vertex
+      float globChi2dof = globalTrack->chi2();
+      float dedx        = primaryTrack->dEdx() * 1e6;
+
+      StThreeVectorF ri = globalTrack->firstPoint();
+
+      // barrel algo track monitors
+      if (mVecBosEvent->l2bitET && vbVertex->mRank > 0 && primaryTrack->flag() == 301)
       {
-         StMuTrack *primaryTrack = mStMuDstMaker->muDst()->primaryTracks(iTrack);
+         hA[21]->Fill(primaryTrack->nHitsFit());
+         hA[22]->Fill(hitFrac);
+         hA[23]->Fill(ri.perp());
+         hA[24]->Fill(ro.perp());
 
-         mVecBosEvent->AddTrack(iv, primaryTrack);
+         //TPC sector dependent filter
+         //XXX:ds: int secID = WtpcFilter::getTpcSec(ro.phi(), ro.pseudoRapidity());
+         //XXX:ds: if (secID == 20) continue; //poorly calibrated sector for Run 9+11+12?
+         //XXX:ds: if (mTpcFilter[secID - 1].accept(primaryTrack) == false) continue;
 
-         //XXX:ds:if (primaryTrack->flag() <= 0) continue;
+         hA[25]->Fill(globalTrack->p().perp());
 
-         const StMuTrack *globalTrack = primaryTrack->globalTrack();
+         if (globalTrack->charge() < 0) hA[27]->Fill(globalTrack->p().perp());
 
-         if (globalTrack == 0) continue; // see the reason at the end of this method
+         hA[29]->Fill(pt);
 
-         // keep list of all tracks for TPC cone sum in tree ana
-         //mVecBosEvent->mVertices[iv].prTrList.push_back(primaryTrack);
+         if (primaryTrack->charge() < 0) hA[30]->Fill(pt);
 
-         StThreeVectorF ro = globalTrack->lastPoint();
+         hA[26]->Fill(ro.pseudoRapidity(), ro.phi());
 
-         // TPC+prim vertex tracks and short EEMC tracks
-         //XXX:ds:if (primaryTrack->flag() != 301 && primaryTrack->flag() != 311) continue;
+         if (pt > 5) hA[57]->Fill(ro.pseudoRapidity(), ro.phi()); // estimate TPC inefficiency in data
 
-         if (mVecBosEvent->l2bitET  && rank > 0 && primaryTrack->flag() == 301) hA[20]->Fill("flag", 1.);
-         if (mVecBosEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin)  hE[20]->Fill("flag", 1.);
+         hA[35]->Fill(globChi2dof);
 
-         float pt = primaryTrack->pt();
+         // monitor chi2 for east/west TPC separately
+         if (ri.z() > 0 && ro.z() > 0)  hA[58]->Fill(globChi2dof);
+         if (ri.z() < 0 && ro.z() < 0)  hA[59]->Fill(globChi2dof);
 
-         //XXX:ds:if (pt < 1.0) continue;
+         hA[36]->Fill(globChi2dof, ro.pseudoRapidity());
+         hA[28]->Fill(primaryTrack->p().mag(), dedx);
 
-         if (mVecBosEvent->l2bitET  && rank > 0 && primaryTrack->flag() == 301) hA[20]->Fill("pt1", 1.);
-         if (mVecBosEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin)  hE[20]->Fill("pt1", 1.);
+         if (pt > 10) hA[197]->Fill(ro.pseudoRapidity(), ro.phi());
 
-         // Accepted tracks
-         float hitFrac     = 1.*primaryTrack->nHitsFit() / primaryTrack->nHitsPoss();
-         // Victor: in reality mChiSqXY is a normal Xi2 for track and mChiSqZ is Xi2 of fit to  primary vertex
-         float globChi2dof = globalTrack->chi2();
-         float dedx        = primaryTrack->dEdx() * 1e6;
-
-         StThreeVectorF ri = globalTrack->firstPoint();
-
-         // barrel algo track monitors
-         if (mVecBosEvent->l2bitET && rank > 0 && primaryTrack->flag() == 301)
-         {
-            hA[21]->Fill(primaryTrack->nHitsFit());
-            hA[22]->Fill(hitFrac);
-            hA[23]->Fill(ri.perp());
-            hA[24]->Fill(ro.perp());
-
-            //TPC sector dependent filter
-            //XXX:ds: int secID = WtpcFilter::getTpcSec(ro.phi(), ro.pseudoRapidity());
-            //XXX:ds: if (secID == 20) continue; //poorly calibrated sector for Run 9+11+12?
-            //XXX:ds: if (mTpcFilter[secID - 1].accept(primaryTrack) == false) continue;
-
-            hA[25]->Fill(globalTrack->p().perp());
-
-            if (globalTrack->charge() < 0) hA[27]->Fill(globalTrack->p().perp());
-
-            hA[29]->Fill(pt);
-
-            if (primaryTrack->charge() < 0) hA[30]->Fill(pt);
-
-            hA[26]->Fill(ro.pseudoRapidity(), ro.phi());
-
-            if (pt > 5) hA[57]->Fill(ro.pseudoRapidity(), ro.phi()); // estimate TPC inefficiency in data
-
-            hA[35]->Fill(globChi2dof);
-
-            // monitor chi2 for east/west TPC separately
-            if (ri.z() > 0 && ro.z() > 0)  hA[58]->Fill(globChi2dof);
-            if (ri.z() < 0 && ro.z() < 0)  hA[59]->Fill(globChi2dof);
-
-            hA[36]->Fill(globChi2dof, ro.pseudoRapidity());
-            hA[28]->Fill(primaryTrack->p().mag(), dedx);
-
-            if (pt > 10) hA[197]->Fill(ro.pseudoRapidity(), ro.phi());
-
-            hA[198]->Fill(ro.pseudoRapidity(), primaryTrack->pt());
-         }
-
-         // endcap algo track monitors
-         if (mVecBosEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin)
-         {
-            hE[20]->Fill("#eta>0.7", 1.);
-            hE[21]->Fill(primaryTrack->nHitsFit());
-            hE[22]->Fill(hitFrac);
-            hE[23]->Fill(ri.perp());
-            hE[24]->Fill(ro.perp());
-
-            // TPC sector dependent filter
-            //XXX:ds:int secID = WtpcFilter::getTpcSec(ro.phi(), ro.pseudoRapidity());
-            //XXX:ds:if ( mTpcFilterE[secID - 1].accept(primaryTrack) == false) continue;
-
-            hE[25]->Fill(globalTrack->p().perp());
-
-            if (globalTrack->charge() < 0) hE[27]->Fill(globalTrack->p().perp());
-
-            hE[29]->Fill(pt);
-
-            if (primaryTrack->charge() < 0) hE[30]->Fill(pt);
-
-            hE[26]->Fill(ro.pseudoRapidity(), ro.phi());
-
-            if (pt > 5) hE[57]->Fill(ro.pseudoRapidity(), ro.phi()); //estimate TPC inefficiency in data
-
-            hE[35]->Fill(globChi2dof);
-            hE[36]->Fill(globChi2dof, ro.pseudoRapidity());
-            hE[28]->Fill(primaryTrack->p().mag(), dedx);
-         }
-
-         bool barrelTrack = (mVecBosEvent->l2bitET && rank > 0 && primaryTrack->flag() == 301 && pt > mMinBTrackPt);
-
-         if (barrelTrack) hA[20]->Fill("ptOK", 1.); //good barrel candidate
-
-         bool endcapTrack = (mVecBosEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin && pt > mMinETrackPt);
-
-         if (endcapTrack) hE[20]->Fill("ptOK", 1.); //good endcap candidate
-
-         //XXX:ds:if (!barrelTrack && !endcapTrack) continue;
-
-         // Keep all tracks in one container
-         StThreeVectorF prPvect = primaryTrack->p();
-
-         VecBosTrack vecBosTrack;
-
-         vecBosTrack.prMuTrack = primaryTrack;
-         vecBosTrack.glMuTrack = globalTrack;
-         vecBosTrack.primP     = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
-
-         mVecBosEvent->mVertices[iv].eleTrack.push_back(vecBosTrack);
+         hA[198]->Fill(ro.pseudoRapidity(), primaryTrack->pt());
       }
+
+      // endcap algo track monitors
+      if (mVecBosEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin)
+      {
+         hE[20]->Fill("#eta>0.7", 1.);
+         hE[21]->Fill(primaryTrack->nHitsFit());
+         hE[22]->Fill(hitFrac);
+         hE[23]->Fill(ri.perp());
+         hE[24]->Fill(ro.perp());
+
+         // TPC sector dependent filter
+         //XXX:ds:int secID = WtpcFilter::getTpcSec(ro.phi(), ro.pseudoRapidity());
+         //XXX:ds:if ( mTpcFilterE[secID - 1].accept(primaryTrack) == false) continue;
+
+         hE[25]->Fill(globalTrack->p().perp());
+
+         if (globalTrack->charge() < 0) hE[27]->Fill(globalTrack->p().perp());
+
+         hE[29]->Fill(pt);
+
+         if (primaryTrack->charge() < 0) hE[30]->Fill(pt);
+
+         hE[26]->Fill(ro.pseudoRapidity(), ro.phi());
+
+         if (pt > 5) hE[57]->Fill(ro.pseudoRapidity(), ro.phi()); //estimate TPC inefficiency in data
+
+         hE[35]->Fill(globChi2dof);
+         hE[36]->Fill(globChi2dof, ro.pseudoRapidity());
+         hE[28]->Fill(primaryTrack->p().mag(), dedx);
+      }
+
+      bool barrelTrack = (mVecBosEvent->l2bitET && vbVertex->mRank > 0 && primaryTrack->flag() == 301 && pt > mMinBTrackPt);
+
+      if (barrelTrack) hA[20]->Fill("ptOK", 1.); //good barrel candidate
+
+      bool endcapTrack = (mVecBosEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin && pt > mMinETrackPt);
+
+      if (endcapTrack) hE[20]->Fill("ptOK", 1.); //good endcap candidate
+
+      //XXX:ds:if (!barrelTrack && !endcapTrack) continue;
    }
 
    if (mVecBosEvent->GetNumTracks() <= 0) return;
@@ -1768,7 +1713,7 @@ void StVecBosMaker::FindWBoson()
          assert(track.nearTotET > 0);      // internal logical error
 
          // make cut on lepton eta
-         if (track.primP.Eta() < mCutTrackEtaMin || track.primP.Eta() > mCutTrackEtaMax) continue;
+         if (track.primP.Eta() < mMinBTrackEta || track.primP.Eta() > mMaxBTrackEta) continue;
 
          hA[20]->Fill("eta1", 1.);
          nEta1++;
@@ -2337,75 +2282,85 @@ float StVecBosMaker::SumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, 
 }
 
 
-/** */
-void StVecBosMaker::ExtendTrack2Barrel()
+// return # of extended tracks
+int StVecBosMaker::ExtendTrack2Endcap()
 {
-   //printf("******* extendTracks() nVert=%d\n", mVecBosEvent->mVertices.size());
-   if (!mVecBosEvent->l2bitET) return; //fire barrel trigger
+   //printf("******* extendTracksEndcap() nVert=%d\n",mVecBosEvent.vertex.size());
+   if (!mVecBosEvent->l2EbitET) return 0; //fire endcap trigger
 
-   // loop over vertices
-   for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++)
+   double parE_zSMD = mGeomEmc->getZSMD(); // (cm), smd depth
+   int nTrE = 0;
+
+   for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++) 
    {
-      VecBosVertex &vertex = mVecBosEvent->mVertices[iv];
-      if (vertex.mRank < 0) continue; // remove vertex for endcap algo only
-
-      // loop over tracks
-      for (uint iTrack = 0; iTrack < vertex.eleTrack.size(); iTrack++)
+      VecBosVertex &V = mVecBosEvent->mVertices[iv];
+      for (uint it = 0; it < V.eleTrack.size(); it++) 
       {
-         VecBosTrack &track = vertex.eleTrack[iTrack];
+         VecBosTrack &T = V.eleTrack[it];
 
-         if (track.prMuTrack->flag() != 301) continue; //remove track for endcap algo only
+         if (T.prMuTrack->eta() < parE_trackEtaMin) continue; // to avoid extrapolation nonsense
 
-         // Apply eta cuts at track level (tree analysis)
-         if (track.primP.Eta() < mCutTrackEtaMin || track.primP.Eta() > mCutTrackEtaMax) continue;
+         // Do eta sorting at track level (tree analysis)
+         if (T.primP.Eta() < mMinETrackEta || T.primP.Eta() > mMaxETrackEta) continue;
 
-         // extrapolate track to the barrel @ R=entrance
-         const StPhysicalHelixD TrkHlx = track.prMuTrack->outerHelix();
-         float Rcylinder = mBtowGeom->Radius();
-         pairD d2 = TrkHlx.pathLength(Rcylinder);
-         //printf(" R=%.1f path 1=%f, 2=%f, period=%f, R=%f\n",Rctb,d2.first ,d2.second,TrkHlx.period(),1./TrkHlx.curvature());
+         // Extrapolate track to the disk perpendicular to the z-axis
+         const StPhysicalHelixD trkHlx       = T.prMuTrack->outerHelix();
+         StThreeVectorD         diskPosition = StThreeVectorD(0, 0, parE_zSMD);
+         StThreeVectorD         diskNormal   = StThreeVectorD(0, 0, 1);
 
-         // assert(d2.first  < 0); // propagate backwards
-         // assert(d2.second > 0); // propagate forwards
-         if (d2.first >= 0 || d2.second <= 0) {
-            LOG_WARN << Form("MatchTrk , unexpected solution for track crossing CTB\n" \
-                             "d2.first=%f, d2.second=%f, swap them", d2.first, d2.second) << endm;
-            float xx  = d2.first;
-            d2.first  = d2.second;
-            d2.second = xx;
+         //path length at intersection with plane
+         double path = trkHlx.pathLength(diskPosition, diskNormal);
+
+         StThreeVectorD r = trkHlx.at(path);
+         float periodL = trkHlx.period();
+
+         if (periodL < 2 * path) {
+            printf(" Warn, long path fac=%.1f ", path / periodL);
+            printf(" punchEEMC1 x,y,z=%.1f, %.1f, %.1f path=%.1f period=%.1f\n", r.x(), r.y(), r.z(), path, periodL);
          }
 
-         // extrapolate track to cylinder
-         StThreeVectorD posR = TrkHlx.at(d2.second);
-         //printf(" punch2 x,y,z=%.1f, %.1f, %.1f, Rxy=%.1f\n",posCTB.x(),posCTB.y(),posCTB.z(),xmagn);
-         float eta = posR.pseudoRapidity();
-         float phi = posR.phi();
+         //printf("hitR xyz=%f %f %f, detEta=%f\n",r.x(),r.y(),r.z(),eta);
+         hE[69]->Fill(r.x(), r.y());
 
-         int iEta, iPhi;
-         if ( !ConvertEtaPhi2Bins(eta, phi, iEta, iPhi) ) continue;
+         int isec, isubSec, ietaBin;
+         Float_t epsPhi, epsEta;
+         TVector3 rCross(r.x(), r.y(), r.z());
+         bool inEtow = mGeomEmc->getTower(rCross, isec, isubSec, ietaBin, epsPhi, epsEta);
+         if (!inEtow) continue;
+         hE[20]->Fill("@E", 1.);
+         //printf("trk points EEMC tower isec=%d isub=%d ieta=%d epsPhi=%f epsEta=%f  trkPT=%f\n", isec,isubSec,ietaBin,epsPhi,epsEta,T.prMuTrack->pt());
 
-         hA[20]->Fill("@B", 1.);
-         //printf(" phi=%.0f deg,  eta=%.2f, iEta=%d, iPhi=%d\n",posCTB.phi()/3.1416*180.,posCTB. pseudoRapidity(),iEta, iPhi);
-         int towerId = mapBtowIJ2ID[ iEta + iPhi * mxBTetaBin];
-         // printf("hit Tower ID=%d\n",towerId);
+         nTrE++;
+         T.pointTower.id   = -999; //set negative for endcap towers
+         T.pointTower.R    = rCross;
+         T.pointTower.iEta = ietaBin;
+         T.pointTower.iPhi = isec * mxEtowSub + isubSec;
 
-         track.pointTower.id   = towerId;
-         track.pointTower.R    = TVector3(posR.x(), posR.y(), posR.z());
-         track.pointTower.iEta = iEta;
-         track.pointTower.iPhi = iPhi;
-         //track.print();
+         //find global track extrapolation (for ESMD analysis)
+         const StPhysicalHelixD trkHlxGlob = T.glMuTrack->outerHelix();
+         double pathGlob = trkHlxGlob.pathLength(diskPosition, diskNormal);
+
+         StThreeVectorD rGlob = trkHlxGlob.at(pathGlob);
+         float periodLGlob    = trkHlxGlob.period();
+
+         if (periodLGlob < 2 * pathGlob) {
+            printf(" Warn, long path Global fac=%.1f ", pathGlob / periodLGlob);
+            printf(" punchEEMC1 x,y,z=%.1f, %.1f, %.1f path=%.1f period=%.1f\n", r.x(), r.y(), r.z(), pathGlob, periodLGlob);
+         }
+         TVector3 rCrossGlob(rGlob.x(), rGlob.y(), rGlob.z());
+         T.pointTower.Rglob = rCrossGlob;
       }
    }
 
-   hA[0]->Fill("TrB", 1.0);
+   if (nTrE <= 0) return -1;
+   hE[0]->Fill("TrE", 1.0);
+
+   return 0;
 }
 
 
 bool StVecBosMaker::MatchTrack2BtowCluster()
 {
-   // First, find barrel candidates
-   ExtendTrack2Barrel();
-
    //printf("******* matchCluster() nVert=%d\n",mVecBosEvent->mVertices.size());
    int   numMatchedTracks = 0;
    float Rcylinder = mBtowGeom->Radius();
@@ -2480,6 +2435,88 @@ bool StVecBosMaker::MatchTrack2BtowCluster()
    if (!numMatchedTracks) return false;
 
    hA[0]->Fill("Tr2Cl", 1.0);
+
+   return true;
+}
+
+
+bool StVecBosMaker::MatchTrack2EtowCluster()
+{
+   // find endcap candidates
+   ExtendTrack2Endcap();
+
+   //printf("******* matchEtowCluster() nVert=%d\n",mVecBosEvent.vertex.size());
+   if (!mVecBosEvent->l2EbitET) return false;
+
+   int numMatchedTracks = 0;
+
+   for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++)
+   {
+      VecBosVertex &vertex = mVecBosEvent->mVertices[iv];
+      float vertexZ = vertex.z;
+
+      for (uint it = 0; it < vertex.eleTrack.size(); it++)
+      {
+         VecBosTrack &track = vertex.eleTrack[it];
+         if (track.pointTower.id >= 0) continue; //skip barrel towers
+
+         float trackPT = track.prMuTrack->momentum().perp();
+
+         //need to decide on 2x2 or 2x1 for cluster size
+         track.mCluster2x2 = maxEtow2x2(track.pointTower.iEta, track.pointTower.iPhi, vertexZ);
+
+         hE[33]->Fill(track.mCluster2x2.ET);
+         hE[34]->Fill(track.mCluster2x2.adcSum, trackPT);
+         hE[110]->Fill(track.mCluster2x2.ET);
+
+         // Compute surrounding mCluster2x2 energy
+         int iEta = track.mCluster2x2.iEta;
+         int iPhi = track.mCluster2x2.iPhi;
+         track.mCluster4x4 = sumEtowPatch(iEta - 1, iPhi - 1, 4, 4, vertexZ);
+
+         if (track.mCluster2x2.ET < parE_clustET) continue; // too low energy
+
+         hE[20]->Fill("CL", 1.);
+         hE[37]->Fill(track.mCluster4x4.ET);
+         hE[38]->Fill(track.mCluster2x2.energy, track.mCluster4x4.energy - track.mCluster2x2.energy);
+
+         float frac24 = track.mCluster2x2.ET / (track.mCluster4x4.ET);
+
+         hE[39]->Fill(frac24);
+
+         if (frac24 < mMinEClusterEnergyIsoRatio) continue;
+
+         hE[20]->Fill("fr24", 1.);
+
+         // set logE weighted cluster position vector at SMD z depth
+         float newMag = mGeomEmc->getZSMD() / TMath::Cos(track.mCluster2x2.position.Theta());
+         track.mCluster2x2.position.SetMag(newMag);
+
+         // spacial separation (track - cluster) only use 2D X-Y distance for endcap (ie. D.Perp())
+         TVector3 D = track.pointTower.R - track.mCluster2x2.position;
+         hE[43]->Fill(track.mCluster2x2.energy, D.Perp());
+
+         float delPhi = track.pointTower.R.DeltaPhi(track.mCluster2x2.position);
+         float Rxy    = track.mCluster2x2.position.Perp();
+
+         hE[44]->Fill( track.mCluster2x2.position.Phi(), Rxy * delPhi);
+         hE[45]->Fill( track.mCluster2x2.energy, Rxy * delPhi); // wrong?
+         hE[46]->Fill( D.Perp());
+
+         if (D.Perp() > mMaxTrackClusterDist) continue;
+
+         track.isMatch2Cl = true; // cluster is matched to TPC track
+
+         hE[20]->Fill("#Delta R", 1.);
+         hE[111]->Fill( track.mCluster2x2.ET);
+
+         numMatchedTracks++;
+      }
+   }
+
+   if (numMatchedTracks <= 0) return false;
+
+   hE[0]->Fill("Tr2Cl", 1.0);
 
    return true;
 }
@@ -2581,9 +2618,11 @@ void StVecBosMaker::FindWBosonEndcap()
    int nNoNear = 0, nNoAway = 0, nGoldW = 0;
 
    // search for  Ws ............
-   for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++) {
+   for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++) 
+   {
       VecBosVertex &V = mVecBosEvent->mVertices[iv];
-      for (uint it = 0; it < V.eleTrack.size(); it++) {
+      for (uint it = 0; it < V.eleTrack.size(); it++) 
+      {
          VecBosTrack &T = V.eleTrack[it];
          if (T.pointTower.id >= 0) continue; //skip barrel towers
          if (T.isMatch2Cl == false) continue;
@@ -2774,9 +2813,11 @@ void StVecBosMaker::analyzeEPRS()
    if (!mVecBosEvent->l2EbitET) return;
 
    //printf("========= analyzeEPRS \n");
-   for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++) {
+   for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++) 
+   {
       VecBosVertex &V = mVecBosEvent->mVertices[iv];
-      for (uint it = 0; it < V.eleTrack.size(); it++) {
+      for (uint it = 0; it < V.eleTrack.size(); it++) 
+      {
          VecBosTrack &T = V.eleTrack[it];
          if (T.pointTower.id >= 0) continue; //skip barrel towers
          if (T.isMatch2Cl == false) continue;
@@ -2787,163 +2828,6 @@ void StVecBosMaker::analyzeEPRS()
       }
    }
 
-}
-
-
-// return # of extended tracks
-int StVecBosMaker::ExtendTrack2Endcap()
-{
-   //printf("******* extendTracksEndcap() nVert=%d\n",mVecBosEvent.vertex.size());
-   if (!mVecBosEvent->l2EbitET) return 0; //fire endcap trigger
-
-   double parE_zSMD = mGeomEmc->getZSMD(); // (cm), smd depth
-   int nTrE = 0;
-   for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++) {
-      VecBosVertex &V = mVecBosEvent->mVertices[iv];
-      for (uint it = 0; it < V.eleTrack.size(); it++) {
-         VecBosTrack &T = V.eleTrack[it];
-         if (T.prMuTrack->eta() < parE_trackEtaMin)
-            continue; // to avoid extrapolation nonsense
-
-         //do eta sorting at track level (tree analysis)
-         if (T.primP.Eta() < parE_leptonEtaLow || T.primP.Eta() > parE_leptonEtaHigh) continue;
-
-         //.... extrapolate track to the disk perpendicular to the z-axis
-         const StPhysicalHelixD trkHlx = T.prMuTrack->outerHelix();
-         StThreeVectorD diskPosition = StThreeVectorD(0, 0, parE_zSMD);
-         StThreeVectorD diskNormal = StThreeVectorD(0, 0, 1);
-
-         //path length at intersection with plane
-         double path = trkHlx.pathLength(diskPosition, diskNormal);
-
-         StThreeVectorD r = trkHlx.at(path);
-         float periodL = trkHlx.period();
-
-         if (periodL < 2 * path) {
-            printf(" Warn, long path fac=%.1f ", path / periodL);
-            printf(" punchEEMC1 x,y,z=%.1f, %.1f, %.1f path=%.1f period=%.1f\n", r.x(), r.y(), r.z(), path, periodL);
-         }
-
-         //printf("hitR xyz=%f %f %f, detEta=%f\n",r.x(),r.y(),r.z(),eta);
-         hE[69]->Fill(r.x(), r.y());
-
-         int isec, isubSec, ietaBin;
-         Float_t epsPhi, epsEta;
-         TVector3 rCross(r.x(), r.y(), r.z());
-         bool inEtow = mGeomEmc->getTower(rCross, isec, isubSec, ietaBin, epsPhi, epsEta);
-         if (!inEtow) continue;
-         hE[20]->Fill("@E", 1.);
-         //printf("trk points EEMC tower isec=%d isub=%d ieta=%d epsPhi=%f epsEta=%f  trkPT=%f\n", isec,isubSec,ietaBin,epsPhi,epsEta,T.prMuTrack->pt());
-
-         nTrE++;
-         T.pointTower.id = -999; //set negative for endcap towers
-         T.pointTower.R = rCross;
-         T.pointTower.iEta = ietaBin;
-         T.pointTower.iPhi = isec * mxEtowSub + isubSec;
-
-         //find global track extrapolation (for ESMD analysis)
-         const StPhysicalHelixD trkHlxGlob = T.glMuTrack->outerHelix();
-         double pathGlob = trkHlxGlob.pathLength(diskPosition, diskNormal);
-
-         StThreeVectorD rGlob = trkHlxGlob.at(pathGlob);
-         float periodLGlob = trkHlxGlob.period();
-
-         if (periodLGlob < 2 * pathGlob) {
-            printf(" Warn, long path Global fac=%.1f ", pathGlob / periodLGlob);
-            printf(" punchEEMC1 x,y,z=%.1f, %.1f, %.1f path=%.1f period=%.1f\n", r.x(), r.y(), r.z(), pathGlob, periodLGlob);
-         }
-         TVector3 rCrossGlob(rGlob.x(), rGlob.y(), rGlob.z());
-         T.pointTower.Rglob = rCrossGlob;
-
-      }
-   }// end of loop over vertices
-
-   if (nTrE <= 0) return -1;
-   hE[0]->Fill("TrE", 1.0);
-   return 0;
-
-}
-
-
-bool StVecBosMaker::matchTrack2EtowCluster()
-{
-   // find endcap candidates
-   ExtendTrack2Endcap();
-
-   //printf("******* matchEtowCluster() nVert=%d\n",mVecBosEvent.vertex.size());
-   if (!mVecBosEvent->l2EbitET) return false;
-
-   int numMatchedTracks = 0;
-
-   for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++)
-   {
-      VecBosVertex &vertex = mVecBosEvent->mVertices[iv];
-      float vertexZ = vertex.z;
-
-      for (uint it = 0; it < vertex.eleTrack.size(); it++)
-      {
-         VecBosTrack &track = vertex.eleTrack[it];
-         if (track.pointTower.id >= 0) continue; //skip barrel towers
-
-         float trackPT = track.prMuTrack->momentum().perp();
-
-         //need to decide on 2x2 or 2x1 for cluster size
-         track.mCluster2x2 = maxEtow2x2(track.pointTower.iEta, track.pointTower.iPhi, vertexZ);
-
-         hE[33]->Fill(track.mCluster2x2.ET);
-         hE[34]->Fill(track.mCluster2x2.adcSum, trackPT);
-         hE[110]->Fill(track.mCluster2x2.ET);
-
-         // Compute surrounding mCluster2x2 energy
-         int iEta = track.mCluster2x2.iEta;
-         int iPhi = track.mCluster2x2.iPhi;
-         track.mCluster4x4 = sumEtowPatch(iEta - 1, iPhi - 1, 4, 4, vertexZ);
-
-         if (track.mCluster2x2.ET < parE_clustET) continue; // too low energy
-
-         hE[20]->Fill("CL", 1.);
-         hE[37]->Fill(track.mCluster4x4.ET);
-         hE[38]->Fill(track.mCluster2x2.energy, track.mCluster4x4.energy - track.mCluster2x2.energy);
-
-         float frac24 = track.mCluster2x2.ET / (track.mCluster4x4.ET);
-
-         hE[39]->Fill(frac24);
-
-         if (frac24 < mMinEClusterEnergyIsoRatio) continue;
-
-         hE[20]->Fill("fr24", 1.);
-
-         // set logE weighted cluster position vector at SMD z depth
-         float newMag = mGeomEmc->getZSMD() / TMath::Cos(track.mCluster2x2.position.Theta());
-         track.mCluster2x2.position.SetMag(newMag);
-
-         // spacial separation (track - cluster) only use 2D X-Y distance for endcap (ie. D.Perp())
-         TVector3 D = track.pointTower.R - track.mCluster2x2.position;
-         hE[43]->Fill(track.mCluster2x2.energy, D.Perp());
-
-         float delPhi = track.pointTower.R.DeltaPhi(track.mCluster2x2.position);
-         float Rxy    = track.mCluster2x2.position.Perp();
-
-         hE[44]->Fill( track.mCluster2x2.position.Phi(), Rxy * delPhi);
-         hE[45]->Fill( track.mCluster2x2.energy, Rxy * delPhi); // wrong?
-         hE[46]->Fill( D.Perp());
-
-         if (D.Perp() > mMaxTrackClusterDist) continue;
-
-         track.isMatch2Cl = true; // cluster is matched to TPC track
-
-         hE[20]->Fill("#Delta R", 1.);
-         hE[111]->Fill( track.mCluster2x2.ET);
-
-         numMatchedTracks++;
-      }
-   }
-
-   if (numMatchedTracks <= 0) return false;
-
-   hE[0]->Fill("Tr2Cl", 1.0);
-
-   return true;
 }
 
 

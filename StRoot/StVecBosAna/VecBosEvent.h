@@ -6,8 +6,8 @@
 #include "TVector3.h"
 #include "TH1.h"
 
-#include <StTriggerUtilities/L2Emulator/L2wAlgo/L2wResult2009.h>
-#include <StMuDSTMaker/COMMON/StMuTrack.h>
+#include "StMuDSTMaker/COMMON/StMuTrack.h"
+#include "StMuDSTMaker/COMMON/StMuPrimaryVertex.h"
 
 #include "StSpinPool/StJets/StJet.h"
 #include "StSpinPool/StJets/StJets.h"
@@ -194,21 +194,24 @@ public:
 
    VecBosEvent();
 
-   void          AddTrack(UInt_t vertexId, StMuTrack *stMuTrack);
-   void          AddStJets(StJets *stJets, StJets *stJetsNoEndcap);
-   TClonesArray* GetJets();
-   TClonesArray* GetJetsNoEndcap();
-   UInt_t        GetNumJets();
-   UInt_t        GetNumJetsNoEndcap();
-   UInt_t        GetNumVertices();
-   UInt_t        GetNumTracks();
-   UInt_t        GetNumTracksWithBCluster();
-   UInt_t        GetNumTracksWithBCluster2();
-   bool          HasGoodVertex();
-   bool          HasGoodTrack();
-   void          clear();
-   void          print(int flag = 0, int isMC = 0);
-   void          getGmt_day_hour(int &yyyymmdd, int &hhmmss);
+   VecBosVertex*       AddVertex(StMuPrimaryVertex &stMuVertex);
+   void                AddVertex(VecBosVertex &vbVertex);
+   void                AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex=0);
+   void                AddStJets(StJets *stJets, StJets *stJetsNoEndcap);
+   TClonesArray*       GetJets();
+   TClonesArray*       GetJetsNoEndcap();
+   UInt_t              GetNumJets();
+   UInt_t              GetNumJetsNoEndcap();
+   UInt_t              GetNumVertices();
+   UInt_t              GetNumTracks();
+   UInt_t              GetNumTracksWithBCluster();
+   UInt_t              GetNumTracksWithBCluster2();
+   bool                HasGoodVertex();
+   bool                HasGoodTrack();
+   void                Process();
+   void                clear();
+   void                print(int flag = 0, int isMC = 0);
+   void                getGmt_day_hour(int &yyyymmdd, int &hhmmss);
 
    ClassDef(VecBosEvent, 2);
 };

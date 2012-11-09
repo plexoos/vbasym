@@ -17,20 +17,37 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
 }
 
 
-void VecBosEvent::AddTrack(UInt_t vertexId, StMuTrack* stMuTrack)
+VecBosVertex* VecBosEvent::AddVertex(StMuPrimaryVertex &stMuVertex)
 {
-   mVertices[vertexId].prTrList.push_back(stMuTrack);
+   VecBosVertex vecBosVertex(stMuVertex);
+   mVertices.push_back(vecBosVertex);
+   return &mVertices.back();
+}
 
+
+void VecBosEvent::AddVertex(VecBosVertex &vbVertex)
+{
+   mVertices.push_back(vbVertex);
+}
+
+
+void VecBosEvent::AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex)
+{
    StThreeVectorF prPvect = stMuTrack->p();
 
-   VecBosTrack track;
+   VecBosTrack vbTrack;
 
-   track.prMuTrack     = stMuTrack;
-   track.glMuTrack     = stMuTrack->globalTrack();
-   track.mVecBosVertex = &mVertices[vertexId];
-   track.primP         = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
+   vbTrack.prMuTrack     = stMuTrack;
+   vbTrack.glMuTrack     = stMuTrack->globalTrack();
+   vbTrack.mVecBosVertex = vbVertex;
+   vbTrack.primP         = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
 
-   mTracks.push_back(track);
+   if (vbVertex) {
+      vbVertex->prTrList.push_back(stMuTrack);
+      vbVertex->eleTrack.push_back(vbTrack);
+   }
+
+   mTracks.push_back(vbTrack);
 }
 
 
@@ -123,15 +140,22 @@ Bool_t VecBosEvent::HasGoodTrack()
    }
 
    return false;
+}
 
-   //if (mVecBosEvent->l2bitET && rank > 0 && primaryTrack->flag() == 301)
-      //XXX:ds:if (secID == 20) continue; //poorly calibrated sector for Run 9+11+12?
-      //XXX:ds:if (mTpcFilter[secID - 1].accept(primaryTrack) == false) continue;
 
-   //if (mVecBosEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin)
-      //XXX:ds:if ( mTpcFilterE[secID - 1].accept(primaryTrack) == false) continue;
+void VecBosEvent::Process()
+{
+   VecBosVertexVecIter iVertex = mVertices.begin();
+   for ( ; iVertex!=mVertices.end(); ++iVertex)
+   {
+      iVertex->Process();
+   }
 
-   //XXX:ds:if (!barrelTrack && !endcapTrack) continue;
+   VecBosTrackVecIter iTrack = mTracks.begin();
+   for ( ; iTrack!=mTracks.end(); ++iTrack)
+   {
+      iTrack->Process();
+   }
 }
 
 

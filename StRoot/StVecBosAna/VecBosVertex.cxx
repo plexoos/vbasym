@@ -2,9 +2,22 @@
 #include "VecBosVertex.h"
 
 
-VecBosVertex::VecBosVertex() : mType(kUNKNOWN), id(-1), z(-1), mRank(-1), mRankLog(-1),
+VecBosVertex::VecBosVertex() : TObject(), mType(kUNKNOWN), id(-1), z(-1), mRank(-1), mRankLog(-1),
    nEEMCMatch(-1), mPosition(), eleTrack(), prTrList()
 {
+}
+
+
+VecBosVertex::VecBosVertex(StMuPrimaryVertex &stMuVertex) : TObject(),
+   mType(kUNKNOWN), id(stMuVertex.idTruth()), z(0), mRank(-1), mRankLog(-1),
+   nEEMCMatch(stMuVertex.nEEMCMatch()), mPosition(), eleTrack(), prTrList()
+{
+   z          = stMuVertex.position().z();
+   mRank      = stMuVertex.ranking();
+   if (mRank > 1e6)    mRankLog = log(mRank - 1e6) + 10;
+   else if (mRank > 0) mRankLog = log(mRank);
+   else                mRankLog = log(mRank + 1e6) - 10;
+   SetPosition(stMuVertex.position());
 }
 
 
@@ -17,25 +30,21 @@ void VecBosVertex::SetPosition(const StThreeVectorF &vec)
 
 
 /** Checks the vertex paramteres against predefined cuts. */
-bool VecBosVertex::IsGood()
-{
-   if (mType == kGOOD) return true;
-
-   if ( (mRank > 0 || nEEMCMatch > 0) && fabs(mPosition.z()) <= 100)
-   {
-      mType = kGOOD;
-      return true;
-   }
-
-   mType = kBAD;
-   return false;
-}
-
-
 bool VecBosVertex::IsGood() const
 {
    if (mType == kGOOD) return true;
    return false;
+}
+
+
+void VecBosVertex::Process()
+{
+   if ( (mRank > 0 || nEEMCMatch > 0) && fabs(mPosition.z()) <= 100)
+   {
+      mType = kGOOD;
+   } else {
+      mType = kBAD;
+   }
 }
 
 

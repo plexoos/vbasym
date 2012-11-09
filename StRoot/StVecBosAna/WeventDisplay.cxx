@@ -1,3 +1,4 @@
+
 #include <TH1.h>
 #include <TH2.h>
 #include <TMath.h>
@@ -13,21 +14,20 @@
 #include <TEllipse.h>
 #include <stdio.h>
 
-// MuDst
-#include <StMuDSTMaker/COMMON/StMuDstMaker.h>
-#include <StMuDSTMaker/COMMON/StMuDst.h>
-#include <StMuDSTMaker/COMMON/StMuTriggerIdCollection.h>
-#include <StMuDSTMaker/COMMON/StMuEvent.h>
-#include <StMuDSTMaker/COMMON/StMuTrack.h>
-#include <StMuDSTMaker/COMMON/StMuPrimaryVertex.h>
+#include "StMuDSTMaker/COMMON/StMuDstMaker.h"
+#include "StMuDSTMaker/COMMON/StMuDst.h"
+#include "StMuDSTMaker/COMMON/StMuTriggerIdCollection.h"
+#include "StMuDSTMaker/COMMON/StMuEvent.h"
+#include "StMuDSTMaker/COMMON/StMuTrack.h"
+#include "StMuDSTMaker/COMMON/StMuPrimaryVertex.h"
 #include "StEmcUtil/geometry/StEmcGeom.h"
 
-// Esmd geometry for plots
 #include "StEEmcUtil/EEmcGeom/EEmcGeomSimple.h"
 #include "StEEmcUtil/StEEmcSmd/EEmcSmdGeom.h"
 
 #include "StVecBosMaker.h"
 #include "WanaConst.h"
+#include "Globals.h"
 #include "WeventDisplay.h"
 
 
@@ -403,8 +403,8 @@ void WeventDisplay::exportEvent( const char *tit, VecBosVertex myV, VecBosTrack 
    hEmcET->SetMinimum(0.3);  hEmcET->SetMaximum(30.);
    // compute approximate event eta for barrel
    float x, y, z;
-   float Rcylinder = wMK->mBtowGeom->Radius();
-   assert(wMK->mBtowGeom->getXYZ(20, x, y, z) == 0); // this is approximate Z of last tower
+   float Rcylinder = mBtowGeom->Radius();
+   assert(mBtowGeom->getXYZ(20, x, y, z) == 0); // this is approximate Z of last tower
    TVector3 rL(Rcylinder, 0, z + myV.z);
    TVector3 rR(Rcylinder, 0, z - myV.z);
    float etaL = -rL.Eta(), etaR = rR.Eta();
@@ -536,7 +536,7 @@ void WeventDisplay::export2sketchup(  const char *tit, VecBosVertex myV, VecBosT
    }
 
    // Dump BTOW towers
-   float Rcylinder = wMK->mBtowGeom->Radius(), Rcylinder2 = Rcylinder * Rcylinder;
+   float Rcylinder = mBtowGeom->Radius(), Rcylinder2 = Rcylinder * Rcylinder;
    for (int i = 0; i < mxBtow; i++) {
       float ene = wMK->mVecBosEvent->bemc.eneTile[kBTow][i];
       if (ene <= 0) continue;

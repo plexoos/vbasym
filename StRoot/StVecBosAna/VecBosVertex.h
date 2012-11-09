@@ -3,16 +3,19 @@
 
 #include <vector>
 
+//#include "TObject.h"
+
 #include "StThreeVectorF.hh"
 
 #include "StMuDSTMaker/COMMON/StMuTrack.h"
+#include "StMuDSTMaker/COMMON/StMuPrimaryVertex.h"
 
 #include "VecBosTrack.h"
 
 
 
 // Info about vertex
-class VecBosVertex
+class VecBosVertex : public TObject
 {
 public:
 
@@ -30,9 +33,10 @@ public:
    vector<StMuTrack*>  prTrList;
 
    VecBosVertex();
+   VecBosVertex(StMuPrimaryVertex &stMuVertex);
    void SetPosition(const StThreeVectorF &vec);
-   bool IsGood();
    bool IsGood() const;
+   void Process();
    void clear();
    void print(int flag=0);
 

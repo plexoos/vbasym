@@ -4,6 +4,7 @@
 #include <vector>
 #include <set>
 
+#include "TObject.h"
 #include "TVector3.h"
 
 #include <StMuDSTMaker/COMMON/StMuTrack.h>
@@ -16,7 +17,7 @@ class VecBosVertex;
 
 
 // Track info
-class VecBosTrack
+class VecBosTrack : public TObject
 {
 public:
 
@@ -64,13 +65,19 @@ public:
 
    VecBosTrack();
 
-   bool IsGood();
+   bool IsGood() const;
+   bool IsBTrack() const;
+   bool IsETrack() const;
    bool HasBarrelMatched();
    bool HasEndcapMatched();
+   void Process();
    void clear();
    void print( int flag = 0);
    TVector3 CalcDistanceToMatchedCluster();
 
+private:
+
+   void ExtendTrack2Barrel();
 
    ClassDef(VecBosTrack, 1);
 };

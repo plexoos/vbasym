@@ -14,6 +14,7 @@
 #include <TRandom3.h>
 
 #include "VecBosEvent.h"
+#include "VecBosVertex.h"
 #include "WtpcFilter.h"
 #include "VecBosRootFile.h"
 
@@ -92,7 +93,7 @@ private:
    float mMinEClusterEnergyIsoRatio, parE_nearTotEtFrac;
    float mTrackIsoDeltaR, mTrackIsoDeltaPhi;
    float mMaxTrackClusterDist, parE_delR3D, par_highET, parE_highET,  par_ptBalance, parE_ptBalance;
-   float mCutTrackEtaMin, mCutTrackEtaMax, parE_leptonEtaLow, parE_leptonEtaHigh; //bracket acceptance
+   float mMinBTrackEta, mMaxBTrackEta, mMinETrackEta, mMaxETrackEta; //bracket acceptance
    float parE_trackEtaMin;
    int   parE_nSmdStrip;
 
@@ -117,10 +118,10 @@ public: // to overwrite default params from .C macro
       par_trackRin = rin;  par_trackRout = rout; mMinBTrackPt = mpt;
    }
    void setWbosonCuts(float a, float fr2,  float bal, float etaLow, float etaHigh) {
-      par_highET = a; par_nearTotEtFrac = fr2;  par_ptBalance = bal;  mCutTrackEtaMin = etaLow; mCutTrackEtaMax = etaHigh;
+      par_highET = a; par_nearTotEtFrac = fr2;  par_ptBalance = bal;  mMinBTrackEta = etaLow; mMaxBTrackEta = etaHigh;
    }
    void setE_WbosonCuts(float a, float fr2,  float bal, float etaLow, float etaHigh) {
-      parE_highET = a; parE_nearTotEtFrac = fr2;  parE_ptBalance = bal;  parE_leptonEtaLow = etaLow; parE_leptonEtaHigh = etaHigh;
+      parE_highET = a; parE_nearTotEtFrac = fr2;  parE_ptBalance = bal;  mMinETrackEta = etaLow; mMaxETrackEta = etaHigh;
    }
    void setEmcCuts(int ksp , float madc, float clet, float fr1, float dr) {
       par_kSigPed = ksp; par_maxADC = madc; mMinBClusterEnergy = clet;
@@ -141,16 +142,14 @@ public: // to overwrite default params from .C macro
 
 private:
 
-   //.... not used in the algo
+   // not used in the algo
    int par_DsmThres, parE_DsmThres;
    int par_maxDisplEve;
 
    StBemcTables *mBarrelTables;                          //used to access EMC status and ped info
-   StEmcGeom    *mBtowGeom;
    StEmcGeom    *mBSmdGeom[mxBSmd];
-   int           mapBtowIJ2ID[mxBTetaBin * mxBTphiBin];  // vs. (iEta, iPhi)
-   TVector3      mBCalTowerCoords[mxBtow];                   // vs. tower ID
-   TVector3      mBSmdStripCoords[mxBSmd][mxBStrips];        // vs. strip ID
+   TVector3      mBCalTowerCoords[mxBtow];               // vs. tower ID
+   TVector3      mBSmdStripCoords[mxBSmd][mxBStrips];    // vs. strip ID
 
    StEEmcDb       *mDbE;       // access to EEMC database
    StSpinDbMaker  *spinDb;     // access spin information
@@ -162,8 +161,8 @@ private:
    int   ReadMuDstETOW();
    int   ReadMuDstBarrelTrig();
    int   ReadMuDstEndcapTrig();
-   void  ReadMuDstVertex();
-   void  ReadMuDstTrack();
+   void  ReadMuDstVerticesTracks();
+   void  ReadMuDstTracks(VecBosVertex* vbVertex);
    void  ReadMuDstBSMD();
    void  ReadMuDstESMD();
    void  ReadMuDstEPRS();
@@ -179,9 +178,9 @@ private:
    void  FindWBosonEndcap();
    void  FindZBoson();
    void  ExtendTrack2Barrel();
-   bool  MatchTrack2BtowCluster();
    int   ExtendTrack2Endcap();
-   bool  matchTrack2EtowCluster();
+   bool  MatchTrack2BtowCluster();
+   bool  MatchTrack2EtowCluster();
    void  FindNearJet();
    void  FindAwayJet();
    void  CalcPtBalance();
@@ -221,7 +220,6 @@ private:
    void initHistos();
    void initEHistos();
    void initGeom();
-   bool ConvertEtaPhi2Bins(float etaF, float phiF, int &kEta, int &kPhi);
 
 public:
 
@@ -237,8 +235,8 @@ public:
 
    void setTrigID(int l2bw, int l2ew) { par_l2bwTrgID = l2bw; parE_l2ewTrgID = l2ew; }
 
-   void setHList(TObjArray *x) {HList = x;}
-   void setHListTpc(TObjArray *x) {HListTpc = x;}
+   void setHList(TObjArray *x)    { HList    = x; }
+   void setHListTpc(TObjArray *x) { HListTpc = x; }
    void setMC(int x) {isMC = x;}
    void setMaxDisplayEve(int n) { par_maxDisplEve = n;}
    void attachSpinDb(StSpinDbMaker *mk) { spinDb = mk;}

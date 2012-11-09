@@ -9,6 +9,9 @@
 #include "StMcEvent/StMcVertex.hh"
 #include "StMcEvent/StMcTrack.hh"
 
+#include "Globals.h"
+
+
 ClassImp(St2011pubMcMaker)
 
 
@@ -187,7 +190,7 @@ void St2011pubMcMaker::doWefficiency()
 
    //plot for Scott
    TVector3 detEle; //where lepton would hit BEMC
-   float Rcylinder = wMK->mBtowGeom->Radius();
+   float Rcylinder = mBtowGeom->Radius();
    detEle.SetPtEtaPhi(Rcylinder, mElectronP.Eta(), mElectronP.Phi());
    detEle.SetZ(detEle.Z() + mVertex.Z());
    hA[66]->Fill(detEle.Eta(), mElectronP.Perp());
