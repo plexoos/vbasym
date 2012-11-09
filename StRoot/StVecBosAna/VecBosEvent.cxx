@@ -33,6 +33,9 @@ void VecBosEvent::AddVertex(VecBosVertex &vbVertex)
 
 void VecBosEvent::AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex)
 {
+   //if (vbVertex) Info("AddTrack", "vbVertex != 0");
+   //else          Info("AddTrack", "vbVertex == 0");
+
    StThreeVectorF prPvect = stMuTrack->p();
 
    VecBosTrack vbTrack;

@@ -48,6 +48,9 @@ void TrackHContainer::BookHists()
    o["hTrackFlag"] = hist = new TH1I("hTrackFlag", "; Track Flag; Num. of Tracks", 60, 280, 340);
    hist->SetOption("hist GRIDX GRIDY");
 
+   o["hTrackType"] = hist = new TH1I("hTrackType", "; Track Type; Num. of Tracks", 40, 0, 40);
+   hist->SetOption("hist GRIDX GRIDY");
+
    o["hTrackEta"] = hist = new TH1I("hTrackEta", "; Track #eta; Num. of Tracks", 60, -3, 3);
    hist->SetOption("hist GRIDX GRIDY");
 
@@ -98,6 +101,7 @@ void TrackHContainer::Fill(ProtoEvent &ev)
 void TrackHContainer::Fill(VecBosTrack &track)
 {
    ((TH1*) o["hTrackFlag"])->Fill(track.prMuTrack->flag());
+   ((TH1*) o["hTrackType"])->Fill(track.mType);
    ((TH1*) o["hTrackEta"])->Fill(track.primP.Eta());
    ((TH1*) o["hTrackPhi"])->Fill(track.primP.Phi());
    ((TH1*) o["hTrackPt"])->Fill(track.prMuTrack->pt());

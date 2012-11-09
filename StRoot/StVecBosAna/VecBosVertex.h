@@ -19,7 +19,7 @@ class VecBosVertex : public TObject
 {
 public:
 
-   enum EVertexType {kUNKNOWN, kBAD, kGOOD};
+   enum EVertexType {kUNKNOWN=0x0000, kBAD=0x1000, kGOOD=0x0001};
 
    EVertexType  mType;
    int          id;           // as store do muDst list

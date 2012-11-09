@@ -42,8 +42,14 @@ void JetHContainer::BookHists()
 
    fDir->cd();
 
-   o["hNumTracksWithBCluster"] = hist = new TH1I("hNumTracksWithBCluster", "; Num. of Tracks with Barrel Cluster; Events", 5, 0, 5);
-   hist->SetOption("hist GRIDX");
+   o["hJetEta"] = hist = new TH1I("hJetEta", "; Jet #eta; Num. of Jets", 60, -3, 3);
+   hist->SetOption("hist GRIDX GRIDY");
+
+   o["hJetPhi"] = hist = new TH1I("hJetPhi", "; Jet #phi; Num. of Jets", 60, -M_PI, M_PI);
+   hist->SetOption("hist GRIDX GRIDY");
+
+   o["hJetPt"] = hist = new TH1I("hJetPt", "; Jet P_T; Num. of Jets", 60, 0, 60);
+   hist->SetOption("hist GRIDX GRIDY XY");
 }
 
 
@@ -52,22 +58,24 @@ void JetHContainer::Fill(ProtoEvent &ev)
 {
    VecBosEvent& event = (VecBosEvent&) ev;
 
-   VecBosTrackVecIter iJet = event.mTracks.begin();
+   StJetPtrSetIter iJet = event.mJets.begin();
 
-   for ( ; iJet!=event.mTracks.end(); ++iJet)
+   for ( ; iJet!=event.mJets.end(); ++iJet)
    {
-      //Fill(*iJet);
+      Fill(**iJet);
    }
 }
 
 
 /** */
-//void JetHContainer::Fill(VecBosTrack &track)
-//{
-//   ((TH1*) o["hTrackFlag"])->Fill(track.prMuTrack->flag());
-//
-//   //printf("hasMatchedCluster: %d\n", track.isMatch2Cl);
-//}
+void JetHContainer::Fill(StJet &stJet)
+{
+   ((TH1*) o["hJetEta"])->Fill(stJet.Eta());
+   ((TH1*) o["hJetPhi"])->Fill(stJet.Phi());
+   ((TH1*) o["hJetPt"])->Fill(stJet.Pt());
+
+   //printf("hasMatchedCluster: %d\n", stJet.isMatch2Cl);
+}
 
 
 /** */

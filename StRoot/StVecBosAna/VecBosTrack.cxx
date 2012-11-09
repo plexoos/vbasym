@@ -50,8 +50,8 @@ void VecBosTrack::Process()
          mType = kBARREL;
       else if ( prMuTrack->flag() == 311 )
          mType = kENDCAP;
-
-      mType = kBAD;
+      else
+         mType = kBAD;
    } else
       mType = kBAD;
 

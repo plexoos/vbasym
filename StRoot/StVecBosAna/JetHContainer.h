@@ -9,6 +9,8 @@
 
 #include "TDirectoryFile.h"
 
+#include "StSpinPool/StJets/StJet.h"
+
 #include "utils/PlotHelper.h"
 #include "utils/ProtoEvent.h"
 
@@ -32,7 +34,7 @@ public:
    using PlotHelper::PostFill;
 
    void Fill(ProtoEvent &ev);
-   //void Fill(VecBosTrack &track);
+   void Fill(StJet &track);
    void FillDerived();
    void PostFill();
 

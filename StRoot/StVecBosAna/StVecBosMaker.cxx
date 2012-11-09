@@ -421,16 +421,16 @@ Int_t StVecBosMaker::Make()
 
    //hA[116]->Fill(mVecBosEvent->mNJets);
 
-   for (uint iJet=0; iJet<mVecBosEvent->GetNumJets(); ++iJet)
-   {
-      StJet *jet     = GetJet(iJet);
-      float  jet_pt  = jet->Pt();
-      float  jet_eta = jet->Eta();
-      float  jet_phi = jet->Phi();
+   //for (uint iJet=0; iJet<mVecBosEvent->GetNumJets(); ++iJet)
+   //{
+   //   StJet *jet     = GetJet(iJet);
+   //   float  jet_pt  = jet->Pt();
+   //   float  jet_eta = jet->Eta();
+   //   float  jet_phi = jet->Phi();
 
-      hA[117]->Fill(jet_eta, jet_phi);
-      hA[118]->Fill(jet_pt);
-   }
+   //   hA[117]->Fill(jet_eta, jet_phi);
+   //   hA[118]->Fill(jet_pt);
+   //}
 
    // Add tracks to the event and atch tracks to energy clusters in the barrel
    // and endcap
@@ -1278,14 +1278,14 @@ void StVecBosMaker::ReadMuDstTracks(VecBosVertex* vbVertex)
       //XXX:ds:if (primaryTrack->flag() != 301 && primaryTrack->flag() != 311) continue;
 
       if (mVecBosEvent->l2bitET  && vbVertex->mRank > 0 && primaryTrack->flag() == 301) hA[20]->Fill("flag", 1.);
-      if (mVecBosEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin)  hE[20]->Fill("flag", 1.);
+      if (mVecBosEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin)             hE[20]->Fill("flag", 1.);
 
       float pt = primaryTrack->pt();
 
       //XXX:ds:if (pt < 1.0) continue;
 
       if (mVecBosEvent->l2bitET  && vbVertex->mRank > 0 && primaryTrack->flag() == 301) hA[20]->Fill("pt1", 1.);
-      if (mVecBosEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin)  hE[20]->Fill("pt1", 1.);
+      if (mVecBosEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin)             hE[20]->Fill("pt1", 1.);
 
       // Accepted tracks
       float hitFrac     = 1.*primaryTrack->nHitsFit() / primaryTrack->nHitsPoss();
