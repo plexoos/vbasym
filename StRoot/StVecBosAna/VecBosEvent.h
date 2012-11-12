@@ -180,6 +180,10 @@ public:
    int                bxStar48;
    int                spin4;             // using spinDb or -1 if failed
    bool               zTag;
+   UInt_t             mNumGoodVertices;
+   UInt_t             mNumGoodTracks;
+   UInt_t             mNumBTracks;
+   UInt_t             mNumETracks;
    StJets            *mStJets;          //!
    StJets            *mStJetsNoEndcap;  //! jets noEEMC
    WeveBEMC           bemc;
@@ -202,12 +206,17 @@ public:
    TClonesArray*       GetJetsNoEndcap();
    UInt_t              GetNumJets();
    UInt_t              GetNumJetsNoEndcap();
-   UInt_t              GetNumVertices();
-   UInt_t              GetNumTracks();
+   UInt_t              GetNumVertices()     { return mVertices.size(); }
+   UInt_t              GetNumTracks()       { return mTracks.size(); }
+   UInt_t              GetNumGoodVertices() { return mNumGoodVertices; }
+   UInt_t              GetNumGoodTracks()   { return mNumGoodTracks; }
+   UInt_t              GetNumBTracks()      { return mNumBTracks; }
+   UInt_t              GetNumETracks()      { return mNumETracks; }
    UInt_t              GetNumTracksWithBCluster();
    UInt_t              GetNumTracksWithBCluster2();
-   bool                HasGoodVertex();
-   bool                HasGoodTrack();
+   /** Checks if at least one good vertex exist in the event. */
+   bool                HasGoodVertex() { return mNumGoodVertices > 0 ? true : false; }
+   bool                HasGoodTrack()  { return mNumGoodTracks > 0 ? true : false; }
    void                Process();
    void                clear();
    void                print(int flag = 0, int isMC = 0);

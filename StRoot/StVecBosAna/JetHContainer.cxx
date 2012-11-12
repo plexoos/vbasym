@@ -50,6 +50,9 @@ void JetHContainer::BookHists()
 
    o["hJetPt"] = hist = new TH1I("hJetPt", "; Jet P_T; Num. of Jets", 60, 0, 60);
    hist->SetOption("hist GRIDX GRIDY XY");
+
+   o["hJetNumTracks"] = hist = new TH1I("hJetNumTracks", "; Num. of Tracks in Jet; Num. of Jets", 20, 0, 20);
+   hist->SetOption("hist GRIDX GRIDY");
 }
 
 

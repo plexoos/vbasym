@@ -48,7 +48,19 @@ void EventHContainer::BookHists()
    o["hNumVertices"] = hist = new TH1I("hNumVertices", "; Num. of Vertices; Events", 10, 0, 10);
    hist->SetOption("hist GRIDX");
 
-   o["hNumTracks"] = hist = new TH1I("hNumTracks", "; Num. of Tracks; Events", 50, 0, 150);
+   o["hNumGoodVertices"] = hist = new TH1I("hNumGoodVertices", "; Num. of Good Vertices; Events", 10, 0, 10);
+   hist->SetOption("hist GRIDX");
+
+   o["hNumTracks"] = hist = new TH1I("hNumTracks", "; Num. of Tracks; Events", 50, 0, 250);
+   hist->SetOption("hist GRIDX");
+
+   o["hNumGoodTracks"] = hist = new TH1I("hNumGoodTracks", "; Num. of Good Tracks; Events", 40, 0, 40);
+   hist->SetOption("hist GRIDX");
+
+   o["hNumBTracks"] = hist = new TH1I("hNumBTracks", "; Num. of Barrel Tracks; Events", 40, 0, 40);
+   hist->SetOption("hist GRIDX");
+
+   o["hNumETracks"] = hist = new TH1I("hNumETracks", "; Num. of Endcap Tracks; Events", 10, 0, 10);
    hist->SetOption("hist GRIDX");
 
    o["hNumTracksWithBCluster"] = hist = new TH1I("hNumTracksWithBCluster", "; Num. of Tracks with Barrel Cluster; Events", 5, 0, 5);
@@ -117,7 +129,11 @@ void EventHContainer::Fill(ProtoEvent &ev)
 
    ((TH1*) o["hNumJets"])->Fill(event.GetNumJets());
    ((TH1*) o["hNumVertices"])->Fill(event.mVertices.size());
+   ((TH1*) o["hNumGoodVertices"])->Fill(event.mVertices.size());
    ((TH1*) o["hNumTracks"])->Fill(event.GetNumTracks());
+   ((TH1*) o["hNumGoodTracks"])->Fill(event.GetNumGoodTracks());
+   ((TH1*) o["hNumBTracks"])->Fill(event.GetNumBTracks());
+   ((TH1*) o["hNumETracks"])->Fill(event.GetNumETracks());
    ((TH1*) o["hNumTracksWithBCluster"])->Fill(event.GetNumTracksWithBCluster());
    ((TH1*) o["hNumTracksWithBCluster2"])->Fill(event.GetNumTracksWithBCluster2());
 }

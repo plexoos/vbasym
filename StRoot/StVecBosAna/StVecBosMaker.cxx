@@ -451,16 +451,18 @@ Int_t StVecBosMaker::Make()
    CalcPtBalance();
    //CalcMissingET();
 
-   if (hasMatchedTrack2BCluster) FindZBoson();
-
    // endcap specific analysis
    if (hasMatchedTrack2ECluster) {
       analyzeESMD();
-      analyzeEPRS();
+      //analyzeEPRS(); // not implemented
    }
 
    // Fill final histograms
-   if (hasMatchedTrack2BCluster) FindWBoson();
+   if (hasMatchedTrack2BCluster) {
+      FindWBoson();
+      FindZBoson();
+   }
+
    if (hasMatchedTrack2ECluster) FindWBosonEndcap();
 
    mVecBosRootFile->Fill(*mVecBosEvent, kCUT_CUT);
@@ -2738,8 +2740,8 @@ void StVecBosMaker::FindWBosonEndcap()
 void StVecBosMaker::analyzeESMD()
 {
    if (!mVecBosEvent->l2EbitET) return;
+   //Info("analyzeESMD", "");
 
-   //printf("========= analyzeESMD \n");
    for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++)
    {
       VecBosVertex &V = mVecBosEvent->mVertices[iv];
@@ -2748,20 +2750,24 @@ void StVecBosMaker::analyzeESMD()
          VecBosTrack &T = V.eleTrack[it];
          if (T.pointTower.id >= 0) continue; //skip barrel towers
          if (T.isMatch2Cl == false) continue;
+
          assert(T.mCluster2x2.nTower > 0); // internal logical error
 
-         //id of strips pointed by prim and glob tracks in each plane
-         int hitStrip[2] = { -1, -1}; int hitStripGlob[2] = { -1, -1};
-         //initialize shower shape histograms
+         // Id of strips pointed by prim and glob tracks in each plane
+         int hitStrip[2]     = { -1, -1};
+         int hitStripGlob[2] = { -1, -1};
+
+         // Initialize shower shape histograms
          TH1F *esmdShowerHist[2];
          esmdShowerHist[0] = new TH1F(Form("esmdU%d", mVecBosEvent->id), "esmdU", 41, -10.25, 10.25);
          esmdShowerHist[1] = new TH1F(Form("esmdV%d", mVecBosEvent->id), "esmdV", 41, -10.25, 10.25);
 
-         //loop over planes
+         // Loop over planes
          for (int iuv = 0; iuv < 2; iuv++)
          {
             Float_t dca; //primary extrapolation to smd plane
             const StructEEmcStrip *stripPtr = mGeomSmd->getDca2Strip(iuv, T.pointTower.R, &dca); // find pointed strip
+
             if (!stripPtr) {cout << "No Strip found" << endl; continue;}
             if (fabs(dca) > 0.5 /*cm*/) {cout << "DCA to big" << endl; continue;}
 
@@ -2770,12 +2776,16 @@ void StVecBosMaker::analyzeESMD()
 
             int maxStripId = -1; float maxE = -1;
 
-            int stripId = stripPtr->stripStructId.stripId;
+            int stripId  = stripPtr->stripStructId.stripId;
             int sectorId = stripPtr->stripStructId.sectorId;
-            T.hitSector = sectorId;
+
+            T.hitSector          = sectorId;
             T.esmdGlobStrip[iuv] = stripPtrGlob->stripStructId.stripId - stripId;
-            T.esmdDca[iuv] = dca; T.esmdDcaGlob[iuv] = dcaGlob;
-            hitStrip[iuv] = stripId; hitStripGlob[iuv] = stripPtrGlob->stripStructId.stripId;
+            T.esmdDca[iuv]       = dca;
+            T.esmdDcaGlob[iuv]   = dcaGlob;
+
+            hitStrip[iuv]     = stripId;
+            hitStripGlob[iuv] = stripPtrGlob->stripStructId.stripId;
 
             // set integration range for smd energy
             int str1 = stripId - parE_nSmdStrip; if (str1 < 1) str1 = 1;
@@ -2811,23 +2821,21 @@ void StVecBosMaker::analyzeESMD()
 void StVecBosMaker::analyzeEPRS()
 {
    if (!mVecBosEvent->l2EbitET) return;
+   // Info("analyzeEPRS");
 
-   //printf("========= analyzeEPRS \n");
    for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++) 
    {
       VecBosVertex &V = mVecBosEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) 
       {
          VecBosTrack &T = V.eleTrack[it];
-         if (T.pointTower.id >= 0) continue; //skip barrel towers
+         if (T.pointTower.id >= 0) continue; // skip barrel towers
          if (T.isMatch2Cl == false) continue;
          assert(T.mCluster2x2.nTower > 0); // internal logical error
 
          //do some clustering of EPRS deposits and plot histos
-
       }
    }
-
 }
 
 

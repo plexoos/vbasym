@@ -68,8 +68,8 @@ public:
    bool IsGood() const;
    bool IsBTrack() const;
    bool IsETrack() const;
-   bool HasBarrelMatched();
-   bool HasEndcapMatched();
+   //bool HasBarrelMatched();
+   //bool HasEndcapMatched();
    void Process();
    void clear();
    void print( int flag = 0);

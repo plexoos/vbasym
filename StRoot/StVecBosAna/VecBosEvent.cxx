@@ -7,6 +7,7 @@ using namespace std;
 
 
 VecBosEvent::VecBosEvent() : ProtoEvent(),
+   mNumGoodVertices(0), mNumGoodTracks(0), mNumBTracks(0), mNumETracks(0),
    mStJets(0),
    mJets(),
    mVertices(),
@@ -76,24 +77,6 @@ UInt_t        VecBosEvent::GetNumJets()         { return mStJets         ? mStJe
 UInt_t        VecBosEvent::GetNumJetsNoEndcap() { return mStJetsNoEndcap ? mStJetsNoEndcap->nJets() : 0; }
 
 
-UInt_t VecBosEvent::GetNumVertices()
-{
-   return mVertices.size();
-}
-
-
-UInt_t VecBosEvent::GetNumTracks()
-{
-   UInt_t nTracks = 0;
-   VecBosVertexVecIter iVertex = mVertices.begin();
-
-   for ( ; iVertex!=mVertices.end(); ++iVertex)
-      nTracks += iVertex->prTrList.size();
-
-   return nTracks;
-}
-
-
 UInt_t VecBosEvent::GetNumTracksWithBCluster()
 {
    UInt_t nTracks = 0;
@@ -119,45 +102,23 @@ UInt_t VecBosEvent::GetNumTracksWithBCluster2()
 }
 
 
-/** Checks if at least one good vertex exist in the event. */
-bool VecBosEvent::HasGoodVertex()
-{
-   VecBosVertexVecIter iVertex = mVertices.begin();
-
-   for ( ; iVertex!=mVertices.end(); ++iVertex)
-   {
-      if ( iVertex->IsGood() ) return true;
-   }
-
-   return false;
-}
-
-
-Bool_t VecBosEvent::HasGoodTrack()
-{
-   VecBosTrackVecIter iTrack = mTracks.begin();
-
-   for ( ; iTrack!=mTracks.end(); ++iTrack)
-   {
-      if (iTrack->IsGood() ) return true;
-   }
-
-   return false;
-}
-
-
 void VecBosEvent::Process()
 {
    VecBosVertexVecIter iVertex = mVertices.begin();
    for ( ; iVertex!=mVertices.end(); ++iVertex)
    {
       iVertex->Process();
+
+      if (iVertex->IsGood())   mNumGoodVertices++;
    }
 
    VecBosTrackVecIter iTrack = mTracks.begin();
    for ( ; iTrack!=mTracks.end(); ++iTrack)
    {
       iTrack->Process();
+      if (iTrack->IsGood())   mNumGoodTracks++;
+      if (iTrack->IsBTrack()) mNumBTracks++;
+      if (iTrack->IsETrack()) mNumETracks++;
    }
 }
 
@@ -166,13 +127,22 @@ void VecBosEvent::clear()
 {
    //Info("clear", "");
    id       = runNo     = time  = 0;
-   zdcRate  = 0;
-   l2bitET  = l2bitRnd  = 0;
-   l2EbitET = l2EbitRnd = 0;
-   bx7      = bx48      = -1;
-   zTag     = false;
-   mStJets  = 0;
-   bxStar7  = bxStar48  = spin4 = -1;
+   zdcRate          = 0;
+   l2bitET          = 0;
+   l2bitRnd         = 0;
+   l2EbitET         = 0;
+   l2EbitRnd        = 0;
+   bx7              = -1;
+   bx48             = -1;
+   zTag             = false;
+   mNumGoodVertices = 0;
+   mNumGoodTracks   = 0;
+   mNumBTracks      = 0;
+   mNumETracks      = 0;
+   mStJets          = 0;
+   bxStar7          = -1;
+   bxStar48         = -1;
+   spin4            = -1;
    bemc.clear();
    etow.clear();
    eprs.clear();

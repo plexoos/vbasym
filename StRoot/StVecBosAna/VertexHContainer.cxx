@@ -46,19 +46,19 @@ void VertexHContainer::BookHists()
    hist->SetOption("hist GRIDX GRIDY");
 
    o["hVertexRank"] = hist = new TH1I("hVertexRank", "; Vertex Rank; Num. of Vertices", 100, -1.2e6, 1.2e6);
-   hist->SetOption("hist GRIDX GRIDY");
+   hist->SetOption("hist GRIDX GRIDY XY");
 
    o["hVertexRankLog"] = hist = new TH1I("hVertexRankLog", "; Vertex LogRank; Num. of Vertices", 60, -30, 30);
-   hist->SetOption("hist GRIDX GRIDY");
+   hist->SetOption("hist GRIDX GRIDY XY");
 
    o["hVertexXPosition"] = hist = new TH1I("hVertexXPosition", "; X Position, cm; Num. of Vertices", 50, -1, 1);
-   hist->SetOption("hist GRIDX GRIDY");
+   hist->SetOption("hist GRIDX GRIDY XY");
 
    o["hVertexYPosition"] = hist = new TH1I("hVertexYPosition", "; Y Position, cm; Num. of Vertices", 50, -1, 1);
-   hist->SetOption("hist GRIDX GRIDY");
+   hist->SetOption("hist GRIDX GRIDY XY");
 
    o["hVertexZPosition"] = hist = new TH1I("hVertexZPosition", "; Z Position, cm; Num. of Vertices", 50, -200, 200);
-   hist->SetOption("hist GRIDX GRIDY");
+   hist->SetOption("hist GRIDX GRIDY XY");
 }
 
 
