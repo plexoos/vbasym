@@ -92,7 +92,7 @@ private:
    float mMinBClusterEnergyIsoRatio, par_nearTotEtFrac;
    float mMinEClusterEnergyIsoRatio, parE_nearTotEtFrac;
    float mTrackIsoDeltaR, mTrackIsoDeltaPhi;
-   float mMaxTrackClusterDist, parE_delR3D, par_highET, parE_highET,  par_ptBalance, parE_ptBalance;
+   float parE_delR3D, par_highET, parE_highET,  par_ptBalance, parE_ptBalance;
    float mMinBTrackEta, mMaxBTrackEta, mMinETrackEta, mMaxETrackEta; //bracket acceptance
    float parE_trackEtaMin;
    int   parE_nSmdStrip;
@@ -147,9 +147,6 @@ private:
    int par_maxDisplEve;
 
    StBemcTables *mBarrelTables;                          //used to access EMC status and ped info
-   StEmcGeom    *mBSmdGeom[mxBSmd];
-   TVector3      mBCalTowerCoords[mxBtow];               // vs. tower ID
-   TVector3      mBSmdStripCoords[mxBSmd][mxBStrips];    // vs. strip ID
 
    StEEmcDb       *mDbE;       // access to EEMC database
    StSpinDbMaker  *spinDb;     // access spin information
@@ -177,9 +174,7 @@ private:
    void  FindWBoson();
    void  FindWBosonEndcap();
    void  FindZBoson();
-   void  ExtendTrack2Barrel();
    int   ExtendTrack2Endcap();
-   bool  MatchTrack2BtowCluster();
    bool  MatchTrack2EtowCluster();
    void  FindNearJet();
    void  FindAwayJet();
@@ -200,8 +195,6 @@ private:
    float SumETowCone(float zVert, TVector3 refAxis, int flag);
    float SumTpcCone(int vertID, TVector3 refAxis, int flag, int pointTowId);
    float SumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, int pointTowId); //uses track vector saved in tree
-   WeveCluster maxBtow2x2(int iEta, int iPhi, float zVert);
-   WeveCluster sumBtowPatch(int iEta, int iPhi, int Leta, int  Lphi, float zVert);
    WeveCluster maxEtow2x1(int iEta, int iPhi, float zVert);
    WeveCluster maxEtow2x2(int iEta, int iPhi, float zVert);
    WeveCluster sumEtowPatch(int iEta, int iPhi, int Leta, int  Lphi, float zVert);

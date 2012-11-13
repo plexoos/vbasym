@@ -1,6 +1,7 @@
 
 #include "VecBosTrack.h"
 
+#include "VecBosEvent.h"
 #include "VecBosVertex.h"
 #include "Globals.h"
 
@@ -10,7 +11,7 @@ ClassImp(VecBosTrack)
 using namespace std;
 
 
-VecBosTrack::VecBosTrack() : TObject(), mType(kUNKNOWN), mVecBosVertex(0)
+VecBosTrack::VecBosTrack() : TObject(), mEvent(0), mType(kUNKNOWN), mVertex(0)
 {
    clear();
 }
@@ -39,7 +40,7 @@ void VecBosTrack::print(int flag)
 void VecBosTrack::Process()
 {
    // Good track must come from a good vertex
-   if (!mVecBosVertex || !mVecBosVertex->IsGood()) {
+   if (!mVertex || !mVertex->IsGood()) {
       mType = kBAD;
       return;
    }
@@ -64,19 +65,20 @@ void VecBosTrack::Process()
 
    //XXX:ds:if (!barrelTrack && !endcapTrack) continue;
 
-   if (IsBTrack()) ExtendTrack2Barrel();
+   if (IsBTrack()) MatchTrack2BtowCluster();
    //if (IsETrack()) ExtendTrack2Barrel();
 }
 
 
 void VecBosTrack::clear()
 {
+   mEvent               = 0;
    mType                = kUNKNOWN;
    isMatch2Cl           = false;
    pointTower.clear();
    glMuTrack            = 0;
    prMuTrack            = 0;
-   mVecBosVertex        = 0;
+   mVertex              = 0;
    mCluster2x2.clear();
    mCluster4x4.clear();
    primP                = TVector3(0, 0, 0);
@@ -159,4 +161,70 @@ void VecBosTrack::ExtendTrack2Barrel()
    pointTower.iEta = iEta;
    pointTower.iPhi = iPhi;
    //track.print();
+}
+
+
+void VecBosTrack::MatchTrack2BtowCluster()
+{
+   ExtendTrack2Barrel();
+
+   if (pointTower.id <= 0) return; // skip endcap towers
+
+   //printf("******* matchCluster() nVert=%d\n",mVecBosEvent->mVertices.size());
+   float Rcylinder = mBtowGeom->Radius();
+
+   float trackPT = prMuTrack->momentum().perp();
+
+   // Choose 2x2 cluster with maximum ET
+   mCluster2x2 = FindMaxBTow2x2(*mEvent, pointTower.iEta, pointTower.iPhi, mVertex->z);
+
+   //hA[33] ->Fill(mCluster2x2.ET);
+   //hA[34] ->Fill(mCluster2x2.adcSum, trackPT);
+   //hA[110]->Fill(mCluster2x2.ET);
+
+   // Compute surroinding cluster energy
+   int iEta = mCluster2x2.iEta;
+   int iPhi = mCluster2x2.iPhi;
+
+   mCluster4x4 = SumBtowPatch(*mEvent, iEta - 1, iPhi - 1, 4, 4, mVertex->z); // needed for lumi monitor
+
+   //if (mCluster2x2.ET < mMinBClusterEnergy) continue; // too low energy
+
+   //hA[20] ->Fill("CL", 1.);
+   //hA[206]->Fill(mCluster2x2.position.PseudoRapidity(), mCluster2x2.ET);
+   //hA[37] ->Fill(mCluster4x4.ET);
+   //hA[38] ->Fill(mCluster2x2.energy, mCluster4x4.energy - mCluster2x2.energy);
+
+   //float frac24 = mCluster2x2.ET / mCluster4x4.ET;
+
+   //hA[39]->Fill(frac24);
+
+   //if (frac24 < mMinBClusterEnergyIsoRatio) continue;
+
+   //hA[20]->Fill("fr24", 1.);
+
+   // spacial separation (track - cluster)
+   TVector3 D = pointTower.R - mCluster2x2.position;
+
+   //hA[43]->Fill(mCluster2x2.energy,       D.Mag());
+   //hA[44]->Fill(mCluster2x2.position.z(), D.z());
+
+   float delPhi = pointTower.R.DeltaPhi(mCluster2x2.position);
+
+   // printf("aaa %f %f %f   phi=%f\n",D.x(),D.y(),D.z(),delPhi);
+   //hA[45]->Fill( mCluster2x2.energy, Rcylinder * delPhi); // wrong?
+   //hA[46]->Fill( D.Mag());
+   //hA[199]->Fill(mCluster2x2.position.PseudoRapidity(), D.Mag());
+   //hA[207]->Fill(mCluster2x2.position.PseudoRapidity(), mCluster2x2.ET);
+
+   if (D.Mag() <= mEvent->mMaxTrackClusterDist) {
+
+      isMatch2Cl = true; // cluster is matched to TPC track
+      //mVecBosEvent->mLeptonBTracks.insert(&track);
+   }
+
+   //hA[20]->Fill("#Delta R", 1.);
+   //hA[111]->Fill(track.mCluster2x2.ET);
+   //hA[208]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mCluster2x2.ET);
+   //hA[0]->Fill("Tr2Cl", 1.0);
 }

@@ -76,6 +76,7 @@ void JetHContainer::Fill(StJet &stJet)
    ((TH1*) o["hJetEta"])->Fill(stJet.Eta());
    ((TH1*) o["hJetPhi"])->Fill(stJet.Phi());
    ((TH1*) o["hJetPt"])->Fill(stJet.Pt());
+   ((TH1*) o["hJetNumTracks"])->Fill(stJet.nTracks);
 
    //printf("hasMatchedCluster: %d\n", stJet.isMatch2Cl);
 }

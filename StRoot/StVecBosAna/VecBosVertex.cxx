@@ -1,16 +1,20 @@
 
 #include "VecBosVertex.h"
 
+#include "VecBosEvent.h"
 
-VecBosVertex::VecBosVertex() : TObject(), mType(kUNKNOWN), id(-1), z(-1), mRank(-1), mRankLog(-1),
+
+VecBosVertex::VecBosVertex() : TObject(), mEvent(0), mType(kUNKNOWN), id(-1),
+   z(-1), mRank(-1), mRankLog(-1),
    nEEMCMatch(-1), mPosition(), eleTrack(), prTrList()
 {
 }
 
 
 VecBosVertex::VecBosVertex(StMuPrimaryVertex &stMuVertex) : TObject(),
-   mType(kUNKNOWN), id(stMuVertex.idTruth()), z(0), mRank(-1), mRankLog(-1),
-   nEEMCMatch(stMuVertex.nEEMCMatch()), mPosition(), eleTrack(), prTrList()
+   mEvent(0), mType(kUNKNOWN), id(stMuVertex.idTruth()), z(0), mRank(-1),
+   mRankLog(-1), nEEMCMatch(stMuVertex.nEEMCMatch()), mPosition(), eleTrack(),
+   prTrList()
 {
    z          = stMuVertex.position().z();
    mRank      = stMuVertex.ranking();
@@ -50,6 +54,7 @@ void VecBosVertex::Process()
 
 void VecBosVertex::clear()
 {
+   mEvent     = 0;
    mType      = kUNKNOWN;
    id         = -999;
    z          = -999;

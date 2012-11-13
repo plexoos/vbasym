@@ -96,7 +96,6 @@ StVecBosMaker::StVecBosMaker(const char *name, VecBosRootFile *vbFile): StMaker(
    mMinBClusterEnergy           = 14.;  // GeV/c 2x2 cluster ET
    mMinBClusterEnergyIsoRatio   = 0.95; // ET ratio 2x2/4x4 cluster
    par_nearTotEtFrac            = 0.88; // ratio 2x2/near Tot ET
-   mMaxTrackClusterDist         = 7.;   // cm, dist between projected track and center of cluster
    mMinBTrackEta                = -1.5; // bracket acceptance
    mMaxBTrackEta                = 1.5;  // bracket acceptance
    par_ptBalance                = 14.;  // GeV, ele cluster vector + jet sum vector
@@ -220,7 +219,7 @@ Int_t StVecBosMaker::InitRun(int runNo)
       mMinNumPileupVertices, mCutVertexZ,
       par_nFitPts, par_nHitFrac,  par_trackRin,  par_trackRout, mMinBTrackPt,
       par_kSigPed, par_AdcThres, par_maxADC, mMinBClusterEnergy, mMinBClusterEnergyIsoRatio, par_nearTotEtFrac,
-      mMaxTrackClusterDist, mTrackIsoDeltaR,
+      mVecBosEvent->mMaxTrackClusterDist, mTrackIsoDeltaR,
       par_highET, mTrackIsoDeltaPhi, par_ptBalance, mMinBTrackEta, mMaxBTrackEta
    ) << endm;
 
@@ -434,13 +433,13 @@ Int_t StVecBosMaker::Make()
 
    // Add tracks to the event and atch tracks to energy clusters in the barrel
    // and endcap
-   bool hasMatchedTrack2BCluster = MatchTrack2BtowCluster();
+   //bool hasMatchedTrack2BCluster = MatchTrack2BtowCluster();
    bool hasMatchedTrack2ECluster = MatchTrack2EtowCluster();
 
    //if (hasMatchedTrack2BCluster) mVecBosRootFile->Fill(*mVecBosEvent, kCUT_BARREL);
    //if (hasMatchedTrack2ECluster) mVecBosRootFile->Fill(*mVecBosEvent, kCUT_ENDCAP);
 
-   if (!hasMatchedTrack2BCluster && !hasMatchedTrack2ECluster) return kStOK; //no matched BTOW or ETOW clusters
+   //if (!hasMatchedTrack2BCluster && !hasMatchedTrack2ECluster) return kStOK; //no matched BTOW or ETOW clusters
 
    nAccEve++;
 
@@ -458,10 +457,10 @@ Int_t StVecBosMaker::Make()
    }
 
    // Fill final histograms
-   if (hasMatchedTrack2BCluster) {
-      FindWBoson();
-      FindZBoson();
-   }
+   //if (hasMatchedTrack2BCluster) {
+   //   FindWBoson();
+   //   FindZBoson();
+   //}
 
    if (hasMatchedTrack2ECluster) FindWBosonEndcap();
 
@@ -498,7 +497,7 @@ void StVecBosMaker::initGeom()
 
       float x, y, z;
       assert( mBtowGeom->getXYZ(towerId, x, y, z) == 0);
-      mBCalTowerCoords[towerId - 1] = TVector3(x, y, z);
+      gBCalTowerCoords[towerId - 1] = TVector3(x, y, z);
    }
 
    // BSMD-E, -P
@@ -535,11 +534,11 @@ void StVecBosMaker::FillNormHists()
 
          int   ieta = -1;
          int   iphi = -1;
-         float etaF = mBCalTowerCoords[i].Eta();
-         float phiF = mBCalTowerCoords[i].Phi();
+         float etaF = gBCalTowerCoords[i].Eta();
+         float phiF = gBCalTowerCoords[i].Phi();
 
          ConvertEtaPhi2Bins(etaF, phiF, ieta, iphi);
-         WeveCluster c = maxBtow2x2(ieta, iphi, mVecBosEvent->mVertices[0].z);
+         WeveCluster c = FindMaxBTow2x2(*mVecBosEvent, ieta, iphi, mVecBosEvent->mVertices[0].z);
 
          if (c.ET > maxBtowET) maxBtowET = c.ET;
       }
@@ -1512,16 +1511,16 @@ void StVecBosMaker::FillTowHit(bool hasVertices)
       if (adc > 10) fillAdc = true; //~150 MeV threshold for tower firing
 
       if (hasVertices) {
-         if (fillAdc) hA[215 + bxBin]->Fill(mBCalTowerCoords[i].Eta(), mBCalTowerCoords[i].Phi());
+         if (fillAdc) hA[215 + bxBin]->Fill(gBCalTowerCoords[i].Eta(), gBCalTowerCoords[i].Phi());
 
          float ene  = mVecBosEvent->bemc.eneTile[kBTow][i];
-         float delZ = mBCalTowerCoords[i].z() - mVecBosEvent->mVertices[maxRankId].z;
+         float delZ = gBCalTowerCoords[i].z() - mVecBosEvent->mVertices[maxRankId].z;
          float e2et = Rcylinder / sqrt(Rcylinder2 + delZ * delZ);
          float ET   = ene * e2et;
 
-         if (ET > 2.0)  hA[219 + bxBin]->Fill(mBCalTowerCoords[i].Eta(), mBCalTowerCoords[i].Phi());
+         if (ET > 2.0)  hA[219 + bxBin]->Fill(gBCalTowerCoords[i].Eta(), gBCalTowerCoords[i].Phi());
       }
-      else if (fillAdc) hA[223 + bxBin]->Fill(mBCalTowerCoords[i].Eta(), mBCalTowerCoords[i].Phi());
+      else if (fillAdc) hA[223 + bxBin]->Fill(gBCalTowerCoords[i].Eta(), gBCalTowerCoords[i].Phi());
    }
 
    //some lower threshold plots
@@ -1655,11 +1654,11 @@ bool StVecBosMaker::passes_L2()
 
       int   ieta = -1;
       int   iphi = -1;
-      float etaF = mBCalTowerCoords[i].Eta();
-      float phiF = mBCalTowerCoords[i].Phi();
+      float etaF = gBCalTowerCoords[i].Eta();
+      float phiF = gBCalTowerCoords[i].Phi();
 
       ConvertEtaPhi2Bins(etaF, phiF, ieta, iphi);
-      WeveCluster c = maxBtow2x2(ieta, iphi, 0);
+      WeveCluster c = FindMaxBTow2x2(*mVecBosEvent, ieta, iphi, 0);
 
       if (c.ET > par_l2emulClusterThresh) return true;
    }
@@ -1901,12 +1900,12 @@ void StVecBosMaker::FindZBoson()
 
             int towerId = stJet->tower(itow)->towerId();
             //find highest 2x2 BTOW cluster in jet
-            TVector3 pos = mBCalTowerCoords[towerId - 1];
+            TVector3 pos = gBCalTowerCoords[towerId - 1];
 
             int iEta, iPhi;
             if ( !ConvertEtaPhi2Bins(pos.Eta(), pos.Phi(), iEta, iPhi) ) continue;
 
-            float clusterET = maxBtow2x2(iEta, iPhi, stJet->zVertex).ET;
+            float clusterET = FindMaxBTow2x2(*mVecBosEvent, iEta, iPhi, stJet->zVertex).ET;
             if (clusterET > maxClusterET) maxClusterET = clusterET;
          }
 
@@ -2131,7 +2130,7 @@ float StVecBosMaker::SumBTowCone(float zVert, TVector3 refAxis, int flag)
       if (energy <= 0) continue;
 
       // Correct BCal tower position to the vertex position
-      TVector3 towerCoord = mBCalTowerCoords[i] - TVector3(0, 0, zVert);
+      TVector3 towerCoord = gBCalTowerCoords[i] - TVector3(0, 0, zVert);
       towerCoord.SetMag(energy); // it is 3D momentum in the event ref frame
 
       if (flag == 1 && fabs( refAxis.DeltaPhi(towerCoord)) > mTrackIsoDeltaPhi ) continue;
@@ -2361,87 +2360,6 @@ int StVecBosMaker::ExtendTrack2Endcap()
 }
 
 
-bool StVecBosMaker::MatchTrack2BtowCluster()
-{
-   //printf("******* matchCluster() nVert=%d\n",mVecBosEvent->mVertices.size());
-   int   numMatchedTracks = 0;
-   float Rcylinder = mBtowGeom->Radius();
-
-   for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++)
-   {
-      VecBosVertex &vertex = mVecBosEvent->mVertices[iv];
-      float vertexZ = vertex.z;
-
-      for (uint it = 0; it < vertex.eleTrack.size(); it++)
-      {
-         VecBosTrack &track = vertex.eleTrack[it];
-         if (track.pointTower.id <= 0) continue; // skip endcap towers
-
-         float trackPT = track.prMuTrack->momentum().perp();
-
-         // Choose 2x2 cluster with maximum ET
-         track.mCluster2x2 = maxBtow2x2( track.pointTower.iEta, track.pointTower.iPhi, vertexZ);
-
-         hA[33] ->Fill(track.mCluster2x2.ET);
-         hA[34] ->Fill(track.mCluster2x2.adcSum, trackPT);
-         hA[110]->Fill(track.mCluster2x2.ET);
-
-         // Compute surroinding cluster energy
-         int iEta = track.mCluster2x2.iEta;
-         int iPhi = track.mCluster2x2.iPhi;
-         track.mCluster4x4 = sumBtowPatch(iEta - 1, iPhi - 1, 4, 4, vertexZ); // needed for lumi monitor
-
-         if (track.mCluster2x2.ET < mMinBClusterEnergy) continue; // too low energy
-
-         hA[20] ->Fill("CL", 1.);
-         hA[206]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mCluster2x2.ET);
-         hA[37] ->Fill(track.mCluster4x4.ET);
-         hA[38] ->Fill(track.mCluster2x2.energy, track.mCluster4x4.energy - track.mCluster2x2.energy);
-
-         float frac24 = track.mCluster2x2.ET / track.mCluster4x4.ET;
-
-         hA[39]->Fill(frac24);
-
-         if (frac24 < mMinBClusterEnergyIsoRatio) continue;
-
-         hA[20]->Fill("fr24", 1.);
-
-         // spacial separation (track - cluster)
-         TVector3 D = track.pointTower.R - track.mCluster2x2.position;
-
-         hA[43]->Fill(track.mCluster2x2.energy,       D.Mag());
-         hA[44]->Fill(track.mCluster2x2.position.z(), D.z());
-
-         float delPhi = track.pointTower.R.DeltaPhi(track.mCluster2x2.position);
-
-         // printf("aaa %f %f %f   phi=%f\n",D.x(),D.y(),D.z(),delPhi);
-         hA[45]->Fill( track.mCluster2x2.energy, Rcylinder * delPhi); // wrong?
-         hA[46]->Fill( D.Mag());
-         hA[199]->Fill(track.mCluster2x2.position.PseudoRapidity(), D.Mag());
-         hA[207]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mCluster2x2.ET);
-
-         if (D.Mag() > mMaxTrackClusterDist) continue;
-
-         track.isMatch2Cl = true; // cluster is matched to TPC track
-         mVecBosEvent->mLeptonBTracks.insert(&track);
-
-         hA[20]->Fill("#Delta R", 1.);
-         hA[111]->Fill(track.mCluster2x2.ET);
-
-         hA[208]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mCluster2x2.ET);
-
-         numMatchedTracks++;
-      }
-   }
-
-   if (!numMatchedTracks) return false;
-
-   hA[0]->Fill("Tr2Cl", 1.0);
-
-   return true;
-}
-
-
 bool StVecBosMaker::MatchTrack2EtowCluster()
 {
    // find endcap candidates
@@ -2505,7 +2423,7 @@ bool StVecBosMaker::MatchTrack2EtowCluster()
          hE[45]->Fill( track.mCluster2x2.energy, Rxy * delPhi); // wrong?
          hE[46]->Fill( D.Perp());
 
-         if (D.Perp() > mMaxTrackClusterDist) continue;
+         if (D.Perp() > mVecBosEvent->mMaxTrackClusterDist) continue;
 
          track.isMatch2Cl = true; // cluster is matched to TPC track
 
@@ -2521,94 +2439,6 @@ bool StVecBosMaker::MatchTrack2EtowCluster()
    hE[0]->Fill("Tr2Cl", 1.0);
 
    return true;
-}
-
-
-/**
- * For a given eta-phi bin considers all combinations of 2x2 bin clusters around it
- * and returns one with the maximum ET.
- */
-WeveCluster StVecBosMaker::maxBtow2x2(int etaBin, int phiBin, float zVert)
-{
-   //printf("maxBtow2x2  seed etaBin=%d phiBin=%d \n",etaBin, phiBin);
-   const int L = 2; // size of the summed square
-
-   WeveCluster maxCL;
-
-   // just 4 cases of 2x2 clusters
-   float maxET = 0;
-
-   for (int iEta=etaBin-1; iEta<=etaBin; iEta++)
-   {
-      for (int iPhi=phiBin-1; iPhi<=phiBin; iPhi++)
-      {
-         WeveCluster CL = sumBtowPatch(iEta, iPhi, L, L, zVert);
-         if (maxET > CL.ET) continue;
-         maxET = CL.ET;
-         maxCL = CL;
-         // printf("   newMaxETSum=%.1f etaBin=%d iPhi=%d \n",maxET, I,J);
-      }
-   }
-
-   //printf(" final inpEve=%d SumET2x2=%.1f \n",nInpEve,maxET);
-   return maxCL;
-}
-
-
-WeveCluster StVecBosMaker::sumBtowPatch(int etaBin, int phiBin, int etaWidth, int  phiWidth, float zVert)
-{
-   //printf("  eveID=%d btowSquare seed etaBin=%d[+%d] phiBin=%d[+%d] zVert=%.0f \n",mVecBosEvent->id,etaBin,etaWidth, phiBin,phiWidth,zVert);
-   WeveCluster CL; // object is small, not to much overhead in creating it
-   CL.iEta = etaBin;
-   CL.iPhi = phiBin;
-   TVector3 R;
-   double sumW = 0;
-   float Rcylinder  = mBtowGeom->Radius();
-   float Rcylinder2 = Rcylinder *Rcylinder;
-
-   for (int iEta = etaBin; iEta < etaBin + etaWidth; iEta++) // trim in eta-direction
-   {
-      if (iEta < 0) continue;
-      if (iEta >= mxBTetaBin) continue;
-
-      for (int iPhi = phiBin; iPhi < phiBin + phiWidth; iPhi++)
-      {
-         // wrap up in the phi-direction
-         int   iPhi_p  = (iPhi + mxBTphiBin) % mxBTphiBin;         // keep it always positive
-         int   towerId = mapBtowIJ2ID[ iEta + iPhi_p*mxBTetaBin];
-         float energy  = mVecBosEvent->bemc.eneTile[kBTow][towerId - 1];
-
-         //if (L<5) printf("n=%2d  iEta=%d iPhi_p=%d\n",CL.nTower,iEta,iPhi_p);
-
-         if (energy <= 0) continue; // skip towers w/o energy
-
-         float adc    = mVecBosEvent->bemc.adcTile[kBTow][towerId - 1];
-         float delZ   = mBCalTowerCoords[towerId - 1].z() - zVert;
-         float cosine = Rcylinder / sqrt(Rcylinder2 + delZ *delZ);
-         float ET     = energy * cosine;
-         float logET  = log10(ET + 0.5);
-
-         CL.nTower++;
-         CL.energy += energy;
-         CL.ET     += ET;
-         CL.adcSum += adc;
-
-         if (logET > 0) {
-            R    += logET * mBCalTowerCoords[towerId - 1];
-            sumW += logET;
-         }
-         // if(etaWidth==2)
-         //    printf("etaBin=%d phiBin=%d  ET=%.1f  energy=%.1f   sum=%.1f logET=%f sumW=%f\n",iEta,iPhi,ET,energy,CL.energy,logET,sumW);
-      }
-
-      // printf(" end btowSquare: etaBin=%d  nTw=%d, ET=%.1f adc=%.1f\n",iEta,CL.nTower,CL.ET,CL.adcSum);
-      if (sumW > 0)
-         CL.position = 1. / sumW * R; // weighted cluster position
-      else
-         CL.position = TVector3(0, 0, 999);
-   }
-
-   return CL;
 }
 
 

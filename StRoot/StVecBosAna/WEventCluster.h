@@ -2,6 +2,9 @@
 #define WEventCluster_h
 
 
+#include "TVector3.h"
+
+
 // info BTOW cluster
 class WeveCluster
 {

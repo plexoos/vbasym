@@ -376,7 +376,7 @@ void WeventDisplay::exportEvent( const char *tit, VecBosVertex myV, VecBosTrack 
    for (int i = 0; i < mxBtow; i++) {
       float ene = wMK->mVecBosEvent->bemc.eneTile[kBTow][i];
       if (ene <= 0) continue;
-      TVector3 primP = wMK->mBCalTowerCoords[i] - TVector3(0, 0, zVert);
+      TVector3 primP = gBCalTowerCoords[i] - TVector3(0, 0, zVert);
       primP.SetMag(ene); // it is 3D momentum in the event ref frame
       float ET = primP.Perp();
 
@@ -431,7 +431,7 @@ void WeventDisplay::exportEvent( const char *tit, VecBosVertex myV, VecBosTrack 
       for (int i = 0; i < mxBStrips; i++) {
          float adc = wMK->mVecBosEvent->bemc.adcBsmd[iep][i];
          if (adc <= 0) continue;
-         TVector3 r = wMK->mBSmdStripCoords[iep][i];
+         TVector3 r = mBSmdStripCoords[iep][i];
          float z1 = r.z() - zVert;
          r.SetZ(z1);
          hBsmdAdc[iep]->Fill(r.Eta(), r.Phi(), adc);
@@ -540,11 +540,11 @@ void WeventDisplay::export2sketchup(  const char *tit, VecBosVertex myV, VecBosT
    for (int i = 0; i < mxBtow; i++) {
       float ene = wMK->mVecBosEvent->bemc.eneTile[kBTow][i];
       if (ene <= 0) continue;
-      float delZ = wMK->mBCalTowerCoords[i].z() - myV.z;
+      float delZ = gBCalTowerCoords[i].z() - myV.z;
       float e2et = Rcylinder / sqrt(Rcylinder2 + delZ * delZ);
       float ET = ene * e2et;
-      float detEta = wMK->mBCalTowerCoords[i].Eta();
-      float detPhi = wMK->mBCalTowerCoords[i].Phi();
+      float detEta = gBCalTowerCoords[i].Eta();
+      float detPhi = gBCalTowerCoords[i].Phi();
       fprintf(fd, "btow V %.1f %.3f %.3f  eveET:detEta:detPhi %.3f %.3f  %.3f\n", rV.x(), rV.y(), rV.z(), ET, detEta, detPhi);
    }
 
@@ -554,7 +554,7 @@ void WeventDisplay::export2sketchup(  const char *tit, VecBosVertex myV, VecBosT
       for (int i = 0; i < mxBStrips; i++) {
          float adc = wMK->mVecBosEvent->bemc.adcBsmd[iep][i];
          if (adc <= 0) continue;
-         TVector3 r = wMK->mBSmdStripCoords[iep][i];
+         TVector3 r = mBSmdStripCoords[iep][i];
          fprintf(fd, "bsmd%c V %.1f %.3f %.3f  adc:detEta:detPhi %.3f %.3f  %.3f\n", cPlane[iep], rV.x(), rV.y(), rV.z(), adc, r.Eta(), r.Phi() );
       }
    }

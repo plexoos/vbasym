@@ -162,7 +162,7 @@ void StVecBosMaker::initHistos()
    hA[45] = h = new TH2F("muBdist3", "Barrel: R#Delta #phi   (track-cluster) vs. 2x2 E;2x2 cluster E (GeV); R#Delta #phi (cm)", 50, 0, 80, 80, -20, 20);
    hA[46] = h = new TH1F("muBdist4", "Barrel: 3D Distance(track-cluster) vs. 2x2 E;| 3D distance |   (cm)", 100, 0, 50);
    Lx = h->GetListOfFunctions();
-   ln = new TLine(mMaxTrackClusterDist, 0, mMaxTrackClusterDist, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
+   ln = new TLine(mVecBosEvent->mMaxTrackClusterDist, 0, mVecBosEvent->mMaxTrackClusterDist, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
 
    // continue same side jet veto
    hA[47] = h = new TH1F("muTjetET", "Barrel: quenched near 'TPC jet' PT ; 'TPC jet'  PT (GeV)", 100, 0, 100);

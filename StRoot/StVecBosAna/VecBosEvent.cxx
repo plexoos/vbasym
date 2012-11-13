@@ -12,7 +12,8 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mJets(),
    mVertices(),
    mTracks(),
-   mLeptonBTracks(), mLeptonETracks()
+   mLeptonBTracks(), mLeptonETracks(),
+   mMaxTrackClusterDist(7)   // cm, dist between projected track and center of cluster
 {
    clear();
 }
@@ -20,14 +21,16 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
 
 VecBosVertex* VecBosEvent::AddVertex(StMuPrimaryVertex &stMuVertex)
 {
-   VecBosVertex vecBosVertex(stMuVertex);
-   mVertices.push_back(vecBosVertex);
+   VecBosVertex vbVertex(stMuVertex);
+   vbVertex.mEvent = this;
+   mVertices.push_back(vbVertex);
    return &mVertices.back();
 }
 
 
 void VecBosEvent::AddVertex(VecBosVertex &vbVertex)
 {
+   vbVertex.mEvent = this;
    mVertices.push_back(vbVertex);
 }
 
@@ -41,9 +44,10 @@ void VecBosEvent::AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex)
 
    VecBosTrack vbTrack;
 
+   vbTrack.mEvent        = this;
    vbTrack.prMuTrack     = stMuTrack;
    vbTrack.glMuTrack     = stMuTrack->globalTrack();
-   vbTrack.mVecBosVertex = vbVertex;
+   vbTrack.mVertex = vbVertex;
    vbTrack.primP         = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
 
    if (vbVertex) {
@@ -116,6 +120,7 @@ void VecBosEvent::Process()
    for ( ; iTrack!=mTracks.end(); ++iTrack)
    {
       iTrack->Process();
+
       if (iTrack->IsGood())   mNumGoodTracks++;
       if (iTrack->IsBTrack()) mNumBTracks++;
       if (iTrack->IsETrack()) mNumETracks++;
@@ -126,7 +131,9 @@ void VecBosEvent::Process()
 void VecBosEvent::clear()
 {
    //Info("clear", "");
-   id       = runNo     = time  = 0;
+   id               = 0;
+   runNo            = 0;
+   time             = 0;
    zdcRate          = 0;
    l2bitET          = 0;
    l2bitRnd         = 0;
@@ -152,6 +159,7 @@ void VecBosEvent::clear()
    mTracks.clear();
    mLeptonBTracks.clear();
    mLeptonETracks.clear();
+   mMaxTrackClusterDist = 7.;
 }
 
 

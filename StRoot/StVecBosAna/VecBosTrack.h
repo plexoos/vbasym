@@ -13,6 +13,7 @@
 #include "WEventCluster.h"
 
 
+class VecBosEvent;
 class VecBosVertex;
 
 
@@ -23,12 +24,13 @@ public:
 
    enum ETrackType {kUNKNOWN=0x0000, kBAD=0x1000, kGOOD=0x0001, kBARREL=0x0011, kENDCAP=0x0021};
 
+   VecBosEvent         *mEvent;
    ETrackType           mType;
    int                  isMatch2Cl;         // result of cuts
    WevePointTower       pointTower;
-   const StMuTrack*     glMuTrack;          //!
-   const StMuTrack*     prMuTrack;          //!
-   const VecBosVertex*  mVecBosVertex;      //! pointer to mother vertex
+   const StMuTrack     *glMuTrack;          //!
+   const StMuTrack     *prMuTrack;          //!
+   const VecBosVertex  *mVertex;            //! pointer to mother vertex
    WeveCluster          mCluster2x2;
    WeveCluster          mCluster4x4;
    TVector3             primP;              // primary momentum vector
@@ -78,6 +80,7 @@ public:
 private:
 
    void ExtendTrack2Barrel();
+   void MatchTrack2BtowCluster();
 
    ClassDef(VecBosTrack, 1);
 };

@@ -34,11 +34,11 @@ public:
    int   statBsmd[mxBSmd][mxBStrips];
 
    void clear() {
-      memset(adcTile, 0, sizeof(adcTile));
-      memset(eneTile, 0, sizeof(eneTile));
+      memset(adcTile,   0, sizeof(adcTile));
+      memset(eneTile,   0, sizeof(eneTile));
       memset(statTile, -1, sizeof(statTile)); // default all dead
-      memset(tileIn, 0, sizeof(tileIn)); // detector was On/Off
-      memset(adcBsmd, 0, sizeof(adcBsmd));
+      memset(tileIn,    0, sizeof(tileIn)); // detector was On/Off
+      memset(adcBsmd,   0, sizeof(adcBsmd));
       memset(statBsmd, -1, sizeof(statBsmd)); // default all dead
       maxAdc   = 0;
       maxHtDsm = -1;
@@ -195,6 +195,8 @@ public:
    VecBosTrackVec     mTracks;
    VecBosTrackPtrSet  mLeptonBTracks;   // Set of lepton track candidates, i.e. good tracks with energy in barrel
    VecBosTrackPtrSet  mLeptonETracks;   // Set of lepton track candidates, i.e. good tracks with energy in endcap
+
+   float mMaxTrackClusterDist;
 
    VecBosEvent();
 
