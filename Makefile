@@ -53,6 +53,7 @@ SOFLAGS       = -shared $(ROOTCFLAGS)
 LIBS          = $(ROOTLIBS) -lTable -lMinuit -lTreePlayer -lGeom -lrt
 
 LDFLAGS      += $(shell root-config --ldflags)
+LDFLAGS      += -L$(OPTSTAR)/lib
 #LDFLAGS      += -Wl,-rpath,.sl53_gcc432/lib:/afs/rhic.bnl.gov/star/packages/SL12d/.sl53_gcc432/lib:/afs/rhic.bnl.gov/star/ROOT/5.22.00/.sl53_gcc432/rootdeb/lib,--warn-unresolved-symbols
 LDFLAGS      += -Wl,-Bdynamic -Wl,--warn-unresolved-symbols -Wl,-rpath,/star/u/smirnovd/rootmacros/utils
 
@@ -60,7 +61,7 @@ LDFLAGS      += -Wl,-Bdynamic -Wl,--warn-unresolved-symbols -Wl,-rpath,/star/u/s
 
 WANA_LIB      = $(LIB_DIR)/libwana.so
 
-STAR_LIBS     = -lSt_base \
+STAR_LIBS     = -lfastjet -lCDFConesPlugin -lSt_base \
                 -lStChain \
                 -lStarRoot \
                 -lSt_Tables \
@@ -108,7 +109,7 @@ STAR_LIBS     = -lSt_base \
                 -lStEmcSimulatorMaker \
                 -lStEEmcSimulatorMaker \
                 -lStEpcMaker \
-                -lStVecBosAna 
+                -lStVecBosAna
 
 
 WANA_DICT_SRC = $(SRC_DIR)/wana_dict.cxx
@@ -148,7 +149,7 @@ $(WANA_LIB): $(OBJS) $(WANA_DICT_OBJ)
 $(WANA_DICT_SRC): $(HDRS) $(INC_DIR)/MyLinkDef.h
 	@echo "Generating dictionary $(WANA_DICT_SRC)..."
 	@echo rootcint -f $(WANA_DICT_SRC) -I$(INC_DIR) -c $^
-	@rootcint -f $(WANA_DICT_SRC) -I$(INC_DIR) -c $^
+	@rootcint -f -c $(WANA_DICT_SRC) -I$(INC_DIR) $^
 
 $(WANA_DICT_OBJ) : $(WANA_DICT_SRC)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
