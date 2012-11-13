@@ -66,7 +66,7 @@ void VecBosTrack::Process()
    //XXX:ds:if (!barrelTrack && !endcapTrack) continue;
 
    if (IsBTrack()) MatchTrack2BtowCluster();
-   //if (IsETrack()) ExtendTrack2Barrel();
+   //if (IsETrack()) ExtendTrack2Endcap();
 }
 
 

@@ -525,9 +525,9 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    if (vecBosRootFile.IsOpen()) {
       TDirectory *old = vecBosRootFile.mkdir("old");
       old->cd();
-      //HList->ls();
+      HList->ls();
       HList->Write();
-      //write TPC histos to new directory
+      // Write TPC histos to new directory
       TDirectory *tpc = vecBosRootFile.mkdir("tpc");
       tpc->cd();
       HListTpc->Write();

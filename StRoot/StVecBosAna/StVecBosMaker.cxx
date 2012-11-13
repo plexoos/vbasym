@@ -76,7 +76,9 @@ StVecBosMaker::StVecBosMaker(const char *name, VecBosRootFile *vbFile): StMaker(
    setHListTpc(0);
    setMC(0);
 
-   nInpEve = mNumTrigEvents = nAccEve = 0;
+   nInpEve        = 0;
+   mNumTrigEvents = 0;
+   nAccEve        = 0;
 
    // MC trigger simulator
    par_l0emulAdcThresh          = 30;
@@ -143,10 +145,6 @@ StVecBosMaker::StVecBosMaker(const char *name, VecBosRootFile *vbFile): StMaker(
 
 Int_t StVecBosMaker::Init()
 {
-   assert(HList);
-   initHistos();
-   initEHistos();
-
    if (mStMuDstMaker) {
       //only need DB tables for MuDst analysis
       mBarrelTables = new StBemcTables();
@@ -169,15 +167,15 @@ Int_t StVecBosMaker::Init()
 
    wDisaply = new WeventDisplay(this, par_maxDisplEve);
 
-   if(isMC){ // load vertex reweighting histo
+   if (isMC) { // load vertex reweighting histo
       // TString filename="/star/u/stevens4/wAnalysis/efficXsec/zVertReweight.root";
       TString filename="/star/u/fazio/offline/users/fazio/vbasym/zVertReweight.root";
       TFile* reweightFile = new TFile(filename);
       cout<<"Re-weighting vertex z distribution with '"<<nameReweight<<"' histo from file "<<endl<<filename<<endl;
       hReweight = (TH1F*) reweightFile->Get(nameReweight);
-   }
 
-   if (isMC) mMinNumPileupVertices = 1;
+      mMinNumPileupVertices = 1;
+   }
 
    // tree only written during MuDst analysis
    if (mStMuDstMaker) {
@@ -188,6 +186,11 @@ Int_t StVecBosMaker::Init()
       mWtree  = new TTree("mWtree", "W candidate Events");
       mWtree->Branch("mVecBosEvent", "VecBosEvent", &mVecBosEvent);
    }
+
+   assert(HList);
+   mVecBosRootFile->cd();
+   initHistos();
+   initEHistos();
 
    return StMaker::Init();
 }
@@ -434,10 +437,7 @@ Int_t StVecBosMaker::Make()
    // Add tracks to the event and atch tracks to energy clusters in the barrel
    // and endcap
    //bool hasMatchedTrack2BCluster = MatchTrack2BtowCluster();
-   bool hasMatchedTrack2ECluster = MatchTrack2EtowCluster();
-
-   //if (hasMatchedTrack2BCluster) mVecBosRootFile->Fill(*mVecBosEvent, kCUT_BARREL);
-   //if (hasMatchedTrack2ECluster) mVecBosRootFile->Fill(*mVecBosEvent, kCUT_ENDCAP);
+   //bool hasMatchedTrack2ECluster = MatchTrack2EtowCluster();
 
    //if (!hasMatchedTrack2BCluster && !hasMatchedTrack2ECluster) return kStOK; //no matched BTOW or ETOW clusters
 
@@ -451,10 +451,10 @@ Int_t StVecBosMaker::Make()
    //CalcMissingET();
 
    // endcap specific analysis
-   if (hasMatchedTrack2ECluster) {
-      analyzeESMD();
-      //analyzeEPRS(); // not implemented
-   }
+   //if (hasMatchedTrack2ECluster) {
+   //   analyzeESMD();
+   //   //analyzeEPRS(); // not implemented
+   //}
 
    // Fill final histograms
    //if (hasMatchedTrack2BCluster) {
@@ -462,9 +462,9 @@ Int_t StVecBosMaker::Make()
    //   FindZBoson();
    //}
 
-   if (hasMatchedTrack2ECluster) FindWBosonEndcap();
+   //if (hasMatchedTrack2ECluster) FindWBosonEndcap();
 
-   mVecBosRootFile->Fill(*mVecBosEvent, kCUT_CUT);
+   //mVecBosRootFile->Fill(*mVecBosEvent, kCUT_CUT);
 
    if (nAccEve < 2 || nAccEve % 1000 == 1 ) mVecBosEvent->print(0x0, isMC);
 
@@ -1003,9 +1003,10 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
    //printf("\n isTrg=%d trgId=%d\n",tic->nominal().isTrigger(par_l2bwTrgID),par_l2bwTrgID);
 
    //get bX info
-   StL0Trigger *trig = &(stMuEvent->l0Trigger());
+   StL0Trigger *trig = &stMuEvent->l0Trigger();
+
    mVecBosEvent->bx48 = trig->bunchCrossingId();
-   mVecBosEvent->bx7 = trig->bunchCrossingId7bit(mRunNo);
+   mVecBosEvent->bx7  = trig->bunchCrossingId7bit(mRunNo);
 
    // store spin info
    int bxStar48 = -2;

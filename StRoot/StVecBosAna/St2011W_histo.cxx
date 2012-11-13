@@ -311,7 +311,8 @@ void StVecBosMaker::initHistos()
 
    //hit towers for beam background tests
    string bx7name[4] = {"[0,30]", "[30,40]", "[40,110]", "[110,120]"};
-   for (int i = 0; i < 4; i++) {
+   for (int i = 0; i < 4; i++)
+   {
       hA[215 + i] = h = new TH2F(Form("muBTOW_adcGT10goodVer_7bx%d", i), Form("BTOW tower ADC > 10 (after good vertex found) bx7=%s; detector eta; detector phi", bx7name[i].data()), 40, -1, 1, 120, -M_PI, M_PI);
       hA[219 + i] = h = new TH2F(Form("muBTOW_etGT2goodVer_7bx%d", i), Form("BTOW tower ET > 2.0 GeV (after good vertex found) bx7=%s; detector eta; detector phi", bx7name[i].data()), 40, -1, 1, 120, -M_PI, M_PI);
       hA[223 + i] = h = new TH2F(Form("muBTOW_adcGT10noVer_7bx%d", i), Form("BTOW tower ADC > 10 (no rank>0 vertex found) bx7=%s; detector eta; detector phi", bx7name[i].data()), 40, -1, 1, 120, -M_PI, M_PI);
