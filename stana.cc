@@ -246,12 +246,17 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
          //BEMC simulator:
          StEmcSimulatorMaker *emcSim = new StEmcSimulatorMaker(); // use this instead to "redo" converstion from geant->adc
          emcSim->setCalibSpread(kBarrelEmcTowerId, 0.15);         // spread gains by 15%
+         emcSim->setCheckStatus(kBarrelEmcTowerId,false);
+         emcSim->setMakeFullDetector(kBarrelEmcTowerId,true);
+         emcSim->setDoZeroSuppression(kBarrelEmcTowerId,false);
 
          StEmcADCtoEMaker *bemcAdc   = new StEmcADCtoEMaker();    // for real data this sets calibration and status
 
+         bemcAdc->saveAllStEvent(true);
+
          // EEMC simulator:
-         StEEmcDbMaker* stEEmcDbMaker = new StEEmcDbMaker("eemcDb");
-         StEEmcSlowMaker *slowSim = new StEEmcSlowMaker("slowSim");
+         StEEmcDbMaker   *stEEmcDbMaker = new StEEmcDbMaker("eemcDb");
+         StEEmcSlowMaker *slowSim       = new StEEmcSlowMaker("slowSim");
          //slowSim->setSamplingFraction(0.0384); // effectively scales all Tower energies with a factor of 1.3 (for old private filtered simu only!)
          slowSim->setAddPed(true);
          slowSim->setSmearPed(true);
@@ -263,7 +268,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
          // simuTrig->setMC(isMC); // must be before individual detectors, to be passed
          simuTrig->setMC(2); // must be before individual detectors, to be passed 
          simuTrig->useBbc();
-         simuTrig->useEemc(0);//default=0:just process ADC, 1,2:comp w/trgData,see .
+         simuTrig->useEemc(0); // default=0: just process ADC, 1,2: comp w/trgData, see .
          assert(simuTrig->eemc);
          //simuTrig->eemc->setSetupPath((char *) eemcSetupPath.c_str());
          simuTrig->useBemc();

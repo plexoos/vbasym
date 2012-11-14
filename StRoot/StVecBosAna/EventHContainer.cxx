@@ -42,6 +42,12 @@ void EventHContainer::BookHists()
 
    fDir->cd();
 
+   o["hRunId"] = hist = new TH1I("hRunId", "; Run Id; Events", 20, 0, 20);
+   hist->SetOption("hist GRIDX");
+
+   o["hZdcRate"] = hist = new TH1I("hZdcRate", "; ZDC Rate; Events", 50, 129e3, 134e3);
+   hist->SetOption("hist GRIDX");
+
    o["hNumJets"] = hist = new TH1I("hNumJets", "; Num. of Jets; Events", 20, 0, 20);
    hist->SetOption("hist GRIDX");
 
@@ -127,6 +133,8 @@ void EventHContainer::Fill(ProtoEvent &ev)
 {
    VecBosEvent& event = (VecBosEvent&) ev;
 
+   ((TH1*) o["hRunId"])->Fill(event.runNo);
+   ((TH1*) o["hZdcRate"])->Fill(event.zdcRate);
    ((TH1*) o["hNumJets"])->Fill(event.GetNumJets());
    ((TH1*) o["hNumVertices"])->Fill(event.mVertices.size());
    ((TH1*) o["hNumGoodVertices"])->Fill(event.mVertices.size());

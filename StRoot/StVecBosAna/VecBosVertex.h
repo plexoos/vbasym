@@ -23,7 +23,7 @@ public:
 
    enum EVertexType {kUNKNOWN=0x0000, kBAD=0x1000, kGOOD=0x0001};
 
-   VecBosEvent *mEvent;
+   VecBosEvent *mEvent;       //!
    EVertexType  mType;
    int          id;           // as store do muDst list
    float        z;            // cm

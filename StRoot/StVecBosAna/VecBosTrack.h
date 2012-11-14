@@ -24,7 +24,7 @@ public:
 
    enum ETrackType {kUNKNOWN=0x0000, kBAD=0x1000, kGOOD=0x0001, kBARREL=0x0011, kENDCAP=0x0021};
 
-   VecBosEvent         *mEvent;
+   VecBosEvent         *mEvent;             //!
    ETrackType           mType;
    int                  isMatch2Cl;         // result of cuts
    WevePointTower       pointTower;
