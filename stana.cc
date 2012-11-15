@@ -509,7 +509,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    //    WlumiMk->FinishRun(RunNo);
 
    stChain->Finish();
-   delete stChain;
+   // delete stChain;
 
    cout << "run " << inMuDstFileListName << " maxEventsUser = " << nProcEvents << " total ";
    tt.Print();
@@ -535,7 +535,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       // Write TPC histos to new directory
       TDirectory *tpc = vecBosRootFile.mkdir("tpc");
       tpc->cd();
-      HListTpc->Write();
+      // HListTpc->Write();
    }
    else {
       printf("\n Failed to open Histo-file -->%s<, continue\n", histFileName.Data());
