@@ -7,6 +7,8 @@ using namespace std;
 
 
 VecBosEvent::VecBosEvent() : ProtoEvent(),
+   mStMuDst(0),
+   mMuDstNumVertices(0), mMuDstNumGTracks(0), mMuDstNumPTracks(0), mMuDstNumOTracks(0),
    mNumGoodVertices(0), mNumGoodTracks(0), mNumBTracks(0), mNumETracks(0),
    mStJets(0),
    mJets(),
@@ -48,7 +50,7 @@ void VecBosEvent::AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex)
    vbTrack.prMuTrack     = stMuTrack;
    vbTrack.glMuTrack     = stMuTrack->globalTrack();
    vbTrack.mVertex = vbVertex;
-   vbTrack.primP         = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
+   vbTrack.mVec3AtDca    = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
 
    if (vbVertex) {
       vbVertex->prTrList.push_back(stMuTrack);
@@ -108,12 +110,17 @@ UInt_t VecBosEvent::GetNumTracksWithBCluster2()
 
 void VecBosEvent::Process()
 {
+   mMuDstNumVertices = mStMuDst->primaryVertices()->GetEntriesFast();
+   mMuDstNumGTracks  = mStMuDst->globalTracks()->GetEntriesFast();
+   mMuDstNumPTracks  = mStMuDst->primaryTracks()->GetEntriesFast();
+   mMuDstNumOTracks  = mStMuDst->otherTracks()->GetEntriesFast();
+
    VecBosVertexVecIter iVertex = mVertices.begin();
    for ( ; iVertex!=mVertices.end(); ++iVertex)
    {
       iVertex->Process();
 
-      if (iVertex->IsGood())   mNumGoodVertices++;
+      if (iVertex->IsGood()) mNumGoodVertices++;
    }
 
    VecBosTrackVecIter iTrack = mTracks.begin();
@@ -131,6 +138,7 @@ void VecBosEvent::Process()
 void VecBosEvent::clear()
 {
    //Info("clear", "");
+   mStMuDst         = 0;
    id               = 0;
    runNo            = 0;
    time             = 0;
@@ -142,6 +150,10 @@ void VecBosEvent::clear()
    bx7              = -1;
    bx48             = -1;
    zTag             = false;
+   mMuDstNumVertices = 0;
+   mMuDstNumGTracks = 0;
+   mMuDstNumPTracks = 0;
+   mMuDstNumOTracks = 0;
    mNumGoodVertices = 0;
    mNumGoodTracks   = 0;
    mNumBTracks      = 0;

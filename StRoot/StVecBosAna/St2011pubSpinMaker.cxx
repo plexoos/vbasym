@@ -117,7 +117,7 @@ void St2011pubSpinMaker::bXingSort()
 
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          VecBosTrack &T = V.eleTrack[it];
-         if (T.pointTower.id == 0) continue;
+         if (T.mMatchedTower.id == 0) continue;
 
          // Collect QCD background for lumi monitors
          float frac24 = T.mCluster2x2.ET / (T.mCluster4x4.ET);

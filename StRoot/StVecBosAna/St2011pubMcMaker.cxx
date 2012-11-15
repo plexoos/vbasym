@@ -128,7 +128,7 @@ void St2011pubMcMaker::doWanalysis()
          //Kinematics
          //reconstruct W pL from reconstructed quantities
          float trueWpL = mWP.z();
-         float eleTheta = T.primP.Theta();
+         float eleTheta = T.mVec3AtDca.Theta();
          float ratioE = T.mCluster2x2.energy / 40.0;
          float pLRecoPlus = 80.0 * (ratioE) * ((cos(eleTheta)) + sqrt(cos(eleTheta) * cos(eleTheta) + sin(eleTheta) * sin(eleTheta) * (1 - ratioE * ratioE))) / (ratioE * ratioE * sin(eleTheta) * sin(eleTheta)); //+ sqrt solution
          float pLRecoMinus = 80.0 * (ratioE) * ((cos(eleTheta)) - sqrt(cos(eleTheta) * cos(eleTheta) + sin(eleTheta) * sin(eleTheta) * (1 - ratioE * ratioE))) / (ratioE * ratioE * sin(eleTheta) * sin(eleTheta)); //- sqrt solution
@@ -144,7 +144,7 @@ void St2011pubMcMaker::doWanalysis()
          float p_chrg = prTr->charge();
          if (p_chrg > 0) continue;
 
-         float eleEta = T.primP.Eta();
+         float eleEta = T.mVec3AtDca.Eta();
          //sort 2 solutions by electron eta
          if (eleEta < -0.8) {
             hA[35]->Fill(trueWpL, pLRecoMinus);
@@ -190,7 +190,7 @@ void St2011pubMcMaker::doWefficiency()
 
    //plot for Scott
    TVector3 detEle; //where lepton would hit BEMC
-   float Rcylinder = mBtowGeom->Radius();
+   float Rcylinder = gBTowGeom->Radius();
    detEle.SetPtEtaPhi(Rcylinder, mElectronP.Eta(), mElectronP.Phi());
    detEle.SetZ(detEle.Z() + mVertex.Z());
    hA[66]->Fill(detEle.Eta(), mElectronP.Perp());

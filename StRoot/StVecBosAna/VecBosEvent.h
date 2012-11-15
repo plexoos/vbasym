@@ -6,6 +6,7 @@
 #include "TVector3.h"
 #include "TH1.h"
 
+#include "StMuDSTMaker/COMMON/StMuDst.h"
 #include "StMuDSTMaker/COMMON/StMuTrack.h"
 #include "StMuDSTMaker/COMMON/StMuPrimaryVertex.h"
 
@@ -162,6 +163,10 @@ typedef StJetPtrSet::const_iterator       StJetPtrSetConstIter;
 
 class VecBosEvent : public ProtoEvent
 {
+protected:
+
+   StMuDst           *mStMuDst; //!
+
 public:
 
    int                l2bitET;
@@ -180,10 +185,14 @@ public:
    int                bxStar48;
    int                spin4;             // using spinDb or -1 if failed
    bool               zTag;
-   UInt_t             mNumGoodVertices;
-   UInt_t             mNumGoodTracks;
-   UInt_t             mNumBTracks;
-   UInt_t             mNumETracks;
+   UShort_t           mMuDstNumGTracks;
+   UShort_t           mMuDstNumVertices;
+   UShort_t           mMuDstNumPTracks;
+   UShort_t           mMuDstNumOTracks;
+   UShort_t           mNumGoodVertices;
+   UShort_t           mNumGoodTracks;
+   UShort_t           mNumBTracks;
+   UShort_t           mNumETracks;
    StJets            *mStJets;          //!
    StJets            *mStJetsNoEndcap;  //! jets noEEMC
    WeveBEMC           bemc;
@@ -200,6 +209,7 @@ public:
 
    VecBosEvent();
 
+   void                SetStMuDst(StMuDst *stMuDst) { mStMuDst = stMuDst; }
    VecBosVertex*       AddVertex(StMuPrimaryVertex &stMuVertex);
    void                AddVertex(VecBosVertex &vbVertex);
    void                AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex=0);

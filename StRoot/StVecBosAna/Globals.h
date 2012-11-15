@@ -8,11 +8,11 @@
 #include "VecBosEvent.h" // for WeveBEMC
 
 
-extern StEmcGeom  *mBtowGeom;
+extern StEmcGeom  *gBTowGeom;
 extern StEmcGeom  *mBSmdGeom[mxBSmd];
 extern TVector3    gBCalTowerCoords[mxBtow];               // vs. tower ID
 extern TVector3    mBSmdStripCoords[mxBSmd][mxBStrips];    // vs. strip ID
-extern int         mapBtowIJ2ID[mxBTetaBin * mxBTphiBin];  // vs. (iEta, iPhi)
+extern int         gMapBTowEtaPhiBin2Id[mxBTetaBin * mxBTphiBin];  // vs. (iEta, iPhi)
 
 
 bool        ConvertEtaPhi2Bins(float etaF, float phiF, int &kEta, int &kPhi);

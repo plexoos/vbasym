@@ -50,7 +50,7 @@ Int_t StZBosMaker::Make()
 void StZBosMaker::printJan(VecBosTrack *T)
 {
    int ibp = kBTow;
-   WevePointTower poiTw = T->pointTower;
+   WevePointTower poiTw = T->mMatchedTower;
    WeveCluster cl = T->mCluster2x2;
    int id = poiTw.id;
    float adc = wMK->mVecBosEvent->bemc.adcTile[ibp][id - 1];
@@ -76,7 +76,7 @@ void StZBosMaker::findEndcap_Z_boson()
       for (uint it = 0; it < V.eleTrack.size(); it++)
       {
          VecBosTrack &TB = V.eleTrack[it];
-         if (TB.pointTower.id <= 0) continue; //skip endcap towers
+         if (TB.mMatchedTower.id <= 0) continue; //skip endcap towers
          if (TB.isMatch2Cl == false) continue;
          assert(TB.mCluster2x2.nTower > 0); // internal logical error
          assert(TB.nearTotET > 0); // internal logical error
@@ -98,7 +98,7 @@ void StZBosMaker::findEndcap_Z_boson()
          for (uint it = 0; it < V.eleTrack.size(); it++)
          {
             VecBosTrack &TE = V.eleTrack[it];
-            if (TE.pointTower.id >= 0) continue; //skip barrel towers
+            if (TE.mMatchedTower.id >= 0) continue; //skip barrel towers
             if (TE.isMatch2Cl == false) continue;
             assert(TE.mCluster2x2.nTower > 0); // internal logical error
             assert(TE.nearTotET > 0); // internal logical error
@@ -117,8 +117,8 @@ void StZBosMaker::findEndcap_Z_boson()
 
             float e1 = TB.mCluster2x2.energy;
             float e2 = TE.mCluster2x2.energy;
-            TVector3 p1 = TB.primP; p1.SetMag(e1); //cluster.position;
-            TVector3 p2 = TE.primP; p2.SetMag(e2); //cluster.position;
+            TVector3 p1 = TB.mVec3AtDca; p1.SetMag(e1); //cluster.position;
+            TVector3 p2 = TE.mVec3AtDca; p2.SetMag(e2); //cluster.position;
 
             float del_phi = p1.DeltaPhi(p2);
             //printf("del Phi=%f\n",del_phi);
@@ -187,7 +187,7 @@ void StZBosMaker::findEndcap_Z_boson()
          //add plots of good candidates
          float e1 = TB.mCluster2x2.energy;
          float e2 = maxCluster.energy;
-         TVector3 p1 = TB.primP; p1.SetMag(e1);
+         TVector3 p1 = TB.mVec3AtDca; p1.SetMag(e1);
          TVector3 p2 = maxCluster.position; p2.SetMag(e2);
          float del_phi = p1.DeltaPhi(p2);
          float xx = del_phi;
@@ -232,7 +232,7 @@ void StZBosMaker::find_Z_boson()
       for (uint it = 0; it < V.eleTrack.size() - 1; it++)
       { // select first track:
          VecBosTrack &T1 = V.eleTrack[it];
-         if (T1.pointTower.id <= 0) continue; //skip endcap towers
+         if (T1.mMatchedTower.id <= 0) continue; //skip endcap towers
          if (T1.isMatch2Cl == false) continue;
          assert(T1.mCluster2x2.nTower > 0); // internal logical error
          assert(T1.nearTotET > 0); // internal logical error
@@ -253,7 +253,7 @@ void StZBosMaker::find_Z_boson()
          for (uint it2 = it + 1; it2 < V.eleTrack.size(); it2++)
          { // select second track:
             VecBosTrack &T2 = V.eleTrack[it2];
-            if (T2.pointTower.id <= 0) continue; //skip endcap towers
+            if (T2.mMatchedTower.id <= 0) continue; //skip endcap towers
             if (T2.isMatch2Cl == false) continue;
             assert(T2.mCluster2x2.nTower > 0); // internal logical error
             assert(T2.nearTotET > 0); // internal logical error
@@ -273,8 +273,8 @@ void StZBosMaker::find_Z_boson()
 
             float e1 = T1.mCluster2x2.energy;
             float e2 = T2.mCluster2x2.energy;
-            TVector3 p1 = T1.primP; p1.SetMag(e1); //cluster.position;
-            TVector3 p2 = T2.primP; p2.SetMag(e2); //cluster.position;
+            TVector3 p1 = T1.mVec3AtDca; p1.SetMag(e1); //cluster.position;
+            TVector3 p2 = T2.mVec3AtDca; p2.SetMag(e2); //cluster.position;
 
             float del_phi = p1.DeltaPhi(p2);
             //printf("del Phi=%f\n",del_phi);
@@ -301,8 +301,8 @@ void StZBosMaker::find_Z_boson()
             hA[15]->Fill(mass);
             hA[33]->Fill(T1.mCluster2x2.ET, T1.prMuTrack->charge() / T1.prMuTrack->pt());
             hA[33]->Fill(T2.mCluster2x2.ET, T2.prMuTrack->charge() / T2.prMuTrack->pt());
-            hA[34]->Fill(T1.pointTower.iEta , T1.mCluster2x2.energy);
-            hA[34]->Fill(T2.pointTower.iEta , T2.mCluster2x2.energy);
+            hA[34]->Fill(T1.mMatchedTower.iEta , T1.mCluster2x2.energy);
+            hA[34]->Fill(T2.mMatchedTower.iEta , T2.mCluster2x2.energy);
             hA[35]->Fill(p1.Eta(), p2.Eta());
             hA[36]->Fill(psum.Eta());
             hA[37]->Fill(psum.Pt());
@@ -343,7 +343,7 @@ void StZBosMaker::find_Z_boson()
             hA[3]->Fill(T1.prMuTrack->charge()*T2.prMuTrack->charge());
             hA[4]->Fill(p1.Phi(), p2.Phi());
             hA[5]->Fill(del_phi);
-            hA[6]->Fill(mass, T1.prMuTrack->charge() / T1.primP.Perp()*T2.prMuTrack->charge() / T1.primP.Perp());
+            hA[6]->Fill(mass, T1.prMuTrack->charge() / T1.mVec3AtDca.Perp()*T2.prMuTrack->charge() / T1.mVec3AtDca.Perp());
             hA[7]->Fill(mass, T1.prMuTrack->charge()*T2.prMuTrack->charge());
             hA[8]->Fill(T1.mCluster2x2.ET);
             if (T1.prMuTrack->charge() > 0) {

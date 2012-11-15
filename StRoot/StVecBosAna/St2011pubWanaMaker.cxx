@@ -87,9 +87,9 @@ void St2011pubWanaMaker::evalWeleTrackSign()
          if ( p_chrg < 0 ) p_ipn = 1; // minus
 
          // Make cut on lepton |eta| for cross section
-         if (fabs(track.primP.Eta()) > 1) continue;
+         if (fabs(track.mVec3AtDca.Eta()) > 1) continue;
 
-         float absEta = fabs(track.primP.Eta());
+         float absEta = fabs(track.mVec3AtDca.Eta());
 
          if (track.mCluster2x2.ET / track.nearTotET_noEEMC > wMK->par_nearTotEtFrac)
          {
@@ -153,13 +153,13 @@ void St2011pubWanaMaker::evalWeleTrackSign()
          hA[6]->Fill(ET, g_chrg / PT);
 
          // Change in pT from global to primary
-         float primPT = prTr->pt();
+         float mVec3AtDcaT = prTr->pt();
          float globPT = glTr->pt();
-         hA[28]->Fill(primPT, globPT);
-         hA[29]->Fill(globPT - primPT);
+         hA[28]->Fill(mVec3AtDcaT, globPT);
+         hA[29]->Fill(globPT - mVec3AtDcaT);
 
-         if (fabs(globPT - primPT) > 1) hA[30]->Fill(ET);
-         if (g_chrg * p_chrg < -0.5) hA[31]->Fill(globPT - primPT);
+         if (fabs(globPT - mVec3AtDcaT) > 1) hA[30]->Fill(ET);
+         if (g_chrg * p_chrg < -0.5) hA[31]->Fill(globPT - mVec3AtDcaT);
 
          // work with prim component
          hA[7]->Fill(ET, p_chrg / prTr->pt());
@@ -183,8 +183,8 @@ void St2011pubWanaMaker::scanCrateRate()
       VecBosVertex &V = wMK->mVecBosEvent->mVertices[iv];
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          VecBosTrack &track = V.eleTrack[it];
-         // track.pointTower.print();
-         int softID = track.pointTower.id;
+         // track.mMatchedTower.print();
+         int softID = track.mMatchedTower.id;
          if (softID <= 0) continue;
          if (wMK->mVecBosEvent->bemc.statTile[kBTow][softID - 1]) continue; // skip masked towers
 

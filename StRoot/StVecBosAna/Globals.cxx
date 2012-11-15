@@ -6,11 +6,11 @@
 #include "TVector3.h"
 
 
-StEmcGeom  *mBtowGeom;
+StEmcGeom  *gBTowGeom;
 StEmcGeom  *mBSmdGeom[mxBSmd];
 TVector3    gBCalTowerCoords[mxBtow];               // vs. tower ID
 TVector3    mBSmdStripCoords[mxBSmd][mxBStrips];    // vs. strip ID
-int         mapBtowIJ2ID[mxBTetaBin * mxBTphiBin];  // vs. (iEta, iPhi)
+int         gMapBTowEtaPhiBin2Id[mxBTetaBin * mxBTphiBin];  // vs. (iEta, iPhi)
 
 
 /**
@@ -78,7 +78,7 @@ WeveCluster SumBtowPatch(VecBosEvent &vbEvent, int etaBin, int phiBin, int etaWi
    cluster.iPhi = phiBin;
    TVector3 R;
    double sumW = 0;
-   float Rcylinder  = mBtowGeom->Radius();
+   float Rcylinder  = gBTowGeom->Radius();
    float Rcylinder2 = Rcylinder *Rcylinder;
 
    for (int iEta = etaBin; iEta < etaBin + etaWidth; iEta++) // trim in eta-direction
@@ -90,7 +90,7 @@ WeveCluster SumBtowPatch(VecBosEvent &vbEvent, int etaBin, int phiBin, int etaWi
       {
          // wrap up in the phi-direction
          int   iPhi_p  = (iPhi + mxBTphiBin) % mxBTphiBin;         // keep it always positive
-         int   towerId = mapBtowIJ2ID[ iEta + iPhi_p*mxBTetaBin];
+         int   towerId = gMapBTowEtaPhiBin2Id[ iEta + iPhi_p*mxBTetaBin];
          float energy  = vbEvent.bemc.eneTile[kBTow][towerId - 1];
 
          //if (L<5) printf("n=%2d  iEta=%d iPhi_p=%d\n",cluster.nTower,iEta,iPhi_p);

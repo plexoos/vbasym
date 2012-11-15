@@ -27,13 +27,14 @@ public:
    VecBosEvent         *mEvent;             //!
    ETrackType           mType;
    int                  isMatch2Cl;         // result of cuts
-   WevePointTower       pointTower;
+   WevePointTower       mMatchedTower;
    const StMuTrack     *glMuTrack;          //!
    const StMuTrack     *prMuTrack;          //!
    const VecBosVertex  *mVertex;            //! pointer to mother vertex
    WeveCluster          mCluster2x2;
    WeveCluster          mCluster4x4;
-   TVector3             primP;              // primary momentum vector
+   TVector3             mVec3AtDca;              // primary momentum vector
+   TVector3             mVec3AtBTow;         // primary momentum vector
    float                nearTpcPT;
    float                nearEmcET;
    float                nearBtowET;

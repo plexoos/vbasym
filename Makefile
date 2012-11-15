@@ -22,13 +22,13 @@ ROOTGLIBS    := $(shell root-config --glibs)
 # Linux with egcs, gcc 2.9x, gcc 3.x (>= RedHat 5.2)
 CXX           = g++
 
-STAR_INC_DIRS = -IStRoot -I.sl53_gcc432/include -I/afs/rhic.bnl.gov/star/packages/SL12c/StRoot/ \
-                -I/afs/rhic.bnl.gov/star/packages/SL12c/.sl53_gcc432/include/ \
-                -I/afs/rhic.bnl.gov/star/packages/SL12c/StRoot/StJetMaker/tracks/ \
+STAR_INC_DIRS = -IStRoot -I.sl53_gcc432/include -I/afs/rhic.bnl.gov/star/packages/SL11d/StRoot/ \
+                -I/afs/rhic.bnl.gov/star/packages/SL11d/.sl53_gcc432/include/ \
+                -I/afs/rhic.bnl.gov/star/packages/SL11d/StRoot/StJetMaker/tracks/ \
                 -I.sl53_gcc432/obj/StRoot
 
-STAR_LIB_DIRS = -L.sl53_gcc432/lib -L/afs/rhic.bnl.gov/star/packages/SL12c/.sl53_gcc432/lib \
-                -L/afs/rhic.bnl.gov/star/packages/SL12c/.sl53_gcc432/LIB
+STAR_LIB_DIRS = -L.sl53_gcc432/lib -L/afs/rhic.bnl.gov/star/packages/SL11d/.sl53_gcc432/lib \
+                -L/afs/rhic.bnl.gov/star/packages/SL11d/.sl53_gcc432/LIB
 
 MYSQLLIBDIR = -L/usr/lib/mysql
 MYSQLLIB = -lmysqlclient
@@ -54,7 +54,7 @@ LIBS          = $(ROOTLIBS) -lTable -lMinuit -lTreePlayer -lGeom -lrt
 
 LDFLAGS      += $(shell root-config --ldflags)
 LDFLAGS      += -L$(OPTSTAR)/lib
-#LDFLAGS      += -Wl,-rpath,.sl53_gcc432/lib:/afs/rhic.bnl.gov/star/packages/SL12c/.sl53_gcc432/lib:/afs/rhic.bnl.gov/star/ROOT/5.22.00/.sl53_gcc432/rootdeb/lib,--warn-unresolved-symbols
+#LDFLAGS      += -Wl,-rpath,.sl53_gcc432/lib:/afs/rhic.bnl.gov/star/packages/SL11d/.sl53_gcc432/lib:/afs/rhic.bnl.gov/star/ROOT/5.22.00/.sl53_gcc432/rootdeb/lib,--warn-unresolved-symbols
 LDFLAGS      += -Wl,-Bdynamic -Wl,--warn-unresolved-symbols -Wl,-rpath,/star/u/smirnovd/rootmacros/utils
 
 #------------------------------------------------------------------------------

@@ -57,6 +57,12 @@ void TrackHContainer::BookHists()
    o["hTrackPhi"] = hist = new TH1I("hTrackPhi", "; Track #phi; Num. of Tracks", 60, -M_PI, M_PI);
    hist->SetOption("hist GRIDX GRIDY");
 
+   o["hTrackEtaAtBTow"] = hist = new TH1I("hTrackEtaAtBTow", "; Track #eta at BTOW; Num. of Tracks", 60, -3, 3);
+   hist->SetOption("hist GRIDX GRIDY");
+
+   o["hTrackPhiAtBTow"] = hist = new TH1I("hTrackPhiAtBTow", "; Track #phi at BTOW; Num. of Tracks", 60, -M_PI, M_PI);
+   hist->SetOption("hist GRIDX GRIDY");
+
    o["hTrackPt"] = hist = new TH1I("hTrackPt", "; Track P_T; Num. of Tracks", 40, 0, 40);
    hist->SetOption("hist GRIDX GRIDY XY");
 
@@ -102,12 +108,23 @@ void TrackHContainer::Fill(VecBosTrack &track)
 {
    ((TH1*) o["hTrackFlag"])->Fill(track.prMuTrack->flag());
    ((TH1*) o["hTrackType"])->Fill(track.mType);
-   ((TH1*) o["hTrackEta"])->Fill(track.primP.Eta());
-   ((TH1*) o["hTrackPhi"])->Fill(track.primP.Phi());
+   ((TH1*) o["hTrackEta"])->Fill(track.mVec3AtDca.Eta());
+   ((TH1*) o["hTrackPhi"])->Fill(track.mVec3AtDca.Phi());
+
+   if (track.IsBTrack()) {
+      //printf("", mVec3AtBTow);
+      //Info("Fill", "XXX");
+      //printf("mType: %x\n", track.mType);
+      //track.mVec3AtDca.Print();
+      //track.mVec3AtBTow.Print();
+      ((TH1*) o["hTrackEtaAtBTow"])->Fill(track.mVec3AtBTow.Eta());
+      ((TH1*) o["hTrackPhiAtBTow"])->Fill(track.mVec3AtBTow.Phi());
+   }
+
    ((TH1*) o["hTrackPt"])->Fill(track.prMuTrack->pt());
    ((TH1*) o["hTrackHitsFit"])->Fill(track.prMuTrack->nHitsFit());
    ((TH1*) o["hTrackHitsPoss"])->Fill(track.prMuTrack->nHitsPoss());
-   ((TH1*) o["hTrackBTowerId"])->Fill(track.pointTower.id);
+   ((TH1*) o["hTrackBTowerId"])->Fill(track.mMatchedTower.id);
    ((TH1*) o["hTrackBClusterEnergy2x2"])->Fill(track.mCluster2x2.ET);
    ((TH1*) o["hTrackBClusterEnergy4x4"])->Fill(track.mCluster4x4.ET);
    ((TH1*) o["hTrackBClusterEnergyIsoRatio"])->Fill(track.mCluster2x2.ET/track.mCluster4x4.ET);

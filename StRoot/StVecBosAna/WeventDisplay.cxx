@@ -127,7 +127,7 @@ void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  
       cU3->Divide(2, 1);
       cU1->cd(); hTpcET->Draw("colz");
 
-      TVector3 rW = myTr.pointTower.R;
+      TVector3 rW = myTr.mMatchedTower.R;
       rW.SetZ(rW.z() - myV.z);
 
       TEllipse *te1 = new TEllipse(rW.Eta(), rW.Phi(), 0.1, 0.1);
@@ -209,7 +209,7 @@ void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  
       cRD->Divide(1, 2);
       cLU1->cd(); hTpcET->Draw("colz");
 
-      TVector3 rW = myTr.pointTower.R;
+      TVector3 rW = myTr.mMatchedTower.R;
       rW.SetZ(rW.z() - myV.z);
       TEllipse *te1 = new TEllipse(rW.Eta(), rW.Phi(), 0.1, 0.1);
       te1->SetFillStyle(0); te1->SetLineStyle(3); te1->SetLineColor(kMagenta);
@@ -287,7 +287,7 @@ void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  
 
       TEllipse *te3 = new TEllipse(rW.X(), rW.Y(), 2.0, 2.0);
       te3->SetLineColor(kBlue); te3->SetFillStyle(0); te3->Draw(); //track projection
-      //TEllipse *te5=new TEllipse(myTr.pointTower.Rglob.X(),myTr.pointTower.Rglob.Y(), .25, .25);
+      //TEllipse *te5=new TEllipse(myTr.mMatchedTower.Rglob.X(),myTr.mMatchedTower.Rglob.Y(), .25, .25);
       //te5->SetLineColor(kBlue); te5->Draw(); //global track projection
       TEllipse *te4 = new TEllipse(0., 0., 215., 215.);
       te4->SetFillStyle(0); te4->SetLineColor(kBlue); te4->Draw("l"); //outer esmd radius
@@ -326,7 +326,7 @@ void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
 
       float chi2 = myTr.glMuTrack->chi2(); if (chi2 > 999.) chi2 = -1.;
-      sprintf(txt, "Track: eta=%.1f Q=%d nFit=%d nPoss=%d r1=%.0f r2=%.0f chi2=%.1f", myTr.pointTower.R.Eta(), myTr.prMuTrack->charge(), myTr.prMuTrack->nHitsFit(), myTr.prMuTrack->nHitsPoss(), myTr.glMuTrack->firstPoint().perp(), myTr.glMuTrack->lastPoint().perp(), chi2);
+      sprintf(txt, "Track: eta=%.1f Q=%d nFit=%d nPoss=%d r1=%.0f r2=%.0f chi2=%.1f", myTr.mMatchedTower.R.Eta(), myTr.prMuTrack->charge(), myTr.prMuTrack->nHitsFit(), myTr.prMuTrack->nHitsPoss(), myTr.glMuTrack->firstPoint().perp(), myTr.glMuTrack->lastPoint().perp(), chi2);
       printf("WeventDisplay:: %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
 
@@ -366,7 +366,7 @@ void WeventDisplay::exportEvent( const char *tit, VecBosVertex myV, VecBosTrack 
    //printf("#xcheck-%s run=%d daqSeq=%d eveID=%7d vertID=%2d zVert=%.1f prTrID=%4d  prTrEta=%.3f prTrPhi/deg=%.1f globPT=%.1f hitTwId=%4d twAdc=%.1f clEta=%.3f clPhi/deg=%.1f  clET=%.1f\n",tit,
    //	 runNo,daqSeq,eveId,myV.id,myV.z,
    //	 myTr.prMuTrack->id(),myTr.prMuTrack->eta(),myTr.prMuTrack->phi()/3.1416*180.,myTr.glMuTrack->pt(),
-   //	 myTr.pointTower.id,wMK->mVecBosEvent->bemc.adcTile[kBTow][myTr.pointTower.id-1],
+   //	 myTr.mMatchedTower.id,wMK->mVecBosEvent->bemc.adcTile[kBTow][myTr.mMatchedTower.id-1],
    //	 rTw.Eta(),rTw.Phi()/3.1416*180.,myTr.mCluster2x2.ET);
 
    float zVert = myV.z;
@@ -376,12 +376,12 @@ void WeventDisplay::exportEvent( const char *tit, VecBosVertex myV, VecBosTrack 
    for (int i = 0; i < mxBtow; i++) {
       float ene = wMK->mVecBosEvent->bemc.eneTile[kBTow][i];
       if (ene <= 0) continue;
-      TVector3 primP = gBCalTowerCoords[i] - TVector3(0, 0, zVert);
-      primP.SetMag(ene); // it is 3D momentum in the event ref frame
-      float ET = primP.Perp();
+      TVector3 mVec3AtDca = gBCalTowerCoords[i] - TVector3(0, 0, zVert);
+      mVec3AtDca.SetMag(ene); // it is 3D momentum in the event ref frame
+      float ET = mVec3AtDca.Perp();
 
-      float eveEta = primP.Eta();
-      float evePhi = primP.Phi();
+      float eveEta = mVec3AtDca.Eta();
+      float evePhi = mVec3AtDca.Phi();
       hEmcET->Fill(eveEta, evePhi, ET);
    }
 
@@ -390,12 +390,12 @@ void WeventDisplay::exportEvent( const char *tit, VecBosVertex myV, VecBosTrack 
       for (int j = 0; j < mxEtowEta; j++) {
          float ene = wMK->mVecBosEvent->etow.ene[i][j];
          if (ene <= 0) continue;
-         TVector3 primP = wMK->positionEtow[i][j] - TVector3(0, 0, zVert);
-         primP.SetMag(ene); // it is 3D momentum in the event ref frame
-         float ET = primP.Perp();
+         TVector3 mVec3AtDca = wMK->positionEtow[i][j] - TVector3(0, 0, zVert);
+         mVec3AtDca.SetMag(ene); // it is 3D momentum in the event ref frame
+         float ET = mVec3AtDca.Perp();
 
-         float eveEta = primP.Eta();
-         float evePhi = primP.Phi();
+         float eveEta = mVec3AtDca.Eta();
+         float evePhi = mVec3AtDca.Phi();
          hEmcET->Fill(eveEta, evePhi, ET);
       }
    }
@@ -403,8 +403,8 @@ void WeventDisplay::exportEvent( const char *tit, VecBosVertex myV, VecBosTrack 
    hEmcET->SetMinimum(0.3);  hEmcET->SetMaximum(30.);
    // compute approximate event eta for barrel
    float x, y, z;
-   float Rcylinder = mBtowGeom->Radius();
-   assert(mBtowGeom->getXYZ(20, x, y, z) == 0); // this is approximate Z of last tower
+   float Rcylinder = gBTowGeom->Radius();
+   assert(gBTowGeom->getXYZ(20, x, y, z) == 0); // this is approximate Z of last tower
    TVector3 rL(Rcylinder, 0, z + myV.z);
    TVector3 rR(Rcylinder, 0, z - myV.z);
    float etaL = -rL.Eta(), etaR = rR.Eta();
@@ -421,8 +421,8 @@ void WeventDisplay::exportEvent( const char *tit, VecBosVertex myV, VecBosTrack 
 
    //... TPC
    hTpcET->SetMinimum(0.3); hTpcET->SetMaximum(10.);
-   if (wMK->mStMuDstMaker) getPrimTracks( myV.id, myTr.pointTower.id);
-   else getPrimTracksFromTree(vertexIndex, myTr.pointTower.id);
+   if (wMK->mStMuDstMaker) getPrimTracks( myV.id, myTr.mMatchedTower.id);
+   else getPrimTracksFromTree(vertexIndex, myTr.mMatchedTower.id);
 
    //.... BSMD-Eta, -Phi
 
@@ -445,7 +445,7 @@ void WeventDisplay::exportEvent( const char *tit, VecBosVertex myV, VecBosTrack 
 
    //...  ESMD cluster picture
    //initialize histo centred at track extrapolation
-   TVector3 rW = myTr.pointTower.R; //z is at SMD depth
+   TVector3 rW = myTr.mMatchedTower.R; //z is at SMD depth
    float width = 65.;
    hEsmdXpt->SetBins(130, rW.X() - width, rW.X() + width, 130, rW.Y() - width, rW.Y() + width);
 
@@ -474,7 +474,7 @@ void WeventDisplay::getPrimTracks( int vertID, int pointTowId)
       float hitFrac = 1.*prTr->nHitsFit() / prTr->nHitsPoss();
       if (hitFrac < wMK->par_nHitFrac) continue;
       StThreeVectorF prPvect = prTr->p();
-      TVector3 primP = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
+      TVector3 mVec3AtDca = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
       float pT = prTr->pt();
       hTpcET->Fill(prTr->eta(), prTr->phi(), pT);
 
@@ -498,7 +498,7 @@ void WeventDisplay::getPrimTracksFromTree(int vertID, int pointTowId)
       float hitFrac = 1.*prTr->nHitsFit() / prTr->nHitsPoss();
       if (hitFrac < wMK->par_nHitFrac) continue;
       StThreeVectorF prPvect = prTr->p();
-      TVector3 primP = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
+      TVector3 mVec3AtDca = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
       float pT = prTr->pt();
       hTpcET->Fill(prTr->eta(), prTr->phi(), pT);
 
@@ -532,11 +532,11 @@ void WeventDisplay::export2sketchup(  const char *tit, VecBosVertex myV, VecBosT
       float hitFrac = 1.*prTr->nHitsFit() / prTr->nHitsPoss();
       if (hitFrac < wMK->par_nHitFrac) continue;
       prTr->p();
-      fprintf(fd, "track V %.1f %.3f %.3f  primP:PT:eta:phi:Q %.1f %.3f  %.3f  %d\n", rV.x(), rV.y(), rV.z(), prTr->p().perp(), prTr->p().pseudoRapidity(), prTr->p().phi(), prTr->charge());
+      fprintf(fd, "track V %.1f %.3f %.3f  mVec3AtDca:PT:eta:phi:Q %.1f %.3f  %.3f  %d\n", rV.x(), rV.y(), rV.z(), prTr->p().perp(), prTr->p().pseudoRapidity(), prTr->p().phi(), prTr->charge());
    }
 
    // Dump BTOW towers
-   float Rcylinder = mBtowGeom->Radius(), Rcylinder2 = Rcylinder * Rcylinder;
+   float Rcylinder = gBTowGeom->Radius(), Rcylinder2 = Rcylinder * Rcylinder;
    for (int i = 0; i < mxBtow; i++) {
       float ene = wMK->mVecBosEvent->bemc.eneTile[kBTow][i];
       if (ene <= 0) continue;
@@ -565,15 +565,15 @@ void WeventDisplay::export2sketchup(  const char *tit, VecBosVertex myV, VecBosT
          float ene = wMK->mVecBosEvent->etow.ene[iphi][ieta];
          if (ene <= 0) continue; //skip towers with no energy
          TVector3 detP = wMK->positionEtow[iphi][ieta];
-         TVector3 primP = detP - TVector3(0, 0, myV.z);
-         primP.SetMag(ene); // it is 3D momentum in the event ref frame
-         fprintf(fd, "etow V %.1f %.3f %.3f  eveET:detEta:detPhi %.3f %.3f  %.3f\n", rV.x(), rV.y(), rV.z(), primP.Perp(), detP.Eta(), detP.Phi());
+         TVector3 mVec3AtDca = detP - TVector3(0, 0, myV.z);
+         mVec3AtDca.SetMag(ene); // it is 3D momentum in the event ref frame
+         fprintf(fd, "etow V %.1f %.3f %.3f  eveET:detEta:detPhi %.3f %.3f  %.3f\n", rV.x(), rV.y(), rV.z(), mVec3AtDca.Perp(), detP.Eta(), detP.Phi());
       }
    }
 
    //.... DUMP reco electron ...
    float eleET = myTr.mCluster2x2.ET;
-   fprintf(fd, "recoElectron V %.1f %.3f %.3f  ET:detEta:detPhi %.3f %.3f  %.3f\n", rV.x(), rV.y(), rV.z() , eleET, myTr.pointTower.R.Eta(), myTr.pointTower.R.Phi());
+   fprintf(fd, "recoElectron V %.1f %.3f %.3f  ET:detEta:detPhi %.3f %.3f  %.3f\n", rV.x(), rV.y(), rV.z() , eleET, myTr.mMatchedTower.R.Eta(), myTr.mMatchedTower.R.Phi());
 
    //... close event file
    fclose(fd);

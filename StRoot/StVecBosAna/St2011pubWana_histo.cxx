@@ -1,7 +1,3 @@
-// $Id: St2011pubWana_histo.cxx,v 1.1 2012/10/09 15:21:20 smirnovd Exp $
-//
-//*-- Author : Jan Balewski, MIT
-
 #include <TH2.h>
 #include <TList.h>
 #include <TLine.h>
@@ -10,13 +6,11 @@
 #include "StVecBosMaker.h"
 #include "St2011pubWanaMaker.h"
 
-//________________________________________________
-//________________________________________________
-void
-St2011pubWanaMaker::initHistos(){
+
+void St2011pubWanaMaker::initHistos()
+{
   //  const float PI=TMath::Pi();
   TString core="pub"; // prefix added to every histo name, to allow for multipl maker saving histos in the same root file
-
 
   //...... data histograms
   memset(hA,0,sizeof(hA));
@@ -75,7 +69,6 @@ St2011pubWanaMaker::initHistos(){
     sprintf(txt,"Final W sel. ET>%.1f GeV, prim Q=%c ; lepton eta ,event ref frame ",par_highET, cPM[ipn]);
     hA[16+ipn]=h=new TH1F(core+txt0, txt, 40,-2,2);      
   }
-  
 
   //20-30 background study cuts
   hA[20]=h=new TH1F(core+"Joe1","Final sel, awayET<8, nearRET>0.9; 2x2 cluster ET (GeV)", 100,0,100);
@@ -89,14 +82,12 @@ St2011pubWanaMaker::initHistos(){
 
   hA[26]=h=new TH1F(core+"Joe7","Final sel, awayET<8 ; 2x2 ET/ nearET ", 110,0,1.1);
   hA[27]=h=new TH2F(core+"Joe8","Final sel, nearR>0.9 ; 2x2 cluster ET (GeV); awayET 9GeV)", 100,0,100,100,0,100);
-
  
   //Study global vs primary tracks //JS
-  hA[28]=h=new TH2F(core+"primPT_globPT","global vs primary pT;primary pT;global pT",100,0,100,100,0,100); 
-  hA[29]=h=new TH1F(core+"diffprimPT_globPT","global - primary pT; global-primary pT",100,-50,50);  
+  hA[28]=h=new TH2F(core+"mVec3AtDcaT_globPT","global vs primary pT;primary pT;global pT",100,0,100,100,0,100); 
+  hA[29]=h=new TH1F(core+"diffmVec3AtDcaT_globPT","global - primary pT; global-primary pT",100,-50,50);  
   hA[30]=h=new TH1F(core+"diffGT1_clustET"," 2x2 cluster ET for global-primary > 1 GeV",100,0,100);  
-  hA[31]=h=new TH1F(core+"diffprimPT_globPT_Qflip","global - primary pT when Q flipped; global-primary pT",100,-50,50);  
-
+  hA[31]=h=new TH1F(core+"diffmVec3AtDcaT_globPT_Qflip","global - primary pT when Q flipped; global-primary pT",100,-50,50);  
   
   //eta bins for X sec
   hA[32]=h=new TH1F(core+"etaBin1sig","electron .6 < |#eta| < 1 ; 2x2 cluster ET",100,1,101);
@@ -117,17 +108,12 @@ St2011pubWanaMaker::initHistos(){
   hA[45]=h=new TH1F(core+"clustPtBal_bckgrdN",Form("PT Balance < %.1f  Q=-; 2x2 Cluster ET",wMK->par_ptBalance),100,0,100);
   hA[46]=h=new TH1F(core+"clustPtBalnoEN",Form("PT Balance > %.1f  (EEMC not included) Q=-; 2x2 Cluster ET",wMK->par_ptBalance),100,0,100);
   
-  
-
   // add histos to the list (if provided)
   for(int i=0;i<mxHA;i++) {
     if(  hA[i]==0) continue;
     HList->Add( hA[i]);
   }
+
   //  HList->ls();
   LOG_INFO<<Form("%s::initHistos done1",GetName())<<endm;
-
 }
-
-
-// Log: $
