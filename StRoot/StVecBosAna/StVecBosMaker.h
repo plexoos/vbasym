@@ -10,8 +10,8 @@
 
 #include "StMaker.h"
 
-#include <TChain.h>
-#include <TRandom3.h>
+#include "TChain.h"
+#include "TRandom3.h"
 
 #include "VecBosEvent.h"
 #include "VecBosVertex.h"
@@ -20,11 +20,7 @@
 
 
 class  TObjArray;
-class  TH1I;
-class  TH2I;
 class  StMuDstMaker;
-class  StEmcGeom;
-class  StEmcDecoder;
 class  StBemcTables;
 class  StEEmcDb;
 class  StSpinDbMaker;
@@ -84,14 +80,13 @@ private:
    int   mMinNumPileupVertices;
 
    int   par_nFitPts, parE_nFitPts;
-   float par_nHitFrac, par_trackRin,  par_trackRout, mMinBTrackPt;
+   float par_nHitFrac, par_trackRin,  par_trackRout;
    float parE_nHitFrac, parE_trackRin,  parE_trackRout, mMinETrackPt;
 
    int   par_kSigPed, par_AdcThres;
    float par_maxADC, mMinBClusterEnergy, parE_clustET;
    float mMinBClusterEnergyIsoRatio, par_nearTotEtFrac;
    float mMinEClusterEnergyIsoRatio, parE_nearTotEtFrac;
-   float mTrackIsoDeltaR, mTrackIsoDeltaPhi;
    float parE_delR3D, par_highET, parE_highET,  par_ptBalance, parE_ptBalance;
    float mMinBTrackEta, mMaxBTrackEta, mMinETrackEta, mMaxETrackEta; //bracket acceptance
    float parE_trackEtaMin;
@@ -115,7 +110,7 @@ public: // to overwrite default params from .C macro
    }
    void setEleTrackCuts(int nfp, int hfr, float rin, float rout, float mpt) {
       par_nFitPts = nfp;  par_nHitFrac = hfr;
-      par_trackRin = rin;  par_trackRout = rout; mMinBTrackPt = mpt;
+      par_trackRin = rin;  par_trackRout = rout;
    }
    void setWbosonCuts(float a, float fr2,  float bal, float etaLow, float etaHigh) {
       par_highET = a; par_nearTotEtFrac = fr2;  par_ptBalance = bal;  mMinBTrackEta = etaLow; mMaxBTrackEta = etaHigh;
@@ -152,7 +147,6 @@ private:
    StSpinDbMaker  *spinDb;     // access spin information
    EEmcGeomSimple *mGeomEmc;   // access to EEMC geometry
    EEmcSmdGeom    *mGeomSmd;   // access to ESMD geometry
-   TVector3 positionEtow[mxEtowSec *mxEtowSub][mxEtowEta];
 
    int   ReadMuDstBTOW();
    int   ReadMuDstETOW();
@@ -191,8 +185,6 @@ private:
    TClonesArray* GetJetsTreeAnalysis(TString branchName);
 
    // tools
-   float SumBTowCone(float zVert, TVector3 refAxis, int flag);
-   float SumETowCone(float zVert, TVector3 refAxis, int flag);
    float SumTpcCone(int vertID, TVector3 refAxis, int flag, int pointTowId);
    float SumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, int pointTowId); //uses track vector saved in tree
    WeveCluster maxEtow2x1(int iEta, int iPhi, float zVert);

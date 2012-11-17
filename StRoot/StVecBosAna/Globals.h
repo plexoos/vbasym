@@ -12,11 +12,14 @@ extern StEmcGeom  *gBTowGeom;
 extern StEmcGeom  *mBSmdGeom[mxBSmd];
 extern TVector3    gBCalTowerCoords[mxBtow];               // vs. tower ID
 extern TVector3    mBSmdStripCoords[mxBSmd][mxBStrips];    // vs. strip ID
+extern TVector3    gETowCoords[mxEtowSec *mxEtowSub][mxEtowEta];
 extern int         gMapBTowEtaPhiBin2Id[mxBTetaBin * mxBTphiBin];  // vs. (iEta, iPhi)
 
 
 bool        ConvertEtaPhi2Bins(float etaF, float phiF, int &kEta, int &kPhi);
 WeveCluster FindMaxBTow2x2(VecBosEvent &vbEvent, int iEta, int iPhi, float zVert);
-WeveCluster SumBtowPatch(VecBosEvent &vbEvent, int iEta, int iPhi, int Leta, int  Lphi, float zVert);
+WeveCluster SumBTowPatch  (VecBosEvent &vbEvent, int iEta, int iPhi, int Leta, int  Lphi, float zVert);
+float       SumBTowCone   (VecBosEvent &vbEvent, float zVert, TVector3 refAxis, int flag);
+float       SumETowCone   (VecBosEvent &vbEvent, float zVert, TVector3 refAxis, int flag);
 
 #endif

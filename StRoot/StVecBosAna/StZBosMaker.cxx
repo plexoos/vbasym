@@ -1,6 +1,8 @@
 
 #include "StZBosMaker.h"
 
+#include "Globals.h"
+
 
 ClassImp(StZBosMaker)
 
@@ -177,8 +179,8 @@ void StZBosMaker::findEndcap_Z_boson()
          hA[50]->Fill("etE", 1.);
 
          //assume poor tracking effic so only towers in nearCone
-         float nearBtow = wMK->SumBTowCone(V.z, maxCluster.position, 2);
-         float nearEtow = wMK->SumETowCone(V.z, maxCluster.position, 2);
+         float nearBtow = SumBTowCone(*wMK->mVecBosEvent, V.z, maxCluster.position, 2);
+         float nearEtow = SumETowCone(*wMK->mVecBosEvent, V.z, maxCluster.position, 2);
          float nearSum = nearBtow; nearSum += nearEtow;
          hA[56]->Fill(maxCluster.ET / nearSum);
          if (maxCluster.ET / nearSum < wMK->parE_nearTotEtFrac) continue;

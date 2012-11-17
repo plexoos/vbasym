@@ -205,7 +205,10 @@ public:
    VecBosTrackPtrSet  mLeptonBTracks;   // Set of lepton track candidates, i.e. good tracks with energy in barrel
    VecBosTrackPtrSet  mLeptonETracks;   // Set of lepton track candidates, i.e. good tracks with energy in endcap
 
-   float mMaxTrackClusterDist;
+   float mMaxTrackClusterDist;  // cm, dist between projected track and center of cluster
+   float mTrackIsoDeltaR;       // (rad) near-cone size
+   float mTrackIsoDeltaPhi;     // (rad) away-'cone' size, approx. 40 deg.
+   float mMinBTrackPt;
 
    VecBosEvent();
 

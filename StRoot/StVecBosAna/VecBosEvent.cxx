@@ -15,7 +15,10 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mVertices(),
    mTracks(),
    mLeptonBTracks(), mLeptonETracks(),
-   mMaxTrackClusterDist(7)   // cm, dist between projected track and center of cluster
+   mMaxTrackClusterDist(7),  
+   mTrackIsoDeltaR     (0.7),
+   mTrackIsoDeltaPhi   (0.7),
+   mMinBTrackPt        (10)
 {
    clear();
 }
@@ -171,7 +174,10 @@ void VecBosEvent::clear()
    mTracks.clear();
    mLeptonBTracks.clear();
    mLeptonETracks.clear();
-   mMaxTrackClusterDist = 7.;
+   mMaxTrackClusterDist = 7;
+   mTrackIsoDeltaR      = 0.7;  // (rad) near-cone size
+   mTrackIsoDeltaPhi    = 0.7;  // (rad) away-'cone' size, approx. 40 deg.
+   mMinBTrackPt         = 10.;  // GeV
 }
 
 

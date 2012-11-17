@@ -105,7 +105,6 @@ StVecBosMaker::StVecBosMaker(const char *name, VecBosRootFile *vbFile): StMaker(
    par_nHitFrac                 = 0.51;
    par_trackRin                 = 90;   // cm
    par_trackRout                = 160;  // cm
-   mMinBTrackPt                 = 10.;  // GeV
    par_highET                   = 25.;  // (GeV), cut-off for final Barrel W-cluster
 
    // Endcap Algo
@@ -125,10 +124,6 @@ StVecBosMaker::StVecBosMaker(const char *name, VecBosRootFile *vbFile): StMaker(
    mMinETrackPt                 = 7.;   // GeV
    parE_nSmdStrip               = 20;
    parE_highET                  = 25.;  // (GeV), cut-off for final Endcap W-cluster
-
-   // search for W's
-   mTrackIsoDeltaR              = 0.7;  // (rad) near-cone size
-   mTrackIsoDeltaPhi            = 0.7;  // (rad) away-'cone' size, approx. 40 deg.
 
    mRunNo                       = 0;
    nRun                         = 0;
@@ -220,10 +215,10 @@ Int_t StVecBosMaker::InitRun(int runNo)
       "W selection highET>%.1f awayDelPhi<%.1frad  ptBalance>%.1fGeV  %.1f<leptonEta<%.1f ",
       mRunNo, coreTitle.Data(), par_l2bwTrgID, isMC,
       mMinNumPileupVertices, mCutVertexZ,
-      par_nFitPts, par_nHitFrac,  par_trackRin,  par_trackRout, mMinBTrackPt,
+      par_nFitPts, par_nHitFrac,  par_trackRin,  par_trackRout, mVecBosEvent->mMinBTrackPt,
       par_kSigPed, par_AdcThres, par_maxADC, mMinBClusterEnergy, mMinBClusterEnergyIsoRatio, par_nearTotEtFrac,
-      mVecBosEvent->mMaxTrackClusterDist, mTrackIsoDeltaR,
-      par_highET, mTrackIsoDeltaPhi, par_ptBalance, mMinBTrackEta, mMaxBTrackEta
+      mVecBosEvent->mMaxTrackClusterDist, mVecBosEvent->mTrackIsoDeltaR,
+      par_highET, mVecBosEvent->mTrackIsoDeltaPhi, par_ptBalance, mMinBTrackEta, mMaxBTrackEta
    ) << endm;
 
    // endcap algo params
@@ -237,8 +232,8 @@ Int_t StVecBosMaker::InitRun(int runNo)
       mMinNumPileupVertices, mCutVertexZ,
       parE_nFitPts, parE_nHitFrac, parE_trackRin, parE_trackRout, mMinETrackPt,
       par_kSigPed, par_AdcThres, par_maxADC, parE_clustET, mMinEClusterEnergyIsoRatio, parE_nearTotEtFrac,
-      parE_delR3D, mTrackIsoDeltaR,
-      par_highET, mTrackIsoDeltaPhi, parE_ptBalance
+      parE_delR3D, mVecBosEvent->mTrackIsoDeltaR,
+      par_highET, mVecBosEvent->mTrackIsoDeltaPhi, parE_ptBalance
    ) << endl;
 
    cout << Form("\n EtowScaleFact=%.2f  BtowScaleFacor=%.2f" , mParETOWScale, mParBTOWScale) << endl;
@@ -515,7 +510,7 @@ void StVecBosMaker::initGeom()
    for (int isec = 0; isec < mxEtowSec; isec++) {
       for (int isub = 0; isub < mxEtowSub; isub++) {
          for (int ieta = 0; ieta < mxEtowEta; ieta++) {
-            positionEtow[isec * mxEtowSub + isub][ieta] = mGeomEmc->getTowerCenter(isec, isub, ieta);
+            gETowCoords[isec * mxEtowSub + isub][ieta] = mGeomEmc->getTowerCenter(isec, isub, ieta);
          }
       }
    }
@@ -1369,7 +1364,7 @@ void StVecBosMaker::ReadMuDstTracks(VecBosVertex* vbVertex)
          hE[28]->Fill(primaryTrack->p().mag(), dedx);
       }
 
-      bool barrelTrack = (mVecBosEvent->l2bitET && vbVertex->mRank > 0 && primaryTrack->flag() == 301 && pt > mMinBTrackPt);
+      bool barrelTrack = (mVecBosEvent->l2bitET && vbVertex->mRank > 0 && primaryTrack->flag() == 301 && pt > mVecBosEvent->mMinBTrackPt);
 
       if (barrelTrack) hA[20]->Fill("ptOK", 1.); //good barrel candidate
 
@@ -1544,8 +1539,8 @@ void StVecBosMaker::FillTowHit(bool hasVertices)
                if (fillAdc) hA[227 + bxBin]->Fill(ieta, iPhi);
 
                float ene  = mVecBosEvent->etow.ene[iPhi][ieta];
-               float delZ = positionEtow[iPhi][ieta].z() - mVecBosEvent->mVertices[maxRankId].z;
-               float Rxy  = positionEtow[iPhi][ieta].Perp();
+               float delZ = gETowCoords[iPhi][ieta].z() - mVecBosEvent->mVertices[maxRankId].z;
+               float Rxy  = gETowCoords[iPhi][ieta].Perp();
                float e2et = Rxy / sqrt(Rxy * Rxy + delZ * delZ);
                float ET   = ene * e2et;
 
@@ -1916,7 +1911,7 @@ void StVecBosMaker::FindZBoson()
 
          TVector3 jetVec3(stJet->X(), stJet->Y(), stJet->Z());
 
-         if (jetVec3.DeltaR(track.mVec3AtDca) < mTrackIsoDeltaR) continue; // skip jets in candidate phi isolation cone
+         if (jetVec3.DeltaR(track.mVec3AtDca) < mVecBosEvent->mTrackIsoDeltaR) continue; // skip jets in candidate phi isolation cone
 
          // form invariant mass
          float    e1 = track.mCluster2x2.energy;
@@ -1959,7 +1954,7 @@ void StVecBosMaker::CalcPtBalance()
             TVector3 jetVec; //vector for jet momentum
             jetVec.SetPtEtaPhi(jet->Pt(), jet->Eta(), jet->Phi());
 
-            if (jetVec.DeltaR(track.mVec3AtDca) > mTrackIsoDeltaR)
+            if (jetVec.DeltaR(track.mVec3AtDca) > mVecBosEvent->mTrackIsoDeltaR)
                track.ptBalance += jetVec;
          }
 
@@ -1984,7 +1979,7 @@ void StVecBosMaker::CalcPtBalance()
             TVector3 jetVec; //vector for jet momentum
             jetVec.SetPtEtaPhi(jet->Pt(), jet->Eta(), jet->Phi());
 
-            if (jetVec.DeltaR(track.mVec3AtDca) > mTrackIsoDeltaR)
+            if (jetVec.DeltaR(track.mVec3AtDca) > mVecBosEvent->mTrackIsoDeltaR)
                track.ptBalance_noEEMC += jetVec;
          }
 
@@ -2021,8 +2016,8 @@ void StVecBosMaker::FindNearJet()
          if (!track.isMatch2Cl) continue;
 
          // sum EMC-jet component. XXX:ds: Note: the track direction is taken at the origin
-         track.nearBtowET  = SumBTowCone(vertex.z, track.mVec3AtDca, 2); // '2'=2D cone
-         track.nearEtowET  = SumETowCone(vertex.z, track.mVec3AtDca, 2);
+         track.nearBtowET  = SumBTowCone(*mVecBosEvent, vertex.z, track.mVec3AtDca, 2); // '2'=2D cone
+         track.nearEtowET  = SumETowCone(*mVecBosEvent, vertex.z, track.mVec3AtDca, 2);
          track.nearEmcET  += track.nearBtowET;
          track.nearEmcET  += track.nearEtowET;
 
@@ -2038,8 +2033,8 @@ void StVecBosMaker::FindNearJet()
          if (track.mMatchedTower.id > 0) { //only barrel towers
 
             // Correct for double counting of electron track in near cone rarely primTrPT<10 GeV & globPT>10 - handle this here
-            if (track.mVec3AtDca.Pt() > mMinBTrackPt) nearSum -= mMinBTrackPt;
-            else                                 nearSum -= track.mVec3AtDca.Pt();
+            if (track.mVec3AtDca.Pt() > mVecBosEvent->mMinBTrackPt) nearSum -= mVecBosEvent->mMinBTrackPt;
+            else                                                    nearSum -= track.mVec3AtDca.Pt();
 
             track.nearTotET        = nearSum;
             track.nearTotET_noEEMC = nearSum - track.nearEtowET;
@@ -2096,8 +2091,8 @@ void StVecBosMaker::FindAwayJet()
          if (!track.isMatch2Cl) continue;
 
          // sum opposite in phi EMC components
-         track.awayBtowET  = SumBTowCone(vertex.z, -track.mVec3AtDca, 1); // '1' = only cut on delta phi
-         track.awayEtowET  = SumETowCone(vertex.z, -track.mVec3AtDca, 1);
+         track.awayBtowET  = SumBTowCone(*mVecBosEvent, vertex.z, -track.mVec3AtDca, 1); // '1' = only cut on delta phi
+         track.awayEtowET  = SumETowCone(*mVecBosEvent, vertex.z, -track.mVec3AtDca, 1);
          track.awayEmcET   = track.awayBtowET;
          track.awayEmcET  += track.awayEtowET;
 
@@ -2113,76 +2108,6 @@ void StVecBosMaker::FindAwayJet()
          //printf("\n*** in   awayTpc=%.1f awayEmc=%.1f\n  ",track.awayTpcPT,track.awayEmcET); track.print();
       }
    }
-}
-
-
-/**
- * Returns the  sum of all towers withing mTrackIsoDeltaR around the track
- * refAxis.
-flag=1: only delta phi cut; used for away (out of) cone cut
-flag=2: use 2D cut;         used for near cone cut
- */
-float StVecBosMaker::SumBTowCone(float zVert, TVector3 refAxis, int flag)
-{
-   assert(flag == 1 || flag == 2);
-
-   TVector3 ptSum;
-
-   // process BTOW hits
-   for (int i=0; i<mxBtow; i++)
-   {
-      float energy = mVecBosEvent->bemc.eneTile[kBTow][i];
-      if (energy <= 0) continue;
-
-      // Correct BCal tower position to the vertex position
-      TVector3 towerCoord = gBCalTowerCoords[i] - TVector3(0, 0, zVert);
-      towerCoord.SetMag(energy); // it is 3D momentum in the event ref frame
-
-      if (flag == 1 && fabs( refAxis.DeltaPhi(towerCoord)) > mTrackIsoDeltaPhi ) continue;
-
-      if (flag == 2 && refAxis.DeltaR(towerCoord) > mTrackIsoDeltaR) continue;
-
-      // XXX:ds: Another bug? The sum should be vector one
-      //ptSum += towerCoord.Perp();
-      ptSum += towerCoord;
-   }
-
-   return ptSum.Perp();
-}
-
-
-/**
-flag=1: only delta phi cut; used for away (out of) cone cut
-flag=2: use 2D cut;         used for near cone cut
- */
-float StVecBosMaker::SumETowCone(float zVert, TVector3 refAxis, int flag)
-{
-   assert(flag == 1 || flag == 2);
-
-   TVector3 ptSum;
-
-   // Loop over all phi bins
-   for (int iphi = 0; iphi < mxEtowPhiBin; iphi++) 
-   {
-      for (int ieta = 0; ieta < mxEtowEta; ieta++) // sum all eta rings
-      {
-         float energy = mVecBosEvent->etow.ene[iphi][ieta];
-         if (energy <= 0) continue; // skip towers with no energy
-
-         TVector3 towerCoord = positionEtow[iphi][ieta] - TVector3(0, 0, zVert);
-         towerCoord.SetMag(energy); // it is 3D momentum in the event ref frame
-
-         if (flag == 1 && fabs( refAxis.DeltaPhi(towerCoord)) > mTrackIsoDeltaPhi) continue;
-
-         if (flag == 2 && refAxis.DeltaR(towerCoord) > mTrackIsoDeltaR) continue;
-
-         // XXX:ds: Another bug? The sum should be vector one
-         //ptsum += towerCoord.Perp();
-         ptSum += towerCoord;
-      }
-   }
-
-   return ptSum.Perp();
 }
 
 
@@ -2231,15 +2156,15 @@ float StVecBosMaker::SumTpcCone(int vertID, TVector3 refAxis, int flag, int poin
       TVector3 mVec3AtDca = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
 
       // printf(" prTrID=%4d  prTrEta=%.3f prTrPhi/deg=%.1f prPT=%.1f  nFitPts=%d\n", primaryTrack->id(),primaryTrack->eta(),primaryTrack->phi()/3.1416*180.,primaryTrack->pt(),primaryTrack->nHitsFit());
-      if (flag == 1 && fabs(refAxis.DeltaPhi(mVec3AtDca)) > mTrackIsoDeltaPhi) continue;
+      if (flag == 1 && fabs(refAxis.DeltaPhi(mVec3AtDca)) > mVecBosEvent->mTrackIsoDeltaPhi) continue;
 
-      if (flag == 2 && refAxis.DeltaR(mVec3AtDca) > mTrackIsoDeltaR) continue;
+      if (flag == 2 && refAxis.DeltaR(mVec3AtDca) > mVecBosEvent->mTrackIsoDeltaR) continue;
 
       float pT = primaryTrack->pt();
 
       // XXX:ds: Another bug? The sum should be vector one
       // separate quench for barrel and endcap candidates
-      if      (pT > mMinBTrackPt && pointTowId > 0) ptSum += mMinBTrackPt;
+      if      (pT > mVecBosEvent->mMinBTrackPt && pointTowId > 0) ptSum += mVecBosEvent->mMinBTrackPt;
       else if (pT > mMinETrackPt && pointTowId < 0) ptSum += mMinETrackPt;
       else  ptSum += pT;
    }
@@ -2269,18 +2194,18 @@ float StVecBosMaker::SumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, 
       // printf(" prTrID=%4d  prTrEta=%.3f prTrPhi/deg=%.1f prPT=%.1f  nFitPts=%d\n", prTr->id(),prTr->eta(),prTr->phi()/3.1416*180.,prTr->pt(),prTr->nHitsFit());
       if (flag == 1) {
          float deltaPhi = refAxis.DeltaPhi(mVec3AtDca);
-         if (fabs(deltaPhi) > mTrackIsoDeltaPhi) continue;
+         if (fabs(deltaPhi) > mVecBosEvent->mTrackIsoDeltaPhi) continue;
       }
       if (flag == 2) {
          float deltaR = refAxis.DeltaR(mVec3AtDca);
-         if (deltaR > mTrackIsoDeltaR) continue;
+         if (deltaR > mVecBosEvent->mTrackIsoDeltaR) continue;
 
       }
       float pT = prTr->pt();
       //    printf(" passed pt=%.1f\n",pT);
 
       //separate quench for barrel and endcap candidates
-      if (pT > mMinBTrackPt && pointTowId > 0) ptSum += mMinBTrackPt;
+      if (pT > mVecBosEvent->mMinBTrackPt && pointTowId > 0) ptSum += mVecBosEvent->mMinBTrackPt;
       else if (pT > mMinETrackPt && pointTowId < 0) ptSum += mMinETrackPt;
       else  ptSum += pT;
    }
@@ -2746,18 +2671,18 @@ WeveCluster StVecBosMaker::sumEtowPatch(int iEta, int iPhi, int Leta, int  Lphi,
 
          float ene = mVecBosEvent->etow.ene[jj][i];
          if (ene <= 0) continue; // skip towers w/o energy
-         float adc = mVecBosEvent->etow.adc[jj][i];
-         float delZ = positionEtow[jj][i].z() - zVert;
-         float Rxy = positionEtow[jj][i].Perp();
-         float e2et = Rxy / sqrt(Rxy * Rxy + delZ * delZ);
-         float ET = ene * e2et;
+         float adc   = mVecBosEvent->etow.adc[jj][i];
+         float delZ  = gETowCoords[jj][i].z() - zVert;
+         float Rxy   = gETowCoords[jj][i].Perp();
+         float e2et  = Rxy / sqrt(Rxy * Rxy + delZ * delZ);
+         float ET    = ene * e2et;
          float logET = log10(ET + 0.5);
          CL.nTower++;
          CL.energy += ene;
          CL.ET += ET;
          CL.adcSum += adc;
          if (logET > 0) {
-            R += logET * positionEtow[jj][i];
+            R += logET * gETowCoords[jj][i];
             sumW += logET;
          }
       }

@@ -1,18 +1,15 @@
-
-#include <TH1.h>
-#include <TH2.h>
-#include <TMath.h>
-#include <TCanvas.h>
-#include <TStyle.h>
-#include <TFile.h>
-#include <TText.h>
-#include <TLatex.h>
-#include <TList.h>
-#include <TBox.h>
-#include <TPaveText.h>
-#include <TPad.h>
-#include <TEllipse.h>
 #include <stdio.h>
+
+#include "TMath.h"
+#include "TCanvas.h"
+#include "TStyle.h"
+#include "TFile.h"
+#include "TLatex.h"
+#include "TList.h"
+#include "TBox.h"
+#include "TPaveText.h"
+#include "TPad.h"
+#include "TEllipse.h"
 
 #include "StMuDSTMaker/COMMON/StMuDstMaker.h"
 #include "StMuDSTMaker/COMMON/StMuDst.h"
@@ -31,7 +28,7 @@
 #include "WeventDisplay.h"
 
 
-WeventDisplay::WeventDisplay( StVecBosMaker *mk, int mxEv)
+WeventDisplay::WeventDisplay(StVecBosMaker *mk, int mxEv)
 {
    maxEve = mxEv;
    wMK = mk;
@@ -136,11 +133,11 @@ void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  
       te2->SetFillStyle(0); te2->SetLineStyle(3); te2->SetLineColor(kBlack);
 
       TVector3 rA = -rW; // away direction
-      bxT->SetY1(rA.Phi() - wMK->mTrackIsoDeltaPhi);
-      bxT->SetY2(rA.Phi() + wMK->mTrackIsoDeltaPhi);
+      bxT->SetY1(rA.Phi() - wMK->mVecBosEvent->mTrackIsoDeltaPhi);
+      bxT->SetY2(rA.Phi() + wMK->mVecBosEvent->mTrackIsoDeltaPhi);
 
-      bxE->SetY1(rA.Phi() - wMK->mTrackIsoDeltaPhi);
-      bxE->SetY2(rA.Phi() + wMK->mTrackIsoDeltaPhi);
+      bxE->SetY1(rA.Phi() - wMK->mVecBosEvent->mTrackIsoDeltaPhi);
+      bxE->SetY2(rA.Phi() + wMK->mVecBosEvent->mTrackIsoDeltaPhi);
 
 
       te1->Draw();   te2->Draw(); bxT->Draw("l");
@@ -217,11 +214,11 @@ void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  
       te2->SetFillStyle(0); te2->SetLineStyle(3); te2->SetLineColor(kBlack);
 
       TVector3 rA = -rW; // away direction
-      bxT->SetY1(rA.Phi() - wMK->mTrackIsoDeltaPhi);
-      bxT->SetY2(rA.Phi() + wMK->mTrackIsoDeltaPhi);
+      bxT->SetY1(rA.Phi() - wMK->mVecBosEvent->mTrackIsoDeltaPhi);
+      bxT->SetY2(rA.Phi() + wMK->mVecBosEvent->mTrackIsoDeltaPhi);
 
-      bxE->SetY1(rA.Phi() - wMK->mTrackIsoDeltaPhi);
-      bxE->SetY2(rA.Phi() + wMK->mTrackIsoDeltaPhi);
+      bxE->SetY1(rA.Phi() - wMK->mVecBosEvent->mTrackIsoDeltaPhi);
+      bxE->SetY2(rA.Phi() + wMK->mVecBosEvent->mTrackIsoDeltaPhi);
 
       te1->Draw();   te2->Draw(); bxT->Draw("l");
       etaBL_ln->Draw();  etaBR_ln->Draw(); etaEL_ln->Draw();
@@ -390,7 +387,7 @@ void WeventDisplay::exportEvent( const char *tit, VecBosVertex myV, VecBosTrack 
       for (int j = 0; j < mxEtowEta; j++) {
          float ene = wMK->mVecBosEvent->etow.ene[i][j];
          if (ene <= 0) continue;
-         TVector3 mVec3AtDca = wMK->positionEtow[i][j] - TVector3(0, 0, zVert);
+         TVector3 mVec3AtDca = gETowCoords[i][j] - TVector3(0, 0, zVert);
          mVec3AtDca.SetMag(ene); // it is 3D momentum in the event ref frame
          float ET = mVec3AtDca.Perp();
 
@@ -564,7 +561,7 @@ void WeventDisplay::export2sketchup(  const char *tit, VecBosVertex myV, VecBosT
       for (int ieta = 0; ieta < mxEtowEta; ieta++) { //sum all eta rings
          float ene = wMK->mVecBosEvent->etow.ene[iphi][ieta];
          if (ene <= 0) continue; //skip towers with no energy
-         TVector3 detP = wMK->positionEtow[iphi][ieta];
+         TVector3 detP = gETowCoords[iphi][ieta];
          TVector3 mVec3AtDca = detP - TVector3(0, 0, myV.z);
          mVec3AtDca.SetMag(ene); // it is 3D momentum in the event ref frame
          fprintf(fd, "etow V %.1f %.3f %.3f  eveET:detEta:detPhi %.3f %.3f  %.3f\n", rV.x(), rV.y(), rV.z(), mVec3AtDca.Perp(), detP.Eta(), detP.Phi());

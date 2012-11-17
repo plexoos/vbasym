@@ -111,7 +111,7 @@ void StVecBosMaker::initHistos()
 
    hA[25] = h = new TH1F("muTrPt1", "Barrel: global track PT ; track PT (GeV/c)", 160, 0, 80);
    Lx = h->GetListOfFunctions();
-   ln = new TLine(mMinBTrackPt, 0, mMinBTrackPt, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln); h->SetFillColor(kYellow);
+   ln = new TLine(mVecBosEvent->mMinBTrackPt, 0, mVecBosEvent->mMinBTrackPt, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln); h->SetFillColor(kYellow);
 
 
    hA[26] = h = new TH2F("muTr2D1", "Barrel: lastHit on track; detector eta ; detector phi (rad)", 100, -1.1, 1.1, 200, -3.2, 3.2);

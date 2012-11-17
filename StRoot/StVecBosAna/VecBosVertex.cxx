@@ -43,7 +43,8 @@ bool VecBosVertex::IsGood() const
 
 void VecBosVertex::Process()
 {
-   if ( (mRank > 0 || nEEMCMatch > 0) && fabs(mPosition.z()) <= 100)
+   //if ( (mRank > 0 || nEEMCMatch > 0) && fabs(mPosition.z()) <= 100)
+   if ( mRank > 0 && fabs(mPosition.z()) <= 100)
    {
       mType = kGOOD;
    } else {
