@@ -205,6 +205,11 @@ public:
    VecBosTrackPtrSet  mLeptonBTracks;   // Set of lepton track candidates, i.e. good tracks with energy in barrel
    VecBosTrackPtrSet  mLeptonETracks;   // Set of lepton track candidates, i.e. good tracks with energy in endcap
 
+   TVector3 mWP;
+   TVector3 mNeutrinoP;
+   TVector3 mElectronP;
+   TVector3 mVertex;
+
    float mMaxTrackClusterDist;  // cm, dist between projected track and center of cluster
    float mTrackIsoDeltaR;       // (rad) near-cone size
    float mTrackIsoDeltaPhi;     // (rad) away-'cone' size, approx. 40 deg.
@@ -233,6 +238,7 @@ public:
    bool                HasGoodVertex() { return mNumGoodVertices > 0 ? true : false; }
    bool                HasGoodTrack()  { return mNumGoodTracks > 0 ? true : false; }
    void                Process();
+   void                addMC();
    void                clear();
    void                print(int flag = 0, int isMC = 0);
    void                getGmt_day_hour(int &yyyymmdd, int &hhmmss);

@@ -1,5 +1,11 @@
 #include "VecBosEvent.h"
 
+//need these to get MC record
+#include "tables/St_g2t_tpc_hit_Table.h"
+#include "StMcEventMaker/StMcEventMaker.h"
+#include "StMcEvent/StMcEvent.hh"
+#include "StMcEvent/StMcVertex.hh"
+#include "StMcEvent/StMcTrack.hh"
 
 ClassImp(VecBosEvent)
 
@@ -137,6 +143,68 @@ void VecBosEvent::Process()
    }
 }
 
+void VecBosEvent::addMC()
+{
+   StMcEvent *mMcEvent = 0;
+   mMcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
+   assert(mMcEvent);
+
+   //initialize momentum vectors
+   StThreeVectorF pW;        float eW;
+   StThreeVectorF pNeutrino; //float eNeutrino;
+   StThreeVectorF pElectron; //float eElectron;
+
+   StMcVertex *V = mMcEvent->primaryVertex();
+   mVertex = TVector3(V->position().x(), V->position().y(), V->position().z());
+
+   uint i = 1;
+   int found = 0;
+   while (found < 2 && i < mMcEvent->tracks().size()) { //loop tracks
+      StMcTrack *mcTrack = mMcEvent->tracks()[i];
+      int pdgId = mcTrack->pdgId();
+      //float pt=mcTrack->pt();
+      //LOG_INFO<<"pdgId "<<pdgId<<" pt "<<pt<<" pz "<<mcTrack->momentum().z()<<endm;
+      if (pdgId == 11 || pdgId == -11) { //select e+ and e-
+         if (abs(mcTrack->parent()->pdgId()) == 24 ) {
+            pElectron = mcTrack->momentum();
+            //LOG_INFO<<"pdgId "<<pdgId<<" pt "<<pt<<" pz "<<mcTrack->momentum().z()<<endm;
+            pW = mcTrack->parent()->momentum();
+            eW = mcTrack->parent()->energy();
+            //LOG_INFO<<"pdgId "<<mcTrack->parent()->pdgId()<<" pt "<<mcTrack->parent()->pt()<<" pz "<<mcTrack->parent()->momentum().z()<<endm;
+            found++;
+         }
+      }
+      if (pdgId == 12 || pdgId == -12) { //select neutrino
+         if (abs(mcTrack->parent()->pdgId()) == 24 ) {
+            pNeutrino = mcTrack->momentum();
+            //LOG_INFO<<"pdgId "<<pdgId<<" pt "<<pt<<" pz "<<mcTrack->momentum().z()<<endm;
+            pW = mcTrack->parent()->momentum();
+            eW = mcTrack->parent()->energy();
+            //LOG_INFO<<"pdgId "<<mcTrack->parent()->pdgId()<<" pt "<<mcTrack->parent()->pt()<<" pz "<<mcTrack->parent()->momentum().z()<<endm;
+            found++;
+         }
+      }
+      i++;
+   }
+
+   if (found != 2) return;
+
+   mWP = TVector3(pW.x(), pW.y(), pW.z());
+   mNeutrinoP = TVector3(pNeutrino.x(), pNeutrino.y(), pNeutrino.z());
+   mElectronP = TVector3(pElectron.x(), pElectron.y(), pElectron.z());
+   TVector3 diff = mWP - mNeutrinoP - mElectronP;
+   if (diff.Mag() > 0.0001) //should get exactly right
+      LOG_INFO << "\n \n W+e+nu vector sum =" << diff.Mag() << endm;
+   if (mElectronP.Mag() < 0.0001)
+      LOG_INFO << "\n \n no lepton track =" << endm;
+
+   //calculate x1 and x2 from W rapidity
+   float rapW = 0.5 * log((eW + mWP.Z()) / (eW - mWP.Z()));
+   float mw2sqs = 80.4 / 500.;
+   float x1 = mw2sqs * exp(rapW);
+   float x2 = mw2sqs * exp(-rapW);
+
+}
 
 void VecBosEvent::clear()
 {

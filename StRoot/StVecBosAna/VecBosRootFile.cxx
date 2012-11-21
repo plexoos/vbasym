@@ -11,6 +11,7 @@
 #include "TrackHContainer.h"
 #include "VertexHContainer.h"
 #include "KinemaHContainer.h"
+#include "MCHContainer.h"
 #include "VecBosEvent.h"
 #include "VecBosTrack.h"
 #include "VecBosVertex.h"
@@ -88,6 +89,9 @@ void VecBosRootFile::BookHists()
 
    fHists->d["tracks_endcap"] = ph = new TrackHContainer(new TDirectoryFile("tracks_endcap", "tracks_endcap", "", this));
    //fHistCuts[kCUT_ENDCAP].insert(ph);
+
+   fHists->d["MC"] = ph = new MCHContainer(new TDirectoryFile("MC", "MC", "", this));
+   fHistCuts[kCUT_NOCUT].insert(ph);
 
    //fHists->d["kinema"]    = ph = new KinemaHContainer(new TDirectoryFile("kinema", "kinema", "", this));
 
