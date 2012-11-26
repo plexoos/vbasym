@@ -247,7 +247,7 @@ public:
    Double_t       fPzRatioInOut;
    Double_t       fPtRatioInOut;
 
-   StMcEvent *mMcEvent;   
+   // StMcEvent *mMcEvent;   
    
 
    VecBosEvent();

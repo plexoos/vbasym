@@ -343,7 +343,8 @@ Int_t StVecBosMaker::Make()
  
   printf("isMC = %d\n", isMC);
    if (isMC) {
-      mVecBosEvent->addMC();   
+      mVecBosEvent->addMC(); 
+      mVecBosEvent->CalcRecoil();   
    }
 
    nInpEve++;

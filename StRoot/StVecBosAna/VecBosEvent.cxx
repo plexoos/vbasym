@@ -2,11 +2,11 @@
 //#include "StVecBosMaker.h"
 
 //need these to get MC record
-#include "tables/St_g2t_tpc_hit_Table.h"
-#include "StMcEventMaker/StMcEventMaker.h"
-#include "StMcEvent/StMcEvent.hh"
-#include "StMcEvent/StMcVertex.hh"
-#include "StMcEvent/StMcTrack.hh"
+//#include "tables/St_g2t_tpc_hit_Table.h"
+//#include "StMcEventMaker/StMcEventMaker.h"
+//#include "StMcEvent/StMcEvent.hh"
+//#include "StMcEvent/StMcVertex.hh"
+//#include "StMcEvent/StMcTrack.hh"
 
 ClassImp(VecBosEvent)
 
@@ -25,8 +25,8 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mMaxTrackClusterDist(7),  
    mTrackIsoDeltaR     (0.7),
    mTrackIsoDeltaPhi   (0.7),
-   mMinBTrackPt        (10),
-   mMcEvent            ()
+   mMinBTrackPt        (10)
+   //mMcEvent            ()
 {
    clear();
 }
@@ -207,7 +207,7 @@ void VecBosEvent::addMC()
 void VecBosEvent::CalcRecoil()
 {
 
-  //StMcEvent *mMcEvent = 0;
+  StMcEvent *mMcEvent = 0;
   
   mMcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
   assert(mMcEvent);
