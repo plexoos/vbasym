@@ -1,4 +1,5 @@
 #include "VecBosEvent.h"
+//#include "StVecBosMaker.h"
 
 //need these to get MC record
 #include "tables/St_g2t_tpc_hit_Table.h"
@@ -24,7 +25,8 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mMaxTrackClusterDist(7),  
    mTrackIsoDeltaR     (0.7),
    mTrackIsoDeltaPhi   (0.7),
-   mMinBTrackPt        (10)
+   mMinBTrackPt        (10),
+   mMcEvent            ()
 {
    clear();
 }
@@ -145,14 +147,9 @@ void VecBosEvent::Process()
 
 void VecBosEvent::addMC()
 {
-   StMcEvent *mMcEvent = 0;
-   mMcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
-   assert(mMcEvent);
-
-   //initialize momentum vectors
-   StThreeVectorF pW;        float eW;
-   StThreeVectorF pNeutrino; //float eNeutrino;
-   StThreeVectorF pElectron; //float eElectron;
+  StMcEvent *mMcEvent = 0;
+  mMcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
+  assert(mMcEvent);
 
    StMcVertex *V = mMcEvent->primaryVertex();
    mVertex = TVector3(V->position().x(), V->position().y(), V->position().z());
@@ -199,12 +196,57 @@ void VecBosEvent::addMC()
       LOG_INFO << "\n \n no lepton track =" << endm;
 
    //calculate x1 and x2 from W rapidity
-   float rapW = 0.5 * log((eW + mWP.Z()) / (eW - mWP.Z()));
-   float mw2sqs = 80.4 / 500.;
-   float x1 = mw2sqs * exp(rapW);
-   float x2 = mw2sqs * exp(-rapW);
+   rapW = 0.5 * log((eW + mWP.Z()) / (eW - mWP.Z()));
+   //float mw2sqs = 80.4 / 500.;
+   //float x1 = mw2sqs * exp(rapW);
+   //float x2 = mw2sqs * exp(-rapW);
 
 }
+
+///*
+void VecBosEvent::CalcRecoil()
+{
+
+  //StMcEvent *mMcEvent = 0;
+  
+  mMcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
+  assert(mMcEvent);
+
+
+   uint i = 1;
+   //int found = 0;
+   while (i < mMcEvent->tracks().size()) { //loop tracks
+      StMcTrack *mcTrack = mMcEvent->tracks()[i];
+      int pdgId = mcTrack->pdgId();  
+
+      // --->>>>  if (iParticle->KS != 1) continue;
+      if (abs(pdgId) != 11 && abs(pdgId) != 12) {
+          hadr = mcTrack->fourMomentum();
+
+         // TLorentzVector hadr(mcTrack->fourmomentum().px(), mcTrack->fourMomentum().py(), mcTrack->fourMomentum().pz(), mcTrack->fourMomentum().e());
+
+          recoil += hadr;
+
+      //if (iParticle->eta > -1 && iParticle->eta < 2)
+        if (hadr.pseudoRapidity() > -2.4 && hadr.pseudoRapidity() < 2.4) {
+          recoilInAccept += hadr;
+        } else {
+          recoilOutAccept += hadr;
+        }
+      }
+      i++;
+   } 
+
+   fEnergyRatio  = recoilInAccept.e()/recoil.e();
+   //fPzRatio      = recoilPInAccept.Pz()/recoilPTotal.Pz();
+   //fPtRatio      = recoilPInAccept.Pt()/recoilPTotal.Pt();
+   //fPzRatioInOut = (recoilPInAccept + recoilPOutAccept).Pz()/recoilPTotal.Pz();
+   //fPtRatioInOut = (recoilPInAccept + recoilPOutAccept).Pt()/recoilPTotal.Pt();
+
+
+}
+
+//*/
 
 void VecBosEvent::clear()
 {

@@ -340,6 +340,12 @@ void StVecBosMaker::Clear(const Option_t *)
 //
 Int_t StVecBosMaker::Make()
 {
+ 
+  printf("isMC = %d\n", isMC);
+   if (isMC) {
+      mVecBosEvent->addMC();   
+   }
+
    nInpEve++;
    Info("Make", "Called for event %d", nInpEve);
 
@@ -391,7 +397,7 @@ Int_t StVecBosMaker::Make()
    ReadMuDstVerticesTracks();
    ReadMuDstJets();   // Get input jet info
 
-   mVecBosEvent->Process();
+
 
    mVecBosRootFile->Fill(*mVecBosEvent);
 

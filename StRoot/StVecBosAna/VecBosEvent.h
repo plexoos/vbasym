@@ -5,6 +5,7 @@
 
 #include "TVector3.h"
 #include "TH1.h"
+#include "TLorentzVector.h"
 
 #include "StMuDSTMaker/COMMON/StMuDst.h"
 #include "StMuDSTMaker/COMMON/StMuTrack.h"
@@ -15,8 +16,15 @@
 
 #include "WanaConst.h"
 #include "VecBosVertex.h"
+#include "VecBosVertex.h"
 #include "utils/ProtoEvent.h"
 
+//need these to get MC record
+#include "tables/St_g2t_tpc_hit_Table.h"
+#include "StMcEventMaker/StMcEventMaker.h"
+#include "StMcEvent/StMcEvent.hh"
+#include "StMcEvent/StMcVertex.hh"
+#include "StMcEvent/StMcTrack.hh"
 
 // W-reco event container
 class WeveBEMC   // info about BEMC
@@ -215,7 +223,35 @@ public:
    float mTrackIsoDeltaPhi;     // (rad) away-'cone' size, approx. 40 deg.
    float mMinBTrackPt;
 
+   //initialize momentum vectors
+   StThreeVectorF pW;        float eW;
+   StThreeVectorF pNeutrino; //float eNeutrino;
+   StThreeVectorF pElectron; //float eElectron;
+   StLorentzVectorF hadr; //float recoil;
+   int trackId; // particle ID
+   
+
+   float rapW;
+
+   StLorentzVectorF recoil;
+   StLorentzVectorF recoilInAccept;
+   StLorentzVectorF recoilOutAccept;
+   UShort_t       fLeptonIndex;
+   UShort_t       fNeutrinoIndex;
+
+   Double_t       fEnergyRatio;
+   Double_t       fPzRatio;
+   Double_t       fPtRatio;
+   Double_t       fPtCorr;
+   Double_t       fPtCorrAngle;
+   Double_t       fPzRatioInOut;
+   Double_t       fPtRatioInOut;
+
+   StMcEvent *mMcEvent;   
+   
+
    VecBosEvent();
+
 
    void                SetStMuDst(StMuDst *stMuDst) { mStMuDst = stMuDst; }
    VecBosVertex*       AddVertex(StMuPrimaryVertex &stMuVertex);
@@ -239,6 +275,7 @@ public:
    bool                HasGoodTrack()  { return mNumGoodTracks > 0 ? true : false; }
    void                Process();
    void                addMC();
+   void                CalcRecoil();
    void                clear();
    void                print(int flag = 0, int isMC = 0);
    void                getGmt_day_hour(int &yyyymmdd, int &hhmmss);
