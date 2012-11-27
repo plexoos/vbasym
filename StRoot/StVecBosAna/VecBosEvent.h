@@ -232,6 +232,7 @@ public:
    
 
    float rapW;
+   float hadronicRecoilEta, hadronicRecoilPt;
 
    StLorentzVectorF recoil;
    StLorentzVectorF recoilInAccept;
@@ -275,6 +276,7 @@ public:
    bool                HasGoodTrack()  { return mNumGoodTracks > 0 ? true : false; }
    void                Process();
    void                addMC();
+   void                McAnalysis();
    void                CalcRecoil();
    void                clear();
    void                print(int flag = 0, int isMC = 0);

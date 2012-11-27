@@ -204,6 +204,36 @@ void VecBosEvent::addMC()
 }
 
 ///*
+
+
+void VecBosEvent::McAnalysis()
+{
+
+   // run through W cuts to fill other histos............
+   for (uint iv = 0; iv < mVertices.size(); iv++) {
+      VecBosVertex &V = mVertices[iv];
+      for (uint it = 0; it < V.eleTrack.size(); it++) {
+         VecBosTrack &T = V.eleTrack[it];
+         if (T.isMatch2Cl == false) continue;
+         assert(T.mCluster2x2.nTower > 0); // internal logical error
+         assert(T.nearTotET > 0); // internal logical error
+
+         ////if (T.mCluster2x2.ET / T.nearTotET < wMK->par_nearTotEtFrac) continue; // too large nearET
+         if (T.awayTotET > 30.) continue; // too large awayET , Jan
+         //Full W cuts applied at this point
+
+         hadronicRecoilEta = T.hadronicRecoil.Eta();
+
+         //hadronic recoil and correlations with W from pythia
+         TVector3 hadronicPt(T.hadronicRecoil.X(), T.hadronicRecoil.Y(), 0); //transverse momentum vector
+
+         hadronicRecoilPt = hadronicPt.Perp();
+
+      }
+   }
+}
+
+
 void VecBosEvent::CalcRecoil()
 {
 
@@ -287,7 +317,32 @@ void VecBosEvent::clear()
    mMaxTrackClusterDist = 7;
    mTrackIsoDeltaR      = 0.7;  // (rad) near-cone size
    mTrackIsoDeltaPhi    = 0.7;  // (rad) away-'cone' size, approx. 40 deg.
-   mMinBTrackPt         = 10.;  // GeV
+   mMinBTrackPt         = 10.;  // GeV 
+   recoil.setX(0);
+   recoil.setY(0);   
+   recoil.setZ(0); 
+   recoil.setPx(0);
+   recoil.setPy(0);   
+   recoil.setPz(0); 
+   recoil.setE(0);
+   recoil.setT(0);
+   recoilInAccept.setX(0);   
+   recoilInAccept.setY(0);   
+   recoilInAccept.setZ(0);
+   recoilInAccept.setPx(0);   
+   recoilInAccept.setPy(0);   
+   recoilInAccept.setPz(0); 
+   recoilInAccept.setE(0); 
+   recoilInAccept.setT(0); 
+   recoilInAccept.setX(0);   
+   recoilInAccept.setY(0);   
+   recoilInAccept.setZ(0); 
+   recoilOutAccept.setPx(0);   
+   recoilOutAccept.setPy(0);   
+   recoilOutAccept.setPz(0); 
+   recoilOutAccept.setE(0);
+   recoilOutAccept.setT(0);
+   fEnergyRatio = 0;
 }
 
 
