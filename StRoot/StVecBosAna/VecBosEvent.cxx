@@ -15,14 +15,14 @@ using namespace std;
 
 VecBosEvent::VecBosEvent() : ProtoEvent(),
    mStMuDst(0),
-   mMuDstNumVertices(0), mMuDstNumGTracks(0), mMuDstNumPTracks(0), mMuDstNumOTracks(0),
+   mMuDstNumGTracks(0), mMuDstNumVertices(0), mMuDstNumPTracks(0), mMuDstNumOTracks(0),
    mNumGoodVertices(0), mNumGoodTracks(0), mNumBTracks(0), mNumETracks(0),
    mStJets(0),
    mJets(),
    mVertices(),
    mTracks(),
    mLeptonBTracks(), mLeptonETracks(),
-   mMaxTrackClusterDist(7),  
+   mMaxTrackClusterDist(7),
    mTrackIsoDeltaR     (0.7),
    mTrackIsoDeltaPhi   (0.7),
    mMinBTrackPt        (10)
@@ -32,7 +32,7 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
 }
 
 
-VecBosVertex* VecBosEvent::AddVertex(StMuPrimaryVertex &stMuVertex)
+VecBosVertex *VecBosEvent::AddVertex(StMuPrimaryVertex &stMuVertex)
 {
    VecBosVertex vbVertex(stMuVertex);
    vbVertex.mEvent = this;
@@ -57,11 +57,11 @@ void VecBosEvent::AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex)
 
    VecBosTrack vbTrack;
 
-   vbTrack.mEvent        = this;
-   vbTrack.prMuTrack     = stMuTrack;
-   vbTrack.glMuTrack     = stMuTrack->globalTrack();
-   vbTrack.mVertex = vbVertex;
-   vbTrack.mVec3AtDca    = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
+   vbTrack.mEvent     = this;
+   vbTrack.prMuTrack  = stMuTrack;
+   vbTrack.glMuTrack  = stMuTrack->globalTrack();
+   vbTrack.mVertex    = vbVertex;
+   vbTrack.mVec3AtDca = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
 
    if (vbVertex) {
       vbVertex->prTrList.push_back(stMuTrack);
@@ -81,15 +81,14 @@ void VecBosEvent::AddStJets(StJets *stJets, StJets *stJetsNoEndcap)
    TIter         jetsIter(jets);
    jetsIter.Reset();
 
-   while ( StJet *stJet = (StJet*) jetsIter() )
-   {
+   while ( StJet *stJet = (StJet *) jetsIter() ) {
       mJets.insert(stJet);
    }
 }
 
 
-TClonesArray* VecBosEvent::GetJets()            { return mStJets         ? mStJets->jets() : 0; }
-TClonesArray* VecBosEvent::GetJetsNoEndcap()    { return mStJetsNoEndcap ? mStJetsNoEndcap->jets() : 0; }
+TClonesArray *VecBosEvent::GetJets()            { return mStJets         ? mStJets->jets() : 0; }
+TClonesArray *VecBosEvent::GetJetsNoEndcap()    { return mStJetsNoEndcap ? mStJetsNoEndcap->jets() : 0; }
 UInt_t        VecBosEvent::GetNumJets()         { return mStJets         ? mStJets->nJets() : 0; }
 UInt_t        VecBosEvent::GetNumJetsNoEndcap() { return mStJetsNoEndcap ? mStJetsNoEndcap->nJets() : 0; }
 
@@ -99,12 +98,10 @@ UInt_t VecBosEvent::GetNumTracksWithBCluster()
    UInt_t nTracks = 0;
    VecBosVertexVecIter iVertex = mVertices.begin();
 
-   for ( ; iVertex!=mVertices.end(); ++iVertex)
-   {
+   for ( ; iVertex != mVertices.end(); ++iVertex) {
       VecBosTrackVecIter iTrack = iVertex->eleTrack.begin();
 
-      for ( ; iTrack!=iVertex->eleTrack.end(); ++iTrack)
-      {
+      for ( ; iTrack != iVertex->eleTrack.end(); ++iTrack) {
          if (iTrack->isMatch2Cl) nTracks++;
       }
    }
@@ -127,16 +124,14 @@ void VecBosEvent::Process()
    mMuDstNumOTracks  = mStMuDst->otherTracks()->GetEntriesFast();
 
    VecBosVertexVecIter iVertex = mVertices.begin();
-   for ( ; iVertex!=mVertices.end(); ++iVertex)
-   {
+   for ( ; iVertex != mVertices.end(); ++iVertex) {
       iVertex->Process();
 
       if (iVertex->IsGood()) mNumGoodVertices++;
    }
 
    VecBosTrackVecIter iTrack = mTracks.begin();
-   for ( ; iTrack!=mTracks.end(); ++iTrack)
-   {
+   for ( ; iTrack != mTracks.end(); ++iTrack) {
       iTrack->Process();
 
       if (iTrack->IsGood())   mNumGoodTracks++;
@@ -145,24 +140,30 @@ void VecBosEvent::Process()
    }
 }
 
+
 void VecBosEvent::addMC()
 {
-  StMcEvent *mMcEvent = 0;
-  mMcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
-  assert(mMcEvent);
+   StMcEvent *mMcEvent = 0;
+   mMcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
+   assert(mMcEvent);
 
    StMcVertex *V = mMcEvent->primaryVertex();
    mVertex = TVector3(V->position().x(), V->position().y(), V->position().z());
 
    uint i = 1;
    int found = 0;
-   while (found < 2 && i < mMcEvent->tracks().size()) { //loop tracks
+
+   while (found < 2 && i < mMcEvent->tracks().size())
+   { //loop tracks
       StMcTrack *mcTrack = mMcEvent->tracks()[i];
       int pdgId = mcTrack->pdgId();
       //float pt=mcTrack->pt();
       //LOG_INFO<<"pdgId "<<pdgId<<" pt "<<pt<<" pz "<<mcTrack->momentum().z()<<endm;
-      if (pdgId == 11 || pdgId == -11) { //select e+ and e-
-         if (abs(mcTrack->parent()->pdgId()) == 24 ) {
+
+      if (pdgId == 11 || pdgId == -11) //select e+ and e-
+      {
+         if (abs(mcTrack->parent()->pdgId()) == 24 )
+         {
             pElectron = mcTrack->momentum();
             //LOG_INFO<<"pdgId "<<pdgId<<" pt "<<pt<<" pz "<<mcTrack->momentum().z()<<endm;
             pW = mcTrack->parent()->momentum();
@@ -171,6 +172,7 @@ void VecBosEvent::addMC()
             found++;
          }
       }
+
       if (pdgId == 12 || pdgId == -12) { //select neutrino
          if (abs(mcTrack->parent()->pdgId()) == 24 ) {
             pNeutrino = mcTrack->momentum();
@@ -186,12 +188,15 @@ void VecBosEvent::addMC()
 
    if (found != 2) return;
 
-   mWP = TVector3(pW.x(), pW.y(), pW.z());
+   mWP        = TVector3(pW.x(), pW.y(), pW.z());
    mNeutrinoP = TVector3(pNeutrino.x(), pNeutrino.y(), pNeutrino.z());
    mElectronP = TVector3(pElectron.x(), pElectron.y(), pElectron.z());
+
    TVector3 diff = mWP - mNeutrinoP - mElectronP;
+
    if (diff.Mag() > 0.0001) //should get exactly right
       LOG_INFO << "\n \n W+e+nu vector sum =" << diff.Mag() << endm;
+
    if (mElectronP.Mag() < 0.0001)
       LOG_INFO << "\n \n no lepton track =" << endm;
 
@@ -200,25 +205,24 @@ void VecBosEvent::addMC()
    //float mw2sqs = 80.4 / 500.;
    //float x1 = mw2sqs * exp(rapW);
    //float x2 = mw2sqs * exp(-rapW);
-
 }
-
-///*
 
 
 void VecBosEvent::McAnalysis()
 {
-
    // run through W cuts to fill other histos............
-   for (uint iv = 0; iv < mVertices.size(); iv++) {
+   for (uint iv = 0; iv < mVertices.size(); iv++)
+   {
       VecBosVertex &V = mVertices[iv];
-      for (uint it = 0; it < V.eleTrack.size(); it++) {
+
+      for (uint it = 0; it < V.eleTrack.size(); it++)
+      {
          VecBosTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
          assert(T.mCluster2x2.nTower > 0); // internal logical error
          assert(T.nearTotET > 0); // internal logical error
 
-         ////if (T.mCluster2x2.ET / T.nearTotET < wMK->par_nearTotEtFrac) continue; // too large nearET
+         //if (T.mCluster2x2.ET / T.nearTotET < wMK->par_nearTotEtFrac) continue; // too large nearET
          if (T.awayTotET > 30.) continue; // too large awayET , Jan
          //Full W cuts applied at this point
 
@@ -228,7 +232,6 @@ void VecBosEvent::McAnalysis()
          TVector3 hadronicPt(T.hadronicRecoil.X(), T.hadronicRecoil.Y(), 0); //transverse momentum vector
 
          hadronicRecoilPt = hadronicPt.Perp();
-
       }
    }
 }
@@ -236,82 +239,94 @@ void VecBosEvent::McAnalysis()
 
 void VecBosEvent::CalcRecoil()
 {
+   RecoilEneTotal   =  0;
+   RecoilEneInAcc   =  0;
+   RecoilEneOutAcc  =  0;
 
-  RecoilEneTotal   =  0;
-  RecoilEneInAcc   =  0;
-  RecoilEneOutAcc  =  0;
-  StMcEvent *mMcEvent = 0;
-  
-  mMcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
-  assert(mMcEvent);
+   StMcEvent *mMcEvent = 0;
 
+   mMcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
+   assert(mMcEvent);
 
-   uint i = 1;
+   uint i = 0;
    //int found = 0;
-   while (i <= mMcEvent->tracks().size()) { //loop tracks
+   while (i < mMcEvent->tracks().size())
+   { //loop tracks
       StMcTrack *mcTrack = mMcEvent->tracks()[i];
-      int pdgId = mcTrack->pdgId();  
-      int key = mcTrack->key(); 
+      int pdgId = mcTrack->pdgId();
+      //int key = mcTrack->key();
 
-      if (key = 1) {
-       if (abs(pdgId) != 11 && abs(pdgId) != 12) {
-          hadr = mcTrack->fourMomentum();
+      //if (key = 1) {
+      if (abs(pdgId) != 11 && abs(pdgId) != 12) {
+         hadr = mcTrack->fourMomentum();
 
          // TLorentzVector hadr(mcTrack->fourmomentum().px(), mcTrack->fourMomentum().py(), mcTrack->fourMomentum().pz(), mcTrack->fourMomentum().e());
-          RecoilEneTotal   += mcTrack->energy();
-          recoil += hadr;
+         RecoilEneTotal += mcTrack->energy();
+         recoil         += hadr;
 
-      //if (iParticle->eta > -1 && iParticle->eta < 2)
-        if (hadr.pseudoRapidity() > -2.4 && hadr.pseudoRapidity() < 2.4) {
-          RecoilEneInAcc   += mcTrack->energy();
-          recoilInAccept += hadr;
-        } else {
-          RecoilEneOutAcc   += mcTrack->energy();
-          recoilOutAccept += hadr;
-        }
-       }
+         //if (iParticle->eta > -1 && iParticle->eta < 2)
+         if (hadr.pseudoRapidity() > -2.4 && hadr.pseudoRapidity() < 2.4) {
+            RecoilEneInAcc += mcTrack->energy();
+            recoilInAccept += hadr;
+         }
+         else {
+            RecoilEneOutAcc   += mcTrack->energy();
+            recoilOutAccept += hadr;
+         }
       }
+      //}
       i++;
-   } 
+   }
 
-   fEnergyRatio  = recoilInAccept.e()/recoil.e();
-   fPzRatio      = recoilInAccept.pz()/recoil.pz();
-   fPtRatio      = recoilInAccept.perp()/recoil.perp();
-   fPzRatioInOut = (recoilInAccept + recoilOutAccept).pz()/recoil.pz();
-   fPtRatioInOut = (recoilInAccept + recoilOutAccept).perp()/recoil.perp();
-
-
+   fEnergyRatio  = recoilInAccept.e() / recoil.e();
+   fPzRatio      = recoilInAccept.pz() / recoil.pz();
+   fPtRatio      = recoilInAccept.perp() / recoil.perp();
+   fPzRatioInOut = (recoilInAccept + recoilOutAccept).pz() / recoil.pz();
+   fPtRatioInOut = (recoilInAccept + recoilOutAccept).perp() / recoil.perp();
 }
 
-//*/
+
+void VecBosEvent::CalcPtInConeAround(VecBosTrack *vbTrack)
+{
+   VecBosTrackVecIter iTrack = mTracks.begin();
+   for ( ; iTrack != mTracks.end(); ++iTrack) {
+      // Skip tracks from different vertices XXX:ds: Later can consider
+      // vertices in close  proximity to this one
+      if (iTrack->mVertex != vbTrack->mVertex) continue;
+
+      // Don't count the same track
+      if (&*iTrack == vbTrack) continue;
+   }
+}
+
 
 void VecBosEvent::clear()
 {
    //Info("clear", "");
-   mStMuDst         = 0;
-   id               = 0;
-   runNo            = 0;
-   time             = 0;
-   zdcRate          = 0;
-   l2bitET          = 0;
-   l2bitRnd         = 0;
-   l2EbitET         = 0;
-   l2EbitRnd        = 0;
-   bx7              = -1;
-   bx48             = -1;
-   zTag             = false;
+   mStMuDst          = 0;
+   id                = 0;
+   runNo             = 0;
+   time              = 0;
+   zdcRate           = 0;
+   l2bitET           = 0;
+   l2bitRnd          = 0;
+   l2EbitET          = 0;
+   l2EbitRnd         = 0;
+   bx7               = -1;
+   bx48              = -1;
+   zTag              = false;
    mMuDstNumVertices = 0;
-   mMuDstNumGTracks = 0;
-   mMuDstNumPTracks = 0;
-   mMuDstNumOTracks = 0;
-   mNumGoodVertices = 0;
-   mNumGoodTracks   = 0;
-   mNumBTracks      = 0;
-   mNumETracks      = 0;
-   mStJets          = 0;
-   bxStar7          = -1;
-   bxStar48         = -1;
-   spin4            = -1;
+   mMuDstNumGTracks  = 0;
+   mMuDstNumPTracks  = 0;
+   mMuDstNumOTracks  = 0;
+   mNumGoodVertices  = 0;
+   mNumGoodTracks    = 0;
+   mNumBTracks       = 0;
+   mNumETracks       = 0;
+   mStJets           = 0;
+   bxStar7           = -1;
+   bxStar48          = -1;
+   spin4             = -1;
    bemc.clear();
    etow.clear();
    eprs.clear();
@@ -324,29 +339,29 @@ void VecBosEvent::clear()
    mMaxTrackClusterDist = 7;
    mTrackIsoDeltaR      = 0.7;  // (rad) near-cone size
    mTrackIsoDeltaPhi    = 0.7;  // (rad) away-'cone' size, approx. 40 deg.
-   mMinBTrackPt         = 10.;  // GeV 
+   mMinBTrackPt         = 10.;  // GeV
    recoil.setX(0);
-   recoil.setY(0);   
-   recoil.setZ(0); 
+   recoil.setY(0);
+   recoil.setZ(0);
    recoil.setPx(0);
-   recoil.setPy(0);   
-   recoil.setPz(0); 
+   recoil.setPy(0);
+   recoil.setPz(0);
    recoil.setE(0);
    recoil.setT(0);
-   recoilInAccept.setX(0);   
-   recoilInAccept.setY(0);   
+   recoilInAccept.setX(0);
+   recoilInAccept.setY(0);
    recoilInAccept.setZ(0);
-   recoilInAccept.setPx(0);   
-   recoilInAccept.setPy(0);   
-   recoilInAccept.setPz(0); 
-   recoilInAccept.setE(0); 
-   recoilInAccept.setT(0); 
-   recoilInAccept.setX(0);   
-   recoilInAccept.setY(0);   
-   recoilInAccept.setZ(0); 
-   recoilOutAccept.setPx(0);   
-   recoilOutAccept.setPy(0);   
-   recoilOutAccept.setPz(0); 
+   recoilInAccept.setPx(0);
+   recoilInAccept.setPy(0);
+   recoilInAccept.setPz(0);
+   recoilInAccept.setE(0);
+   recoilInAccept.setT(0);
+   recoilInAccept.setX(0);
+   recoilInAccept.setY(0);
+   recoilInAccept.setZ(0);
+   recoilOutAccept.setPx(0);
+   recoilOutAccept.setPy(0);
+   recoilOutAccept.setPz(0);
    recoilOutAccept.setE(0);
    recoilOutAccept.setT(0);
    fEnergyRatio = 0;

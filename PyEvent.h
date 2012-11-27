@@ -19,16 +19,18 @@
 class WEvent;
 
 
-class PyEvent : public TObject {
+class PyEvent : public TObject
+{
+
 public:
 
 	std::vector<track> tracks;
-	int I;
-	int nParticles;//particle number in the final state
-	int ievent;	
-	int genevent;
-	int subprocess;
-	int nucleon;
+	int    I;
+	int    nParticles;      //particle number in the final state
+	int    ievent;
+	int    genevent;
+	int    subprocess;
+	int    nucleon;
 	double targetparton;
 	double xtargparton;
 	double beamparton;
@@ -36,7 +38,7 @@ public:
 	double thetabeamprtn;
 	double pt2_hat;
 	double Q2_hat;
-	int nrTracks;
+	int    nrTracks;
 
    Bool_t AcceptWEvent(WEvent& wEvent);
 

@@ -268,6 +268,7 @@ bool St2011pubMcMaker::doMCanalysis()
       int pdgId = mcTrack->pdgId();
       //float pt=mcTrack->pt();
       //LOG_INFO<<"pdgId "<<pdgId<<" pt "<<pt<<" pz "<<mcTrack->momentum().z()<<endm;
+
       if (pdgId == 11 || pdgId == -11) { //select e+ and e-
          if (abs(mcTrack->parent()->pdgId()) == 24 ) {
             pElectron = mcTrack->momentum();
@@ -278,6 +279,7 @@ bool St2011pubMcMaker::doMCanalysis()
             found++;
          }
       }
+
       if (pdgId == 12 || pdgId == -12) { //select neutrino
          if (abs(mcTrack->parent()->pdgId()) == 24 ) {
             pNeutrino = mcTrack->momentum();
@@ -297,8 +299,10 @@ bool St2011pubMcMaker::doMCanalysis()
    mNeutrinoP = TVector3(pNeutrino.x(), pNeutrino.y(), pNeutrino.z());
    mElectronP = TVector3(pElectron.x(), pElectron.y(), pElectron.z());
    TVector3 diff = mWP - mNeutrinoP - mElectronP;
+
    if (diff.Mag() > 0.0001) //should get exactly right
       LOG_INFO << "\n \n W+e+nu vector sum =" << diff.Mag() << endm;
+
    if (mElectronP.Mag() < 0.0001)
       LOG_INFO << "\n \n no lepton track =" << endm;
 

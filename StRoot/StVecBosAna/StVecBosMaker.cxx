@@ -340,8 +340,8 @@ void StVecBosMaker::Clear(const Option_t *)
 //
 Int_t StVecBosMaker::Make()
 {
- 
-  printf("isMC = %d\n", isMC);
+   printf("isMC = %d\n", isMC);
+
    if (isMC) {
       mVecBosEvent->addMC(); 
       mVecBosEvent->McAnalysis(); 
@@ -449,7 +449,7 @@ Int_t StVecBosMaker::Make()
    nAccEve++;
 
    // Add info to the event
-   FindNearJet();
+   //FindNearJet();
    FindAwayJet();
 
    CalcPtBalance();
@@ -2161,19 +2161,19 @@ float StVecBosMaker::SumTpcCone(int vertID, TVector3 refAxis, int flag, int poin
       if (hitFrac < par_nHitFrac) continue;
 
       StThreeVectorF prPvect = primaryTrack->p();
-      TVector3 mVec3AtDca = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
+      TVector3 vec3AtDca = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
 
       // printf(" prTrID=%4d  prTrEta=%.3f prTrPhi/deg=%.1f prPT=%.1f  nFitPts=%d\n", primaryTrack->id(),primaryTrack->eta(),primaryTrack->phi()/3.1416*180.,primaryTrack->pt(),primaryTrack->nHitsFit());
-      if (flag == 1 && fabs(refAxis.DeltaPhi(mVec3AtDca)) > mVecBosEvent->mTrackIsoDeltaPhi) continue;
+      if (flag == 1 && fabs(refAxis.DeltaPhi(vec3AtDca)) > mVecBosEvent->mTrackIsoDeltaPhi) continue;
 
-      if (flag == 2 && refAxis.DeltaR(mVec3AtDca) > mVecBosEvent->mTrackIsoDeltaR) continue;
+      if (flag == 2 && refAxis.DeltaR(vec3AtDca) > mVecBosEvent->mTrackIsoDeltaR) continue;
 
       float pT = primaryTrack->pt();
 
       // XXX:ds: Another bug? The sum should be vector one
       // separate quench for barrel and endcap candidates
       if      (pT > mVecBosEvent->mMinBTrackPt && pointTowId > 0) ptSum += mVecBosEvent->mMinBTrackPt;
-      else if (pT > mMinETrackPt && pointTowId < 0) ptSum += mMinETrackPt;
+      else if (pT > mMinETrackPt && pointTowId < 0)               ptSum += mMinETrackPt;
       else  ptSum += pT;
    }
 

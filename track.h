@@ -3,7 +3,8 @@
 
 #include <TObject.h>
 
-class track : public TObject {
+class track : public TObject
+{
 
 public:
 
@@ -11,12 +12,12 @@ public:
 //	int index, KS, id, mother1, mother2, daughter1, daughter2, process1, process2;
 //	double px, py, pz, E, m, x, y, z;
 	
-	int index;
-	int id;
-	int KS;
-	int mother;
-	int daughter1;
-	int daughter2;
+	int    index;
+	int    id;
+	int    KS;
+	int    mother;
+	int    daughter1;
+	int    daughter2;
 	double px;
 	double py;
 	double pz;
@@ -26,7 +27,7 @@ public:
 	double y;
 	double z;
 
-//derived variables like pt, theta, phi, rapidity...
+   //derived variables like pt, theta, phi, rapidity...
 	double pt;
 	double p;
 	double theta;

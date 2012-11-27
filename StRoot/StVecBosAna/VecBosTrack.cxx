@@ -60,6 +60,7 @@ void VecBosTrack::Process()
    {
       mType |= kBARREL;
       MatchTrack2BtowCluster();
+      FindNearJet();
    }
    else if ( prMuTrack->pt() >= 1.0 && prMuTrack->flag() == 311 )
    {
@@ -270,13 +271,14 @@ void VecBosTrack::FindNearJet()
    // fill histos separately for 2 types of events
    //if (mMatchedTower.id > 0) { //only barrel towers
 
-   // Correct for double counting of electron track in near cone rarely primTrPT<10 GeV & globPT>10 - handle this here
+   // Correct for double counting of electron track in near cone rarely
+   // primTrPT<10 GeV & globPT>10 - handle this here
    if (mVec3AtDca.Pt() > mEvent->mMinBTrackPt) nearSum -= mEvent->mMinBTrackPt;
    else                                        nearSum -= mVec3AtDca.Pt();
 
    nearTotET        = nearSum;
    nearTotET_noEEMC = nearSum - nearEtowET;
-   float nearTotETfrac    = mCluster2x2.ET / nearTotET;
+   //float nearTotETfrac = mCluster2x2.ET / nearTotET;
 
    //hA[40]->Fill(nearEmcET);
    //hA[41]->Fill(mCluster2x2.ET, nearEmcET - mCluster2x2.ET);

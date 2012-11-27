@@ -151,10 +151,10 @@ public:
 
 
 inline bool operator==(const StJet& lhs, const StJet& rhs) { return (TLorentzVector) lhs == (TLorentzVector) lhs; }
-inline bool operator!=(const StJet& lhs, const StJet& rhs) { return !operator==(lhs,rhs); } 
+inline bool operator!=(const StJet& lhs, const StJet& rhs) { return !operator==(lhs,rhs); }
 inline bool operator< (const StJet& lhs, const StJet& rhs) { return lhs.E() < rhs.E(); }
-inline bool operator> (const StJet& lhs, const StJet& rhs) { return  operator< (rhs,lhs); } 
-inline bool operator<=(const StJet& lhs, const StJet& rhs) { return !operator> (lhs,rhs); } 
+inline bool operator> (const StJet& lhs, const StJet& rhs) { return  operator< (rhs,lhs); }
+inline bool operator<=(const StJet& lhs, const StJet& rhs) { return !operator> (lhs,rhs); }
 inline bool operator>=(const StJet& lhs, const StJet& rhs) { return !operator< (lhs,rhs); }
 
 
@@ -224,38 +224,36 @@ public:
    float mMinBTrackPt;
 
    //initialize momentum vectors
-   StThreeVectorF pW;        float eW;
-   StThreeVectorF pNeutrino; //float eNeutrino;
-   StThreeVectorF pElectron; //float eElectron;
-   StLorentzVectorF hadr; //float recoil;
-   int trackId; // particle ID
-   
-
-   float rapW;
-   Double_t   hadronicRecoilEta, hadronicRecoilPt;
+   StThreeVectorF   pW;
+   StThreeVectorF   pNeutrino;           //float eNeutrino;
+   StThreeVectorF   pElectron;           //float eElectron;
+   StLorentzVectorF hadr;                //float recoil;
+   float            eW;
+   int              trackId;             // particle ID
+   float            rapW;
+   Double_t         hadronicRecoilEta;
+   Double_t         hadronicRecoilPt;
 
    StLorentzVectorF recoil;
    StLorentzVectorF recoilInAccept;
    StLorentzVectorF recoilOutAccept;
-   UShort_t       fLeptonIndex;
-   UShort_t       fNeutrinoIndex;
+   UShort_t         fLeptonIndex;
+   UShort_t         fNeutrinoIndex;
 
-   Double_t       fEnergyRatio;
-   Double_t       fPzRatio;
-   Double_t       fPtRatio;
-   Double_t       fPtCorr;
-   Double_t       fPtCorrAngle;
-   Double_t       fPzRatioInOut;
-   Double_t       fPtRatioInOut;
-   Double_t       RecoilEneTotal; 
-   Double_t       RecoilEneInAcc; 
-   Double_t       RecoilEneOutAcc; 
+   Double_t         fEnergyRatio;
+   Double_t         fPzRatio;
+   Double_t         fPtRatio;
+   Double_t         fPtCorr;
+   Double_t         fPtCorrAngle;
+   Double_t         fPzRatioInOut;
+   Double_t         fPtRatioInOut;
+   Double_t         RecoilEneTotal;
+   Double_t         RecoilEneInAcc;
+   Double_t         RecoilEneOutAcc;
 
-   // StMcEvent *mMcEvent;   
-   
+   //StMcEvent *mMcEvent;
 
    VecBosEvent();
-
 
    void                SetStMuDst(StMuDst *stMuDst) { mStMuDst = stMuDst; }
    VecBosVertex*       AddVertex(StMuPrimaryVertex &stMuVertex);
@@ -278,6 +276,7 @@ public:
    bool                HasGoodVertex() { return mNumGoodVertices > 0 ? true : false; }
    bool                HasGoodTrack()  { return mNumGoodTracks > 0 ? true : false; }
    void                Process();
+   void                CalcPtInConeAround(VecBosTrack *vbTrack);
    void                addMC();
    void                McAnalysis();
    void                CalcRecoil();
