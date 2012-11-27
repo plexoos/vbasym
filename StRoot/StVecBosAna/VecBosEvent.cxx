@@ -248,12 +248,13 @@ void VecBosEvent::CalcRecoil()
 
    uint i = 1;
    //int found = 0;
-   while (i < mMcEvent->tracks().size()) { //loop tracks
+   while (i <= mMcEvent->tracks().size()) { //loop tracks
       StMcTrack *mcTrack = mMcEvent->tracks()[i];
       int pdgId = mcTrack->pdgId();  
+      int key = mcTrack->key(); 
 
-      // --->>>>  if (iParticle->KS != 1) continue;
-      if (abs(pdgId) != 11 && abs(pdgId) != 12) {
+      if (key = 1) {
+       if (abs(pdgId) != 11 && abs(pdgId) != 12) {
           hadr = mcTrack->fourMomentum();
 
          // TLorentzVector hadr(mcTrack->fourmomentum().px(), mcTrack->fourMomentum().py(), mcTrack->fourMomentum().pz(), mcTrack->fourMomentum().e());
@@ -268,6 +269,7 @@ void VecBosEvent::CalcRecoil()
           RecoilEneOutAcc   += mcTrack->energy();
           recoilOutAccept += hadr;
         }
+       }
       }
       i++;
    } 
