@@ -232,7 +232,7 @@ public:
    
 
    float rapW;
-   float hadronicRecoilEta, hadronicRecoilPt;
+   Double_t   hadronicRecoilEta, hadronicRecoilPt;
 
    StLorentzVectorF recoil;
    StLorentzVectorF recoilInAccept;
@@ -247,6 +247,9 @@ public:
    Double_t       fPtCorrAngle;
    Double_t       fPzRatioInOut;
    Double_t       fPtRatioInOut;
+   Double_t       RecoilEneTotal; 
+   Double_t       RecoilEneInAcc; 
+   Double_t       RecoilEneOutAcc; 
 
    // StMcEvent *mMcEvent;   
    

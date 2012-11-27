@@ -237,6 +237,9 @@ void VecBosEvent::McAnalysis()
 void VecBosEvent::CalcRecoil()
 {
 
+  RecoilEneTotal   =  0;
+  RecoilEneInAcc   =  0;
+  RecoilEneOutAcc  =  0;
   StMcEvent *mMcEvent = 0;
   
   mMcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
@@ -254,13 +257,15 @@ void VecBosEvent::CalcRecoil()
           hadr = mcTrack->fourMomentum();
 
          // TLorentzVector hadr(mcTrack->fourmomentum().px(), mcTrack->fourMomentum().py(), mcTrack->fourMomentum().pz(), mcTrack->fourMomentum().e());
-
+          RecoilEneTotal   += mcTrack->energy();
           recoil += hadr;
 
       //if (iParticle->eta > -1 && iParticle->eta < 2)
         if (hadr.pseudoRapidity() > -2.4 && hadr.pseudoRapidity() < 2.4) {
+          RecoilEneInAcc   += mcTrack->energy();
           recoilInAccept += hadr;
         } else {
+          RecoilEneOutAcc   += mcTrack->energy();
           recoilOutAccept += hadr;
         }
       }
@@ -268,10 +273,10 @@ void VecBosEvent::CalcRecoil()
    } 
 
    fEnergyRatio  = recoilInAccept.e()/recoil.e();
-   //fPzRatio      = recoilPInAccept.Pz()/recoilPTotal.Pz();
-   //fPtRatio      = recoilPInAccept.Pt()/recoilPTotal.Pt();
-   //fPzRatioInOut = (recoilPInAccept + recoilPOutAccept).Pz()/recoilPTotal.Pz();
-   //fPtRatioInOut = (recoilPInAccept + recoilPOutAccept).Pt()/recoilPTotal.Pt();
+   fPzRatio      = recoilInAccept.pz()/recoil.pz();
+   fPtRatio      = recoilInAccept.perp()/recoil.perp();
+   fPzRatioInOut = (recoilInAccept + recoilOutAccept).pz()/recoil.pz();
+   fPtRatioInOut = (recoilInAccept + recoilOutAccept).perp()/recoil.perp();
 
 
 }
