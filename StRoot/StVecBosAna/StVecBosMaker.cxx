@@ -340,7 +340,7 @@ void StVecBosMaker::Clear(const Option_t *)
 //
 Int_t StVecBosMaker::Make()
 {
-   printf("isMC = %d\n", isMC);
+  //printf("isMC = %d\n", isMC);
 
    if (isMC) {
       mVecBosEvent->addMC(); 

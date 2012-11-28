@@ -248,7 +248,7 @@ void VecBosEvent::CalcRecoil()
    mMcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
    assert(mMcEvent);
 
-   uint i = 0;
+   uint i = 1;
    //int found = 0;
    while (i < mMcEvent->tracks().size())
    { //loop tracks
@@ -256,23 +256,32 @@ void VecBosEvent::CalcRecoil()
       int pdgId = mcTrack->pdgId();
       //int key = mcTrack->key();
 
+      //printf("Track parent = %d\n", mcTrack->parent()->pdgId());
       //if (key = 1) {
+      //if (abs(mcTrack->parent()->pdgId()) != 24) {
       if (abs(pdgId) != 11 && abs(pdgId) != 12) {
+       if (mcTrack->parent() !=0 &&  abs(mcTrack->parent()->pdgId()) != 24 && abs(pdgId) != 24) {
+	if(mcTrack->stopVertex() == 0 && mcTrack->startVertex() != 0) {
+	  //         if (abs(mcTrack->parent()->pdgId()) != 24) {
+	  //printf("stopVertex (is null?) = %d\n", mcTrack->stopVertex());
          hadr = mcTrack->fourMomentum();
 
          // TLorentzVector hadr(mcTrack->fourmomentum().px(), mcTrack->fourMomentum().py(), mcTrack->fourMomentum().pz(), mcTrack->fourMomentum().e());
+	 //printf("startVertex = %d\n", mcTrack->startVertex());
          RecoilEneTotal += mcTrack->energy();
          recoil         += hadr;
 
          //if (iParticle->eta > -1 && iParticle->eta < 2)
-         if (hadr.pseudoRapidity() > -2.4 && hadr.pseudoRapidity() < 2.4) {
+          if (hadr.pseudoRapidity() > -2.4 && hadr.pseudoRapidity() < 2.4) {
             RecoilEneInAcc += mcTrack->energy();
             recoilInAccept += hadr;
-         }
-         else {
+          }
+          else {
             RecoilEneOutAcc   += mcTrack->energy();
             recoilOutAccept += hadr;
-         }
+          }
+	}
+       }
       }
       //}
       i++;
