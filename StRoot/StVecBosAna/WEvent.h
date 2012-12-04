@@ -36,8 +36,7 @@ public:
 
    WEvent();
 
-   void SetVectors();
-   void RecoW();
+   TLorentzVector RecoW();
    void CalcRecoil(PyEvent &pyEvent);
    void CalcRecoil(StMcEvent &stMcEvent);
 

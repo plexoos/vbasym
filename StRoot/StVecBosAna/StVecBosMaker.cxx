@@ -349,8 +349,7 @@ Int_t StVecBosMaker::Make()
    //mWtree->Branch("mVecBosEvent", "VecBosEvent", &mVecBosEvent);
 
    nInpEve++;
-   Info("Make", "Called for event %d", nInpEve);
-   std::cout << "cout: Make: " << endl;
+   //Info("Make", "Called for event %d", nInpEve);
    //printf("isMC = %d\n", isMC);
 
    if (isMC) {
@@ -377,11 +376,10 @@ Int_t StVecBosMaker::Make()
    const char *afile = mStMuDstMaker->GetFile();
 
    if (nInpEve % 200 == 1)
-      Info("Make", "muDst nEve: inp=%d trig=%d accpt=%d\n" \
-           "daqFile: %s\n", nInpEve, mNumTrigEvents, nAccEve, afile);
+      Info("Make", "nEve: inp=%d, trig=%d, accpt=%d, daqFile: %s\n", nInpEve, mNumTrigEvents, nAccEve, afile);
 
-   hA[0]->Fill("inp", 1.);
-   hE[0]->Fill("inp", 1.);
+   //hA[0]->Fill("inp", 1.);
+   //hE[0]->Fill("inp", 1.);
 
    // First access calorimeter data
    int btowStat = ReadMuDstBTOW(); // get energy in BTOW
@@ -390,7 +388,10 @@ Int_t StVecBosMaker::Make()
    int etrig    = ReadMuDstEndcapTrig();
 
    // Skip entire event if no energy in BTOW && ETOW
-   if ( btowStat != 0 && etowStat != 0 ) return kStOK;
+   if ( btowStat != 0 && etowStat != 0 ) {
+      Info("Make", "No energy in neither BTOW nor ETOW. Skipping event...");
+      return kStOK;
+   }
 
    // Skip entire event if no valid trig ID
    if ( btrig != 0 && etrig != 0 ) { mWtree->Fill(); return kStOK; }
@@ -407,9 +408,9 @@ Int_t StVecBosMaker::Make()
    ReadMuDstVerticesTracks();
    ReadMuDstJets();   // Get input jet info
 
-   mVecBosRootFile->Fill(*mVecBosEvent);
+   //mVecBosRootFile->Fill(*mVecBosEvent);
 
-   mWtree->Fill(); // write all events w/ pt>10 track to tree
+   mWtree->Fill(); // write event to tree
 
    //if (mVecBosEvent->HasGoodVertex())
    //   mVecBosRootFile->Fill(*mVecBosEvent, kCUT_VERTICES_GOOD);
@@ -692,7 +693,8 @@ void StVecBosMaker::chainJetFile( const Char_t *file )
 int StVecBosMaker::ReadMuDstEndcapTrig()
 {
    if (isMC) {
-      if (mVecBosEvent->etow.maxAdc < 10. / 60.*4096) return -1; //L2 is HT
+      if (mVecBosEvent->etow.maxAdc < 10. / 60.*4096)
+         return -1; //L2 is HT
       hE[0]->Fill("L2ewET", 1.);
       mVecBosEvent->l2EbitET = true;
       return 0;
@@ -943,7 +945,7 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
 {
    if (isMC) {
       // When the trigger emulator is ready, this should hook into that
-      // instead of the two functions used below.  For now, check that is passes both
+      // instead of the two functions used below.  For now, check that it passes both
       // L0 and L2, and set the l2bitET flag to true if so.
 
       //if (!passes_L0()) return -1;
@@ -1587,7 +1589,8 @@ void StVecBosMaker::ReadMuDstBSMD()
       //printf("muDst BSMD-%c nHit=%d\n",cPlane[iep],nh);
       int n5 = 0, n1 = 0, n2 = 0, n3 = 0, n4 = 0;
 
-      for (int i = 0; i < nh; i++) {
+      for (int i = 0; i < nh; i++)
+      {
          StMuEmcHit *hit = emc->getSmdHit(i, iEP);
          float  adc = hit->getAdc();
          int softID = hit->getId();

@@ -15,7 +15,6 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mTrackIsoDeltaR     (0.7),
    mTrackIsoDeltaPhi   (0.7),
    mMinBTrackPt        (10)
-   //mMcEvent            ()
 {
    clear();
 }
@@ -130,6 +129,7 @@ void VecBosEvent::Process()
 }
 
 
+/*
 void VecBosEvent::addMC()
 {
    StMcEvent *mcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
@@ -194,8 +194,10 @@ void VecBosEvent::addMC()
    //float x1 = mw2sqs * exp(rapW);
    //float x2 = mw2sqs * exp(-rapW);
 }
+*/
 
 
+/*
 void VecBosEvent::McAnalysis()
 {
    // run through W cuts to fill other histos............
@@ -223,6 +225,7 @@ void VecBosEvent::McAnalysis()
       }
    }
 }
+*/
 
 
 void VecBosEvent::CalcRecoil()

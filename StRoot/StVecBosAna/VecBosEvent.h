@@ -214,10 +214,10 @@ public:
    VecBosTrackPtrSet  mLeptonETracks;   // Set of lepton track candidates, i.e. good tracks with energy in endcap
    WEvent            *mWEvent;
 
-   TVector3 mWP;
-   TVector3 mNeutrinoP;
-   TVector3 mElectronP;
-   TVector3 mVertex;
+   //TVector3 mWP;
+   //TVector3 mNeutrinoP;
+   //TVector3 mElectronP;
+   //TVector3 mVertex;
 
    float mMaxTrackClusterDist;  // cm, dist between projected track and center of cluster
    float mTrackIsoDeltaR;       // (rad) near-cone size
@@ -225,24 +225,13 @@ public:
    float mMinBTrackPt;
 
    //initialize momentum vectors
-   StThreeVectorF   pW;
-   StThreeVectorF   pNeutrino;           //float eNeutrino;
-   StThreeVectorF   pElectron;           //float eElectron;
-   //StLorentzVectorF hadr;                //float recoil;
-   float            eW;
-   int              trackId;             // particle ID
-   float            rapW;
-   Double_t         hadronicRecoilEta;
-   Double_t         hadronicRecoilPt;
-
-   //StLorentzVectorF recoil;
-   //StLorentzVectorF recoilInAccept;
-   //StLorentzVectorF recoilOutAccept;
-   //Double_t         RecoilEneTotal;
-   //Double_t         RecoilEneInAcc;
-   //Double_t         RecoilEneOutAcc;
-
-   //StMcEvent *mMcEvent;
+   //StThreeVectorF   pW;
+   //StThreeVectorF   pNeutrino;           //float eNeutrino;
+   //StThreeVectorF   pElectron;           //float eElectron;
+   //float            eW;
+   //float            rapW;
+   //Double_t         hadronicRecoilEta;
+   //Double_t         hadronicRecoilPt;
 
    VecBosEvent();
 
@@ -267,8 +256,8 @@ public:
    bool                HasGoodTrack()  { return mNumGoodTracks > 0 ? true : false; }
    void                Process();
    void                CalcPtInConeAround(VecBosTrack *vbTrack);
-   void                addMC();
-   void                McAnalysis();
+   //void                addMC();
+   //void                McAnalysis();
    void                CalcRecoil();
    void                clear();
    void                print(int flag = 0, int isMC = 0);

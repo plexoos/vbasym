@@ -41,11 +41,6 @@ public:
 
 private:
 
-   TVector3 mWP;
-   TVector3 mNeutrinoP;
-   TVector3 mElectronP;
-   TVector3 mVertex;
-
    void BookHists();
 
 
