@@ -114,7 +114,6 @@ int main(int argc, char *argv[])
 
             wEvent->RecoW();
             wEvent->CalcRecoil(*pyEvent);
-            wEvent->CalcEventEnergyRatio(*pyEvent);
 
             pyTree.Fill();
             wTree.Fill();

@@ -100,8 +100,8 @@ private:
    float gains_BTOW[4801];
 
    TString coreTitle;
-
-  TH1F* hReweight; char* nameReweight;
+   TH1F* hReweight;
+   char* nameReweight;
 
 public: // to overwrite default params from .C macro
 

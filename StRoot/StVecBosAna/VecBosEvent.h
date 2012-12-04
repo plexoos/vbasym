@@ -13,18 +13,18 @@
 
 #include "StSpinPool/StJets/StJet.h"
 #include "StSpinPool/StJets/StJets.h"
-
-#include "WanaConst.h"
-#include "VecBosVertex.h"
-#include "VecBosVertex.h"
-#include "utils/ProtoEvent.h"
-
-//need these to get MC record
 #include "tables/St_g2t_tpc_hit_Table.h"
 #include "StMcEventMaker/StMcEventMaker.h"
 #include "StMcEvent/StMcEvent.hh"
 #include "StMcEvent/StMcVertex.hh"
 #include "StMcEvent/StMcTrack.hh"
+
+#include "WanaConst.h"
+#include "WEvent.h"
+#include "VecBosVertex.h"
+#include "VecBosVertex.h"
+#include "utils/ProtoEvent.h"
+
 
 // W-reco event container
 class WeveBEMC   // info about BEMC
@@ -212,6 +212,7 @@ public:
    VecBosTrackVec     mTracks;
    VecBosTrackPtrSet  mLeptonBTracks;   // Set of lepton track candidates, i.e. good tracks with energy in barrel
    VecBosTrackPtrSet  mLeptonETracks;   // Set of lepton track candidates, i.e. good tracks with energy in endcap
+   WEvent            *mWEvent;
 
    TVector3 mWP;
    TVector3 mNeutrinoP;
@@ -227,29 +228,19 @@ public:
    StThreeVectorF   pW;
    StThreeVectorF   pNeutrino;           //float eNeutrino;
    StThreeVectorF   pElectron;           //float eElectron;
-   StLorentzVectorF hadr;                //float recoil;
+   //StLorentzVectorF hadr;                //float recoil;
    float            eW;
    int              trackId;             // particle ID
    float            rapW;
    Double_t         hadronicRecoilEta;
    Double_t         hadronicRecoilPt;
 
-   StLorentzVectorF recoil;
-   StLorentzVectorF recoilInAccept;
-   StLorentzVectorF recoilOutAccept;
-   UShort_t         fLeptonIndex;
-   UShort_t         fNeutrinoIndex;
-
-   Double_t         fEnergyRatio;
-   Double_t         fPzRatio;
-   Double_t         fPtRatio;
-   Double_t         fPtCorr;
-   Double_t         fPtCorrAngle;
-   Double_t         fPzRatioInOut;
-   Double_t         fPtRatioInOut;
-   Double_t         RecoilEneTotal;
-   Double_t         RecoilEneInAcc;
-   Double_t         RecoilEneOutAcc;
+   //StLorentzVectorF recoil;
+   //StLorentzVectorF recoilInAccept;
+   //StLorentzVectorF recoilOutAccept;
+   //Double_t         RecoilEneTotal;
+   //Double_t         RecoilEneInAcc;
+   //Double_t         RecoilEneOutAcc;
 
    //StMcEvent *mMcEvent;
 
@@ -272,8 +263,7 @@ public:
    UInt_t              GetNumETracks()      { return mNumETracks; }
    UInt_t              GetNumTracksWithBCluster();
    UInt_t              GetNumTracksWithBCluster2();
-   /** Checks if at least one good vertex exist in the event. */
-   bool                HasGoodVertex() { return mNumGoodVertices > 0 ? true : false; }
+   bool                HasGoodVertex() { return mNumGoodVertices > 0 ? true : false; } // Checks if at least one good vertex exist in the event
    bool                HasGoodTrack()  { return mNumGoodTracks > 0 ? true : false; }
    void                Process();
    void                CalcPtInConeAround(VecBosTrack *vbTrack);

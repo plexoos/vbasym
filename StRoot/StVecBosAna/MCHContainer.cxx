@@ -158,21 +158,21 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hElectronPt"])->Fill(event.mElectronP.Perp());
 
    // recoil variables
-   ((TH1*) o["hRecEnergy"])->Fill(event.recoil.e());
-   ((TH1*) o["hRecMomentumX"])->Fill(event.recoil.px());
-   ((TH1*) o["hRecMomentumY"])->Fill(event.recoil.py());
-   ((TH1*) o["hRecMomentumZ"])->Fill(event.recoil.pz());
-   ((TH1*) o["hRecInAccEnergy"])->Fill(event.recoilInAccept.e());
-   ((TH1*) o["hRecInAccMomentumX"])->Fill(event.recoilInAccept.px());
-   ((TH1*) o["hRecInAccMomentumY"])->Fill(event.recoilInAccept.py());
-   ((TH1*) o["hRecInAccMomentumZ"])->Fill(event.recoilInAccept.pz());
-   ((TH1*) o["hRecOutAccEnergy"])->Fill(event.recoilOutAccept.e());
-   ((TH1*) o["hRecOutAccMomentumX"])->Fill(event.recoilOutAccept.px());
-   ((TH1*) o["hRecOutAccMomentumY"])->Fill(event.recoilOutAccept.py());
-   ((TH1*) o["hRecOutAccMomentumZ"])->Fill(event.recoilOutAccept.pz());
+   ((TH1*) o["hRecEnergy"])->Fill(event.mWEvent->mRecoilP4.E());
+   ((TH1*) o["hRecMomentumX"])->Fill(event.mWEvent->mRecoilP4.Px());
+   ((TH1*) o["hRecMomentumY"])->Fill(event.mWEvent->mRecoilP4.Py());
+   ((TH1*) o["hRecMomentumZ"])->Fill(event.mWEvent->mRecoilP4.Pz());
+   ((TH1*) o["hRecInAccEnergy"])->Fill(event.mWEvent->mRecoilP4.E());
+   ((TH1*) o["hRecInAccMomentumX"])->Fill(event.mWEvent->mRecoilInAcceptP4.Px());
+   ((TH1*) o["hRecInAccMomentumY"])->Fill(event.mWEvent->mRecoilInAcceptP4.Py());
+   ((TH1*) o["hRecInAccMomentumZ"])->Fill(event.mWEvent->mRecoilInAcceptP4.Pz());
+   ((TH1*) o["hRecOutAccEnergy"])->Fill(event.mWEvent->mRecoilOutAcceptP4.E());
+   ((TH1*) o["hRecOutAccMomentumX"])->Fill(event.mWEvent->mRecoilOutAcceptP4.Px());
+   ((TH1*) o["hRecOutAccMomentumY"])->Fill(event.mWEvent->mRecoilOutAcceptP4.Py());
+   ((TH1*) o["hRecOutAccMomentumZ"])->Fill(event.mWEvent->mRecoilOutAcceptP4.Pz());
 
    // MC correction variablel
-   ((TH1*) o["hEnergyRatio"])->Fill(event.fEnergyRatio);
+   ((TH1*) o["hEnergyRatio"])->Fill(event.mWEvent->fEnergyRatio);
    //((TH1*) o["hTrackID"])->Fill(event.trackId);
   
 }

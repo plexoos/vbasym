@@ -147,11 +147,11 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    printf("Output file: %s\n", outF.Data());
    ////printf("geant file: %s\n", fileG.Data());
 
-   printf("TRIG ID: L2BW=%d, L2EW=%d   isMC=%d  useJetFinder=%d\n", idL2BWtrg, idL2EWtrg, isMC, useJetFinder );
+   printf("TRIG ID: L2BW=%d, L2EW=%d, isMC=%d, useJetFinder=%d\n", idL2BWtrg, idL2EWtrg, isMC, useJetFinder );
 
    // Logger business
-   //gMessMgr->SwitchOff("D");
-   //gMessMgr->SwitchOn("I");
+   gMessMgr->SwitchOff("D");
+   gMessMgr->SwitchOn("I");
 
    cout << " loading done " << endl;
 
@@ -178,7 +178,6 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    int maxFiles = 1000;
 
    StMuDstMaker *stMuDstMaker = new StMuDstMaker(0, 0, "", inMuDstFileListName.c_str(), ".", maxFiles);
-      cout << " test Salvo 3" << endl;
    stMuDstMaker->SetStatus("*", 0);
    stMuDstMaker->SetStatus("MuEvent", 1);
    stMuDstMaker->SetStatus("EmcTow", 1);
@@ -286,7 +285,6 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       cout << "BEGIN: running jet finder/reader on " << jetFile << endl;
    }
 
-
    if (useJetFinder == 1) {
       // run jet finder
       // Makers for clusterfinding
@@ -309,6 +307,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       stBET4pMakerFrac100_noEEMC->setUse2003Cuts(use2003TowerCuts);
       stBET4pMakerFrac100_noEEMC->setUseEndcap(false);
       stBET4pMakerFrac100_noEEMC->setUse2006Cuts(use2006TowerCuts);
+
 
       // Instantiate the JetMaker and SkimEventMaker
       StJetMaker* stJetMaker = new StJetMaker("stJetMaker", stMuDstMaker, jetFile);
@@ -492,7 +491,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    for (UInt_t iev = 0; iev < nEntries; iev++)
    {
-      Info("main()", "Analyzing event %d", iev);
+      //Info("main()", "Analyzing event %d", iev);
 
       if (maxEventsUser > 0 && nProcEvents >= maxEventsUser) break;
 
@@ -511,7 +510,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    stChain->Finish();
    // delete stChain;
 
-   cout << "run " << inMuDstFileListName << " maxEventsUser = " << nProcEvents << " total ";
+   cout << "inMuDstFileListName: " << inMuDstFileListName << ", maxEventsUser = " << nProcEvents << " total " << endl;
    tt.Print();
 
    printf("****************************************** \n");

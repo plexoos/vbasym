@@ -1,12 +1,4 @@
 #include "VecBosEvent.h"
-//#include "StVecBosMaker.h"
-
-//need these to get MC record
-//#include "tables/St_g2t_tpc_hit_Table.h"
-//#include "StMcEventMaker/StMcEventMaker.h"
-//#include "StMcEvent/StMcEvent.hh"
-//#include "StMcEvent/StMcVertex.hh"
-//#include "StMcEvent/StMcTrack.hh"
 
 ClassImp(VecBosEvent)
 
@@ -17,11 +9,8 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mStMuDst(0),
    mMuDstNumGTracks(0), mMuDstNumVertices(0), mMuDstNumPTracks(0), mMuDstNumOTracks(0),
    mNumGoodVertices(0), mNumGoodTracks(0), mNumBTracks(0), mNumETracks(0),
-   mStJets(0),
-   mJets(),
-   mVertices(),
-   mTracks(),
-   mLeptonBTracks(), mLeptonETracks(),
+   mStJets(0), mJets(), mVertices(), mTracks(),
+   mLeptonBTracks(), mLeptonETracks(), mWEvent(0),
    mMaxTrackClusterDist(7),
    mTrackIsoDeltaR     (0.7),
    mTrackIsoDeltaPhi   (0.7),
@@ -143,19 +132,18 @@ void VecBosEvent::Process()
 
 void VecBosEvent::addMC()
 {
-   StMcEvent *mMcEvent = 0;
-   mMcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
-   assert(mMcEvent);
+   StMcEvent *mcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
+   assert(mcEvent);
 
-   StMcVertex *V = mMcEvent->primaryVertex();
+   StMcVertex *V = mcEvent->primaryVertex();
    mVertex = TVector3(V->position().x(), V->position().y(), V->position().z());
 
    uint i = 1;
    int found = 0;
 
-   while (found < 2 && i < mMcEvent->tracks().size())
+   while (found < 2 && i < mcEvent->tracks().size())
    { //loop tracks
-      StMcTrack *mcTrack = mMcEvent->tracks()[i];
+      StMcTrack *mcTrack = mcEvent->tracks()[i];
       int pdgId = mcTrack->pdgId();
       //float pt=mcTrack->pt();
       //LOG_INFO<<"pdgId "<<pdgId<<" pt "<<pt<<" pz "<<mcTrack->momentum().z()<<endm;
@@ -239,59 +227,12 @@ void VecBosEvent::McAnalysis()
 
 void VecBosEvent::CalcRecoil()
 {
-   RecoilEneTotal   =  0;
-   RecoilEneInAcc   =  0;
-   RecoilEneOutAcc  =  0;
+   //Info("CalcRecoil()", "test...");
 
-   StMcEvent *mMcEvent = 0;
+   StMcEvent *mcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
+   assert(mcEvent);
 
-   mMcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
-   assert(mMcEvent);
-
-   uint i = 1;
-   //int found = 0;
-   while (i < mMcEvent->tracks().size())
-   { //loop tracks
-      StMcTrack *mcTrack = mMcEvent->tracks()[i];
-      int pdgId = mcTrack->pdgId();
-      //int key = mcTrack->key();
-
-      //printf("Track parent = %d\n", mcTrack->parent()->pdgId());
-      //if (key = 1) {
-      //if (abs(mcTrack->parent()->pdgId()) != 24) {
-      if (abs(pdgId) != 11 && abs(pdgId) != 12) {
-       if (mcTrack->parent() !=0 &&  abs(mcTrack->parent()->pdgId()) != 24 && abs(pdgId) != 24) {
-	if(mcTrack->stopVertex() == 0 && mcTrack->startVertex() != 0) {
-	  //         if (abs(mcTrack->parent()->pdgId()) != 24) {
-	  //printf("stopVertex (is null?) = %d\n", mcTrack->stopVertex());
-         hadr = mcTrack->fourMomentum();
-
-         // TLorentzVector hadr(mcTrack->fourmomentum().px(), mcTrack->fourMomentum().py(), mcTrack->fourMomentum().pz(), mcTrack->fourMomentum().e());
-	 //printf("startVertex = %d\n", mcTrack->startVertex());
-         RecoilEneTotal += mcTrack->energy();
-         recoil         += hadr;
-
-         //if (iParticle->eta > -1 && iParticle->eta < 2)
-          if (hadr.pseudoRapidity() > -2.4 && hadr.pseudoRapidity() < 2.4) {
-            RecoilEneInAcc += mcTrack->energy();
-            recoilInAccept += hadr;
-          }
-          else {
-            RecoilEneOutAcc   += mcTrack->energy();
-            recoilOutAccept += hadr;
-          }
-	}
-       }
-      }
-      //}
-      i++;
-   }
-
-   fEnergyRatio  = recoilInAccept.e() / recoil.e();
-   fPzRatio      = recoilInAccept.pz() / recoil.pz();
-   fPtRatio      = recoilInAccept.perp() / recoil.perp();
-   fPzRatioInOut = (recoilInAccept + recoilOutAccept).pz() / recoil.pz();
-   fPtRatioInOut = (recoilInAccept + recoilOutAccept).perp() / recoil.perp();
+   mWEvent->CalcRecoil(*mcEvent);
 }
 
 
@@ -345,35 +286,12 @@ void VecBosEvent::clear()
    mTracks.clear();
    mLeptonBTracks.clear();
    mLeptonETracks.clear();
+   if (mWEvent) delete mWEvent;
+   mWEvent = new WEvent();
    mMaxTrackClusterDist = 7;
    mTrackIsoDeltaR      = 0.7;  // (rad) near-cone size
    mTrackIsoDeltaPhi    = 0.7;  // (rad) away-'cone' size, approx. 40 deg.
    mMinBTrackPt         = 10.;  // GeV
-   recoil.setX(0);
-   recoil.setY(0);
-   recoil.setZ(0);
-   recoil.setPx(0);
-   recoil.setPy(0);
-   recoil.setPz(0);
-   recoil.setE(0);
-   recoil.setT(0);
-   recoilInAccept.setX(0);
-   recoilInAccept.setY(0);
-   recoilInAccept.setZ(0);
-   recoilInAccept.setPx(0);
-   recoilInAccept.setPy(0);
-   recoilInAccept.setPz(0);
-   recoilInAccept.setE(0);
-   recoilInAccept.setT(0);
-   recoilInAccept.setX(0);
-   recoilInAccept.setY(0);
-   recoilInAccept.setZ(0);
-   recoilOutAccept.setPx(0);
-   recoilOutAccept.setPy(0);
-   recoilOutAccept.setPz(0);
-   recoilOutAccept.setE(0);
-   recoilOutAccept.setT(0);
-   fEnergyRatio = 0;
 }
 
 

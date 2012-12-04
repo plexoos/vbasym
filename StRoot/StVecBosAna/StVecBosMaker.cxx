@@ -42,6 +42,8 @@ ClassImp(StVecBosMaker)
 /** */
 StVecBosMaker::StVecBosMaker(const char *name, VecBosRootFile *vbFile): StMaker(name),
    mStMuDstMaker(0), mStJetReader(0), mVecBosRootFile(vbFile),
+   mJetTreeBranchName(), mJetTreeBranchNameNoEndcap(),
+   mJets(0), mVecBosEvent(0), mWtree(0),
    Tfirst(numeric_limits<int>::max()), Tlast(numeric_limits<int>::min()),
    mParETOWScale(1.0), mParBTOWScale(1.0)   // for old the Endcap geometr you need ~1.3
 {
@@ -146,10 +148,10 @@ Int_t StVecBosMaker::Init()
       mDbE = (StEEmcDb*) GetDataSet("StEEmcDb");
       assert(mDbE);
    }
-   else {
+   else { // not used
       //setup for reading in tree
-      mVecBosEvent = new VecBosEvent();
-      mTreeChain-> SetBranchAddress("mVecBosEvent", &mVecBosEvent);
+      //mVecBosEvent = new VecBosEvent();
+      //mTreeChain-> SetBranchAddress("mVecBosEvent", &mVecBosEvent);
    }
 
    gBTowGeom       = StEmcGeom::instance("bemc");
@@ -166,8 +168,8 @@ Int_t StVecBosMaker::Init()
       // TString filename="/star/u/stevens4/wAnalysis/efficXsec/zVertReweight.root";
       TString filename="/star/u/fazio/offline/users/fazio/vbasym/zVertReweight.root";
       TFile* reweightFile = new TFile(filename);
-      cout<<"Re-weighting vertex z distribution with '"<<nameReweight<<"' histo from file "<<endl<<filename<<endl;
-      hReweight = (TH1F*) reweightFile->Get(nameReweight);
+      //cout<<"Re-weighting vertex z distribution with '"<<nameReweight<<"' histo from file "<<endl<<filename<<endl;
+      //hReweight = (TH1F*) reweightFile->Get(nameReweight);
 
       mMinNumPileupVertices = 1;
    }
@@ -177,8 +179,8 @@ Int_t StVecBosMaker::Init()
       mTreeFile = new TFile(mTreeName, "recreate");
       mTreeFile->cd();
 
+      mWtree = new TTree("mWtree", "W candidate Events");
       mVecBosEvent = new VecBosEvent();
-      mWtree  = new TTree("mWtree", "W candidate Events");
       mWtree->Branch("mVecBosEvent", "VecBosEvent", &mVecBosEvent);
    }
 
@@ -202,39 +204,39 @@ Int_t StVecBosMaker::InitRun(int runNo)
       mBarrelTables->loadTables(this);
       mRunNo = runNo;
    }
-   else {
-      mRunNo = mVecBosEvent->runNo;
-   }
+   //else {
+   //   mRunNo = mVecBosEvent->runNo;
+   //}
 
    // barrel algo params
-   LOG_INFO << Form("::InitRun(%d) %s done\n" \
-      "Barrel W-algo params: trigID L2BW=%d isMC=%d\n" \
-      "TPC: nPileupVert>%d, vertex |Z|<%.1fcm, primEleTrack: nFit>%d, hitFrac>%.2f Rin<%.1fcm, Rout>%.1fcm, PT>%.1fGeV/c\n" \
-      "BTOW ADC: kSigPed=%d AdcThr>%d maxAdc>%.0f clustET>%.1f GeV  ET2x2/ET4x4>%0.2f  ET2x2/nearTotET>%0.2f\n" \
-      "dist(track-clust)<%.1fcm, nearDelR<%.1f\n" \
-      "W selection highET>%.1f awayDelPhi<%.1frad  ptBalance>%.1fGeV  %.1f<leptonEta<%.1f ",
-      mRunNo, coreTitle.Data(), par_l2bwTrgID, isMC,
-      mMinNumPileupVertices, mCutVertexZ,
-      par_nFitPts, par_nHitFrac,  par_trackRin,  par_trackRout, mVecBosEvent->mMinBTrackPt,
-      par_kSigPed, par_AdcThres, par_maxADC, mMinBClusterEnergy, mMinBClusterEnergyIsoRatio, par_nearTotEtFrac,
-      mVecBosEvent->mMaxTrackClusterDist, mVecBosEvent->mTrackIsoDeltaR,
-      par_highET, mVecBosEvent->mTrackIsoDeltaPhi, par_ptBalance, mMinBTrackEta, mMaxBTrackEta
-   ) << endm;
+   //LOG_INFO << Form("::InitRun(%d) %s done\n" \
+   //   "Barrel W-algo params: trigID L2BW=%d isMC=%d\n" \
+   //   "TPC: nPileupVert>%d, vertex |Z|<%.1fcm, primEleTrack: nFit>%d, hitFrac>%.2f Rin<%.1fcm, Rout>%.1fcm, PT>%.1fGeV/c\n" \
+   //   "BTOW ADC: kSigPed=%d AdcThr>%d maxAdc>%.0f clustET>%.1f GeV  ET2x2/ET4x4>%0.2f  ET2x2/nearTotET>%0.2f\n" \
+   //   "dist(track-clust)<%.1fcm, nearDelR<%.1f\n" \
+   //   "W selection highET>%.1f awayDelPhi<%.1frad  ptBalance>%.1fGeV  %.1f<leptonEta<%.1f ",
+   //   mRunNo, coreTitle.Data(), par_l2bwTrgID, isMC,
+   //   mMinNumPileupVertices, mCutVertexZ,
+   //   par_nFitPts, par_nHitFrac,  par_trackRin,  par_trackRout, mVecBosEvent->mMinBTrackPt,
+   //   par_kSigPed, par_AdcThres, par_maxADC, mMinBClusterEnergy, mMinBClusterEnergyIsoRatio, par_nearTotEtFrac,
+   //   mVecBosEvent->mMaxTrackClusterDist, mVecBosEvent->mTrackIsoDeltaR,
+   //   par_highET, mVecBosEvent->mTrackIsoDeltaPhi, par_ptBalance, mMinBTrackEta, mMaxBTrackEta
+   //) << endm;
 
    // endcap algo params
-   cout << Form("\n" \
-      "Endcap W-algo params: trigID: L2EW=%d isMC=%d\n" \
-      "TPC: nPileupVert>%d, vertex |Z|<%.1fcm, primEleTrack: nFit>%d, hitFrac>%.2f Rin<%.1fcm, Rout>%.1fcm, PT>%.1fGeV/c\n" \
-      "ETOW ADC: kSigPed=%d AdcThr>%d maxAdc>%.0f clustET>%.1f GeV  ET2x1/ET4x4>%0.2f  ET2x1/nearTotET>%0.2f\n" \
-      "dist(track-clust)<%.1fcm, nearDelR<%.1f\n" \
-      "W selection highET>%.1f awayDelPhi<%.1frad  ptBalance>%.1fGeV ",
-      parE_l2ewTrgID, isMC,
-      mMinNumPileupVertices, mCutVertexZ,
-      parE_nFitPts, parE_nHitFrac, parE_trackRin, parE_trackRout, mMinETrackPt,
-      par_kSigPed, par_AdcThres, par_maxADC, parE_clustET, mMinEClusterEnergyIsoRatio, parE_nearTotEtFrac,
-      parE_delR3D, mVecBosEvent->mTrackIsoDeltaR,
-      par_highET, mVecBosEvent->mTrackIsoDeltaPhi, parE_ptBalance
-   ) << endl;
+   //cout << Form("\n" \
+   //   "Endcap W-algo params: trigID: L2EW=%d isMC=%d\n" \
+   //   "TPC: nPileupVert>%d, vertex |Z|<%.1fcm, primEleTrack: nFit>%d, hitFrac>%.2f Rin<%.1fcm, Rout>%.1fcm, PT>%.1fGeV/c\n" \
+   //   "ETOW ADC: kSigPed=%d AdcThr>%d maxAdc>%.0f clustET>%.1f GeV  ET2x1/ET4x4>%0.2f  ET2x1/nearTotET>%0.2f\n" \
+   //   "dist(track-clust)<%.1fcm, nearDelR<%.1f\n" \
+   //   "W selection highET>%.1f awayDelPhi<%.1frad  ptBalance>%.1fGeV ",
+   //   parE_l2ewTrgID, isMC,
+   //   mMinNumPileupVertices, mCutVertexZ,
+   //   parE_nFitPts, parE_nHitFrac, parE_trackRin, parE_trackRout, mMinETrackPt,
+   //   par_kSigPed, par_AdcThres, par_maxADC, parE_clustET, mMinEClusterEnergyIsoRatio, parE_nearTotEtFrac,
+   //   parE_delR3D, mVecBosEvent->mTrackIsoDeltaR,
+   //   par_highET, mVecBosEvent->mTrackIsoDeltaPhi, parE_ptBalance
+   //) << endl;
 
    cout << Form("\n EtowScaleFact=%.2f  BtowScaleFacor=%.2f" , mParETOWScale, mParBTOWScale) << endl;
 
@@ -334,22 +336,28 @@ Int_t StVecBosMaker::FinishRun(int runNo)
 void StVecBosMaker::Clear(const Option_t *)
 {
    mVecBosEvent->clear();
+   //delete mVecBosEvent;
+   //mVecBosEvent = 0;
 }
 
 
 //
 Int_t StVecBosMaker::Make()
 {
-  //printf("isMC = %d\n", isMC);
-
-   if (isMC) {
-      mVecBosEvent->addMC(); 
-      mVecBosEvent->McAnalysis(); 
-      mVecBosEvent->CalcRecoil();   
-   }
+   // Create new event and connect it to the tree
+   //mVecBosEvent = new VecBosEvent();
+   //mWtree->Branch("mVecBosEvent", "VecBosEvent", &mVecBosEvent);
 
    nInpEve++;
    Info("Make", "Called for event %d", nInpEve);
+   std::cout << "cout: Make: " << endl;
+   //printf("isMC = %d\n", isMC);
+
+   if (isMC) {
+      //mVecBosEvent->addMC(); 
+      //mVecBosEvent->McAnalysis(); 
+      mVecBosEvent->CalcRecoil();   
+   }
 
    // standard MuDst analysis
    if (!mStMuDstMaker || !mStJetReader) return kStOK; // We need both makers for proper analysis
@@ -398,8 +406,6 @@ Int_t StVecBosMaker::Make()
    // function for the cuts imposed on the track quality
    ReadMuDstVerticesTracks();
    ReadMuDstJets();   // Get input jet info
-
-
 
    mVecBosRootFile->Fill(*mVecBosEvent);
 
