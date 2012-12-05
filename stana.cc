@@ -141,11 +141,12 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       //// outF = file1;
       //// outF.ReplaceAll(".MuDst.root","");
       fileG = inMuDstFileListName.c_str();
+      fileG.ReplaceAll("eve_mu", "eve_geant");
       fileG.ReplaceAll("MuDst", "geant");
    }
 
    printf("Output file: %s\n", outF.Data());
-   ////printf("geant file: %s\n", fileG.Data());
+   printf("geant file: %s\n", fileG.Data());
 
    printf("TRIG ID: L2BW=%d, L2EW=%d, isMC=%d, useJetFinder=%d\n", idL2BWtrg, idL2EWtrg, isMC, useJetFinder );
 
@@ -165,9 +166,9 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    if (geant) {
       // get geant file
       StIOMaker *ioMaker = new StIOMaker();
-      // ioMaker->SetFile(fileG.Data());
+      ioMaker->SetFile(fileG.Data());
       // ioMaker->SetFile("/star/data56/reco/pp500/pythia6_422/Wplus_enu/perugia320/y2009a/gheisha_on/p09ig/rcf10010_1000_1000evts.geant.root");
-      ioMaker->SetFile("/star/institutions/mit/balewski/2012-Wsimu-setH-noFilt/eve_geant/jbc310_1_1000evts.geant.root");
+      // ioMaker->SetFile("/star/institutions/mit/balewski/2012-Wsimu-setH-noFilt/eve_geant/jbc310_1_1000evts.geant.root");
       ioMaker->SetIOMode("r");
       ioMaker->SetBranch("*", 0, "1"); //deactivate all branches
       ioMaker->SetBranch("geantBranch", 0, "r"); //activate geant Branch
