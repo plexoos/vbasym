@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<job filesPerHour="1" maxFilesPerProcess="1" fileListSyntax="paths" simulateSubmission="false">
+             <ResourceUsage>
+                <StorageSpace> 
+                   <MinStorage>20</MinStorage>
+                </StorageSpace>
+             </ResourceUsage>
+
+   <Generator>
+      <Location>./</Location>
+   </Generator>
+
+	<command>
+                starver &STAR_VER;
+                echo "inpPath="&inpPath;" fillNo="&fillNo; 
+                echo "inpList=" $FILELIST
+		starver SL12c;
+                echo $STAR
+                pwd
+                ln -s &codePath;/stana
+                ln -s &codePath;/.sl53_gcc432
+                ls -al
+                setenv filename `cat $FILELIST`
+                echo "work on:"$filename 
+
+                ./stana -f /star/institutions/mit/balewski/2012-Wsimu-setH-noFilt/eve_mu/jbc310_&fillNo;_1000evts.MuDst.root -j -m
+                # ./stana -f $filename -j -m
+ 
+                ln -s &outPath;/jets_run11/jets_jbc310_&fillNo;1000evt.root 
+                ls -al
+                ./stana -f /star/institutions/mit/balewski/2012-Wsimu-setH-noFilt/eve_mu/jbc310_&fillNo;_1000evts.MuDst.root -m 
+                #./stana -f $filename -m 
+	
+       </command>
+         <output fromScratch="jets*.root" toURL="file:&outPath;/jets_run11/"/>
+         <output fromScratch="*hist.root" toURL="file:&outPath;/data_run11/"/>
+         <output fromScratch="*Wtree.root" toURL="file:&outPath;/wtree_run11/"/>
+         <output fromScratch="*.ps" toURL="file:&outPath;/data_run11/"/>
+         <stdout URL="file:&outPath;/log_run11/$FILEBASENAME.out"/>
+         <stderr URL="file:&outPath;/log_run11/$FILEBASENAME.out"/>
+	<SandBox>
+            <Package>
+               <File>file:&codePath;/.sl53_gcc432</File>
+	    </Package>
+	</SandBox> 
+
+        <input URL="file:&inpPath;/MC_list_Wp_2012.txt" nFiles="all" /> 
+	<!--  <input URL="file:&inpPath;/&fillNo;.lis" nFiles="all" />  --> 
+	<!--    <input URL="catalog:star.bnl.gov?filename~MuDst,storage=hpss,runnumber~&runNumber;%" nFiles="all" />  -->
+</job>
