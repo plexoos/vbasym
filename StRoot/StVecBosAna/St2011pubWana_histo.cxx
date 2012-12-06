@@ -84,10 +84,10 @@ void St2011pubWanaMaker::initHistos()
   hA[27]=h=new TH2F(core+"Joe8","Final sel, nearR>0.9 ; 2x2 cluster ET (GeV); awayET 9GeV)", 100,0,100,100,0,100);
  
   //Study global vs primary tracks //JS
-  hA[28]=h=new TH2F(core+"mVec3AtDcaT_globPT","global vs primary pT;primary pT;global pT",100,0,100,100,0,100); 
-  hA[29]=h=new TH1F(core+"diffmVec3AtDcaT_globPT","global - primary pT; global-primary pT",100,-50,50);  
+  hA[28]=h=new TH2F(core+"mP3AtDcaT_globPT","global vs primary pT;primary pT;global pT",100,0,100,100,0,100); 
+  hA[29]=h=new TH1F(core+"diffmP3AtDcaT_globPT","global - primary pT; global-primary pT",100,-50,50);  
   hA[30]=h=new TH1F(core+"diffGT1_clustET"," 2x2 cluster ET for global-primary > 1 GeV",100,0,100);  
-  hA[31]=h=new TH1F(core+"diffmVec3AtDcaT_globPT_Qflip","global - primary pT when Q flipped; global-primary pT",100,-50,50);  
+  hA[31]=h=new TH1F(core+"diffmP3AtDcaT_globPT_Qflip","global - primary pT when Q flipped; global-primary pT",100,-50,50);  
   
   //eta bins for X sec
   hA[32]=h=new TH1F(core+"etaBin1sig","electron .6 < |#eta| < 1 ; 2x2 cluster ET",100,1,101);

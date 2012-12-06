@@ -70,7 +70,7 @@ void St2011pubWanaMaker::evalWeleTrackSign()
          if ( !track.isMatch2Cl ) continue;
 
          assert(track.mCluster2x2.nTower > 0); // internal logical error
-         assert(track.nearTotET > 0); // internal logical error
+         assert(track.mP3InNearCone.Pt() > 0); // internal logical error
 
          // work with W-track
          float ET = track.mCluster2x2.ET;
@@ -87,11 +87,11 @@ void St2011pubWanaMaker::evalWeleTrackSign()
          if ( p_chrg < 0 ) p_ipn = 1; // minus
 
          // Make cut on lepton |eta| for cross section
-         if (fabs(track.mVec3AtDca.Eta()) > 1) continue;
+         if (fabs(track.mP3AtDca.Eta()) > 1) continue;
 
-         float absEta = fabs(track.mVec3AtDca.Eta());
+         float absEta = fabs(track.mP3AtDca.Eta());
 
-         if (track.mCluster2x2.ET / track.nearTotET_noEEMC > wMK->par_nearTotEtFrac)
+         if (track.mCluster2x2.ET / track.mP3InNearConeNoETow.Pt() > wMK->par_nearTotEtFrac)
          {
             if (track.sPtBalance_noEEMC > wMK->par_ptBalance) { //signal w/o endcap in veto
                // Charge sorted
@@ -110,7 +110,7 @@ void St2011pubWanaMaker::evalWeleTrackSign()
             }
          }
 
-         if (track.mCluster2x2.ET / track.nearTotET < wMK->par_nearTotEtFrac) continue; // too large nearET
+         if (track.mCluster2x2.ET / track.mP3InNearCone.Pt() < wMK->par_nearTotEtFrac) continue; // too large nearET
 
          // xSec binned
          if (track.sPtBalance > wMK->par_ptBalance ) { //signal
@@ -153,13 +153,13 @@ void St2011pubWanaMaker::evalWeleTrackSign()
          hA[6]->Fill(ET, g_chrg / PT);
 
          // Change in pT from global to primary
-         float mVec3AtDcaT = prTr->pt();
+         float mP3AtDcaT = prTr->pt();
          float globPT = glTr->pt();
-         hA[28]->Fill(mVec3AtDcaT, globPT);
-         hA[29]->Fill(globPT - mVec3AtDcaT);
+         hA[28]->Fill(mP3AtDcaT, globPT);
+         hA[29]->Fill(globPT - mP3AtDcaT);
 
-         if (fabs(globPT - mVec3AtDcaT) > 1) hA[30]->Fill(ET);
-         if (g_chrg * p_chrg < -0.5) hA[31]->Fill(globPT - mVec3AtDcaT);
+         if (fabs(globPT - mP3AtDcaT) > 1) hA[30]->Fill(ET);
+         if (g_chrg * p_chrg < -0.5) hA[31]->Fill(globPT - mP3AtDcaT);
 
          // work with prim component
          hA[7]->Fill(ET, p_chrg / prTr->pt());
@@ -213,9 +213,9 @@ void St2011pubWanaMaker::varyCuts4backgStudy()
          if (track.isMatch2Cl == false) continue;
 
          assert(track.mCluster2x2.nTower > 0); // internal logical error
-         assert(track.nearTotET > 0); // internal logical error
+         assert(track.mP3InNearCone.Pt() > 0); // internal logical error
 
-         float nearR  = track.mCluster2x2.ET / track.nearTotET;
+         float nearR  = track.mCluster2x2.ET / track.mP3InNearCone.Pt();
          float awayET = track.awayTotET;
          float ET     = track.mCluster2x2.ET;
 

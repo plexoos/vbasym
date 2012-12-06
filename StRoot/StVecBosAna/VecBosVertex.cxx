@@ -34,13 +34,6 @@ void VecBosVertex::SetPosition(const StThreeVectorF &vec)
 
 
 /** Checks the vertex paramteres against predefined cuts. */
-bool VecBosVertex::IsGood() const
-{
-   if (mType == kGOOD) return true;
-   return false;
-}
-
-
 void VecBosVertex::Process()
 {
    //if ( (mRank > 0 || nEEMCMatch > 0) && fabs(mPosition.z()) <= 100)
@@ -66,9 +59,12 @@ void VecBosVertex::clear()
 }
 
 
-void VecBosVertex::print(int flag)
+void VecBosVertex::Print(const Option_t* opt) const
 {
-   printf(" Vertex ID=%d Z=%.1f cm  nTrack=%d\n", id, z, eleTrack.size());
-   for (uint i = 0; i < eleTrack.size(); i++)
-      eleTrack[i].print();
+   Info("Print(const Option_t* opt)", " Vertex ID=%d Z=%.1f cm  nTrack=%d\n", id, z, eleTrack.size());
+
+   VecBosTrackVecConstIter iTrack = eleTrack.begin();
+
+   for ( ; iTrack!=eleTrack.end(); ++iTrack)
+      iTrack->print();
 }

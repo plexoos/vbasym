@@ -1,11 +1,32 @@
 #ifndef Globals_h
 #define Globals_h
 
+#include <set>
+
 #include "StEmcUtil/geometry/StEmcGeom.h"
+#include "StSpinPool/StJets/StJet.h"
 
 #include "WanaConst.h"
 #include "WEventCluster.h"
-#include "VecBosEvent.h" // for WeveBEMC
+
+
+inline bool operator==(const StJet& lhs, const StJet& rhs) { return (TLorentzVector) lhs == (TLorentzVector) lhs; }
+inline bool operator!=(const StJet& lhs, const StJet& rhs) { return !operator==(lhs,rhs); }
+inline bool operator< (const StJet& lhs, const StJet& rhs) { return lhs.E() < rhs.E(); }
+inline bool operator> (const StJet& lhs, const StJet& rhs) { return  operator< (rhs,lhs); }
+inline bool operator<=(const StJet& lhs, const StJet& rhs) { return !operator> (lhs,rhs); }
+inline bool operator>=(const StJet& lhs, const StJet& rhs) { return !operator< (lhs,rhs); }
+
+
+struct CompareStJets
+{
+   bool operator()(const StJet* lhs, const StJet* rhs) const { return (*lhs) < (*rhs); }
+};
+
+
+typedef std::set<StJet*, CompareStJets>   StJetPtrSet;
+typedef StJetPtrSet::iterator             StJetPtrSetIter;
+typedef StJetPtrSet::const_iterator       StJetPtrSetConstIter;
 
 
 extern StEmcGeom  *gBTowGeom;
@@ -16,10 +37,7 @@ extern TVector3    gETowCoords[mxEtowSec *mxEtowSub][mxEtowEta];
 extern int         gMapBTowEtaPhiBin2Id[mxBTetaBin * mxBTphiBin];  // vs. (iEta, iPhi)
 
 
-bool        ConvertEtaPhi2Bins(float etaF, float phiF, int &kEta, int &kPhi);
-WeveCluster FindMaxBTow2x2(VecBosEvent &vbEvent, int iEta, int iPhi, float zVert);
-WeveCluster SumBTowPatch  (VecBosEvent &vbEvent, int iEta, int iPhi, int Leta, int  Lphi, float zVert);
-float       SumBTowCone   (VecBosEvent &vbEvent, float zVert, TVector3 refAxis, int flag);
-float       SumETowCone   (VecBosEvent &vbEvent, float zVert, TVector3 refAxis, int flag);
+bool ConvertEtaPhi2Bins(float etaF, float phiF, int &kEta, int &kPhi);
+void PatchToEtaPhi(int patch, int *eta, int *phi);
 
 #endif

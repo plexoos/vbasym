@@ -81,7 +81,7 @@ void StZBosMaker::findEndcap_Z_boson()
          if (TB.mMatchedTower.id <= 0) continue; //skip endcap towers
          if (TB.isMatch2Cl == false) continue;
          assert(TB.mCluster2x2.nTower > 0); // internal logical error
-         assert(TB.nearTotET > 0); // internal logical error
+         assert(TB.mP3InNearCone.Pt() > 0); // internal logical error
 
          //place cuts on reco track first (both barrel and endcap tracks allowed)
          float isoET1 = TB.mCluster2x2.ET / TB.mCluster4x4.ET;
@@ -91,7 +91,7 @@ void StZBosMaker::findEndcap_Z_boson()
          if (TB.mCluster2x2.ET < par_clusterEtZ) continue;
          hA[50]->Fill("etB", 1.); hA[60]->Fill("etB", 1.);
 
-         float fracET1 = TB.mCluster2x2.ET / TB.nearTotET;
+         float fracET1 = TB.mCluster2x2.ET / TB.mP3InNearCone.Pt();
          hA[53]->Fill(fracET1);
          if (fracET1 < par_nearTotEtFracZ) continue;
          hA[50]->Fill("conB", 1.); hA[60]->Fill("conB", 1.);
@@ -103,7 +103,7 @@ void StZBosMaker::findEndcap_Z_boson()
             if (TE.mMatchedTower.id >= 0) continue; //skip barrel towers
             if (TE.isMatch2Cl == false) continue;
             assert(TE.mCluster2x2.nTower > 0); // internal logical error
-            assert(TE.nearTotET > 0); // internal logical error
+            assert(TE.mP3InNearCone.Pt() > 0); // internal logical error
 
             float isoET2 = TE.mCluster2x2.ET / TE.mCluster4x4.ET;
             hA[71]->Fill(isoET2);
@@ -112,15 +112,15 @@ void StZBosMaker::findEndcap_Z_boson()
             if (TE.mCluster2x2.ET < par_clusterEtZ) continue;
             hA[70]->Fill("etE", 1.);
 
-            float fracET2 = TE.mCluster2x2.ET / TE.nearTotET;
+            float fracET2 = TE.mCluster2x2.ET / TE.mP3InNearCone.Pt();
             hA[73]->Fill(fracET2);
             if (fracET2 < par_nearTotEtFracZ) continue;
             hA[70]->Fill("conE", 1.);
 
             float e1 = TB.mCluster2x2.energy;
             float e2 = TE.mCluster2x2.energy;
-            TVector3 p1 = TB.mVec3AtDca; p1.SetMag(e1); //cluster.position;
-            TVector3 p2 = TE.mVec3AtDca; p2.SetMag(e2); //cluster.position;
+            TVector3 p1 = TB.mP3AtDca; p1.SetMag(e1); //cluster.position;
+            TVector3 p2 = TE.mP3AtDca; p2.SetMag(e2); //cluster.position;
 
             float del_phi = p1.DeltaPhi(p2);
             //printf("del Phi=%f\n",del_phi);
@@ -169,7 +169,7 @@ void StZBosMaker::findEndcap_Z_boson()
 
          if (maxCluster.ET <= 1.0) continue; //remove low E clusters
 
-         //apply cuts to max ETOW cluster and isolation sums
+         // Apply cuts to max ETOW cluster and isolation sums
          WeveCluster mCluster4x4 = wMK->sumEtowPatch(maxCluster.iEta - 1, maxCluster.iPhi - 1, 4, 4, V.z);
          hA[54]->Fill(maxCluster.ET / mCluster4x4.ET);
          if (maxCluster.ET / mCluster4x4.ET < wMK->mMinEClusterEnergyIsoRatio) continue;
@@ -178,10 +178,11 @@ void StZBosMaker::findEndcap_Z_boson()
          if (maxCluster.ET < par_clusterEtZ) continue;
          hA[50]->Fill("etE", 1.);
 
-         //assume poor tracking effic so only towers in nearCone
-         float nearBtow = SumBTowCone(*wMK->mVecBosEvent, V.z, maxCluster.position, 2);
-         float nearEtow = SumETowCone(*wMK->mVecBosEvent, V.z, maxCluster.position, 2);
-         float nearSum = nearBtow; nearSum += nearEtow;
+         // Assume poor tracking effic so only towers in nearCone
+         float nearBtow = wMK->mVecBosEvent->CalcP3InConeBTow(&TB, 2).Pt();
+         float nearEtow = wMK->mVecBosEvent->CalcP3InConeETow(&TB, 2).Pt();
+         float nearSum = nearBtow;
+         nearSum += nearEtow;
          hA[56]->Fill(maxCluster.ET / nearSum);
          if (maxCluster.ET / nearSum < wMK->parE_nearTotEtFrac) continue;
          hA[50]->Fill("conE", 1.);
@@ -189,7 +190,7 @@ void StZBosMaker::findEndcap_Z_boson()
          //add plots of good candidates
          float e1 = TB.mCluster2x2.energy;
          float e2 = maxCluster.energy;
-         TVector3 p1 = TB.mVec3AtDca; p1.SetMag(e1);
+         TVector3 p1 = TB.mP3AtDca; p1.SetMag(e1);
          TVector3 p2 = maxCluster.position; p2.SetMag(e2);
          float del_phi = p1.DeltaPhi(p2);
          float xx = del_phi;
@@ -237,7 +238,7 @@ void StZBosMaker::find_Z_boson()
          if (T1.mMatchedTower.id <= 0) continue; //skip endcap towers
          if (T1.isMatch2Cl == false) continue;
          assert(T1.mCluster2x2.nTower > 0); // internal logical error
-         assert(T1.nearTotET > 0); // internal logical error
+         assert(T1.mP3InNearCone.Pt() > 0); // internal logical error
 
          float isoET1 = T1.mCluster2x2.ET / T1.mCluster4x4.ET;
          hA[29]->Fill(isoET1);
@@ -247,7 +248,7 @@ void StZBosMaker::find_Z_boson()
          if (T1.mCluster2x2.ET < par_clusterEtZ) continue;
          hA[0]->Fill("et1", 1.);
 
-         float fracET1 = T1.mCluster2x2.ET / T1.nearTotET;
+         float fracET1 = T1.mCluster2x2.ET / T1.mP3InNearCone.Pt();
          hA[24]->Fill(fracET1);
          if (fracET1 < par_nearTotEtFracZ) continue;
          hA[0]->Fill("con1", 1.);
@@ -258,7 +259,7 @@ void StZBosMaker::find_Z_boson()
             if (T2.mMatchedTower.id <= 0) continue; //skip endcap towers
             if (T2.isMatch2Cl == false) continue;
             assert(T2.mCluster2x2.nTower > 0); // internal logical error
-            assert(T2.nearTotET > 0); // internal logical error
+            assert(T2.mP3InNearCone.Pt() > 0); // internal logical error
 
             float isoET2 = T2.mCluster2x2.ET / T2.mCluster4x4.ET;
             hA[30]->Fill(isoET2);
@@ -268,15 +269,15 @@ void StZBosMaker::find_Z_boson()
             if (T2.mCluster2x2.ET < par_clusterEtZ) continue;
             hA[0]->Fill("et2", 1.);
 
-            float fracET2 = T2.mCluster2x2.ET / T2.nearTotET;
+            float fracET2 = T2.mCluster2x2.ET / T2.mP3InNearCone.Pt();
             hA[26]->Fill(fracET2);
             if (fracET2 < par_nearTotEtFracZ) continue;
             hA[0]->Fill("con2", 1.);
 
             float e1 = T1.mCluster2x2.energy;
             float e2 = T2.mCluster2x2.energy;
-            TVector3 p1 = T1.mVec3AtDca; p1.SetMag(e1); //cluster.position;
-            TVector3 p2 = T2.mVec3AtDca; p2.SetMag(e2); //cluster.position;
+            TVector3 p1 = T1.mP3AtDca; p1.SetMag(e1); //cluster.position;
+            TVector3 p2 = T2.mP3AtDca; p2.SetMag(e2); //cluster.position;
 
             float del_phi = p1.DeltaPhi(p2);
             //printf("del Phi=%f\n",del_phi);
@@ -345,7 +346,7 @@ void StZBosMaker::find_Z_boson()
             hA[3]->Fill(T1.prMuTrack->charge()*T2.prMuTrack->charge());
             hA[4]->Fill(p1.Phi(), p2.Phi());
             hA[5]->Fill(del_phi);
-            hA[6]->Fill(mass, T1.prMuTrack->charge() / T1.mVec3AtDca.Perp()*T2.prMuTrack->charge() / T1.mVec3AtDca.Perp());
+            hA[6]->Fill(mass, T1.prMuTrack->charge() / T1.mP3AtDca.Perp()*T2.prMuTrack->charge() / T1.mP3AtDca.Perp());
             hA[7]->Fill(mass, T1.prMuTrack->charge()*T2.prMuTrack->charge());
             hA[8]->Fill(T1.mCluster2x2.ET);
             if (T1.prMuTrack->charge() > 0) {

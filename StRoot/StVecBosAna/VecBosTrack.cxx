@@ -12,27 +12,33 @@ using namespace std;
 
 
 VecBosTrack::VecBosTrack() : TObject(), mEvent(0), mType(kUNKNOWN), mHelix(), mVertex(0),
-   mVec3AtDca(), mVec3AtBTow(), mCoorAtBTow()
+   mP3AtDca(), mP3AtBTow(), mCoorAtBTow(),
+   mP3InNearCone(), mP3InNearConeTow(), mP3InNearConeBTow(), mP3InNearConeETow(), mP3InNearConeNoETow(), mP3InNearConeTpc(),
+   mP3InOppsCone(), mP3InOppsConeTow(), mP3InOppsConeBTow(), mP3InOppsConeETow(), mP3InOppsConeNoETow(), mP3InOppsConeTpc()
 {
    clear();
 }
 
 
-void VecBosTrack::print(int flag)
+void VecBosTrack::print(int opt) const
 {
    if (prMuTrack == 0) {  printf("   Track NULL pointer???\n"); return; }
 
-   printf("   Track glPT=%.1f GeV/c   isMatch2Cl=%d, nearTotET=%.1f, awayTotET=%.1f mVec3AtDcaT=%.1f\n",
-          glMuTrack->pt(), isMatch2Cl, nearTotET, awayTotET, mVec3AtDca.Pt());
+   printf("Track glPT=%.1f GeV/c   isMatch2Cl=%d, mP3InNearCone=%.1f, awayTotET=%.1f mP3AtDcaT=%.1f\n",
+          glMuTrack->pt(), isMatch2Cl, mP3InNearCone.Pt(), awayTotET, mP3AtDca.Pt());
 
-   mMatchedTower.print(flag);
-   mCluster2x2.print(flag);
+   mMatchedTower.print(opt);
+   mCluster2x2.print(opt);
 
    TVector3 D = mMatchedTower.R - mCluster2x2.position;
-   printf("                XYZ(track-mCluster2x2):  |3D dist|=%.1fcm  delZ=%.1fcm\n", D.Mag(), D.z());
-   printf("     4x4 :"); mCluster4x4.print(flag);
-   printf("     nearET/GeV:    TPC=%.1f   Emc=%.1f (BTOW=%.1f ETOW=%.1f) sum=%.1f\n", nearTpcPT, nearEmcET, nearBtowET, nearEtowET, nearTotET);
-   printf("     awayET/GeV:    TPC=%.1f   Emc=%.1f (BTOW=%.1f ETOW=%.1f) sum=%.1f\n", awayTpcPT, awayEmcET, awayBtowET, awayEtowET, awayTotET);
+
+   printf("     XYZ(track-mCluster2x2):  |3D dist|=%.1fcm  delZ=%.1fcm\n", D.Mag(), D.z());
+   printf("     4x4 :");
+   mCluster4x4.print(opt);
+   printf("     nearET/GeV:    TPC=%.1f   Emc=%.1f (BTOW=%.1f ETOW=%.1f) sum=%.1f\n",
+      mP3InNearConeTpc.Pt(), mP3InNearConeTow.Pt(), mP3InNearConeBTow.Pt(), mP3InNearConeETow.Pt(), mP3InNearCone.Pt());
+   printf("     awayET/GeV:    TPC=%.1f   Emc=%.1f (BTOW=%.1f ETOW=%.1f) sum=%.1f\n",
+      awayTpcPT, awayEmcET, awayBtowET, awayEtowET, awayTotET);
 }
 
 
@@ -60,7 +66,7 @@ void VecBosTrack::Process()
    {
       mType |= kBARREL;
       MatchTrack2BtowCluster();
-      FindNearJet();
+      CalcEnergyInNearCone();
    }
    else if ( prMuTrack->pt() >= 1.0 && prMuTrack->flag() == 311 )
    {
@@ -72,37 +78,43 @@ void VecBosTrack::Process()
 
 void VecBosTrack::clear()
 {
-   mEvent               = 0;
-   mType                = kUNKNOWN;
-   isMatch2Cl           = false;
+   mEvent                 = 0;
+   mType                  = kUNKNOWN;
+   isMatch2Cl             = false;
    mMatchedTower.clear();
-   glMuTrack            = 0;
-   prMuTrack            = 0;
+   glMuTrack              = 0;
+   prMuTrack              = 0;
    //mHelix               = St
-   mVertex              = 0;
+   mVertex                = 0;
    mCluster2x2.clear();
    mCluster4x4.clear();
-   mVec3AtDca           = TVector3(0, 0, 0);
-   mVec3AtBTow          = TVector3(0, 0, 0);
-   mCoorAtBTow          = TVector3(0, 0, 0);
-   awayTpcPT            = 0;
-   nearTpcPT            = 0;
-   nearTotET            = 0;
-   awayTotET            = 0;
-   nearEmcET            = 0;
-   awayEmcET            = 0;
-   nearBtowET           = 0;
-   awayBtowET           = 0;
-   nearEtowET           = 0;
-   awayEtowET           = 0;
-   smallNearTpcPT       = 0;
-   nearTotET_noEEMC     = 0;
-   awayTotET_noEEMC     = 0;
-   ptBalance            = TVector3(0, 0, 0);
-   ptBalance_noEEMC     = TVector3(0, 0, 0);
-   sPtBalance           = 0;
-   sPtBalance_noEEMC    = 0;
-   hadronicRecoil       = TVector3(0, 0, 0);
+   mP3AtDca               = TVector3(0, 0, 0);
+   mP3AtBTow              = TVector3(0, 0, 0);
+   mCoorAtBTow            = TVector3(0, 0, 0);
+   mP3InNearCone          = TVector3(0, 0, 0);
+   mP3InNearConeTow       = TVector3(0, 0, 0);
+   mP3InNearConeBTow      = TVector3(0, 0, 0);
+   mP3InNearConeETow      = TVector3(0, 0, 0);
+   mP3InNearConeNoETow    = TVector3(0, 0, 0);
+   mP3InNearConeTpc       = TVector3(0, 0, 0);
+   mP3InOppsCone          = TVector3(0, 0, 0);
+   mP3InOppsConeTow       = TVector3(0, 0, 0);
+   mP3InOppsConeBTow      = TVector3(0, 0, 0);
+   mP3InOppsConeETow      = TVector3(0, 0, 0);
+   mP3InOppsConeNoETow    = TVector3(0, 0, 0);
+   mP3InOppsConeTpc       = TVector3(0, 0, 0);
+   awayTpcPT              = 0;
+   awayEmcET              = 0;
+   awayBtowET             = 0;
+   awayEtowET             = 0;
+   awayTotET              = 0;
+   smallNearTpcPT         = 0;
+   awayTotET_noEEMC       = 0;
+   ptBalance              = TVector3(0, 0, 0);
+   ptBalance_noEEMC       = TVector3(0, 0, 0);
+   sPtBalance             = 0;
+   sPtBalance_noEEMC      = 0;
+   hadronicRecoil         = TVector3(0, 0, 0);
 
    memset(esmdGlobStrip, -999, sizeof(esmdGlobStrip));
    memset(esmdDca, -999., sizeof(esmdDca));
@@ -129,7 +141,7 @@ bool VecBosTrack::ExtendTrack2Barrel()
    //if (!mVecBosEvent->l2bitET) return; //fire barrel trigger
 
    // Apply eta cuts at track level (tree analysis)
-   //if (mVec3AtDca.Eta() < mMinBTrackEta || mVec3AtDca.Eta() > mMaxBTrackEta) continue;
+   //if (mP3AtDca.Eta() < mMinBTrackEta || mP3AtDca.Eta() > mMaxBTrackEta) continue;
 
    // extrapolate track to the barrel @ R=entrance
    mHelix               = prMuTrack->outerHelix();
@@ -157,7 +169,7 @@ bool VecBosTrack::ExtendTrack2Barrel()
    mCoorAtBTow.SetXYZ(posAtBTow.x(), posAtBTow.y(), posAtBTow.z());
 
    //Info("ExtendTrack2Barrel", "XXX");
-   //mVec3AtDca.Print();
+   //mP3AtDca.Print();
    //mCoorAtBTow.Print();
 
    int iEta, iPhi;
@@ -171,7 +183,7 @@ bool VecBosTrack::ExtendTrack2Barrel()
    mMatchedTower.R    = mCoorAtBTow; //TVector3(posAtBTow.x(), posAtBTow.y(), posAtBTow.z());
    mMatchedTower.iEta = iEta;
    mMatchedTower.iPhi = iPhi;
-   //print();
+   //Print();
 
    return true;
 }
@@ -190,7 +202,7 @@ void VecBosTrack::MatchTrack2BtowCluster()
    //float trackPT = prMuTrack->momentum().perp();
 
    // Choose 2x2 cluster with maximum ET
-   mCluster2x2 = FindMaxBTow2x2(*mEvent, mMatchedTower.iEta, mMatchedTower.iPhi, mVertex->z);
+   mCluster2x2 = mEvent->FindMaxBTow2x2(mMatchedTower.iEta, mMatchedTower.iPhi, mVertex->z);
 
    //hA[33] ->Fill(mCluster2x2.ET);
    //hA[34] ->Fill(mCluster2x2.adcSum, trackPT);
@@ -200,7 +212,7 @@ void VecBosTrack::MatchTrack2BtowCluster()
    int iEta = mCluster2x2.iEta;
    int iPhi = mCluster2x2.iPhi;
 
-   mCluster4x4 = SumBTowPatch(*mEvent, iEta - 1, iPhi - 1, 4, 4, mVertex->z); // needed for lumi monitor
+   mCluster4x4 = mEvent->SumBTowPatch(iEta - 1, iPhi - 1, 4, 4, mVertex->z); // needed for lumi monitor
 
    //if (mCluster2x2.ET < mMinBClusterEnergy) continue; // too low energy
 
@@ -246,70 +258,85 @@ void VecBosTrack::MatchTrack2BtowCluster()
 
 
 /**
- * Calculates the energy in the cone around the electron.
+ * Calculates the energy in the cone around the track+cluster (electron
+ * candidate).
  */
-void VecBosTrack::FindNearJet()
+void VecBosTrack::CalcEnergyInNearCone()
 {
-   //printf("\n******* FindNearJet() nVert=%d\n",mVecBosEvent->mVertices.size());
+   //Info("CalcEnergyInNearCone()", "nVert=%d\n",mVecBosEvent->mVertices.size());
 
-   if (!isMatch2Cl) return;
+   if (!HasCluster()) return;
 
    // sum EMC-jet component. XXX:ds: Note: the track direction is taken at the origin
-   nearBtowET  = SumBTowCone(*mEvent, mVertex->z, mVec3AtDca, 2); // '2'=2D cone
-   //nearEtowET  = SumETowCone(mVertex->z, mVec3AtDca, 2);
-   nearEmcET  += nearBtowET;
-   nearEmcET  += nearEtowET;
+   mP3InNearConeBTow   = mEvent->CalcP3InConeBTow(this, 2); // '2'=2D cone
+   mP3InNearConeETow   = mEvent->CalcP3InConeETow(this, 2); // '2'=2D cone
+   mP3InNearConeTpc    = mEvent->CalcP3InConeTpc (this, 2); // '2'=2D cone
 
+   mP3InNearConeTow    = mP3InNearConeBTow + mP3InNearConeETow;
+   mP3InNearCone       = mP3InNearConeTow  + mP3InNearConeTpc; // XXX:ds: double counting? yes, see correction below
+   mP3InNearConeNoETow = mP3InNearCone     - mP3InNearConeETow;
+
+   mP3InOppsConeBTow   = mEvent->CalcP3InConeBTow(this, 1, -1); // '1'=1D cone
+   mP3InOppsConeETow   = mEvent->CalcP3InConeETow(this, 1, -1); // '1'=1D cone
+   mP3InOppsConeTpc    = mEvent->CalcP3InConeTpc (this, 1, -1); // '1'=1D cone
+
+   mP3InOppsConeTow    = mP3InOppsConeBTow + mP3InOppsConeETow;
+   mP3InOppsCone       = mP3InOppsConeTow  + mP3InOppsConeTpc; // XXX:ds: double counting? yes, see correction below
+   mP3InOppsConeNoETow = mP3InOppsCone     - mP3InOppsConeETow;
+
+
+   if (GetClusterEnergyFrac() >= mEvent->mMinClusterEnergyFrac)
+   {
+      mType |= kISOLATED;
+
+      //if (GetClusterEnergyFrac() >= mEvent->mMinClusterEnergyFrac)
+   }
+   
    // sum TPC-near component
    //if (mStMuDstMaker)
-//      nearTpcPT = SumTpcCone(mVertex->id, mVec3AtDca, 2, mMatchedTower.id); // '2'=2D cone
    //else
-   //   nearTpcPT = SumTpcConeFromTree(iv, mVec3AtDca, 2, mMatchedTower.id);
-
-   float nearSum = nearEmcET + nearTpcPT; // XXX:ds: double counting? yes, see correction below
+   //   mP3InNearConeTpc = SumTpcConeFromTree(iv, mP3AtDca, 2, mMatchedTower.id);
 
    // fill histos separately for 2 types of events
    //if (mMatchedTower.id > 0) { //only barrel towers
 
    // Correct for double counting of electron track in near cone rarely
    // primTrPT<10 GeV & globPT>10 - handle this here
-   if (mVec3AtDca.Pt() > mEvent->mMinBTrackPt) nearSum -= mEvent->mMinBTrackPt;
-   else                                        nearSum -= mVec3AtDca.Pt();
+   //if (mP3AtDca.Pt() > mEvent->mMinBTrackPt) mP3InNearCone -= mEvent->mMinBTrackPt;
+   //else                                      mP3InNearCone -= mP3AtDca.Pt();
 
-   nearTotET        = nearSum;
-   nearTotET_noEEMC = nearSum - nearEtowET;
-   //float nearTotETfrac = mCluster2x2.ET / nearTotET;
+   //float nearTotETfrac = mCluster2x2.ET / mP3InNearCone;
 
-   //hA[40]->Fill(nearEmcET);
-   //hA[41]->Fill(mCluster2x2.ET, nearEmcET - mCluster2x2.ET);
+   //hA[40]->Fill(mP3InNearConeTow);
+   //hA[41]->Fill(mCluster2x2.ET, mP3InNearConeTow - mCluster2x2.ET);
    //hA[42]->Fill(nearTotETfrac);
-   //hA[47]->Fill(nearTpcPT);
-   //hA[48]->Fill(nearEmcET, nearTpcPT);
-   //hA[49]->Fill(nearSum);
+   //hA[47]->Fill(mP3InNearConeTpc);
+   //hA[48]->Fill(mP3InNearConeTow, mP3InNearConeTpc);
+   //hA[49]->Fill(mP3InNearCone);
    //hA[250]->Fill(mCluster2x2.ET, nearTotETfrac);
 
    //// check east/west yield diff
-   //hA[210]->Fill(mCluster2x2.position.PseudoRapidity(), nearEtowET);
+   //hA[210]->Fill(mCluster2x2.position.PseudoRapidity(), mP3InNearConeETow);
 
-   //if (mCluster2x2.position.PseudoRapidity() > 0) hA[211]->Fill(mCluster2x2.position.Phi(), nearEtowET);
-   //else                                           hA[212]->Fill(mCluster2x2.position.Phi(), nearEtowET);
+   //if (mCluster2x2.position.PseudoRapidity() > 0) hA[211]->Fill(mCluster2x2.position.Phi(), mP3InNearConeETow);
+   //else                                           hA[212]->Fill(mCluster2x2.position.Phi(), mP3InNearConeETow);
 
    //} else if (mMatchedTower.id < 0) { //only endcap towers
 
    //   // Correct for double counting of electron track in near cone rarely primTrPT<10 GeV & globPT>10 - handle this here
-   //   if (mVec3AtDca.Pt() > mMinETrackPt) nearSum -= mMinETrackPt;
-   //   else                                 nearSum -= mVec3AtDca.Pt();
+   //   if (mP3AtDca.Pt() > mMinETrackPt) mP3InNearCone -= mMinETrackPt;
+   //   else                              mP3InNearCone -= mP3AtDca.Pt();
 
-   //   nearTotET        = nearSum;
-   //   nearTotET_noEEMC = nearSum - nearEtowET;
-   //   float nearTotETfrac    = mCluster2x2.ET / nearTotET;
+   //   mP3InNearCone       = mP3InNearCone;
+   //   mP3InNearConeNoETow = mP3InNearCone - mP3InNearConeETow;
+   //   float nearTotETfrac = mCluster2x2.ET / mP3InNearCone;
 
-   //   hE[40]->Fill(nearEmcET);
-   //   hE[41]->Fill(mCluster2x2.ET, nearEmcET - mCluster2x2.ET);
+   //   hE[40]->Fill(mP3InNearConeTow);
+   //   hE[41]->Fill(mCluster2x2.ET, mP3InNearConeTow - mCluster2x2.ET);
    //   hE[42]->Fill(nearTotETfrac);
-   //   hE[47]->Fill(nearTpcPT);
-   //   hE[48]->Fill(nearEmcET, nearTpcPT);
-   //   hE[49]->Fill(nearSum);
+   //   hE[47]->Fill(mP3InNearConeTpc);
+   //   hE[48]->Fill(mP3InNearConeTow, mP3InNearConeTpc);
+   //   hE[49]->Fill(mP3InNearCone);
    //}
 }
 
@@ -329,16 +356,16 @@ void VecBosTrack::FindAwayJet()
 //         if (!isMatch2Cl) continue;
 //
 //         // sum opposite in phi EMC components
-//         awayBtowET  = SumBTowCone(vertex.z, -mVec3AtDca, 1); // '1' = only cut on delta phi
-//         awayEtowET  = SumETowCone(vertex.z, -mVec3AtDca, 1);
+//         awayBtowET  = mEvent->CalcP3InConeBTow(vertex.z, -mP3AtDca, 1); // '1' = only cut on delta phi
+//         awayEtowET  = mEvent->CalcP3InConeETow(vertex.z, -mP3AtDca, 1);
 //         awayEmcET   = awayBtowET;
 //         awayEmcET  += awayEtowET;
 //
 //         // add TPC ET
 //         //if (mStMuDstMaker)
-//            awayTpcPT = SumTpcCone(vertex.id, -mVec3AtDca, 1, mMatchedTower.id);
+//            awayTpcPT = mEvent->CalcP3InConeTpc(vertex.id, -mP3AtDca, 1, mMatchedTower.id);
 //         //else
-//         //   awayTpcPT = SumTpcConeFromTree(iv, -mVec3AtDca, 1, mMatchedTower.id);
+//         //   awayTpcPT = SumTpcConeFromTree(iv, -mP3AtDca, 1, mMatchedTower.id);
 //
 //         awayTotET        = awayEmcET  + awayTpcPT;
 //         awayTotET_noEEMC = awayBtowET + awayTpcPT;

@@ -1,10 +1,10 @@
 #ifndef StVecBosMaker_h
 #define StVecBosMaker_h
 
-/*!
+/**
  *
  * \class  StVecBosMaker
- * \brief  muDst based extraction of W-signal from pp500 data from 2011
+ * \brief  muDst based extraction of W-signal from pp data
  *
  */
 
@@ -80,7 +80,7 @@ private:
    int   mMinNumPileupVertices;
 
    int   par_nFitPts, parE_nFitPts;
-   float par_nHitFrac, par_trackRin,  par_trackRout;
+   float par_trackRin,  par_trackRout;
    float parE_nHitFrac, parE_trackRin,  parE_trackRout, mMinETrackPt;
 
    int   par_kSigPed, par_AdcThres;
@@ -109,7 +109,7 @@ public: // to overwrite default params from .C macro
       mCutVertexZ = zm; mMinNumPileupVertices = npv;
    }
    void setEleTrackCuts(int nfp, int hfr, float rin, float rout, float mpt) {
-      par_nFitPts = nfp;  par_nHitFrac = hfr;
+      par_nFitPts = nfp;
       par_trackRin = rin;  par_trackRout = rout;
    }
    void setWbosonCuts(float a, float fr2,  float bal, float etaLow, float etaHigh) {
@@ -171,7 +171,6 @@ private:
    int   ExtendTrack2Endcap();
    bool  MatchTrack2EtowCluster();
    void  FindNearJet();
-   void  FindAwayJet();
    void  CalcPtBalance();
    void  CalcMissingET();
    void  esmdAnalysis();
@@ -184,14 +183,10 @@ private:
    TClonesArray* GetJets(TString branchName);
    TClonesArray* GetJetsTreeAnalysis(TString branchName);
 
-   // tools
-   float SumTpcCone(int vertID, TVector3 refAxis, int flag, int pointTowId);
-   float SumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, int pointTowId); //uses track vector saved in tree
+   //float       SumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, int pointTowId); //uses track vector saved in tree
    WeveCluster maxEtow2x1(int iEta, int iPhi, float zVert);
    WeveCluster maxEtow2x2(int iEta, int iPhi, float zVert);
    WeveCluster sumEtowPatch(int iEta, int iPhi, int Leta, int  Lphi, float zVert);
-   void PatchToEtaPhi(int patch, int *eta, int *phi);
-
 
    // histograms
    enum {mxHA = 300};
@@ -209,41 +204,42 @@ private:
 public:
 
    StVecBosMaker(const char *name = "StVecBosMaker", VecBosRootFile *vbFile = 0);
-   virtual  ~StVecBosMaker() {};
+   virtual ~StVecBosMaker() {};
+
    virtual Int_t Init();
    virtual Int_t Make();
    virtual Int_t Finish();
-
-   virtual Int_t InitRun  (int runumber);
-   virtual void Clear(const Option_t* = "");
+   virtual Int_t InitRun (int runumber);
+   virtual void  Clear(const Option_t* = "");
    virtual Int_t FinishRun(int runumber);
 
-   void setTrigID(int l2bw, int l2ew) { par_l2bwTrgID = l2bw; parE_l2ewTrgID = l2ew; }
+   void setTrigID(int l2bw, int l2ew)   { par_l2bwTrgID = l2bw; parE_l2ewTrgID = l2ew; }
+   void setHList(TObjArray *x)          { HList    = x; }
+   void setHListTpc(TObjArray *x)       { HListTpc = x; }
+   void setMC(int x)                    { isMC = x; }
+   void setMaxDisplayEve(int n)         { par_maxDisplEve = n; }
+   void attachSpinDb(StSpinDbMaker *mk) { spinDb = mk; }
 
-   void setHList(TObjArray *x)    { HList    = x; }
-   void setHListTpc(TObjArray *x) { HListTpc = x; }
-   void setMC(int x) {isMC = x;}
-   void setMaxDisplayEve(int n) { par_maxDisplEve = n;}
-   void attachSpinDb(StSpinDbMaker *mk) { spinDb = mk;}
-
-   //tree analysis
-   void chainFile( const Char_t *name );
-   void chainJetFile( const Char_t *name );
+   // tree analysis
+   void  chainFile( const Char_t *name );
+   void  chainJetFile( const Char_t *name );
    Int_t getNumberOfEvents() { return mTreeChain->GetEntries(); }
    Int_t getEvent(Int_t event, Int_t eventJet);
 
 protected:
-   Int_t index, indexJet;
+
+   Int_t   index;
+   Int_t   indexJet;
    TChain *mTreeChain;
    TChain *mJetTreeChain;
 
-   /// Displayed on session exit, leave it as-is please ...
+   // Displayed on session exit, leave it as-is please ...
    virtual const char *GetCVS() const {
       static const char cvs[] = "";
       return cvs;
    }
 
-   ClassDef(StVecBosMaker, 0)  //StAF chain virtual base class for Makers
+   ClassDef(StVecBosMaker, 0)
 };
 
 #endif

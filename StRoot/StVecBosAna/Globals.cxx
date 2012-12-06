@@ -40,158 +40,24 @@ bool ConvertEtaPhi2Bins(float eta, float phi, int &iEta, int &iPhi)
 }
 
 
-/**
- * For a given eta-phi bin considers all combinations of 2x2 bin clusters around it
- * and returns one with the maximum ET.
- */
-WeveCluster FindMaxBTow2x2(VecBosEvent &vbEvent, int etaBin, int phiBin, float zVert)
+/** Converts patch index to eta-phi bins? */
+void PatchToEtaPhi(int patch, int *eta, int *phi)
 {
-   //printf("FindMaxBTow2x2  seed etaBin=%d phiBin=%d \n",etaBin, phiBin);
-   const int L = 2; // size of the summed square
-
-   WeveCluster maxCL;
-
-   // Just 4 cases of 2x2 clusters
-   float maxET = 0;
-
-   for (int iEta=etaBin-1; iEta<=etaBin; iEta++)
-   {
-      for (int iPhi=phiBin-1; iPhi<=phiBin; iPhi++)
-      {
-         WeveCluster cluster = SumBTowPatch(vbEvent, iEta, iPhi, L, L, zVert);
-         if (maxET > cluster.ET) continue;
-         maxET = cluster.ET;
-         maxCL = cluster;
-         // printf("   newMaxETSum=%.1f etaBin=%d iPhi=%d \n",maxET, I,J);
-      }
+   if (patch < 0 || patch > 299) {
+      Error("PatchToEtaPhi", "PatchToEtaPhi p=%d, out of range. Eta phi not defined.\n", patch);
+      return;
    }
 
-   //printf(" final inpEve=%d SumET2x2=%.1f \n",nInpEve,maxET);
-   return maxCL;
-}
-
-
-WeveCluster SumBTowPatch(VecBosEvent &vbEvent, int etaBin, int phiBin, int etaWidth, int  phiWidth, float zVert)
-{
-   //printf("  eveID=%d btowSquare seed etaBin=%d[+%d] phiBin=%d[+%d] zVert=%.0f \n",vbEvent.id,etaBin,etaWidth, phiBin,phiWidth,zVert);
-   WeveCluster cluster; // object is small, not to much overhead in creating it
-   cluster.iEta = etaBin;
-   cluster.iPhi = phiBin;
-   TVector3 cluCoord;
-   double sumW          = 0;
-   float  nomBTowRadius = gBTowGeom->Radius();
-
-   for (int iEta = etaBin; iEta < etaBin + etaWidth; iEta++) // trim in eta-direction
-   {
-      if (iEta < 0) continue;
-      if (iEta >= mxBTetaBin) continue;
-
-      for (int iPhi = phiBin; iPhi < phiBin + phiWidth; iPhi++)
-      {
-         // wrap up in the phi-direction
-         int   iPhi_p  = (iPhi + mxBTphiBin) % mxBTphiBin;         // keep it always positive
-         int   towerId = gMapBTowEtaPhiBin2Id[ iEta + iPhi_p*mxBTetaBin];
-         float energy  = vbEvent.bemc.eneTile[kBTow][towerId - 1];
-
-         //if (L<5) printf("n=%2d  iEta=%d iPhi_p=%d\n",cluster.nTower,iEta,iPhi_p);
-
-         if (energy <= 0) continue; // skip towers w/o energy
-
-         float adc    = vbEvent.bemc.adcTile[kBTow][towerId - 1];
-         float delZ   = gBCalTowerCoords[towerId - 1].z() - zVert;
-         float cosine = nomBTowRadius / sqrt(nomBTowRadius *nomBTowRadius + delZ *delZ);
-         float ET     = energy * cosine;
-         float logET  = log10(ET + 0.5);
-
-         cluster.nTower++;
-         cluster.energy += energy;
-         cluster.ET     += ET;
-         cluster.adcSum += adc;
-
-         if (logET > 0) {
-            cluCoord += logET * gBCalTowerCoords[towerId - 1]; // (log) energy weighted cluster position
-            sumW     += logET;
-         }
-         // if(etaWidth==2)
-         //    printf("etaBin=%d phiBin=%d  ET=%.1f  energy=%.1f   sum=%.1f logET=%f sumW=%f\n",iEta,iPhi,ET,energy,cluster.energy,logET,sumW);
-      }
-
-      // printf(" end btowSquare: etaBin=%d  nTw=%d, ET=%.1f adc=%.1f\n",iEta,cluster.nTower,cluster.ET,cluster.adcSum);
-      if (sumW > 0)
-         cluster.position =  (1./sumW) * cluCoord; // weighted cluster position
-      else
-         cluster.position = TVector3(0, 0, 999);
+   if (patch < 150) {
+      int m = 14 - patch / 10;
+      int n = patch % 10;
+      *eta = n / 2 + 5;
+      *phi = n % 2 + m * 2;
    }
-
-   return cluster;
-}
-
-
-/**
- * Returns the  sum of all towers withing mTrackIsoDeltaR around the track
- * refAxis.
-flag=1: only delta phi cut; used for away (out of) cone cut
-flag=2: use 2D cut;         used for near cone cut
- */
-float SumBTowCone(VecBosEvent &vbEvent, float zVert, TVector3 refAxis, int flag)
-{
-   assert(flag == 1 || flag == 2);
-
-   TVector3 ptSum;
-
-   // process BTOW hits
-   for (int i=0; i<mxBtow; i++)
-   {
-      float energy = vbEvent.bemc.eneTile[kBTow][i];
-      if (energy <= 0) continue;
-
-      // Correct BCal tower position to the vertex position
-      TVector3 towerCoord = gBCalTowerCoords[i] - TVector3(0, 0, zVert);
-      towerCoord.SetMag(energy); // it is 3D momentum in the event ref frame
-
-      if (flag == 1 && fabs( refAxis.DeltaPhi(towerCoord)) > vbEvent.mTrackIsoDeltaPhi ) continue;
-
-      if (flag == 2 && refAxis.DeltaR(towerCoord) > vbEvent.mTrackIsoDeltaR) continue;
-
-      // XXX:ds: Another bug? The sum should be vector one
-      //ptSum += towerCoord.Perp();
-      ptSum += towerCoord;
+   else {
+      int m = 29 - patch / 10;
+      int n = patch % 10;
+      *eta = 4 - n / 2;
+      *phi = 1 - n % 2 + m * 2;
    }
-
-   return ptSum.Perp();
-}
-
-
-/**
-flag=1: only delta phi cut; used for away (out of) cone cut
-flag=2: use 2D cut;         used for near cone cut
- */
-float SumETowCone(VecBosEvent &vbEvent, float zVert, TVector3 refAxis, int flag)
-{
-   assert(flag == 1 || flag == 2);
-
-   TVector3 ptSum;
-
-   // Loop over all phi bins
-   for (int iphi = 0; iphi < mxEtowPhiBin; iphi++) 
-   {
-      for (int ieta = 0; ieta < mxEtowEta; ieta++) // sum all eta rings
-      {
-         float energy = vbEvent.etow.ene[iphi][ieta];
-         if (energy <= 0) continue; // skip towers with no energy
-
-         TVector3 towerCoord = gETowCoords[iphi][ieta] - TVector3(0, 0, zVert);
-         towerCoord.SetMag(energy); // it is 3D momentum in the event ref frame
-
-         if (flag == 1 && fabs( refAxis.DeltaPhi(towerCoord)) > vbEvent.mTrackIsoDeltaPhi) continue;
-
-         if (flag == 2 && refAxis.DeltaR(towerCoord) > vbEvent.mTrackIsoDeltaR) continue;
-
-         // XXX:ds: Another bug? The sum should be vector one
-         //ptsum += towerCoord.Perp();
-         ptSum += towerCoord;
-      }
-   }
-
-   return ptSum.Perp();
 }

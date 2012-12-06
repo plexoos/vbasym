@@ -129,7 +129,7 @@ void St2011pubSpinMaker::bXingSort()
 
          if (T.isMatch2Cl == false) continue;
          assert(T.mCluster2x2.nTower > 0); // internal logical error
-         assert(T.nearTotET > 0); // internal logical error
+         assert(T.mP3InNearCone.Pt() > 0); // internal logical error
 
          int iQ = 0; // plus
          float p_Q = T.prMuTrack->charge();
@@ -137,7 +137,7 @@ void St2011pubSpinMaker::bXingSort()
          float ET = T.mCluster2x2.ET;
 
          //put final W cut here
-         bool isW = T.mCluster2x2.ET / T.nearTotET > wMK->par_nearTotEtFrac; // near cone
+         bool isW = T.mCluster2x2.ET / T.mP3InNearCone.Pt() > wMK->par_nearTotEtFrac; // near cone
 
          if (par_useNoEEMC)
             isW = isW && T.sPtBalance_noEEMC > wMK->par_ptBalance; // awayET

@@ -16,7 +16,8 @@ public:
    int      iEta, iPhi;       // lower-left corner of the cluster, can be negative, L2-indexing convention
    //int      iEtaE[4], iPhiE[4]; //index of cluster towers
    TVector3 position; // 3D ln(E) weighted sume of tower positions
-   WeveCluster() {clear();}
+   WeveCluster() { clear(); }
+   ~WeveCluster() { }
 
    void clear() {
       position = TVector3(0, 0, 0);
@@ -25,7 +26,8 @@ public:
       iEta = iPhi = 999;
    }
 
-   void print( int flag = 0) {
+   void print( int flag = 0) const
+   {
       printf("     Cluster ET=%.1f E=%.1f GeV, sumAdc=%.0f nTw=%d iEta=%d, iPhi=%d XYZ(%.0f,%.0f,%.0f)cm\n", ET, energy, adcSum, nTower, iEta, iPhi, position.x(), position.y(), position.z());
    }
 
@@ -44,7 +46,7 @@ public:
    int      iPhi;    // eta x phi bin using L2 indexing convention
 
    void clear() { id = 0; R = TVector3(0, 0, 0); Rglob = TVector3(0, 0, 0); iEta = iPhi = 9999; }
-   void print(int flag = 0) {
+   void print(int flag = 0) const {
       printf("     pointed tower ID=%d; L2index: iEta=%d iPhi=%d; XYZ=(%.0f,%.0f,%.0f)cm\n",
              id, iEta, iPhi, R.x(), R.y(), R.z());
    }

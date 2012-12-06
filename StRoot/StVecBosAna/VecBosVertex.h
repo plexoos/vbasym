@@ -23,25 +23,24 @@ public:
 
    enum EVertexType {kUNKNOWN=0x0000, kBAD=0x1000, kGOOD=0x0001};
 
-   VecBosEvent *mEvent;       //!
-   EVertexType  mType;
-   int          id;           // as store do muDst list
-   float        z;            // cm
-   float        mRank;
-   float        mRankLog;
-   int          nEEMCMatch;   //# of matched endcap towers
-   TVector3     mPosition;
-
+   VecBosEvent        *mEvent;       //!
+   EVertexType         mType;
+   int                 id;           // as store do muDst list
+   float               z;            // cm
+   float               mRank;
+   float               mRankLog;
+   int                 nEEMCMatch;   // # of matched endcap towers
+   TVector3            mPosition;
    VecBosTrackVec      eleTrack;
-   vector<StMuTrack*>  prTrList;
+   vector<StMuTrack*>  prTrList;     //!
 
    VecBosVertex();
    VecBosVertex(StMuPrimaryVertex &stMuVertex);
    void SetPosition(const StThreeVectorF &vec);
-   bool IsGood() const;
+   bool IsGood() const { return (mType & kGOOD) == kGOOD ? true : false; }
    void Process();
    void clear();
-   void print(int flag=0);
+   virtual void Print(const Option_t* opt="") const;
 
    ClassDef(VecBosVertex, 1);
 };

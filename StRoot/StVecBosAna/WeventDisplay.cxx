@@ -162,19 +162,19 @@ void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  
       printf("WeventDisplay::Event ID  %s\n", txt);
       pvt->AddText(txt);
 
-      sprintf(txt, "TPC PT(GeV/c) near=%.1f  away=%.1f ", myTr.nearTpcPT, myTr.awayTpcPT);
+      sprintf(txt, "TPC PT(GeV/c) near=%.1f  away=%.1f ", myTr.mP3InNearConeTpc, myTr.awayTpcPT);
       printf("WeventDisplay::Event TPC  %s\n", txt);
       pvt->AddText(txt);
 
-      sprintf(txt, "BTOW ET/GeV: 2x2=%.1f   near= %.1f   away= %.1f", myTr.mCluster2x2.ET, myTr.nearBtowET, myTr.awayBtowET);
+      sprintf(txt, "BTOW ET/GeV: 2x2=%.1f   near= %.1f   away= %.1f", myTr.mCluster2x2.ET, myTr.mP3InNearConeBTow, myTr.awayBtowET);
       printf("WeventDisplay:: BTOW  %s\n", txt);
       pvt->AddText(txt);
 
-      sprintf(txt, "Emc (Btow+Etow) ET/GeV:   near= %.1f   away= %.1f", myTr.nearEmcET, myTr.awayEmcET);
+      sprintf(txt, "Emc (Btow+Etow) ET/GeV:   near= %.1f   away= %.1f", myTr.mP3InNearCone, myTr.awayEmcET);
       printf("WeventDisplay:: BTOW+ETOW  %s\n", txt);
       pvt->AddText(txt);
 
-      sprintf(txt, "total ET/GeV:   near= %.1f   away= %.1f  ptBalance= %.1f", myTr.nearTotET, myTr.awayTotET, myTr.ptBalance.Perp());
+      sprintf(txt, "total ET/GeV:   near= %.1f   away= %.1f  ptBalance= %.1f", myTr.mP3InNearCone, myTr.awayTotET, myTr.ptBalance.Perp());
       printf("WeventDisplay:: BTOW  %s\n", txt);
       pvt->AddText(txt);
       // save dump of histos
@@ -306,15 +306,15 @@ void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  
       sprintf(txt, "run=%d  eveID=%05d daq=%d vertex:ID=%d Z=%.0fcm ", runNo, eveID, daqSeq, myV.id, myV.z);
       printf("WeventDisplay::Event ID  %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
-      sprintf(txt, "TPC PT(GeV/c) prim=%.1f  near=%.1f  away=%.1f ", myTr.prMuTrack->pt(), myTr.nearTpcPT, myTr.awayTpcPT);
+      sprintf(txt, "TPC PT(GeV/c) prim=%.1f  near=%.1f  away=%.1f ", myTr.prMuTrack->pt(), myTr.mP3InNearConeTpc, myTr.awayTpcPT);
       printf("WeventDisplay::Event %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
 
-      sprintf(txt, "ETOW ET/GeV: 2x2=%.1f  EMC: near= %.1f   away= %.1f ", myTr.mCluster2x2.ET, myTr.nearEmcET, myTr.awayEmcET);
+      sprintf(txt, "ETOW ET/GeV: 2x2=%.1f  EMC: near= %.1f   away= %.1f ", myTr.mCluster2x2.ET, myTr.mP3InNearCone, myTr.awayEmcET);
       printf("WeventDisplay:: %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
 
-      sprintf(txt, "total ET/GeV:   near= %.1f   away= %.1f  ptBalance= %.1f ", myTr.nearTotET, myTr.awayTotET, myTr.ptBalance.Perp());
+      sprintf(txt, "total ET/GeV:   near= %.1f   away= %.1f  ptBalance= %.1f ", myTr.mP3InNearCone, myTr.awayTotET, myTr.ptBalance.Perp());
       printf("WeventDisplay:: %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
 
@@ -373,12 +373,12 @@ void WeventDisplay::exportEvent( const char *tit, VecBosVertex myV, VecBosTrack 
    for (int i = 0; i < mxBtow; i++) {
       float ene = wMK->mVecBosEvent->bemc.eneTile[kBTow][i];
       if (ene <= 0) continue;
-      TVector3 mVec3AtDca = gBCalTowerCoords[i] - TVector3(0, 0, zVert);
-      mVec3AtDca.SetMag(ene); // it is 3D momentum in the event ref frame
-      float ET = mVec3AtDca.Perp();
+      TVector3 mP3AtDca = gBCalTowerCoords[i] - TVector3(0, 0, zVert);
+      mP3AtDca.SetMag(ene); // it is 3D momentum in the event ref frame
+      float ET = mP3AtDca.Perp();
 
-      float eveEta = mVec3AtDca.Eta();
-      float evePhi = mVec3AtDca.Phi();
+      float eveEta = mP3AtDca.Eta();
+      float evePhi = mP3AtDca.Phi();
       hEmcET->Fill(eveEta, evePhi, ET);
    }
 
@@ -387,12 +387,12 @@ void WeventDisplay::exportEvent( const char *tit, VecBosVertex myV, VecBosTrack 
       for (int j = 0; j < mxEtowEta; j++) {
          float ene = wMK->mVecBosEvent->etow.ene[i][j];
          if (ene <= 0) continue;
-         TVector3 mVec3AtDca = gETowCoords[i][j] - TVector3(0, 0, zVert);
-         mVec3AtDca.SetMag(ene); // it is 3D momentum in the event ref frame
-         float ET = mVec3AtDca.Perp();
+         TVector3 mP3AtDca = gETowCoords[i][j] - TVector3(0, 0, zVert);
+         mP3AtDca.SetMag(ene); // it is 3D momentum in the event ref frame
+         float ET = mP3AtDca.Perp();
 
-         float eveEta = mVec3AtDca.Eta();
-         float evePhi = mVec3AtDca.Phi();
+         float eveEta = mP3AtDca.Eta();
+         float evePhi = mP3AtDca.Phi();
          hEmcET->Fill(eveEta, evePhi, ET);
       }
    }
@@ -469,9 +469,9 @@ void WeventDisplay::getPrimTracks( int vertID, int pointTowId)
       if (prTr->flag() != 301 && pointTowId > 0) continue; // TPC-only regular tracks for barrel candidate
       if (prTr->flag() != 301 && prTr->flag() != 311 && pointTowId < 0) continue; // TPC regular and short EEMC tracks for endcap candidate
       float hitFrac = 1.*prTr->nHitsFit() / prTr->nHitsPoss();
-      if (hitFrac < wMK->par_nHitFrac) continue;
+      if (hitFrac < wMK->mVecBosEvent->mMinTrackHitFrac) continue;
       StThreeVectorF prPvect = prTr->p();
-      TVector3 mVec3AtDca = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
+      TVector3 mP3AtDca = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
       float pT = prTr->pt();
       hTpcET->Fill(prTr->eta(), prTr->phi(), pT);
 
@@ -493,9 +493,9 @@ void WeventDisplay::getPrimTracksFromTree(int vertID, int pointTowId)
       if (prTr->flag() != 301 && pointTowId > 0) continue; // TPC-only regular tracks for barrel candidate
       if (prTr->flag() != 301 && prTr->flag() != 311 && pointTowId < 0) continue; // TPC regular and short EEMC tracks for endcap candidate
       float hitFrac = 1.*prTr->nHitsFit() / prTr->nHitsPoss();
-      if (hitFrac < wMK->par_nHitFrac) continue;
+      if (hitFrac < wMK->mVecBosEvent->mMinTrackHitFrac) continue;
       StThreeVectorF prPvect = prTr->p();
-      TVector3 mVec3AtDca = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
+      TVector3 mP3AtDca = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
       float pT = prTr->pt();
       hTpcET->Fill(prTr->eta(), prTr->phi(), pT);
 
@@ -527,9 +527,9 @@ void WeventDisplay::export2sketchup(  const char *tit, VecBosVertex myV, VecBosT
       if (prTr->flag() <= 0) continue;
       if (prTr->flag() != 301) continue; // TPC-only regular tracks
       float hitFrac = 1.*prTr->nHitsFit() / prTr->nHitsPoss();
-      if (hitFrac < wMK->par_nHitFrac) continue;
+      if (hitFrac < wMK->mVecBosEvent->mMinTrackHitFrac) continue;
       prTr->p();
-      fprintf(fd, "track V %.1f %.3f %.3f  mVec3AtDca:PT:eta:phi:Q %.1f %.3f  %.3f  %d\n", rV.x(), rV.y(), rV.z(), prTr->p().perp(), prTr->p().pseudoRapidity(), prTr->p().phi(), prTr->charge());
+      fprintf(fd, "track V %.1f %.3f %.3f  mP3AtDca:PT:eta:phi:Q %.1f %.3f  %.3f  %d\n", rV.x(), rV.y(), rV.z(), prTr->p().perp(), prTr->p().pseudoRapidity(), prTr->p().phi(), prTr->charge());
    }
 
    // Dump BTOW towers
@@ -562,9 +562,9 @@ void WeventDisplay::export2sketchup(  const char *tit, VecBosVertex myV, VecBosT
          float ene = wMK->mVecBosEvent->etow.ene[iphi][ieta];
          if (ene <= 0) continue; //skip towers with no energy
          TVector3 detP = gETowCoords[iphi][ieta];
-         TVector3 mVec3AtDca = detP - TVector3(0, 0, myV.z);
-         mVec3AtDca.SetMag(ene); // it is 3D momentum in the event ref frame
-         fprintf(fd, "etow V %.1f %.3f %.3f  eveET:detEta:detPhi %.3f %.3f  %.3f\n", rV.x(), rV.y(), rV.z(), mVec3AtDca.Perp(), detP.Eta(), detP.Phi());
+         TVector3 mP3AtDca = detP - TVector3(0, 0, myV.z);
+         mP3AtDca.SetMag(ene); // it is 3D momentum in the event ref frame
+         fprintf(fd, "etow V %.1f %.3f %.3f  eveET:detEta:detPhi %.3f %.3f  %.3f\n", rV.x(), rV.y(), rV.z(), mP3AtDca.Perp(), detP.Eta(), detP.Phi());
       }
    }
 

@@ -96,7 +96,7 @@ StVecBosMaker::StVecBosMaker(const char *name, VecBosRootFile *vbFile): StMaker(
    par_AdcThres                 = 8;    // ADC threshold to avoid correlated noise
    par_maxADC                   = 200.; // (adc chan) on the highest tower in events
 
-   //... Barrel Algo
+   // Barrel params
    mMinBClusterEnergy           = 14.;  // GeV/c 2x2 cluster ET
    mMinBClusterEnergyIsoRatio   = 0.95; // ET ratio 2x2/4x4 cluster
    par_nearTotEtFrac            = 0.88; // ratio 2x2/near Tot ET
@@ -104,7 +104,6 @@ StVecBosMaker::StVecBosMaker(const char *name, VecBosRootFile *vbFile): StMaker(
    mMaxBTrackEta                = 1.5;  // bracket acceptance
    par_ptBalance                = 14.;  // GeV, ele cluster vector + jet sum vector
    par_nFitPts                  = 15;   // hits on the track
-   par_nHitFrac                 = 0.51;
    par_trackRin                 = 90;   // cm
    par_trackRout                = 160;  // cm
    par_highET                   = 25.;  // (GeV), cut-off for final Barrel W-cluster
@@ -167,7 +166,7 @@ Int_t StVecBosMaker::Init()
    if (isMC) { // load vertex reweighting histo
       // TString filename="/star/u/stevens4/wAnalysis/efficXsec/zVertReweight.root";
       TString filename="/star/u/fazio/offline/users/fazio/vbasym/zVertReweight.root";
-      TFile* reweightFile = new TFile(filename);
+      //TFile* reweightFile = new TFile(filename);
       //cout<<"Re-weighting vertex z distribution with '"<<nameReweight<<"' histo from file "<<endl<<filename<<endl;
       //hReweight = (TH1F*) reweightFile->Get(nameReweight);
 
@@ -212,12 +211,12 @@ Int_t StVecBosMaker::InitRun(int runNo)
    //LOG_INFO << Form("::InitRun(%d) %s done\n" \
    //   "Barrel W-algo params: trigID L2BW=%d isMC=%d\n" \
    //   "TPC: nPileupVert>%d, vertex |Z|<%.1fcm, primEleTrack: nFit>%d, hitFrac>%.2f Rin<%.1fcm, Rout>%.1fcm, PT>%.1fGeV/c\n" \
-   //   "BTOW ADC: kSigPed=%d AdcThr>%d maxAdc>%.0f clustET>%.1f GeV  ET2x2/ET4x4>%0.2f  ET2x2/nearTotET>%0.2f\n" \
+   //   "BTOW ADC: kSigPed=%d AdcThr>%d maxAdc>%.0f clustET>%.1f GeV  ET2x2/ET4x4>%0.2f  ET2x2/mP3InNearCone.Pt()>%0.2f\n" \
    //   "dist(track-clust)<%.1fcm, nearDelR<%.1f\n" \
    //   "W selection highET>%.1f awayDelPhi<%.1frad  ptBalance>%.1fGeV  %.1f<leptonEta<%.1f ",
    //   mRunNo, coreTitle.Data(), par_l2bwTrgID, isMC,
    //   mMinNumPileupVertices, mCutVertexZ,
-   //   par_nFitPts, par_nHitFrac,  par_trackRin,  par_trackRout, mVecBosEvent->mMinBTrackPt,
+   //   par_nFitPts, par_trackRin,  par_trackRout, mVecBosEvent->mMinBTrackPt,
    //   par_kSigPed, par_AdcThres, par_maxADC, mMinBClusterEnergy, mMinBClusterEnergyIsoRatio, par_nearTotEtFrac,
    //   mVecBosEvent->mMaxTrackClusterDist, mVecBosEvent->mTrackIsoDeltaR,
    //   par_highET, mVecBosEvent->mTrackIsoDeltaPhi, par_ptBalance, mMinBTrackEta, mMaxBTrackEta
@@ -227,7 +226,7 @@ Int_t StVecBosMaker::InitRun(int runNo)
    //cout << Form("\n" \
    //   "Endcap W-algo params: trigID: L2EW=%d isMC=%d\n" \
    //   "TPC: nPileupVert>%d, vertex |Z|<%.1fcm, primEleTrack: nFit>%d, hitFrac>%.2f Rin<%.1fcm, Rout>%.1fcm, PT>%.1fGeV/c\n" \
-   //   "ETOW ADC: kSigPed=%d AdcThr>%d maxAdc>%.0f clustET>%.1f GeV  ET2x1/ET4x4>%0.2f  ET2x1/nearTotET>%0.2f\n" \
+   //   "ETOW ADC: kSigPed=%d AdcThr>%d maxAdc>%.0f clustET>%.1f GeV  ET2x1/ET4x4>%0.2f  ET2x1/mP3InNearCone.Pt()>%0.2f\n" \
    //   "dist(track-clust)<%.1fcm, nearDelR<%.1f\n" \
    //   "W selection highET>%.1f awayDelPhi<%.1frad  ptBalance>%.1fGeV ",
    //   parE_l2ewTrgID, isMC,
@@ -273,7 +272,7 @@ Int_t StVecBosMaker::InitRun(int runNo)
          //Run 11 ?? XXX
 
          //Run 12 ??
-         mTpcFilter[iSector-1].setCuts(par_nFitPts, par_nHitFrac, Rin, Rout);
+         mTpcFilter[iSector-1].setCuts(par_nFitPts, mVecBosEvent->mMinTrackHitFrac, Rin, Rout);
          mTpcFilter[iSector-1].init("iSector", iSector, HListTpc, true);
 
          mTpcFilterE[iSector-1].setCuts(parE_nFitPts, parE_nHitFrac, RinE, RoutE);
@@ -408,19 +407,19 @@ Int_t StVecBosMaker::Make()
    ReadMuDstVerticesTracks();
    ReadMuDstJets();   // Get input jet info
 
-   //mVecBosRootFile->Fill(*mVecBosEvent);
-
+   mVecBosEvent->Process();
+   mVecBosRootFile->Fill(*mVecBosEvent);
    mWtree->Fill(); // write event to tree
 
    //if (mVecBosEvent->HasGoodVertex())
    //   mVecBosRootFile->Fill(*mVecBosEvent, kCUT_VERTICES_GOOD);
 
-   // XXX:ds: if (mVecBosEvent->GetNumVertices())
-   // XXX:ds:    FillTowHit(true);  // fill 2D tower "hit" histos for vertex found and L2BW trigger (beam background analysis, remove any time JS)
-   // XXX:ds: else
-   // XXX:ds:    FillTowHit(false); // fill 2D tower "hit" histos for _no_ vertex and L2BW trigger (beam background analysis, remove any time JS)
+   //XXX:ds: if (mVecBosEvent->GetNumVertices())
+   //XXX:ds:    FillTowHit(true);  // fill 2D tower "hit" histos for vertex found and L2BW trigger (beam background analysis, remove any time JS)
+   //XXX:ds: else
+   //XXX:ds:    FillTowHit(false); // fill 2D tower "hit" histos for _no_ vertex and L2BW trigger (beam background analysis, remove any time JS)
 
-   // XXX:ds: FillNormHists();  // add plots for QCD normalization
+   //XXX:ds: FillNormHists();  // add plots for QCD normalization
 
    //XXX:ds: // Skip event w/o high Pt tracks
    //XXX:ds: if (mVecBosEvent->GetNumTracks() <= 0) {
@@ -428,10 +427,10 @@ Int_t StVecBosMaker::Make()
    //XXX:ds:    return kStOK;
    //XXX:ds: }
 
-   if (mVecBosEvent->l2bitET  && mVecBosEvent->bemc.tileIn[0] == 1) hA[0]->Fill("B-in", 1.0);
-   if (mVecBosEvent->l2EbitET && mVecBosEvent->etow.etowIn == 1)    hE[0]->Fill("E-in", 1.0);
-   if (mVecBosEvent->l2bitET  && !btowStat)                         hA[0]->Fill("B200", 1.0);
-   if (mVecBosEvent->l2EbitET && !etowStat)                         hE[0]->Fill("E200", 1.0);
+   //XXX:ds: if (mVecBosEvent->l2bitET  && mVecBosEvent->bemc.tileIn[0] == 1) hA[0]->Fill("B-in", 1.0);
+   //XXX:ds: if (mVecBosEvent->l2EbitET && mVecBosEvent->etow.etowIn == 1)    hE[0]->Fill("E-in", 1.0);
+   //XXX:ds: if (mVecBosEvent->l2bitET  && !btowStat)                         hA[0]->Fill("B200", 1.0);
+   //XXX:ds: if (mVecBosEvent->l2EbitET && !etowStat)                         hE[0]->Fill("E200", 1.0);
 
    //hA[116]->Fill(mVecBosEvent->mNJets);
 
@@ -456,9 +455,6 @@ Int_t StVecBosMaker::Make()
    nAccEve++;
 
    // Add info to the event
-   //FindNearJet();
-   FindAwayJet();
-
    CalcPtBalance();
    //CalcMissingET();
 
@@ -478,7 +474,7 @@ Int_t StVecBosMaker::Make()
 
    //mVecBosRootFile->Fill(*mVecBosEvent, kCUT_CUT);
 
-   if (nAccEve < 2 || nAccEve % 1000 == 1 ) mVecBosEvent->print(0x0, isMC);
+   if (nAccEve < 2 || nAccEve % 1000 == 1 ) mVecBosEvent->Print(0x0, isMC);
 
    return kStOK;
 }
@@ -551,7 +547,7 @@ void StVecBosMaker::FillNormHists()
          float phiF = gBCalTowerCoords[i].Phi();
 
          ConvertEtaPhi2Bins(etaF, phiF, ieta, iphi);
-         WeveCluster c = FindMaxBTow2x2(*mVecBosEvent, ieta, iphi, mVecBosEvent->mVertices[0].z);
+         WeveCluster c = mVecBosEvent->FindMaxBTow2x2(ieta, iphi, mVecBosEvent->mVertices[0].z);
 
          if (c.ET > maxBtowET) maxBtowET = c.ET;
       }
@@ -1675,35 +1671,12 @@ bool StVecBosMaker::passes_L2()
       float phiF = gBCalTowerCoords[i].Phi();
 
       ConvertEtaPhi2Bins(etaF, phiF, ieta, iphi);
-      WeveCluster c = FindMaxBTow2x2(*mVecBosEvent, ieta, iphi, 0);
+      WeveCluster c = mVecBosEvent->FindMaxBTow2x2(ieta, iphi, 0);
 
       if (c.ET > par_l2emulClusterThresh) return true;
    }
 
    return false;
-}
-
-
-/** Converts patch index to eta-phi bins? */
-void StVecBosMaker::PatchToEtaPhi(int patch, int *eta, int *phi)
-{
-   if (patch < 0 || patch > 299) {
-      Error("PatchToEtaPhi", "PatchToEtaPhi p=%d, out of range. Eta phi not defined.\n", patch);
-      return;
-   }
-
-   if (patch < 150) {
-      int m = 14 - patch / 10;
-      int n = patch % 10;
-      *eta = n / 2 + 5;
-      *phi = n % 2 + m * 2;
-   }
-   else {
-      int m = 29 - patch / 10;
-      int n = patch % 10;
-      *eta = 4 - n / 2;
-      *phi = 1 - n % 2 + m * 2;
-   }
 }
 
 
@@ -1717,7 +1690,7 @@ void StVecBosMaker::FindWBoson()
    //remove events tagged as Zs
    if (mVecBosEvent->zTag) return;
 
-   // search for  Ws
+   // search for Ws
    for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++)
    {
       VecBosVertex &vertex = mVecBosEvent->mVertices[iv];
@@ -1728,16 +1701,16 @@ void StVecBosMaker::FindWBoson()
          if (track.isMatch2Cl == false) continue;
 
          assert(track.mCluster2x2.nTower > 0); // internal logical error
-         assert(track.nearTotET > 0);      // internal logical error
+         assert(track.mP3InNearCone.Pt() > 0);      // internal logical error
 
          // make cut on lepton eta
-         if (track.mVec3AtDca.Eta() < mMinBTrackEta || track.mVec3AtDca.Eta() > mMaxBTrackEta) continue;
+         if (track.mP3AtDca.Eta() < mMinBTrackEta || track.mP3AtDca.Eta() > mMaxBTrackEta) continue;
 
          hA[20]->Fill("eta1", 1.);
          nEta1++;
 
          //signal plots w/o EEMC in veto
-         if (track.mCluster2x2.ET / track.nearTotET_noEEMC > par_nearTotEtFrac) {
+         if (track.mCluster2x2.ET / track.mP3InNearConeNoETow.Pt() > par_nearTotEtFrac) {
             if (track.sPtBalance_noEEMC > par_ptBalance ) { // only signed ptBalance cut
                hA[140]->Fill(track.mCluster2x2.ET);
                hA[240]->Fill(track.prMuTrack->eta(), track.mCluster2x2.ET);
@@ -1752,11 +1725,11 @@ void StVecBosMaker::FindWBoson()
 
          // fill plot for background
          if (track.mCluster2x2.ET > par_highET) {
-            if (track.prMuTrack->charge() > 0)      hA[251]->Fill(track.mCluster2x2.ET / track.nearTotET, track.sPtBalance);
-            else if (track.prMuTrack->charge() < 0) hA[252]->Fill(track.mCluster2x2.ET / track.nearTotET, track.sPtBalance);
+            if (track.prMuTrack->charge() > 0)      hA[251]->Fill(track.mCluster2x2.ET / track.mP3InNearCone.Pt(), track.sPtBalance);
+            else if (track.prMuTrack->charge() < 0) hA[252]->Fill(track.mCluster2x2.ET / track.mP3InNearCone.Pt(), track.sPtBalance);
          }
 
-         if (track.mCluster2x2.ET / track.nearTotET < par_nearTotEtFrac) continue; // too large nearET
+         if (track.mCluster2x2.ET / track.mP3InNearCone.Pt() < par_nearTotEtFrac) continue; // too large nearET
 
          hA[20]->Fill("noNear", 1.);
          nNoNear++;
@@ -1817,7 +1790,7 @@ void StVecBosMaker::FindWBoson()
          if (track.sPtBalance > par_ptBalance) {
             Info("FindWBoson", "WWWWWWWWWWWWWWWWWWWWW  Barrel");
             wDisaply->exportEvent( "WB", vertex, track, iv);
-            mVecBosEvent->print();
+            mVecBosEvent->Print();
          }
 
          // put final W cut here
@@ -1891,9 +1864,9 @@ void StVecBosMaker::FindZBoson()
       if ( !track.isMatch2Cl ) continue;
 
       assert(track.mCluster2x2.nTower > 0); // internal logical error
-      assert(track.nearTotET > 0); // internal logical error
+      assert(track.mP3InNearCone.Pt() > 0); // internal logical error
 
-      if (track.mCluster2x2.ET / track.nearTotET < par_nearTotEtFrac) continue; // too large nearET
+      if (track.mCluster2x2.ET / track.mP3InNearCone.Pt() < par_nearTotEtFrac) continue; // too large nearET
 
       //match lepton candidate with jet
       //for (uint iJet = 0; iJet < mVecBosEvent->mNJets; iJet++) //jet loop
@@ -1922,17 +1895,17 @@ void StVecBosMaker::FindZBoson()
             int iEta, iPhi;
             if ( !ConvertEtaPhi2Bins(pos.Eta(), pos.Phi(), iEta, iPhi) ) continue;
 
-            float clusterET = FindMaxBTow2x2(*mVecBosEvent, iEta, iPhi, stJet->zVertex).ET;
+            float clusterET = mVecBosEvent->FindMaxBTow2x2(iEta, iPhi, stJet->zVertex).ET;
             if (clusterET > maxClusterET) maxClusterET = clusterET;
          }
 
          TVector3 jetVec3(stJet->X(), stJet->Y(), stJet->Z());
 
-         if (jetVec3.DeltaR(track.mVec3AtDca) < mVecBosEvent->mTrackIsoDeltaR) continue; // skip jets in candidate phi isolation cone
+         if (jetVec3.DeltaR(track.mP3AtDca) < mVecBosEvent->mTrackIsoDeltaR) continue; // skip jets in candidate phi isolation cone
 
          // form invariant mass
          float    e1 = track.mCluster2x2.energy;
-         TVector3 p1 = track.mVec3AtDca;
+         TVector3 p1 = track.mP3AtDca;
          p1.SetMag(e1);
          TLorentzVector ele1(p1, e1); //lepton candidate 4-momentum
          TLorentzVector sum = ele1 + *stJet;
@@ -1971,11 +1944,11 @@ void StVecBosMaker::CalcPtBalance()
             TVector3 jetVec; //vector for jet momentum
             jetVec.SetPtEtaPhi(jet->Pt(), jet->Eta(), jet->Phi());
 
-            if (jetVec.DeltaR(track.mVec3AtDca) > mVecBosEvent->mTrackIsoDeltaR)
+            if (jetVec.DeltaR(track.mP3AtDca) > mVecBosEvent->mTrackIsoDeltaR)
                track.ptBalance += jetVec;
          }
 
-         TVector3 clustPt(track.mVec3AtDca.X(), track.mVec3AtDca.Y(), 0);
+         TVector3 clustPt(track.mP3AtDca.X(), track.mP3AtDca.Y(), 0);
          clustPt.SetMag(track.mCluster2x2.ET);
 
          // Add electron energy. XXX:ds: Why is the energy transverse only?
@@ -1996,7 +1969,7 @@ void StVecBosMaker::CalcPtBalance()
             TVector3 jetVec; //vector for jet momentum
             jetVec.SetPtEtaPhi(jet->Pt(), jet->Eta(), jet->Phi());
 
-            if (jetVec.DeltaR(track.mVec3AtDca) > mVecBosEvent->mTrackIsoDeltaR)
+            if (jetVec.DeltaR(track.mP3AtDca) > mVecBosEvent->mTrackIsoDeltaR)
                track.ptBalance_noEEMC += jetVec;
          }
 
@@ -2015,181 +1988,8 @@ void StVecBosMaker::CalcMissingET()
 }
 
 
-/**
- * Calculates the energy in the cone around the electron.
- */
-void StVecBosMaker::FindNearJet()
-{
-   //printf("\n******* FindNearJet() nVert=%d\n",mVecBosEvent->mVertices.size());
-
-   for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++)
-   {
-      VecBosVertex &vertex = mVecBosEvent->mVertices[iv];
-
-      for (uint it = 0; it < vertex.eleTrack.size(); it++)
-      {
-         VecBosTrack &track = vertex.eleTrack[it];
-
-         if (!track.isMatch2Cl) continue;
-
-         // sum EMC-jet component. XXX:ds: Note: the track direction is taken at the origin
-         track.nearBtowET  = SumBTowCone(*mVecBosEvent, vertex.z, track.mVec3AtDca, 2); // '2'=2D cone
-         track.nearEtowET  = SumETowCone(*mVecBosEvent, vertex.z, track.mVec3AtDca, 2);
-         track.nearEmcET  += track.nearBtowET;
-         track.nearEmcET  += track.nearEtowET;
-
-         // sum TPC-near component
-         //if (mStMuDstMaker)
-            track.nearTpcPT = SumTpcCone(vertex.id, track.mVec3AtDca, 2, track.mMatchedTower.id); // '2'=2D cone
-         //else
-         //   track.nearTpcPT = SumTpcConeFromTree(iv, track.mVec3AtDca, 2, track.mMatchedTower.id);
-
-         float nearSum = track.nearEmcET + track.nearTpcPT; // XXX:ds: double counting? yes, see correction below
-
-         // fill histos separately for 2 types of events
-         if (track.mMatchedTower.id > 0) { //only barrel towers
-
-            // Correct for double counting of electron track in near cone rarely primTrPT<10 GeV & globPT>10 - handle this here
-            if (track.mVec3AtDca.Pt() > mVecBosEvent->mMinBTrackPt) nearSum -= mVecBosEvent->mMinBTrackPt;
-            else                                                    nearSum -= track.mVec3AtDca.Pt();
-
-            track.nearTotET        = nearSum;
-            track.nearTotET_noEEMC = nearSum - track.nearEtowET;
-            float nearTotETfrac    = track.mCluster2x2.ET / track.nearTotET;
-
-            hA[40]->Fill(track.nearEmcET);
-            hA[41]->Fill(track.mCluster2x2.ET, track.nearEmcET - track.mCluster2x2.ET);
-            hA[42]->Fill(nearTotETfrac);
-            hA[47]->Fill(track.nearTpcPT);
-            hA[48]->Fill(track.nearEmcET, track.nearTpcPT);
-            hA[49]->Fill(nearSum);
-            hA[250]->Fill(track.mCluster2x2.ET, nearTotETfrac);
-
-            // check east/west yield diff
-            hA[210]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.nearEtowET);
-
-            if (track.mCluster2x2.position.PseudoRapidity() > 0) hA[211]->Fill(track.mCluster2x2.position.Phi(), track.nearEtowET);
-            else                                                 hA[212]->Fill(track.mCluster2x2.position.Phi(), track.nearEtowET);
-
-         } else if (track.mMatchedTower.id < 0) { //only endcap towers
-
-            // Correct for double counting of electron track in near cone rarely primTrPT<10 GeV & globPT>10 - handle this here
-            if (track.mVec3AtDca.Pt() > mMinETrackPt) nearSum -= mMinETrackPt;
-            else                                 nearSum -= track.mVec3AtDca.Pt();
-
-            track.nearTotET        = nearSum;
-            track.nearTotET_noEEMC = nearSum - track.nearEtowET;
-            float nearTotETfrac    = track.mCluster2x2.ET / track.nearTotET;
-
-            hE[40]->Fill(track.nearEmcET);
-            hE[41]->Fill(track.mCluster2x2.ET, track.nearEmcET - track.mCluster2x2.ET);
-            hE[42]->Fill(nearTotETfrac);
-            hE[47]->Fill(track.nearTpcPT);
-            hE[48]->Fill(track.nearEmcET, track.nearTpcPT);
-            hE[49]->Fill(nearSum);
-         }
-      }
-   }
-}
-
-
-void StVecBosMaker::FindAwayJet()
-{
-   // printf("\n******* find AwayJet() nVert=%d\n", mVecBosEvent->mVertices.size());
-   //mVecBosEvent->print();
-   for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++)
-   {
-      VecBosVertex &vertex = mVecBosEvent->mVertices[iv];
-
-      for (uint iTrack = 0; iTrack < vertex.eleTrack.size(); iTrack++)
-      {
-         VecBosTrack &track = vertex.eleTrack[iTrack];
-
-         if (!track.isMatch2Cl) continue;
-
-         // sum opposite in phi EMC components
-         track.awayBtowET  = SumBTowCone(*mVecBosEvent, vertex.z, -track.mVec3AtDca, 1); // '1' = only cut on delta phi
-         track.awayEtowET  = SumETowCone(*mVecBosEvent, vertex.z, -track.mVec3AtDca, 1);
-         track.awayEmcET   = track.awayBtowET;
-         track.awayEmcET  += track.awayEtowET;
-
-         // add TPC ET
-         //if (mStMuDstMaker)
-            track.awayTpcPT = SumTpcCone(vertex.id, -track.mVec3AtDca, 1, track.mMatchedTower.id);
-         //else
-         //   track.awayTpcPT = SumTpcConeFromTree(iv, -track.mVec3AtDca, 1, track.mMatchedTower.id);
-
-         track.awayTotET        = track.awayEmcET  + track.awayTpcPT;
-         track.awayTotET_noEEMC = track.awayBtowET + track.awayTpcPT;
-
-         //printf("\n*** in   awayTpc=%.1f awayEmc=%.1f\n  ",track.awayTpcPT,track.awayEmcET); track.print();
-      }
-   }
-}
-
-
-/**
- * Returns the sum of all track P_T's inside the cone around the refAxis track.
-
-flag=1: only delta phi cut; used for away (out of) cone cut
-flag=2: use 2D cut;         used for near cone cut
-
- *
- * XXX:ds: Do we want to count the refAxis P_T?
- * The calculated sum is scalar. We probably want a vector sum.
- */
-float StVecBosMaker::SumTpcCone(int vertID, TVector3 refAxis, int flag, int pointTowId)
-{
-   // printf("******* SumTpcCone, flag=%d eveId=%d vertID=%d  eta0=%.2f phi0/rad=%.2f  \n",flag,mVecBosEvent->id,vertID,refAxis.PseudoRapidity() ,refAxis.Phi());
-   assert(vertID >= 0);
-   assert(vertID < (int) mStMuDstMaker->muDst()->numberOfPrimaryVertices());
-
-   StMuPrimaryVertex *vertex = mStMuDstMaker->muDst()->primaryVertex(vertID);
-   assert(vertex);
-
-   // Select current vertex
-   mStMuDstMaker->muDst()->setVertexIndex(vertID);
-
-   float rank = vertex->ranking();
-   // XXX:ds: assert(rank > 0 || (rank < 0 && vertex->nEEMCMatch()));
-   if (rank <= 0 && vertex->nEEMCMatch() <= 0)  return -1;
-
-   double ptSum = 0;
-   Int_t nPrimaryTracks = mStMuDstMaker->muDst()->GetNPrimaryTrack();
-
-   for (int iTrack = 0; iTrack < nPrimaryTracks; iTrack++)
-   {
-      StMuTrack *primaryTrack = mStMuDstMaker->muDst()->primaryTracks(iTrack);
-
-      if (primaryTrack->flag() <= 0) continue;
-      if (primaryTrack->flag() != 301 && pointTowId > 0) continue; // TPC-only regular tracks for barrel candidate
-      if (primaryTrack->flag() != 301 && primaryTrack->flag() != 311 && pointTowId < 0) continue; // TPC regular and short EEMC tracks for endcap candidate
-
-      float hitFrac = float(primaryTrack->nHitsFit()) / primaryTrack->nHitsPoss();
-
-      if (hitFrac < par_nHitFrac) continue;
-
-      StThreeVectorF prPvect = primaryTrack->p();
-      TVector3 vec3AtDca = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
-
-      // printf(" prTrID=%4d  prTrEta=%.3f prTrPhi/deg=%.1f prPT=%.1f  nFitPts=%d\n", primaryTrack->id(),primaryTrack->eta(),primaryTrack->phi()/3.1416*180.,primaryTrack->pt(),primaryTrack->nHitsFit());
-      if (flag == 1 && fabs(refAxis.DeltaPhi(vec3AtDca)) > mVecBosEvent->mTrackIsoDeltaPhi) continue;
-
-      if (flag == 2 && refAxis.DeltaR(vec3AtDca) > mVecBosEvent->mTrackIsoDeltaR) continue;
-
-      float pT = primaryTrack->pt();
-
-      // XXX:ds: Another bug? The sum should be vector one
-      // separate quench for barrel and endcap candidates
-      if      (pT > mVecBosEvent->mMinBTrackPt && pointTowId > 0) ptSum += mVecBosEvent->mMinBTrackPt;
-      else if (pT > mMinETrackPt && pointTowId < 0)               ptSum += mMinETrackPt;
-      else  ptSum += pT;
-   }
-
-   return ptSum;
-}
-
-
+// Deprecated
+/*
 float StVecBosMaker::SumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, int pointTowId)
 {
    // flag=2 use 2D cut, 1= only delta phi
@@ -2205,16 +2005,16 @@ float StVecBosMaker::SumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, 
       if (prTr->flag() != 301 && pointTowId > 0) continue; // TPC-only regular tracks for barrel candidate
       if (prTr->flag() != 301 && prTr->flag() != 311 && pointTowId < 0) continue; // TPC regular and short EEMC tracks for endcap candidate
       float hitFrac = 1.*prTr->nHitsFit() / prTr->nHitsPoss();
-      if (hitFrac < par_nHitFrac) continue;
+      if (hitFrac < mVecBosEvent->mMinTrackHitFrac) continue;
       StThreeVectorF prPvect = prTr->p();
-      TVector3 mVec3AtDca = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
+      TVector3 mP3AtDca = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
       // printf(" prTrID=%4d  prTrEta=%.3f prTrPhi/deg=%.1f prPT=%.1f  nFitPts=%d\n", prTr->id(),prTr->eta(),prTr->phi()/3.1416*180.,prTr->pt(),prTr->nHitsFit());
       if (flag == 1) {
-         float deltaPhi = refAxis.DeltaPhi(mVec3AtDca);
+         float deltaPhi = refAxis.DeltaPhi(mP3AtDca);
          if (fabs(deltaPhi) > mVecBosEvent->mTrackIsoDeltaPhi) continue;
       }
       if (flag == 2) {
-         float deltaR = refAxis.DeltaR(mVec3AtDca);
+         float deltaR = refAxis.DeltaR(mP3AtDca);
          if (deltaR > mVecBosEvent->mTrackIsoDeltaR) continue;
 
       }
@@ -2228,6 +2028,7 @@ float StVecBosMaker::SumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, 
    }
    return ptSum;
 }
+*/
 
 
 // return # of extended tracks
@@ -2249,7 +2050,7 @@ int StVecBosMaker::ExtendTrack2Endcap()
          if (T.prMuTrack->eta() < parE_trackEtaMin) continue; // to avoid extrapolation nonsense
 
          // Do eta sorting at track level (tree analysis)
-         if (T.mVec3AtDca.Eta() < mMinETrackEta || T.mVec3AtDca.Eta() > mMaxETrackEta) continue;
+         if (T.mP3AtDca.Eta() < mMinETrackEta || T.mP3AtDca.Eta() > mMaxETrackEta) continue;
 
          // Extrapolate track to the disk perpendicular to the z-axis
          const StPhysicalHelixD trkHlx       = T.prMuTrack->outerHelix();
@@ -2406,11 +2207,11 @@ void StVecBosMaker::FindWBosonEndcap()
          if (T.mMatchedTower.id >= 0) continue; //skip barrel towers
          if (T.isMatch2Cl == false) continue;
          assert(T.mCluster2x2.nTower > 0); // internal logical error
-         // XXX:ds: assert(T.nearTotET > 0); // internal logical error
-         if (T.nearTotET < 0) continue; // internal logical error
+         // XXX:ds: assert(T.mP3InNearCone.Pt() > 0); // internal logical error
+         if (T.mP3InNearCone.Pt() < 0) continue; // internal logical error
 
          //signal plots w/o EEMC in veto
-         if (T.mCluster2x2.ET / T.nearTotET_noEEMC > parE_nearTotEtFrac) {
+         if (T.mCluster2x2.ET / T.mP3InNearConeNoETow.Pt() > parE_nearTotEtFrac) {
             if (T.sPtBalance_noEEMC > parE_ptBalance ) { //only signed ptBalance cut
                hE[140]->Fill(T.mCluster2x2.ET);
                if (T.prMuTrack->charge() < 0) {
@@ -2422,7 +2223,7 @@ void StVecBosMaker::FindWBosonEndcap()
             }
          }
 
-         if (T.mCluster2x2.ET / T.nearTotET < parE_nearTotEtFrac) continue; // too large nearET
+         if (T.mCluster2x2.ET / T.mP3InNearCone.Pt() < parE_nearTotEtFrac) continue; // too large nearET
 
          hE[20]->Fill("noNear", 1.);
          nNoNear++;
@@ -2464,7 +2265,7 @@ void StVecBosMaker::FindWBosonEndcap()
          if (T.sPtBalance > parE_ptBalance) { /***************************/
             printf("\n WWWWWWWWWWWWWWWWWWWWW  Endcap \n");
             wDisaply->exportEvent( "WE", V, T, iv);
-            mVecBosEvent->print();
+            mVecBosEvent->Print();
          }/***************************/
 
          //put final W cut here

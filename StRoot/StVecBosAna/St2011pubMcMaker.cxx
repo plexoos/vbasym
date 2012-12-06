@@ -61,9 +61,9 @@ void St2011pubMcMaker::doWanalysis()
          VecBosTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
          assert(T.mCluster2x2.nTower > 0); // internal logical error
-         assert(T.nearTotET > 0); // internal logical error
+         assert(T.mP3InNearCone.Pt() > 0); // internal logical error
 
-         if (T.mCluster2x2.ET / T.nearTotET < wMK->par_nearTotEtFrac) continue; // too large nearET
+         if (T.mCluster2x2.ET / T.mP3InNearCone.Pt() < wMK->par_nearTotEtFrac) continue; // too large nearET
          if (T.awayTotET > 30.) continue; // too large awayET , Jan
          //Full W cuts applied at this point
 
@@ -128,7 +128,7 @@ void St2011pubMcMaker::doWanalysis()
          //Kinematics
          //reconstruct W pL from reconstructed quantities
          float trueWpL = mWP.z();
-         float eleTheta = T.mVec3AtDca.Theta();
+         float eleTheta = T.mP3AtDca.Theta();
          float ratioE = T.mCluster2x2.energy / 40.0;
          float pLRecoPlus = 80.0 * (ratioE) * ((cos(eleTheta)) + sqrt(cos(eleTheta) * cos(eleTheta) + sin(eleTheta) * sin(eleTheta) * (1 - ratioE * ratioE))) / (ratioE * ratioE * sin(eleTheta) * sin(eleTheta)); //+ sqrt solution
          float pLRecoMinus = 80.0 * (ratioE) * ((cos(eleTheta)) - sqrt(cos(eleTheta) * cos(eleTheta) + sin(eleTheta) * sin(eleTheta) * (1 - ratioE * ratioE))) / (ratioE * ratioE * sin(eleTheta) * sin(eleTheta)); //- sqrt solution
@@ -144,7 +144,7 @@ void St2011pubMcMaker::doWanalysis()
          float p_chrg = prTr->charge();
          if (p_chrg > 0) continue;
 
-         float eleEta = T.mVec3AtDca.Eta();
+         float eleEta = T.mP3AtDca.Eta();
          //sort 2 solutions by electron eta
          if (eleEta < -0.8) {
             hA[35]->Fill(trueWpL, pLRecoMinus);
@@ -227,9 +227,9 @@ void St2011pubMcMaker::doWefficiency()
          VecBosTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
          assert(T.mCluster2x2.nTower > 0); // internal logical error
-         assert(T.nearTotET > 0); // internal logical error
+         assert(T.mP3InNearCone.Pt() > 0); // internal logical error
 
-         if (T.mCluster2x2.ET / T.nearTotET < wMK->par_nearTotEtFrac)
+         if (T.mCluster2x2.ET / T.mP3InNearCone.Pt() < wMK->par_nearTotEtFrac)
             continue; // too large nearET
          if (T.ptBalance.Perp() < wMK->par_ptBalance || T.awayTotET > 30.) //Jan
             continue;

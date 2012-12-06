@@ -108,15 +108,15 @@ void TrackHContainer::Fill(VecBosTrack &track)
 {
    ((TH1*) o["hTrackFlag"])->Fill(track.prMuTrack->flag());
    ((TH1*) o["hTrackType"])->Fill(track.mType);
-   ((TH1*) o["hTrackEta"])->Fill(track.mVec3AtDca.Eta());
-   ((TH1*) o["hTrackPhi"])->Fill(track.mVec3AtDca.Phi());
+   ((TH1*) o["hTrackEta"])->Fill(track.mP3AtDca.Eta());
+   ((TH1*) o["hTrackPhi"])->Fill(track.mP3AtDca.Phi());
 
    if (track.IsBTrack()) {
-      //printf("", mVec3AtBTow);
+      //printf("", mP3AtBTow);
       //Info("Fill", "XXX");
       //printf("mType: %x\n", track.mType);
-      //track.mVec3AtDca.Print();
-      //track.mVec3AtBTow.Print();
+      //track.mP3AtDca.Print();
+      //track.mP3AtBTow.Print();
       ((TH1*) o["hTrackEtaAtBTow"])->Fill(track.mCoorAtBTow.Eta());
       ((TH1*) o["hTrackPhiAtBTow"])->Fill(track.mCoorAtBTow.Phi());
    }

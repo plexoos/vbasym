@@ -11,10 +11,13 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mNumGoodVertices(0), mNumGoodTracks(0), mNumBTracks(0), mNumETracks(0),
    mStJets(0), mJets(), mVertices(), mTracks(),
    mLeptonBTracks(), mLeptonETracks(), mWEvent(0),
-   mMaxTrackClusterDist(7),
-   mTrackIsoDeltaR     (0.7),
-   mTrackIsoDeltaPhi   (0.7),
-   mMinBTrackPt        (10)
+   mMaxTrackClusterDist (7),
+   mTrackIsoDeltaR      (0.7),
+   mTrackIsoDeltaPhi    (0.7),
+   mMinBTrackPt         (10),
+   mMinTrackHitFrac     (0.51),
+   mMinClusterEnergyFrac(0.88),
+   mMaxEnergyInOppsCone (30)
 {
    clear();
 }
@@ -49,7 +52,7 @@ void VecBosEvent::AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex)
    vbTrack.prMuTrack  = stMuTrack;
    vbTrack.glMuTrack  = stMuTrack->globalTrack();
    vbTrack.mVertex    = vbVertex;
-   vbTrack.mVec3AtDca = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
+   vbTrack.mP3AtDca   = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
 
    if (vbVertex) {
       vbVertex->prTrList.push_back(stMuTrack);
@@ -210,9 +213,9 @@ void VecBosEvent::McAnalysis()
          VecBosTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
          assert(T.mCluster2x2.nTower > 0); // internal logical error
-         assert(T.nearTotET > 0); // internal logical error
+         assert(T.mP3InNearCone > 0); // internal logical error
 
-         //if (T.mCluster2x2.ET / T.nearTotET < wMK->par_nearTotEtFrac) continue; // too large nearET
+         //if (T.mCluster2x2.ET / T.mP3InNearCone < wMK->par_nearTotEtFrac) continue; // too large nearET
          if (T.awayTotET > 30.) continue; // too large awayET , Jan
          //Full W cuts applied at this point
 
@@ -239,18 +242,260 @@ void VecBosEvent::CalcRecoil()
 }
 
 
-void VecBosEvent::CalcPtInConeAround(VecBosTrack *vbTrack)
+/**
+ * For a given eta-phi bin considers all combinations of 2x2 bin clusters around it
+ * and returns one with the maximum ET.
+ */
+WeveCluster VecBosEvent::FindMaxBTow2x2(int etaBin, int phiBin, float zVert)
 {
+   //Info("FindMaxBTow2x2(int etaBin, int phiBin, float zVert)", "seed etaBin=%d phiBin=%d \n",etaBin, phiBin);
+   const int L = 2; // size of the summed square
+
+   WeveCluster maxCL;
+
+   // Just 4 cases of 2x2 clusters
+   float maxET = 0;
+
+   for (int iEta=etaBin-1; iEta<=etaBin; iEta++)
+   {
+      for (int iPhi=phiBin-1; iPhi<=phiBin; iPhi++)
+      {
+         WeveCluster cluster = SumBTowPatch(iEta, iPhi, L, L, zVert);
+         if (maxET > cluster.ET) continue;
+         maxET = cluster.ET;
+         maxCL = cluster;
+         // printf("   newMaxETSum=%.1f etaBin=%d iPhi=%d \n",maxET, I,J);
+      }
+   }
+
+   //printf(" final inpEve=%d SumET2x2=%.1f \n",nInpEve,maxET);
+   return maxCL;
+}
+
+
+WeveCluster VecBosEvent::SumBTowPatch(int etaBin, int phiBin, int etaWidth, int  phiWidth, float zVert)
+{
+   //printf("eveID=%d btow Square seed etaBin=%d[+%d] phiBin=%d[+%d] zVert=%.0f\n", id, etaBin, etaWidth, phiBin, phiWidth, zVert);
+   WeveCluster cluster; // object is small, not to much overhead in creating it
+   cluster.iEta = etaBin;
+   cluster.iPhi = phiBin;
+   TVector3 cluCoord;
+   double sumW          = 0;
+   float  nomBTowRadius = gBTowGeom->Radius();
+
+   for (int iEta = etaBin; iEta < etaBin + etaWidth; iEta++) // trim in eta-direction
+   {
+      if (iEta < 0) continue;
+      if (iEta >= mxBTetaBin) continue;
+
+      for (int iPhi = phiBin; iPhi < phiBin + phiWidth; iPhi++)
+      {
+         // wrap up in the phi-direction
+         int   iPhi_p  = (iPhi + mxBTphiBin) % mxBTphiBin;         // keep it always positive
+         int   towerId = gMapBTowEtaPhiBin2Id[ iEta + iPhi_p*mxBTetaBin];
+         float energy  = bemc.eneTile[kBTow][towerId - 1];
+
+         //if (L<5) printf("n=%2d  iEta=%d iPhi_p=%d\n",cluster.nTower,iEta,iPhi_p);
+
+         if (energy <= 0) continue; // skip towers w/o energy
+
+         float adc    = bemc.adcTile[kBTow][towerId - 1];
+         float delZ   = gBCalTowerCoords[towerId - 1].z() - zVert;
+         float cosine = nomBTowRadius / sqrt(nomBTowRadius *nomBTowRadius + delZ *delZ);
+         float ET     = energy * cosine;
+         float logET  = log10(ET + 0.5);
+
+         cluster.nTower++;
+         cluster.energy += energy;
+         cluster.ET     += ET;
+         cluster.adcSum += adc;
+
+         if (logET > 0) {
+            cluCoord += logET * gBCalTowerCoords[towerId - 1]; // (log) energy weighted cluster position
+            sumW     += logET;
+         }
+         // if(etaWidth==2)
+         //    printf("etaBin=%d phiBin=%d  ET=%.1f  energy=%.1f   sum=%.1f logET=%f sumW=%f\n",iEta,iPhi,ET,energy,cluster.energy,logET,sumW);
+      }
+
+      // printf(" end btowSquare: etaBin=%d  nTw=%d, ET=%.1f adc=%.1f\n",iEta,cluster.nTower,cluster.ET,cluster.adcSum);
+      if (sumW > 0)
+         cluster.position =  (1./sumW) * cluCoord; // weighted cluster position
+      else
+         cluster.position = TVector3(0, 0, 999);
+   }
+
+   return cluster;
+}
+
+
+TVector3 VecBosEvent::CalcP3InConeTpc(VecBosTrack *vbTrack, UShort_t cone1d2d, Float_t scale)
+{
+   TVector3 totalP3InCone;
+
+   if (!vbTrack) return totalP3InCone;
+
+   // Scale P3 momentum of the track
+   TVector3 trackP3 = vbTrack->mP3AtDca * scale;
+
    VecBosTrackVecIter iTrack = mTracks.begin();
-   for ( ; iTrack != mTracks.end(); ++iTrack) {
+
+   for ( ; iTrack != mTracks.end(); ++iTrack)
+   {
       // Skip tracks from different vertices XXX:ds: Later can consider
-      // vertices in close  proximity to this one
+      // vertices in some close proximity to this one
       if (iTrack->mVertex != vbTrack->mVertex) continue;
 
       // Don't count the same track
       if (&*iTrack == vbTrack) continue;
+
+      if (iTrack->GetFitHitFrac() < mMinTrackHitFrac) continue;
+
+      if (cone1d2d == 1 && fabs(trackP3.DeltaPhi(iTrack->mP3AtDca)) > mTrackIsoDeltaPhi) continue;
+      if (cone1d2d == 2 &&      trackP3.DeltaR(iTrack->mP3AtDca)    > mTrackIsoDeltaR)   continue;
+
+      totalP3InCone += iTrack->mP3AtDca;
    }
+
+   return totalP3InCone;
 }
+
+
+/**
+ * Returns the  sum of all towers withing mTrackIsoDeltaR around the track
+ * refAxis.
+ * flag = 1: only delta phi cut; used for away (out of) cone cut
+ * flag = 2: use 2D cut;         used for near cone cut
+ */
+TVector3 VecBosEvent::CalcP3InConeBTow(VecBosTrack *vbTrack, UShort_t cone1d2d, Float_t scale)
+{
+   TVector3 totalP3InCone;
+
+   if (!vbTrack) return totalP3InCone;
+
+   // Scale P3 momentum of the track
+   TVector3 trackP3 = vbTrack->mP3AtDca * scale;
+
+   // process BTOW hits
+   for (int iBTow=0; iBTow<mxBtow; iBTow++)
+   {
+      float energy = bemc.eneTile[kBTow][iBTow];
+      if (energy <= 0) continue;
+
+      // Correct BCal tower position to the vertex position
+      TVector3 towerCoord = gBCalTowerCoords[iBTow] - vbTrack->mVertex->mPosition;
+      towerCoord.SetMag(energy); // it is 3D momentum in the event ref frame
+
+      if (cone1d2d == 1 && fabs(trackP3.DeltaPhi(towerCoord)) > mTrackIsoDeltaPhi) continue;
+      if (cone1d2d == 2 &&      trackP3.DeltaR(towerCoord)    > mTrackIsoDeltaR)   continue;
+
+      // XXX:ds: Another bug? The sum should be vector one
+      //totalP3InCone += towerCoord.Perp();
+      totalP3InCone += towerCoord;
+   }
+
+   return totalP3InCone;
+}
+
+
+/**
+ * flag = 1: only delta phi cut; used for away (out of) cone cut
+ * flag = 2: use 2D cut;         used for near cone cut
+ */
+TVector3 VecBosEvent::CalcP3InConeETow(VecBosTrack *vbTrack, UShort_t cone1d2d, Float_t scale)
+{
+   TVector3 totalP3InCone;
+
+   if (!vbTrack) return totalP3InCone;
+
+   // Scale P3 momentum of the track
+   TVector3 trackP3 = vbTrack->mP3AtDca * scale;
+
+   // Loop over all phi bins
+   for (int iphi = 0; iphi < mxEtowPhiBin; iphi++) 
+   {
+      for (int ieta = 0; ieta < mxEtowEta; ieta++) // sum all eta rings
+      {
+         float energy = etow.ene[iphi][ieta];
+         if (energy <= 0) continue; // skip towers with no energy
+
+         TVector3 towerCoord = gETowCoords[iphi][ieta] - vbTrack->mVertex->mPosition;
+         towerCoord.SetMag(energy); // it is 3D momentum in the event ref frame
+
+         if (cone1d2d == 1 && fabs(trackP3.DeltaPhi(towerCoord)) > mTrackIsoDeltaPhi) continue;
+         if (cone1d2d == 2 &&      trackP3.DeltaR(towerCoord)    > mTrackIsoDeltaR)   continue;
+
+         // XXX:ds: Another bug? The sum should be vector one
+         //ptsum += towerCoord.Perp();
+         totalP3InCone += towerCoord;
+      }
+   }
+
+   return totalP3InCone;
+}
+
+
+/**
+ * Returns the sum of all track P_T's inside the cone around the refAxis track.
+ *
+ * flag=1: only delta phi cut; used for away (out of) cone cut
+ * flag=2: use 2D cut;         used for near cone cut
+ *
+ *
+ * XXX:ds: Do we want to count the refAxis P_T?
+ * The calculated sum is scalar. We probably want a vector sum.
+ */
+/*
+float VecBosEvent::SumTpcCone(int vertID, TVector3 refAxis, int flag, int pointTowId)
+{
+   // printf("******* SumTpcCone, flag=%d eveId=%d vertID=%d  eta0=%.2f phi0/rad=%.2f  \n",flag,mVecBosEvent->id,vertID,refAxis.PseudoRapidity() ,refAxis.Phi());
+   assert(vertID >= 0);
+   assert(vertID < (int) mStMuDstMaker->muDst()->numberOfPrimaryVertices());
+
+   StMuPrimaryVertex *vertex = mStMuDstMaker->muDst()->primaryVertex(vertID);
+   assert(vertex);
+
+   // Select current vertex
+   mStMuDstMaker->muDst()->setVertexIndex(vertID);
+
+   float rank = vertex->ranking();
+   // XXX:ds: assert(rank > 0 || (rank < 0 && vertex->nEEMCMatch()));
+   if (rank <= 0 && vertex->nEEMCMatch() <= 0)  return -1;
+
+   double ptSum = 0;
+   Int_t nPrimaryTracks = mStMuDstMaker->muDst()->GetNPrimaryTrack();
+
+   for (int iTrack = 0; iTrack < nPrimaryTracks; iTrack++)
+   {
+      StMuTrack *stMuTrack = mStMuDstMaker->muDst()->primaryTracks(iTrack);
+
+      if (stMuTrack->flag() <= 0) continue;
+      if (stMuTrack->flag() != 301 && pointTowId > 0) continue; // TPC-only regular tracks for barrel candidate
+      if (stMuTrack->flag() != 301 && stMuTrack->flag() != 311 && pointTowId < 0) continue; // TPC regular and short EEMC tracks for endcap candidate
+
+      float hitFrac = float(stMuTrack->nHitsFit()) / stMuTrack->nHitsPoss();
+
+      if (hitFrac < mMinTrackHitFrac) continue;
+
+      StThreeVectorF prPvect = stMuTrack->p();
+      TVector3 vec3AtDca = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
+
+      // printf(" prTrID=%4d  prTrEta=%.3f prTrPhi/deg=%.1f prPT=%.1f  nFitPts=%d\n", stMuTrack->id(),stMuTrack->eta(),stMuTrack->phi()/3.1416*180.,stMuTrack->pt(),stMuTrack->nHitsFit());
+      if (flag == 1 && fabs(refAxis.DeltaPhi(vec3AtDca)) > mVecBosEvent->mTrackIsoDeltaPhi) continue;
+      if (flag == 2 &&      refAxis.DeltaR(vec3AtDca)    > mVecBosEvent->mTrackIsoDeltaR)   continue;
+
+      float pT = stMuTrack->pt();
+
+      // XXX:ds: Another bug? The sum should be vector one
+      // separate quench for barrel and endcap candidates
+      if      (pT > mVecBosEvent->mMinBTrackPt && pointTowId > 0) ptSum += mVecBosEvent->mMinBTrackPt;
+      else if (pT > mMinETrackPt && pointTowId < 0)               ptSum += mMinETrackPt;
+      else  ptSum += pT;
+   }
+
+   return ptSum;
+}
+*/
 
 
 void VecBosEvent::clear()
@@ -291,23 +536,26 @@ void VecBosEvent::clear()
    mLeptonETracks.clear();
    if (mWEvent) delete mWEvent;
    mWEvent = new WEvent();
-   mMaxTrackClusterDist = 7;
-   mTrackIsoDeltaR      = 0.7;  // (rad) near-cone size
-   mTrackIsoDeltaPhi    = 0.7;  // (rad) away-'cone' size, approx. 40 deg.
-   mMinBTrackPt         = 10.;  // GeV
+   mMaxTrackClusterDist  = 7;
+   mTrackIsoDeltaR       = 0.7;  // (rad) near-cone size
+   mTrackIsoDeltaPhi     = 0.7;  // (rad) away-'cone' size, approx. 40 deg.
+   mMinBTrackPt          = 10.;  // GeV
+   mMinTrackHitFrac      = 0.51;
+   mMinClusterEnergyFrac = 0.88;
+   mMaxEnergyInOppsCone  = 30;   // GeV
 }
 
 
-void VecBosEvent::print(int flag, int isMC)
+void VecBosEvent::Print(int opt, int isMC)
 {
-   Info("print", "");
+   Info("Print(int opt, int isMC)", "");
 
    printf("\nmy W2011event runNo=%d ID=%d  L2Wbits: ET=%d rnd=%d;  muDst: bx7=%d bx48=%d nVert=%d star: Bx7m=%d, Bx48=%d, spin4=%d \n", runNo, id, l2bitET, l2bitRnd, bx7, bx48, mVertices.size(), bxStar7, bxStar48, spin4);
    int  yyyymmdd,  hhmmss; getGmt_day_hour( yyyymmdd,  hhmmss);
    printf("  event time is: day=%d, hour=%d (GMT)\n", yyyymmdd, hhmmss);
 
-   for (uint i = 0; i < mVertices.size(); i++) mVertices[i].print(flag);
-   bemc.print(flag);
+   for (uint i = 0; i < mVertices.size(); i++) mVertices[i].Print();
+   bemc.print(opt);
 }
 
 
