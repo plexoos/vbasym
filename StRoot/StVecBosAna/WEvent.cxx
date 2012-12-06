@@ -70,15 +70,18 @@ void WEvent::CalcRecoil(PyEvent &pyEvent)
    fEnergyRatio  = eneAccept/eneTotal;
    fPzRatio      = mRecoilInAcceptP4.Pz()/mRecoilP4.Pz();
    fPtRatio      = mRecoilInAcceptP4.Pt()/mRecoilP4.Pt();
-   fPzRatioInOut = (mRecoilInAcceptP4 + mRecoilOutAcceptP4).Pz()/mRecoilP4.Pz();
-   fPtRatioInOut = (mRecoilInAcceptP4 + mRecoilOutAcceptP4).Pt()/mRecoilP4.Pt();
+   //fPzRatioInOut = (mRecoilInAcceptP4 + mRecoilOutAcceptP4).Pz()/mRecoilP4.Pz();
+   //fPtRatioInOut = (mRecoilInAcceptP4 + mRecoilOutAcceptP4).Pt()/mRecoilP4.Pt();
 
    //mRecoilInAcceptP4.SetPz(0);
    //mRecoilP4.SetPz(0);
 
-   fPtCorr       = (mRecoilP4.Pt() - mRecoilInAcceptP4.Pt())/mRecoilInAcceptP4.Pt();
+   //fPtCorr       = (mRecoilP4.Pt() - mRecoilInAcceptP4.Pt())/mRecoilInAcceptP4.Pt();
    // XXX:ds: z componennt should be removed
    fPtCorrAngle  = mRecoilInAcceptP4.Angle(mRecoilP4.Vect());
+
+
+   fPtCorr       = mRecoilP4.Pt()/mRecoilInAcceptP4.Pt();
 }
 
 

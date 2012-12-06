@@ -67,9 +67,8 @@ void MCHContainer::BookHists()
    o["hWrapidity"] = hist = new TH1I("hWrapidity", "; W pseudo-rapidity #eta; Events", 20, -4, 4);
    hist->SetOption("hist GRIDX");
 
-   //   o["hNeutrinoEnergy"] = hist = new TH1I("hNeutrinoEnergy", "; #nu energy [GeV]; Events", 50, 20., 200.);
-   //   hist->SetOption("hist GRIDX");
-
+   o["hNeutrinoEnergy"] = hist = new TH1I("hNeutrinoEnergy", "; #nu energy [GeV]; Events", 50, 0., 200.);
+   hist->SetOption("hist GRIDX");
    o["hNeutrinoMomentumX"] = hist = new TH1I("hNeutrinoMomentumX", "; P^{#nu}_{x} [GeV/c]; Events", 100, -150., 150.);
    hist->SetOption("hist GRIDX");
    o["hNeutrinoMomentumY"] = hist = new TH1I("hNeutrinoMomentumY", "; P^{#nu}_{y} [GeV/c]; Events", 100, -150., 150.);
@@ -79,6 +78,8 @@ void MCHContainer::BookHists()
    o["hNeutrinoPt"] = hist = new TH1I("hNeutrinoPt", "; P^{#nu}_{T} [GeV/c]; Events", 100, 0., 150.);
    hist->SetOption("hist GRIDX");
 
+   o["hElectronEnergy"] = hist = new TH1I("hElectronEnergy", "; electron energy [GeV]; Events", 50, 0., 200.);
+   hist->SetOption("hist GRIDX");
    o["hElectronMomentumX"] = hist = new TH1I("hElectronMomentumX", "; P^{#nu}_{x} [GeV/c]; Events", 100, -150., 150.);
    hist->SetOption("hist GRIDX");
    o["hElectronMomentumY"] = hist = new TH1I("hElectronMomentumY", "; P^{#nu}_{y} [GeV/c]; Events", 100, -150., 150.);
@@ -134,39 +135,55 @@ void MCHContainer::BookHists()
 
 void MCHContainer::Fill(ProtoEvent &ev)
 {
-   //VecBosEvent& event = (VecBosEvent&) ev;
+   VecBosEvent& event = (VecBosEvent&) ev;
 
    //((TH1*) o["hWenergy"])->Fill(event.eW);
+  ((TH1*) o["hWenergy"])->Fill(event.mWEvent->mWBosonP4.E());
    //((TH1*) o["hWmomentumX"])->Fill(event.mWP.x());
+   ((TH1*) o["hWmomentumX"])->Fill(event.mWEvent->mWBosonP4.Px());
    //((TH1*) o["hWmomentumY"])->Fill(event.mWP.y());
+   ((TH1*) o["hWmomentumY"])->Fill(event.mWEvent->mWBosonP4.Py());
    //((TH1*) o["hWmomentumZ"])->Fill(event.mWP.z());
+   ((TH1*) o["hWmomentumZ"])->Fill(event.mWEvent->mWBosonP4.Pz());
    //((TH1*) o["hWpt"])->Fill(event.mWP.Perp());
-   //((TH1*) o["hWrapidity"])->Fill(event.rapW);
+   ((TH1*) o["hWpt"])->Fill(event.mWEvent->mWBosonP4.Pt());
+   //((TH1*) o["hWrapidity"])->Fill(event.rapW)
+   ((TH1*) o["hWrapidity"])->Fill(event.mWEvent->mWBosonP4.Eta());;
 
    ////((TH1*) o["hNeutrinoEnergy"])->Fill(event.eNeutrino);
+   ((TH1*) o["hNeutrinoEnergy"])->Fill(event.mWEvent->mNeutrinoP4.E());
    //((TH1*) o["hNeutrinoMomentumX"])->Fill(event.mNeutrinoP.x());
+   ((TH1*) o["hNeutrinoMomentumX"])->Fill(event.mWEvent->mNeutrinoP4.Px());
    //((TH1*) o["hNeutrinoMomentumY"])->Fill(event.mNeutrinoP.y());
+   ((TH1*) o["hNeutrinoMomentumY"])->Fill(event.mWEvent->mNeutrinoP4.Py());
    //((TH1*) o["hNeutrinoMomentumZ"])->Fill(event.mNeutrinoP.z());
+   ((TH1*) o["hNeutrinoMomentumZ"])->Fill(event.mWEvent->mNeutrinoP4.Pz());
    //((TH1*) o["hNeutrinoPt"])->Fill(event.mNeutrinoP.Perp());
+   ((TH1*) o["hNeutrinoPt"])->Fill(event.mWEvent->mNeutrinoP4.Pz());
 
+   ((TH1*) o["hElectronEnergy"])->Fill(event.mWEvent->mLeptonP4.E());
    //((TH1*) o["hElectronMomentumX"])->Fill(event.mElectronP.x());
+   ((TH1*) o["hElectronMomentumX"])->Fill(event.mWEvent->mLeptonP4.Px());
    //((TH1*) o["hElectronMomentumY"])->Fill(event.mElectronP.y());
+   ((TH1*) o["hElectronMomentumY"])->Fill(event.mWEvent->mLeptonP4.Py());
    //((TH1*) o["hElectronMomentumZ"])->Fill(event.mElectronP.z());
+   ((TH1*) o["hElectronMomentumZ"])->Fill(event.mWEvent->mLeptonP4.Pz());
    //((TH1*) o["hElectronPt"])->Fill(event.mElectronP.Perp());
+   ((TH1*) o["hElectronPt"])->Fill(event.mWEvent->mLeptonP4.Pt());
 
    // recoil variables
-   //((TH1*) o["hRecEnergy"])->Fill(event.mWEvent->mRecoilP4.E());
-   //((TH1*) o["hRecMomentumX"])->Fill(event.mWEvent->mRecoilP4.Px());
-   //((TH1*) o["hRecMomentumY"])->Fill(event.mWEvent->mRecoilP4.Py());
-   //((TH1*) o["hRecMomentumZ"])->Fill(event.mWEvent->mRecoilP4.Pz());
-   //((TH1*) o["hRecInAccEnergy"])->Fill(event.mWEvent->mRecoilP4.E());
-   //((TH1*) o["hRecInAccMomentumX"])->Fill(event.mWEvent->mRecoilInAcceptP4.Px());
-   //((TH1*) o["hRecInAccMomentumY"])->Fill(event.mWEvent->mRecoilInAcceptP4.Py());
-   //((TH1*) o["hRecInAccMomentumZ"])->Fill(event.mWEvent->mRecoilInAcceptP4.Pz());
-   //((TH1*) o["hRecOutAccEnergy"])->Fill(event.mWEvent->mRecoilOutAcceptP4.E());
-   //((TH1*) o["hRecOutAccMomentumX"])->Fill(event.mWEvent->mRecoilOutAcceptP4.Px());
-   //((TH1*) o["hRecOutAccMomentumY"])->Fill(event.mWEvent->mRecoilOutAcceptP4.Py());
-   //((TH1*) o["hRecOutAccMomentumZ"])->Fill(event.mWEvent->mRecoilOutAcceptP4.Pz());
+   ((TH1*) o["hRecEnergy"])->Fill(event.mWEvent->mRecoilP4.E());
+   ((TH1*) o["hRecMomentumX"])->Fill(event.mWEvent->mRecoilP4.Px());
+   ((TH1*) o["hRecMomentumY"])->Fill(event.mWEvent->mRecoilP4.Py());
+   ((TH1*) o["hRecMomentumZ"])->Fill(event.mWEvent->mRecoilP4.Pz());
+   ((TH1*) o["hRecInAccEnergy"])->Fill(event.mWEvent->mRecoilInAcceptP4.E());
+   ((TH1*) o["hRecInAccMomentumX"])->Fill(event.mWEvent->mRecoilInAcceptP4.Px());
+   ((TH1*) o["hRecInAccMomentumY"])->Fill(event.mWEvent->mRecoilInAcceptP4.Py());
+   ((TH1*) o["hRecInAccMomentumZ"])->Fill(event.mWEvent->mRecoilInAcceptP4.Pz());
+   ((TH1*) o["hRecOutAccEnergy"])->Fill(event.mWEvent->mRecoilOutAcceptP4.E());
+   ((TH1*) o["hRecOutAccMomentumX"])->Fill(event.mWEvent->mRecoilOutAcceptP4.Px());
+   ((TH1*) o["hRecOutAccMomentumY"])->Fill(event.mWEvent->mRecoilOutAcceptP4.Py());
+   ((TH1*) o["hRecOutAccMomentumZ"])->Fill(event.mWEvent->mRecoilOutAcceptP4.Pz());
 
    // MC correction variablel
    //((TH1*) o["hEnergyRatio"])->Fill(event.mWEvent->fEnergyRatio);

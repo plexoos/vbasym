@@ -239,6 +239,35 @@ void VecBosEvent::CalcRecoil()
    assert(mcEvent);
 
    mWEvent->CalcRecoil(*mcEvent);
+
+   // Lets now do the MC analysis runnin trough the entire selection
+   // run through W cuts to fill other histos............
+   for (uint iv = 0; iv < mVertices.size(); iv++)
+   {
+      VecBosVertex &V = mVertices[iv];
+
+      for (uint it = 0; it < V.eleTrack.size(); it++)
+      {
+         VecBosTrack &T = V.eleTrack[it];
+         if (T.isMatch2Cl == false) continue;
+         assert(T.mCluster2x2.nTower > 0); // internal logical error
+         ////assert(T.nearTotET > 0); // internal logical error
+
+         //if (T.mCluster2x2.ET / T.nearTotET < wMK->par_nearTotEtFrac) continue; // too large nearET
+         if (T.awayTotET > 30.) continue; // too large awayET , Jan
+         //Full W cuts applied at this point
+
+         hadronicRecoilEta = T.hadronicRecoil.Eta();
+
+         //hadronic recoil and correlations with W from pythia
+         TVector3 hadronicPt(T.hadronicRecoil.X(), T.hadronicRecoil.Y(), 0); //transverse momentum vector
+
+         hadronicRecoilPt = hadronicPt.Perp();
+      }
+   }
+
+   fPtKfactor   = mWEvent->mRecoilP4.Pt()/hadronicRecoilPt;
+
 }
 
 

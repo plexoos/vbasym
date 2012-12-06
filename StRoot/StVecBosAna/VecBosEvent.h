@@ -78,6 +78,11 @@ public:
    float mMinClusterEnergyFrac;
    float mMaxEnergyInOppsCone;
 
+   Double_t         hadronicRecoilEta;
+   Double_t         hadronicRecoilPt;
+   Double_t         fPtKfactor;
+
+
    VecBosEvent();
 
    void                SetStMuDst(StMuDst *stMuDst) { mStMuDst = stMuDst; }
