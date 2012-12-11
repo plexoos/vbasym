@@ -44,6 +44,7 @@ StVecBosMaker::StVecBosMaker(const char *name, VecBosRootFile *vbFile): StMaker(
    mStMuDstMaker(0), mStJetReader(0), mVecBosRootFile(vbFile),
    mJetTreeBranchName(), mJetTreeBranchNameNoEndcap(),
    mJets(0), mVecBosEvent(0), mWtree(0),
+   mNumInputEvents(0), mNumTrigEvents(0), mNumAcceptedEvents(0),
    Tfirst(numeric_limits<int>::max()), Tlast(numeric_limits<int>::min()),
    mParETOWScale(1.0), mParBTOWScale(1.0)   // for old the Endcap geometr you need ~1.3
 {
@@ -77,10 +78,6 @@ StVecBosMaker::StVecBosMaker(const char *name, VecBosRootFile *vbFile): StMaker(
    setHList(0);
    setHListTpc(0);
    setMC(0);
-
-   nInpEve        = 0;
-   mNumTrigEvents = 0;
-   nAccEve        = 0;
 
    // MC trigger simulator
    par_l0emulAdcThresh          = 30;
@@ -347,8 +344,8 @@ Int_t StVecBosMaker::Make()
    //mVecBosEvent = new VecBosEvent();
    //mWtree->Branch("mVecBosEvent", "VecBosEvent", &mVecBosEvent);
 
-   nInpEve++;
-   //Info("Make", "Called for event %d", nInpEve);
+   mNumInputEvents++;
+   //Info("Make", "Called for event %d", mNumInputEvents);
    //printf("isMC = %d\n", isMC);
 
    if (isMC) {
@@ -374,8 +371,8 @@ Int_t StVecBosMaker::Make()
 
    const char *afile = mStMuDstMaker->GetFile();
 
-   if (nInpEve % 200 == 1)
-      Info("Make", "nEve: inp=%d, trig=%d, accpt=%d, daqFile: %s\n", nInpEve, mNumTrigEvents, nAccEve, afile);
+   if (mNumInputEvents % 200 == 0)
+      Info("Make", "nEve: inp=%d, trig=%d, accpt=%d, daqFile: %s\n", mNumInputEvents, mNumTrigEvents, mNumAcceptedEvents, afile);
 
    //hA[0]->Fill("inp", 1.);
    //hE[0]->Fill("inp", 1.);
@@ -383,8 +380,6 @@ Int_t StVecBosMaker::Make()
    // First access calorimeter data
    int btowStat = ReadMuDstBTOW(); // get energy in BTOW
    int etowStat = ReadMuDstETOW(); // get energy in ETOW
-   int btrig    = ReadMuDstBarrelTrig();
-   int etrig    = ReadMuDstEndcapTrig();
 
    // Skip entire event if no energy in BTOW && ETOW
    if ( btowStat != 0 && etowStat != 0 ) {
@@ -392,8 +387,15 @@ Int_t StVecBosMaker::Make()
       return kStOK;
    }
 
+   int btrig    = ReadMuDstBarrelTrig();
+   int etrig    = ReadMuDstEndcapTrig();
+
    // Skip entire event if no valid trig ID
-   if ( btrig != 0 && etrig != 0 ) { mWtree->Fill(); return kStOK; }
+   if ( btrig != 0 && etrig != 0 ) {
+      Info("Make", "No trigger bit in neither BTOW nor ETOW. Skipping event...");
+      //mWtree->Fill();
+      return kStOK;
+   }
 
    mNumTrigEvents++;
 
@@ -452,7 +454,7 @@ Int_t StVecBosMaker::Make()
 
    //if (!hasMatchedTrack2BCluster && !hasMatchedTrack2ECluster) return kStOK; //no matched BTOW or ETOW clusters
 
-   nAccEve++;
+   mNumAcceptedEvents++;
 
    // Add info to the event
    CalcPtBalance();
@@ -474,7 +476,7 @@ Int_t StVecBosMaker::Make()
 
    //mVecBosRootFile->Fill(*mVecBosEvent, kCUT_CUT);
 
-   if (nAccEve < 2 || nAccEve % 1000 == 1 ) mVecBosEvent->Print(0x0, isMC);
+   if (mNumAcceptedEvents < 2 || mNumAcceptedEvents % 1000 == 1 ) mVecBosEvent->Print(0x0, isMC);
 
    return kStOK;
 }
@@ -729,6 +731,7 @@ int StVecBosMaker::ReadMuDstEndcapTrig()
    const int EEMCW_offset = 35; // valid only for 2011 run
 
    L2weResult2011 *l2weResult2011 = (L2weResult2011*) &trigL2Chunk[EEMCW_offset];
+
    mVecBosEvent->l2EbitET  = (l2weResult2011->trigger & 2) > 0; // bit1=ET>thr
    mVecBosEvent->l2EbitRnd = (l2weResult2011->trigger & 1) > 0; // bit0=rnd,
 
@@ -988,7 +991,6 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
             awaySum[away_width] += myT;
          }
       }
-
       totalSum += myT;
    }
 
@@ -1262,7 +1264,7 @@ void StVecBosMaker::ReadMuDstVerticesTracks()
 void StVecBosMaker::ReadMuDstTracks(VecBosVertex* vbVertex)
 {
    // printf("\n nInp=%d eveID=%d nPVer=%d nAnyV=
-   //        %d\n",nInpEve,mStMuDstMaker->muDst()->event()->eventId(),mVecBosEvent->mVertices.size(),mStMuDstMaker->muDst()->numberOfPrimaryVertices());
+   //        %d\n",mNumInputEvents,mStMuDstMaker->muDst()->event()->eventId(),mVecBosEvent->mVertices.size(),mStMuDstMaker->muDst()->numberOfPrimaryVertices());
    //float rank = vertex->ranking();
    // XXX:ds: assert(rank > 0 || (rank < 0 && vertex->nEEMCMatch()));
 
@@ -1432,13 +1434,13 @@ int StVecBosMaker::ReadMuDstBTOW()
       mBarrelTables->getPedestal(BTOW, softID, capID, ped, sigPed);
       mBarrelTables->getCalib(BTOW, softID, 1, gain);
 
-      if (use_gains_file == 1) {
-         gain = gains_BTOW[softID];
-      }
+      //if (use_gains_file == 1) {
+      //   gain = gains_BTOW[softID];
+      //}
 
       //printf("id=%d gain=%f\n",softID,gain);
 
-      //method for shifting energy scale
+      // method for shifting energy scale
       gain = gain * mParBTOWScale; //(default is mParBTOWScale=1)
 
       float adc = rawAdc - ped;
@@ -1461,7 +1463,7 @@ int StVecBosMaker::ReadMuDstBTOW()
 
    mVecBosEvent->bemc.tileIn[ibp] = 1; //tag usable data
 
-   if (nInpEve % 5000 == 1) {
+   if (mNumInputEvents % 5000 == 1) {
       LOG_INFO << Form("unpackMuBTOW() dataIn=%d, nBbad: ped=%d stat=%d gain=%d ; nAdc: %d>0, %d>thres\n    maxADC=%.0f softID=%d adcSum=%.0f",
                        mVecBosEvent->bemc.tileIn[ibp], n1, n2, n3, n4, n5,
                        maxADC, maxID, adcSum
@@ -1474,7 +1476,7 @@ int StVecBosMaker::ReadMuDstBTOW()
    mVecBosEvent->bemc.maxAdc = maxADC;
 
    if (maxID <= 2400) hA[195]->Fill(maxADC);
-   else hA[196]->Fill(maxADC);
+   else               hA[196]->Fill(maxADC);
 
    if (maxADC < par_maxADC) return -2 ; // not enough energy
 
@@ -1624,7 +1626,7 @@ void StVecBosMaker::ReadMuDstBSMD()
          mVecBosEvent->bemc.adcBsmd[ iep][id0] = adc;
          hA[70 + 10 * iep]->Fill(adc);
 
-         //if(nInpEve<3 || i <20 )printf("  i=%d, smd%c id=%d, m=%d adc=%.3f pedRes=%.1f, sigP=%.1f stat: O=%d P=%d G=%d  gain=%.2f\n",i,cPlane[iep],softID,1+id0/150,adc,pedRes,sigPed, statOfl,statPed,statGain, gain);
+         //if(mNumInputEvents<3 || i <20 )printf("  i=%d, smd%c id=%d, m=%d adc=%.3f pedRes=%.1f, sigP=%.1f stat: O=%d P=%d G=%d  gain=%.2f\n",i,cPlane[iep],softID,1+id0/150,adc,pedRes,sigPed, statOfl,statPed,statGain, gain);
       }
 
       if (mNumTrigEvents % 5000 == 1) {
@@ -2441,7 +2443,7 @@ WeveCluster StVecBosMaker::maxEtow2x1(int iEta, int iPhi, float zVert)
       maxCL = CL;
       //printf(" maxEtow2x1 B  newMaxETSum=%.1f iEta=%d iPhi=%d \n",maxET,iEta,J);
    }
-   //printf(" final inpEve=%d SumET2x2=%.1f \n",nInpEve,maxET);
+   //printf(" final inpEve=%d SumET2x2=%.1f \n",mNumInputEvents,maxET);
    return maxCL;
 }
 
@@ -2466,7 +2468,7 @@ WeveCluster StVecBosMaker::maxEtow2x2(int iEta, int iPhi, float zVert)
       }
    }// 4 combinations done
 
-   //printf(" final inpEve=%d SumET2x2=%.1f \n",nInpEve,maxET);
+   //printf(" final inpEve=%d SumET2x2=%.1f \n",mNumInputEvents,maxET);
    return maxCL;
 }
 

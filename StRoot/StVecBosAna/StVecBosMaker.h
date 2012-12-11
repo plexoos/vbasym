@@ -61,9 +61,9 @@ private:
    WeventDisplay  *wDisaply;
    WtpcFilter      mTpcFilter[mxTpcSec];    //allows sector dependent filter
    WtpcFilter      mTpcFilterE[mxTpcSec];   //allows sector dependent filter for endcap tracks
-   int             nInpEve;
+   int             mNumInputEvents;
    int             mNumTrigEvents;
-   int             nAccEve;                 // event counters
+   int             mNumAcceptedEvents;      // event counters
    int             mRunNo;
    int             nRun;
    int             isMC;                    //0 for real data
@@ -128,7 +128,8 @@ public: // to overwrite default params from .C macro
    void setL2ClusterThresh(float x) { par_l2emulClusterThresh = x; }
    void setL2SeedThresh(float x) { par_l2emulSeedThresh = x; }
    void setJetTreeBranch(TString jetTreeBranch, TString jetTreeBranch_noEEMC) {
-      mJetTreeBranchName = jetTreeBranch; mJetTreeBranchNameNoEndcap = jetTreeBranch_noEEMC;
+      mJetTreeBranchName         = jetTreeBranch;
+      mJetTreeBranchNameNoEndcap = jetTreeBranch_noEEMC;
    }
 
    void setGainsFile(char *x) {gains_file = x; use_gains_file = 1;}

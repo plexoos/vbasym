@@ -92,8 +92,10 @@ public:
    //bool      HasBarrelMatched();
    //bool      HasEndcapMatched();
    void      Process();
-   float     GetFitHitFrac() const { return float(prMuTrack->nHitsFit()) / prMuTrack->nHitsPoss(); }
-   float     GetClusterEnergyFrac() const { return mCluster2x2.ET / mP3InNearConeNoETow.Pt(); }
+   float     GetFitHitFrac()        const { return float(prMuTrack->nHitsFit()) / prMuTrack->nHitsPoss(); }
+   float     GetClusterEnergyFrac() const { return (mCluster2x2.energy + mP3AtDca.Mag()) / mP3InNearConeNoETow.Mag(); }
+   float     GetClusterETFrac()     const { return (mCluster2x2.ET     + mP3AtDca.Pt())  / mP3InNearConeNoETow.Perp(); }
+   //float     GetClusterEnergyFrac() const { return mCluster2x2.ET / mP3InNearCone.Perp(); }
    void      clear();
    void      print(int opt=0) const;
    TVector3  CalcDistanceToMatchedCluster();
@@ -111,9 +113,11 @@ private:
 typedef std::vector<VecBosTrack>          VecBosTrackVec;
 typedef VecBosTrackVec::iterator          VecBosTrackVecIter;
 typedef VecBosTrackVec::const_iterator    VecBosTrackVecConstIter;
+
 typedef std::vector<VecBosTrack*>         VecBosTrackPtrVec;
 typedef VecBosTrackPtrVec::iterator       VecBosTrackPtrVecIter;
 typedef VecBosTrackPtrVec::const_iterator VecBosTrackPtrVecConstIter;
+
 typedef std::set<VecBosTrack*>            VecBosTrackPtrSet;
 typedef VecBosTrackPtrSet::iterator       VecBosTrackPtrSetIter;
 typedef VecBosTrackPtrSet::const_iterator VecBosTrackPtrSetConstIter;

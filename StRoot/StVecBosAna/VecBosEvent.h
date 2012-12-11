@@ -37,17 +37,17 @@ public:
    int                l2bitRnd;
    int                l2EbitET;
    int                l2EbitRnd;
-   int                trigAwaySum[16];   //for lumi
-   int                trigTotalSum;      //for lumi
+   int                trigAwaySum[16];   // for lumi
+   int                trigTotalSum;      // for lumi
    int                id;                // eventID
    int                runNo;
    int                time;
    float              zdcRate;
-   int                bx7;
-   int                bx48;              // raw from muDst
-   int                bxStar7;
-   int                bxStar48;
-   int                spin4;             // using spinDb or -1 if failed
+   int                bx7;               //!
+   int                bx48;              //! raw from muDst
+   int                bxStar7;           //!
+   int                bxStar48;          //!
+   int                spin4;             //! using spinDb or -1 if failed
    bool               zTag;
    UShort_t           mMuDstNumGTracks;
    UShort_t           mMuDstNumVertices;
@@ -57,31 +57,36 @@ public:
    UShort_t           mNumGoodTracks;
    UShort_t           mNumBTracks;
    UShort_t           mNumETracks;
+   UShort_t           mNumIsolatedTracks;
    StJets            *mStJets;          //!
    StJets            *mStJetsNoEndcap;  //! jets noEEMC
-   WeveBEMC           bemc;
-   WeveETOW           etow;
-   WeveEPRS           eprs;
-   WeveESMD           esmd;
+   WeveBEMC           bemc;             //!
+   WeveETOW           etow;             //!
+   WeveEPRS           eprs;             //!
+   WeveESMD           esmd;             //!
    StJetPtrSet        mJets;
+   StJetPtrSet        mJetsPure;
    VecBosVertexVec    mVertices;
    VecBosTrackVec     mTracks;
-   VecBosTrackPtrSet  mLeptonBTracks;   // Set of lepton track candidates, i.e. good tracks with energy in barrel
-   VecBosTrackPtrSet  mLeptonETracks;   // Set of lepton track candidates, i.e. good tracks with energy in endcap
+   VecBosTrackPtrVec  mTracksCluster;
+   VecBosTrackPtrSet  mTracksBLepton;   // Set of lepton track candidates, i.e. good tracks with energy in barrel
+   VecBosTrackPtrSet  mTracksELepton;   // Set of lepton track candidates, i.e. good tracks with energy in endcap
    WEvent            *mWEvent;
+   TLorentzVector     mP4JetTotal;
+   TLorentzVector     mP4JetFirst;
+   Double_t           mMinDeltaR;
 
-   float mMaxTrackClusterDist;  // cm, dist between projected track and center of cluster
-   float mTrackIsoDeltaR;       // (rad) near-cone size
-   float mTrackIsoDeltaPhi;     // (rad) away-'cone' size, approx. 40 deg.
-   float mMinBTrackPt;
-   float mMinTrackHitFrac;
-   float mMinClusterEnergyFrac;
-   float mMaxEnergyInOppsCone;
+   float mMaxTrackClusterDist;  //! cm, dist between projected track and center of cluster
+   float mTrackIsoDeltaR;       //! (rad) near-cone size
+   float mTrackIsoDeltaPhi;     //! (rad) away-'cone' size, approx. 40 deg.
+   float mMinBTrackPt;          //!
+   float mMinTrackHitFrac;      //!
+   float mMinClusterEnergyFrac; //!
+   float mMaxEnergyInOppsCone;  //!
 
    Double_t         hadronicRecoilEta;
    Double_t         hadronicRecoilPt;
    Double_t         fPtKfactor;
-
 
    VecBosEvent();
 
@@ -94,16 +99,19 @@ public:
    TClonesArray*       GetJetsNoEndcap();
    UInt_t              GetNumJets();
    UInt_t              GetNumJetsNoEndcap();
-   UInt_t              GetNumVertices()     { return mVertices.size(); }
-   UInt_t              GetNumTracks()       { return mTracks.size(); }
-   UInt_t              GetNumGoodVertices() { return mNumGoodVertices; }
-   UInt_t              GetNumGoodTracks()   { return mNumGoodTracks; }
-   UInt_t              GetNumBTracks()      { return mNumBTracks; }
-   UInt_t              GetNumETracks()      { return mNumETracks; }
+   UInt_t              GetNumVertices()       { return mVertices.size(); }
+   UInt_t              GetNumTracks()         { return mTracks.size(); }
+   UShort_t            GetNumGoodVertices()   { return mNumGoodVertices; }
+   UShort_t            GetNumGoodTracks()     { return mNumGoodTracks; }
+   UShort_t            GetNumBTracks()        { return mNumBTracks; }
+   UShort_t            GetNumETracks()        { return mNumETracks; }
+   UShort_t            GetNumIsolatedTracks() { return mNumIsolatedTracks; }
    UInt_t              GetNumTracksWithBCluster();
    UInt_t              GetNumTracksWithBCluster2();
-   bool                HasGoodVertex() { return mNumGoodVertices > 0 ? true : false; } // Checks if at least one good vertex exist in the event
-   bool                HasGoodTrack()  { return mNumGoodTracks > 0 ? true : false; }
+   bool                HasGoodVertex()        { return mNumGoodVertices   > 0 ? true : false; } // Checks if at least one good vertex exist in the event
+   bool                HasGoodTrack()         { return mNumGoodTracks     > 0 ? true : false; }
+   bool                HasIsolatedTrack()     { return mNumIsolatedTracks > 0 ? true : false; }
+
    void                Process();
    //void                addMC();
    //void                McAnalysis();

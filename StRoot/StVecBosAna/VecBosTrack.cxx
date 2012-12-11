@@ -209,10 +209,8 @@ void VecBosTrack::MatchTrack2BtowCluster()
    //hA[110]->Fill(mCluster2x2.ET);
 
    // Compute surroinding cluster energy
-   int iEta = mCluster2x2.iEta;
-   int iPhi = mCluster2x2.iPhi;
-
-   mCluster4x4 = mEvent->SumBTowPatch(iEta - 1, iPhi - 1, 4, 4, mVertex->z); // needed for lumi monitor
+   // 4x4 cluster lower left tower
+   mCluster4x4 = mEvent->SumBTowPatch(mCluster2x2.iEta - 1, mCluster2x2.iPhi - 1, 4, 4, mVertex->z); // needed for lumi monitor
 
    //if (mCluster2x2.ET < mMinBClusterEnergy) continue; // too low energy
 
@@ -247,7 +245,7 @@ void VecBosTrack::MatchTrack2BtowCluster()
    {
       isMatch2Cl = true; // cluster is matched to TPC track
       mType |= kHAS_CLUSTER;
-      //mVecBosEvent->mLeptonBTracks.insert(&track);
+      mEvent->mTracksCluster.push_back(this);
    }
 
    //hA[20]->Fill("#Delta R", 1.);
@@ -273,8 +271,8 @@ void VecBosTrack::CalcEnergyInNearCone()
    mP3InNearConeTpc    = mEvent->CalcP3InConeTpc (this, 2); // '2'=2D cone
 
    mP3InNearConeTow    = mP3InNearConeBTow + mP3InNearConeETow;
-   mP3InNearCone       = mP3InNearConeTow  + mP3InNearConeTpc; // XXX:ds: double counting? yes, see correction below
-   mP3InNearConeNoETow = mP3InNearCone     - mP3InNearConeETow;
+   mP3InNearCone       = mP3InNearConeBTow + mP3InNearConeETow + mP3InNearConeTpc; // XXX:ds: double counting? yes, see correction below
+   mP3InNearConeNoETow = mP3InNearConeBTow                     + mP3InNearConeTpc;
 
    mP3InOppsConeBTow   = mEvent->CalcP3InConeBTow(this, 1, -1); // '1'=1D cone
    mP3InOppsConeETow   = mEvent->CalcP3InConeETow(this, 1, -1); // '1'=1D cone
@@ -288,7 +286,6 @@ void VecBosTrack::CalcEnergyInNearCone()
    if (GetClusterEnergyFrac() >= mEvent->mMinClusterEnergyFrac)
    {
       mType |= kISOLATED;
-
       //if (GetClusterEnergyFrac() >= mEvent->mMinClusterEnergyFrac)
    }
    

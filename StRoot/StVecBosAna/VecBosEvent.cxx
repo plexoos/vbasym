@@ -1,4 +1,8 @@
+#include <math.h>
+
 #include "VecBosEvent.h"
+
+#include "utils/utils.h"
 
 ClassImp(VecBosEvent)
 
@@ -8,15 +12,19 @@ using namespace std;
 VecBosEvent::VecBosEvent() : ProtoEvent(),
    mStMuDst(0),
    mMuDstNumGTracks(0), mMuDstNumVertices(0), mMuDstNumPTracks(0), mMuDstNumOTracks(0),
-   mNumGoodVertices(0), mNumGoodTracks(0), mNumBTracks(0), mNumETracks(0),
-   mStJets(0), mJets(), mVertices(), mTracks(),
-   mLeptonBTracks(), mLeptonETracks(), mWEvent(0),
+   mNumGoodVertices(0), mNumGoodTracks(0), mNumBTracks(0), mNumETracks(0), mNumIsolatedTracks(0),
+   mStJets(0), mJets(), mJetsPure(), mVertices(),
+   mTracks(), mTracksCluster(), mTracksBLepton(), mTracksELepton(),
+   mWEvent(0),
+   mP4JetTotal(), mP4JetFirst(),
+   mMinDeltaR(M_PI),
    mMaxTrackClusterDist (7),
    mTrackIsoDeltaR      (0.7),
    mTrackIsoDeltaPhi    (0.7),
    mMinBTrackPt         (10),
    mMinTrackHitFrac     (0.51),
-   mMinClusterEnergyFrac(0.88),
+   //mMinClusterEnergyFrac(0.88),
+   mMinClusterEnergyFrac(0.80),
    mMaxEnergyInOppsCone (30)
 {
    clear();
@@ -72,7 +80,7 @@ void VecBosEvent::AddStJets(StJets *stJets, StJets *stJetsNoEndcap)
    TIter         jetsIter(jets);
    jetsIter.Reset();
 
-   while ( StJet *stJet = (StJet *) jetsIter() ) {
+   while ( StJet* stJet = (StJet*) jetsIter() ) {
       mJets.insert(stJet);
    }
 }
@@ -103,7 +111,7 @@ UInt_t VecBosEvent::GetNumTracksWithBCluster()
 
 UInt_t VecBosEvent::GetNumTracksWithBCluster2()
 {
-   return mLeptonBTracks.size();
+   return mTracksBLepton.size();
 }
 
 
@@ -121,13 +129,38 @@ void VecBosEvent::Process()
       if (iVertex->IsGood()) mNumGoodVertices++;
    }
 
+   // Process tracks
    VecBosTrackVecIter iTrack = mTracks.begin();
    for ( ; iTrack != mTracks.end(); ++iTrack) {
       iTrack->Process();
 
-      if (iTrack->IsGood())   mNumGoodTracks++;
-      if (iTrack->IsBTrack()) mNumBTracks++;
-      if (iTrack->IsETrack()) mNumETracks++;
+      if (iTrack->IsGood())     mNumGoodTracks++;
+      if (iTrack->IsBTrack())   mNumBTracks++;
+      if (iTrack->IsETrack())   mNumETracks++;
+      if (iTrack->IsIsolated()) mNumIsolatedTracks++;
+   }
+
+   // Process jets
+   StJetPtrSetConstIter iJet = mJets.begin();
+   mP4JetFirst = *iJet ? **iJet : TLorentzVector();
+
+   for ( ; iJet != mJets.end(); ++iJet)
+   {
+      StJet *stJet = *iJet;
+      //utils::PrintTLorentzVector(**iJet);
+      mP4JetTotal += *stJet;
+
+      // Check the distance between the isolated track (if exists) and a jet
+      VecBosTrackVecIter iTrack = mTracks.begin();
+      for ( ; iTrack != mTracks.end(); ++iTrack) {
+         if (!iTrack->IsIsolated()) continue;
+
+         Double_t deltaR = stJet->Vect().DeltaR(iTrack->mP3AtDca);
+         if (deltaR < mMinDeltaR) mMinDeltaR = deltaR;
+
+         if (deltaR > mTrackIsoDeltaR)
+            mJetsPure.insert(stJet);
+      }
    }
 }
 
@@ -251,7 +284,7 @@ void VecBosEvent::CalcRecoil()
          VecBosTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
          assert(T.mCluster2x2.nTower > 0); // internal logical error
-         ////assert(T.nearTotET > 0); // internal logical error
+         //assert(T.nearTotET > 0); // internal logical error
 
          //if (T.mCluster2x2.ET / T.nearTotET < wMK->par_nearTotEtFrac) continue; // too large nearET
          if (T.awayTotET > 30.) continue; // too large awayET , Jan
@@ -266,8 +299,7 @@ void VecBosEvent::CalcRecoil()
       }
    }
 
-   fPtKfactor   = mWEvent->mRecoilP4.Pt()/hadronicRecoilPt;
-
+   fPtKfactor = mWEvent->mRecoilP4.Pt()/hadronicRecoilPt;
 }
 
 
@@ -349,7 +381,7 @@ WeveCluster VecBosEvent::SumBTowPatch(int etaBin, int phiBin, int etaWidth, int 
 
       // printf(" end btowSquare: etaBin=%d  nTw=%d, ET=%.1f adc=%.1f\n",iEta,cluster.nTower,cluster.ET,cluster.adcSum);
       if (sumW > 0)
-         cluster.position =  (1./sumW) * cluCoord; // weighted cluster position
+         cluster.position = (1./sumW) * cluCoord; // weighted cluster position
       else
          cluster.position = TVector3(0, 0, 999);
    }
@@ -376,9 +408,8 @@ TVector3 VecBosEvent::CalcP3InConeTpc(VecBosTrack *vbTrack, UShort_t cone1d2d, F
       if (iTrack->mVertex != vbTrack->mVertex) continue;
 
       // Don't count the same track
-      if (&*iTrack == vbTrack) continue;
-
-      if (iTrack->GetFitHitFrac() < mMinTrackHitFrac) continue;
+      //if (&*iTrack == vbTrack) continue;
+      //if (iTrack->GetFitHitFrac() < mMinTrackHitFrac) continue;
 
       if (cone1d2d == 1 && fabs(trackP3.DeltaPhi(iTrack->mP3AtDca)) > mTrackIsoDeltaPhi) continue;
       if (cone1d2d == 2 &&      trackP3.DeltaR(iTrack->mP3AtDca)    > mTrackIsoDeltaR)   continue;
@@ -530,47 +561,54 @@ float VecBosEvent::SumTpcCone(int vertID, TVector3 refAxis, int flag, int pointT
 void VecBosEvent::clear()
 {
    //Info("clear", "");
-   mStMuDst          = 0;
-   id                = 0;
-   runNo             = 0;
-   time              = 0;
-   zdcRate           = 0;
-   l2bitET           = 0;
-   l2bitRnd          = 0;
-   l2EbitET          = 0;
-   l2EbitRnd         = 0;
-   bx7               = -1;
-   bx48              = -1;
-   zTag              = false;
-   mMuDstNumVertices = 0;
-   mMuDstNumGTracks  = 0;
-   mMuDstNumPTracks  = 0;
-   mMuDstNumOTracks  = 0;
-   mNumGoodVertices  = 0;
-   mNumGoodTracks    = 0;
-   mNumBTracks       = 0;
-   mNumETracks       = 0;
-   mStJets           = 0;
-   bxStar7           = -1;
-   bxStar48          = -1;
-   spin4             = -1;
+   mStMuDst           = 0;
+   id                 = 0;
+   runNo              = 0;
+   time               = 0;
+   zdcRate            = 0;
+   l2bitET            = 0;
+   l2bitRnd           = 0;
+   l2EbitET           = 0;
+   l2EbitRnd          = 0;
+   bx7                = -1;
+   bx48               = -1;
+   zTag               = false;
+   mMuDstNumVertices  = 0;
+   mMuDstNumGTracks   = 0;
+   mMuDstNumPTracks   = 0;
+   mMuDstNumOTracks   = 0;
+   mNumGoodVertices   = 0;
+   mNumGoodTracks     = 0;
+   mNumBTracks        = 0;
+   mNumETracks        = 0;
+   mNumIsolatedTracks = 0;
+   mStJets            = 0;
+   bxStar7            = -1;
+   bxStar48           = -1;
+   spin4              = -1;
    bemc.clear();
    etow.clear();
    eprs.clear();
    esmd.clear();
    mJets.clear();
+   mJetsPure.clear();
    mVertices.clear();
    mTracks.clear();
-   mLeptonBTracks.clear();
-   mLeptonETracks.clear();
+   mTracksCluster.clear();
+   mTracksBLepton.clear();
+   mTracksELepton.clear();
    if (mWEvent) delete mWEvent;
-   mWEvent = new WEvent();
-   mMaxTrackClusterDist  = 7;
+   mWEvent               = new WEvent();
+   mP4JetTotal           = TLorentzVector();
+   mP4JetFirst           = TLorentzVector();
+   mMinDeltaR            = M_PI;
+   mMaxTrackClusterDist  = 7;    // cm
    mTrackIsoDeltaR       = 0.7;  // (rad) near-cone size
    mTrackIsoDeltaPhi     = 0.7;  // (rad) away-'cone' size, approx. 40 deg.
    mMinBTrackPt          = 10.;  // GeV
    mMinTrackHitFrac      = 0.51;
-   mMinClusterEnergyFrac = 0.88;
+   //mMinClusterEnergyFrac = 0.88;
+   mMinClusterEnergyFrac = 0.80;
    mMaxEnergyInOppsCone  = 30;   // GeV
 }
 

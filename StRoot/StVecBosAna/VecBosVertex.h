@@ -26,7 +26,7 @@ public:
    VecBosEvent        *mEvent;       //!
    EVertexType         mType;
    int                 id;           // as store do muDst list
-   float               z;            // cm
+   float               z;            //! cm
    float               mRank;
    float               mRankLog;
    int                 nEEMCMatch;   // # of matched endcap towers

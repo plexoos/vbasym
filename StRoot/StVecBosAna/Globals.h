@@ -20,11 +20,11 @@ inline bool operator>=(const StJet& lhs, const StJet& rhs) { return !operator< (
 
 struct CompareStJets
 {
-   bool operator()(const StJet* lhs, const StJet* rhs) const { return (*lhs) < (*rhs); }
+   bool operator()(const StJet* lhs, const StJet* rhs) const { return (*lhs) > (*rhs); }
 };
 
 
-typedef std::set<StJet*, CompareStJets>   StJetPtrSet;
+typedef std::set<StJet*, CompareStJets>   StJetPtrSet;         // Jets are sorted according to their E
 typedef StJetPtrSet::iterator             StJetPtrSetIter;
 typedef StJetPtrSet::const_iterator       StJetPtrSetConstIter;
 

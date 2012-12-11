@@ -19,8 +19,12 @@ void St2011pubWanaMaker::initHistos()
   int nCase=5;
 
   hA[0]=h=new TH1F(core+"StatEve",core+" event count",nCase,0,nCase);
-  h->GetXaxis()->SetTitleOffset(0.4);  h->GetXaxis()->SetLabelSize(0.06);  h->GetXaxis()->SetTitleSize(0.05); h->SetMinimum(0.8);
-  h->SetLineColor(kBlue);h->SetLineWidth(2);
+  h->GetXaxis()->SetTitleOffset(0.4);
+  h->GetXaxis()->SetLabelSize(0.06);
+  h->GetXaxis()->SetTitleSize(0.05);
+  h->SetMinimum(0.8);
+  h->SetLineColor(kBlue);
+  h->SetLineWidth(2);
 
   char key[][200]={"inp","acc","W"};
   for(int i=0;i<3;i++) h->Fill(key[i],0.); // preset the order of keys
