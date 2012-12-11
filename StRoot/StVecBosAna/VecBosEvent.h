@@ -66,6 +66,7 @@ public:
    WeveESMD           esmd;             //!
    StJetPtrSet        mJets;            //
    StJetPtrSet        mJetsPure;        //
+   StJetPtrSet        mJetsIsolated;    //
    VecBosVertexVec    mVertices;
    VecBosTrackVec     mTracks;
    VecBosTrackPtrVec  mTracksCluster;

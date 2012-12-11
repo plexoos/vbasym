@@ -13,7 +13,7 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mStMuDst(0),
 
    mNumGoodVertices(0), mNumGoodTracks(0), mNumBTracks(0), mNumETracks(0), mNumIsolatedTracks(0),
-   mStJets(0), mJets(), mJetsPure(), mVertices(),
+   mStJets(0), mJets(), mJetsPure(), mJetsIsolated(), mVertices(),
    mTracks(), mTracksCluster(), mTracksIsolated(), mTracksBLepton(), mTracksELepton(),
    mWEvent(0),
    mP4JetTotal(), mP4JetFirst(), mP4JetRecoil(), 
@@ -174,6 +174,8 @@ void VecBosEvent::Process()
          mJetsPure.insert(stJet);
          mP4JetRecoil += *stJet;
          //utils::PrintTLorentzVector(mP4JetRecoil);
+      } else {
+         mJetsIsolated.insert(stJet);
       }
    }
 }
@@ -607,6 +609,7 @@ void VecBosEvent::clear()
    esmd.clear();
    mJets.clear();
    mJetsPure.clear();
+   mJetsIsolated.clear();
    mVertices.clear();
    mTracks.clear();
    mTracksCluster.clear();
