@@ -11,7 +11,10 @@
 
 #include "StMuDSTMaker/COMMON/StMuDstMaker.h"
 #include "StMuDSTMaker/COMMON/StMuDst.h"
+#include <StMuDSTMaker/COMMON/StMuTriggerIdCollection.h>
 #include "StMuDSTMaker/COMMON/StMuEvent.h"
+#include <StMuDSTMaker/COMMON/StMuTrack.h>
+#include <StMuDSTMaker/COMMON/StMuPrimaryVertex.h>
 #include "StTriggerUtilities/L2Emulator/L2wAlgo/L2wResult2009.h"
 
 #include "StEmcUtil/database/StBemcTables.h"
@@ -2517,3 +2520,91 @@ WeveCluster StVecBosMaker::sumEtowPatch(int iEta, int iPhi, int Leta, int  Lphi,
    }
    return CL;
 }
+
+
+//________________________________________________
+//________________________________________________
+
+void
+StVecBosMaker::hadronicRecoil(){ //add up all vector pt outside of 'nearJet' region to get 'hadronic recoil' pt vector 
+
+  for(uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++) 
+  {
+    VecBosVertex &vertex = mVecBosEvent->mVertices[iv];
+    for(uint it = 0; it < vertex.eleTrack.size(); it++) 
+    {
+      VecBosTrack &track = vertex.eleTrack[it];
+      if(track.isMatch2Cl == false) continue;
+      
+      TVector3 recoil;
+      
+      //.... process BTOW hits
+      for(int i = 0; i < mxBtow; i++) 
+      {
+	float ene = mVecBosEvent->bemc.eneTile[kBTow][i];
+	if(ene <= 0) continue;
+
+	TVector3 primP = positionBtow[i]-TVector3(0,0,vertex.z);
+	primP.SetMag(ene); // it is 3D momentum in the event ref frame
+
+	float deltaR = primP.DeltaR(primP);        
+	if(deltaR < mVecBosEvent->mTrackIsoDeltaR) continue;
+	recoil += primP;
+      }
+
+      //....process ETOW hits
+      for(int iphi = 0; iphi < mxEtowPhiBin; iphi++)
+      {
+	for(int ieta = 0; ieta < mxEtowEta; ieta++)
+        {
+	  float ene = mVecBosEvent->etow.ene[iphi][ieta];
+	  if(ene <= 0) continue; //skip towers with no energy
+ 
+	  TVector3 primP = positionEtow[iphi][ieta] - TVector3(0,0,vertex.z);
+	  primP.SetMag(ene); // it is 3D momentum in the event ref frame
+
+	  float deltaR = primP.DeltaR(primP);        
+	  if(deltaR < mVecBosEvent->mTrackIsoDeltaR) continue;
+	  recoil += primP;
+	}
+      }    
+
+      //....process TPC tracks
+      int vertID = vertex.id;
+      assert(vertID >= 0);
+      assert(vertID < (int)mStMuDstMaker->muDst()->numberOfPrimaryVertices());
+      
+      StMuPrimaryVertex* prV = mStMuDstMaker->muDst()->primaryVertex(vertID);
+      assert(prV);	  
+      mStMuDstMaker->muDst()->setVertexIndex(vertID);
+
+      float rank = prV->ranking();
+      assert(rank > 0);
+
+      Int_t nPrimTrAll = mStMuDstMaker->muDst()->GetNPrimaryTrack();
+
+      for(int itr=0;itr<nPrimTrAll;itr++) 
+      {
+	StMuTrack *prTr = mStMuDstMaker->muDst()->primaryTracks(itr);
+	if(prTr->flag() <= 0) continue;
+	if(prTr->flag() != 301) continue;// TPC-only regular tracks
+
+	float hitFrac = 1.*prTr->nHitsFit()/prTr->nHitsPoss();
+	if(hitFrac < par_nHitFrac) continue;
+
+	StThreeVectorF prPvect = prTr->p();
+
+	TVector3 primP = TVector3(prPvect.x(),prPvect.y(),prPvect.z());
+
+	float deltaR = primP.DeltaR(primP);
+	if(deltaR <  mVecBosEvent->mTrackIsoDeltaR) continue;
+	if(primP.Perp() < 0.15) continue; //lower threshold on pT < 150 MeV
+	recoil += primP;	
+      }
+      
+      track.hadronicRecoil = recoil;
+
+    }
+  }
+}
+

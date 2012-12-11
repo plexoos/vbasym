@@ -80,7 +80,7 @@ private:
    int   mMinNumPileupVertices;
 
    int   par_nFitPts, parE_nFitPts;
-   float par_trackRin,  par_trackRout;
+   float par_nHitFrac, par_trackRin,  par_trackRout;
    float parE_nHitFrac, parE_trackRin,  parE_trackRout, mMinETrackPt;
 
    int   par_kSigPed, par_AdcThres;
@@ -143,6 +143,9 @@ private:
    int par_maxDisplEve;
 
    StBemcTables *mBarrelTables;                          //used to access EMC status and ped info
+   TVector3 positionBtow[mxBtow]; // vs. tower ID
+   TVector3 positionBsmd[mxBSmd][mxBStrips]; // vs. strip ID       
+   TVector3 positionEtow[mxEtowSec*mxEtowSub][mxEtowEta];  
 
    StEEmcDb       *mDbE;       // access to EEMC database
    StSpinDbMaker  *spinDb;     // access spin information
@@ -169,6 +172,7 @@ private:
    void  FindWBoson();
    void  FindWBosonEndcap();
    void  FindZBoson();
+   void  hadronicRecoil();
    int   ExtendTrack2Endcap();
    bool  MatchTrack2EtowCluster();
    void  FindNearJet();

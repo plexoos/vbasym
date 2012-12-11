@@ -11,13 +11,14 @@ using namespace std;
 
 VecBosEvent::VecBosEvent() : ProtoEvent(),
    mStMuDst(0),
-   mMuDstNumGTracks(0), mMuDstNumVertices(0), mMuDstNumPTracks(0), mMuDstNumOTracks(0),
+
    mNumGoodVertices(0), mNumGoodTracks(0), mNumBTracks(0), mNumETracks(0), mNumIsolatedTracks(0),
    mStJets(0), mJets(), mJetsPure(), mVertices(),
    mTracks(), mTracksCluster(), mTracksIsolated(), mTracksBLepton(), mTracksELepton(),
    mWEvent(0),
    mP4JetTotal(), mP4JetFirst(), mP4JetRecoil(), 
    mMinDeltaR(M_PI),
+   fPtKfactor(0),
    mMaxTrackClusterDist (7),
    mTrackIsoDeltaR      (0.7),
    mTrackIsoDeltaPhi    (0.7),
@@ -286,7 +287,7 @@ void VecBosEvent::CalcRecoil()
 
    mWEvent->CalcRecoil(*mcEvent);
 
-   // Lets now do the MC analysis runnin trough the entire selection
+   // Lets now do the MC analysis running trough the entire selection
    // run through W cuts to fill other histos............
    for (uint iv = 0; iv < mVertices.size(); iv++)
    {
@@ -295,12 +296,13 @@ void VecBosEvent::CalcRecoil()
       for (uint it = 0; it < V.eleTrack.size(); it++)
       {
          VecBosTrack &T = V.eleTrack[it];
-         if (T.isMatch2Cl == false) continue;
+         ////if (T.isMatch2Cl == false) continue;
          assert(T.mCluster2x2.nTower > 0); // internal logical error
          //assert(T.nearTotET > 0); // internal logical error
 
          //if (T.mCluster2x2.ET / T.nearTotET < wMK->par_nearTotEtFrac) continue; // too large nearET
-         if (T.awayTotET > 30.) continue; // too large awayET , Jan
+         ////if (T.awayTotET > 30.) continue; // too large awayET , Jan
+
          //Full W cuts applied at this point
 
          hadronicRecoilEta = T.hadronicRecoil.Eta();
@@ -625,6 +627,7 @@ void VecBosEvent::clear()
    //mMinClusterEnergyFrac = 0.88;
    mMinClusterEnergyFrac = 0.80;
    mMaxEnergyInOppsCone  = 30;   // GeV
+   fPtKfactor         = 0;
 }
 
 

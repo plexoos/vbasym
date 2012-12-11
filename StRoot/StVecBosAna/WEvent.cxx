@@ -106,21 +106,6 @@ void WEvent::CalcRecoil(StMcEvent &stMcEvent)
       return;
    }
 
-   //cout << "primVertex:" << endl;
-   //primVertex->Print();
-   //cout << endl;
-
-   // Loop over vertices
-   //StSPtrVecMcVertex::const_iterator iVertex    = stMcEvent.vertices().begin();
-   //StSPtrVecMcVertex::const_iterator lastVertex = stMcEvent.vertices().end();
-
-   //cout << "vertices:" << endl;
-   //for ( ; iVertex!=lastVertex; ++iVertex)
-   //{
-   //   const StMcVertex *stMcVertex = *iVertex;
-   //   stMcVertex->Print();
-   //}
-   //cout << endl;
 
    // Loop over tracks
    std::vector<StMcTrack*, std::allocator<StMcTrack*> >::const_iterator iParticle     = stMcEvent.tracks().begin();
