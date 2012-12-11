@@ -286,6 +286,7 @@ void VecBosTrack::CalcEnergyInNearCone()
    if (GetClusterEnergyFrac() >= mEvent->mMinClusterEnergyFrac)
    {
       mType |= kISOLATED;
+      mEvent->mTracksIsolated.push_back(this);
       //if (GetClusterEnergyFrac() >= mEvent->mMinClusterEnergyFrac)
    }
    

@@ -175,9 +175,9 @@ Int_t StVecBosMaker::Init()
       mTreeFile = new TFile(mTreeName, "recreate");
       mTreeFile->cd();
 
-      mWtree = new TTree("mWtree", "W candidate Events");
+      mWtree = new TTree("t", "mWtree");
       mVecBosEvent = new VecBosEvent();
-      mWtree->Branch("mVecBosEvent", "VecBosEvent", &mVecBosEvent);
+      mWtree->Branch("e", "VecBosEvent", &mVecBosEvent);
    }
 
    assert(HList);
@@ -345,7 +345,8 @@ Int_t StVecBosMaker::Make()
    //mWtree->Branch("mVecBosEvent", "VecBosEvent", &mVecBosEvent);
 
    mNumInputEvents++;
-   //Info("Make", "Called for event %d", mNumInputEvents);
+   cout << endl;
+   Info("Make()", "Called for event %d", mNumInputEvents);
    //printf("isMC = %d\n", isMC);
 
    if (isMC) {
@@ -372,7 +373,7 @@ Int_t StVecBosMaker::Make()
    const char *afile = mStMuDstMaker->GetFile();
 
    if (mNumInputEvents % 200 == 0)
-      Info("Make", "nEve: inp=%d, trig=%d, accpt=%d, daqFile: %s\n", mNumInputEvents, mNumTrigEvents, mNumAcceptedEvents, afile);
+      Info("Make()", "nEve: inp=%d, trig=%d, accpt=%d, daqFile: %s\n", mNumInputEvents, mNumTrigEvents, mNumAcceptedEvents, afile);
 
    //hA[0]->Fill("inp", 1.);
    //hE[0]->Fill("inp", 1.);
@@ -383,7 +384,7 @@ Int_t StVecBosMaker::Make()
 
    // Skip entire event if no energy in BTOW && ETOW
    if ( btowStat != 0 && etowStat != 0 ) {
-      Info("Make", "No energy in neither BTOW nor ETOW. Skipping event...");
+      Info("Make()", "No energy in neither BTOW nor ETOW. Skipping event...");
       return kStOK;
    }
 
@@ -392,7 +393,7 @@ Int_t StVecBosMaker::Make()
 
    // Skip entire event if no valid trig ID
    if ( btrig != 0 && etrig != 0 ) {
-      Info("Make", "No trigger bit in neither BTOW nor ETOW. Skipping event...");
+      Info("Make()", "No trigger bit in neither BTOW nor ETOW. Skipping event...");
       //mWtree->Fill();
       return kStOK;
    }
@@ -425,7 +426,7 @@ Int_t StVecBosMaker::Make()
 
    //XXX:ds: // Skip event w/o high Pt tracks
    //XXX:ds: if (mVecBosEvent->GetNumTracks() <= 0) {
-   //XXX:ds:    Info("Make", "No tracks found in the event. Skipping...");
+   //XXX:ds:    Info("Make()", "No tracks found in the event. Skipping...");
    //XXX:ds:    return kStOK;
    //XXX:ds: }
 

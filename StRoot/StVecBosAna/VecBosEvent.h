@@ -64,16 +64,18 @@ public:
    WeveETOW           etow;             //!
    WeveEPRS           eprs;             //!
    WeveESMD           esmd;             //!
-   StJetPtrSet        mJets;
-   StJetPtrSet        mJetsPure;
+   StJetPtrSet        mJets;            //
+   StJetPtrSet        mJetsPure;        //
    VecBosVertexVec    mVertices;
    VecBosTrackVec     mTracks;
    VecBosTrackPtrVec  mTracksCluster;
+   VecBosTrackPtrVec  mTracksIsolated;
    VecBosTrackPtrSet  mTracksBLepton;   // Set of lepton track candidates, i.e. good tracks with energy in barrel
    VecBosTrackPtrSet  mTracksELepton;   // Set of lepton track candidates, i.e. good tracks with energy in endcap
    WEvent            *mWEvent;
    TLorentzVector     mP4JetTotal;
    TLorentzVector     mP4JetFirst;
+   TLorentzVector     mP4JetRecoil;
    Double_t           mMinDeltaR;
 
    float mMaxTrackClusterDist;  //! cm, dist between projected track and center of cluster
