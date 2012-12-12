@@ -77,7 +77,6 @@ public:
    TLorentzVector     mP4JetTotal;
    TLorentzVector     mP4JetFirst;
    TLorentzVector     mP4JetRecoil;
-   Double_t           mMinDeltaR;
 
    TVector3   RecoilFromTracksP3;
 

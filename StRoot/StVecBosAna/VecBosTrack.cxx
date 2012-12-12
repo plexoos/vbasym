@@ -14,7 +14,17 @@ using namespace std;
 VecBosTrack::VecBosTrack() : TObject(), mEvent(0), mType(kUNKNOWN), mHelix(), mVertex(0),
    mP3AtDca(), mP3AtBTow(), mCoorAtBTow(),
    mP3InNearCone(), mP3InNearConeTow(), mP3InNearConeBTow(), mP3InNearConeETow(), mP3InNearConeNoETow(), mP3InNearConeTpc(),
-   mP3InOppsCone(), mP3InOppsConeTow(), mP3InOppsConeBTow(), mP3InOppsConeETow(), mP3InOppsConeNoETow(), mP3InOppsConeTpc()
+   mP3InOppsCone(), mP3InOppsConeTow(), mP3InOppsConeBTow(), mP3InOppsConeETow(), mP3InOppsConeNoETow(), mP3InOppsConeTpc(),
+   awayTpcPT       (0),
+   awayEmcET       (0),
+   awayBtowET      (0),
+   awayEtowET      (0),
+   awayTotET       (0),
+   smallNearTpcPT  (0),
+   awayTotET_noEEMC(0),
+   mNumTracksInNearCone(0),
+   ptBalance(), ptBalance_noEEMC(), sPtBalance(0), sPtBalance_noEEMC(0), hadronicRecoil(),
+   mMinDeltaR(2*M_PI)
 {
    clear();
 }
@@ -110,11 +120,13 @@ void VecBosTrack::clear()
    awayTotET              = 0;
    smallNearTpcPT         = 0;
    awayTotET_noEEMC       = 0;
+   mNumTracksInNearCone   = 0;
    ptBalance              = TVector3(0, 0, 0);
    ptBalance_noEEMC       = TVector3(0, 0, 0);
    sPtBalance             = 0;
    sPtBalance_noEEMC      = 0;
    hadronicRecoil         = TVector3(0, 0, 0);
+   mMinDeltaR             = 2*M_PI;
 
    memset(esmdGlobStrip, -999, sizeof(esmdGlobStrip));
    memset(esmdDca, -999., sizeof(esmdDca));
@@ -128,7 +140,7 @@ void VecBosTrack::clear()
 }
 
 
-TVector3 VecBosTrack::CalcDistanceToMatchedCluster()
+TVector3 VecBosTrack::CalcDistanceToCluster()
 {
    return mCoorAtBTow - mCluster2x2.position;
 }

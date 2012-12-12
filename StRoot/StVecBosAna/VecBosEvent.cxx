@@ -19,8 +19,6 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mTracksIsolated(), //mTracksBLepton(), mTracksELepton(),
    mWEvent(0),
    mP4JetTotal(), mP4JetFirst(), //mP4JetRecoil(), 
-   mMinDeltaR(M_PI),
-   fPtKfactor(0),
    mMaxTrackClusterDist (7),
    mTrackIsoDeltaR      (0.7),
    mTrackIsoDeltaPhi    (0.7),
@@ -28,7 +26,10 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mMinTrackHitFrac     (0.51),
    //mMinClusterEnergyFrac(0.88),
    mMinClusterEnergyFrac(0.80),
-   mMaxEnergyInOppsCone (30)
+   mMaxEnergyInOppsCone (30),
+   hadronicRecoilEta(0),
+   hadronicRecoilPt(0),
+   fPtKfactor(0)
 {
    clear();
 }
@@ -140,7 +141,41 @@ void VecBosEvent::Process()
       if (iTrack->IsGood())     mNumGoodTracks++;
       if (iTrack->IsBTrack())   mNumBTracks++;
       if (iTrack->IsETrack())   mNumETracks++;
-      if (iTrack->IsIsolated()) mNumIsolatedTracks++;
+      //if (iTrack->IsIsolated()) mNumIsolatedTracks++;
+
+      // Consider tracks with clusters only
+      if (!iTrack->HasCluster()) continue;
+
+      // Find the min distance between the track and the closest jet
+
+      StJetPtrSetConstIter iJet = mJets.begin();
+      for ( ; iJet != mJets.end(); ++iJet)
+      {
+         StJet *stJet = *iJet;
+
+         Double_t deltaR = stJet->Vect().DeltaR(iTrack->mP3AtDca);
+         //Info("Process()", "Iso track found: %f ", deltaR);
+
+         // Find the distance to the closest track to this jet
+         if (deltaR < iTrack->mMinDeltaR) iTrack->mMinDeltaR = deltaR;
+      }
+
+      if (iTrack->mMinDeltaR > mTrackIsoDeltaR)
+      {
+         iTrack->mType |= VecBosTrack::kISOLATED;
+         mNumIsolatedTracks++;
+         mTracksIsolated.push_back(*iTrack);
+      }
+
+      //if (mMinDeltaR > mTrackIsoDeltaR) {
+      //   //Info("Process", "recoil accepted: %f > %f", mMinDeltaR, mTrackIsoDeltaR);
+      //   //utils::PrintTLorentzVector(*stJet);
+      //   //mJetsPure.insert(stJet);
+      //   //mP4JetRecoil += *stJet;
+      //   //utils::PrintTLorentzVector(mP4JetRecoil);
+      //} else {
+      //   //mJetsIsolated.insert(stJet);
+      //}
    }
 
    // Process jets
@@ -154,34 +189,6 @@ void VecBosEvent::Process()
       //utils::PrintTLorentzVector(*stJet);
       mP4JetTotal += *stJet;
       //utils::PrintTLorentzVector(mP4JetTotal);
-
-      // Check the distance between the isolated track (if exists) and a jet
-      mMinDeltaR = M_PI;
-      VecBosTrackVecIter iTrack = mTracks.begin();
-
-      for ( ; iTrack != mTracks.end(); ++iTrack)
-      {
-         if (!iTrack->HasCluster()) continue;
-         Double_t deltaR = stJet->Vect().DeltaR(iTrack->mP3AtDca);
-         //Info("Process()", "Iso track found: %f ", deltaR);
-         // Find the distance to the closest track to this jet
-         if (deltaR < mMinDeltaR) mMinDeltaR = deltaR;
-
-         if (deltaR > mTrackIsoDeltaR) {
-            iTrack->mType |= VecBosTrack::kISOLATED;
-            mTracksIsolated.push_back(*iTrack);
-         }
-      }
-
-      //if (mMinDeltaR > mTrackIsoDeltaR) {
-      //   //Info("Process", "recoil accepted: %f > %f", mMinDeltaR, mTrackIsoDeltaR);
-      //   //utils::PrintTLorentzVector(*stJet);
-      //   //mJetsPure.insert(stJet);
-      //   //mP4JetRecoil += *stJet;
-      //   //utils::PrintTLorentzVector(mP4JetRecoil);
-      //} else {
-      //   //mJetsIsolated.insert(stJet);
-      //}
    }
 }
 
@@ -474,10 +481,15 @@ TVector3 VecBosEvent::CalcP3InConeTpc(VecBosTrack *vbTrack, UShort_t cone1d2d, F
 
       // Don't count the same track
       //if (&*iTrack == vbTrack) continue;
+      // XXX:ds: move this requirement to the track class where appropriate
       //if (iTrack->GetFitHitFrac() < mMinTrackHitFrac) continue;
 
       if (cone1d2d == 1 && fabs(trackP3.DeltaPhi(iTrack->mP3AtDca)) > mTrackIsoDeltaPhi) continue;
-      if (cone1d2d == 2 &&      trackP3.DeltaR(iTrack->mP3AtDca)    > mTrackIsoDeltaR)   continue;
+      if (cone1d2d == 2) {
+         if (trackP3.DeltaR(iTrack->mP3AtDca) > mTrackIsoDeltaR) continue;
+         // Count the number of tracks in the cone
+         vbTrack->mNumTracksInNearCone++;
+      }
 
       totalP3InCone += iTrack->mP3AtDca;
    }
@@ -669,7 +681,6 @@ void VecBosEvent::clear()
    mP4JetTotal           = TLorentzVector();
    mP4JetFirst           = TLorentzVector();
    //mP4JetRecoil          = TLorentzVector();
-   mMinDeltaR            = M_PI;
    mMaxTrackClusterDist  = 7;    // cm
    mTrackIsoDeltaR       = 0.7;  // (rad) near-cone size
    mTrackIsoDeltaPhi     = 0.7;  // (rad) away-'cone' size, approx. 40 deg.

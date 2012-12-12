@@ -57,18 +57,20 @@ public:
    TVector3                mP3InOppsConeETow;
    TVector3                mP3InOppsConeNoETow;
    TVector3                mP3InOppsConeTpc;
-   float                   smallNearTpcPT;     //!(GeV/c) around prim track direction
+   float                   smallNearTpcPT;     //! GeV/c, around prim track direction
    float                   awayTpcPT;          //!
    float                   awayEmcET;          //!
    float                   awayBtowET;         //!
-   float                   awayEtowET;         //!(GeV/c) opposite in phi to prim track direction
+   float                   awayEtowET;         //! GeV/c, opposite in phi to prim track direction
    float                   awayTotET;          //!
-   float                   awayTotET_noEEMC;   //!(GeV) for nearCone 10 GeV is subtracted to avoid double counting
+   float                   awayTotET_noEEMC;   //! GeV, for nearCone 10 GeV is subtracted to avoid double counting
+   UShort_t                mNumTracksInNearCone;
    TVector3                ptBalance;
    TVector3                ptBalance_noEEMC;
    float                   sPtBalance;
-   float                   sPtBalance_noEEMC;   // signed pT balance (GeV/c)
+   float                   sPtBalance_noEEMC;  // signed pT balance (GeV/c)
    TVector3                hadronicRecoil;
+   float                   mMinDeltaR;         // Min distance to a jet
 
    // esmd shower info
    int                     hitSector;
@@ -98,7 +100,7 @@ public:
    //float     GetClusterEnergyFrac() const { return mCluster2x2.ET / mP3InNearCone.Perp(); }
    void      clear();
    void      print(int opt=0) const;
-   TVector3  CalcDistanceToMatchedCluster();
+   TVector3  CalcDistanceToCluster();
 
 private:
 
