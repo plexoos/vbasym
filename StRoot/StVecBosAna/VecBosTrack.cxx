@@ -257,7 +257,6 @@ void VecBosTrack::MatchTrack2BtowCluster()
    {
       isMatch2Cl = true; // cluster is matched to TPC track
       mType |= kHAS_CLUSTER;
-      //mEvent->mTracksCluster.push_back(this);
    }
 
    //hA[20]->Fill("#Delta R", 1.);

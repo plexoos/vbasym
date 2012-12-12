@@ -11,14 +11,17 @@ using namespace std;
 
 VecBosEvent::VecBosEvent() : ProtoEvent(),
    mStMuDst(0),
-
    mNumGoodVertices(0), mNumGoodTracks(0), mNumBTracks(0), mNumETracks(0), mNumIsolatedTracks(0),
-   mStJets(0), mJets(), //mJetsPure(), mJetsIsolated(),
+   mStJets(0), mJets(),
    mVertices(),
-   mTracks(), //mTracksCluster(),
-   mTracksIsolated(), //mTracksBLepton(), mTracksELepton(),
+   mTracks(),
+   mTracksIsolated(),
    mWEvent(0),
-   mP4JetTotal(), mP4JetFirst(), //mP4JetRecoil(), 
+   mP4JetTotal(), mP4JetFirst(),
+   mP3RecoilFromTracks(),
+   mHadronicRecoilEta(0),
+   mHadronicRecoilPt(0),
+   mPtKfactor(0),
    mMaxTrackClusterDist (7),
    mTrackIsoDeltaR      (0.7),
    mTrackIsoDeltaPhi    (0.7),
@@ -26,10 +29,7 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mMinTrackHitFrac     (0.51),
    //mMinClusterEnergyFrac(0.88),
    mMinClusterEnergyFrac(0.80),
-   mMaxEnergyInOppsCone (30),
-   hadronicRecoilEta(0),
-   hadronicRecoilPt(0),
-   fPtKfactor(0)
+   mMaxEnergyInOppsCone (30)
 {
    clear();
 }
@@ -84,7 +84,7 @@ void VecBosEvent::AddStJets(StJets *stJets, StJets *stJetsNoEndcap)
    TIter         jetsIter(jets);
    jetsIter.Reset();
 
-   while ( StJet* stJet = (StJet*) jetsIter() ) {
+   while ( StJet *stJet = (StJet *) jetsIter() ) {
       mJets.insert(stJet);
    }
 }
@@ -111,12 +111,6 @@ UInt_t VecBosEvent::GetNumTracksWithBCluster()
 
    return nTracks;
 }
-
-
-//UInt_t VecBosEvent::GetNumTracksWithBCluster2()
-//{
-//   return mTracksBLepton.size();
-//}
 
 
 void VecBosEvent::Process()
@@ -149,8 +143,7 @@ void VecBosEvent::Process()
       // Find the min distance between the track and the closest jet
 
       StJetPtrSetConstIter iJet = mJets.begin();
-      for ( ; iJet != mJets.end(); ++iJet)
-      {
+      for ( ; iJet != mJets.end(); ++iJet) {
          StJet *stJet = *iJet;
 
          Double_t deltaR = stJet->Vect().DeltaR(iTrack->mP3AtDca);
@@ -160,8 +153,7 @@ void VecBosEvent::Process()
          if (deltaR < iTrack->mMinDeltaR) iTrack->mMinDeltaR = deltaR;
       }
 
-      if (iTrack->mMinDeltaR > mTrackIsoDeltaR)
-      {
+      if (iTrack->mMinDeltaR > mTrackIsoDeltaR) {
          iTrack->mType |= VecBosTrack::kISOLATED;
          mNumIsolatedTracks++;
          mTracksIsolated.push_back(*iTrack);
@@ -170,7 +162,6 @@ void VecBosEvent::Process()
       //if (mMinDeltaR > mTrackIsoDeltaR) {
       //   //Info("Process", "recoil accepted: %f > %f", mMinDeltaR, mTrackIsoDeltaR);
       //   //utils::PrintTLorentzVector(*stJet);
-      //   //mJetsPure.insert(stJet);
       //   //mP4JetRecoil += *stJet;
       //   //utils::PrintTLorentzVector(mP4JetRecoil);
       //} else {
@@ -182,14 +173,83 @@ void VecBosEvent::Process()
    StJetPtrSetConstIter iJet = mJets.begin();
    mP4JetFirst = *iJet ? **iJet : TLorentzVector();
 
-   for ( ; iJet != mJets.end(); ++iJet)
-   {
+   for ( ; iJet != mJets.end(); ++iJet) {
       StJet *stJet = *iJet;
       //Info("Process", "total jet");
       //utils::PrintTLorentzVector(*stJet);
       mP4JetTotal += *stJet;
       //utils::PrintTLorentzVector(mP4JetTotal);
    }
+}
+
+
+void VecBosEvent::ProcessMC()
+{
+   //Info("ProcessMC()", "test...");
+
+   StMcEvent *mcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
+   assert(mcEvent);
+
+   mWEvent->CalcRecoil(*mcEvent);
+}
+
+
+void VecBosEvent::CalcRecoilFromTracks()
+{
+   //loop over tracks with a good vertex
+   TVector3 recoil;
+   VecBosTrackVecIter iTrack = mTracks.begin();
+   for (; iTrack !=  mTracks.end(); ++iTrack)
+   {
+      //// iTrack->Process();
+      if (iTrack->IsGood() == false) continue;      // Track has a good vertex
+      if (iTrack->IsIsolated() == true) continue;   // Track is not the electro
+      //if(iTrack->HasCluster() == false) continue;  // Track points to a cluster
+
+      TVector3 TrackP3 = iTrack->mP3AtDca;
+
+      //....process TPC tracks
+
+      recoil += TrackP3;
+   }
+
+   mP3RecoilFromTracks = recoil;
+   mHadronicRecoilEta  = mP3RecoilFromTracks.Eta();
+   mHadronicRecoilPt   = mP3RecoilFromTracks.Perp();
+}
+
+
+void VecBosEvent::MCanalysis()
+{
+   ////CalcRecoilFromTracks();
+   // Lets now do the MC analysis running trough the entire selection
+   // run through W cuts to fill other histos............
+   //   for (uint iv = 0; iv < mVertices.size(); iv++)
+   //   {
+   //      VecBosVertex &V = mVertices[iv];
+
+   //      for (uint it = 0; it < V.eleTrack.size(); it++)
+   //      {
+   //         VecBosTrack &T = V.eleTrack[it];
+   ////if (T.isMatch2Cl == false) continue;
+   //         assert(T.mCluster2x2.nTower > 0); // internal logical error
+   //assert(T.nearTotET > 0); // internal logical error
+
+   //if (T.mCluster2x2.ET / T.nearTotET < wMK->par_nearTotEtFrac) continue; // too large nearET
+   ////if (T.awayTotET > 30.) continue; // too large awayET , Jan
+
+   //Full W cuts applied at this point
+
+   mHadronicRecoilEta = mP3RecoilFromTracks.Eta();
+
+   //hadronic recoil and correlations with W from pythia
+   //         TVector3 hadronicPt(T.hadronicRecoil.X(), T.hadronicRecoil.Y(), 0); //transverse momentum vector
+
+   mHadronicRecoilPt = mP3RecoilFromTracks.Perp();
+   //    }
+   //   }
+
+   //   mPtKfactor = mWEvent->mRecoilP4.Pt()/mHadronicRecoilPt;
 }
 
 
@@ -280,99 +340,16 @@ void VecBosEvent::McAnalysis()
          if (T.awayTotET > 30.) continue; // too large awayET , Jan
          //Full W cuts applied at this point
 
-         hadronicRecoilEta = T.hadronicRecoil.Eta();
+         mHadronicRecoilEta = T.hadronicRecoil.Eta();
 
          //hadronic recoil and correlations with W from pythia
          TVector3 hadronicPt(T.hadronicRecoil.X(), T.hadronicRecoil.Y(), 0); //transverse momentum vector
 
-         hadronicRecoilPt = hadronicPt.Perp();
+         mHadronicRecoilPt = hadronicPt.Perp();
       }
    }
 }
 */
-
-
-void VecBosEvent::RecoilFromTracks()
-{ 
-
-  //loop over tracks with a good vertex
-
-  TVector3 recoil; 
-  VecBosTrackVecIter iTrack = mTracks.begin();
-  for(; iTrack !=  mTracks.end(); ++iTrack)
-  {
-
-    //// iTrack->Process();
-    if(iTrack->IsGood() == false) continue;       // Track has a good vertex
-    if(iTrack->IsIsolated() == true) continue;    // Track is not the electro 
-    //if(iTrack->HasCluster() == false) continue;  // Track points to a cluster
-
-    TVector3 TrackP3 = iTrack->mP3AtDca;
-
-      //....process TPC tracks
-
-      recoil += TrackP3;      
-
-
-  }
-
-      //VecBosTrack vbTrack;
-      RecoilFromTracksP3 = recoil;
-}
-
-
-void VecBosEvent::ProcessMC()
-{
-   //Info("ProcessMC()", "test...");
-
-   StMcEvent *mcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
-   assert(mcEvent);
-
-   mWEvent->CalcRecoil(*mcEvent);
-}
-
-
-void VecBosEvent::MCanalysis()
-{
-
-   //////RecoilFromTracks();  
-   // Lets now do the MC analysis running trough the entire selection
-   // run through W cuts to fill other histos............
-//   for (uint iv = 0; iv < mVertices.size(); iv++)
-//   {
-//      VecBosVertex &V = mVertices[iv];
-
-//      for (uint it = 0; it < V.eleTrack.size(); it++)
-//      {
-//         VecBosTrack &T = V.eleTrack[it];
-         ////if (T.isMatch2Cl == false) continue;
-//         assert(T.mCluster2x2.nTower > 0); // internal logical error
-         //assert(T.nearTotET > 0); // internal logical error
-
-         //if (T.mCluster2x2.ET / T.nearTotET < wMK->par_nearTotEtFrac) continue; // too large nearET
-         ////if (T.awayTotET > 30.) continue; // too large awayET , Jan
-
-         //Full W cuts applied at this point
-
-
-   hadronicRecoilEta = RecoilFromTracksP3.Eta();
-
-         //hadronic recoil and correlations with W from pythia
-//         TVector3 hadronicPt(T.hadronicRecoil.X(), T.hadronicRecoil.Y(), 0); //transverse momentum vector
-
-   hadronicRecoilPt = RecoilFromTracksP3.Perp();
-//    }
-//   }
-
-//   fPtKfactor = mWEvent->mRecoilP4.Pt()/hadronicRecoilPt;
-  
-}
-
-
-//bool VecBosEvent::IsInJetCone(VecBosTrack *vbTrack)
-//{
-//   
-//}
 
 
 /**
@@ -389,10 +366,8 @@ WeveCluster VecBosEvent::FindMaxBTow2x2(int etaBin, int phiBin, float zVert)
    // Just 4 cases of 2x2 clusters
    float maxET = 0;
 
-   for (int iEta=etaBin-1; iEta<=etaBin; iEta++)
-   {
-      for (int iPhi=phiBin-1; iPhi<=phiBin; iPhi++)
-      {
+   for (int iEta = etaBin - 1; iEta <= etaBin; iEta++) {
+      for (int iPhi = phiBin - 1; iPhi <= phiBin; iPhi++) {
          WeveCluster cluster = SumBTowPatch(iEta, iPhi, L, L, zVert);
          if (maxET > cluster.ET) continue;
          maxET = cluster.ET;
@@ -416,16 +391,14 @@ WeveCluster VecBosEvent::SumBTowPatch(int etaBin, int phiBin, int etaWidth, int 
    double sumW          = 0;
    float  nomBTowRadius = gBTowGeom->Radius();
 
-   for (int iEta = etaBin; iEta < etaBin + etaWidth; iEta++) // trim in eta-direction
-   {
+   for (int iEta = etaBin; iEta < etaBin + etaWidth; iEta++) { // trim in eta-direction
       if (iEta < 0) continue;
       if (iEta >= mxBTetaBin) continue;
 
-      for (int iPhi = phiBin; iPhi < phiBin + phiWidth; iPhi++)
-      {
+      for (int iPhi = phiBin; iPhi < phiBin + phiWidth; iPhi++) {
          // wrap up in the phi-direction
          int   iPhi_p  = (iPhi + mxBTphiBin) % mxBTphiBin;         // keep it always positive
-         int   towerId = gMapBTowEtaPhiBin2Id[ iEta + iPhi_p*mxBTetaBin];
+         int   towerId = gMapBTowEtaPhiBin2Id[ iEta + iPhi_p * mxBTetaBin];
          float energy  = bemc.eneTile[kBTow][towerId - 1];
 
          //if (L<5) printf("n=%2d  iEta=%d iPhi_p=%d\n",cluster.nTower,iEta,iPhi_p);
@@ -434,7 +407,7 @@ WeveCluster VecBosEvent::SumBTowPatch(int etaBin, int phiBin, int etaWidth, int 
 
          float adc    = bemc.adcTile[kBTow][towerId - 1];
          float delZ   = gBCalTowerCoords[towerId - 1].z() - zVert;
-         float cosine = nomBTowRadius / sqrt(nomBTowRadius *nomBTowRadius + delZ *delZ);
+         float cosine = nomBTowRadius / sqrt(nomBTowRadius * nomBTowRadius + delZ * delZ);
          float ET     = energy * cosine;
          float logET  = log10(ET + 0.5);
 
@@ -453,7 +426,7 @@ WeveCluster VecBosEvent::SumBTowPatch(int etaBin, int phiBin, int etaWidth, int 
 
       // printf(" end btowSquare: etaBin=%d  nTw=%d, ET=%.1f adc=%.1f\n",iEta,cluster.nTower,cluster.ET,cluster.adcSum);
       if (sumW > 0)
-         cluster.position = (1./sumW) * cluCoord; // weighted cluster position
+         cluster.position = (1. / sumW) * cluCoord; // weighted cluster position
       else
          cluster.position = TVector3(0, 0, 999);
    }
@@ -473,8 +446,7 @@ TVector3 VecBosEvent::CalcP3InConeTpc(VecBosTrack *vbTrack, UShort_t cone1d2d, F
 
    VecBosTrackVecIter iTrack = mTracks.begin();
 
-   for ( ; iTrack != mTracks.end(); ++iTrack)
-   {
+   for ( ; iTrack != mTracks.end(); ++iTrack) {
       // Skip tracks from different vertices XXX:ds: Later can consider
       // vertices in some close proximity to this one
       if (iTrack->mVertex != vbTrack->mVertex) continue;
@@ -514,8 +486,7 @@ TVector3 VecBosEvent::CalcP3InConeBTow(VecBosTrack *vbTrack, UShort_t cone1d2d, 
    TVector3 trackP3 = vbTrack->mP3AtDca * scale;
 
    // process BTOW hits
-   for (int iBTow=0; iBTow<mxBtow; iBTow++)
-   {
+   for (int iBTow = 0; iBTow < mxBtow; iBTow++) {
       float energy = bemc.eneTile[kBTow][iBTow];
       if (energy <= 0) continue;
 
@@ -549,10 +520,8 @@ TVector3 VecBosEvent::CalcP3InConeETow(VecBosTrack *vbTrack, UShort_t cone1d2d, 
    TVector3 trackP3 = vbTrack->mP3AtDca * scale;
 
    // Loop over all phi bins
-   for (int iphi = 0; iphi < mxEtowPhiBin; iphi++) 
-   {
-      for (int ieta = 0; ieta < mxEtowEta; ieta++) // sum all eta rings
-      {
+   for (int iphi = 0; iphi < mxEtowPhiBin; iphi++) {
+      for (int ieta = 0; ieta < mxEtowEta; ieta++) { // sum all eta rings
          float energy = etow.ene[iphi][ieta];
          if (energy <= 0) continue; // skip towers with no energy
 
@@ -668,19 +637,14 @@ void VecBosEvent::clear()
    eprs.clear();
    esmd.clear();
    mJets.clear();
-   //mJetsPure.clear();
-   //mJetsIsolated.clear();
    mVertices.clear();
    mTracks.clear();
-   //mTracksCluster.clear();
    mTracksIsolated.clear();
-   //mTracksBLepton.clear();
-   //mTracksELepton.clear();
    if (mWEvent) delete mWEvent;
    mWEvent               = new WEvent();
    mP4JetTotal           = TLorentzVector();
    mP4JetFirst           = TLorentzVector();
-   //mP4JetRecoil          = TLorentzVector();
+
    mMaxTrackClusterDist  = 7;    // cm
    mTrackIsoDeltaR       = 0.7;  // (rad) near-cone size
    mTrackIsoDeltaPhi     = 0.7;  // (rad) away-'cone' size, approx. 40 deg.
@@ -689,8 +653,8 @@ void VecBosEvent::clear()
    //mMinClusterEnergyFrac = 0.88;
    mMinClusterEnergyFrac = 0.80;
    mMaxEnergyInOppsCone  = 30;   // GeV
-   RecoilFromTracksP3 = TVector3(0, 0, 0);
-   fPtKfactor         = 0;
+   mP3RecoilFromTracks   = TVector3(0, 0, 0);
+   mPtKfactor            = 0;
 }
 
 

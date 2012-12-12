@@ -341,7 +341,6 @@ void StVecBosMaker::Clear(const Option_t *)
 }
 
 
-//
 Int_t StVecBosMaker::Make()
 {
    // Create new event and connect it to the tree
@@ -351,11 +350,6 @@ Int_t StVecBosMaker::Make()
    mNumInputEvents++;
    cout << endl;
    Info("Make()", "Called for event %d", mNumInputEvents);
-   //printf("isMC = %d\n", isMC);
-
-   if (isMC) {
-      mVecBosEvent->ProcessMC();   
-   }
 
    // standard MuDst analysis
    if (!mStMuDstMaker || !mStJetReader) return kStOK; // We need both makers for proper analysis
@@ -390,8 +384,8 @@ Int_t StVecBosMaker::Make()
       return kStOK;
    }
 
-   int btrig    = ReadMuDstBarrelTrig();
-   int etrig    = ReadMuDstEndcapTrig();
+   int btrig = ReadMuDstBarrelTrig();
+   int etrig = ReadMuDstEndcapTrig();
 
    // Skip entire event if no valid trig ID
    if ( btrig != 0 && etrig != 0 ) {
@@ -413,10 +407,11 @@ Int_t StVecBosMaker::Make()
    ReadMuDstJets();   // Get input jet info
 
    mVecBosEvent->Process();
-   mVecBosEvent->RecoilFromTracks();
+   mVecBosEvent->CalcRecoilFromTracks();
 
    if (isMC) {
-      mVecBosEvent->MCanalysis();   
+      mVecBosEvent->ProcessMC();   
+      //mVecBosEvent->MCanalysis(); // move this to ProcessMC()
    }
 
    mVecBosRootFile->Fill(*mVecBosEvent);
@@ -451,7 +446,6 @@ Int_t StVecBosMaker::Make()
    //   float  jet_pt  = jet->Pt();
    //   float  jet_eta = jet->Eta();
    //   float  jet_phi = jet->Phi();
-
    //   hA[117]->Fill(jet_eta, jet_phi);
    //   hA[118]->Fill(jet_pt);
    //}
@@ -467,12 +461,11 @@ Int_t StVecBosMaker::Make()
 
    // Add info to the event
    CalcPtBalance();
-   //CalcMissingET();
 
    // endcap specific analysis
    //if (hasMatchedTrack2ECluster) {
-   //   analyzeESMD();
-   //   //analyzeEPRS(); // not implemented
+   //   AnalyzeESMD();
+   //   //AnalyzeEPRS(); // not implemented
    //}
 
    // Fill final histograms
@@ -696,102 +689,90 @@ void StVecBosMaker::chainJetFile( const Char_t *file )
 }
 
 
-// return non-zero on abort
-int StVecBosMaker::ReadMuDstEndcapTrig()
+int StVecBosMaker::ReadMuDstBTOW()
 {
-   if (isMC) {
-      if (mVecBosEvent->etow.maxAdc < 10. / 60.*4096)
-         return -1; //L2 is HT
-      hE[0]->Fill("L2ewET", 1.);
-      mVecBosEvent->l2EbitET = true;
-      return 0;
+   StMuEmcCollection *emc = mStMuDstMaker->muDst()->muEmcCollection();
+
+   if (!emc) {
+      gMessMgr->Warning() << "No EMC data for this event" << endm;
+      return -4;
    }
 
-   StMuEvent *stMuEvent = mStMuDstMaker->muDst()->event();
-   StMuTriggerIdCollection *tic = &(stMuEvent->triggerIdCollection());
+   int ibp = kBTow; // my index for tower & preshower set to BTOW
+   int n5  = 0, n0 = 0, n1 = 0, n2 = 0, n3 = 0, n4 = 0;
+   int maxID = 0;
+   double maxADC = 0, adcSum = 0;
 
-   assert(tic);
+   for (int softID=1; softID<=mxBtow; softID++)
+   {
+      float rawAdc = emc->getTowerADC(softID);
 
-   const StTriggerId &l1 = tic->l1();
-   vector<unsigned int> idL = l1.triggerIds();
+      if (rawAdc == 0) n0++;
 
-   //printf("nTrig=%d, trigID: ",idL.size());
-   for (unsigned int i = 0; i < idL.size(); i++) {
-      char txt[100];
-      sprintf(txt, "%d", idL[i]);
-      hE[1]->Fill(txt, 1.);
+      int statPed, statOfl, statGain;
+
+      mBarrelTables->getStatus(BTOW, softID, statPed, "pedestal"); // official BTOW detector ID
+      mBarrelTables->getStatus(BTOW, softID, statOfl);
+      mBarrelTables->getStatus(BTOW, softID, statGain, "calib");
+
+      if (statPed  != 1) { mVecBosEvent->bemc.statTile[ibp][softID - 1] = 1; n1++; continue; }
+      if (statOfl  != 1) { mVecBosEvent->bemc.statTile[ibp][softID - 1] = 2; n2++; continue; }
+      if (statGain != 1) { mVecBosEvent->bemc.statTile[ibp][softID - 1] = 4; n3++; continue; }
+
+      mVecBosEvent->bemc.statTile[ibp][softID - 1] = 0 ;
+
+      float ped, sigPed, gain;
+      int capID = 0; // just one value for btow
+
+      mBarrelTables->getPedestal(BTOW, softID, capID, ped, sigPed);
+      mBarrelTables->getCalib(BTOW, softID, 1, gain);
+
+      //if (use_gains_file == 1) {
+      //   gain = gains_BTOW[softID];
+      //}
+
+      //printf("id=%d gain=%f\n",softID,gain);
+
+      // method for shifting energy scale
+      gain = gain * mParBTOWScale; //(default is mParBTOWScale=1)
+
+      float adc = rawAdc - ped;
+
+      if (adc > 0) n4++;
+      if (adc < par_kSigPed * sigPed) continue;
+      if (adc < par_AdcThres)         continue;
+
+      n5++;
+      mVecBosEvent->bemc.adcTile[ibp][softID - 1] = adc;
+      mVecBosEvent->bemc.eneTile[ibp][softID - 1] = adc * gain;
+
+      if (maxADC < adc) { maxID = softID; maxADC = adc;}
+
+      adcSum += adc;
    }
 
-   //check trigger ID
-   if (!tic->nominal().isTrigger(parE_l2ewTrgID)) return -2;
-   hE[0]->Fill("L2ewId", 1.);
+   //printf("NNN %d %d %d %d %d %d id=%d\n",n0,n1,n2,n3,n4,n5,maxID);
+   if (n0 == mxBtow) return -1 ; // BTOW was not present in this events
 
-   // need to get offset for 2011 run for EEMC
-   struct  L2weResult2011 {
-      unsigned char  trigger;     // bit0=rnd, bit1=ET>thr
-      unsigned char  highestEt;   // cluster Et with 60Gev Max.  bits=Et*256/60
-      unsigned short highestRDO;
-   };
+   mVecBosEvent->bemc.tileIn[ibp] = 1; //tag usable data
 
-   TArrayI &l2Array = stMuEvent->L2Result();
-   LOG_DEBUG << Form("AccessL2Decision() from regular muDst: L2Array-size=%d", l2Array.GetSize()) << endm;
-
-   unsigned int* trigL2Chunk = (unsigned int*) l2Array.GetArray();
-   const int EEMCW_offset = 35; // valid only for 2011 run
-
-   L2weResult2011 *l2weResult2011 = (L2weResult2011*) &trigL2Chunk[EEMCW_offset];
-
-   mVecBosEvent->l2EbitET  = (l2weResult2011->trigger & 2) > 0; // bit1=ET>thr
-   mVecBosEvent->l2EbitRnd = (l2weResult2011->trigger & 1) > 0; // bit0=rnd,
-
-#if 0
-   if (l2weResult2011->trigger == 0) return -3;
-   printf(" L2-jet online results below:\n");
-   for (int k = 0; k < 64; k++)
-      if (trigL2Chunk[k]) printf("k=%2d  val=0x%04x\n", k, trigL2Chunk[k]);
-   printf("L2WE_Result 4-bytes: trg bitET=%d,  bitRnd=%d, highets:  ET/GeV=%.2f,  RDO=%d  hex=0x%08x\n", mVecBosEvent->l2EbitET, mVecBosEvent->l2EbitRnd, l2weResult2011->highestEt / 256.*60, l2weResult2011->highestRDO, trigL2Chunk[EEMCW_offset]);
-#endif
-
-   // hack to make the code work also for run 9 and early run 12
-   // XXX:ds: What about run 11?
-   if (mRunNo < 11000111 || mRunNo > 13000000) {
-      mVecBosEvent->l2EbitET  = 1;
-      mVecBosEvent->l2EbitRnd = 1;
+   if (mNumInputEvents % 5000 == 1) {
+      LOG_INFO << Form("unpackMuBTOW() dataIn=%d, nBbad: ped=%d stat=%d gain=%d ; nAdc: %d>0, %d>thres\n    maxADC=%.0f softID=%d adcSum=%.0f",
+                       mVecBosEvent->bemc.tileIn[ibp], n1, n2, n3, n4, n5,
+                       maxADC, maxID, adcSum
+                      ) << endm;
    }
 
-   if ( (mVecBosEvent->l2EbitRnd || mVecBosEvent->l2EbitET) == 0) return -3; // L2W-algo did not accept this event
+   hA[31]->Fill(maxADC);
+   hA[32]->Fill(adcSum);
 
-   hE[0]->Fill("L2ewBits", 1.); // confirmation bits were set properly
+   mVecBosEvent->bemc.maxAdc = maxADC;
 
-   if (mVecBosEvent->l2EbitRnd) {
-      hE[0]->Fill("L2ewRnd", 1.);
-      for (int m = 0; m < 90; m++) {
-         int val = stMuEvent->emcTriggerDetector().highTowerEndcap(m);
-         hE[7]->Fill(val);
-      }
+   if (maxID <= 2400) hA[195]->Fill(maxADC);
+   else               hA[196]->Fill(maxADC);
 
-      hE[61]->Fill(mVecBosEvent->bx7);
-   }
+   if (maxADC < par_maxADC) return -2 ; // not enough energy
 
-   if (!mVecBosEvent->l2EbitET) return -3; // drop L2W-random accepts
-   if ( mVecBosEvent->l2EbitET) hE[0]->Fill("L2ewET", 1.);
-
-   // only monitor below
-   hE[2]->Fill(mVecBosEvent->bx48);
-   hE[3]->Fill(mVecBosEvent->bx7);
-
-   // access L0-HT data
-   int mxVal = -1;
-   for (int m = 0; m < 90; m++)  {
-      int val = stMuEvent->emcTriggerDetector().highTowerEndcap(m);
-      if (mxVal < val) mxVal = val;
-      if (mVecBosEvent->l2EbitET) hE[6]->Fill(val);
-      if (val < parE_DsmThres) continue;
-      if (mVecBosEvent->l2EbitET) hE[8]->Fill(m);
-      //printf("Fired L0 EHT m=%d val=%d\n",m,val);
-   }
-
-   mVecBosEvent->etow.maxHtDsm = mxVal;
    return 0;
 }
 
@@ -856,95 +837,6 @@ int StVecBosMaker::ReadMuDstETOW()
    if (maxADC < par_maxADC) return -2 ; // not enough energy
 
    return 0;
-}
-
-
-void StVecBosMaker::ReadMuDstESMD()
-{
-   StMuEmcCollection *emc = mStMuDstMaker->muDst()->muEmcCollection();
-
-   if (!emc) {
-      LOG_WARN << "No EMC data for this event" << endm;
-   }
-
-   for (char uv = 'U'; uv <= 'V'; uv++)
-   {
-      int sec, strip;
-      int nh = emc->getNEndcapSmdHits(uv);
-
-      for (int i = 0; i < nh; i++) {
-         StMuEmcHit *hit = emc->getEndcapSmdHit(uv, i, sec, strip);
-         float rawAdc = hit->getAdc();
-         const EEmcDbItem *eEmcDbItem = mDbE->getByStrip(sec, uv, strip);
-         assert(eEmcDbItem); // it should never happened for muDst
-
-         if (eEmcDbItem->fail )   continue; // drop broken channels
-         if (eEmcDbItem->ped < 0) continue; // drop channels without peds
-
-         float adc    = rawAdc - eEmcDbItem->ped; // ped subtracted ADC
-         float sigPed = eEmcDbItem->sigPed;
-
-         int isec     = sec - 1;
-         int iuv      = eEmcDbItem->plane - 'U';
-         int istr     = eEmcDbItem->strip - 1;
-
-         //eEmcDbItem->print(); printf("adc=%f\n",adc);
-
-         assert(isec >= 0 && isec < mxEtowSec); //never trust the input
-         assert(iuv  >= 0 && iuv  < mxEsmdPlane);
-         assert(istr >= 0 && istr < mxEsmdStrip);
-
-         if (eEmcDbItem->gain <= 0) continue; // drop channels w/o gains
-         if (adc < par_kSigPed * sigPed) continue; //drop noise
-
-         mVecBosEvent->esmd.adc[isec][iuv][istr] = adc;
-         mVecBosEvent->esmd.ene[isec][iuv][istr] = adc / eEmcDbItem->gain;
-      }
-   }
-}
-
-
-void StVecBosMaker::ReadMuDstEPRS()
-{
-   StMuEmcCollection *emc = mStMuDstMaker->muDst()->muEmcCollection();
-
-   if (!emc) {
-      LOG_WARN << "No EMC data for this event" << endm;
-   }
-
-   int pNh = emc->getNEndcapPrsHits();
-
-   for (int i = 0; i < pNh; i++) {
-      int pre, sec, eta, sub; //muDst  ranges: sec:1-12, sub:1-5, eta:1-12 ,pre:1-3==>pre1/pre2/post
-
-      StMuEmcHit *hit = emc->getEndcapPrsHit(i, sec, sub, eta, pre);
-      float rawAdc = hit->getAdc();
-      //Db ranges: sec=1-12,sub=A-E,eta=1-12,type=T,P-R ; slow method
-
-      const EEmcDbItem *eEmcDbItem = mDbE->getTile(sec, sub - 1 + 'A', eta, pre - 1 + 'P');
-      assert(eEmcDbItem); // it should never happened for muDst
-      if (eEmcDbItem->fail ) continue; // drop not working channels
-
-      int isec = eEmcDbItem->sec - 1;
-      int isub = eEmcDbItem->sub - 'A';
-      int ieta = eEmcDbItem->eta - 1;
-      int ipre = pre - 1;
-      int iphi = isec * mxEtowSub + isub;
-
-      assert(isec >= 0 && isec < mxEtowSec); // check input is ok
-      assert(isub >= 0 && isub < mxEtowSub);
-      assert(ieta >= 0 && ieta < mxEtowEta);
-
-      float adc = rawAdc - eEmcDbItem->ped; // ped subtracted ADC
-      if (adc < par_kSigPed * eEmcDbItem->sigPed) continue;
-
-      mVecBosEvent->eprs.adc[iphi][ieta][ipre] = adc;
-
-      if (eEmcDbItem->gain <= 0) continue; // drop channels w/o gains
-
-      mVecBosEvent->eprs.ene[isec * mxEtowSub + isub][ieta][ipre] = adc / eEmcDbItem->gain;
-      mVecBosEvent->eprs.stat[isec * mxEtowSub + isub][ieta][ipre] = 0;
-   }
 }
 
 
@@ -1115,6 +1007,264 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
 
    mVecBosEvent->bemc.maxHtDsm = mxVal;
    return 0;
+}
+
+
+// return non-zero on abort
+int StVecBosMaker::ReadMuDstEndcapTrig()
+{
+   if (isMC) {
+      if (mVecBosEvent->etow.maxAdc < 10. / 60.*4096)
+         return -1; //L2 is HT
+      hE[0]->Fill("L2ewET", 1.);
+      mVecBosEvent->l2EbitET = true;
+      return 0;
+   }
+
+   StMuEvent *stMuEvent = mStMuDstMaker->muDst()->event();
+   StMuTriggerIdCollection *tic = &(stMuEvent->triggerIdCollection());
+
+   assert(tic);
+
+   const StTriggerId &l1 = tic->l1();
+   vector<unsigned int> idL = l1.triggerIds();
+
+   //printf("nTrig=%d, trigID: ",idL.size());
+   for (unsigned int i = 0; i < idL.size(); i++) {
+      char txt[100];
+      sprintf(txt, "%d", idL[i]);
+      hE[1]->Fill(txt, 1.);
+   }
+
+   //check trigger ID
+   if (!tic->nominal().isTrigger(parE_l2ewTrgID)) return -2;
+   hE[0]->Fill("L2ewId", 1.);
+
+   // need to get offset for 2011 run for EEMC
+   struct  L2weResult2011 {
+      unsigned char  trigger;     // bit0=rnd, bit1=ET>thr
+      unsigned char  highestEt;   // cluster Et with 60Gev Max.  bits=Et*256/60
+      unsigned short highestRDO;
+   };
+
+   TArrayI &l2Array = stMuEvent->L2Result();
+   LOG_DEBUG << Form("AccessL2Decision() from regular muDst: L2Array-size=%d", l2Array.GetSize()) << endm;
+
+   unsigned int* trigL2Chunk = (unsigned int*) l2Array.GetArray();
+   const int EEMCW_offset = 35; // valid only for 2011 run
+
+   L2weResult2011 *l2weResult2011 = (L2weResult2011*) &trigL2Chunk[EEMCW_offset];
+
+   mVecBosEvent->l2EbitET  = (l2weResult2011->trigger & 2) > 0; // bit1=ET>thr
+   mVecBosEvent->l2EbitRnd = (l2weResult2011->trigger & 1) > 0; // bit0=rnd,
+
+#if 0
+   if (l2weResult2011->trigger == 0) return -3;
+   printf(" L2-jet online results below:\n");
+   for (int k = 0; k < 64; k++)
+      if (trigL2Chunk[k]) printf("k=%2d  val=0x%04x\n", k, trigL2Chunk[k]);
+   printf("L2WE_Result 4-bytes: trg bitET=%d,  bitRnd=%d, highets:  ET/GeV=%.2f,  RDO=%d  hex=0x%08x\n", mVecBosEvent->l2EbitET, mVecBosEvent->l2EbitRnd, l2weResult2011->highestEt / 256.*60, l2weResult2011->highestRDO, trigL2Chunk[EEMCW_offset]);
+#endif
+
+   // hack to make the code work also for run 9 and early run 12
+   // XXX:ds: What about run 11?
+   if (mRunNo < 11000111 || mRunNo > 13000000) {
+      mVecBosEvent->l2EbitET  = 1;
+      mVecBosEvent->l2EbitRnd = 1;
+   }
+
+   if ( (mVecBosEvent->l2EbitRnd || mVecBosEvent->l2EbitET) == 0) return -3; // L2W-algo did not accept this event
+
+   hE[0]->Fill("L2ewBits", 1.); // confirmation bits were set properly
+
+   if (mVecBosEvent->l2EbitRnd) {
+      hE[0]->Fill("L2ewRnd", 1.);
+      for (int m = 0; m < 90; m++) {
+         int val = stMuEvent->emcTriggerDetector().highTowerEndcap(m);
+         hE[7]->Fill(val);
+      }
+
+      hE[61]->Fill(mVecBosEvent->bx7);
+   }
+
+   if (!mVecBosEvent->l2EbitET) return -3; // drop L2W-random accepts
+   if ( mVecBosEvent->l2EbitET) hE[0]->Fill("L2ewET", 1.);
+
+   // only monitor below
+   hE[2]->Fill(mVecBosEvent->bx48);
+   hE[3]->Fill(mVecBosEvent->bx7);
+
+   // access L0-HT data
+   int mxVal = -1;
+   for (int m = 0; m < 90; m++)  {
+      int val = stMuEvent->emcTriggerDetector().highTowerEndcap(m);
+      if (mxVal < val) mxVal = val;
+      if (mVecBosEvent->l2EbitET) hE[6]->Fill(val);
+      if (val < parE_DsmThres) continue;
+      if (mVecBosEvent->l2EbitET) hE[8]->Fill(m);
+      //printf("Fired L0 EHT m=%d val=%d\n",m,val);
+   }
+
+   mVecBosEvent->etow.maxHtDsm = mxVal;
+   return 0;
+}
+
+
+void StVecBosMaker::ReadMuDstBSMD()
+{
+   const char cPlane[mxBSmd] = {'E', 'P'};
+
+   // Access to muDst
+   StMuEmcCollection *emc = mStMuDstMaker->muDst()->muEmcCollection();
+
+   if (!emc) {
+      gMessMgr->Warning() << "No EMC data for this muDst event" << endm;    return;
+   }
+
+   // BSMD
+   for (int iEP = bsmde; iEP <= bsmdp; iEP++)
+   { // official BSMD plane IDs
+      int iep = iEP - 3;
+      assert(bsmde == 3); // what a hack
+      int nh = emc->getNSmdHits(iEP);
+      //printf("muDst BSMD-%c nHit=%d\n",cPlane[iep],nh);
+      int n5 = 0, n1 = 0, n2 = 0, n3 = 0, n4 = 0;
+
+      for (int i = 0; i < nh; i++)
+      {
+         StMuEmcHit *hit = emc->getSmdHit(i, iEP);
+         float  adc = hit->getAdc();
+         int softID = hit->getId();
+
+         int statPed, statOfl, statGain;
+         mBarrelTables->getStatus(iEP, softID, statPed, "pedestal");
+         mBarrelTables->getStatus(iEP, softID, statOfl);
+         mBarrelTables->getStatus(iEP, softID, statGain, "calib");
+
+         if (statPed != 1) { mVecBosEvent->bemc.statBsmd[iep][softID - 1] = 1; n1++; continue; }
+         if (statOfl != 1) { mVecBosEvent->bemc.statBsmd[iep][softID - 1] = 2; n2++; continue; }
+         if (statGain < 1 || statGain > 19) { mVecBosEvent->bemc.statBsmd[iep][softID - 1] = 4; n3++; continue; }
+
+         float pedRes, sigPed, gain;
+         int capID = 0; // just one value for ped residua in pp500, 2009 run
+
+         mBarrelTables->getPedestal(iEP, softID, capID, pedRes, sigPed);
+         mBarrelTables->getCalib(iEP, softID, 1, gain);
+
+         if (isMC) { // overwrite it based on genat DE & private calibration
+            float par_bsmdAbsGain = 6e6; // tmp arbitrary absolute calib of bsmd, was 3e6
+            float  de = hit->getEnergy();// Geant energy deposit (GeV)
+            adc = de * par_bsmdAbsGain;
+         }
+         else { // correct for pedestal residua
+            adc -= pedRes;
+
+            if (adc > 0) n4++;
+            if (adc < par_kSigPed * sigPed) continue;
+         }
+
+         n5++;
+         assert(softID >= 1);      assert(softID <= mxBStrips);
+         int id0 = softID - 1;
+         mVecBosEvent->bemc.adcBsmd[ iep][id0] = adc;
+         hA[70 + 10 * iep]->Fill(adc);
+
+         //if(mNumInputEvents<3 || i <20 )printf("  i=%d, smd%c id=%d, m=%d adc=%.3f pedRes=%.1f, sigP=%.1f stat: O=%d P=%d G=%d  gain=%.2f\n",i,cPlane[iep],softID,1+id0/150,adc,pedRes,sigPed, statOfl,statPed,statGain, gain);
+      }
+
+      if (mNumTrigEvents % 5000 == 1) {
+         LOG_INFO << Form("unpackMuBSMD-%c() nBbad: ped=%d stat=%d gain=%d ; nAdc: %d>0, %d>thres", cPlane[iep], n1, n2, n3, n4, n5) << endm;
+      }
+   }
+}
+
+
+void StVecBosMaker::ReadMuDstESMD()
+{
+   StMuEmcCollection *emc = mStMuDstMaker->muDst()->muEmcCollection();
+
+   if (!emc) {
+      LOG_WARN << "No EMC data for this event" << endm;
+   }
+
+   for (char uv = 'U'; uv <= 'V'; uv++)
+   {
+      int sec, strip;
+      int nh = emc->getNEndcapSmdHits(uv);
+
+      for (int i = 0; i < nh; i++) {
+         StMuEmcHit *hit = emc->getEndcapSmdHit(uv, i, sec, strip);
+         float rawAdc = hit->getAdc();
+         const EEmcDbItem *eEmcDbItem = mDbE->getByStrip(sec, uv, strip);
+         assert(eEmcDbItem); // it should never happened for muDst
+
+         if (eEmcDbItem->fail )   continue; // drop broken channels
+         if (eEmcDbItem->ped < 0) continue; // drop channels without peds
+
+         float adc    = rawAdc - eEmcDbItem->ped; // ped subtracted ADC
+         float sigPed = eEmcDbItem->sigPed;
+
+         int isec     = sec - 1;
+         int iuv      = eEmcDbItem->plane - 'U';
+         int istr     = eEmcDbItem->strip - 1;
+
+         //eEmcDbItem->print(); printf("adc=%f\n",adc);
+
+         assert(isec >= 0 && isec < mxEtowSec); //never trust the input
+         assert(iuv  >= 0 && iuv  < mxEsmdPlane);
+         assert(istr >= 0 && istr < mxEsmdStrip);
+
+         if (eEmcDbItem->gain <= 0) continue; // drop channels w/o gains
+         if (adc < par_kSigPed * sigPed) continue; //drop noise
+
+         mVecBosEvent->esmd.adc[isec][iuv][istr] = adc;
+         mVecBosEvent->esmd.ene[isec][iuv][istr] = adc / eEmcDbItem->gain;
+      }
+   }
+}
+
+
+void StVecBosMaker::ReadMuDstEPRS()
+{
+   StMuEmcCollection *emc = mStMuDstMaker->muDst()->muEmcCollection();
+
+   if (!emc) {
+      LOG_WARN << "No EMC data for this event" << endm;
+   }
+
+   int pNh = emc->getNEndcapPrsHits();
+
+   for (int i = 0; i < pNh; i++) {
+      int pre, sec, eta, sub; //muDst  ranges: sec:1-12, sub:1-5, eta:1-12 ,pre:1-3==>pre1/pre2/post
+
+      StMuEmcHit *hit = emc->getEndcapPrsHit(i, sec, sub, eta, pre);
+      float rawAdc = hit->getAdc();
+      //Db ranges: sec=1-12,sub=A-E,eta=1-12,type=T,P-R ; slow method
+
+      const EEmcDbItem *eEmcDbItem = mDbE->getTile(sec, sub - 1 + 'A', eta, pre - 1 + 'P');
+      assert(eEmcDbItem); // it should never happened for muDst
+      if (eEmcDbItem->fail ) continue; // drop not working channels
+
+      int isec = eEmcDbItem->sec - 1;
+      int isub = eEmcDbItem->sub - 'A';
+      int ieta = eEmcDbItem->eta - 1;
+      int ipre = pre - 1;
+      int iphi = isec * mxEtowSub + isub;
+
+      assert(isec >= 0 && isec < mxEtowSec); // check input is ok
+      assert(isub >= 0 && isub < mxEtowSub);
+      assert(ieta >= 0 && ieta < mxEtowEta);
+
+      float adc = rawAdc - eEmcDbItem->ped; // ped subtracted ADC
+      if (adc < par_kSigPed * eEmcDbItem->sigPed) continue;
+
+      mVecBosEvent->eprs.adc[iphi][ieta][ipre] = adc;
+
+      if (eEmcDbItem->gain <= 0) continue; // drop channels w/o gains
+
+      mVecBosEvent->eprs.ene[isec * mxEtowSub + isub][ieta][ipre] = adc / eEmcDbItem->gain;
+      mVecBosEvent->eprs.stat[isec * mxEtowSub + isub][ieta][ipre] = 0;
+   }
 }
 
 
@@ -1405,94 +1555,6 @@ void StVecBosMaker::ReadMuDstTracks(VecBosVertex* vbVertex)
 }
 
 
-int StVecBosMaker::ReadMuDstBTOW()
-{
-   StMuEmcCollection *emc = mStMuDstMaker->muDst()->muEmcCollection();
-
-   if (!emc) {
-      gMessMgr->Warning() << "No EMC data for this event" << endm;
-      return -4;
-   }
-
-   int ibp = kBTow; // my index for tower & preshower set to BTOW
-   int n5  = 0, n0 = 0, n1 = 0, n2 = 0, n3 = 0, n4 = 0;
-   int maxID = 0;
-   double maxADC = 0, adcSum = 0;
-
-   for (int softID=1; softID<=mxBtow; softID++)
-   {
-      float rawAdc = emc->getTowerADC(softID);
-
-      if (rawAdc == 0) n0++;
-
-      int statPed, statOfl, statGain;
-
-      mBarrelTables->getStatus(BTOW, softID, statPed, "pedestal"); // official BTOW detector ID
-      mBarrelTables->getStatus(BTOW, softID, statOfl);
-      mBarrelTables->getStatus(BTOW, softID, statGain, "calib");
-
-      if (statPed  != 1) { mVecBosEvent->bemc.statTile[ibp][softID - 1] = 1; n1++; continue; }
-      if (statOfl  != 1) { mVecBosEvent->bemc.statTile[ibp][softID - 1] = 2; n2++; continue; }
-      if (statGain != 1) { mVecBosEvent->bemc.statTile[ibp][softID - 1] = 4; n3++; continue; }
-
-      mVecBosEvent->bemc.statTile[ibp][softID - 1] = 0 ;
-
-      float ped, sigPed, gain;
-      int capID = 0; // just one value for btow
-
-      mBarrelTables->getPedestal(BTOW, softID, capID, ped, sigPed);
-      mBarrelTables->getCalib(BTOW, softID, 1, gain);
-
-      //if (use_gains_file == 1) {
-      //   gain = gains_BTOW[softID];
-      //}
-
-      //printf("id=%d gain=%f\n",softID,gain);
-
-      // method for shifting energy scale
-      gain = gain * mParBTOWScale; //(default is mParBTOWScale=1)
-
-      float adc = rawAdc - ped;
-
-      if (adc > 0) n4++;
-      if (adc < par_kSigPed * sigPed) continue;
-      if (adc < par_AdcThres)         continue;
-
-      n5++;
-      mVecBosEvent->bemc.adcTile[ibp][softID - 1] = adc;
-      mVecBosEvent->bemc.eneTile[ibp][softID - 1] = adc * gain;
-
-      if (maxADC < adc) { maxID = softID; maxADC = adc;}
-
-      adcSum += adc;
-   }
-
-   //printf("NNN %d %d %d %d %d %d id=%d\n",n0,n1,n2,n3,n4,n5,maxID);
-   if (n0 == mxBtow) return -1 ; // BTOW was not present in this events
-
-   mVecBosEvent->bemc.tileIn[ibp] = 1; //tag usable data
-
-   if (mNumInputEvents % 5000 == 1) {
-      LOG_INFO << Form("unpackMuBTOW() dataIn=%d, nBbad: ped=%d stat=%d gain=%d ; nAdc: %d>0, %d>thres\n    maxADC=%.0f softID=%d adcSum=%.0f",
-                       mVecBosEvent->bemc.tileIn[ibp], n1, n2, n3, n4, n5,
-                       maxADC, maxID, adcSum
-                      ) << endm;
-   }
-
-   hA[31]->Fill(maxADC);
-   hA[32]->Fill(adcSum);
-
-   mVecBosEvent->bemc.maxAdc = maxADC;
-
-   if (maxID <= 2400) hA[195]->Fill(maxADC);
-   else               hA[196]->Fill(maxADC);
-
-   if (maxADC < par_maxADC) return -2 ; // not enough energy
-
-   return 0;
-}
-
-
 void StVecBosMaker::FillTowHit(bool hasVertices)
 {
    if (!mVecBosEvent->l2bitET) return; //only barrel triggers
@@ -1571,75 +1633,6 @@ void StVecBosMaker::FillTowHit(bool hasVertices)
             }
             else if (fillAdc) hA[235 + bxBin]->Fill(ieta, iPhi);
          }
-      }
-   }
-}
-
-
-void StVecBosMaker::ReadMuDstBSMD()
-{
-   const char cPlane[mxBSmd] = {'E', 'P'};
-
-   // Access to muDst
-   StMuEmcCollection *emc = mStMuDstMaker->muDst()->muEmcCollection();
-
-   if (!emc) {
-      gMessMgr->Warning() << "No EMC data for this muDst event" << endm;    return;
-   }
-
-   // BSMD
-   for (int iEP = bsmde; iEP <= bsmdp; iEP++)
-   { // official BSMD plane IDs
-      int iep = iEP - 3;
-      assert(bsmde == 3); // what a hack
-      int nh = emc->getNSmdHits(iEP);
-      //printf("muDst BSMD-%c nHit=%d\n",cPlane[iep],nh);
-      int n5 = 0, n1 = 0, n2 = 0, n3 = 0, n4 = 0;
-
-      for (int i = 0; i < nh; i++)
-      {
-         StMuEmcHit *hit = emc->getSmdHit(i, iEP);
-         float  adc = hit->getAdc();
-         int softID = hit->getId();
-
-         int statPed, statOfl, statGain;
-         mBarrelTables->getStatus(iEP, softID, statPed, "pedestal");
-         mBarrelTables->getStatus(iEP, softID, statOfl);
-         mBarrelTables->getStatus(iEP, softID, statGain, "calib");
-
-         if (statPed != 1) { mVecBosEvent->bemc.statBsmd[iep][softID - 1] = 1; n1++; continue; }
-         if (statOfl != 1) { mVecBosEvent->bemc.statBsmd[iep][softID - 1] = 2; n2++; continue; }
-         if (statGain < 1 || statGain > 19) { mVecBosEvent->bemc.statBsmd[iep][softID - 1] = 4; n3++; continue; }
-
-         float pedRes, sigPed, gain;
-         int capID = 0; // just one value for ped residua in pp500, 2009 run
-
-         mBarrelTables->getPedestal(iEP, softID, capID, pedRes, sigPed);
-         mBarrelTables->getCalib(iEP, softID, 1, gain);
-
-         if (isMC) { // overwrite it based on genat DE & private calibration
-            float par_bsmdAbsGain = 6e6; // tmp arbitrary absolute calib of bsmd, was 3e6
-            float  de = hit->getEnergy();// Geant energy deposit (GeV)
-            adc = de * par_bsmdAbsGain;
-         }
-         else { // correct for pedestal residua
-            adc -= pedRes;
-
-            if (adc > 0) n4++;
-            if (adc < par_kSigPed * sigPed) continue;
-         }
-
-         n5++;
-         assert(softID >= 1);      assert(softID <= mxBStrips);
-         int id0 = softID - 1;
-         mVecBosEvent->bemc.adcBsmd[ iep][id0] = adc;
-         hA[70 + 10 * iep]->Fill(adc);
-
-         //if(mNumInputEvents<3 || i <20 )printf("  i=%d, smd%c id=%d, m=%d adc=%.3f pedRes=%.1f, sigP=%.1f stat: O=%d P=%d G=%d  gain=%.2f\n",i,cPlane[iep],softID,1+id0/150,adc,pedRes,sigPed, statOfl,statPed,statGain, gain);
-      }
-
-      if (mNumTrigEvents % 5000 == 1) {
-         LOG_INFO << Form("unpackMuBSMD-%c() nBbad: ped=%d stat=%d gain=%d ; nAdc: %d>0, %d>thres", cPlane[iep], n1, n2, n3, n4, n5) << endm;
       }
    }
 }
@@ -1994,11 +1987,6 @@ void StVecBosMaker::CalcPtBalance()
 }
 
 
-void StVecBosMaker::CalcMissingET()
-{
-}
-
-
 // Deprecated
 /*
 float StVecBosMaker::SumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, int pointTowId)
@@ -2326,10 +2314,10 @@ void StVecBosMaker::FindWBosonEndcap()
 }
 
 
-void StVecBosMaker::analyzeESMD()
+void StVecBosMaker::AnalyzeESMD()
 {
    if (!mVecBosEvent->l2EbitET) return;
-   //Info("analyzeESMD", "");
+   //Info("AnalyzeESMD", "");
 
    for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++)
    {
@@ -2407,10 +2395,10 @@ void StVecBosMaker::analyzeESMD()
 }
 
 
-void StVecBosMaker::analyzeEPRS()
+void StVecBosMaker::AnalyzeEPRS()
 {
    if (!mVecBosEvent->l2EbitET) return;
-   // Info("analyzeEPRS");
+   // Info("AnalyzeEPRS");
 
    for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++) 
    {
@@ -2459,7 +2447,7 @@ WeveCluster StVecBosMaker::maxEtow2x1(int iEta, int iPhi, float zVert)
 
 WeveCluster StVecBosMaker::maxEtow2x2(int iEta, int iPhi, float zVert)
 {
-   //printf("   maxEtow2x1  seed iEta=%d iPhi=%d \n",iEta, iPhi);
+   //printf("   maxEtow2x2  seed iEta=%d iPhi=%d \n",iEta, iPhi);
    const int L = 2; // size of the summed square
 
    WeveCluster maxCL;
@@ -2525,10 +2513,3 @@ WeveCluster StVecBosMaker::sumEtowPatch(int iEta, int iPhi, int Leta, int  Lphi,
    }
    return CL;
 }
-
-
-//________________________________________________
-//________________________________________________
-
-
-

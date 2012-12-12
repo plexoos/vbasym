@@ -65,20 +65,16 @@ public:
    WeveEPRS           eprs;             //!
    WeveESMD           esmd;             //!
    StJetPtrSet        mJets;            //
-   //StJetPtrSet        mJetsPure;        //
-   //StJetPtrSet        mJetsIsolated;    //
    VecBosVertexVec    mVertices;
    VecBosTrackVec     mTracks;
-   //VecBosTrackPtrVec  mTracksCluster;
-   VecBosTrackVec  mTracksIsolated;
-   //VecBosTrackPtrSet  mTracksBLepton;   // Set of lepton track candidates, i.e. good tracks with energy in barrel
-   //VecBosTrackPtrSet  mTracksELepton;   // Set of lepton track candidates, i.e. good tracks with energy in endcap
+   VecBosTrackVec     mTracksIsolated;
    WEvent            *mWEvent;
    TLorentzVector     mP4JetTotal;
    TLorentzVector     mP4JetFirst;
-   TLorentzVector     mP4JetRecoil;
-
-   TVector3   RecoilFromTracksP3;
+   TVector3           mP3RecoilFromTracks;
+   Double_t           mHadronicRecoilEta;
+   Double_t           mHadronicRecoilPt;
+   Double_t           mPtKfactor;
 
    float mMaxTrackClusterDist;  //! cm, dist between projected track and center of cluster
    float mTrackIsoDeltaR;       //! (rad) near-cone size
@@ -88,51 +84,44 @@ public:
    float mMinClusterEnergyFrac; //!
    float mMaxEnergyInOppsCone;  //!
 
-   Double_t         hadronicRecoilEta;
-   Double_t         hadronicRecoilPt;
-   Double_t         fPtKfactor;
-
    VecBosEvent();
 
-   void                SetStMuDst(StMuDst *stMuDst) { mStMuDst = stMuDst; }
-   VecBosVertex*       AddVertex(StMuPrimaryVertex &stMuVertex);
-   void                AddVertex(VecBosVertex &vbVertex);
-   void                AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex=0);
-   void                AddStJets(StJets *stJets, StJets *stJetsNoEndcap);
-   TClonesArray*       GetJets();
-   TClonesArray*       GetJetsNoEndcap();
-   UInt_t              GetNumJets();
-   UInt_t              GetNumJetsNoEndcap();
-   UInt_t              GetNumVertices()       { return mVertices.size(); }
-   UInt_t              GetNumTracks()         { return mTracks.size(); }
-   UShort_t            GetNumGoodVertices()   { return mNumGoodVertices; }
-   UShort_t            GetNumGoodTracks()     { return mNumGoodTracks; }
-   UShort_t            GetNumBTracks()        { return mNumBTracks; }
-   UShort_t            GetNumETracks()        { return mNumETracks; }
-   UShort_t            GetNumIsolatedTracks() { return mNumIsolatedTracks; }
-   UInt_t              GetNumTracksWithBCluster();
-   //UInt_t              GetNumTracksWithBCluster2();
-   bool                HasGoodVertex()        { return mNumGoodVertices   > 0 ? true : false; } // Checks if at least one good vertex exist in the event
-   bool                HasGoodTrack()         { return mNumGoodTracks     > 0 ? true : false; }
-   bool                HasIsolatedTrack()     { return mNumIsolatedTracks > 0 ? true : false; }
+   void           SetStMuDst(StMuDst *stMuDst) { mStMuDst = stMuDst; }
+   VecBosVertex*  AddVertex(StMuPrimaryVertex &stMuVertex);
+   void           AddVertex(VecBosVertex &vbVertex);
+   void           AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex=0);
+   void           AddStJets(StJets *stJets, StJets *stJetsNoEndcap);
+   TClonesArray*  GetJets();
+   TClonesArray*  GetJetsNoEndcap();
+   UInt_t         GetNumJets();
+   UInt_t         GetNumJetsNoEndcap();
+   UInt_t         GetNumVertices()       { return mVertices.size(); }
+   UInt_t         GetNumTracks()         { return mTracks.size(); }
+   UShort_t       GetNumGoodVertices()   { return mNumGoodVertices; }
+   UShort_t       GetNumGoodTracks()     { return mNumGoodTracks; }
+   UShort_t       GetNumBTracks()        { return mNumBTracks; }
+   UShort_t       GetNumETracks()        { return mNumETracks; }
+   UShort_t       GetNumIsolatedTracks() { return mNumIsolatedTracks; }
+   UInt_t         GetNumTracksWithBCluster();
+   bool           HasGoodVertex()        { return mNumGoodVertices   > 0 ? true : false; } // Checks if at least one good vertex exist in the event
+   bool           HasGoodTrack()         { return mNumGoodTracks     > 0 ? true : false; }
+   bool           HasIsolatedTrack()     { return mNumIsolatedTracks > 0 ? true : false; }
 
-   void                Process();
-   void                RecoilFromTracks();
-   void                ProcessMC();
-   //void                addMC();
-   void                MCanalysis();
-   void                clear();
-   void                Print(int flag = 0, int isMC = 0);
-   void                getGmt_day_hour(int &yyyymmdd, int &hhmmss);
+   void           Process();
+   void           ProcessMC();
+   void           CalcRecoilFromTracks();
+   void           MCanalysis();
+   void           clear();
+   void           Print(int flag = 0, int isMC = 0);
+   void           getGmt_day_hour(int &yyyymmdd, int &hhmmss);
 
-   bool                IsInJetCone(VecBosTrack *vbTrack);
-   WeveCluster         FindMaxBTow2x2(int iEta, int iPhi, float zVert);
-   WeveCluster         SumBTowPatch  (int iEta, int iPhi, int Leta, int  Lphi, float zVert);
-   TVector3            CalcP3InConeTpc(VecBosTrack *vbTrack, UShort_t cone1d2d=2, Float_t scale=1);
-   TVector3            CalcP3InConeBTow(VecBosTrack *vbTrack, UShort_t cone1d2d=2, Float_t scale=1);
-   TVector3            CalcP3InConeETow(VecBosTrack *vbTrack, UShort_t cone1d2d=2, Float_t scale=1);
-   //float               SumETowCone   (float zVert, TVector3 refAxis, int flag);
-   //float               SumTpcCone    (int vertID, TVector3 refAxis, int flag, int pointTowId);
+   WeveCluster    FindMaxBTow2x2(int iEta, int iPhi, float zVert);
+   WeveCluster    SumBTowPatch  (int iEta, int iPhi, int Leta, int  Lphi, float zVert);
+   TVector3       CalcP3InConeTpc(VecBosTrack *vbTrack, UShort_t cone1d2d=2, Float_t scale=1);
+   TVector3       CalcP3InConeBTow(VecBosTrack *vbTrack, UShort_t cone1d2d=2, Float_t scale=1);
+   TVector3       CalcP3InConeETow(VecBosTrack *vbTrack, UShort_t cone1d2d=2, Float_t scale=1);
+   //float          SumETowCone   (float zVert, TVector3 refAxis, int flag);
+   //float          SumTpcCone    (int vertID, TVector3 refAxis, int flag, int pointTowId);
 
    ClassDef(VecBosEvent, 2);
 };

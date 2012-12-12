@@ -156,16 +156,16 @@ private:
    int   ReadMuDstETOW();
    int   ReadMuDstBarrelTrig();
    int   ReadMuDstEndcapTrig();
-   void  ReadMuDstVerticesTracks();
-   void  ReadMuDstTracks(VecBosVertex* vbVertex);
    void  ReadMuDstBSMD();
    void  ReadMuDstESMD();
    void  ReadMuDstEPRS();
+   void  ReadMuDstVerticesTracks();
+   void  ReadMuDstTracks(VecBosVertex* vbVertex);
    void  ReadMuDstJets();
    void  FillTowHit(bool hasVertices);
    void  FillNormHists();
-   void  analyzeESMD();
-   void  analyzeEPRS();
+   void  AnalyzeESMD();
+   void  AnalyzeEPRS();
 
    bool  passes_L0();
    bool  passes_L2();
@@ -177,7 +177,6 @@ private:
    bool  MatchTrack2EtowCluster();
    void  FindNearJet();
    void  CalcPtBalance();
-   void  CalcMissingET();
    void  esmdAnalysis();
 
    // jets
