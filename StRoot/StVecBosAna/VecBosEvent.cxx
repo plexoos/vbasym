@@ -13,10 +13,12 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mStMuDst(0),
 
    mNumGoodVertices(0), mNumGoodTracks(0), mNumBTracks(0), mNumETracks(0), mNumIsolatedTracks(0),
-   mStJets(0), mJets(), mJetsPure(), mJetsIsolated(), mVertices(),
-   mTracks(), mTracksCluster(), mTracksIsolated(), mTracksBLepton(), mTracksELepton(),
+   mStJets(0), mJets(), //mJetsPure(), mJetsIsolated(),
+   mVertices(),
+   mTracks(), //mTracksCluster(),
+   mTracksIsolated(), //mTracksBLepton(), mTracksELepton(),
    mWEvent(0),
-   mP4JetTotal(), mP4JetFirst(), mP4JetRecoil(), 
+   mP4JetTotal(), mP4JetFirst(), //mP4JetRecoil(), 
    mMinDeltaR(M_PI),
    fPtKfactor(0),
    mMaxTrackClusterDist (7),
@@ -110,10 +112,10 @@ UInt_t VecBosEvent::GetNumTracksWithBCluster()
 }
 
 
-UInt_t VecBosEvent::GetNumTracksWithBCluster2()
-{
-   return mTracksBLepton.size();
-}
+//UInt_t VecBosEvent::GetNumTracksWithBCluster2()
+//{
+//   return mTracksBLepton.size();
+//}
 
 
 void VecBosEvent::Process()
@@ -155,28 +157,31 @@ void VecBosEvent::Process()
 
       // Check the distance between the isolated track (if exists) and a jet
       mMinDeltaR = M_PI;
-      //VecBosTrackVecIter iTrack = mTracks.begin();
-      //for ( ; iTrack != mTracks.end(); ++iTrack) {
-      VecBosTrackPtrVecConstIter iTrack = mTracksIsolated.begin();
-      for ( ; iTrack != mTracksIsolated.end(); ++iTrack) {
-         //if (!iTrack->IsIsolated()) continue;
+      VecBosTrackVecIter iTrack = mTracks.begin();
 
-         Double_t deltaR = stJet->Vect().DeltaR((*iTrack)->mP3AtDca);
+      for ( ; iTrack != mTracks.end(); ++iTrack)
+      {
+         if (!iTrack->HasCluster()) continue;
+         Double_t deltaR = stJet->Vect().DeltaR(iTrack->mP3AtDca);
          //Info("Process()", "Iso track found: %f ", deltaR);
+         // Find the distance to the closest track to this jet
          if (deltaR < mMinDeltaR) mMinDeltaR = deltaR;
 
-         //if (deltaR < mTrackIsoDeltaR) continue;
+         if (deltaR > mTrackIsoDeltaR) {
+            iTrack->mType |= VecBosTrack::kISOLATED;
+            mTracksIsolated.push_back(*iTrack);
+         }
       }
 
-      if (mMinDeltaR > mTrackIsoDeltaR) {
-         //Info("Process", "recoil accepted: %f > %f", mMinDeltaR, mTrackIsoDeltaR);
-         //utils::PrintTLorentzVector(*stJet);
-         mJetsPure.insert(stJet);
-         mP4JetRecoil += *stJet;
-         //utils::PrintTLorentzVector(mP4JetRecoil);
-      } else {
-         mJetsIsolated.insert(stJet);
-      }
+      //if (mMinDeltaR > mTrackIsoDeltaR) {
+      //   //Info("Process", "recoil accepted: %f > %f", mMinDeltaR, mTrackIsoDeltaR);
+      //   //utils::PrintTLorentzVector(*stJet);
+      //   //mJetsPure.insert(stJet);
+      //   //mP4JetRecoil += *stJet;
+      //   //utils::PrintTLorentzVector(mP4JetRecoil);
+      //} else {
+      //   //mJetsIsolated.insert(stJet);
+      //}
    }
 }
 
@@ -280,9 +285,9 @@ void VecBosEvent::McAnalysis()
 */
 
 
-void VecBosEvent::CalcRecoil()
+void VecBosEvent::ProcessMC()
 {
-   //Info("CalcRecoil()", "test...");
+   //Info("ProcessMC()", "test...");
 
    StMcEvent *mcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
    assert(mcEvent);
@@ -318,6 +323,12 @@ void VecBosEvent::CalcRecoil()
 
    fPtKfactor = mWEvent->mRecoilP4.Pt()/hadronicRecoilPt;
 }
+
+
+//bool VecBosEvent::IsInJetCone(VecBosTrack *vbTrack)
+//{
+//   
+//}
 
 
 /**
@@ -608,19 +619,19 @@ void VecBosEvent::clear()
    eprs.clear();
    esmd.clear();
    mJets.clear();
-   mJetsPure.clear();
-   mJetsIsolated.clear();
+   //mJetsPure.clear();
+   //mJetsIsolated.clear();
    mVertices.clear();
    mTracks.clear();
-   mTracksCluster.clear();
+   //mTracksCluster.clear();
    mTracksIsolated.clear();
-   mTracksBLepton.clear();
-   mTracksELepton.clear();
+   //mTracksBLepton.clear();
+   //mTracksELepton.clear();
    if (mWEvent) delete mWEvent;
    mWEvent               = new WEvent();
    mP4JetTotal           = TLorentzVector();
    mP4JetFirst           = TLorentzVector();
-   mP4JetRecoil          = TLorentzVector();
+   //mP4JetRecoil          = TLorentzVector();
    mMinDeltaR            = M_PI;
    mMaxTrackClusterDist  = 7;    // cm
    mTrackIsoDeltaR       = 0.7;  // (rad) near-cone size

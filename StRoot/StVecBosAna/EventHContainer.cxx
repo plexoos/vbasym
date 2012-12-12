@@ -143,7 +143,7 @@ void EventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hNumBTracks"])->Fill(event.GetNumBTracks());
    ((TH1*) o["hNumETracks"])->Fill(event.GetNumETracks());
    ((TH1*) o["hNumTracksWithBCluster"])->Fill(event.GetNumTracksWithBCluster());
-   ((TH1*) o["hNumTracksWithBCluster2"])->Fill(event.GetNumTracksWithBCluster2());
+   //((TH1*) o["hNumTracksWithBCluster2"])->Fill(event.GetNumTracksWithBCluster2());
 }
 
 

@@ -353,9 +353,7 @@ Int_t StVecBosMaker::Make()
    //printf("isMC = %d\n", isMC);
 
    if (isMC) {
-      //mVecBosEvent->addMC(); 
-      //mVecBosEvent->McAnalysis(); 
-      mVecBosEvent->CalcRecoil();   
+      mVecBosEvent->ProcessMC();   
    }
 
    // standard MuDst analysis

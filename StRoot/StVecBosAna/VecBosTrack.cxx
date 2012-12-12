@@ -245,7 +245,7 @@ void VecBosTrack::MatchTrack2BtowCluster()
    {
       isMatch2Cl = true; // cluster is matched to TPC track
       mType |= kHAS_CLUSTER;
-      mEvent->mTracksCluster.push_back(this);
+      //mEvent->mTracksCluster.push_back(this);
    }
 
    //hA[20]->Fill("#Delta R", 1.);
@@ -283,12 +283,12 @@ void VecBosTrack::CalcEnergyInNearCone()
    mP3InOppsConeNoETow = mP3InOppsCone     - mP3InOppsConeETow;
 
 
-   if (GetClusterEnergyFrac() >= mEvent->mMinClusterEnergyFrac)
-   {
-      mType |= kISOLATED;
-      mEvent->mTracksIsolated.push_back(this);
-      //if (GetClusterEnergyFrac() >= mEvent->mMinClusterEnergyFrac)
-   }
+   //if (GetClusterEnergyFrac() >= mEvent->mMinClusterEnergyFrac)
+   //{
+   //   mType |= kISOLATED;
+   //   mEvent->mTracksIsolated.push_back(this);
+   //   //if (GetClusterEnergyFrac() >= mEvent->mMinClusterEnergyFrac)
+   //}
    
    // sum TPC-near component
    //if (mStMuDstMaker)

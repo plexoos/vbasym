@@ -65,14 +65,14 @@ public:
    WeveEPRS           eprs;             //!
    WeveESMD           esmd;             //!
    StJetPtrSet        mJets;            //
-   StJetPtrSet        mJetsPure;        //
-   StJetPtrSet        mJetsIsolated;    //
+   //StJetPtrSet        mJetsPure;        //
+   //StJetPtrSet        mJetsIsolated;    //
    VecBosVertexVec    mVertices;
    VecBosTrackVec     mTracks;
-   VecBosTrackPtrVec  mTracksCluster;
-   VecBosTrackPtrVec  mTracksIsolated;
-   VecBosTrackPtrSet  mTracksBLepton;   // Set of lepton track candidates, i.e. good tracks with energy in barrel
-   VecBosTrackPtrSet  mTracksELepton;   // Set of lepton track candidates, i.e. good tracks with energy in endcap
+   //VecBosTrackPtrVec  mTracksCluster;
+   VecBosTrackVec  mTracksIsolated;
+   //VecBosTrackPtrSet  mTracksBLepton;   // Set of lepton track candidates, i.e. good tracks with energy in barrel
+   //VecBosTrackPtrSet  mTracksELepton;   // Set of lepton track candidates, i.e. good tracks with energy in endcap
    WEvent            *mWEvent;
    TLorentzVector     mP4JetTotal;
    TLorentzVector     mP4JetFirst;
@@ -110,19 +110,20 @@ public:
    UShort_t            GetNumETracks()        { return mNumETracks; }
    UShort_t            GetNumIsolatedTracks() { return mNumIsolatedTracks; }
    UInt_t              GetNumTracksWithBCluster();
-   UInt_t              GetNumTracksWithBCluster2();
+   //UInt_t              GetNumTracksWithBCluster2();
    bool                HasGoodVertex()        { return mNumGoodVertices   > 0 ? true : false; } // Checks if at least one good vertex exist in the event
    bool                HasGoodTrack()         { return mNumGoodTracks     > 0 ? true : false; }
    bool                HasIsolatedTrack()     { return mNumIsolatedTracks > 0 ? true : false; }
 
    void                Process();
+   void                ProcessMC();
    //void                addMC();
    //void                McAnalysis();
-   void                CalcRecoil();
    void                clear();
    void                Print(int flag = 0, int isMC = 0);
    void                getGmt_day_hour(int &yyyymmdd, int &hhmmss);
 
+   bool                IsInJetCone(VecBosTrack *vbTrack);
    WeveCluster         FindMaxBTow2x2(int iEta, int iPhi, float zVert);
    WeveCluster         SumBTowPatch  (int iEta, int iPhi, int Leta, int  Lphi, float zVert);
    TVector3            CalcP3InConeTpc(VecBosTrack *vbTrack, UShort_t cone1d2d=2, Float_t scale=1);
