@@ -121,7 +121,7 @@ public:
    void                RecoilFromTracks();
    void                ProcessMC();
    //void                addMC();
-   //void                McAnalysis();
+   void                MCanalysis();
    void                clear();
    void                Print(int flag = 0, int isMC = 0);
    void                getGmt_day_hour(int &yyyymmdd, int &hhmmss);

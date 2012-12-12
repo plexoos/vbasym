@@ -290,28 +290,27 @@ void VecBosEvent::RecoilFromTracks()
 
   //loop over tracks with a good vertex
 
+  TVector3 recoil; 
   VecBosTrackVecIter iTrack = mTracks.begin();
   for(; iTrack !=  mTracks.end(); ++iTrack)
   {
 
-    iTrack->Process();
+    //// iTrack->Process();
     if(iTrack->IsGood() == false) continue;       // Track has a good vertex
-    if(iTrack->IsIsolated() == true) continue;    // Track is not the electron 
-    if (iTrack->HasCluster() == false) continue;  // Track points to a cluster
-    //    if(iTrack->isMatch2Cl == false) continue;
+    if(iTrack->IsIsolated() == true) continue;    // Track is not the electro 
+    //if(iTrack->HasCluster() == false) continue;  // Track points to a cluster
 
     TVector3 TrackP3 = iTrack->mP3AtDca;
-      
-      TVector3 recoil; 
 
       //....process TPC tracks
 
       recoil += TrackP3;      
 
-      //VecBosTrack vbTrack;
-      RecoilFromTracksP3 = recoil;
 
   }
+
+      //VecBosTrack vbTrack;
+      RecoilFromTracksP3 = recoil;
 }
 
 
@@ -323,8 +322,13 @@ void VecBosEvent::ProcessMC()
    assert(mcEvent);
 
    mWEvent->CalcRecoil(*mcEvent);
+}
 
-   RecoilFromTracks();  
+
+void VecBosEvent::MCanalysis()
+{
+
+   //////RecoilFromTracks();  
    // Lets now do the MC analysis running trough the entire selection
    // run through W cuts to fill other histos............
 //   for (uint iv = 0; iv < mVertices.size(); iv++)
@@ -344,12 +348,12 @@ void VecBosEvent::ProcessMC()
          //Full W cuts applied at this point
 
 
-         hadronicRecoilEta = RecoilFromTracksP3.Eta();
+   hadronicRecoilEta = RecoilFromTracksP3.Eta();
 
          //hadronic recoil and correlations with W from pythia
 //         TVector3 hadronicPt(T.hadronicRecoil.X(), T.hadronicRecoil.Y(), 0); //transverse momentum vector
 
-         hadronicRecoilPt = RecoilFromTracksP3.Perp();
+   hadronicRecoilPt = RecoilFromTracksP3.Perp();
 //    }
 //   }
 

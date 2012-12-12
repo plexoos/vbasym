@@ -412,8 +412,13 @@ Int_t StVecBosMaker::Make()
    ReadMuDstVerticesTracks();
    ReadMuDstJets();   // Get input jet info
 
-   mVecBosEvent->RecoilFromTracks();
    mVecBosEvent->Process();
+   mVecBosEvent->RecoilFromTracks();
+
+   if (isMC) {
+      mVecBosEvent->MCanalysis();   
+   }
+
    mVecBosRootFile->Fill(*mVecBosEvent);
    mWtree->Fill(); // write event to tree
 
