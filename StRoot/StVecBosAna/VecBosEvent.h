@@ -79,6 +79,8 @@ public:
    TLorentzVector     mP4JetRecoil;
    Double_t           mMinDeltaR;
 
+   TVector3   RecoilFromTracksP3;
+
    float mMaxTrackClusterDist;  //! cm, dist between projected track and center of cluster
    float mTrackIsoDeltaR;       //! (rad) near-cone size
    float mTrackIsoDeltaPhi;     //! (rad) away-'cone' size, approx. 40 deg.
@@ -116,6 +118,7 @@ public:
    bool                HasIsolatedTrack()     { return mNumIsolatedTracks > 0 ? true : false; }
 
    void                Process();
+   void                RecoilFromTracks();
    void                ProcessMC();
    //void                addMC();
    //void                McAnalysis();

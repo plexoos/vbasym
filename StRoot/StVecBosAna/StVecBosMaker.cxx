@@ -337,7 +337,7 @@ void StVecBosMaker::Clear(const Option_t *)
    mVecBosEvent->clear();
    //delete mVecBosEvent;
    //mVecBosEvent = 0;
-   RecoilFromTracksP3 = TVector3(0, 0, 0);
+   //RecoilFromTracksP3 = TVector3(0, 0, 0);
 }
 
 
@@ -412,6 +412,7 @@ Int_t StVecBosMaker::Make()
    ReadMuDstVerticesTracks();
    ReadMuDstJets();   // Get input jet info
 
+   mVecBosEvent->RecoilFromTracks();
    mVecBosEvent->Process();
    mVecBosRootFile->Fill(*mVecBosEvent);
    mWtree->Fill(); // write event to tree
@@ -2524,98 +2525,5 @@ WeveCluster StVecBosMaker::sumEtowPatch(int iEta, int iPhi, int Leta, int  Lphi,
 //________________________________________________
 //________________________________________________
 
-void
-StVecBosMaker::RecoilFromTracks(){ 
 
-  //loop over tracks with a good vertex
-
-  VecBosTrackVecIter iTrack = mVecBosEvent->mTracks.begin();
-  for(; iTrack !=  mVecBosEvent->mTracks.end(); ++iTrack)
-  {
-
-    TVector3 TrackP3 = TVector3(iTrack->mP3AtDca.x(),iTrack->mP3AtDca.y(),iTrack->mP3AtDca.z());
-
-    if(iTrack->IsGood() == false) continue;       // Track has a good vertex
-    if(iTrack->IsIsolated() == true) continue;    // Track is not the electron 
-    if (iTrack->HasCluster() == false) continue;  // Track points to a cluster
-    //    if(iTrack->isMatch2Cl == false) continue;
-      
-      TVector3 recoil; 
-
-      //....process TPC tracks
-
-      recoil += TrackP3;      
-
-      //VecBosTrack vbTrack;
-      RecoilFromTracksP3 = recoil;
-
-/*      
-      //.... process BTOW hits
-      for(int i = 0; i < mxBtow; i++) 
-      {
-	float ene = mVecBosEvent->bemc.eneTile[kBTow][i];
-	if(ene <= 0) continue;
-
-	TVector3 primP = positionBtow[i]-TVector3(0,0,vertex.z);
-	primP.SetMag(ene); // it is 3D momentum in the event ref frame
-
-	float deltaR = track.mP3AtDca.DeltaR(primP);        
-	if(deltaR < mVecBosEvent->mTrackIsoDeltaR) continue;
-	recoil += primP;
-      }
-
-      //....process ETOW hits
-      for(int iphi = 0; iphi < mxEtowPhiBin; iphi++)
-      {
-	for(int ieta = 0; ieta < mxEtowEta; ieta++)
-        {
-	  float ene = mVecBosEvent->etow.ene[iphi][ieta];
-	  if(ene <= 0) continue; //skip towers with no energy
- 
-	  TVector3 primP = positionEtow[iphi][ieta] - TVector3(0,0,vertex.z);
-	  primP.SetMag(ene); // it is 3D momentum in the event ref frame
-
-	  float deltaR = track.mP3AtDca.DeltaR(primP);        
-	  if(deltaR < mVecBosEvent->mTrackIsoDeltaR) continue;
-	  recoil += primP;
-	}
-      }    
-
-      //....process TPC tracks
-      int vertID = vertex.id;
-      assert(vertID >= 0);
-      assert(vertID < (int)mStMuDstMaker->muDst()->numberOfPrimaryVertices());
-      
-      StMuPrimaryVertex* prV = mStMuDstMaker->muDst()->primaryVertex(vertID);
-      assert(prV);	  
-      mStMuDstMaker->muDst()->setVertexIndex(vertID);
-
-      float rank = prV->ranking();
-      assert(rank > 0);
-
-      Int_t nPrimTrAll = mStMuDstMaker->muDst()->GetNPrimaryTrack();
-
-      for(int itr=0;itr<nPrimTrAll;itr++) 
-      {
-	StMuTrack *prTr = mStMuDstMaker->muDst()->primaryTracks(itr);
-	if(prTr->flag() <= 0) continue;
-	if(prTr->flag() != 301) continue;// TPC-only regular tracks
-
-	float hitFrac = 1.*prTr->nHitsFit()/prTr->nHitsPoss();
-	if(hitFrac < par_nHitFrac) continue;
-
-	StThreeVectorF prPvect = prTr->p();
-
-	TVector3 primP = TVector3(prPvect.x(),prPvect.y(),prPvect.z());
-
-	float deltaR = track.mP3AtDca.DeltaR(primP);
-	if(deltaR <  mVecBosEvent->mTrackIsoDeltaR) continue;
-	if(primP.Perp() < 0.15) continue; //lower threshold on pT < 150 MeV
-	recoil += primP;	
-      }
-      
-      track.hadronicRecoil = recoil;
-*/
-  }
-}
 
