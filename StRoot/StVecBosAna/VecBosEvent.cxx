@@ -293,7 +293,7 @@ void VecBosEvent::ProcessMC()
    assert(mcEvent);
 
    mWEvent->CalcRecoil(*mcEvent);
-
+   /*
    // Lets now do the MC analysis running trough the entire selection
    // run through W cuts to fill other histos............
    for (uint iv = 0; iv < mVertices.size(); iv++)
@@ -322,6 +322,7 @@ void VecBosEvent::ProcessMC()
    }
 
    fPtKfactor = mWEvent->mRecoilP4.Pt()/hadronicRecoilPt;
+   */
 }
 
 

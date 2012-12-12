@@ -337,6 +337,7 @@ void StVecBosMaker::Clear(const Option_t *)
    mVecBosEvent->clear();
    //delete mVecBosEvent;
    //mVecBosEvent = 0;
+   RecoilFromTracksP3 = TVector3(0, 0, 0);
 }
 
 
@@ -2524,18 +2525,31 @@ WeveCluster StVecBosMaker::sumEtowPatch(int iEta, int iPhi, int Leta, int  Lphi,
 //________________________________________________
 
 void
-StVecBosMaker::hadronicRecoil(){ //add up all vector pt outside of 'nearJet' region to get 'hadronic recoil' pt vector 
+StVecBosMaker::RecoilFromTracks(){ 
 
-  for(uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++) 
+  //loop over tracks with a good vertex
+
+  VecBosTrackVecIter iTrack = mVecBosEvent->mTracks.begin();
+  for(; iTrack !=  mVecBosEvent->mTracks.end(); ++iTrack)
   {
-    VecBosVertex &vertex = mVecBosEvent->mVertices[iv];
-    for(uint it = 0; it < vertex.eleTrack.size(); it++) 
-    {
-      VecBosTrack &track = vertex.eleTrack[it];
-      if(track.isMatch2Cl == false) continue;
+
+    TVector3 TrackP3 = TVector3(iTrack->mP3AtDca.x(),iTrack->mP3AtDca.y(),iTrack->mP3AtDca.z());
+
+    if(iTrack->IsGood() == false) continue;       // Track has a good vertex
+    if(iTrack->IsIsolated() == true) continue;    // Track is not the electron 
+    if (iTrack->HasCluster() == false) continue;  // Track points to a cluster
+    //    if(iTrack->isMatch2Cl == false) continue;
       
-      TVector3 recoil;
-      
+      TVector3 recoil; 
+
+      //....process TPC tracks
+
+      recoil += TrackP3;      
+
+      //VecBosTrack vbTrack;
+      RecoilFromTracksP3 = recoil;
+
+/*      
       //.... process BTOW hits
       for(int i = 0; i < mxBtow; i++) 
       {
@@ -2545,7 +2559,7 @@ StVecBosMaker::hadronicRecoil(){ //add up all vector pt outside of 'nearJet' reg
 	TVector3 primP = positionBtow[i]-TVector3(0,0,vertex.z);
 	primP.SetMag(ene); // it is 3D momentum in the event ref frame
 
-	float deltaR = primP.DeltaR(primP);        
+	float deltaR = track.mP3AtDca.DeltaR(primP);        
 	if(deltaR < mVecBosEvent->mTrackIsoDeltaR) continue;
 	recoil += primP;
       }
@@ -2561,7 +2575,7 @@ StVecBosMaker::hadronicRecoil(){ //add up all vector pt outside of 'nearJet' reg
 	  TVector3 primP = positionEtow[iphi][ieta] - TVector3(0,0,vertex.z);
 	  primP.SetMag(ene); // it is 3D momentum in the event ref frame
 
-	  float deltaR = primP.DeltaR(primP);        
+	  float deltaR = track.mP3AtDca.DeltaR(primP);        
 	  if(deltaR < mVecBosEvent->mTrackIsoDeltaR) continue;
 	  recoil += primP;
 	}
@@ -2594,15 +2608,14 @@ StVecBosMaker::hadronicRecoil(){ //add up all vector pt outside of 'nearJet' reg
 
 	TVector3 primP = TVector3(prPvect.x(),prPvect.y(),prPvect.z());
 
-	float deltaR = primP.DeltaR(primP);
+	float deltaR = track.mP3AtDca.DeltaR(primP);
 	if(deltaR <  mVecBosEvent->mTrackIsoDeltaR) continue;
 	if(primP.Perp() < 0.15) continue; //lower threshold on pT < 150 MeV
 	recoil += primP;	
       }
       
       track.hadronicRecoil = recoil;
-
-    }
+*/
   }
 }
 

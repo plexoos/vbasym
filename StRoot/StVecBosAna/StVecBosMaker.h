@@ -172,7 +172,7 @@ private:
    void  FindWBoson();
    void  FindWBosonEndcap();
    void  FindZBoson();
-   void  hadronicRecoil();
+   void  RecoilFromTracks();
    int   ExtendTrack2Endcap();
    bool  MatchTrack2EtowCluster();
    void  FindNearJet();
@@ -224,6 +224,7 @@ public:
    void setMC(int x)                    { isMC = x; }
    void setMaxDisplayEve(int n)         { par_maxDisplEve = n; }
    void attachSpinDb(StSpinDbMaker *mk) { spinDb = mk; }
+   TVector3   RecoilFromTracksP3;
 
    // tree analysis
    void  chainFile( const Char_t *name );
