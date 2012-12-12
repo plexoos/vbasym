@@ -285,7 +285,8 @@ void VecBosEvent::McAnalysis()
 */
 
 
-void VecBosEvent::RecoilFromTracks(){ 
+void VecBosEvent::RecoilFromTracks()
+{ 
 
   //loop over tracks with a good vertex
 
@@ -293,12 +294,13 @@ void VecBosEvent::RecoilFromTracks(){
   for(; iTrack !=  mTracks.end(); ++iTrack)
   {
 
-    TVector3 TrackP3 = TVector3(iTrack->mP3AtDca.x(),iTrack->mP3AtDca.y(),iTrack->mP3AtDca.z());
-
+    iTrack->Process();
     if(iTrack->IsGood() == false) continue;       // Track has a good vertex
     if(iTrack->IsIsolated() == true) continue;    // Track is not the electron 
     if (iTrack->HasCluster() == false) continue;  // Track points to a cluster
     //    if(iTrack->isMatch2Cl == false) continue;
+
+    TVector3 TrackP3 = iTrack->mP3AtDca;
       
       TVector3 recoil; 
 
