@@ -123,7 +123,8 @@ void VecBosEvent::Process()
    mMuDstNumOTracks  = mStMuDst->otherTracks()->GetEntriesFast();
 
    VecBosVertexVecIter iVertex = mVertices.begin();
-   for ( ; iVertex != mVertices.end(); ++iVertex) {
+   for ( ; iVertex != mVertices.end(); ++iVertex)
+   {
       iVertex->Process();
 
       if (iVertex->IsGood()) mNumGoodVertices++;
@@ -131,51 +132,25 @@ void VecBosEvent::Process()
 
    // Process tracks
    VecBosTrackVecIter iTrack = mTracks.begin();
-   for ( ; iTrack != mTracks.end(); ++iTrack) {
+   for ( ; iTrack != mTracks.end(); ++iTrack)
+   {
       iTrack->Process();
 
       if (iTrack->IsGood())     mNumGoodTracks++;
       if (iTrack->IsBTrack())   mNumBTracks++;
       if (iTrack->IsETrack())   mNumETracks++;
-      //if (iTrack->IsIsolated()) mNumIsolatedTracks++;
-
-      // Consider tracks with clusters only
-      if (!iTrack->HasCluster()) continue;
-
-      // Find the min distance between the track and the closest jet
-
-      StJetPtrSetConstIter iJet = mJets.begin();
-      for ( ; iJet != mJets.end(); ++iJet) {
-         StJet *stJet = *iJet;
-
-         Double_t deltaR = stJet->Vect().DeltaR(iTrack->mP3AtDca);
-         //Info("Process()", "Iso track found: %f ", deltaR);
-
-         // Find the distance to the closest track to this jet
-         if (deltaR < iTrack->mMinDeltaR) iTrack->mMinDeltaR = deltaR;
-      }
-
-      if (iTrack->mMinDeltaR > mTrackIsoDeltaR) {
-         iTrack->mType |= VecBosTrack::kISOLATED;
+      if (iTrack->IsIsolated()) {
          mNumIsolatedTracks++;
-         mTracksIsolated.push_back(*iTrack);
+         iTrack->CalcDistanceToJet(mJets);
       }
-
-      //if (mMinDeltaR > mTrackIsoDeltaR) {
-      //   //Info("Process", "recoil accepted: %f > %f", mMinDeltaR, mTrackIsoDeltaR);
-      //   //utils::PrintTLorentzVector(*stJet);
-      //   //mP4JetRecoil += *stJet;
-      //   //utils::PrintTLorentzVector(mP4JetRecoil);
-      //} else {
-      //   //mJetsIsolated.insert(stJet);
-      //}
    }
 
    // Process jets
    StJetPtrSetConstIter iJet = mJets.begin();
    mP4JetFirst = *iJet ? **iJet : TLorentzVector();
 
-   for ( ; iJet != mJets.end(); ++iJet) {
+   for ( ; iJet != mJets.end(); ++iJet)
+   {
       StJet *stJet = *iJet;
       //Info("Process", "total jet");
       //utils::PrintTLorentzVector(*stJet);

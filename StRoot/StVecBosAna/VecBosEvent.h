@@ -67,7 +67,7 @@ public:
    StJetPtrSet        mJets;            //
    VecBosVertexVec    mVertices;
    VecBosTrackVec     mTracks;
-   VecBosTrackVec     mTracksIsolated;
+   VecBosTrackPtrVec  mTracksIsolated;
    WEvent            *mWEvent;
    TLorentzVector     mP4JetTotal;
    TLorentzVector     mP4JetFirst;

@@ -128,7 +128,7 @@ void TrackHContainer::Fill(VecBosTrack &track)
    ((TH1*) o["hTrackBClusterEnergy2x2"])->Fill(track.mCluster2x2.ET);
    ((TH1*) o["hTrackBClusterEnergy4x4"])->Fill(track.mCluster4x4.ET);
    ((TH1*) o["hTrackBClusterEnergyIsoRatio"])->Fill(track.mCluster2x2.ET/track.mCluster4x4.ET);
-   ((TH1*) o["hTrackDistanceToCluster"])->Fill(track.CalcDistanceToCluster().Mag());
+   ((TH1*) o["hTrackDistanceToCluster"])->Fill(track.GetDistanceToCluster().Mag());
    ((TH1*) o["hChargePrimaryTrack"])->Fill(track.prMuTrack->charge());
 
    //printf("hasMatchedCluster: %d\n", track.isMatch2Cl);

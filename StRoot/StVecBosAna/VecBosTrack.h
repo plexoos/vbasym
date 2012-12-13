@@ -10,6 +10,7 @@
 #include "StMuDSTMaker/COMMON/StMuTrack.h"
 #include "StarClassLibrary/StPhysicalHelix.hh"
 
+#include "Globals.h"
 #include "WanaConst.h"
 #include "WEventCluster.h"
 
@@ -29,7 +30,8 @@ public:
                     kBARREL      = 0x0010, kENDCAP   = 0x0020, // from reco algo definition
                     kHAS_CLUSTER = 0x0100,                     // has cluster above a threshold
                     kISOLATED    = 0x0200,                     // cluster/cone energy > 0.88
-                    kMISBALANCED = 0x0400                      // not much energy in opposite direction
+                    kIN_JET      = 0x0400,                     // track belongs to a jet
+                    kMISBALANCED = 0x0800                      // not much energy in opposite direction
                    };
 
    VecBosEvent            *mEvent;             //!
@@ -91,16 +93,17 @@ public:
    bool      IsETrack()   const { return (mType & kENDCAP) == kENDCAP ? true : false; }
    bool      HasCluster() const { return (mType & kHAS_CLUSTER) == kHAS_CLUSTER ? true : false; }
    bool      IsIsolated() const { return (mType & kISOLATED) == kISOLATED ? true : false; }
+   bool      IsInJet()    const { return (mType & kIN_JET) == kIN_JET ? true : false; }
    //bool      HasBarrelMatched();
    //bool      HasEndcapMatched();
    void      Process();
    float     GetFitHitFrac()        const { return float(prMuTrack->nHitsFit()) / prMuTrack->nHitsPoss(); }
    float     GetClusterEnergyFrac() const { return (mCluster2x2.energy + mP3AtDca.Mag()) / mP3InNearConeNoETow.Mag(); }
    float     GetClusterETFrac()     const { return (mCluster2x2.ET     + mP3AtDca.Pt())  / mP3InNearConeNoETow.Perp(); }
-   //float     GetClusterEnergyFrac() const { return mCluster2x2.ET / mP3InNearCone.Perp(); }
+   TVector3  GetDistanceToCluster() const { mCoorAtBTow - mCluster2x2.position; }
+   void      CalcDistanceToJet(StJetPtrSet &jets);
    void      clear();
    void      print(int opt=0) const;
-   TVector3  CalcDistanceToCluster();
 
 private:
 

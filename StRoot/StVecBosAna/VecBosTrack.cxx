@@ -24,7 +24,7 @@ VecBosTrack::VecBosTrack() : TObject(), mEvent(0), mType(kUNKNOWN), mHelix(), mV
    awayTotET_noEEMC(0),
    mNumTracksInNearCone(0),
    ptBalance(), ptBalance_noEEMC(), sPtBalance(0), sPtBalance_noEEMC(0), hadronicRecoil(),
-   mMinDeltaR(2*M_PI)
+   mMinDeltaR(-1) // nonsense value
 {
    clear();
 }
@@ -86,6 +86,35 @@ void VecBosTrack::Process()
 }
 
 
+void VecBosTrack::CalcDistanceToJet(StJetPtrSet &jets)
+{
+   // Find the min distance between the track and the closest jet
+   StJetPtrSetConstIter iJet = jets.begin();
+   for ( ; iJet != jets.end(); ++iJet)
+   {
+      StJet *stJet = *iJet;
+
+      Double_t deltaR = stJet->Vect().DeltaR(mP3AtDca);
+      //Info("Process()", "Iso track found: %f ", deltaR);
+
+      if (mMinDeltaR < 0 || deltaR < mMinDeltaR) mMinDeltaR = deltaR;
+   }
+
+   if (mMinDeltaR > mEvent->mTrackIsoDeltaR) {
+      //Info("Process", "recoil accepted: %f > %f", mMinDeltaR, mTrackIsoDeltaR);
+      mType |= VecBosTrack::kIN_JET;
+   }
+
+   //if (mMinDeltaR > mTrackIsoDeltaR) {
+   //   //utils::PrintTLorentzVector(*stJet);
+   //   //mP4JetRecoil += *stJet;
+   //   //utils::PrintTLorentzVector(mP4JetRecoil);
+   //} else {
+   //   //mJetsIsolated.insert(stJet);
+   //}
+}
+
+
 void VecBosTrack::clear()
 {
    mEvent                 = 0;
@@ -126,7 +155,7 @@ void VecBosTrack::clear()
    sPtBalance             = 0;
    sPtBalance_noEEMC      = 0;
    hadronicRecoil         = TVector3(0, 0, 0);
-   mMinDeltaR             = 2*M_PI;
+   mMinDeltaR             = -1;
 
    memset(esmdGlobStrip, -999, sizeof(esmdGlobStrip));
    memset(esmdDca, -999., sizeof(esmdDca));
@@ -137,12 +166,6 @@ void VecBosTrack::clear()
    memset(esmdShowerWidth, 999., sizeof(esmdShowerWidth));
 
    esmdXPcentroid = TVector3(0, 0, 0);
-}
-
-
-TVector3 VecBosTrack::CalcDistanceToCluster()
-{
-   return mCoorAtBTow - mCluster2x2.position;
 }
 
 
@@ -294,12 +317,11 @@ void VecBosTrack::CalcEnergyInNearCone()
    mP3InOppsConeNoETow = mP3InOppsCone     - mP3InOppsConeETow;
 
 
-   //if (GetClusterEnergyFrac() >= mEvent->mMinClusterEnergyFrac)
-   //{
-   //   mType |= kISOLATED;
-   //   mEvent->mTracksIsolated.push_back(this);
-   //   //if (GetClusterEnergyFrac() >= mEvent->mMinClusterEnergyFrac)
-   //}
+   if (GetClusterEnergyFrac() >= mEvent->mMinClusterEnergyFrac)
+   {
+      mType |= kISOLATED;
+      mEvent->mTracksIsolated.push_back(this);
+   }
    
    // sum TPC-near component
    //if (mStMuDstMaker)
