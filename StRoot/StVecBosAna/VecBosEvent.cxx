@@ -21,6 +21,8 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mP3RecoilFromTracks(),
    mHadronicRecoilEta(0),
    mHadronicRecoilPt(0),
+   mHadRecoilFromTracksEta(0),
+   mHadRecoilFromTracksPt(0),
    mPtKfactor(0),
    mMaxTrackClusterDist (7),
    mTrackIsoDeltaR      (0.7),
@@ -214,8 +216,8 @@ void VecBosEvent::CalcRecoilFromTracks()
    }
 
    mP3RecoilFromTracks = recoil;
-   mHadronicRecoilEta  = mP3RecoilFromTracks.Eta();
-   mHadronicRecoilPt   = mP3RecoilFromTracks.Perp();
+   mHadRecoilFromTracksEta  = mP3RecoilFromTracks.Eta();
+   mHadRecoilFromTracksPt   = mP3RecoilFromTracks.Perp();
 }
 
 
@@ -232,7 +234,8 @@ void VecBosEvent::MCanalysis()
    //      {
    //         VecBosTrack &T = V.eleTrack[it];
    ////if (T.isMatch2Cl == false) continue;
-   //         assert(T.mCluster2x2.nTower > 0); // internal logical error
+
+   //assert(T.mCluster2x2.nTower > 0); // internal logical error
    //assert(T.nearTotET > 0); // internal logical error
 
    //if (T.mCluster2x2.ET / T.nearTotET < wMK->par_nearTotEtFrac) continue; // too large nearET
@@ -240,12 +243,12 @@ void VecBosEvent::MCanalysis()
 
    //Full W cuts applied at this point
 
-   mHadronicRecoilEta = mP3RecoilFromTracks.Eta();
+   mHadRecoilFromTracksEta = mP3RecoilFromTracks.Eta();
 
    //hadronic recoil and correlations with W from pythia
    //         TVector3 hadronicPt(T.hadronicRecoil.X(), T.hadronicRecoil.Y(), 0); //transverse momentum vector
 
-   mHadronicRecoilPt = mP3RecoilFromTracks.Perp();
+   mHadRecoilFromTracksPt = mP3RecoilFromTracks.Perp();
    //    }
    //   }
 
@@ -317,37 +320,6 @@ void VecBosEvent::addMC()
    //float mw2sqs = 80.4 / 500.;
    //float x1 = mw2sqs * exp(rapW);
    //float x2 = mw2sqs * exp(-rapW);
-}
-*/
-
-
-/*
-void VecBosEvent::McAnalysis()
-{
-   // run through W cuts to fill other histos............
-   for (uint iv = 0; iv < mVertices.size(); iv++)
-   {
-      VecBosVertex &V = mVertices[iv];
-
-      for (uint it = 0; it < V.eleTrack.size(); it++)
-      {
-         VecBosTrack &T = V.eleTrack[it];
-         if (T.isMatch2Cl == false) continue;
-         assert(T.mCluster2x2.nTower > 0); // internal logical error
-         assert(T.mP3InNearCone > 0); // internal logical error
-
-         //if (T.mCluster2x2.ET / T.mP3InNearCone < wMK->par_nearTotEtFrac) continue; // too large nearET
-         if (T.awayTotET > 30.) continue; // too large awayET , Jan
-         //Full W cuts applied at this point
-
-         mHadronicRecoilEta = T.hadronicRecoil.Eta();
-
-         //hadronic recoil and correlations with W from pythia
-         TVector3 hadronicPt(T.hadronicRecoil.X(), T.hadronicRecoil.Y(), 0); //transverse momentum vector
-
-         mHadronicRecoilPt = hadronicPt.Perp();
-      }
-   }
 }
 */
 
@@ -654,7 +626,9 @@ void VecBosEvent::clear()
    mMinClusterEnergyFrac = 0.80;
    mMaxEnergyInOppsCone  = 30;   // GeV
    mP3RecoilFromTracks   = TVector3(0, 0, 0);
-   mPtKfactor            = 0;
+   mHadRecoilFromTracksEta  = 0;
+   mHadRecoilFromTracksPt   = 0;
+   mPtKfactor               = 0;
 }
 
 

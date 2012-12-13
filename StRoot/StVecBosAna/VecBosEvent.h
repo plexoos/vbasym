@@ -72,6 +72,8 @@ public:
    TLorentzVector     mP4JetTotal;
    TLorentzVector     mP4JetFirst;
    TVector3           mP3RecoilFromTracks;
+   Double_t           mHadRecoilFromTracksEta;
+   Double_t           mHadRecoilFromTracksPt;
    Double_t           mHadronicRecoilEta;
    Double_t           mHadronicRecoilPt;
    Double_t           mPtKfactor;
