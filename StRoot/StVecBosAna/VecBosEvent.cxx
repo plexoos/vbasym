@@ -174,20 +174,38 @@ void VecBosEvent::ProcessMC()
 void VecBosEvent::CalcRecoilFromTracks()
 {
 
-  //Make sure an isolated track exists
- VecBosTrackPtrVecIter iTrack = mTracksIsolated.begin();
- for (; iTrack !=  mTracksIsolated.end(); ++iTrack)
+ VecBosVertexVecIter iVertex = mVertices.begin();
+ for ( ; iVertex != mVertices.end(); ++iVertex)
  {
-
-  TVector3 prP3 = (*iTrack)->mP3AtDca;
-  if (prP3.Pt() <= 0) continue;   
-
       
-   //loop over tracks with a good vertex
    TVector3 recoil;
-   VecBosTrackVecIter rTrack = mTracks.begin();
-   for (; rTrack !=  mTracks.end(); ++rTrack)
+
+   //Make sure an isolated track exists
+   VecBosTrackPtrVecIter iTrack = mTracksIsolated.begin();
+   for (; iTrack !=  mTracksIsolated.end(); ++iTrack)
    {
+
+     TVector3 prP3 = (*iTrack)->mP3AtDca;
+     if (prP3.Pt() <= 0) continue;   // iso track with a positive Pt
+
+
+     //.... process BTOW hits
+
+     for(int i = 0; i < mxBtow; i++) 
+     {
+	float ene = bemc.eneTile[kBTow][i];
+	if(ene <= 0) continue;
+        TVector3 positionBtow[mxBtow]; // vs. tower ID
+	TVector3 primP = positionBtow[i]-TVector3(0,0,iVertex->mPosition.Z());
+	primP.SetMag(ene); // it is 3D momentum in the event ref frame
+	
+	recoil+=primP;
+     }
+
+     //loop over tracks with a good vertex
+     VecBosTrackVecIter rTrack = mTracks.begin();
+     for (; rTrack !=  mTracks.end(); ++rTrack)
+     {
       //// rTrack->Process();
       if (rTrack->IsGood() == false) continue;      // Track has a good vertex
       if (rTrack->IsIsolated() == true) continue;   // Track is not the electro
@@ -198,40 +216,23 @@ void VecBosEvent::CalcRecoilFromTracks()
       //....process TPC tracks
 
       recoil += TrackP3;
-   }
+     }
 
-   mP3RecoilFromTracks = recoil;
-   mHadRecoilFromTracksEta  = mP3RecoilFromTracks.Eta();
-   mHadRecoilFromTracksPt   = mP3RecoilFromTracks.Perp();
- }
+      mP3RecoilFromTracks = recoil;
+     if (mP3RecoilFromTracks.Pt() > 0)
+     {
+      mHadRecoilFromTracksEta  = mP3RecoilFromTracks.Eta();
+      mHadRecoilFromTracksPt   = mP3RecoilFromTracks.Perp();
+     } 
+   } // close there is iso track
+ }  // close loop ove vertices
 }
 
 
 void VecBosEvent::MCanalysis()
 {
-   ////CalcRecoilFromTracks();
-   // Lets now do the MC analysis running trough the entire selection
-   // run through W cuts to fill other histos............
-   //   for (uint iv = 0; iv < mVertices.size(); iv++)
-   //   {
-   //      VecBosVertex &V = mVertices[iv];
-
-   //      for (uint it = 0; it < V.eleTrack.size(); it++)
-   //      {
-   //         VecBosTrack &T = V.eleTrack[it];
-   ////if (T.isMatch2Cl == false) continue;
-
-   //assert(T.mCluster2x2.nTower > 0); // internal logical error
-   //assert(T.nearTotET > 0); // internal logical error
-
-   //if (T.mCluster2x2.ET / T.nearTotET < wMK->par_nearTotEtFrac) continue; // too large nearET
-   ////if (T.awayTotET > 30.) continue; // too large awayET , Jan
-
-  //VecBosTrackPtrVec isoTrack = mTracksIsolated.begin();
-  //for (uint it = 0; it < mTracksIsolated.size(); it++)
-  //{
-
-  /*
+  
+/*
    VecBosTrackPtrVecIter iTrack = mTracksIsolated.begin();
    for (; iTrack !=  mTracksIsolated.end(); ++iTrack)
    {
@@ -258,7 +259,8 @@ void VecBosEvent::MCanalysis()
  
       }
    }
-  */
+  
+*/
 }
 
 

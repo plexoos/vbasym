@@ -123,6 +123,16 @@ void MCHContainer::BookHists()
    o["hRecOutAccMomentumZ"] = hist = new TH1I("hRecOutAccMomentumZ", "; P^{Recoil}_{z} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
 
+
+   // recoil from tracks geant variables
+   o["hHadRecoilFromTracksPx"] = hist = new TH1I("hHadRecoilFromTracksPx", "; P_{x}^{Recoil} (geant); Events", 100, -50., 50.);
+   o["hHadRecoilFromTracksPy"] = hist = new TH1I("hHadRecoilFromTracksPy", "; P_{y}^{Recoil} (geant); Events", 100, -50., 50.);
+   o["hHadRecoilFromTracksPz"] = hist = new TH1I("hHadRecoilFromTracksPz", "; P_{z}^{Recoil} (geant); Events", 100, -50., 50.);
+   o["hHadRecoilFromTracksEta"] = hist = new TH1I("hHadRecoilFromTracksEta", "; #eta^{Recoil} (geant); Events", 100, -8., 8.);
+   o["hHadRecoilFromTracksPt"] = hist = new TH1I("hHadRecoilFromTracksPt", "; P_{T}^{Recoil} (geant); Events", 100, 0., 50.);
+   o["hRecoilCorrelPythia"] = hist = new TH2I("hRecoilCorrelPythia", "; P_{T}^{Recoil} (geant:pythia); P_{T}^{Recoil}", 100, 0., 50., 100, 0., 50.);
+
+
    // MC correction variables
    o["hEnergyRatio"] = hist = new TH1I("hEnergyRatio", "; E_{in}^{Recoil}/E_{out}^{Recoil}; Events", 100, 0., 4.);
    hist->SetOption("hist GRIDX");
@@ -185,9 +195,21 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hRecOutAccMomentumY"])->Fill(event.mWEvent->mRecoilOutAcceptP4.Py());
    ((TH1*) o["hRecOutAccMomentumZ"])->Fill(event.mWEvent->mRecoilOutAcceptP4.Pz());
 
+
+   // recoil from tracks geant variables
+   ((TH1*) o["hHadRecoilFromTracksPx"])->Fill(event.mP3RecoilFromTracks.Px(), event.mHadRecoilFromTracksPt != 0);
+   ((TH1*) o["hHadRecoilFromTracksPy"])->Fill(event.mP3RecoilFromTracks.Py(), event.mHadRecoilFromTracksPt != 0);
+   ((TH1*) o["hHadRecoilFromTracksPz"])->Fill(event.mP3RecoilFromTracks.Pz(), event.mHadRecoilFromTracksPt != 0);
+   ((TH1*) o["hHadRecoilFromTracksEta"])->Fill(event.mP3RecoilFromTracks.Eta(), event.mHadRecoilFromTracksPt != 0);
+   ((TH1*) o["hHadRecoilFromTracksPt"])->Fill(event.mP3RecoilFromTracks.Pt(), event.mHadRecoilFromTracksPt != 0);
+   ((TH2*) o["hRecoilCorrelPythia"])->Fill(event.mP3RecoilFromTracks.Pt(), event.mWEvent->mRecoilP4.Pt());
+
+
+
    // MC correction variablel
    //((TH1*) o["hEnergyRatio"])->Fill(event.mWEvent->fEnergyRatio);
    //((TH1*) o["hTrackID"])->Fill(event.trackId);
+
   
 }
 
