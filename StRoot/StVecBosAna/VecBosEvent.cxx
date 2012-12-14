@@ -173,17 +173,27 @@ void VecBosEvent::ProcessMC()
 
 void VecBosEvent::CalcRecoilFromTracks()
 {
+
+  //Make sure an isolated track exists
+ VecBosTrackPtrVecIter iTrack = mTracksIsolated.begin();
+ for (; iTrack !=  mTracksIsolated.end(); ++iTrack)
+ {
+
+  TVector3 prP3 = (*iTrack)->mP3AtDca;
+  if (prP3.Pt() <= 0) continue;   
+
+      
    //loop over tracks with a good vertex
    TVector3 recoil;
-   VecBosTrackVecIter iTrack = mTracks.begin();
-   for (; iTrack !=  mTracks.end(); ++iTrack)
+   VecBosTrackVecIter rTrack = mTracks.begin();
+   for (; rTrack !=  mTracks.end(); ++rTrack)
    {
-      //// iTrack->Process();
-      if (iTrack->IsGood() == false) continue;      // Track has a good vertex
-      if (iTrack->IsIsolated() == true) continue;   // Track is not the electro
+      //// rTrack->Process();
+      if (rTrack->IsGood() == false) continue;      // Track has a good vertex
+      if (rTrack->IsIsolated() == true) continue;   // Track is not the electro
       //if(iTrack->HasCluster() == false) continue;  // Track points to a cluster
 
-      TVector3 TrackP3 = iTrack->mP3AtDca;
+      TVector3 TrackP3 = rTrack->mP3AtDca;
 
       //....process TPC tracks
 
@@ -193,6 +203,7 @@ void VecBosEvent::CalcRecoilFromTracks()
    mP3RecoilFromTracks = recoil;
    mHadRecoilFromTracksEta  = mP3RecoilFromTracks.Eta();
    mHadRecoilFromTracksPt   = mP3RecoilFromTracks.Perp();
+ }
 }
 
 
@@ -216,18 +227,38 @@ void VecBosEvent::MCanalysis()
    //if (T.mCluster2x2.ET / T.nearTotET < wMK->par_nearTotEtFrac) continue; // too large nearET
    ////if (T.awayTotET > 30.) continue; // too large awayET , Jan
 
-   //Full W cuts applied at this point
+  //VecBosTrackPtrVec isoTrack = mTracksIsolated.begin();
+  //for (uint it = 0; it < mTracksIsolated.size(); it++)
+  //{
 
-   mHadRecoilFromTracksEta = mP3RecoilFromTracks.Eta();
+  /*
+   VecBosTrackPtrVecIter iTrack = mTracksIsolated.begin();
+   for (; iTrack !=  mTracksIsolated.end(); ++iTrack)
+   {
+ 
+     //if ((*iTrack)->IsGood() == false) continue;      // Track has a good vertex
+     //if ((*iTrack)->IsIsolated() == false) continue;   // Track is not the electro
+     //if(iTrack->HasCluster() == false) continue;  // Track points to a cluster
 
-   //hadronic recoil and correlations with W from pythia
-   //         TVector3 hadronicPt(T.hadronicRecoil.X(), T.hadronicRecoil.Y(), 0); //transverse momentum vector
+     TVector3 prP3 = (*iTrack)->mP3AtDca;
+      if (prP3.Pt() > 27)  
+      {
 
-   mHadRecoilFromTracksPt = mP3RecoilFromTracks.Perp();
-   //    }
-   //   }
 
-   //   mPtKfactor = mWEvent->mRecoilP4.Pt()/mHadronicRecoilPt;
+        //Full W cuts applied at this point
+
+          mHadRecoilFromTracksEta = mP3RecoilFromTracks.Eta();
+
+        //hadronic recoil and correlations with W from pythia
+        //  TVector3 hadronicPt(T.hadronicRecoil.X(), T.hadronicRecoil.Y(), 0); //transverse momentum vector
+
+          mHadRecoilFromTracksPt = mP3RecoilFromTracks.Perp();
+
+        //   mPtKfactor = mWEvent->mRecoilP4.Pt()/mHadronicRecoilPt;
+ 
+      }
+   }
+  */
 }
 
 

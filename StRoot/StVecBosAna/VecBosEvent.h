@@ -20,6 +20,7 @@
 #include "WanaConst.h"
 #include "VecBosEventInfo.h"
 #include "VecBosVertex.h"
+#include "VecBosTrack.h"
 #include "WEvent.h"
 
 #include "utils/ProtoEvent.h"
