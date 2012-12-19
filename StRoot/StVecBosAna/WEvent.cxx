@@ -152,8 +152,9 @@ void WEvent::CalcRecoil(StMcEvent &stMcEvent)
       mTotalP4 += particleP4;
       eneTotal += particleP4.E();
 
-      //if (particleP4.Eta() > -1 && particleP4.Eta() < 2)
-      if (particleP4.Eta() > -2.4 && particleP4.Eta() < 2.4) {
+      //if (particleP4.Eta() > -2.4 && particleP4.Eta() < 2.4)
+      if (particleP4.Eta() > -1.1 && particleP4.Eta() < 2.0)
+      {
          eneAccept          += particleP4.E();
          mRecoilInAcceptP4  += particleP4;
       } else {
@@ -168,6 +169,16 @@ void WEvent::CalcRecoil(StMcEvent &stMcEvent)
    mRecoilP4  = mTotalP4;
    mRecoilP4 -= mLeptonP4;
    mRecoilP4 -= mNeutrinoP4;
+
+   if (mLeptonP4.Eta() > -1.1 && mLeptonP4.Eta() < 2.0)
+      mRecoilInAcceptP4 -= mLeptonP4;
+   else                                                
+      mRecoilOutAcceptP4 -= mLeptonP4;
+
+   if (mNeutrinoP4.Eta() > -1.1 && mNeutrinoP4.Eta() < 2.0)
+      mRecoilInAcceptP4 -= mNeutrinoP4;
+   else 
+      mRecoilOutAcceptP4 -= mNeutrinoP4;
 
    //printf("%f, %f\t", mRecoilInAcceptP4.Px(), mRecoilP4.Px());
    //printf("%f, %f\n", mRecoilInAcceptP4.Pz(), mRecoilP4.Pz());

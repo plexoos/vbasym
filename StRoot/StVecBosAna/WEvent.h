@@ -37,6 +37,7 @@ public:
    WEvent();
 
    TLorentzVector RecoW();
+   TLorentzVector GetRecoilInOutAccept() { return mRecoilInAcceptP4 + mRecoilOutAcceptP4; }
    void CalcRecoil(PyEvent &pyEvent);
    void CalcRecoil(StMcEvent &stMcEvent);
 

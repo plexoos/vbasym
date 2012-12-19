@@ -18,6 +18,7 @@ root4star -b -q 'analyzeMuDst.C(2e3,"st_W_12037041_raw_1400001.MuDst.root",0,1,5
 
 #include "TObject.h"
 #include "TString.h"
+#include "TStopwatch.h"
 
 //#include "St_base/StObject.h"
 #include "St_base/StMessMgr.h"
@@ -289,7 +290,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    if (useJetFinder == 1) {
       // run jet finder
       // Makers for clusterfinding
-      StSpinDbMaker    *stSpinDbMaker    = new StSpinDbMaker("spinDb");
+      //StSpinDbMaker    *stSpinDbMaker    = new StSpinDbMaker("spinDb");
       StEmcADCtoEMaker *stEmcADCtoEMaker = new StEmcADCtoEMaker();
 
       // here we also tag whether or not to do the swap:

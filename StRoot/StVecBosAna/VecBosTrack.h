@@ -101,7 +101,7 @@ public:
    float     GetClusterEnergyFrac() const { return (mCluster2x2.energy + mP3AtDca.Mag()) / mP3InNearConeNoETow.Mag(); }
    float     GetClusterETFrac()     const { return (mCluster2x2.ET     + mP3AtDca.Pt())  / mP3InNearConeNoETow.Perp(); }
    TVector3  GetDistanceToCluster() const { mCoorAtBTow - mCluster2x2.position; }
-   void      CalcDistanceToJet(StJetPtrSet &jets);
+   StJet*    CalcDistanceToJet(StJetPtrSet &jets);
    void      clear();
    void      print(int opt=0) const;
 

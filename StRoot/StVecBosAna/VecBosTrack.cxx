@@ -86,8 +86,10 @@ void VecBosTrack::Process()
 }
 
 
-void VecBosTrack::CalcDistanceToJet(StJetPtrSet &jets)
+StJet* VecBosTrack::CalcDistanceToJet(StJetPtrSet &jets)
 {
+   StJet *closestJet = 0;
+
    // Find the min distance between the track and the closest jet
    StJetPtrSetConstIter iJet = jets.begin();
    for ( ; iJet != jets.end(); ++iJet)
@@ -97,13 +99,19 @@ void VecBosTrack::CalcDistanceToJet(StJetPtrSet &jets)
       Double_t deltaR = stJet->Vect().DeltaR(mP3AtDca);
       //Info("Process()", "Iso track found: %f ", deltaR);
 
-      if (mMinDeltaR < 0 || deltaR < mMinDeltaR) mMinDeltaR = deltaR;
+      if (mMinDeltaR < 0 || deltaR < mMinDeltaR) {
+         mMinDeltaR = deltaR;
+         closestJet = stJet;
+      }
    }
 
-   if (mMinDeltaR > mEvent->mTrackIsoDeltaR) {
+   if (mMinDeltaR <= mEvent->mTrackIsoDeltaR) {
       //Info("Process", "recoil accepted: %f > %f", mMinDeltaR, mTrackIsoDeltaR);
       mType |= VecBosTrack::kIN_JET;
+      return closestJet;
    }
+   
+   return 0;
 
    //if (mMinDeltaR > mTrackIsoDeltaR) {
    //   //utils::PrintTLorentzVector(*stJet);

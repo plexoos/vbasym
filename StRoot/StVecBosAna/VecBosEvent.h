@@ -50,6 +50,8 @@ public:
    int                bxStar48;          //!
    int                spin4;             //! using spinDb or -1 if failed
    bool               zTag;
+   Double_t           mCpuTimeEventAna;
+   Double_t           mCpuTimeHistFill;
    UShort_t           mMuDstNumGTracks;
    UShort_t           mMuDstNumVertices;
    UShort_t           mMuDstNumPTracks;
@@ -66,12 +68,14 @@ public:
    WeveEPRS           eprs;             //!
    WeveESMD           esmd;             //!
    StJetPtrSet        mJets;            //
+   StJetPtrSet        mJetsIsoTrack;    //
    VecBosVertexVec    mVertices;
    VecBosTrackVec     mTracks;
    VecBosTrackPtrVec  mTracksIsolated;
    WEvent            *mWEvent;
    TLorentzVector     mP4JetTotal;
    TLorentzVector     mP4JetFirst;
+   TLorentzVector     mP4JetRecoil;
    TVector3           mP3RecoilFromTracks;
    Double_t           mHadRecoilFromTracksEta;
    Double_t           mHadRecoilFromTracksPt;
@@ -90,25 +94,27 @@ public:
    VecBosEvent();
 
    void           SetStMuDst(StMuDst *stMuDst) { mStMuDst = stMuDst; }
-   VecBosVertex*  AddVertex(StMuPrimaryVertex &stMuVertex);
+   VecBosVertex  *AddVertex(StMuPrimaryVertex &stMuVertex);
    void           AddVertex(VecBosVertex &vbVertex);
-   void           AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex=0);
+   void           AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex = 0);
    void           AddStJets(StJets *stJets, StJets *stJetsNoEndcap);
-   TClonesArray*  GetJets();
-   TClonesArray*  GetJetsNoEndcap();
+   TClonesArray  *GetJets();
+   TClonesArray  *GetJetsNoEndcap();
    UInt_t         GetNumJets();
    UInt_t         GetNumJetsNoEndcap();
-   UInt_t         GetNumVertices()       { return mVertices.size(); }
-   UInt_t         GetNumTracks()         { return mTracks.size(); }
-   UShort_t       GetNumGoodVertices()   { return mNumGoodVertices; }
-   UShort_t       GetNumGoodTracks()     { return mNumGoodTracks; }
-   UShort_t       GetNumBTracks()        { return mNumBTracks; }
-   UShort_t       GetNumETracks()        { return mNumETracks; }
-   UShort_t       GetNumIsolatedTracks() { return mNumIsolatedTracks; }
+   UInt_t         GetNumVertices()       const { return mVertices.size(); }
+   UInt_t         GetNumTracks()         const { return mTracks.size(); }
+   UShort_t       GetNumGoodVertices()   const { return mNumGoodVertices; }
+   UShort_t       GetNumGoodTracks()     const { return mNumGoodTracks; }
+   UShort_t       GetNumBTracks()        const { return mNumBTracks; }
+   UShort_t       GetNumETracks()        const { return mNumETracks; }
+   UShort_t       GetNumIsolatedTracks() const { return mNumIsolatedTracks; }
    UInt_t         GetNumTracksWithBCluster();
-   bool           HasGoodVertex()        { return mNumGoodVertices   > 0 ? true : false; } // Checks if at least one good vertex exist in the event
-   bool           HasGoodTrack()         { return mNumGoodTracks     > 0 ? true : false; }
-   bool           HasIsolatedTrack()     { return mNumIsolatedTracks > 0 ? true : false; }
+   void           SetCpuTimeEventAna(Double_t time) { mCpuTimeEventAna = time; }
+   void           SetCpuTimeHistFill(Double_t time) { mCpuTimeHistFill = time; }
+   bool           HasGoodVertex()        const { return mNumGoodVertices   > 0 ? true : false; } // Checks if at least one good vertex exist in the event
+   bool           HasGoodTrack()         const { return mNumGoodTracks     > 0 ? true : false; }
+   bool           HasIsolatedTrack()     const { return mNumIsolatedTracks > 0 ? true : false; }
 
    void           Process();
    void           ProcessMC();
@@ -120,9 +126,9 @@ public:
 
    WeveCluster    FindMaxBTow2x2(int iEta, int iPhi, float zVert);
    WeveCluster    SumBTowPatch  (int iEta, int iPhi, int Leta, int  Lphi, float zVert);
-   TVector3       CalcP3InConeTpc(VecBosTrack *vbTrack, UShort_t cone1d2d=2, Float_t scale=1);
-   TVector3       CalcP3InConeBTow(VecBosTrack *vbTrack, UShort_t cone1d2d=2, Float_t scale=1);
-   TVector3       CalcP3InConeETow(VecBosTrack *vbTrack, UShort_t cone1d2d=2, Float_t scale=1);
+   TVector3       CalcP3InConeTpc(VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
+   TVector3       CalcP3InConeBTow(VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
+   TVector3       CalcP3InConeETow(VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
    //float          SumETowCone   (float zVert, TVector3 refAxis, int flag);
    //float          SumTpcCone    (int vertID, TVector3 refAxis, int flag, int pointTowId);
 

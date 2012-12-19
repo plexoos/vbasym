@@ -125,12 +125,12 @@ void MCHContainer::BookHists()
 
 
    // recoil from tracks geant variables
-   o["hHadRecoilFromTracksPx"] = hist = new TH1I("hHadRecoilFromTracksPx", "; P_{x}^{Recoil} (geant); Events", 100, -50., 50.);
-   o["hHadRecoilFromTracksPy"] = hist = new TH1I("hHadRecoilFromTracksPy", "; P_{y}^{Recoil} (geant); Events", 100, -50., 50.);
-   o["hHadRecoilFromTracksPz"] = hist = new TH1I("hHadRecoilFromTracksPz", "; P_{z}^{Recoil} (geant); Events", 100, -50., 50.);
+   o["hHadRecoilFromTracksPx"]  = hist = new TH1I("hHadRecoilFromTracksPx", "; P_{x}^{Recoil} (geant); Events", 100, -50., 50.);
+   o["hHadRecoilFromTracksPy"]  = hist = new TH1I("hHadRecoilFromTracksPy", "; P_{y}^{Recoil} (geant); Events", 100, -50., 50.);
+   o["hHadRecoilFromTracksPz"]  = hist = new TH1I("hHadRecoilFromTracksPz", "; P_{z}^{Recoil} (geant); Events", 100, -50., 50.);
    o["hHadRecoilFromTracksEta"] = hist = new TH1I("hHadRecoilFromTracksEta", "; #eta^{Recoil} (geant); Events", 100, -8., 8.);
-   o["hHadRecoilFromTracksPt"] = hist = new TH1I("hHadRecoilFromTracksPt", "; P_{T}^{Recoil} (geant); Events", 100, 0., 50.);
-   o["hRecoilCorrelPythia"] = hist = new TH2I("hRecoilCorrelPythia", "; P_{T}^{Recoil} (geant:pythia); P_{T}^{Recoil}", 100, 0., 50., 100, 0., 50.);
+   o["hHadRecoilFromTracksPt"]  = hist = new TH1I("hHadRecoilFromTracksPt", "; P_{T}^{Recoil} (geant); Events", 100, 0., 50.);
+   o["hRecoilCorrelPythia"]     = hist = new TH2I("hRecoilCorrelPythia", "; P_{T}^{Recoil} (geant:pythia); P_{T}^{Recoil}", 100, 0., 50., 100, 0., 50.);
 
 
    // MC correction variables
@@ -148,7 +148,7 @@ void MCHContainer::Fill(ProtoEvent &ev)
    VecBosEvent& event = (VecBosEvent&) ev;
 
    //((TH1*) o["hWenergy"])->Fill(event.eW);
-  ((TH1*) o["hWenergy"])->Fill(event.mWEvent->mWBosonP4.E());
+   ((TH1*) o["hWenergy"])->Fill(event.mWEvent->mWBosonP4.E());
    //((TH1*) o["hWmomentumX"])->Fill(event.mWP.x());
    ((TH1*) o["hWmomentumX"])->Fill(event.mWEvent->mWBosonP4.Px());
    //((TH1*) o["hWmomentumY"])->Fill(event.mWP.y());
@@ -195,7 +195,6 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hRecOutAccMomentumY"])->Fill(event.mWEvent->mRecoilOutAcceptP4.Py());
    ((TH1*) o["hRecOutAccMomentumZ"])->Fill(event.mWEvent->mRecoilOutAcceptP4.Pz());
 
-
    // recoil from tracks geant variables
    ((TH1*) o["hHadRecoilFromTracksPx"])->Fill(event.mP3RecoilFromTracks.Px(), event.mHadRecoilFromTracksPt != 0);
    ((TH1*) o["hHadRecoilFromTracksPy"])->Fill(event.mP3RecoilFromTracks.Py(), event.mHadRecoilFromTracksPt != 0);
@@ -204,13 +203,9 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hHadRecoilFromTracksPt"])->Fill(event.mP3RecoilFromTracks.Pt(), event.mHadRecoilFromTracksPt != 0);
    ((TH2*) o["hRecoilCorrelPythia"])->Fill(event.mP3RecoilFromTracks.Pt(), event.mWEvent->mRecoilP4.Pt());
 
-
-
    // MC correction variablel
    //((TH1*) o["hEnergyRatio"])->Fill(event.mWEvent->fEnergyRatio);
    //((TH1*) o["hTrackID"])->Fill(event.trackId);
-
-  
 }
 
 

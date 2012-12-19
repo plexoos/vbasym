@@ -5,16 +5,18 @@
 #include "TH1.h"
 #include "TH2.h"
 #include "TTree.h"
-#include <TString.h>
-#include <StMessMgr.h>
-#include <StThreeVectorF.hh>
+#include "TStopwatch.h"
+#include "TString.h"
+
+#include "StMessMgr.h"
+#include "StThreeVectorF.hh"
 
 #include "StMuDSTMaker/COMMON/StMuDstMaker.h"
 #include "StMuDSTMaker/COMMON/StMuDst.h"
-#include <StMuDSTMaker/COMMON/StMuTriggerIdCollection.h>
+#include "StMuDSTMaker/COMMON/StMuTriggerIdCollection.h"
 #include "StMuDSTMaker/COMMON/StMuEvent.h"
-#include <StMuDSTMaker/COMMON/StMuTrack.h>
-#include <StMuDSTMaker/COMMON/StMuPrimaryVertex.h>
+#include "StMuDSTMaker/COMMON/StMuTrack.h"
+#include "StMuDSTMaker/COMMON/StMuPrimaryVertex.h"
 #include "StTriggerUtilities/L2Emulator/L2wAlgo/L2wResult2009.h"
 
 #include "StEmcUtil/database/StBemcTables.h"
@@ -44,7 +46,7 @@ ClassImp(StVecBosMaker)
 
 /** */
 StVecBosMaker::StVecBosMaker(const char *name, VecBosRootFile *vbFile): StMaker(name),
-   mStMuDstMaker(0), mStJetReader(0), mVecBosRootFile(vbFile),
+   mStopWatch(), mStMuDstMaker(0), mStJetReader(0), mVecBosRootFile(vbFile),
    mJetTreeBranchName(), mJetTreeBranchNameNoEndcap(),
    mJets(0), mVecBosEvent(0), mWtree(0),
    mNumInputEvents(0), mNumTrigEvents(0), mNumAcceptedEvents(0),
@@ -280,11 +282,11 @@ Int_t StVecBosMaker::InitRun(int runNo)
       }
    }
 
-   // spinDB monitoring
-   if (mStMuDstMaker && spinDb) {
+   // mSpinDbMaker monitoring
+   if (mStMuDstMaker && mSpinDbMaker) {
       char txt[1000], txt0[100];
       sprintf(txt0, "bxIdeal%d", nRun);
-      sprintf(txt,  "intended fill pattern  R%d-%d vs. bXing; %s", runNo, nRun, spinDb->getV124comment());
+      sprintf(txt,  "intended fill pattern  R%d-%d vs. bXing; %s", runNo, nRun, mSpinDbMaker->getV124comment());
       nRun++;
 
       Tfirst = int(2e9);
@@ -294,10 +296,10 @@ Int_t StVecBosMaker::InitRun(int runNo)
       hbxIdeal->SetFillColor(kYellow);
       HList->Add(hbxIdeal);
 
-      spinDb->print(0); // 0=short, 1=huge
+      mSpinDbMaker->print(0); // 0=short, 1=huge
 
       for (int bx = 0; bx < 120; bx++) {
-         if (spinDb->isBXfilledUsingInternalBX(bx))
+         if (mSpinDbMaker->isBXfilledUsingInternalBX(bx))
             hbxIdeal->Fill(bx);
       }
    }
@@ -346,13 +348,18 @@ Int_t StVecBosMaker::Make()
    // Create new event and connect it to the tree
    //mVecBosEvent = new VecBosEvent();
    //mWtree->Branch("mVecBosEvent", "VecBosEvent", &mVecBosEvent);
+   mStopWatch.Start(); // restart mStopWatch
 
    mNumInputEvents++;
    cout << endl;
    Info("Make()", "Called for event %d", mNumInputEvents);
 
    // standard MuDst analysis
-   if (!mStMuDstMaker || !mStJetReader) return kStOK; // We need both makers for proper analysis
+   // We need both makers for proper analysis
+   if (!mStMuDstMaker || !mStJetReader) {
+      mStopWatch.Stop();
+      return kStOK;
+   }
 
    mVecBosEvent->id      = mStMuDstMaker->muDst()->event()->eventId();
    mVecBosEvent->runNo   = mStMuDstMaker->muDst()->event()->runId();
@@ -381,6 +388,7 @@ Int_t StVecBosMaker::Make()
    // Skip entire event if no energy in BTOW && ETOW
    if ( btowStat != 0 && etowStat != 0 ) {
       Info("Make()", "No energy in neither BTOW nor ETOW. Skipping event...");
+      mStopWatch.Stop();
       return kStOK;
    }
 
@@ -391,6 +399,7 @@ Int_t StVecBosMaker::Make()
    if ( btrig != 0 && etrig != 0 ) {
       Info("Make()", "No trigger bit in neither BTOW nor ETOW. Skipping event...");
       //mWtree->Fill();
+      mStopWatch.Stop();
       return kStOK;
    }
 
@@ -414,8 +423,16 @@ Int_t StVecBosMaker::Make()
       //mVecBosEvent->MCanalysis(); // move this to ProcessMC()
    }
 
+   mVecBosEvent->SetCpuTimeEventAna( mStopWatch.CpuTime() );
+
+   // Restart stopwatch
+   mStopWatch.Continue();
+
    mVecBosRootFile->Fill(*mVecBosEvent);
-   mWtree->Fill(); // write event to tree
+   mVecBosEvent->SetCpuTimeHistFill( mStopWatch.CpuTime() );
+
+   // Write event to tree
+   mWtree->Fill();
 
    //if (mVecBosEvent->HasGoodVertex())
    //   mVecBosRootFile->Fill(*mVecBosEvent, kCUT_VERTICES_GOOD);
@@ -597,7 +614,7 @@ void StVecBosMaker::ReadMuDstJets()
 
    //if (mStJetReader->getStJets(branchName)->eventId() != mVecBosEvent->id)
    if (stJets->eventId() != mVecBosEvent->id)    Error("ReadMuDstJets", "Jet and W event ids do not match: %12d, %12d", stJets->eventId(), mVecBosEvent->id);
-   if (stJets->runId()   != mVecBosEvent->runNo) Error("ReadMuDstJets", "Jet and W run ids do not match: %12d, %12d", stJets->runId(), mVecBosEvent->runNo);
+   if (stJets->runId()   != mVecBosEvent->runNo) Error("ReadMuDstJets", "Jet and W run ids do not match: %12d, %12d",   stJets->runId(), mVecBosEvent->runNo);
 
    if (stJetsNoEndcap->eventId() != mVecBosEvent->id)    Error("ReadMuDstJets", "Jet and W event ids do not match: %12d, %12d (no_endcap branch)", stJetsNoEndcap->eventId(), mVecBosEvent->id);
    if (stJetsNoEndcap->runId()   != mVecBosEvent->runNo) Error("ReadMuDstJets", "Jet and W run ids do not match: %12d, %12d (no_endcap branch)", stJetsNoEndcap->runId(), mVecBosEvent->runNo);
@@ -927,11 +944,11 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
    int spin4    = -2;
 
    // all 3 DB records exist
-   if (spinDb && spinDb->isValid() && spinDb->isPolDirLong())
+   if (mSpinDbMaker && mSpinDbMaker->isValid() && mSpinDbMaker->isPolDirLong())
    {  // you do not want mix Long & Trans by accident
-      bxStar48 = spinDb->BXstarUsingBX48(mVecBosEvent->bx48);
-      bxStar7  = spinDb->BXstarUsingBX7(mVecBosEvent->bx7);
-      spin4    = spinDb->spin4usingBX48(mVecBosEvent->bx48);
+      bxStar48 = mSpinDbMaker->BXstarUsingBX48(mVecBosEvent->bx48);
+      bxStar7  = mSpinDbMaker->BXstarUsingBX7(mVecBosEvent->bx7);
+      spin4    = mSpinDbMaker->spin4usingBX48(mVecBosEvent->bx48);
    }
 
    mVecBosEvent->bxStar48 = bxStar48;

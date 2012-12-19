@@ -11,13 +11,15 @@ using namespace std;
 
 VecBosEvent::VecBosEvent() : ProtoEvent(),
    mStMuDst(0),
+   mCpuTimeEventAna(0), mCpuTimeHistFill(0),
+   mMuDstNumGTracks(0), mMuDstNumVertices(0), mMuDstNumPTracks(0), mMuDstNumOTracks(0),
    mNumGoodVertices(0), mNumGoodTracks(0), mNumBTracks(0), mNumETracks(0), mNumIsolatedTracks(0),
-   mStJets(0), mJets(),
+   mStJets(0), mJets(), mJetsIsoTrack(),
    mVertices(),
    mTracks(),
    mTracksIsolated(),
    mWEvent(0),
-   mP4JetTotal(), mP4JetFirst(),
+   mP4JetTotal(), mP4JetFirst(), mP4JetRecoil(),
    mP3RecoilFromTracks(),
    mHadronicRecoilEta(0),
    mHadronicRecoilPt(0),
@@ -123,8 +125,7 @@ void VecBosEvent::Process()
    mMuDstNumOTracks  = mStMuDst->otherTracks()->GetEntriesFast();
 
    VecBosVertexVecIter iVertex = mVertices.begin();
-   for ( ; iVertex != mVertices.end(); ++iVertex)
-   {
+   for ( ; iVertex != mVertices.end(); ++iVertex) {
       iVertex->Process();
 
       if (iVertex->IsGood()) mNumGoodVertices++;
@@ -132,8 +133,7 @@ void VecBosEvent::Process()
 
    // Process tracks
    VecBosTrackVecIter iTrack = mTracks.begin();
-   for ( ; iTrack != mTracks.end(); ++iTrack)
-   {
+   for ( ; iTrack != mTracks.end(); ++iTrack) {
       iTrack->Process();
 
       if (iTrack->IsGood())     mNumGoodTracks++;
@@ -141,7 +141,9 @@ void VecBosEvent::Process()
       if (iTrack->IsETrack())   mNumETracks++;
       if (iTrack->IsIsolated()) {
          mNumIsolatedTracks++;
-         iTrack->CalcDistanceToJet(mJets);
+         StJet *stJet = iTrack->CalcDistanceToJet(mJets);
+
+         if (stJet) mJetsIsoTrack.insert(stJet);
       }
    }
 
@@ -149,12 +151,15 @@ void VecBosEvent::Process()
    StJetPtrSetConstIter iJet = mJets.begin();
    mP4JetFirst = *iJet ? **iJet : TLorentzVector();
 
-   for ( ; iJet != mJets.end(); ++iJet)
-   {
+   for ( ; iJet != mJets.end(); ++iJet) {
       StJet *stJet = *iJet;
       //Info("Process", "total jet");
       //utils::PrintTLorentzVector(*stJet);
       mP4JetTotal += *stJet;
+
+      if (mJetsIsoTrack.find(stJet) == mJetsIsoTrack.end())
+         mP4JetRecoil += *stJet;
+
       //utils::PrintTLorentzVector(mP4JetTotal);
    }
 }
@@ -173,94 +178,85 @@ void VecBosEvent::ProcessMC()
 
 void VecBosEvent::CalcRecoilFromTracks()
 {
-
- VecBosVertexVecIter iVertex = mVertices.begin();
- for ( ; iVertex != mVertices.end(); ++iVertex)
- {
-      
-   TVector3 recoil;
-
-   //Make sure an isolated track exists
-   VecBosTrackPtrVecIter iTrack = mTracksIsolated.begin();
-   for (; iTrack !=  mTracksIsolated.end(); ++iTrack)
+   VecBosVertexVecIter iVertex = mVertices.begin();
+   for ( ; iVertex != mVertices.end(); ++iVertex)
    {
+      TVector3 recoil;
 
-     TVector3 prP3 = (*iTrack)->mP3AtDca;
-     if (prP3.Pt() <= 0) continue;   // iso track with a positive Pt
+      //Make sure an isolated track exists
+      VecBosTrackPtrVecIter iTrack = mTracksIsolated.begin();
+      for (; iTrack !=  mTracksIsolated.end(); ++iTrack)
+      {
+         TVector3 prP3 = (*iTrack)->mP3AtDca;
+         if (prP3.Pt() <= 0) continue;   // iso track with a positive Pt
 
+         //.... process BTOW hits
+         for (int i = 0; i < mxBtow; i++) {
+            float ene = bemc.eneTile[kBTow][i];
+            if (ene <= 0) continue;
+            TVector3 positionBtow[mxBtow]; // vs. tower ID
+            TVector3 primP = positionBtow[i] - TVector3(0, 0, iVertex->mPosition.Z());
+            primP.SetMag(ene); // it is 3D momentum in the event ref frame
 
-     //.... process BTOW hits
+            recoil += primP;
+         }
 
-     for(int i = 0; i < mxBtow; i++) 
-     {
-	float ene = bemc.eneTile[kBTow][i];
-	if(ene <= 0) continue;
-        TVector3 positionBtow[mxBtow]; // vs. tower ID
-	TVector3 primP = positionBtow[i]-TVector3(0,0,iVertex->mPosition.Z());
-	primP.SetMag(ene); // it is 3D momentum in the event ref frame
-	
-	recoil+=primP;
-     }
+         //loop over tracks with a good vertex
+         VecBosTrackVecIter rTrack = mTracks.begin();
+         for (; rTrack !=  mTracks.end(); ++rTrack) {
+            //// rTrack->Process();
+            if (rTrack->IsGood() == false) continue;      // Track has a good vertex
+            if (rTrack->IsIsolated() == true) continue;   // Track is not the electro
+            //if(iTrack->HasCluster() == false) continue;  // Track points to a cluster
 
-     //loop over tracks with a good vertex
-     VecBosTrackVecIter rTrack = mTracks.begin();
-     for (; rTrack !=  mTracks.end(); ++rTrack)
-     {
-      //// rTrack->Process();
-      if (rTrack->IsGood() == false) continue;      // Track has a good vertex
-      if (rTrack->IsIsolated() == true) continue;   // Track is not the electro
-      //if(iTrack->HasCluster() == false) continue;  // Track points to a cluster
+            TVector3 TrackP3 = rTrack->mP3AtDca;
 
-      TVector3 TrackP3 = rTrack->mP3AtDca;
+            //....process TPC tracks
+            recoil += TrackP3;
+         }
 
-      //....process TPC tracks
-
-      recoil += TrackP3;
-     }
-
-      mP3RecoilFromTracks = recoil;
-     if (mP3RecoilFromTracks.Pt() > 0)
-     {
-      mHadRecoilFromTracksEta  = mP3RecoilFromTracks.Eta();
-      mHadRecoilFromTracksPt   = mP3RecoilFromTracks.Perp();
-     } 
-   } // close there is iso track
- }  // close loop ove vertices
+         mP3RecoilFromTracks = recoil;
+         if (mP3RecoilFromTracks.Pt() > 0) {
+            mHadRecoilFromTracksEta  = mP3RecoilFromTracks.Eta();
+            mHadRecoilFromTracksPt   = mP3RecoilFromTracks.Perp();
+         }
+      } // close there is iso track
+   }  // close loop ove vertices
 }
 
 
 void VecBosEvent::MCanalysis()
 {
-  
-/*
-   VecBosTrackPtrVecIter iTrack = mTracksIsolated.begin();
-   for (; iTrack !=  mTracksIsolated.end(); ++iTrack)
-   {
- 
-     //if ((*iTrack)->IsGood() == false) continue;      // Track has a good vertex
-     //if ((*iTrack)->IsIsolated() == false) continue;   // Track is not the electro
-     //if(iTrack->HasCluster() == false) continue;  // Track points to a cluster
 
-     TVector3 prP3 = (*iTrack)->mP3AtDca;
-      if (prP3.Pt() > 27)  
+   /*
+      VecBosTrackPtrVecIter iTrack = mTracksIsolated.begin();
+      for (; iTrack !=  mTracksIsolated.end(); ++iTrack)
       {
 
+        //if ((*iTrack)->IsGood() == false) continue;      // Track has a good vertex
+        //if ((*iTrack)->IsIsolated() == false) continue;   // Track is not the electro
+        //if(iTrack->HasCluster() == false) continue;  // Track points to a cluster
 
-        //Full W cuts applied at this point
+        TVector3 prP3 = (*iTrack)->mP3AtDca;
+         if (prP3.Pt() > 27)
+         {
 
-          mHadRecoilFromTracksEta = mP3RecoilFromTracks.Eta();
 
-        //hadronic recoil and correlations with W from pythia
-        //  TVector3 hadronicPt(T.hadronicRecoil.X(), T.hadronicRecoil.Y(), 0); //transverse momentum vector
+           //Full W cuts applied at this point
 
-          mHadRecoilFromTracksPt = mP3RecoilFromTracks.Perp();
+             mHadRecoilFromTracksEta = mP3RecoilFromTracks.Eta();
 
-        //   mPtKfactor = mWEvent->mRecoilP4.Pt()/mHadronicRecoilPt;
- 
+           //hadronic recoil and correlations with W from pythia
+           //  TVector3 hadronicPt(T.hadronicRecoil.X(), T.hadronicRecoil.Y(), 0); //transverse momentum vector
+
+             mHadRecoilFromTracksPt = mP3RecoilFromTracks.Perp();
+
+           //   mPtKfactor = mWEvent->mRecoilP4.Pt()/mHadronicRecoilPt;
+
+         }
       }
-   }
-  
-*/
+
+   */
 }
 
 
@@ -599,8 +595,10 @@ void VecBosEvent::clear()
    bx7                = -1;
    bx48               = -1;
    zTag               = false;
-   mMuDstNumVertices  = 0;
+   mCpuTimeEventAna   = 0;
+   mCpuTimeHistFill   = 0;
    mMuDstNumGTracks   = 0;
+   mMuDstNumVertices  = 0;
    mMuDstNumPTracks   = 0;
    mMuDstNumOTracks   = 0;
    mNumGoodVertices   = 0;
@@ -617,6 +615,7 @@ void VecBosEvent::clear()
    eprs.clear();
    esmd.clear();
    mJets.clear();
+   mJetsIsoTrack.clear();
    mVertices.clear();
    mTracks.clear();
    mTracksIsolated.clear();
@@ -624,6 +623,7 @@ void VecBosEvent::clear()
    mWEvent               = new WEvent();
    mP4JetTotal           = TLorentzVector();
    mP4JetFirst           = TLorentzVector();
+   mP4JetRecoil          = TLorentzVector();
 
    mMaxTrackClusterDist  = 7;    // cm
    mTrackIsoDeltaR       = 0.7;  // (rad) near-cone size

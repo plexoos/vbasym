@@ -48,6 +48,7 @@ class StVecBosMaker : public StMaker
 
 private:
   
+   TStopwatch      mStopWatch;
    StMuDstMaker   *mStMuDstMaker;
    StJetReader    *mStJetReader;
    VecBosRootFile *mVecBosRootFile;
@@ -148,7 +149,7 @@ private:
    TVector3 positionEtow[mxEtowSec*mxEtowSub][mxEtowEta];  
 
    StEEmcDb       *mDbE;       // access to EEMC database
-   StSpinDbMaker  *spinDb;     // access spin information
+   StSpinDbMaker  *mSpinDbMaker;     // access spin information
    EEmcGeomSimple *mGeomEmc;   // access to EEMC geometry
    EEmcSmdGeom    *mGeomSmd;   // access to ESMD geometry
 
@@ -222,7 +223,7 @@ public:
    void setHListTpc(TObjArray *x)       { HListTpc = x; }
    void setMC(int x)                    { isMC = x; }
    void setMaxDisplayEve(int n)         { par_maxDisplEve = n; }
-   void attachSpinDb(StSpinDbMaker *mk) { spinDb = mk; }
+   void attachSpinDb(StSpinDbMaker *mk) { mSpinDbMaker = mk; }
    //TVector3   RecoilFromTracksP3;
 
    // tree analysis
