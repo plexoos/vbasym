@@ -40,8 +40,16 @@ public:
    virtual       ~StZBosMaker() {};
    virtual Int_t  Init();
    virtual Int_t  Make();
+   virtual Int_t InitRun(int runnumber);   // Overload empty StMaker::InitRun
+   virtual Int_t FinishRun(int runnumber); // Overload empty StMaker::FinishRun
+   virtual const char *GetCVS() const
+   {
+      static const char cvs[] = "";
+      return cvs;
+   }
+
    void setHList(TObjArray *x)             { HList = x;}
-   void attachWalgoMaker(StVecBosMaker *mk) { wMK = mk;}
+   void AttachWalgoMaker(StVecBosMaker *mk) { wMK = mk;}
    void attachMuMaker(StMuDstMaker *mk)    { muMK = mk;}
    void setNearEtFrac(float x)             { par_nearTotEtFracZ = x; return;}
    void setClusterMinEt(float x)           { par_clusterEtZ = x; return;}
@@ -49,14 +57,6 @@ public:
    void setMinZMass(float x)               { par_minMassZ = x; return;}
    void setMaxZMass(float x)               { par_maxMassZ = x; return;}
    void printJan(VecBosTrack *T);
-   virtual Int_t InitRun(int runnumber);   // Overload empty StMaker::InitRun
-   virtual Int_t FinishRun(int runnumber); // Overload empty StMaker::FinishRun
-
-   // Displayed on session exit, leave it as-is please ...
-   virtual const char *GetCVS() const {
-      static const char cvs[] = "";
-      return cvs;
-   }
 
    ClassDef(StZBosMaker, 0)
 };

@@ -162,6 +162,8 @@ void VecBosEvent::Process()
 
       //utils::PrintTLorentzVector(mP4JetTotal);
    }
+
+   CalcRecoilFromTracks();
 }
 
 
@@ -609,7 +611,7 @@ void VecBosEvent::clear()
    mStJets            = 0;
    bxStar7            = -1;
    bxStar48           = -1;
-   spin4              = -1;
+   mSpinPattern4Bits              = -1;
    bemc.clear();
    etow.clear();
    eprs.clear();
@@ -644,7 +646,7 @@ void VecBosEvent::Print(int opt, int isMC)
 {
    Info("Print(int opt, int isMC)", "");
 
-   printf("\nmy W2011event runNo=%d ID=%d  L2Wbits: ET=%d rnd=%d;  muDst: bx7=%d bx48=%d nVert=%d star: Bx7m=%d, Bx48=%d, spin4=%d \n", runNo, id, l2bitET, l2bitRnd, bx7, bx48, mVertices.size(), bxStar7, bxStar48, spin4);
+   printf("\nmy W2011event runNo=%d ID=%d  L2Wbits: ET=%d rnd=%d;  muDst: bx7=%d bx48=%d nVert=%d star: Bx7m=%d, Bx48=%d, mSpinPattern4Bits=%d \n", runNo, id, l2bitET, l2bitRnd, bx7, bx48, mVertices.size(), bxStar7, bxStar48, mSpinPattern4Bits);
    int  yyyymmdd,  hhmmss; getGmt_day_hour( yyyymmdd,  hhmmss);
    printf("  event time is: day=%d, hour=%d (GMT)\n", yyyymmdd, hhmmss);
 

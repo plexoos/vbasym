@@ -14,13 +14,10 @@ root4star -b -q 'analyzeMuDst.C(2e3,"st_W_12037041_raw_1400001.MuDst.root",0,1,5
 
 #include "stana.h"
 
-//#include "St_base/StObject.h"
-
 #include "TObject.h"
 #include "TString.h"
 #include "TStopwatch.h"
 
-//#include "St_base/StObject.h"
 #include "St_base/StMessMgr.h"
 #include "StChain.h"
 #include "StEEmcDbMaker/StEEmcDbMaker.h"
@@ -40,7 +37,6 @@ root4star -b -q 'analyzeMuDst.C(2e3,"st_W_12037041_raw_1400001.MuDst.root",0,1,5
 #include "StJetMaker/StBET4pMaker.h"
 #include "StJetMaker/StJetMaker.h"
 #include "StJetMaker/towers/StjTowerEnergyCorrectionForTracksFraction.h"
-//#include <StJetMaker/tracks/StjTrackList.h>
 
 #include "StJetMaker/StppAnaPars.h"
 #include "StJetFinder/StConePars.h"
@@ -50,7 +46,7 @@ root4star -b -q 'analyzeMuDst.C(2e3,"st_W_12037041_raw_1400001.MuDst.root",0,1,5
 #include "StVecBosAna/StVecBosMaker.h"
 #include "StVecBosAna/StZBosMaker.h"
 #include "StVecBosAna/St2011pubWanaMaker.h"
-#include "StVecBosAna/St2011pubSpinMaker.h"
+#include "StVecBosAna/StVecBosSpinMaker.h"
 #include "StVecBosAna/AnaInfo.h"
 #include "StVecBosAna/St2011WlumiMaker.h"
 #include "StVecBosAna/VecBosRootFile.h"
@@ -71,7 +67,7 @@ int analyzeMuDst(
    string   jetDir              = "",
    string   histDir             = "",
    string   wtreeDir            = "",
-   int      spinSort            = false,
+   bool     spinSort            = true,
    bool     findZ               = false,
    int      geant               = false
 );
@@ -86,13 +82,13 @@ int main(int argc, char *argv[])
    int useJetFinder = anaInfo.fDoReconstructJets ? 1 : 2;
    bool isMC = anaInfo.fThisisMC; 
 
-   return analyzeMuDst(anaInfo.fMaxEventsUser, anaInfo.GetListName(), isMC, useJetFinder, 330801, 330851, "", "", "", "", false, false, false);
+   return analyzeMuDst(anaInfo.fMaxEventsUser, anaInfo.GetListName(), isMC, useJetFinder, 330801, 330851);
 }
 
 
 int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    int useJetFinder, int idL2BWtrg, int idL2EWtrg, string muDir, string jetDir,
-   string histDir, string wtreeDir, int spinSort, bool findZ, int geant)
+   string histDir, string wtreeDir, bool spinSort, bool findZ, int geant)
 {
    string eemcSetupPath = "/afs/rhic.bnl.gov/star/users/kocolosk/public/StarTrigSimuSetup/";
 
@@ -147,8 +143,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    }
 
    printf("Output file: %s\n", outF.Data());
-   printf("geant file: %s\n", fileG.Data());
-
+   printf("Geant file:  %s\n", fileG.Data());
    printf("TRIG ID: L2BW=%d, L2EW=%d, isMC=%d, useJetFinder=%d\n", idL2BWtrg, idL2EWtrg, isMC, useJetFinder );
 
    // Logger business
@@ -166,14 +161,14 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    if (geant) {
       // get geant file
-      StIOMaker *ioMaker = new StIOMaker();
-      ioMaker->SetFile(fileG.Data());
-      // ioMaker->SetFile("/star/data56/reco/pp500/pythia6_422/Wplus_enu/perugia320/y2009a/gheisha_on/p09ig/rcf10010_1000_1000evts.geant.root");
-      // ioMaker->SetFile("/star/institutions/mit/balewski/2012-Wsimu-setH-noFilt/eve_geant/jbc310_1_1000evts.geant.root");
-      ioMaker->SetIOMode("r");
-      ioMaker->SetBranch("*", 0, "1"); //deactivate all branches
-      ioMaker->SetBranch("geantBranch", 0, "r"); //activate geant Branch
-      ioMaker->SetBranch("minimcBranch", 0, "r"); //activate geant Branch
+      StIOMaker *stIOMaker = new StIOMaker();
+      stIOMaker->SetFile(fileG.Data());
+      // stIOMaker->SetFile("/star/data56/reco/pp500/pythia6_422/Wplus_enu/perugia320/y2009a/gheisha_on/p09ig/rcf10010_1000_1000evts.geant.root");
+      // stIOMaker->SetFile("/star/institutions/mit/balewski/2012-Wsimu-setH-noFilt/eve_geant/jbc310_1_1000evts.geant.root");
+      stIOMaker->SetIOMode("r");
+      stIOMaker->SetBranch("*", 0, "1"); //deactivate all branches
+      stIOMaker->SetBranch("geantBranch", 0, "r"); //activate geant Branch
+      stIOMaker->SetBranch("minimcBranch", 0, "r"); //activate geant Branch
    }
 
    // Now we add Makers to the chain...
@@ -205,22 +200,22 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    printf("Total number of events in muDst chain = %d\n", nEntries);
 
-   //for EEMC, need full db access:
-   St_db_Maker *dbMk = new St_db_Maker("StarDb", "MySQL:StarDb", "MySQL:StarDb", "$STAR/StarDb");
+   // For EEMC, need full db access:
+   St_db_Maker *stDbMaker = new St_db_Maker("StarDb", "MySQL:StarDb", "MySQL:StarDb", "$STAR/StarDb");
 
-   if (!isMC) {
-      // run 11  data
-      dbMk->SetFlavor("Wbose2", "bsmdeCalib"); // Willie's abs gains E-plane, run 9
-      dbMk->SetFlavor("Wbose2", "bsmdpCalib"); // P-plane
-      dbMk->SetFlavor("sim",    "bemcCalib");  // use ideal gains for real data
-      dbMk->SetFlavor("sim",    "eemcPMTcal"); // use ideal gains for 2011 real data as well
-   }
-   else { // embedding samples
-      dbMk->SetMaxEntryTime(20101215, 0); // keep the same DB snap-shot as used in BFC for embedding
-      dbMk->SetFlavor("Wbose2","bsmdpCalib");
-      dbMk->SetFlavor("Wbose2","bsmdeCalib");
+   if (isMC) {
+      stDbMaker->SetMaxEntryTime(20101215, 0); // keep the same DB snap-shot as used in BFC for embedding
+      stDbMaker->SetFlavor("Wbose2", "bsmdpCalib");
+      stDbMaker->SetFlavor("Wbose2", "bsmdeCalib");
       // printf("???? unforeseen MC flag, ABORT\n");
       // assert(1 == 2);
+   }
+   else { // embedding samples
+      // run 11  data
+      stDbMaker->SetFlavor("Wbose2", "bsmdeCalib"); // Willie's abs gains E-plane, run 9
+      stDbMaker->SetFlavor("Wbose2", "bsmdpCalib"); // P-plane
+      stDbMaker->SetFlavor("sim",    "bemcCalib");  // use ideal gains for real data
+      stDbMaker->SetFlavor("sim",    "eemcPMTcal"); // use ideal gains for 2011 real data as well
    }
 
    // Load EEMC database
@@ -349,7 +344,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
       int nProcEvents = 0;
       int t1 = time(0);
-      TStopwatch tt;
+      TStopwatch stopwatch;
 
       for (UInt_t iev = 0; iev < nEntries; iev++)
       {
@@ -365,7 +360,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       }
 
       cout << "run " << inMuDstFileListName << " maxEventsUser = " << nProcEvents << " total ";
-      tt.Print();
+      stopwatch.Print();
       printf("******************************************\n");
 
       int t2 = time(0);
@@ -376,7 +371,6 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       float rate = 1.*nProcEvents / (t2 - t1);
 
       printf("jets sorting done %d of maxEventsUser = %d, CPU rate= %.1f Hz, total time %.1f minute(s) \n\n", nProcEvents, nEntries, rate, tMnt);
-
       cout << "END: jet finder " << endl;
 
       stChain->Finish();
@@ -384,8 +378,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
       return 1;
    } 
-
-   // the jet reconstruction ends above
+   // the jet reconstruction ends here
 
 
    if (useJetFinder == 2) {
@@ -394,8 +387,34 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       stJetReader->InitFile(jetFile);
    }
 
-   // W reconstruction code
+   StSpinDbMaker *stSpinDbMaker = new StSpinDbMaker("stSpinDbMaker");
    StVecBosMaker *stVecBosMaker = new StVecBosMaker("StVecBosMaker", &vecBosRootFile);
+
+   if (spinSort)
+   {
+      //stSpinDbMaker = new StSpinDbMaker("stSpinDbMaker");
+      stVecBosMaker->AttachSpinDb(stSpinDbMaker);
+
+      enum {mxSM = 5}; // to study eta-cuts, drop Q/PT cut
+
+      StVecBosSpinMaker *stVecBosSpinMaker[mxSM];
+
+      for (int kk = 0; kk < mxSM; kk++)
+      {
+         char ttx[100];
+         sprintf(ttx, "%cspin", 'A' + kk);
+         printf("add spinMaker %s %d \n", ttx, kk);
+         stVecBosSpinMaker[kk] = new StVecBosSpinMaker(ttx);
+         stVecBosSpinMaker[kk]->AttachWalgoMaker(stVecBosMaker);
+         //stVecBosSpinMaker[kk]->AttachSpinDb(stSpinDbMaker);
+         stVecBosSpinMaker[kk]->SetHList(HList);
+
+         if (kk == 1) stVecBosSpinMaker[kk]->setEta(-1., 0.);
+         if (kk == 2) stVecBosSpinMaker[kk]->setEta(0, 1.);
+         if (kk == 3) stVecBosSpinMaker[kk]->setQPT(-1); // disable Q/PT cut
+         if (kk == 4) stVecBosSpinMaker[kk]->setNoEEMC();
+      }
+   }
 
    if (isMC) { // MC specific
       // S.F. - Here version does nothing (just pass .true.), but it was used
@@ -426,7 +445,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    // overwrite - be careful
 
    St2011pubWanaMaker* st2011pubWanaMaker = new St2011pubWanaMaker();
-   st2011pubWanaMaker->attachWalgoMaker(stVecBosMaker);
+   st2011pubWanaMaker->AttachWalgoMaker(stVecBosMaker);
 
    //Collect all output histograms
    //already defined this above:  TObjArray* HList=new TObjArray;
@@ -438,42 +457,20 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    //// calculate lumi from runs
    //if(!isMC) {
    //  St2011WlumiMaker *WlumiMk = new St2011WlumiMaker("lumi"); 
-   //  WlumiMk->attachWalgoMaker(stVecBosMaker); 
+   //  WlumiMk->AttachWalgoMaker(stVecBosMaker); 
    //  WlumiMk->attachMuMaker(stMuDstMaker);
    //  WlumiMk->setHList(HList);
    //}
 
-   if (spinSort) {
-      StSpinDbMaker *stSpinDbMaker = new StSpinDbMaker("spinDb");
-      enum {mxSM = 5}; // to study eta-cuts, drop Q/PT cut
-
-      St2011pubSpinMaker *spinMkA[mxSM];
-
-      for (int kk = 0; kk < mxSM; kk++) {
-         char ttx[100];
-         sprintf(ttx, "%cspin", 'A' + kk);
-         printf("add spinMaker %s %d \n", ttx, kk);
-         spinMkA[kk] = new St2011pubSpinMaker(ttx);
-         spinMkA[kk]->attachWalgoMaker(stVecBosMaker);
-         //spinMkA[kk]->attachSpinDb(stSpinDbMaker);
-         spinMkA[kk]->setHList(HList);
-
-         if (kk == 1) spinMkA[kk]->setEta(-1., 0.);
-         if (kk == 2) spinMkA[kk]->setEta(0, 1.);
-         if (kk == 3) spinMkA[kk]->setQPT(-1); // disable Q/PT cut
-         if (kk == 4) spinMkA[kk]->setNoEEMC();
-      }
-   }
-
    if (geant) {
       St2011pubMcMaker *pubMcMk = new St2011pubMcMaker("pubMc");
-      pubMcMk->attachWalgoMaker(stVecBosMaker);
+      pubMcMk->AttachWalgoMaker(stVecBosMaker);
       pubMcMk->setHList(HList);
    }
 
    if (findZ) {
       StZBosMaker *st2011ZMaker = new StZBosMaker("Z");
-      st2011ZMaker->attachWalgoMaker(stVecBosMaker);
+      st2011ZMaker->AttachWalgoMaker(stVecBosMaker);
       st2011ZMaker->setHList(HList);
       st2011ZMaker->setNearEtFrac(0.88);
       st2011ZMaker->setClusterMinEt(15);
@@ -489,7 +486,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    int nProcEvents = 0;
    int t1 = time(0);
-   TStopwatch tt;
+   TStopwatch stopwatch;
 
    for (UInt_t iev = 0; iev < nEntries; iev++)
    {
@@ -513,8 +510,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    // delete stChain;
 
    cout << "inMuDstFileListName: " << inMuDstFileListName << ", maxEventsUser = " << nProcEvents << " total " << endl;
-   tt.Print();
-
+   stopwatch.Print();
    printf("****************************************** \n");
 
    int t2 = time(0);

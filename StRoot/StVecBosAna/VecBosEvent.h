@@ -48,7 +48,7 @@ public:
    int                bx48;              //! raw from muDst
    int                bxStar7;           //!
    int                bxStar48;          //!
-   int                spin4;             //! using spinDb or -1 if failed
+   int                mSpinPattern4Bits; // using spinDb or -1 if failed
    bool               zTag;
    Double_t           mCpuTimeEventAna;
    Double_t           mCpuTimeHistFill;

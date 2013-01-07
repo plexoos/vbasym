@@ -3,7 +3,7 @@
 
 #include <vector>
 
-//#include "TObject.h"
+#include "TObject.h"
 
 #include "StThreeVectorF.hh"
 
@@ -44,6 +44,7 @@ public:
 
    ClassDef(VecBosVertex, 1);
 };
+
 
 typedef std::vector<VecBosVertex>   VecBosVertexVec;
 typedef VecBosVertexVec::iterator   VecBosVertexVecIter;

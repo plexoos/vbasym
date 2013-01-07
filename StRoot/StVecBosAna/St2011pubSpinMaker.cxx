@@ -70,13 +70,13 @@ void St2011pubSpinMaker::bXingSort()
 
    hA[0]->Fill("inp", 1.);
 
-   if (wMK->mVecBosEvent->mVertices.size() <= 0) return;
+   if (wMK->GetVecBosEvent()->mVertices.size() <= 0) return;
    // require: L2W-trig (ET or rnd) & vertex is reasonable
 
-   int bx48     = wMK->mVecBosEvent->bx48;
-   int bx7      = wMK->mVecBosEvent->bx7;
-   int bxStar48 = wMK->mVecBosEvent->bxStar48;
-   int bxStar7  = wMK->mVecBosEvent->bxStar7;
+   int bx48     = wMK->GetVecBosEvent()->bx48;
+   int bx7      = wMK->GetVecBosEvent()->bx7;
+   int bxStar48 = wMK->GetVecBosEvent()->bxStar48;
+   int bxStar7  = wMK->GetVecBosEvent()->bxStar7;
 
    if (bxStar48 != bxStar7) {
       printf("BAD bx7=%d bx48=%d del=%d\n", bx7, bx48, bxStar48 - bxStar7);
@@ -85,7 +85,7 @@ void St2011pubSpinMaker::bXingSort()
    }
 
    //remove events tagged as Zs
-   if (wMK->mVecBosEvent->zTag) return;
+   if (wMK->GetVecBosEvent()->zTag) return;
    hA[0]->Fill("noZ", 1.);
 
    hA[1]->Fill(bx48);
@@ -94,26 +94,26 @@ void St2011pubSpinMaker::bXingSort()
    hA[3]->Fill(bxStar48);
    hA[4]->Fill(bxStar7);
 
-   int spin4 = wMK->mVecBosEvent->spin4;
+   int spin4 = wMK->GetVecBosEvent()->mSpinPattern4Bits;
    hA[5]->Fill(bxStar7, spin4);
 
    float par_maxDsmThr = 58;
    float par_myET = 25; // monitoring cut
 
-   if ( wMK->mVecBosEvent->l2bitRnd) { // lumi monitor BHT3-random
+   if ( wMK->GetVecBosEvent()->l2bitRnd) { // lumi monitor BHT3-random
       // avoid too much energy - can be W-events (1/milion :)
-      if (wMK-> mVecBosEvent->bemc.maxHtDsm < par_maxDsmThr)  {
+      if (wMK-> GetVecBosEvent()->bemc.maxHtDsm < par_maxDsmThr)  {
          hA[6]->Fill(spin4);  hA[0]->Fill("BG1", 1.);
       }
       return; // LOGICAL ERROR - FIX IT LATER
    }
 
-   if ( wMK->mVecBosEvent->l2bitET == 0) return;
+   if ( wMK->GetVecBosEvent()->l2bitET == 0) return;
    //..... it is guaranteed ..... L2W-ET>13 did fired  ......
 
    // search for  Ws ............
-   for (uint iv = 0; iv < wMK->mVecBosEvent->mVertices.size(); iv++) {
-      VecBosVertex &V = wMK->mVecBosEvent->mVertices[iv];
+   for (uint iv = 0; iv < wMK->GetVecBosEvent()->mVertices.size(); iv++) {
+      VecBosVertex &V = wMK->GetVecBosEvent()->mVertices[iv];
 
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          VecBosTrack &T = V.eleTrack[it];
@@ -122,7 +122,7 @@ void St2011pubSpinMaker::bXingSort()
          // Collect QCD background for lumi monitors
          float frac24 = T.mCluster2x2.ET / (T.mCluster4x4.ET);
 
-         if (iv == 0 && it == 0 && frac24 < wMK->mMinBClusterEnergyIsoRatio) {
+         if (iv == 0 && it == 0 && frac24 < wMK->GetMinBClusterEnergyIsoRatio() ) {
             hA[31]->Fill(T.mCluster2x2.ET);
             if ( T.mCluster2x2.ET < 20. ) { hA[7]->Fill(spin4);  hA[0]->Fill("BG2", 1.);}
          }
@@ -137,12 +137,12 @@ void St2011pubSpinMaker::bXingSort()
          float ET = T.mCluster2x2.ET;
 
          //put final W cut here
-         bool isW = T.mCluster2x2.ET / T.mP3InNearCone.Pt() > wMK->par_nearTotEtFrac; // near cone
+         bool isW = T.mCluster2x2.ET / T.mP3InNearCone.Pt() > wMK->GetNearTotEtFrac(); // near cone
 
          if (par_useNoEEMC)
-            isW = isW && T.sPtBalance_noEEMC > wMK->par_ptBalance; // awayET
+            isW = isW && T.sPtBalance_noEEMC > wMK->GetPtBalance(); // awayET
          else
-            isW = isW && T.sPtBalance > wMK->par_ptBalance; // awayET
+            isW = isW && T.sPtBalance > wMK->GetPtBalance(); // awayET
 
          if (!isW) { // AL(QCD)
             if (ET > 15 && ET < 20 ) hA[16 + iQ]->Fill(spin4);

@@ -28,7 +28,7 @@ class  EEmcGeomSimple;
 class  EEmcSmdGeom;
 class  WeventDisplay;
 class  St2011pubWanaMaker;
-class  St2011pubSpinMaker;
+class  StVecBosSpinMaker;
 class  St2011pubMcMaker;
 
 class  StJetReader;
@@ -41,7 +41,7 @@ class StVecBosMaker : public StMaker
 {
    friend class WeventDisplay;
    friend class St2011pubWanaMaker;
-   friend class St2011pubSpinMaker;
+   friend class StVecBosSpinMaker;
    friend class St2011pubMcMaker;
    friend class St2011WlumiMaker;
    friend class StZBosMaker;
@@ -149,7 +149,7 @@ private:
    TVector3 positionEtow[mxEtowSec*mxEtowSub][mxEtowEta];  
 
    StEEmcDb       *mDbE;       // access to EEMC database
-   StSpinDbMaker  *mSpinDbMaker;     // access spin information
+   StSpinDbMaker  *mStSpinDbMaker;     // access spin information
    EEmcGeomSimple *mGeomEmc;   // access to EEMC geometry
    EEmcSmdGeom    *mGeomSmd;   // access to ESMD geometry
 
@@ -218,13 +218,17 @@ public:
    virtual void  Clear(const Option_t* = "");
    virtual Int_t FinishRun(int runumber);
 
-   void setTrigID(int l2bw, int l2ew)   { par_l2bwTrgID = l2bw; parE_l2ewTrgID = l2ew; }
-   void setHList(TObjArray *x)          { HList    = x; }
-   void setHListTpc(TObjArray *x)       { HListTpc = x; }
-   void setMC(int x)                    { isMC = x; }
-   void setMaxDisplayEve(int n)         { par_maxDisplEve = n; }
-   void attachSpinDb(StSpinDbMaker *mk) { mSpinDbMaker = mk; }
-   //TVector3   RecoilFromTracksP3;
+   VecBosEvent* GetVecBosEvent()                { return mVecBosEvent; }
+   float        GetMinBClusterEnergyIsoRatio()  { return mMinBClusterEnergyIsoRatio; }
+   float        GetNearTotEtFrac()              { return par_nearTotEtFrac; }
+   float        GetPtBalance()                  { return par_ptBalance; }
+   void         setTrigID(int l2bw, int l2ew)   { par_l2bwTrgID = l2bw; parE_l2ewTrgID = l2ew; }
+   void         setHList(TObjArray *x)          { HList    = x; }
+   void         setHListTpc(TObjArray *x)       { HListTpc = x; }
+   void         setMC(int x)                    { isMC = x; }
+   void         setMaxDisplayEve(int n)         { par_maxDisplEve = n; }
+   void         AttachSpinDb(StSpinDbMaker *mk) { mStSpinDbMaker = mk; }
+   //TVector3     RecoilFromTracksP3;
 
    // tree analysis
    void  chainFile( const Char_t *name );

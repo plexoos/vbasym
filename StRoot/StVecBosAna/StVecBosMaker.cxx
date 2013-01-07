@@ -1,5 +1,6 @@
 #include <limits>
 //#include <math.h>
+#include <string>
 
 #include "TF1.h"
 #include "TH1.h"
@@ -167,7 +168,7 @@ Int_t StVecBosMaker::Init()
 
    if (isMC) { // load vertex reweighting histo
       // TString filename="/star/u/stevens4/wAnalysis/efficXsec/zVertReweight.root";
-      TString filename="/star/u/fazio/offline/users/fazio/vbasym/zVertReweight.root";
+      //TString filename="/star/u/fazio/offline/users/fazio/vbasym/zVertReweight.root";
       //TFile* reweightFile = new TFile(filename);
       //cout<<"Re-weighting vertex z distribution with '"<<nameReweight<<"' histo from file "<<endl<<filename<<endl;
       //hReweight = (TH1F*) reweightFile->Get(nameReweight);
@@ -282,11 +283,16 @@ Int_t StVecBosMaker::InitRun(int runNo)
       }
    }
 
-   // mSpinDbMaker monitoring
-   if (mStMuDstMaker && mSpinDbMaker) {
+   // mStSpinDbMaker monitoring
+   if (mStMuDstMaker && mStSpinDbMaker)
+   {
       char txt[1000], txt0[100];
       sprintf(txt0, "bxIdeal%d", nRun);
-      sprintf(txt,  "intended fill pattern  R%d-%d vs. bXing; %s", runNo, nRun, mSpinDbMaker->getV124comment());
+      sprintf(txt,  "intended fill pattern  R%d-%d vs. bXing; ", runNo, nRun);
+      //string str_txt = txt;
+      //str_txt += mStSpinDbMaker->getV124comment();
+      //Info("InitRun(...)", "v124comment: %s", mStSpinDbMaker->getV124comment());
+
       nRun++;
 
       Tfirst = int(2e9);
@@ -296,10 +302,10 @@ Int_t StVecBosMaker::InitRun(int runNo)
       hbxIdeal->SetFillColor(kYellow);
       HList->Add(hbxIdeal);
 
-      mSpinDbMaker->print(0); // 0=short, 1=huge
+      mStSpinDbMaker->print(0); // 0=short, 1=huge
 
       for (int bx = 0; bx < 120; bx++) {
-         if (mSpinDbMaker->isBXfilledUsingInternalBX(bx))
+         if (mStSpinDbMaker->isBXfilledUsingInternalBX(bx))
             hbxIdeal->Fill(bx);
       }
    }
@@ -416,11 +422,9 @@ Int_t StVecBosMaker::Make()
    ReadMuDstJets();   // Get input jet info
 
    mVecBosEvent->Process();
-   mVecBosEvent->CalcRecoilFromTracks();
 
    if (isMC) {
       mVecBosEvent->ProcessMC();   
-      //mVecBosEvent->MCanalysis(); // move this to ProcessMC()
    }
 
    mVecBosEvent->SetCpuTimeEventAna( mStopWatch.CpuTime() );
@@ -944,16 +948,20 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
    int spin4    = -2;
 
    // all 3 DB records exist
-   if (mSpinDbMaker && mSpinDbMaker->isValid() && mSpinDbMaker->isPolDirLong())
-   {  // you do not want mix Long & Trans by accident
-      bxStar48 = mSpinDbMaker->BXstarUsingBX48(mVecBosEvent->bx48);
-      bxStar7  = mSpinDbMaker->BXstarUsingBX7(mVecBosEvent->bx7);
-      spin4    = mSpinDbMaker->spin4usingBX48(mVecBosEvent->bx48);
+   // you do not want mix Long & Trans by accident
+   //if (mStSpinDbMaker && mStSpinDbMaker->isValid() && mStSpinDbMaker->isPolDirLong())
+   if (mStSpinDbMaker && mStSpinDbMaker->isValid() )
+   { 
+      bxStar48 = mStSpinDbMaker->BXstarUsingBX48(mVecBosEvent->bx48);
+      bxStar7  = mStSpinDbMaker->BXstarUsingBX7(mVecBosEvent->bx7);
+      spin4    = mStSpinDbMaker->spin4usingBX48(mVecBosEvent->bx48);
+   } else {
+      Info("ReadMuDstBarrelTrig()", "No valid mStSpinDbMaker");
    }
 
-   mVecBosEvent->bxStar48 = bxStar48;
-   mVecBosEvent->bxStar7  = bxStar7;
-   mVecBosEvent->spin4    = spin4;
+   mVecBosEvent->bxStar48          = bxStar48;
+   mVecBosEvent->bxStar7           = bxStar7;
+   mVecBosEvent->mSpinPattern4Bits = spin4;
 
    // Check trigger ID exists = fired
    if ( !tic->nominal().isTrigger(par_l2bwTrgID) ) return -2;

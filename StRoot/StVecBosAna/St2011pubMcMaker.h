@@ -41,14 +41,14 @@ public:
    virtual Int_t  Make();
    void setHList(TObjArray *x) {HList = x;}
 
-   void attachWalgoMaker(StVecBosMaker *mk) { wMK = mk;}
+   void AttachWalgoMaker(StVecBosMaker *mk) { wMK = mk;}
 
    virtual Int_t InitRun  (int runumber) {return 0;}; // Overload empty StMaker::InitRun
    virtual Int_t FinishRun(int runumber) {return 0;}; // Overload empty StMaker::FinishRun
 
    // Displayed on session exit, leave it as-is please ...
    virtual const char *GetCVS() const {
-      static const char cvs[] = "Tag $Name:  $ $Id: St2011pubMcMaker.h,v 1.3 2012/10/27 01:47:23 smirnovd Exp $ built "__DATE__" "__TIME__ ;
+      static const char cvs[] = "Tag $Name:  $ $Id: St2011pubMcMaker.h,v 1.4 2013/01/07 23:53:26 smirnovd Exp $ built "__DATE__" "__TIME__ ;
       return cvs;
    }
 
