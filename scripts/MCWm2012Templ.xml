@@ -26,7 +26,7 @@
                 ./stana -f /star/institutions/mit/balewski/2012-Wsimu-setH-noFilt/eve_mu/jbc311_&fillNo;_1000evts.MuDst.root -j -m
                 # ./stana -f $filename -j -m
  
-                ln -s &outPath;/jets_run11/jets_jbc311_&fillNo;1000evt.root 
+                ln -s &outPath;/jets_run11/jets_jbc311_&fillNo;_1000evt.root 
                 ls -al
                 ./stana -f /star/institutions/mit/balewski/2012-Wsimu-setH-noFilt/eve_mu/jbc311_&fillNo;_1000evts.MuDst.root -m 
                 #./stana -f $filename -m 
