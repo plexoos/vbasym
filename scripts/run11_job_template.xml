@@ -41,27 +41,12 @@
       echo "SCRATCH:        " $SCRATCH
       echo "pwd:            " `pwd`
       echo "COMMAND:        " $COMMAND
-
-      # no spaces between arguments!
-      #root4star -b -q stana.C\(n1;,\"$RUNLIST\"\)
+      echo
 
       `$COMMAND`
 
-      #ln -s &outPath;/jets_run11/jets_R&runNumber;.root
-      #ls -al
-      #./stana -f &outPath;/lists_run11/R&runNumber;.lis
-
-
-      #@ nFile=0
-      #while ( $nFile &lt; $INPUTFILECOUNT )
-      #   eval set RUNLIST = '$INPUTFILE'$nFile 
-      #   
-      #   # put your script here, with RUNLIST as input file
-      #   echo "RUNLIST:  " $RUNLIST 
-      #   root4star -b -q stana.C\(n1;,\"$RUNLIST\"\)
-      #   
-      #   @ nFile++
-      #end
+      # Remove link
+      if ($OPT_JETS == 0) rm jets_R*.root
 
    </command>
 
@@ -69,8 +54,8 @@
    <output fromScratch="jets*.root"   toURL="file:&outPath;/jets_run11/"/>
    <output fromScratch="R*Wtree.root" toURL="file:&outPath;/wtree_run11/"/>
    <output fromScratch="*.ps"         toURL="file:&outPath;/ps_run11/"/>
-   <stdout URL="file:&outPath;/log_run11/R&runNumber;.log"/>
-   <stderr URL="file:&outPath;/log_run11/R&runNumber;.log"/>
+   <stdout URL="file:&outPath;/log_run11/R&runNumber;_&STANA_OPTIONS;.log"/>
+   <stderr URL="file:&outPath;/log_run11/R&runNumber;_&STANA_OPTIONS;.log"/>
 
    <SandBox>
        <Package>
