@@ -13,26 +13,39 @@
    <command>
       starver &STAR_VER;
       #stardev
-      echo
-      echo "STAR:      " $STAR
-      echo "runNumber: " &runNumber;
-      echo "codePath:  " &codePath;
-      echo "FILELIST:  " $FILELIST
-      echo "SCRATCH:   " $SCRATCH
-      echo "pwd:       " `pwd`
+
+      cp $FILELIST &outPath;/lists_run11/R&runNumber;.lis
+
+      setenv RUNLIST "&outPath;/lists_run11/R&runNumber;.lis"
+      setenv OPTIONS `echo &STANA_OPTIONS; | sed 's/_/ /g'`
+      setenv OPT_JETS `echo $OPTIONS | awk '{print index($0,"-j")}'`
+      setenv COMMAND "./stana -f $RUNLIST $OPTIONS"
+
+      if ($OPT_JETS == 0) ln -s &outPath;/jets_run11/jets_R&runNumber;.root
       ln -s &codePath;/.sl53_gcc432
       ln -s &codePath;/stana
-      ln -s &codePath;/R12043044_local.lis
       ls -al
-      cp $FILELIST &outPath;/lists_run11/R&runNumber;.lis
-      setenv filename `ls &outPath;/lists_run11/R&runNumber;.lis`
-      echo "work on: " $filename
+
+      echo
+      echo "outPath:        " &outPath;
+      echo "codePath:       " &codePath;
+      echo "runNumber:      " &runNumber;
+      echo "STAR_VER:       " &STAR_VER;
+      echo "STANA_OPTIONS:  " &STANA_OPTIONS;
+      echo
+      echo "STAR:           " $STAR
+      echo "FILELIST:       " $FILELIST
+      echo "RUNLIST:        " $RUNLIST
+      echo "OPTIONS:        " $OPTIONS
+      echo "OPT_JETS:       " $OPT_JETS
+      echo "SCRATCH:        " $SCRATCH
+      echo "pwd:            " `pwd`
+      echo "COMMAND:        " $COMMAND
 
       # no spaces between arguments!
-      #root4star -b -q stana.C\(&n1;,\"$filename\"\)
+      #root4star -b -q stana.C\(n1;,\"$RUNLIST\"\)
 
-
-      ./stana -f &outPath;/lists_run11/R&runNumber;.lis -j
+      `$COMMAND`
 
       #ln -s &outPath;/jets_run11/jets_R&runNumber;.root
       #ls -al
@@ -41,11 +54,11 @@
 
       #@ nFile=0
       #while ( $nFile &lt; $INPUTFILECOUNT )
-      #   eval set filename = '$INPUTFILE'$nFile 
+      #   eval set RUNLIST = '$INPUTFILE'$nFile 
       #   
-      #   # put your script here, with filename as input file
-      #   echo "filename:  " $filename 
-      #   root4star -b -q stana.C\(&n1;,\"$filename\"\)
+      #   # put your script here, with RUNLIST as input file
+      #   echo "RUNLIST:  " $RUNLIST 
+      #   root4star -b -q stana.C\(n1;,\"$RUNLIST\"\)
       #   
       #   @ nFile++
       #end

@@ -1,23 +1,23 @@
 #!/bin/sh
-mxEve=500000
-codePath=/star/u/smirnovd/vbasym_cvs/
-inpPath=/star/u/smirnovd/vbasym_results/lists
-outPath=/star/u/smirnovd/vbasym_results/
-STAR_VER=SL11d
+
+RUNLIST=$1
+CODE_DIR=/star/u/smirnovd/vbasym/
+OUT_DIR=/star/u/smirnovd/vbasym_results/
+#STAR_VER=SL11d
+STAR_VER=SL12c
+STANA_OPTIONS="-j_-n100"
+#STANA_OPTIONS="-n100"
 
 export $STAR_VER
 
-echo outPath  = $outPath
-echo inpPath  = $inpPath
+echo RUNLIST  = $RUNLIST
+echo CODE_DIR = $CODE_DIR
+echo OUT_DIR  = $OUT_DIR
 echo STAR_VER = $STAR_VER
+echo STANA_OPTIONS = $STANA_OPTIONS
 
-#for runNumber in `cat run_list_11_nfs.txt`
-#for runNumber in `cat run_list_11_all.txt`
-#for runNumber in `cat run_list_11_test.txt`
-#for runNumber in `cat run_list_11_all_reduced2_test.txt`
-#for runNumber in `cat run_list_11_all_reduced2.txt`
-for runNumber in `cat runlists/run11_test_short`
+for runNumber in `cat $RUNLIST`
 do
-   echo submitting job for runNumber = $runNumber
-   star-submit-template -template scripts/run11_job_template.xml -entities  n1=$mxEve,outPath=$outPath,codePath=$codePath,inpPath=$inpPath,runNumber=$runNumber,STAR_VER=$STAR_VER
+   echo "Submitting job for runNumber = " $runNumber
+   star-submit-template -template scripts/run11_job_template.xml -entities outPath=$OUT_DIR,codePath=$CODE_DIR,runNumber=$runNumber,STAR_VER=$STAR_VER,STANA_OPTIONS=$STANA_OPTIONS
 done
