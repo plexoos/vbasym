@@ -134,7 +134,7 @@ public: // to overwrite default params from .C macro
    }
 
    void setGainsFile(char *x) {gains_file = x; use_gains_file = 1;}
-   void setTreeName(TString x) { mTreeName = x; }
+   void SetTreeName(TString x) { mTreeName = x; }
    void setNameReweight(char* x) {nameReweight=x;}
 
 private:

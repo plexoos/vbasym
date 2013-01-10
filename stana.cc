@@ -119,9 +119,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    cout << "Output histo file " << histFileName << endl;
 
-   //if (useJetFinder == 2) {
-      VecBosRootFile vecBosRootFile(histFileName, "recreate"); 
-   //}
+   VecBosRootFile vecBosRootFile(histFileName, "recreate"); 
 
    TString fileG;
 
@@ -430,7 +428,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    TString treeFileName = wtreeDir + outF + ".Wtree.root";
 
-   stVecBosMaker->setTreeName(treeFileName);
+   stVecBosMaker->SetTreeName(treeFileName);
 
    if (useJetFinder == 2)
       stVecBosMaker->setJetTreeBranch("ConeJets12_100", "ConeJets12_100_noEEMC"); //select jet tree braches used

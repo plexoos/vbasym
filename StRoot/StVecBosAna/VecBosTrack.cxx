@@ -35,7 +35,8 @@ const float VecBosTrack::mMaxEnergyInOppsCone = 30; // was 30 GeV
 
 
 //bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && !IsInJet() && mP3AtDca.Pt() >= mMinPt); }
-bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && mP3AtDca.Pt() >= mMinPt); }
+//bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && mP3AtDca.Pt() >= mMinPt); }
+bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && mCluster2x2.energy >= 20); }
 
 
 void VecBosTrack::Process()

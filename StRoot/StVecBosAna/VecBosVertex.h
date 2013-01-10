@@ -50,3 +50,4 @@ typedef std::vector<VecBosVertex>   VecBosVertexVec;
 typedef VecBosVertexVec::iterator   VecBosVertexVecIter;
 
 #endif
+

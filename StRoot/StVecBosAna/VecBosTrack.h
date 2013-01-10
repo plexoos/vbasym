@@ -31,7 +31,8 @@ public:
                     kHAS_CLUSTER = 0x0100,                     // has cluster above a threshold
                     kISOLATED    = 0x0200,                     // cluster/cone energy > 0.88
                     kIN_JET      = 0x0400,                     // track belongs to a jet
-                    kMISBALANCED = 0x0800                      // not much energy in opposite direction
+                    kUNBALANCED  = 0x0800,                     // does not have much energy in opposite direction
+                    kCANDIDATE   = 0x1000                      // kHAS_CLUSTER && kISOLATED && !kIN_JET && !kBALANCED && Pt > XX GeV
                    };
 
    VecBosEvent            *mEvent;             //!
@@ -42,6 +43,7 @@ public:
    const StMuTrack        *prMuTrack;          //!
    StPhysicalHelixD        mHelix;             //!
    const VecBosVertex     *mVertex;            //! pointer to mother vertex
+   StJet                  *mStJet;             //! pointer to mother jet if exists
    WeveCluster             mCluster2x2;
    WeveCluster             mCluster4x4;
    TVector3                mP3AtDca;           // primary momentum vector
@@ -72,7 +74,10 @@ public:
    float                   sPtBalance;
    float                   sPtBalance_noEEMC;  // signed pT balance (GeV/c)
    TVector3                hadronicRecoil;
-   float                   mMinDeltaR;         // Min distance to a jet
+   float                   mMinDeltaRToJet;       // Min distance to a jet
+
+   static const float      mMinPt;                //!
+   static const float      mMaxEnergyInOppsCone;  //!
 
    // esmd shower info
    int                     hitSector;
@@ -88,20 +93,22 @@ public:
 
    VecBosTrack();
 
-   bool      IsGood()     const { return (mType & kGOOD)   == kGOOD   ? true : false; }
-   bool      IsBTrack()   const { return (mType & kBARREL) == kBARREL ? true : false; }
-   bool      IsETrack()   const { return (mType & kENDCAP) == kENDCAP ? true : false; }
-   bool      HasCluster() const { return (mType & kHAS_CLUSTER) == kHAS_CLUSTER ? true : false; }
-   bool      IsIsolated() const { return (mType & kISOLATED) == kISOLATED ? true : false; }
-   bool      IsInJet()    const { return (mType & kIN_JET) == kIN_JET ? true : false; }
+   bool      IsGood()       const { return (mType & kGOOD)   == kGOOD   ? true : false; }
+   bool      IsBTrack()     const { return (mType & kBARREL) == kBARREL ? true : false; }
+   bool      IsETrack()     const { return (mType & kENDCAP) == kENDCAP ? true : false; }
+   bool      HasCluster()   const { return (mType & kHAS_CLUSTER) == kHAS_CLUSTER ? true : false; }
+   bool      IsIsolated()   const { return (mType & kISOLATED) == kISOLATED ? true : false; }
+   bool      IsInJet()      const { return (mType & kIN_JET) == kIN_JET ? true : false; }
+   bool      IsUnBalanced() const { return (mType & kUNBALANCED) == kUNBALANCED ? true : false; }
+   bool      IsCandidate()  const;
    //bool      HasBarrelMatched();
    //bool      HasEndcapMatched();
    void      Process();
    float     GetFitHitFrac()        const { return float(prMuTrack->nHitsFit()) / prMuTrack->nHitsPoss(); }
    float     GetClusterEnergyFrac() const { return (mCluster2x2.energy + mP3AtDca.Mag()) / mP3InNearConeNoETow.Mag(); }
    float     GetClusterETFrac()     const { return (mCluster2x2.ET     + mP3AtDca.Pt())  / mP3InNearConeNoETow.Perp(); }
-   TVector3  GetDistanceToCluster() const { mCoorAtBTow - mCluster2x2.position; }
-   StJet*    CalcDistanceToJet(StJetPtrSet &jets);
+   TVector3  GetDistanceToCluster() const { return mCoorAtBTow - mCluster2x2.position; }
+   StJet*    FindClosestJet(StJetPtrSet &jets);
    void      clear();
    void      print(int opt=0) const;
 

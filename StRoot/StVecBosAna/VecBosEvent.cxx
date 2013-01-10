@@ -13,11 +13,11 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mStMuDst(0),
    mCpuTimeEventAna(0), mCpuTimeHistFill(0),
    mMuDstNumGTracks(0), mMuDstNumVertices(0), mMuDstNumPTracks(0), mMuDstNumOTracks(0),
-   mNumGoodVertices(0), mNumGoodTracks(0), mNumBTracks(0), mNumETracks(0), mNumIsolatedTracks(0),
-   mStJets(0), mJets(), mJetsIsoTrack(),
+   mNumGoodVertices(0), mNumGoodTracks(0), mNumBTracks(0), mNumETracks(0), mNumIsolatedTracks(0), mNumCandidateTracks(0),
+   mStJets(0), mJets(), mJetsWithIsoTrack(),
    mVertices(),
    mTracks(),
-   mTracksIsolated(),
+   mTracksCandidate(),
    mWEvent(0),
    mP4JetTotal(), mP4JetFirst(), mP4JetRecoil(),
    mP3RecoilFromTracks(),
@@ -29,11 +29,10 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mMaxTrackClusterDist (7),
    mTrackIsoDeltaR      (0.7),
    mTrackIsoDeltaPhi    (0.7),
+   mMinTrackPt          (20),
    mMinBTrackPt         (10),
    mMinTrackHitFrac     (0.51),
-   //mMinClusterEnergyFrac(0.88),
-   mMinClusterEnergyFrac(0.80),
-   mMaxEnergyInOppsCone (30)
+   mMinClusterEnergyFrac(0.80) // was 0.88
 {
    clear();
 }
@@ -60,15 +59,13 @@ void VecBosEvent::AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex)
    //if (vbVertex) Info("AddTrack", "vbVertex != 0");
    //else          Info("AddTrack", "vbVertex == 0");
 
-   StThreeVectorF prPvect = stMuTrack->p();
-
    VecBosTrack vbTrack;
 
    vbTrack.mEvent     = this;
    vbTrack.prMuTrack  = stMuTrack;
    vbTrack.glMuTrack  = stMuTrack->globalTrack();
    vbTrack.mVertex    = vbVertex;
-   vbTrack.mP3AtDca   = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
+   vbTrack.mP3AtDca   = TVector3(stMuTrack->p().x(), stMuTrack->p().y(), stMuTrack->p().z());
 
    if (vbVertex) {
       vbVertex->prTrList.push_back(stMuTrack);
@@ -132,6 +129,7 @@ void VecBosEvent::Process()
    }
 
    // Process tracks
+   //Info("Process", "Process tracks");
    VecBosTrackVecIter iTrack = mTracks.begin();
    for ( ; iTrack != mTracks.end(); ++iTrack) {
       iTrack->Process();
@@ -140,27 +138,45 @@ void VecBosEvent::Process()
       if (iTrack->IsBTrack())   mNumBTracks++;
       if (iTrack->IsETrack())   mNumETracks++;
       if (iTrack->IsIsolated()) {
+         //Info("Process()", "Iso track found");
          mNumIsolatedTracks++;
-         StJet *stJet = iTrack->CalcDistanceToJet(mJets);
 
-         if (stJet) mJetsIsoTrack.insert(stJet);
+         if ( iTrack->IsUnBalanced() ) iTrack->FindClosestJet(mJets);
+      }
+
+      if ( iTrack->IsCandidate() )
+      {
+         mNumCandidateTracks++;
+         mTracksCandidate.push_back(&*iTrack);
+
+         if ( iTrack->IsInJet() )
+         {
+            //Info("Process()", "Track is a candidate and within jet: %f <= %f. Saving jet...", iTrack->mMinDeltaRToJet, mTrackIsoDeltaR);
+            utils::PrintTLorentzVector((TLorentzVector&) *iTrack->mStJet);
+
+            mJetsWithIsoTrack.insert(iTrack->mStJet);
+         }
       }
    }
 
    // Process jets
+   //Info("Process", "Process jets");
+
    StJetPtrSetConstIter iJet = mJets.begin();
    mP4JetFirst = *iJet ? **iJet : TLorentzVector();
 
    for ( ; iJet != mJets.end(); ++iJet) {
       StJet *stJet = *iJet;
-      //Info("Process", "total jet");
-      //utils::PrintTLorentzVector(*stJet);
+      utils::PrintTLorentzVector(*stJet);
       mP4JetTotal += *stJet;
 
-      if (mJetsIsoTrack.find(stJet) == mJetsIsoTrack.end())
+      if (mJetsWithIsoTrack.find(stJet) == mJetsWithIsoTrack.end())
+      {
          mP4JetRecoil += *stJet;
-
-      //utils::PrintTLorentzVector(mP4JetTotal);
+         //utils::PrintTLorentzVector(mP4JetTotal);
+      } else {
+         //Info("Process()", "Don't add this jet to recoil");
+      }
    }
 
    CalcRecoilFromTracks();
@@ -186,8 +202,8 @@ void VecBosEvent::CalcRecoilFromTracks()
       TVector3 recoil;
 
       //Make sure an isolated track exists
-      VecBosTrackPtrVecIter iTrack = mTracksIsolated.begin();
-      for (; iTrack !=  mTracksIsolated.end(); ++iTrack)
+      VecBosTrackPtrVecIter iTrack = mTracksCandidate.begin();
+      for (; iTrack !=  mTracksCandidate.end(); ++iTrack)
       {
          TVector3 prP3 = (*iTrack)->mP3AtDca;
          if (prP3.Pt() <= 0) continue;   // iso track with a positive Pt
@@ -231,8 +247,8 @@ void VecBosEvent::MCanalysis()
 {
 
    /*
-      VecBosTrackPtrVecIter iTrack = mTracksIsolated.begin();
-      for (; iTrack !=  mTracksIsolated.end(); ++iTrack)
+      VecBosTrackPtrVecIter iTrack = mTracksCandidate.begin();
+      for (; iTrack !=  mTracksCandidate.end(); ++iTrack)
       {
 
         //if ((*iTrack)->IsGood() == false) continue;      // Track has a good vertex
@@ -413,41 +429,6 @@ WeveCluster VecBosEvent::SumBTowPatch(int etaBin, int phiBin, int etaWidth, int 
 }
 
 
-TVector3 VecBosEvent::CalcP3InConeTpc(VecBosTrack *vbTrack, UShort_t cone1d2d, Float_t scale)
-{
-   TVector3 totalP3InCone;
-
-   if (!vbTrack) return totalP3InCone;
-
-   // Scale P3 momentum of the track
-   TVector3 trackP3 = vbTrack->mP3AtDca * scale;
-
-   VecBosTrackVecIter iTrack = mTracks.begin();
-
-   for ( ; iTrack != mTracks.end(); ++iTrack) {
-      // Skip tracks from different vertices XXX:ds: Later can consider
-      // vertices in some close proximity to this one
-      if (iTrack->mVertex != vbTrack->mVertex) continue;
-
-      // Don't count the same track
-      //if (&*iTrack == vbTrack) continue;
-      // XXX:ds: move this requirement to the track class where appropriate
-      //if (iTrack->GetFitHitFrac() < mMinTrackHitFrac) continue;
-
-      if (cone1d2d == 1 && fabs(trackP3.DeltaPhi(iTrack->mP3AtDca)) > mTrackIsoDeltaPhi) continue;
-      if (cone1d2d == 2) {
-         if (trackP3.DeltaR(iTrack->mP3AtDca) > mTrackIsoDeltaR) continue;
-         // Count the number of tracks in the cone
-         vbTrack->mNumTracksInNearCone++;
-      }
-
-      totalP3InCone += iTrack->mP3AtDca;
-   }
-
-   return totalP3InCone;
-}
-
-
 /**
  * Returns the  sum of all towers withing mTrackIsoDeltaR around the track
  * refAxis.
@@ -513,6 +494,42 @@ TVector3 VecBosEvent::CalcP3InConeETow(VecBosTrack *vbTrack, UShort_t cone1d2d, 
          //ptsum += towerCoord.Perp();
          totalP3InCone += towerCoord;
       }
+   }
+
+   return totalP3InCone;
+}
+
+
+TVector3 VecBosEvent::CalcP3InConeTpc(VecBosTrack *vbTrack, UShort_t cone1d2d, Float_t scale)
+{
+   TVector3 totalP3InCone;
+
+   if (!vbTrack) return totalP3InCone;
+
+   // Scale P3 momentum of the track
+   TVector3 trackP3 = vbTrack->mP3AtDca * scale;
+
+   VecBosTrackVecIter iTrack = mTracks.begin();
+
+   for ( ; iTrack != mTracks.end(); ++iTrack)
+   {
+      // Skip tracks from different vertices XXX:ds: Later can consider
+      // vertices in some close proximity to this one
+      if (iTrack->mVertex != vbTrack->mVertex) continue;
+
+      // Don't count the same track
+      //if (&*iTrack == vbTrack) continue;
+      // XXX:ds: move this requirement to the track class where appropriate
+      //if (iTrack->GetFitHitFrac() < mMinTrackHitFrac) continue;
+
+      if (cone1d2d == 1 && fabs(trackP3.DeltaPhi(iTrack->mP3AtDca)) > mTrackIsoDeltaPhi) continue;
+      if (cone1d2d == 2) {
+         if (trackP3.DeltaR(iTrack->mP3AtDca) > mTrackIsoDeltaR) continue;
+         // Count the number of tracks in the cone
+         vbTrack->mNumTracksInNearCone++;
+      }
+
+      totalP3InCone += iTrack->mP3AtDca;
    }
 
    return totalP3InCone;
@@ -585,56 +602,56 @@ float VecBosEvent::SumTpcCone(int vertID, TVector3 refAxis, int flag, int pointT
 void VecBosEvent::clear()
 {
    //Info("clear", "");
-   mStMuDst           = 0;
-   id                 = 0;
-   runNo              = 0;
-   time               = 0;
-   zdcRate            = 0;
-   l2bitET            = 0;
-   l2bitRnd           = 0;
-   l2EbitET           = 0;
-   l2EbitRnd          = 0;
-   bx7                = -1;
-   bx48               = -1;
-   zTag               = false;
-   mCpuTimeEventAna   = 0;
-   mCpuTimeHistFill   = 0;
-   mMuDstNumGTracks   = 0;
-   mMuDstNumVertices  = 0;
-   mMuDstNumPTracks   = 0;
-   mMuDstNumOTracks   = 0;
-   mNumGoodVertices   = 0;
-   mNumGoodTracks     = 0;
-   mNumBTracks        = 0;
-   mNumETracks        = 0;
-   mNumIsolatedTracks = 0;
-   mStJets            = 0;
-   bxStar7            = -1;
-   bxStar48           = -1;
-   mSpinPattern4Bits              = -1;
+   mStMuDst            = 0;
+   id                  = 0;
+   runNo               = 0;
+   time                = 0;
+   zdcRate             = 0;
+   l2bitET             = 0;
+   l2bitRnd            = 0;
+   l2EbitET            = 0;
+   l2EbitRnd           = 0;
+   bx7                 = -1;
+   bx48                = -1;
+   zTag                = false;
+   mCpuTimeEventAna    = 0;
+   mCpuTimeHistFill    = 0;
+   mMuDstNumGTracks    = 0;
+   mMuDstNumVertices   = 0;
+   mMuDstNumPTracks    = 0;
+   mMuDstNumOTracks    = 0;
+   mNumGoodVertices    = 0;
+   mNumGoodTracks      = 0;
+   mNumBTracks         = 0;
+   mNumETracks         = 0;
+   mNumIsolatedTracks  = 0;
+   mNumCandidateTracks = 0;
+   mStJets             = 0;
+   bxStar7             = -1;
+   bxStar48            = -1;
+   mSpinPattern4Bits   = -1;
    bemc.clear();
    etow.clear();
    eprs.clear();
    esmd.clear();
    mJets.clear();
-   mJetsIsoTrack.clear();
+   mJetsWithIsoTrack.clear();
    mVertices.clear();
    mTracks.clear();
-   mTracksIsolated.clear();
+   mTracksCandidate.clear();
    if (mWEvent) delete mWEvent;
    mWEvent               = new WEvent();
-   mP4JetTotal           = TLorentzVector();
-   mP4JetFirst           = TLorentzVector();
-   mP4JetRecoil          = TLorentzVector();
+   mP4JetTotal.SetXYZT(0, 0, 0, 0);
+   mP4JetFirst.SetXYZT(0, 0, 0, 0);
+   mP4JetRecoil.SetXYZT(0, 0, 0, 0);
 
    mMaxTrackClusterDist  = 7;    // cm
    mTrackIsoDeltaR       = 0.7;  // (rad) near-cone size
    mTrackIsoDeltaPhi     = 0.7;  // (rad) away-'cone' size, approx. 40 deg.
+   mMinTrackPt           = 20.;  // GeV
    mMinBTrackPt          = 10.;  // GeV
    mMinTrackHitFrac      = 0.51;
-   //mMinClusterEnergyFrac = 0.88;
-   mMinClusterEnergyFrac = 0.80;
-   mMaxEnergyInOppsCone  = 30;   // GeV
+   mMinClusterEnergyFrac = 0.80; // was 0.88;
    mP3RecoilFromTracks   = TVector3(0, 0, 0);
    mHadRecoilFromTracksEta  = 0;
    mHadRecoilFromTracksPt   = 0;
