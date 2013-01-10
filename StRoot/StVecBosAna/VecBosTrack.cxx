@@ -11,7 +11,7 @@ ClassImp(VecBosTrack)
 using namespace std;
 
 
-VecBosTrack::VecBosTrack() : TObject(), mEvent(0), mType(kUNKNOWN), mHelix(), mVertex(0),
+VecBosTrack::VecBosTrack() : TObject(), mEvent(0), mType(kUNKNOWN), mHelix(), mVertex(0), mStJet(0),
    mP3AtDca(), mP3AtBTow(), mCoorAtBTow(),
    mP3InNearCone(), mP3InNearConeTow(), mP3InNearConeBTow(), mP3InNearConeETow(), mP3InNearConeNoETow(), mP3InNearConeTpc(),
    mP3InOppsCone(), mP3InOppsConeTow(), mP3InOppsConeBTow(), mP3InOppsConeETow(), mP3InOppsConeNoETow(), mP3InOppsConeTpc(),
@@ -24,32 +24,18 @@ VecBosTrack::VecBosTrack() : TObject(), mEvent(0), mType(kUNKNOWN), mHelix(), mV
    awayTotET_noEEMC(0),
    mNumTracksInNearCone(0),
    ptBalance(), ptBalance_noEEMC(), sPtBalance(0), sPtBalance_noEEMC(0), hadronicRecoil(),
-   mMinDeltaR(-1) // nonsense value
+   mMinDeltaRToJet(-1) // nonsense value
 {
    clear();
 }
 
 
-void VecBosTrack::print(int opt) const
-{
-   if (prMuTrack == 0) {  printf("   Track NULL pointer???\n"); return; }
+const float VecBosTrack::mMinPt = 20;
+const float VecBosTrack::mMaxEnergyInOppsCone = 30; // was 30 GeV
 
-   printf("Track glPT=%.1f GeV/c   isMatch2Cl=%d, mP3InNearCone=%.1f, awayTotET=%.1f mP3AtDcaT=%.1f\n",
-          glMuTrack->pt(), isMatch2Cl, mP3InNearCone.Pt(), awayTotET, mP3AtDca.Pt());
 
-   mMatchedTower.print(opt);
-   mCluster2x2.print(opt);
-
-   TVector3 D = mMatchedTower.R - mCluster2x2.position;
-
-   printf("     XYZ(track-mCluster2x2):  |3D dist|=%.1fcm  delZ=%.1fcm\n", D.Mag(), D.z());
-   printf("     4x4 :");
-   mCluster4x4.print(opt);
-   printf("     nearET/GeV:    TPC=%.1f   Emc=%.1f (BTOW=%.1f ETOW=%.1f) sum=%.1f\n",
-      mP3InNearConeTpc.Pt(), mP3InNearConeTow.Pt(), mP3InNearConeBTow.Pt(), mP3InNearConeETow.Pt(), mP3InNearCone.Pt());
-   printf("     awayET/GeV:    TPC=%.1f   Emc=%.1f (BTOW=%.1f ETOW=%.1f) sum=%.1f\n",
-      awayTpcPT, awayEmcET, awayBtowET, awayEtowET, awayTotET);
-}
+//bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && !IsInJet() && mP3AtDca.Pt() >= mMinPt); }
+bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && mP3AtDca.Pt() >= mMinPt); }
 
 
 void VecBosTrack::Process()
@@ -86,7 +72,7 @@ void VecBosTrack::Process()
 }
 
 
-StJet* VecBosTrack::CalcDistanceToJet(StJetPtrSet &jets)
+StJet* VecBosTrack::FindClosestJet(StJetPtrSet &jets)
 {
    StJet *closestJet = 0;
 
@@ -97,29 +83,24 @@ StJet* VecBosTrack::CalcDistanceToJet(StJetPtrSet &jets)
       StJet *stJet = *iJet;
 
       Double_t deltaR = stJet->Vect().DeltaR(mP3AtDca);
-      //Info("Process()", "Iso track found: %f ", deltaR);
+      //Info("FindClosestJet()", "deltaR: %f ", deltaR);
 
-      if (mMinDeltaR < 0 || deltaR < mMinDeltaR) {
-         mMinDeltaR = deltaR;
+      if (mMinDeltaRToJet < 0 || deltaR < mMinDeltaRToJet) {
+         mMinDeltaRToJet = deltaR;
          closestJet = stJet;
+         //Info("FindClosestJet()", "New closest jet found: mMinDeltaRToJet = %f", mMinDeltaRToJet);
       }
    }
 
-   if (mMinDeltaR <= mEvent->mTrackIsoDeltaR) {
-      //Info("Process", "recoil accepted: %f > %f", mMinDeltaR, mTrackIsoDeltaR);
+   if (closestJet && mMinDeltaRToJet <= mEvent->mTrackIsoDeltaR)
+   {
+      //Info("FindClosestJet()", "Track is within jet: %f <= %f. Returning jet...", mMinDeltaRToJet, mEvent->mTrackIsoDeltaR);
       mType |= VecBosTrack::kIN_JET;
+      mStJet = closestJet;
       return closestJet;
    }
    
    return 0;
-
-   //if (mMinDeltaR > mTrackIsoDeltaR) {
-   //   //utils::PrintTLorentzVector(*stJet);
-   //   //mP4JetRecoil += *stJet;
-   //   //utils::PrintTLorentzVector(mP4JetRecoil);
-   //} else {
-   //   //mJetsIsolated.insert(stJet);
-   //}
 }
 
 
@@ -133,6 +114,7 @@ void VecBosTrack::clear()
    prMuTrack              = 0;
    //mHelix               = St
    mVertex                = 0;
+   mStJet                 = 0;
    mCluster2x2.clear();
    mCluster4x4.clear();
    mP3AtDca               = TVector3(0, 0, 0);
@@ -163,7 +145,9 @@ void VecBosTrack::clear()
    sPtBalance             = 0;
    sPtBalance_noEEMC      = 0;
    hadronicRecoil         = TVector3(0, 0, 0);
-   mMinDeltaR             = -1;
+   mMinDeltaRToJet        = -1;
+   //mMinPt                 = 20;
+   //mMaxEnergyInOppsCone   = 20;
 
    memset(esmdGlobStrip, -999, sizeof(esmdGlobStrip));
    memset(esmdDca, -999., sizeof(esmdDca));
@@ -174,6 +158,28 @@ void VecBosTrack::clear()
    memset(esmdShowerWidth, 999., sizeof(esmdShowerWidth));
 
    esmdXPcentroid = TVector3(0, 0, 0);
+}
+
+
+void VecBosTrack::print(int opt) const
+{
+   if (prMuTrack == 0) {  printf("   Track NULL pointer???\n"); return; }
+
+   printf("Track glPT=%.1f GeV/c   isMatch2Cl=%d, mP3InNearCone=%.1f, awayTotET=%.1f mP3AtDcaT=%.1f\n",
+          glMuTrack->pt(), isMatch2Cl, mP3InNearCone.Pt(), awayTotET, mP3AtDca.Pt());
+
+   mMatchedTower.print(opt);
+   mCluster2x2.print(opt);
+
+   TVector3 D = mMatchedTower.R - mCluster2x2.position;
+
+   printf("     XYZ(track-mCluster2x2):  |3D dist|=%.1fcm  delZ=%.1fcm\n", D.Mag(), D.z());
+   printf("     4x4 :");
+   mCluster4x4.print(opt);
+   printf("     nearET/GeV:    TPC=%.1f   Emc=%.1f (BTOW=%.1f ETOW=%.1f) sum=%.1f\n",
+      mP3InNearConeTpc.Pt(), mP3InNearConeTow.Pt(), mP3InNearConeBTow.Pt(), mP3InNearConeETow.Pt(), mP3InNearCone.Pt());
+   printf("     awayET/GeV:    TPC=%.1f   Emc=%.1f (BTOW=%.1f ETOW=%.1f) sum=%.1f\n",
+      awayTpcPT, awayEmcET, awayBtowET, awayEtowET, awayTotET);
 }
 
 
@@ -324,12 +330,18 @@ void VecBosTrack::CalcEnergyInNearCone()
    mP3InOppsCone       = mP3InOppsConeTow  + mP3InOppsConeTpc; // XXX:ds: double counting? yes, see correction below
    mP3InOppsConeNoETow = mP3InOppsCone     - mP3InOppsConeETow;
 
-
    if (GetClusterEnergyFrac() >= mEvent->mMinClusterEnergyFrac)
    {
       mType |= kISOLATED;
-      mEvent->mTracksIsolated.push_back(this);
+
+      if ( mP3InOppsConeTow.Mag() < mMaxEnergyInOppsCone )
+      {
+         mType |= kUNBALANCED;
+      }
    }
+   // else {
+      //mEvent->mTracksCandidate.push_back(this);
+   //}
    
    // sum TPC-near component
    //if (mStMuDstMaker)
