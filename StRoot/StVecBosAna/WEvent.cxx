@@ -88,7 +88,7 @@ void WEvent::CalcRecoil(PyEvent &pyEvent)
 /** */
 void WEvent::CalcRecoil(StMcEvent &stMcEvent)
 {
-   Info("CalcRecoil(StMcEvent &stMcEvent)", "Called...");
+   //Info("CalcRecoil(StMcEvent &stMcEvent)", "Called...");
 
    Double_t eneTotal  = 0;
    Double_t eneAccept = 0;

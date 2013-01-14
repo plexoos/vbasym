@@ -131,7 +131,8 @@ void VecBosEvent::Process()
    // Process tracks
    //Info("Process", "Process tracks");
    VecBosTrackVecIter iTrack = mTracks.begin();
-   for ( ; iTrack != mTracks.end(); ++iTrack) {
+   for ( ; iTrack != mTracks.end(); ++iTrack)
+   {
       iTrack->Process();
 
       if (iTrack->IsGood())     mNumGoodTracks++;
@@ -152,7 +153,7 @@ void VecBosEvent::Process()
          if ( iTrack->IsInJet() )
          {
             //Info("Process()", "Track is a candidate and within jet: %f <= %f. Saving jet...", iTrack->mMinDeltaRToJet, mTrackIsoDeltaR);
-            utils::PrintTLorentzVector((TLorentzVector&) *iTrack->mStJet);
+            //utils::PrintTLorentzVector((TLorentzVector&) *iTrack->mStJet);
 
             mJetsWithIsoTrack.insert(iTrack->mStJet);
          }
@@ -167,7 +168,7 @@ void VecBosEvent::Process()
 
    for ( ; iJet != mJets.end(); ++iJet) {
       StJet *stJet = *iJet;
-      utils::PrintTLorentzVector(*stJet);
+      //utils::PrintTLorentzVector(*stJet);
       mP4JetTotal += *stJet;
 
       if (mJetsWithIsoTrack.find(stJet) == mJetsWithIsoTrack.end())

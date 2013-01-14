@@ -2,7 +2,8 @@
 
 RUNLIST=$1
 CODE_DIR=/star/u/smirnovd/vbasym/
-OUT_DIR=/star/u/smirnovd/vbasym_results/
+#OUT_DIR=/star/u/smirnovd/vbasym_results/
+OUT_DIR=/star/data05/scratch/smirnovd/
 #STAR_VER=SL11d
 STAR_VER=SL12c
 #STANA_OPTIONS="-j"

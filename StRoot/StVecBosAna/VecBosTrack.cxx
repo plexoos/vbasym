@@ -31,7 +31,7 @@ VecBosTrack::VecBosTrack() : TObject(), mEvent(0), mType(kUNKNOWN), mHelix(), mV
 
 
 const float VecBosTrack::mMinPt = 20;
-const float VecBosTrack::mMaxEnergyInOppsCone = 30; // was 30 GeV
+const float VecBosTrack::mMaxEnergyInOppsCone = 40; // was 30 GeV
 
 
 //bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && !IsInJet() && mP3AtDca.Pt() >= mMinPt); }
@@ -147,8 +147,6 @@ void VecBosTrack::clear()
    sPtBalance_noEEMC      = 0;
    hadronicRecoil         = TVector3(0, 0, 0);
    mMinDeltaRToJet        = -1;
-   //mMinPt                 = 20;
-   //mMaxEnergyInOppsCone   = 20;
 
    memset(esmdGlobStrip, -999, sizeof(esmdGlobStrip));
    memset(esmdDca, -999., sizeof(esmdDca));

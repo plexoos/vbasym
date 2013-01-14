@@ -357,8 +357,8 @@ Int_t StVecBosMaker::Make()
    mStopWatch.Start(); // restart mStopWatch
 
    mNumInputEvents++;
-   cout << endl;
-   Info("Make()", "Called for event %d", mNumInputEvents);
+   //cout << endl;
+   //Info("Make()", "Called for event %d", mNumInputEvents);
 
    // standard MuDst analysis
    // We need both makers for proper analysis

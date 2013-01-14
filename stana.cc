@@ -51,6 +51,7 @@ root4star -b -q 'analyzeMuDst.C(2e3,"st_W_12037041_raw_1400001.MuDst.root",0,1,5
 #include "StVecBosAna/St2011WlumiMaker.h"
 #include "StVecBosAna/VecBosRootFile.h"
 
+#include "utils/utils.h"
 
 using namespace std;
 
@@ -79,8 +80,8 @@ int main(int argc, char *argv[])
    anaInfo.ProcessOptions(argc, argv);
    anaInfo.VerifyOptions();
 
-   int useJetFinder = anaInfo.fDoReconstructJets ? 1 : 2;
-   bool isMC = anaInfo.fThisisMC; 
+   int  useJetFinder = anaInfo.fDoReconstructJets ? 1 : 2;
+   bool isMC         = anaInfo.fThisisMC; 
 
    return analyzeMuDst(anaInfo.fMaxEventsUser, anaInfo.GetListName(), isMC, useJetFinder, 330801, 330851);
 }
@@ -108,8 +109,9 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    string inputFile = inputPathFile.substr(iLastSlash + 1);
 
-   printf("Input path: %s\n", inputPath.c_str());
-   printf("Input inMuDstFileListName: %s\n", inputFile.c_str());
+   printf("Input inputPath: %s\n", inputPath.c_str());
+   printf("Input inputFile: %s\n", inputFile.c_str());
+   printf("Input inMuDstFileListName: %s\n", inMuDstFileListName.c_str());
 
    TString outF = inputFile;
    outF = outF.ReplaceAll(".MuDst.root", "");
@@ -121,27 +123,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    VecBosRootFile vecBosRootFile(histFileName, "recreate"); 
 
-   TString fileG;
-
-   if (!isMC) {
-      //outF = inMuDstFileListName;
-      //outF = outF;
-   }
-   else { //  new  MC w/ working time stamp
-      //assert(2==5); M-C not unpacking not implemented
-      //// char *file1 = strstr(inMuDstFileListName.c_str(), "cn100");
-      //// assert(file1);
-      //// file1--;
-      //// printf("file1: %s\n", file1);
-      //// outF = file1;
-      //// outF.ReplaceAll(".MuDst.root","");
-      fileG = inMuDstFileListName.c_str();
-      fileG.ReplaceAll("eve_mu", "eve_geant");
-      fileG.ReplaceAll("MuDst", "geant");
-   }
-
    printf("Output file: %s\n", outF.Data());
-   printf("Geant file:  %s\n", fileG.Data());
    printf("TRIG ID: L2BW=%d, L2EW=%d, isMC=%d, useJetFinder=%d\n", idL2BWtrg, idL2EWtrg, isMC, useJetFinder );
 
    // Logger business
@@ -157,20 +139,32 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    TObjArray *HList    = new TObjArray();
    TObjArray *HListTpc = new TObjArray();
 
-   if (geant) {
+   if (isMC && useJetFinder == 2)
+   {
       // get geant file
       StIOMaker *stIOMaker = new StIOMaker();
-      stIOMaker->SetFile(fileG.Data());
-      // stIOMaker->SetFile("/star/data56/reco/pp500/pythia6_422/Wplus_enu/perugia320/y2009a/gheisha_on/p09ig/rcf10010_1000_1000evts.geant.root");
-      // stIOMaker->SetFile("/star/institutions/mit/balewski/2012-Wsimu-setH-noFilt/eve_geant/jbc310_1_1000evts.geant.root");
+
+      TObject *o;
+      TIter   *next = new TIter(utils::getFileList(inMuDstFileListName.c_str()));
+
+      while (next && (o = (*next)()) )
+      {
+         TString geantFileName = TString(((TObjString*) o)->GetName());
+         geantFileName.ReplaceAll("eve_mu", "eve_geant");
+         geantFileName.ReplaceAll("MuDst", "geant");
+
+         Info("analyzeMuDst(...)", "Added geantFileName: %s", geantFileName.Data());
+         stIOMaker->SetFile(geantFileName.Data());
+      }
+
       stIOMaker->SetIOMode("r");
-      stIOMaker->SetBranch("*", 0, "1"); //deactivate all branches
-      stIOMaker->SetBranch("geantBranch", 0, "r"); //activate geant Branch
-      stIOMaker->SetBranch("minimcBranch", 0, "r"); //activate geant Branch
+      stIOMaker->SetBranch("*", 0, "1");            // deactivate all branches
+      stIOMaker->SetBranch("geantBranch", 0, "r");  // activate geant Branch
+      stIOMaker->SetBranch("minimcBranch", 0, "r"); // activate geant Branch
    }
 
    // Now we add Makers to the chain...
-   int maxFiles = 1000;
+   int maxFiles = 100;
 
    StMuDstMaker *stMuDstMaker = new StMuDstMaker(0, 0, "", inMuDstFileListName.c_str(), ".", maxFiles);
    stMuDstMaker->SetStatus("*", 0);
@@ -186,30 +180,28 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    assert(stMuDstMakerChain);
 
-   int nEntries = (int) stMuDstMakerChain->GetEntries();
+   int numTotalEvents = (int) stMuDstMakerChain->GetEntries();
 
-   Info("main()", "stMuDstMakerChain->ls()");
+   Info("analyzeMuDst(...)", "stMuDstMakerChain->ls()");
    stMuDstMakerChain->ls();
 
-   if (nEntries < 0) {
-      Error("analyzeMuDst", "Invalid number of events %d", nEntries);
+   if (numTotalEvents < 0) {
+      Error("analyzeMuDst(...)", "Invalid number of events %d", numTotalEvents);
       return -1;
    }
 
-   printf("Total number of events in muDst chain = %d\n", nEntries);
+   printf("Total number of events in muDst chain: %d\n", numTotalEvents);
 
-   // For EEMC, need full db access:
+   // For EEMC need full db access:
    St_db_Maker *stDbMaker = new St_db_Maker("StarDb", "MySQL:StarDb", "MySQL:StarDb", "$STAR/StarDb");
 
    if (isMC) {
-      stDbMaker->SetMaxEntryTime(20101215, 0); // keep the same DB snap-shot as used in BFC for embedding
+      stDbMaker->SetMaxEntryTime(20101215, 0); // keep the same DB snapshot as used in BFC for embedding
       stDbMaker->SetFlavor("Wbose2", "bsmdpCalib");
       stDbMaker->SetFlavor("Wbose2", "bsmdeCalib");
-      // printf("???? unforeseen MC flag, ABORT\n");
-      // assert(1 == 2);
    }
    else { // embedding samples
-      // run 11  data
+      // run 11  data ???
       stDbMaker->SetFlavor("Wbose2", "bsmdeCalib"); // Willie's abs gains E-plane, run 9
       stDbMaker->SetFlavor("Wbose2", "bsmdpCalib"); // P-plane
       stDbMaker->SetFlavor("sim",    "bemcCalib");  // use ideal gains for real data
@@ -220,71 +212,59 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    StEEmcDbMaker *mEEmcDatabase = new StEEmcDbMaker("eemcDb");
 
 #if 0 // drop abs lumi for now
-
    if (!isMC && strstr(inMuDstFileListName, "fillListPhys")) {
       StTriggerFilterMaker *filterMaker = new StTriggerFilterMaker;
       filterMaker->addTrigger(230420); // AJP
       filterMaker->addTrigger(230411); // JP2
       filterMaker->addTrigger(bht3ID); // regular W -> e+ analysis
    }
-
 #endif
 
-   if (geant) {
+   if (isMC && useJetFinder == 2)
+   {
       StMcEventMaker *mcEventMaker = new StMcEventMaker();
       mcEventMaker->doPrintEventInfo  = false;
       mcEventMaker->doPrintMemoryInfo = false;
 
-      if (useJetFinder != 1) { // only use trigger simulator in W algo
-         //don't need geant for trigger simu
-         //BEMC simulator:
-         StEmcSimulatorMaker *emcSim = new StEmcSimulatorMaker(); // use this instead to "redo" converstion from geant->adc
-         emcSim->setCalibSpread(kBarrelEmcTowerId, 0.15);         // spread gains by 15%
-         emcSim->setCheckStatus(kBarrelEmcTowerId,false);
-         emcSim->setMakeFullDetector(kBarrelEmcTowerId,true);
-         emcSim->setDoZeroSuppression(kBarrelEmcTowerId,false);
+      //don't need geant for trigger simu
+      //BEMC simulator:
+      StEmcSimulatorMaker *emcSim = new StEmcSimulatorMaker(); // use this instead to "redo" converstion from geant->adc
+      emcSim->setCalibSpread(kBarrelEmcTowerId, 0.15);         // spread gains by 15%
+      emcSim->setCheckStatus(kBarrelEmcTowerId, false);
+      emcSim->setMakeFullDetector(kBarrelEmcTowerId, true);
+      emcSim->setDoZeroSuppression(kBarrelEmcTowerId, false);
 
-         StEmcADCtoEMaker *bemcAdc   = new StEmcADCtoEMaker();    // for real data this sets calibration and status
+      StEmcADCtoEMaker *stEmcADCtoEMaker = new StEmcADCtoEMaker();    // for real data this sets calibration and status
+      stEmcADCtoEMaker->saveAllStEvent(true);
 
-         bemcAdc->saveAllStEvent(true);
+      // EEMC simulator:
+      //StEEmcDbMaker   *stEEmcDbMaker = new StEEmcDbMaker("eemcDb"); // already added
+      StEEmcSlowMaker *slowSim       = new StEEmcSlowMaker("slowSim");
+      //slowSim->setSamplingFraction(0.0384); // effectively scales all Tower energies with a factor of 1.3 (for old private filtered simu only!)
+      slowSim->setAddPed(true);
+      slowSim->setSmearPed(true);
 
-         // EEMC simulator:
-         StEEmcDbMaker   *stEEmcDbMaker = new StEEmcDbMaker("eemcDb");
-         StEEmcSlowMaker *slowSim       = new StEEmcSlowMaker("slowSim");
-         //slowSim->setSamplingFraction(0.0384); // effectively scales all Tower energies with a factor of 1.3 (for old private filtered simu only!)
-         slowSim->setAddPed(true);
-         slowSim->setSmearPed(true);
-
-         //Get TriggerMaker
-         StTriggerSimuMaker *simuTrig = new StTriggerSimuMaker("StarTrigSimu");
-         assert(simuTrig);
-         simuTrig->setHList(HList);
-         // simuTrig->setMC(isMC); // must be before individual detectors, to be passed
-         simuTrig->setMC(2); // must be before individual detectors, to be passed 
-         simuTrig->useBbc();
-         simuTrig->useEemc(0); // default=0: just process ADC, 1,2: comp w/trgData, see .
-         assert(simuTrig->eemc);
-         //simuTrig->eemc->setSetupPath((char *) eemcSetupPath.c_str());
-         simuTrig->useBemc();
-         simuTrig->bemc->setConfig(2);
-      }
+      //Get TriggerMaker
+      StTriggerSimuMaker *simuTrig = new StTriggerSimuMaker("StarTrigSimu");
+      assert(simuTrig);
+      simuTrig->setHList(HList);
+      //simuTrig->setMC(isMC); // must be before individual detectors, to be passed
+      simuTrig->setMC(2); // must be before individual detectors, to be passed 
+      simuTrig->useBbc();
+      simuTrig->useEemc(0); // default=0: just process ADC, 1,2: comp w/trgData, see .
+      assert(simuTrig->eemc);
+      //simuTrig->eemc->setSetupPath((char *) eemcSetupPath.c_str());
+      simuTrig->useBemc();
+      simuTrig->bemc->setConfig(2);
    }
-
-   TString jetFile = jetDir;
 
    // Jet finder code
-   if (useJetFinder > 0)  {
-      //ds TString jetFile = jetDir;
-      //ds jetFile+="jets_"+outF+".root";
-      jetFile += "jets_" + outF + ".root";
-      cout << "BEGIN: running jet finder/reader on " << jetFile << endl;
-   }
+   TString jetFile = jetDir + "jets_" + outF + ".root";
+   cout << "BEGIN: Jet finder/reader on jetFile=\"" << jetFile << "\"" << endl;
 
    if (useJetFinder == 1) {
-      // run jet finder
-      // Makers for clusterfinding
-      //StSpinDbMaker    *stSpinDbMaker    = new StSpinDbMaker("spinDb");
-      StEmcADCtoEMaker *stEmcADCtoEMaker = new StEmcADCtoEMaker();
+      // Makers for cluster finding
+      StEmcADCtoEMaker *stEmcADCtoEMaker = new StEmcADCtoEMaker(); // for real data this sets calibration and status
 
       // here we also tag whether or not to do the swap:
       bool doTowerSwapFix   = true;
@@ -303,8 +283,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       stBET4pMakerFrac100_noEEMC->setUseEndcap(false);
       stBET4pMakerFrac100_noEEMC->setUse2006Cuts(use2006TowerCuts);
 
-
-      // Instantiate the JetMaker and SkimEventMaker
+      // Instantiate the stJetMaker and SkimEventMaker
       StJetMaker* stJetMaker = new StJetMaker("stJetMaker", stMuDstMaker, jetFile);
       //StJetSkimEventMaker* skimEventMaker = new StJetSkimEventMaker("StJetSkimEventMaker", stMuDstMaker,outSkimFile);
 
@@ -335,18 +314,19 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       stJetMaker->addAnalyzer(stppAnaPars, stConePars, stBET4pMakerFrac100, "ConeJets12_100"); //100% subtraction
       stJetMaker->addAnalyzer(stppAnaPars, stConePars, stBET4pMakerFrac100_noEEMC, "ConeJets12_100_noEEMC"); //100% subtraction (no Endcap)
 
-      Info("main()", "stChain->ls");
+      Info("analyzeMuDst(...)", "stChain->ls");
       stChain->ls(3);
-      Info("main()", "stChain->Init()");
+      Info("analyzeMuDst(...)", "stChain->Init()");
       stChain->Init();
 
       int nProcEvents = 0;
       int t1 = time(0);
       TStopwatch stopwatch;
 
-      for (UInt_t iev = 0; iev < nEntries; iev++)
+      for (UInt_t iev = 0; iev < numTotalEvents; iev++)
       {
-         //Info("main()", "Analyzing event %d", iev);
+         Info("analyzeMuDst(...)", "Analyzing event %d", iev);
+
          if (maxEventsUser > 0 && nProcEvents >= maxEventsUser) break;
 
          stChain->Clear();
@@ -368,7 +348,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       float tMnt = (t2 - t1) / 60.;
       float rate = 1.*nProcEvents / (t2 - t1);
 
-      printf("jets sorting done %d of maxEventsUser = %d, CPU rate= %.1f Hz, total time %.1f minute(s) \n\n", nProcEvents, nEntries, rate, tMnt);
+      printf("Jets sorting done %d of maxEventsUser = %d, CPU rate= %.1f Hz, total time %.1f minute(s) \n\n", nProcEvents, numTotalEvents, rate, tMnt);
       cout << "END: jet finder " << endl;
 
       stChain->Finish();
@@ -426,7 +406,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       stVecBosMaker->setTrigID(idL2BWtrg, idL2EWtrg);
    }
 
-   TString treeFileName = wtreeDir + outF + ".Wtree.root";
+   TString treeFileName = wtreeDir + outF + ".wtree.root";
 
    stVecBosMaker->SetTreeName(treeFileName);
 
@@ -460,7 +440,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    //  WlumiMk->setHList(HList);
    //}
 
-   if (geant) {
+   if (isMC && useJetFinder == 2) {
       St2011pubMcMaker *pubMcMk = new St2011pubMcMaker("pubMc");
       pubMcMk->AttachWalgoMaker(stVecBosMaker);
       pubMcMk->setHList(HList);
@@ -486,9 +466,9 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    int t1 = time(0);
    TStopwatch stopwatch;
 
-   for (UInt_t iev = 0; iev < nEntries; iev++)
+   for (UInt_t iev = 0; iev < numTotalEvents; iev++)
    {
-      //Info("main()", "Analyzing event %d", iev);
+      Info("analyzeMuDst(...)", "Analyzing event %d", iev);
 
       if (maxEventsUser > 0 && nProcEvents >= maxEventsUser) break;
 
@@ -518,7 +498,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    float tMnt = (t2 - t1) / 60.;
    float rate = 1.*nProcEvents / (t2 - t1);
 
-   printf("#sorting %s done %d of maxEventsUser = %d, CPU rate= %.1f Hz, total time %.1f minute(s) \n\n", inMuDstFileListName.c_str(), nProcEvents, nEntries, rate, tMnt);
+   printf("#sorting %s done %d of maxEventsUser = %d, CPU rate= %.1f Hz, total time %.1f minute(s) \n\n", inMuDstFileListName.c_str(), nProcEvents, numTotalEvents, rate, tMnt);
 
    //vecBosRootFile.Write();
 
