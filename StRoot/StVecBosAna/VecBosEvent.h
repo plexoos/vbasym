@@ -83,6 +83,7 @@ public:
    Double_t           mHadronicRecoilEta;
    Double_t           mHadronicRecoilPt;
    Double_t           mPtKfactor;
+   TVector3           mP3PtBalanceFromTracks;
 
    float mMaxTrackClusterDist;  //! cm, dist between projected track and center of cluster
    float mTrackIsoDeltaR;       //! (rad) near-cone size

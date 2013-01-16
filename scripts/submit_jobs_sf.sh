@@ -3,7 +3,8 @@ mxEve=500000
 codePath=/star/u/fazio/offline/users/fazio/vbasym
 inpPath=/star/data05/scratch/fazio/lists_run11
 outPath=/star/data05/scratch/fazio/
-STAR_VER=SL11d
+#STAR_VER=SL11d
+STAR_VER=SL12c
 
 export $STAR_VER
 

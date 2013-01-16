@@ -21,6 +21,7 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mWEvent(0),
    mP4JetTotal(), mP4JetFirst(), mP4JetRecoil(),
    mP3RecoilFromTracks(),
+   mP3PtBalanceFromTracks(),
    mHadronicRecoilEta(0),
    mHadronicRecoilPt(0),
    mHadRecoilFromTracksEta(0),
@@ -191,6 +192,12 @@ void VecBosEvent::Process()
    //utils::PrintTLorentzVector(mP4JetRecoil);
 
    CalcRecoilFromTracks();
+
+   // Calculate the Pt balance as the vector sum: pt elec + pt recoil
+   if  (mTracksCandidate.size() == 1) {
+
+    mP3PtBalanceFromTracks = mP3RecoilFromTracks + mTracksCandidate[0]->mP3AtDca;
+   }
 }
 
 
@@ -251,6 +258,8 @@ void VecBosEvent::CalcRecoilFromTracks()
          }
       } // close there is iso track
    }  // close loop ove vertices
+
+
 }
 
 
@@ -691,8 +700,9 @@ void VecBosEvent::clear()
    mMinTrackPt           = 20.;  // GeV
    mMinBTrackPt          = 10.;  // GeV
    mMinTrackHitFrac      = 0.51;
-   mMinClusterEnergyFrac = 0.80; // was 0.88;
+   mMinClusterEnergyFrac = 0.90; // was 0.88;
    mP3RecoilFromTracks   = TVector3(0, 0, 0);
+   mP3PtBalanceFromTracks   = TVector3(0, 0, 0);
    mHadRecoilFromTracksEta  = 0;
    mHadRecoilFromTracksPt   = 0;
    mPtKfactor               = 0;
