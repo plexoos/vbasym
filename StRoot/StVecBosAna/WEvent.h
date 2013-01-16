@@ -13,13 +13,13 @@ class WEvent : public TObject
 {
 public:
 
-   TLorentzVector mWBosonP4;
-   TLorentzVector mLeptonP4;
-   TLorentzVector mNeutrinoP4;
-   TLorentzVector mTotalP4;
-   TLorentzVector mRecoilP4;
-   TLorentzVector mRecoilInAcceptP4;
-   TLorentzVector mRecoilOutAcceptP4;
+   TLorentzVector mP4WBoson;
+   TLorentzVector mP4Lepton;
+   TLorentzVector mP4Neutrino;
+   TLorentzVector mP4Total;
+   TLorentzVector mP4Recoil;
+   TLorentzVector mP4RecoilInAccept;
+   TLorentzVector mP4RecoilOutAccept;
 
    UShort_t       fLeptonGen;
    UShort_t       fLeptonSign;
@@ -36,10 +36,10 @@ public:
 
    WEvent();
 
-   TLorentzVector RecoW();
-   TLorentzVector GetRecoilInOutAccept() { return mRecoilInAcceptP4 + mRecoilOutAcceptP4; }
-   void CalcRecoil(PyEvent &pyEvent);
-   void CalcRecoil(StMcEvent &stMcEvent);
+   TLorentzVector CalcRecoP4WBoson();
+   TLorentzVector GetRecoilInOutAccept() { return mP4RecoilInAccept + mP4RecoilOutAccept; }
+   void           CalcRecoil(PyEvent &pyEvent);
+   void           CalcRecoil(StMcEvent &stMcEvent);
 
 	ClassDef( WEvent, 1 )
 };

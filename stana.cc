@@ -76,12 +76,14 @@ int analyzeMuDst(
 
 int main(int argc, char *argv[])
 {
+   setbuf(stdout, NULL);
+
    AnaInfo anaInfo;
    anaInfo.ProcessOptions(argc, argv);
    anaInfo.VerifyOptions();
 
    int  useJetFinder = anaInfo.fDoReconstructJets ? 1 : 2;
-   bool isMC         = anaInfo.fThisisMC; 
+   bool isMC         = anaInfo.fIsMc; 
 
    return analyzeMuDst(anaInfo.fMaxEventsUser, anaInfo.GetListName(), isMC, useJetFinder, 330801, 330851);
 }
@@ -323,8 +325,9 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       int t1 = time(0);
       TStopwatch stopwatch;
 
-      for (UInt_t iev = 0; iev < numTotalEvents; iev++)
+      for (UInt_t iev=1; iev<=numTotalEvents; iev++)
       {
+         printf("\n");
          Info("analyzeMuDst(...)", "Analyzing event %d", iev);
 
          if (maxEventsUser > 0 && nProcEvents >= maxEventsUser) break;
@@ -466,8 +469,9 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    int t1 = time(0);
    TStopwatch stopwatch;
 
-   for (UInt_t iev = 0; iev < numTotalEvents; iev++)
+   for (UInt_t iev=1; iev<=numTotalEvents; iev++)
    {
+      printf("\n");
       Info("analyzeMuDst(...)", "Analyzing event %d", iev);
 
       if (maxEventsUser > 0 && nProcEvents >= maxEventsUser) break;
@@ -499,8 +503,6 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    float rate = 1.*nProcEvents / (t2 - t1);
 
    printf("#sorting %s done %d of maxEventsUser = %d, CPU rate= %.1f Hz, total time %.1f minute(s) \n\n", inMuDstFileListName.c_str(), nProcEvents, numTotalEvents, rate, tMnt);
-
-   //vecBosRootFile.Write();
 
    if (vecBosRootFile.IsOpen()) {
       TDirectory *old = vecBosRootFile.mkdir("old");

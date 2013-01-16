@@ -123,6 +123,7 @@ public:
    void           ProcessMC();
    void           CalcRecoilFromTracks();
    void           MCanalysis();
+   bool           IsCandidateTrackInJet(StJet *stJet) const;
    void           clear();
    void           Print(int flag = 0, int isMC = 0);
    void           getGmt_day_hour(int &yyyymmdd, int &hhmmss);

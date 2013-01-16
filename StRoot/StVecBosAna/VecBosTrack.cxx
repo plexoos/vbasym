@@ -162,23 +162,26 @@ void VecBosTrack::clear()
 
 void VecBosTrack::print(int opt) const
 {
-   if (prMuTrack == 0) {  printf("   Track NULL pointer???\n"); return; }
+   printf("\n");
+   Info("print(int opt)", "");
 
-   printf("Track glPT=%.1f GeV/c   isMatch2Cl=%d, mP3InNearCone=%.1f, awayTotET=%.1f mP3AtDcaT=%.1f\n",
+   mP3AtDca.Print();
+
+   if (prMuTrack == 0) { printf("Track NULL pointer???\n"); }
+
+   printf("\tTrack glPT=%.2f GeV/c   isMatch2Cl=%d, mP3InNearCone=%.2f, awayTotET=%.2f mP3AtDca.Pt()=%.2f\n",
           glMuTrack->pt(), isMatch2Cl, mP3InNearCone.Pt(), awayTotET, mP3AtDca.Pt());
 
-   mMatchedTower.print(opt);
-   mCluster2x2.print(opt);
+   //mMatchedTower.print(opt);
+   //mCluster2x2.print(opt);
 
-   TVector3 D = mMatchedTower.R - mCluster2x2.position;
-
-   printf("     XYZ(track-mCluster2x2):  |3D dist|=%.1fcm  delZ=%.1fcm\n", D.Mag(), D.z());
-   printf("     4x4 :");
-   mCluster4x4.print(opt);
-   printf("     nearET/GeV:    TPC=%.1f   Emc=%.1f (BTOW=%.1f ETOW=%.1f) sum=%.1f\n",
-      mP3InNearConeTpc.Pt(), mP3InNearConeTow.Pt(), mP3InNearConeBTow.Pt(), mP3InNearConeETow.Pt(), mP3InNearCone.Pt());
-   printf("     awayET/GeV:    TPC=%.1f   Emc=%.1f (BTOW=%.1f ETOW=%.1f) sum=%.1f\n",
-      awayTpcPT, awayEmcET, awayBtowET, awayEtowET, awayTotET);
+   //printf("\tXYZ(track-mCluster2x2):  |3D dist|=%.1fcm  delZ=%.1fcm\n", CalcDistanceToCluster.Mag(), CalcDistanceToCluster.z());
+   //printf("\tCluster4x4 :");
+   //mCluster4x4.print(opt);
+   //printf("\tnearET/GeV:    TPC=%.1f   Emc=%.1f (BTOW=%.1f ETOW=%.1f) sum=%.1f\n",
+   //   mP3InNearConeTpc.Pt(), mP3InNearConeTow.Pt(), mP3InNearConeBTow.Pt(), mP3InNearConeETow.Pt(), mP3InNearCone.Pt());
+   //printf("\tawayET/GeV:    TPC=%.1f   Emc=%.1f (BTOW=%.1f ETOW=%.1f) sum=%.1f\n",
+   //   awayTpcPT, awayEmcET, awayBtowET, awayEtowET, awayTotET);
 }
 
 

@@ -21,7 +21,8 @@ AnaInfo::AnaInfo() : TObject(),
    fSuffix(""),
    fModes(0),
    fDoReconstructJets(kFALSE),
-   fThisisMC(kFALSE),
+   fIsMc(kFALSE),
+   fSaveHists(kFALSE),
    fAnaDateTime(0),
    fAnaTimeReal(0),
    fAnaTimeCpu (0),
@@ -112,7 +113,7 @@ string AnaInfo::GetOutDir() const
 
 /** */
 void AnaInfo::ProcessOptions(int argc, char **argv)
-{ //{{{
+{
    int          option_index = 0;
    stringstream sstr;
 
@@ -121,13 +122,15 @@ void AnaInfo::ProcessOptions(int argc, char **argv)
       {"sfx",                 required_argument,   0,   AnaInfo::OPTION_SUFFIX},
       {"list",                required_argument,   0,   'f'},
       {"jets",                no_argument,         0,   'j'},
-      {"MC",                  no_argument,         0,   'm'},
+      {"mc",                  no_argument,         0,   'm'},
+      {"plots",               no_argument,         0,   'p'},
+      {"hists",               no_argument,         0,   'p'},
       {0, 0, 0, 0}
    };
 
    int c;
 
-   while ((c = getopt_long(argc, argv, "?hl::r:f:jn:m", long_options, &option_index)) != -1)
+   while ((c = getopt_long(argc, argv, "?hl::r:f:n:jmp", long_options, &option_index)) != -1)
    {
       switch (c) {
 
@@ -145,16 +148,20 @@ void AnaInfo::ProcessOptions(int argc, char **argv)
          SetListName(optarg);
          break;
 
-      case 'j':
-         fDoReconstructJets = kTRUE;
-         break;
-
       case 'n':
          fMaxEventsUser = atoi(optarg);
          break;
 
+      case 'j':
+         fDoReconstructJets = kTRUE;
+         break;
+
       case 'm':
-         fThisisMC = kTRUE;
+         fIsMc = kTRUE;
+         break;
+
+      case 'p':
+         fSaveHists = kTRUE;
          break;
 
       default:
@@ -164,12 +171,12 @@ void AnaInfo::ProcessOptions(int argc, char **argv)
          break;
       }
    }
-} //}}}
+}
 
 
 /** */
 void AnaInfo::VerifyOptions()
-{ //{{{
+{
    // The file list must be specified
    if (fListName.empty()) {
       Error("VerifyOptions", "File with input list files must be specified");
@@ -193,20 +200,20 @@ void AnaInfo::VerifyOptions()
    //freopen(GetStdLogFileName().c_str(), "w", stderr);
    //setbuf(stdout, NULL);
    //fFileStdLogBuf.open(GetStdLogFileName().c_str(), ios::out|ios::ate|ios::app);
-} //}}}
+}
 
 
 /** */
 void AnaInfo::Print(const Option_t* opt) const
-{ //{{{
+{
    Info("Print", "Print members:");
    PrintAsPhp();
-} //}}}
+}
 
 
 /** */
 void AnaInfo::PrintAsPhp(FILE *f) const
-{ //{{{
+{
    fprintf(f, "$rc['fOutputName']                  = \"%s\";\n", fOutputName.c_str());
    fprintf(f, "$rc['fAsymVersion']                 = \"%s\";\n", fAsymVersion.c_str());
    fprintf(f, "$rc['fSuffix']                      = \"%s\";\n", fSuffix.c_str());
@@ -240,12 +247,12 @@ void AnaInfo::PrintAsPhp(FILE *f) const
    // Various printouts. Should be combined with Print()?
    //cout << "Max events to process:         " << fMaxEventsUser << endl;
    fprintf(f, "\n");
-} //}}}
+}
 
 
 /** */
 void AnaInfo::CopyResults()
-{ //{{{
+{
    if (!fFlagCopyResults) return;
 
    string cmd = "rsync -rlpgoDv " + GetOutDir() + " pc2pc-phy:/usr/local/polarim/root/";
@@ -260,16 +267,18 @@ void AnaInfo::CopyResults()
    //printf("%s", result);
 
    pclose(fp);
-} //}}}
+}
 
 
 /** */
 void AnaInfo::PrintUsage()
-{ //{{{
+{
    cout << endl;
    cout << "Options:" << endl;
    cout << " -h, -?                               : Print this help" << endl;
    cout << " -l, --log=[filename]                 : Optional log file to redirect stdout and stderr" << endl;
    cout << " -r, -f, --list                       : Input list file" << endl;
+   cout << " -m, --mc                             : Process input as monte-carlo" << endl;
+   cout << " -p, --plots, --hists                 : Save histograms in a separate file" << endl;
    cout << endl;
-} //}}}
+}

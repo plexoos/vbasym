@@ -55,7 +55,8 @@ public:
    std::string      fSuffix;            // Additional unique identifier for analysis job
    ULong_t          fModes;
    Bool_t           fDoReconstructJets;
-   Bool_t           fThisisMC;
+   Bool_t           fIsMc;
+   Bool_t           fSaveHists;
    time_t           fAnaDateTime;       // Date/time when data analysis started
    Double_t         fAnaTimeReal;       // Time in seconds to process input raw file
    Double_t         fAnaTimeCpu;        // Time in seconds to process input raw file

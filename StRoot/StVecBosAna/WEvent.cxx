@@ -14,8 +14,8 @@ using namespace std;
 
 
 /** */
-WEvent::WEvent() : TObject(), mWBosonP4(), mLeptonP4(), mNeutrinoP4(),
-   mTotalP4(), mRecoilP4(), mRecoilInAcceptP4(), mRecoilOutAcceptP4(),
+WEvent::WEvent() : TObject(), mP4WBoson(), mP4Lepton(), mP4Neutrino(),
+   mP4Total(), mP4Recoil(), mP4RecoilInAccept(), mP4RecoilOutAccept(),
    fLeptonGen(0), fLeptonIndex(0), fNeutrinoIndex(0), fEnergyRatio(0),
    fPzRatio(0), fPtRatio(0), fPtCorr(0), fPtCorrAngle(0), fPzRatioInOut(0),
    fPtRatioInOut(0)
@@ -24,9 +24,9 @@ WEvent::WEvent() : TObject(), mWBosonP4(), mLeptonP4(), mNeutrinoP4(),
 
 
 /** */
-TLorentzVector WEvent::RecoW()
+TLorentzVector WEvent::CalcRecoP4WBoson()
 {
-   return mLeptonP4 + mNeutrinoP4;
+   return mP4Lepton + mP4Neutrino;
 }
 
 
@@ -36,10 +36,10 @@ void WEvent::CalcRecoil(PyEvent &pyEvent)
    Double_t eneTotal = 0, eneAccept = 0;
    TLorentzVector recoilPOutAccept;
 
-   mTotalP4.SetPxPyPzE(0, 0, 0, 0);
-   mRecoilP4.SetPxPyPzE(0, 0, 0, 0);
-   mRecoilInAcceptP4.SetPxPyPzE(0, 0, 0, 0);
-   mRecoilOutAcceptP4.SetPxPyPzE(0, 0, 0, 0);
+   mP4Total.SetPxPyPzE(0, 0, 0, 0);
+   mP4Recoil.SetPxPyPzE(0, 0, 0, 0);
+   mP4RecoilInAccept.SetPxPyPzE(0, 0, 0, 0);
+   mP4RecoilOutAccept.SetPxPyPzE(0, 0, 0, 0);
 
    vector<track>::const_iterator iParticle    = pyEvent.tracks.begin();
    vector<track>::const_iterator lastParticle = pyEvent.tracks.end();
@@ -52,36 +52,36 @@ void WEvent::CalcRecoil(PyEvent &pyEvent)
 
       TLorentzVector particleP4(iParticle->px, iParticle->py, iParticle->pz, iParticle->E);
 
-      mRecoilP4   += particleP4;
+      mP4Recoil   += particleP4;
       eneTotal += particleP4.E();
 
       //if (particleP4.Eta() > -1 && particleP4.Eta() < 2)
       if (particleP4.Eta() > -2.4 && particleP4.Eta() < 2.4) {
          eneAccept          += particleP4.E();
-         mRecoilInAcceptP4  += particleP4;
+         mP4RecoilInAccept  += particleP4;
       } else {
-         mRecoilOutAcceptP4 += particleP4;
+         mP4RecoilOutAccept += particleP4;
       }
    }
 
-   //printf("%f, %f\t", mRecoilInAcceptP4.Px(), mRecoilP4.Px());
-   //printf("%f, %f\n", mRecoilInAcceptP4.Pz(), mRecoilP4.Pz());
+   //printf("%f, %f\t", mP4RecoilInAccept.Px(), mP4Recoil.Px());
+   //printf("%f, %f\n", mP4RecoilInAccept.Pz(), mP4Recoil.Pz());
 
    fEnergyRatio  = eneAccept/eneTotal;
-   fPzRatio      = mRecoilInAcceptP4.Pz()/mRecoilP4.Pz();
-   fPtRatio      = mRecoilInAcceptP4.Pt()/mRecoilP4.Pt();
-   //fPzRatioInOut = (mRecoilInAcceptP4 + mRecoilOutAcceptP4).Pz()/mRecoilP4.Pz();
-   //fPtRatioInOut = (mRecoilInAcceptP4 + mRecoilOutAcceptP4).Pt()/mRecoilP4.Pt();
+   fPzRatio      = mP4RecoilInAccept.Pz()/mP4Recoil.Pz();
+   fPtRatio      = mP4RecoilInAccept.Pt()/mP4Recoil.Pt();
+   //fPzRatioInOut = (mP4RecoilInAccept + mP4RecoilOutAccept).Pz()/mP4Recoil.Pz();
+   //fPtRatioInOut = (mP4RecoilInAccept + mP4RecoilOutAccept).Pt()/mP4Recoil.Pt();
 
-   //mRecoilInAcceptP4.SetPz(0);
-   //mRecoilP4.SetPz(0);
+   //mP4RecoilInAccept.SetPz(0);
+   //mP4Recoil.SetPz(0);
 
-   //fPtCorr       = (mRecoilP4.Pt() - mRecoilInAcceptP4.Pt())/mRecoilInAcceptP4.Pt();
+   //fPtCorr       = (mP4Recoil.Pt() - mP4RecoilInAccept.Pt())/mP4RecoilInAccept.Pt();
    // XXX:ds: z componennt should be removed
-   fPtCorrAngle  = mRecoilInAcceptP4.Angle(mRecoilP4.Vect());
+   fPtCorrAngle  = mP4RecoilInAccept.Angle(mP4Recoil.Vect());
 
 
-   fPtCorr       = mRecoilP4.Pt()/mRecoilInAcceptP4.Pt();
+   fPtCorr       = mP4Recoil.Pt()/mP4RecoilInAccept.Pt();
 }
 
 
@@ -94,10 +94,10 @@ void WEvent::CalcRecoil(StMcEvent &stMcEvent)
    Double_t eneAccept = 0;
    TLorentzVector recoilPOutAccept;
 
-   mTotalP4.SetPxPyPzE(0, 0, 0, 0);
-   mRecoilP4.SetPxPyPzE(0, 0, 0, 0);
-   mRecoilInAcceptP4.SetPxPyPzE(0, 0, 0, 0);
-   mRecoilOutAcceptP4.SetPxPyPzE(0, 0, 0, 0);
+   mP4Total.SetPxPyPzE(0, 0, 0, 0);
+   mP4Recoil.SetPxPyPzE(0, 0, 0, 0);
+   mP4RecoilInAccept.SetPxPyPzE(0, 0, 0, 0);
+   mP4RecoilOutAccept.SetPxPyPzE(0, 0, 0, 0);
 
    StMcVertex *primVertex = stMcEvent.primaryVertex();
 
@@ -136,11 +136,11 @@ void WEvent::CalcRecoil(StMcEvent &stMcEvent)
          int pdgId = mcTrack->pdgId();
 
          if (abs(pdgId) == 24)
-            mWBosonP4   = particleP4;
+            mP4WBoson   = particleP4;
          else if (abs(pdgId) == 11 && abs(mcTrack->parent()->pdgId()) == 24)
-            mLeptonP4   = particleP4;
+            mP4Lepton   = particleP4;
          else if (abs(pdgId) == 12 && abs(mcTrack->parent()->pdgId()) == 24)
-            mNeutrinoP4 = particleP4;
+            mP4Neutrino = particleP4;
       }
 
       const StMcVertex *currVertex = mcTrack->startVertex();
@@ -149,50 +149,50 @@ void WEvent::CalcRecoil(StMcEvent &stMcEvent)
       //if (currVertex != primVertex) continue;
       if (currVertex->geantProcess() != 0) continue; // only pythia particles/decays
 
-      mTotalP4 += particleP4;
+      mP4Total += particleP4;
       eneTotal += particleP4.E();
 
       //if (particleP4.Eta() > -2.4 && particleP4.Eta() < 2.4)
       if (particleP4.Eta() > -1.1 && particleP4.Eta() < 2.0)
       {
          eneAccept          += particleP4.E();
-         mRecoilInAcceptP4  += particleP4;
+         mP4RecoilInAccept  += particleP4;
       } else {
-         mRecoilOutAcceptP4 += particleP4;
+         mP4RecoilOutAccept += particleP4;
       }
    }
 
-   //cout << "mTotalP4:" << endl;
-   //utils::PrintTLorentzVector(mTotalP4);
+   //cout << "mP4Total:" << endl;
+   //utils::PrintTLorentzVector(mP4Total);
    //cout << endl;
 
-   mRecoilP4  = mTotalP4;
-   mRecoilP4 -= mLeptonP4;
-   mRecoilP4 -= mNeutrinoP4;
+   mP4Recoil  = mP4Total;
+   mP4Recoil -= mP4Lepton;
+   mP4Recoil -= mP4Neutrino;
 
-   if (mLeptonP4.Eta() > -1.1 && mLeptonP4.Eta() < 2.0)
-      mRecoilInAcceptP4 -= mLeptonP4;
+   if (mP4Lepton.Eta() > -1.1 && mP4Lepton.Eta() < 2.0)
+      mP4RecoilInAccept -= mP4Lepton;
    else                                                
-      mRecoilOutAcceptP4 -= mLeptonP4;
+      mP4RecoilOutAccept -= mP4Lepton;
 
-   if (mNeutrinoP4.Eta() > -1.1 && mNeutrinoP4.Eta() < 2.0)
-      mRecoilInAcceptP4 -= mNeutrinoP4;
+   if (mP4Neutrino.Eta() > -1.1 && mP4Neutrino.Eta() < 2.0)
+      mP4RecoilInAccept -= mP4Neutrino;
    else 
-      mRecoilOutAcceptP4 -= mNeutrinoP4;
+      mP4RecoilOutAccept -= mP4Neutrino;
 
-   //printf("%f, %f\t", mRecoilInAcceptP4.Px(), mRecoilP4.Px());
-   //printf("%f, %f\n", mRecoilInAcceptP4.Pz(), mRecoilP4.Pz());
+   //printf("%f, %f\t", mP4RecoilInAccept.Px(), mP4Recoil.Px());
+   //printf("%f, %f\n", mP4RecoilInAccept.Pz(), mP4Recoil.Pz());
 
    fEnergyRatio  = eneAccept/eneTotal;
-   fPzRatio      = mRecoilInAcceptP4.Pz()/mRecoilP4.Pz();
-   fPtRatio      = mRecoilInAcceptP4.Pt()/mRecoilP4.Pt();
-   fPzRatioInOut = (mRecoilInAcceptP4 + mRecoilOutAcceptP4).Pz()/mRecoilP4.Pz();
-   fPtRatioInOut = (mRecoilInAcceptP4 + mRecoilOutAcceptP4).Pt()/mRecoilP4.Pt();
+   fPzRatio      = mP4RecoilInAccept.Pz()/mP4Recoil.Pz();
+   fPtRatio      = mP4RecoilInAccept.Pt()/mP4Recoil.Pt();
+   fPzRatioInOut = (mP4RecoilInAccept + mP4RecoilOutAccept).Pz()/mP4Recoil.Pz();
+   fPtRatioInOut = (mP4RecoilInAccept + mP4RecoilOutAccept).Pt()/mP4Recoil.Pt();
 
-   //mRecoilInAcceptP4.SetPz(0);
-   //mRecoilP4.SetPz(0);
+   //mP4RecoilInAccept.SetPz(0);
+   //mP4Recoil.SetPz(0);
 
-   fPtCorr       = (mRecoilP4.Pt() - mRecoilInAcceptP4.Pt())/mRecoilInAcceptP4.Pt();
+   fPtCorr       = (mP4Recoil.Pt() - mP4RecoilInAccept.Pt())/mP4RecoilInAccept.Pt();
    // XXX:ds: z componennt should be removed
-   fPtCorrAngle  = mRecoilInAcceptP4.Angle(mRecoilP4.Vect());
+   fPtCorrAngle  = mP4RecoilInAccept.Angle(mP4Recoil.Vect());
 }

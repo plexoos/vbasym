@@ -168,17 +168,27 @@ void VecBosEvent::Process()
 
    for ( ; iJet != mJets.end(); ++iJet) {
       StJet *stJet = *iJet;
+      //printf("\nstJet: ");
       //utils::PrintTLorentzVector(*stJet);
       mP4JetTotal += *stJet;
 
-      if (mJetsWithIsoTrack.find(stJet) == mJetsWithIsoTrack.end())
+      if ( !IsCandidateTrackInJet(stJet) )
       {
          mP4JetRecoil += *stJet;
-         //utils::PrintTLorentzVector(mP4JetTotal);
-      } else {
-         //Info("Process()", "Don't add this jet to recoil");
-      }
+      }// else
+       //  Info("Process()", "Don't add this jet to recoil");
+
+      //if (mJetsWithIsoTrack.find(stJet) == mJetsWithIsoTrack.end())
+      //{
+      //   //mP4JetRecoil += *stJet;
+      //   //utils::PrintTLorentzVector(mP4JetTotal);
+      //} else {
+      //   //Info("Process()", "Don't add this jet to recoil");
+      //}
    }
+
+   //printf("\nmP4JetRecoil: ");
+   //utils::PrintTLorentzVector(mP4JetRecoil);
 
    CalcRecoilFromTracks();
 }
@@ -276,6 +286,35 @@ void VecBosEvent::MCanalysis()
       }
 
    */
+}
+
+
+bool VecBosEvent::IsCandidateTrackInJet(StJet *stJet) const
+{
+   if (!mTracksCandidate.size()) {
+      Warning("IsCandidateTrackInJet(StJet *stJet)", "No candidate tracks in this event => track not in jet");
+      return false;
+   }
+
+   VecBosTrackPtrVecConstIter iTrackCandidate = mTracksCandidate.begin();
+   for ( ; iTrackCandidate != mTracksCandidate.end(); ++iTrackCandidate)
+   {
+      //printf("\ntrackCandidate: ");
+      //(*iTrackCandidate)->print();
+
+      Double_t deltaZ = fabs(stJet->zVertex - (*iTrackCandidate)->mVertex->mPosition.Z());
+      if (deltaZ > 5) return true;
+
+      Double_t deltaR = stJet->Vect().DeltaR((*iTrackCandidate)->mP3AtDca);
+      if (deltaR < mTrackIsoDeltaR && deltaZ < 5)
+      {
+         //Info("IsCandidateTrackInJet(StJet *stJet)", "deltaR: %f", deltaR);
+         //Info("IsCandidateTrackInJet(StJet *stJet)", "deltaZ: %f = |%f - %f|", deltaZ, stJet->zVertex, (*iTrackCandidate)->mVertex->mPosition.Z());
+         return true;
+      }
+   }
+
+   return false;
 }
 
 
@@ -662,13 +701,18 @@ void VecBosEvent::clear()
 
 void VecBosEvent::Print(int opt, int isMC)
 {
+   printf("\n");
    Info("Print(int opt, int isMC)", "");
 
-   printf("\nmy W2011event runNo=%d ID=%d  L2Wbits: ET=%d rnd=%d;  muDst: bx7=%d bx48=%d nVert=%d star: Bx7m=%d, Bx48=%d, mSpinPattern4Bits=%d \n", runNo, id, l2bitET, l2bitRnd, bx7, bx48, mVertices.size(), bxStar7, bxStar48, mSpinPattern4Bits);
-   int  yyyymmdd,  hhmmss; getGmt_day_hour( yyyymmdd,  hhmmss);
-   printf("  event time is: day=%d, hour=%d (GMT)\n", yyyymmdd, hhmmss);
+   printf("My W2011event runNo=%d ID=%d  L2Wbits: ET=%d rnd=%d;  muDst: bx7=%d bx48=%d nVert=%d star: Bx7m=%d, Bx48=%d, mSpinPattern4Bits=%d \n",
+      runNo, id, l2bitET, l2bitRnd, bx7, bx48, mVertices.size(), bxStar7, bxStar48, mSpinPattern4Bits);
+   int  yyyymmdd,  hhmmss;
+   getGmt_day_hour( yyyymmdd,  hhmmss);
+   printf("Event time is: day=%d, hour=%d (GMT)\n", yyyymmdd, hhmmss);
 
-   for (uint i = 0; i < mVertices.size(); i++) mVertices[i].Print();
+   for (uint i = 0; i < mVertices.size(); i++)
+      mVertices[i].Print();
+
    bemc.print(opt);
 }
 

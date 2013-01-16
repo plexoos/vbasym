@@ -36,7 +36,7 @@ public:
 
 
 // tower pointed by the track
-class WevePointTower
+class WevePointTower : public TObject
 {
 public:
    TVector3 R;       // extrapolated position of primary track
@@ -45,8 +45,18 @@ public:
    int      iEta;
    int      iPhi;    // eta x phi bin using L2 indexing convention
 
-   void clear() { id = 0; R = TVector3(0, 0, 0); Rglob = TVector3(0, 0, 0); iEta = iPhi = 9999; }
-   void print(int flag = 0) const {
+   void clear()
+   {
+      id    = 0;
+      R     = TVector3(0, 0, 0);
+      Rglob = TVector3(0, 0, 0);
+      iEta  = iPhi = 9999;
+   }
+
+   void print(int flag = 0) const
+   {
+      printf("\n");
+      Info("print(int flag)", "");
       printf("     pointed tower ID=%d; L2index: iEta=%d iPhi=%d; XYZ=(%.0f,%.0f,%.0f)cm\n",
              id, iEta, iPhi, R.x(), R.y(), R.z());
    }
