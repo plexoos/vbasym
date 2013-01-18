@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<job filesPerHour="60" maxFilesPerProcess="500" fileListSyntax="xrootd" inputOrder="runnumber" simulateSubmission="false" name="&RUNLIST_ID;">
+<job filesPerHour="1" maxFilesPerProcess="50" fileListSyntax="xrootd" inputOrder="runnumber" simulateSubmission="false" name="&RUNLIST_ID;">
    <ResourceUsage>
       <StorageSpace>
          <MinStorage>20</MinStorage>
@@ -51,7 +51,7 @@
 
    </command>
 
-   <output fromScratch="*.hist.root"  toURL="file:&OUT_DIR;/hists_run11/"/>
+   <output fromScratch="*.hist.root"  toURL="file:&OUT_DIR;/data_run11/"/>
    <output fromScratch="jets_*.root"  toURL="file:&OUT_DIR;/jets_run11/"/>
    <output fromScratch="*.wtree.root" toURL="file:&OUT_DIR;/wtree_run11/"/>
    <output fromScratch="*.ps"         toURL="file:&OUT_DIR;/ps_run11/"/>

@@ -198,7 +198,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    St_db_Maker *stDbMaker = new St_db_Maker("StarDb", "MySQL:StarDb", "MySQL:StarDb", "$STAR/StarDb");
 
    if (isMC) {
-      stDbMaker->SetMaxEntryTime(20101215, 0); // keep the same DB snapshot as used in BFC for embedding
+     //      stDbMaker->SetMaxEntryTime(20101215, 0); // keep the same DB snapshot as used in BFC for embedding
       stDbMaker->SetFlavor("Wbose2", "bsmdpCalib");
       stDbMaker->SetFlavor("Wbose2", "bsmdeCalib");
    }

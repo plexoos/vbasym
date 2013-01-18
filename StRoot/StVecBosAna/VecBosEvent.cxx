@@ -21,7 +21,7 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mWEvent(0),
    mP4JetTotal(), mP4JetFirst(), mP4JetRecoil(),
    mP3RecoilFromTracks(),
-   mP3PtBalanceFromTracks(),
+   mP3BalanceFromTracks(),
    mHadronicRecoilEta(0),
    mHadronicRecoilPt(0),
    mHadRecoilFromTracksEta(0),
@@ -196,7 +196,9 @@ void VecBosEvent::Process()
    // Calculate the Pt balance as the vector sum: pt elec + pt recoil
    if  (mTracksCandidate.size() == 1) {
 
-    mP3PtBalanceFromTracks = mP3RecoilFromTracks + mTracksCandidate[0]->mP3AtDca;
+    mP3BalanceFromTracks = mP3RecoilFromTracks + mTracksCandidate[0]->mP3AtDca;
+    mBalanceDeltaPhiFromTracks = mTracksCandidate[0]->mP3AtDca.DeltaPhi(mP3RecoilFromTracks);
+
    }
 }
 
@@ -702,7 +704,7 @@ void VecBosEvent::clear()
    mMinTrackHitFrac      = 0.51;
    mMinClusterEnergyFrac = 0.90; // was 0.88;
    mP3RecoilFromTracks   = TVector3(0, 0, 0);
-   mP3PtBalanceFromTracks   = TVector3(0, 0, 0);
+   mP3BalanceFromTracks   = TVector3(0, 0, 0);
    mHadRecoilFromTracksEta  = 0;
    mHadRecoilFromTracksPt   = 0;
    mPtKfactor               = 0;
