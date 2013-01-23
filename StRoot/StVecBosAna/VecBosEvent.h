@@ -85,6 +85,7 @@ public:
    Double_t           mPtKfactor;
    TVector3           mP3BalanceFromTracks;
    Double_t           mBalanceDeltaPhiFromTracks; 
+   Double_t           mPtBalanceCosPhiFromTracks; 
 
    float mMaxTrackClusterDist;  //! cm, dist between projected track and center of cluster
    float mTrackIsoDeltaR;       //! (rad) near-cone size

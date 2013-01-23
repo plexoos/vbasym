@@ -194,12 +194,16 @@ void VecBosEvent::Process()
    CalcRecoilFromTracks();
 
    // Calculate the Pt balance as the vector sum: pt elec + pt recoil
+
+/*
    if  (mTracksCandidate.size() == 1) {
 
     mP3BalanceFromTracks = mP3RecoilFromTracks + mTracksCandidate[0]->mP3AtDca;
     mBalanceDeltaPhiFromTracks = mTracksCandidate[0]->mP3AtDca.DeltaPhi(mP3RecoilFromTracks);
-
+    mPtBalanceCosPhiFromTracks = mP3BalanceFromTracks.Pt()*cos(mBalanceDeltaPhiFromTracks) ;
    }
+*/
+
 }
 
 
@@ -225,9 +229,13 @@ void VecBosEvent::CalcRecoilFromTracks()
       VecBosTrackPtrVecIter iTrack = mTracksCandidate.begin();
       for (; iTrack !=  mTracksCandidate.end(); ++iTrack)
       {
+
+
          TVector3 prP3 = (*iTrack)->mP3AtDca;
          if (prP3.Pt() <= 0) continue;   // iso track with a positive Pt
+         //if(iTrack->HasCluster() == false) continue;  // iso Track must point to a cluster
 
+/*
          //.... process BTOW hits
          for (int i = 0; i < mxBtow; i++) {
             float ene = bemc.eneTile[kBTow][i];
@@ -238,26 +246,41 @@ void VecBosEvent::CalcRecoilFromTracks()
 
             recoil += primP;
          }
+*/
 
          //loop over tracks with a good vertex
          VecBosTrackVecIter rTrack = mTracks.begin();
-         for (; rTrack !=  mTracks.end(); ++rTrack) {
+         for (; rTrack !=  mTracks.end(); ++rTrack) 
+         {
             //// rTrack->Process();
             if (rTrack->IsGood() == false) continue;      // Track has a good vertex
             if (rTrack->IsIsolated() == true) continue;   // Track is not the electro
-            //if(iTrack->HasCluster() == false) continue;  // Track points to a cluster
 
             TVector3 TrackP3 = rTrack->mP3AtDca;
 
             //....process TPC tracks
+
             recoil += TrackP3;
          }
 
          mP3RecoilFromTracks = recoil;
+
          if (mP3RecoilFromTracks.Pt() > 0) {
             mHadRecoilFromTracksEta  = mP3RecoilFromTracks.Eta();
             mHadRecoilFromTracksPt   = mP3RecoilFromTracks.Perp();
          }
+
+
+	 if  (mTracksCandidate.size() == 1) 
+	 {
+
+	   //       mP3BalanceFromTracks = mP3RecoilFromTracks + mTracksCandidate[0]->mP3AtDca;
+            mP3BalanceFromTracks = mP3RecoilFromTracks + prP3;
+            mBalanceDeltaPhiFromTracks = prP3.DeltaPhi(mP3RecoilFromTracks);
+            mPtBalanceCosPhiFromTracks = mP3BalanceFromTracks.Pt()*cos(mBalanceDeltaPhiFromTracks) ;
+	 }
+
+
       } // close there is iso track
    }  // close loop ove vertices
 
