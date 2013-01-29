@@ -50,7 +50,7 @@
 
    </command>
 
-   <output fromScratch="*.hist.root"  toURL="file:&outPath;/hists_run11/"/>
+   <output fromScratch="*.hist.root"  toURL="file:&outPath;/data_run11/"/>
    <output fromScratch="jets_*.root"   toURL="file:&outPath;/jets_run11/"/>
    <output fromScratch="*.wtree.root" toURL="file:&outPath;/wtree_run11/"/>
    <output fromScratch="*.ps"         toURL="file:&outPath;/ps_run11/"/>
