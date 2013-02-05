@@ -12,9 +12,7 @@
 
    <command>
       starver &STAR_VER;
-      #stardev
 
-      #cp $FILELIST &OUT_DIR;/lists_run11/R&RUNLIST_ID;.lis
       cp &codePath;/runlists/&RUNLIST_ID; &OUT_DIR;/lists_run11/&RUNLIST_ID;.lis
 
       setenv RUNLIST &OUT_DIR;/lists_run11/&RUNLIST_ID;.lis
@@ -51,7 +49,7 @@
 
    </command>
 
-   <output fromScratch="*.hist.root"  toURL="file:&OUT_DIR;/data_run11/"/>
+   <output fromScratch="*.hist.root"  toURL="file:&OUT_DIR;/hists_run11/"/>
    <output fromScratch="jets_*.root"  toURL="file:&OUT_DIR;/jets_run11/"/>
    <output fromScratch="*.wtree.root" toURL="file:&OUT_DIR;/wtree_run11/"/>
    <output fromScratch="*.ps"         toURL="file:&OUT_DIR;/ps_run11/"/>
