@@ -84,6 +84,7 @@ public:
    Double_t           mHadronicRecoilPt;
    Double_t           mPtKfactor;
    TVector3           mP3BalanceFromTracks;
+   Double_t           mPtBalanceFromTracks;
    Double_t           mBalanceDeltaPhiFromTracks; 
    Double_t           mPtBalanceCosPhiFromTracks; 
 

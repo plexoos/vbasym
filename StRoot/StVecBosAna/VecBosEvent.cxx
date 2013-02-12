@@ -277,6 +277,7 @@ void VecBosEvent::CalcRecoilFromTracks()
 	   //       mP3BalanceFromTracks = mP3RecoilFromTracks + mTracksCandidate[0]->mP3AtDca;
             mP3BalanceFromTracks += recoil;
             mP3BalanceFromTracks += prP3;
+            mPtBalanceFromTracks  = mP3BalanceFromTracks.Pt();
             mBalanceDeltaPhiFromTracks = prP3.DeltaPhi(mP3BalanceFromTracks);
             mPtBalanceCosPhiFromTracks = mP3BalanceFromTracks.Pt()*cos(mBalanceDeltaPhiFromTracks) ;
 	 }
