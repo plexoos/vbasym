@@ -216,9 +216,12 @@ void StVecBosSpinMaker::bXingSort()
    if ( wMK->mVecBosEvent->l2bitET == 0) return;
    //..... it is guaranteed ..... L2W-ET>13 did fired  ......
 
-   // search for  Ws ............
-   for (uint iv = 0; iv < wMK->mVecBosEvent->mVertices.size(); iv++) {
-      VecBosVertex &V = wMK->mVecBosEvent->mVertices[iv];
+   // search for Ws
+   VecBosVertexPtrSetIter iVertex = wMK->GetVecBosEvent()->mVertices.begin();
+
+   for (short iv=0 ; iVertex != wMK->GetVecBosEvent()->mVertices.end(); ++iVertex, iv++)
+   {
+      VecBosVertex &V = **iVertex;
 
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          VecBosTrack &T = V.eleTrack[it];

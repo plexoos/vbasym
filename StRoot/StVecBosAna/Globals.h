@@ -10,7 +10,7 @@
 #include "WEventCluster.h"
 
 
-inline bool operator==(const StJet& lhs, const StJet& rhs) { return (TLorentzVector) lhs == (TLorentzVector) lhs; }
+inline bool operator==(const StJet& lhs, const StJet& rhs) { return (TLorentzVector) lhs == (TLorentzVector) rhs; }
 inline bool operator!=(const StJet& lhs, const StJet& rhs) { return !operator==(lhs,rhs); }
 inline bool operator< (const StJet& lhs, const StJet& rhs) { return lhs.E() < rhs.E(); }
 inline bool operator> (const StJet& lhs, const StJet& rhs) { return  operator< (rhs,lhs); }

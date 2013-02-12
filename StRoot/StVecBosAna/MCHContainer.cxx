@@ -177,11 +177,11 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hRecOutAccMomentumZ"])->Fill(event.mWEvent->mP4RecoilOutAccept.Pz());
 
    // recoil from tracks geant variables
-   ((TH1*) o["hHadRecoilFromTracksPx"])->Fill(event.mP3RecoilFromTracks.Px(), event.mHadRecoilFromTracksPt != 0);
-   ((TH1*) o["hHadRecoilFromTracksPy"])->Fill(event.mP3RecoilFromTracks.Py(), event.mHadRecoilFromTracksPt != 0);
-   ((TH1*) o["hHadRecoilFromTracksPz"])->Fill(event.mP3RecoilFromTracks.Pz(), event.mHadRecoilFromTracksPt != 0);
-   ((TH1*) o["hHadRecoilFromTracksEta"])->Fill(event.mP3RecoilFromTracks.Eta(), event.mHadRecoilFromTracksPt != 0);
-   ((TH1*) o["hHadRecoilFromTracksPt"])->Fill(event.mP3RecoilFromTracks.Pt(), event.mHadRecoilFromTracksPt != 0);
+   ((TH1*) o["hHadRecoilFromTracksPx"])->Fill(event.mP3RecoilFromTracks.Px(),   event.mP3RecoilFromTracks.Perp() != 0);
+   ((TH1*) o["hHadRecoilFromTracksPy"])->Fill(event.mP3RecoilFromTracks.Py(),   event.mP3RecoilFromTracks.Perp() != 0);
+   ((TH1*) o["hHadRecoilFromTracksPz"])->Fill(event.mP3RecoilFromTracks.Pz(),   event.mP3RecoilFromTracks.Perp() != 0);
+   ((TH1*) o["hHadRecoilFromTracksEta"])->Fill(event.mP3RecoilFromTracks.Eta(), event.mP3RecoilFromTracks.Perp() != 0);
+   ((TH1*) o["hHadRecoilFromTracksPt"])->Fill(event.mP3RecoilFromTracks.Pt(),   event.mP3RecoilFromTracks.Perp() != 0);
    ((TH2*) o["hRecoilCorrelPythia"])->Fill(event.mP3RecoilFromTracks.Pt(), event.mWEvent->mP4Recoil.Pt());
 
    // MC correction variablel

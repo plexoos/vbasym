@@ -25,13 +25,15 @@ public:
 
    VecBosEvent        *mEvent;       //!
    EVertexType         mType;
-   int                 id;           // as store do muDst list
+   Short_t             mId;          // Unique vertex id. Updated when all vertices are set
+   Short_t             mIdMuDst;     // as store do muDst list
    float               z;            //! cm
    float               mRank;
    float               mRankLog;
    int                 nEEMCMatch;   // # of matched endcap towers
    TVector3            mPosition;
-   VecBosTrackVec      eleTrack;
+   VecBosTrackPtrSet   mTracks;      // these tracks are owned by the event
+   VecBosTrackVec      eleTrack;     //!
    vector<StMuTrack*>  prTrList;     //!
 
    VecBosVertex();
@@ -46,8 +48,36 @@ public:
 };
 
 
-typedef std::vector<VecBosVertex>   VecBosVertexVec;
-typedef VecBosVertexVec::iterator   VecBosVertexVecIter;
+typedef std::vector<VecBosVertex>         VecBosVertexVec;
+typedef VecBosVertexVec::iterator         VecBosVertexVecIter;
+typedef VecBosVertexVec::const_iterator   VecBosVertexVecConstIter;
+
+
+inline bool operator==(const VecBosVertex& lhs, const VecBosVertex& rhs) { return (TVector3) lhs.mPosition == (TVector3) lhs.mPosition; }
+inline bool operator!=(const VecBosVertex& lhs, const VecBosVertex& rhs) { return !operator==(lhs,rhs); }
+//inline bool operator< (const VecBosVertex& lhs, const VecBosVertex& rhs) { return lhs.mTracks.size() < rhs.mTracks.size(); }
+inline bool operator< (const VecBosVertex& lhs, const VecBosVertex& rhs) { return lhs.mRank < rhs.mRank; }
+inline bool operator> (const VecBosVertex& lhs, const VecBosVertex& rhs) { return  operator< (rhs,lhs); }
+inline bool operator<=(const VecBosVertex& lhs, const VecBosVertex& rhs) { return !operator> (lhs,rhs); }
+inline bool operator>=(const VecBosVertex& lhs, const VecBosVertex& rhs) { return !operator< (lhs,rhs); }
+
+struct CompareVecBosVertex
+{
+   bool operator()(const VecBosVertex& lhs, const VecBosVertex& rhs) const { return lhs > rhs; }
+};
+
+struct CompareVecBosVertexPtr
+{
+   bool operator()(const VecBosVertex* lhs, const VecBosVertex* rhs) const { return (*lhs) > (*rhs); }
+};
+
+typedef std::set<VecBosVertex, CompareVecBosVertex>     VecBosVertexSet;
+typedef VecBosVertexSet::iterator                       VecBosVertexSetIter;
+typedef VecBosVertexSet::const_iterator                 VecBosVertexSetConstIter;
+
+typedef std::set<VecBosVertex*, CompareVecBosVertexPtr> VecBosVertexPtrSet;
+typedef VecBosVertexPtrSet::iterator                    VecBosVertexPtrSetIter;
+typedef VecBosVertexPtrSet::const_iterator              VecBosVertexPtrSetConstIter;
 
 #endif
 

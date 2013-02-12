@@ -11,7 +11,8 @@ ClassImp(VecBosTrack)
 using namespace std;
 
 
-VecBosTrack::VecBosTrack() : TObject(), mEvent(0), mType(kUNKNOWN), mHelix(), mVertex(0), mStJet(0),
+VecBosTrack::VecBosTrack() : TObject(), mEvent(0), mType(kUNKNOWN), mHelix(),
+   mVertex(0), mVertexId(-1), mJet(0),
    mP3AtDca(), mP3AtBTow(), mCoorAtBTow(),
    mP3InNearCone(), mP3InNearConeTow(), mP3InNearConeBTow(), mP3InNearConeETow(), mP3InNearConeNoETow(), mP3InNearConeTpc(),
    mP3InOppsCone(), mP3InOppsConeTow(), mP3InOppsConeBTow(), mP3InOppsConeETow(), mP3InOppsConeNoETow(), mP3InOppsConeTpc(),
@@ -23,14 +24,17 @@ VecBosTrack::VecBosTrack() : TObject(), mEvent(0), mType(kUNKNOWN), mHelix(), mV
    smallNearTpcPT  (0),
    awayTotET_noEEMC(0),
    mNumTracksInNearCone(0),
-   ptBalance(), ptBalance_noEEMC(), sPtBalance(0), sPtBalance_noEEMC(0), hadronicRecoil(),
-   mMinDeltaRToJet(-1) // nonsense value
+   hadronicRecoil(), ptBalance(), ptBalance_noEEMC(), sPtBalance(0), sPtBalance_noEEMC(0),
+   mMinDeltaZToJet(-1),            // nonsense value
+   mMinDeltaRToJet(-1),            // nonsense value
+   mDistToCluster(-10, -10, -10)   // nonsense value
 {
    clear();
 }
 
 
-const float VecBosTrack::mMinPt = 20;
+const float VecBosTrack::mMaxTrackClusterDist = 7;  // cm
+const float VecBosTrack::mMinPt               = 20;
 const float VecBosTrack::mMaxEnergyInOppsCone = 40; // was 30 GeV
 
 
@@ -47,7 +51,8 @@ void VecBosTrack::Process()
       return;
    }
 
-   mType = kGOOD; // this track has a good vertex
+   mType     = kGOOD; // this track has a good vertex
+   mVertexId = mVertex->mId;
 
    //if (mVecBosEvent->l2bitET && rank > 0 && primaryTrack->flag() == 301)
       //XXX:ds:if (secID == 20) continue; //poorly calibrated sector for Run 9+11+12?
@@ -73,22 +78,27 @@ void VecBosTrack::Process()
 }
 
 
-StJet* VecBosTrack::FindClosestJet(StJetPtrSet &jets)
+VecBosJet* VecBosTrack::FindClosestJet(VecBosJetPtrSet &jets)
 {
-   StJet *closestJet = 0;
+   VecBosJet *closestJet = 0;
 
    // Find the min distance between the track and the closest jet
-   StJetPtrSetConstIter iJet = jets.begin();
+   VecBosJetPtrSetConstIter iJet = jets.begin();
    for ( ; iJet != jets.end(); ++iJet)
    {
-      StJet *stJet = *iJet;
+      VecBosJet *vbJet = *iJet;
 
-      Double_t deltaR = stJet->Vect().DeltaR(mP3AtDca);
+      Double_t deltaZ = fabs(vbJet->zVertex - mVertex->mPosition.Z());
+
+      // Jet should come out of the same vertex
+      if (deltaZ > VecBosEvent::mMaxTrackJetDeltaZ) continue;
+
+      Double_t deltaR = vbJet->Vect().DeltaR(mP3AtDca);
       //Info("FindClosestJet()", "deltaR: %f ", deltaR);
 
       if (mMinDeltaRToJet < 0 || deltaR < mMinDeltaRToJet) {
          mMinDeltaRToJet = deltaR;
-         closestJet = stJet;
+         closestJet = vbJet;
          //Info("FindClosestJet()", "New closest jet found: mMinDeltaRToJet = %f", mMinDeltaRToJet);
       }
    }
@@ -97,7 +107,7 @@ StJet* VecBosTrack::FindClosestJet(StJetPtrSet &jets)
    {
       //Info("FindClosestJet()", "Track is within jet: %f <= %f. Returning jet...", mMinDeltaRToJet, mEvent->mTrackIsoDeltaR);
       mType |= VecBosTrack::kIN_JET;
-      mStJet = closestJet;
+      mJet = closestJet;
       return closestJet;
    }
    
@@ -115,7 +125,8 @@ void VecBosTrack::clear()
    prMuTrack              = 0;
    //mHelix               = St
    mVertex                = 0;
-   mStJet                 = 0;
+   mVertexId              = -1;
+   mJet                   = 0;
    mCluster2x2.clear();
    mCluster4x4.clear();
    mP3AtDca               = TVector3(0, 0, 0);
@@ -141,12 +152,14 @@ void VecBosTrack::clear()
    smallNearTpcPT         = 0;
    awayTotET_noEEMC       = 0;
    mNumTracksInNearCone   = 0;
-   ptBalance              = TVector3(0, 0, 0);
-   ptBalance_noEEMC       = TVector3(0, 0, 0);
+   hadronicRecoil.SetXYZ(0, 0, 0);
+   ptBalance.SetXYZ(0, 0, 0);
+   ptBalance_noEEMC.SetXYZ(0, 0, 0);
    sPtBalance             = 0;
    sPtBalance_noEEMC      = 0;
-   hadronicRecoil         = TVector3(0, 0, 0);
+   mMinDeltaZToJet        = -1;
    mMinDeltaRToJet        = -1;
+   mDistToCluster         = -1;
 
    memset(esmdGlobStrip, -999, sizeof(esmdGlobStrip));
    memset(esmdDca, -999., sizeof(esmdDca));
@@ -167,7 +180,7 @@ void VecBosTrack::print(int opt) const
 
    mP3AtDca.Print();
 
-   if (prMuTrack == 0) { printf("Track NULL pointer???\n"); }
+   if (prMuTrack == 0) { printf("prMuTrack is NULL pointer???\n"); return; }
 
    printf("\tTrack glPT=%.2f GeV/c   isMatch2Cl=%d, mP3InNearCone=%.2f, awayTotET=%.2f mP3AtDca.Pt()=%.2f\n",
           glMuTrack->pt(), isMatch2Cl, mP3InNearCone.Pt(), awayTotET, mP3AtDca.Pt());
@@ -279,20 +292,20 @@ void VecBosTrack::MatchTrack2BtowCluster()
    //hA[20]->Fill("fr24", 1.);
 
    // spacial separation (track - cluster)
-   TVector3 delta3D = mCoorAtBTow - mCluster2x2.position;
+   mDistToCluster = mCoorAtBTow - mCluster2x2.position;
 
-   //hA[43]->Fill(mCluster2x2.energy,       delta3D.Mag());
-   //hA[44]->Fill(mCluster2x2.position.z(), delta3D.z());
+   //hA[43]->Fill(mCluster2x2.energy,       mDistToCluster.Mag());
+   //hA[44]->Fill(mCluster2x2.position.z(), mDistToCluster.z());
 
    //float deltaPhi = mCoorAtBTow.DeltaPhi(mCluster2x2.position);
 
-   // printf("aaa %f %f %f   phi=%f\n",delta3D.x(),delta3D.y(),delta3D.z(),deltaPhi);
+   // printf("aaa %f %f %f   phi=%f\n",mDistToCluster.x(),mDistToCluster.y(),mDistToCluster.z(),deltaPhi);
    //hA[45]->Fill( mCluster2x2.energy, nomBTowRadius * deltaPhi); // wrong?
-   //hA[46]->Fill( delta3D.Mag());
-   //hA[199]->Fill(mCluster2x2.position.PseudoRapidity(), delta3D.Mag());
+   //hA[46]->Fill( mDistToCluster.Mag());
+   //hA[199]->Fill(mCluster2x2.position.PseudoRapidity(), mDistToCluster.Mag());
    //hA[207]->Fill(mCluster2x2.position.PseudoRapidity(), mCluster2x2.ET);
 
-   if (delta3D.Mag() <= mEvent->mMaxTrackClusterDist)
+   if (mDistToCluster.Mag() <= mMaxTrackClusterDist)
    {
       isMatch2Cl = true; // cluster is matched to TPC track
       mType |= kHAS_CLUSTER;
@@ -391,39 +404,4 @@ void VecBosTrack::CalcEnergyInNearCone()
    //   hE[48]->Fill(mP3InNearConeTow, mP3InNearConeTpc);
    //   hE[49]->Fill(mP3InNearCone);
    //}
-}
-
-
-void VecBosTrack::FindAwayJet()
-{
-//   // printf("\n******* find AwayJet() nVert=%d\n", mVecBosEvent->mVertices.size());
-//   //mVecBosEvent->print();
-//   for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++)
-//   {
-//      VecBosVertex &vertex = mVecBosEvent->mVertices[iv];
-//
-//      for (uint iTrack = 0; iTrack < vertex.eleTrack.size(); iTrack++)
-//      {
-//         VecBosTrack &track = vertex.eleTrack[iTrack];
-//
-//         if (!isMatch2Cl) continue;
-//
-//         // sum opposite in phi EMC components
-//         awayBtowET  = mEvent->CalcP3InConeBTow(vertex.z, -mP3AtDca, 1); // '1' = only cut on delta phi
-//         awayEtowET  = mEvent->CalcP3InConeETow(vertex.z, -mP3AtDca, 1);
-//         awayEmcET   = awayBtowET;
-//         awayEmcET  += awayEtowET;
-//
-//         // add TPC ET
-//         //if (mStMuDstMaker)
-//            awayTpcPT = mEvent->CalcP3InConeTpc(vertex.id, -mP3AtDca, 1, mMatchedTower.id);
-//         //else
-//         //   awayTpcPT = SumTpcConeFromTree(iv, -mP3AtDca, 1, mMatchedTower.id);
-//
-//         awayTotET        = awayEmcET  + awayTpcPT;
-//         awayTotET_noEEMC = awayBtowET + awayTpcPT;
-//
-//         //printf("\n*** in   awayTpc=%.1f awayEmc=%.1f\n  ",awayTpcPT,awayEmcET); print();
-//      }
-//   }
 }

@@ -59,9 +59,10 @@ void St2011pubWanaMaker::evalWeleTrackSign()
    // has access to whole W-algo-maker data via pointer 'wMK'
 
    // search for Ws
-   for (uint iv = 0; iv < wMK->mVecBosEvent->mVertices.size(); iv++)
+   VecBosVertexPtrSetIter iVertex = wMK->GetVecBosEvent()->mVertices.begin();
+   for ( ; iVertex != wMK->GetVecBosEvent()->mVertices.end(); ++iVertex)
    {
-      VecBosVertex &V = wMK->mVecBosEvent->mVertices[iv];
+      VecBosVertex &V = **iVertex;
 
       for (uint it = 0; it < V.eleTrack.size(); it++)
       {
@@ -178,10 +179,13 @@ void St2011pubWanaMaker::scanCrateRate()
    // printf("crateScan: eveID=%d\n",wMK->mVecBosEvent->id);
 
    // search for  Ws ............
-   for (uint iv = 0; iv < wMK->mVecBosEvent->mVertices.size(); iv++)
+   VecBosVertexPtrSetIter iVertex = wMK->GetVecBosEvent()->mVertices.begin();
+   for ( ; iVertex != wMK->GetVecBosEvent()->mVertices.end(); ++iVertex)
    {
-      VecBosVertex &V = wMK->mVecBosEvent->mVertices[iv];
-      for (uint it = 0; it < V.eleTrack.size(); it++) {
+      VecBosVertex &V = **iVertex;
+
+      for (uint it = 0; it < V.eleTrack.size(); it++)
+      {
          VecBosTrack &track = V.eleTrack[it];
          // track.mMatchedTower.print();
          int softID = track.mMatchedTower.id;
@@ -203,9 +207,11 @@ void St2011pubWanaMaker::scanCrateRate()
 //
 void St2011pubWanaMaker::varyCuts4backgStudy()
 {
-   for (uint iv = 0; iv < wMK->mVecBosEvent->mVertices.size(); iv++)
+   VecBosVertexPtrSetIter iVertex = wMK->GetVecBosEvent()->mVertices.begin();
+
+   for ( ; iVertex != wMK->GetVecBosEvent()->mVertices.end(); ++iVertex)
    {
-      VecBosVertex &V = wMK->mVecBosEvent->mVertices[iv];
+      VecBosVertex &V = **iVertex;
 
       for (uint it = 0; it < V.eleTrack.size(); it++)
       {

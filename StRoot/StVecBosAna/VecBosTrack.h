@@ -13,6 +13,7 @@
 #include "Globals.h"
 #include "WanaConst.h"
 #include "WEventCluster.h"
+#include "VecBosJet.h"
 
 
 class VecBosEvent;
@@ -43,7 +44,8 @@ public:
    const StMuTrack        *prMuTrack;          //!
    StPhysicalHelixD        mHelix;             //!
    const VecBosVertex     *mVertex;            //! pointer to mother vertex
-   StJet                  *mStJet;             //! pointer to mother jet if exists
+   Short_t                 mVertexId;          // mId of the mother vertex
+   VecBosJet              *mJet;               //! pointer to mother jet if exists
    WeveCluster             mCluster2x2;
    WeveCluster             mCluster4x4;
    TVector3                mP3AtDca;           // primary momentum vector
@@ -69,13 +71,16 @@ public:
    float                   awayTotET;          //!
    float                   awayTotET_noEEMC;   //! GeV, for nearCone 10 GeV is subtracted to avoid double counting
    UShort_t                mNumTracksInNearCone;
-   TVector3                ptBalance;
-   TVector3                ptBalance_noEEMC;
-   float                   sPtBalance;
-   float                   sPtBalance_noEEMC;  // signed pT balance (GeV/c)
-   TVector3                hadronicRecoil;
-   float                   mMinDeltaRToJet;       // Min distance to a jet
+   TVector3                hadronicRecoil;     //!
+   TVector3                ptBalance;          //!
+   TVector3                ptBalance_noEEMC;   //!
+   float                   sPtBalance;         //!
+   float                   sPtBalance_noEEMC;  //! signed pT balance (GeV/c)
+   float                   mMinDeltaZToJet;    // Min distance to a jet
+   float                   mMinDeltaRToJet;    // Min distance to a jet
+   TVector3                mDistToCluster;     // Distance to cluster
 
+   static const float      mMaxTrackClusterDist;  //! cm, dist between projected track and center of cluster
    static const float      mMinPt;                //!
    static const float      mMaxEnergyInOppsCone;  //!
 
@@ -93,34 +98,36 @@ public:
 
    VecBosTrack();
 
-   bool      IsGood()       const { return (mType & kGOOD)   == kGOOD   ? true : false; }
-   bool      IsBTrack()     const { return (mType & kBARREL) == kBARREL ? true : false; }
-   bool      IsETrack()     const { return (mType & kENDCAP) == kENDCAP ? true : false; }
-   bool      HasCluster()   const { return (mType & kHAS_CLUSTER) == kHAS_CLUSTER ? true : false; }
-   bool      IsIsolated()   const { return (mType & kISOLATED) == kISOLATED ? true : false; }
-   bool      IsInJet()      const { return (mType & kIN_JET) == kIN_JET ? true : false; }
-   bool      IsUnBalanced() const { return (mType & kUNBALANCED) == kUNBALANCED ? true : false; }
-   bool      IsCandidate()  const;
-   //bool      HasBarrelMatched();
-   //bool      HasEndcapMatched();
-   void      Process();
-   float     GetFitHitFrac()        const { return float(prMuTrack->nHitsFit()) / prMuTrack->nHitsPoss(); }
-   float     GetClusterEnergyFrac() const { return (mCluster2x2.energy + mP3AtDca.Mag()) / mP3InNearConeNoETow.Mag(); }
-   float     GetClusterETFrac()     const { return (mCluster2x2.ET     + mP3AtDca.Pt())  / mP3InNearConeNoETow.Perp(); }
-   TVector3  CalcDistanceToCluster() const { return mCoorAtBTow - mCluster2x2.position; }
-   StJet*    FindClosestJet(StJetPtrSet &jets);
-   void      clear();
-   void      print(int opt=0) const;
+   bool        IsGood()       const { return (mType & kGOOD)   == kGOOD   ? true : false; }
+   bool        IsBTrack()     const { return (mType & kBARREL) == kBARREL ? true : false; }
+   bool        IsETrack()     const { return (mType & kENDCAP) == kENDCAP ? true : false; }
+   bool        HasCluster()   const { return (mType & kHAS_CLUSTER) == kHAS_CLUSTER ? true : false; }
+   bool        IsIsolated()   const { return (mType & kISOLATED) == kISOLATED ? true : false; }
+   bool        IsInJet()      const { return (mType & kIN_JET) == kIN_JET ? true : false; }
+   bool        IsUnBalanced() const { return (mType & kUNBALANCED) == kUNBALANCED ? true : false; }
+   bool        IsCandidate()  const;
+   //bool        HasBarrelMatched();
+   //bool        HasEndcapMatched();
+   void        Process();
+   float       GetFitHitFrac()         const { return float(prMuTrack->nHitsFit()) / prMuTrack->nHitsPoss(); }
+   float       GetClusterEnergyFrac()  const { return (mCluster2x2.energy + mP3AtDca.Mag()) / mP3InNearConeNoETow.Mag(); }
+   float       GetClusterETFrac()      const { return (mCluster2x2.ET     + mP3AtDca.Pt())  / mP3InNearConeNoETow.Perp(); }
+   TVector3    GetDistanceToCluster()  const { return mDistToCluster; }
+   TVector3    CalcDistanceToCluster() const { return mCoorAtBTow - mCluster2x2.position; }
+   void        SetVertexId(Short_t vId) { mVertexId = vId; }
+   VecBosJet*  FindClosestJet(VecBosJetPtrSet &jets);
+   void        clear();
+   void        print(int opt=0) const;
 
 private:
 
    bool ExtendTrack2Barrel();
    void MatchTrack2BtowCluster();
    void CalcEnergyInNearCone();
-   void FindAwayJet();
 
    ClassDef(VecBosTrack, 1);
 };
+
 
 typedef std::vector<VecBosTrack>          VecBosTrackVec;
 typedef VecBosTrackVec::iterator          VecBosTrackVecIter;
@@ -130,8 +137,29 @@ typedef std::vector<VecBosTrack*>         VecBosTrackPtrVec;
 typedef VecBosTrackPtrVec::iterator       VecBosTrackPtrVecIter;
 typedef VecBosTrackPtrVec::const_iterator VecBosTrackPtrVecConstIter;
 
-typedef std::set<VecBosTrack*>            VecBosTrackPtrSet;
-typedef VecBosTrackPtrSet::iterator       VecBosTrackPtrSetIter;
-typedef VecBosTrackPtrSet::const_iterator VecBosTrackPtrSetConstIter;
+inline bool operator==(const VecBosTrack& lhs, const VecBosTrack& rhs) { return (TVector3) lhs.mP3AtDca == (TVector3) rhs.mP3AtDca; }
+inline bool operator!=(const VecBosTrack& lhs, const VecBosTrack& rhs) { return !operator==(lhs,rhs); }
+inline bool operator< (const VecBosTrack& lhs, const VecBosTrack& rhs) { return lhs.mP3AtDca.Mag() < rhs.mP3AtDca.Mag(); }
+inline bool operator> (const VecBosTrack& lhs, const VecBosTrack& rhs) { return  operator< (rhs,lhs); }
+inline bool operator<=(const VecBosTrack& lhs, const VecBosTrack& rhs) { return !operator> (lhs,rhs); }
+inline bool operator>=(const VecBosTrack& lhs, const VecBosTrack& rhs) { return !operator< (lhs,rhs); }
+
+struct CompareVecBosTrack
+{
+   bool operator()(const VecBosTrack& lhs, const VecBosTrack& rhs) const { return lhs > rhs; }
+};
+
+struct CompareVecBosTrackPtr
+{
+   bool operator()(const VecBosTrack* lhs, const VecBosTrack* rhs) const { return (*lhs) > (*rhs); }
+};
+
+typedef std::set<VecBosTrack, CompareVecBosTrack>     VecBosTrackSet;
+typedef VecBosTrackSet::iterator                      VecBosTrackSetIter;
+typedef VecBosTrackSet::const_iterator                VecBosTrackSetConstIter;
+
+typedef std::set<VecBosTrack*, CompareVecBosTrackPtr> VecBosTrackPtrSet;
+typedef VecBosTrackPtrSet::iterator                   VecBosTrackPtrSetIter;
+typedef VecBosTrackPtrSet::const_iterator             VecBosTrackPtrSetConstIter;
 
 #endif

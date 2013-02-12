@@ -67,11 +67,11 @@ void VertexHContainer::Fill(ProtoEvent &ev)
 {
    VecBosEvent& event = (VecBosEvent&) ev;
 
-   VecBosVertexVecIter iVertex = event.mVertices.begin();
+   VecBosVertexPtrSetIter iVertex = event.mVertices.begin();
 
    for ( ; iVertex!=event.mVertices.end(); ++iVertex)
    {
-      Fill(*iVertex);
+      Fill(**iVertex);
    }
 }
 
@@ -79,7 +79,7 @@ void VertexHContainer::Fill(ProtoEvent &ev)
 /** */
 void VertexHContainer::Fill(VecBosVertex &vertex)
 {
-   ((TH1*) o["hVertexId"])->Fill(vertex.id);
+   ((TH1*) o["hVertexId"])->Fill(vertex.mId);
    ((TH1*) o["hVertexRank"])->Fill(vertex.mRank);
    ((TH1*) o["hVertexRankLog"])->Fill(vertex.mRankLog);
    ((TH1*) o["hVertexXPosition"])->Fill(vertex.mPosition.x());

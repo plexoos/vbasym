@@ -175,7 +175,6 @@ private:
    void  FindZBoson();
    //void  RecoilFromTracks();
    int   ExtendTrack2Endcap();
-   bool  MatchTrack2EtowCluster();
    void  FindNearJet();
    void  CalcPtBalance();
    void  esmdAnalysis();

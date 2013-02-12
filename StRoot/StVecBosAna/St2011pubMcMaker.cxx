@@ -55,8 +55,12 @@ void St2011pubMcMaker::doWanalysis()
    //has access to whole W-algo-maker data via pointer 'wMK'
 
    // run through W cuts to fill other histos............
-   for (uint iv = 0; iv < wMK->mVecBosEvent->mVertices.size(); iv++) {
-      VecBosVertex &V = wMK->mVecBosEvent->mVertices[iv];
+   VecBosVertexPtrSetIter iVertex = wMK->mVecBosEvent->mVertices.begin();
+
+   for ( ; iVertex != wMK->mVecBosEvent->mVertices.end(); ++iVertex)
+   {
+      VecBosVertex &V = **iVertex;
+
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          VecBosTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;
@@ -220,9 +224,12 @@ void St2011pubMcMaker::doWefficiency()
    //cout<<"diff="<<diff<<endl;
 
    //reco efficiency
-   for (uint iv = 0; iv < wMK->mVecBosEvent->mVertices.size(); iv++)
+   VecBosVertexPtrSetIter iVertex = wMK->mVecBosEvent->mVertices.begin();
+
+   for ( ; iVertex != wMK->mVecBosEvent->mVertices.end(); ++iVertex)
    {
-      VecBosVertex &V = wMK->mVecBosEvent->mVertices[iv];
+      VecBosVertex &V = **iVertex;
+
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          VecBosTrack &T = V.eleTrack[it];
          if (T.isMatch2Cl == false) continue;

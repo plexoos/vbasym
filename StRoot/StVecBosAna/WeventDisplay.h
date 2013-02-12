@@ -36,11 +36,11 @@ public:
 
    WeventDisplay( StVecBosMaker *mk, int mxEv);
    void clear();
-   void exportEvent(  const char *tit, VecBosVertex myV, VecBosTrack myTr, int vertexIndex);
-   void export2sketchup(  const char *tit, VecBosVertex myV, VecBosTrack myTr);
-   void getPrimTracks(  int vertID, int pointTowId);
+   void exportEvent(const char *tit, VecBosVertex &myV, VecBosTrack &myTr, int vertexIndex);
+   void export2sketchup(const char *tit, VecBosVertex &myV, VecBosTrack &myTr);
+   void getPrimTracks(int vertID, int pointTowId);
    void getPrimTracksFromTree(  int vertID, int pointTowId);
-   void draw( const char *tit, int eveID, int daqSeq, int runNo,  VecBosVertex myV, VecBosTrack myTr);
+   void draw(const char *tit, int eveID, int daqSeq, int runNo, VecBosVertex &myV, VecBosTrack &myTr);
 
 };
 

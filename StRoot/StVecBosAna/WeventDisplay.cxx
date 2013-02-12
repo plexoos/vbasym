@@ -92,7 +92,7 @@ void WeventDisplay::clear()
 }
 
 
-void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  VecBosVertex myV, VecBosTrack myTr)
+void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo, VecBosVertex &myV, VecBosTrack &myTr)
 {
    if (maxEve <= 0) return;
    maxEve--;
@@ -102,14 +102,14 @@ void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  
    myStyle->SetOptStat(1000010);
 
    char txt[1000];
-   sprintf(txt, "display-%s_run%d.eventId%06dvert%d", tit, runNo, eveID, myV.id);
+   sprintf(txt, "display-%s_run%d.eventId%06dvert%d", tit, runNo, eveID, myV.mId);
 
    printf("WeventDisplay::Draw %s\n", txt);
    TCanvas *c0; TPaveText *pvt;
    string detector = tit;
 
    if (detector.compare("WB") == 0) { //barrel event display
-      sprintf(txt, "display-%s%.0f_run%d.eventId%05dvert%d", tit, myTr.mCluster2x2.ET, runNo, eveID, myV.id);
+      sprintf(txt, "display-%s%.0f_run%d.eventId%05dvert%d", tit, myTr.mCluster2x2.ET, runNo, eveID, myV.mId);
       TFile hf(Form("%s.root", txt), "recreate"); //TFile hf(txt,"recreate");
       c0 = new TCanvas(txt, txt, 850, 600);
       c0->cd();
@@ -158,7 +158,7 @@ void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  
       //........... text information .............
       pvt = new TPaveText(0, 0., 1, 1, "br");
       cD->cd();
-      sprintf(txt, "run=%d  eveID=%05d daq=%d vertex:ID=%d Z=%.0fcm", runNo, eveID, daqSeq, myV.id, myV.z);
+      sprintf(txt, "run=%d  eveID=%05d daq=%d vertex:mId=%d Z=%.0fcm", runNo, eveID, daqSeq, myV.mId, myV.z);
       printf("WeventDisplay::Event ID  %s\n", txt);
       pvt->AddText(txt);
 
@@ -186,7 +186,7 @@ void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  
       }
    }
    else if (detector.compare("WE") == 0) { //endcap event display
-      sprintf(txt, "display-%s%.0f_run%d.eventId%05dvert%d", tit, myTr.mCluster2x2.ET, runNo, eveID, myV.id);
+      sprintf(txt, "display-%s%.0f_run%d.eventId%05dvert%d", tit, myTr.mCluster2x2.ET, runNo, eveID, myV.mId);
       TFile hf(Form("%s.root", txt), "recreate");
       c0 = new TCanvas(txt, txt, 1750, 1300);
       c0->cd();
@@ -303,7 +303,7 @@ void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  
       pvt = new TPaveText(0, 0., 1, 1, "br");
       TH1F *hText = new TH1F("text", " ", 1, 0, 1);
       cLD->cd();
-      sprintf(txt, "run=%d  eveID=%05d daq=%d vertex:ID=%d Z=%.0fcm ", runNo, eveID, daqSeq, myV.id, myV.z);
+      sprintf(txt, "run=%d  eveID=%05d daq=%d vertex:mId=%d Z=%.0fcm ", runNo, eveID, daqSeq, myV.mId, myV.z);
       printf("WeventDisplay::Event ID  %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
       sprintf(txt, "TPC PT(GeV/c) prim=%.1f  near=%.1f  away=%.1f ", myTr.prMuTrack->pt(), myTr.mP3InNearConeTpc, myTr.awayTpcPT);
@@ -344,7 +344,7 @@ void WeventDisplay::draw(  const char *tit, int eveID, int daqSeq,  int runNo,  
 }
 
 
-void WeventDisplay::exportEvent( const char *tit, VecBosVertex myV, VecBosTrack myTr, int vertexIndex)
+void WeventDisplay::exportEvent( const char *tit, VecBosVertex &myV, VecBosTrack &myTr, int vertexIndex)
 {
    if (maxEve <= 0) return;
    clear();
@@ -418,8 +418,10 @@ void WeventDisplay::exportEvent( const char *tit, VecBosVertex myV, VecBosTrack 
 
    //... TPC
    hTpcET->SetMinimum(0.3); hTpcET->SetMaximum(10.);
-   if (wMK->mStMuDstMaker) getPrimTracks( myV.id, myTr.mMatchedTower.id);
-   else getPrimTracksFromTree(vertexIndex, myTr.mMatchedTower.id);
+   if (wMK->mStMuDstMaker)
+      getPrimTracks( myV.mId, myTr.mMatchedTower.id);
+   //XXX:ds else
+   //   getPrimTracksFromTree(vertexIndex, myTr.mMatchedTower.id);
 
    //.... BSMD-Eta, -Phi
 
@@ -481,12 +483,14 @@ void WeventDisplay::getPrimTracks( int vertID, int pointTowId)
 
 void WeventDisplay::getPrimTracksFromTree(int vertID, int pointTowId)
 {
+/*
    // flag=2 use 2D cut, 1= only delta phi
 
    assert(vertID >= 0);
-   assert(vertID < (int)wMK->mVecBosEvent->mVertices.size());
+   assert(vertID < (int) wMK->mVecBosEvent->mVertices.size());
 
    VecBosVertex &V = wMK->mVecBosEvent->mVertices[vertID];
+
    for (uint it = 0; it < V.prTrList.size(); it++) {
       StMuTrack *prTr = V.prTrList[it];
       if (prTr->flag() <= 0) continue;
@@ -500,19 +504,20 @@ void WeventDisplay::getPrimTracksFromTree(int vertID, int pointTowId)
       hTpcET->Fill(prTr->eta(), prTr->phi(), pT);
 
    }
+*/
 }
 
 
-void WeventDisplay::export2sketchup(  const char *tit, VecBosVertex myV, VecBosTrack myTr)
+void WeventDisplay::export2sketchup(const char *tit, VecBosVertex &myV, VecBosTrack &myTr)
 {
    int eveId = wMK->mStMuDstMaker->muDst()->event()->eventId();
    int runNo = wMK->mStMuDstMaker->muDst()->event()->runId();
    char txt[1000];
-   sprintf(txt, "display3D-%s_run%d.eventId%05d_vert%d.txt", tit, runNo, eveId, myV.id);
+   sprintf(txt, "display3D-%s_run%d.eventId%05d_vert%d.txt", tit, runNo, eveId, myV.mId);
    FILE *fd = fopen(txt, "w"); assert(fd);
 
    //........ DUMP PRIM TRACKS..........
-   int vertID = myV.id;
+   int vertID = myV.mId;
    assert(vertID >= 0);
    assert(vertID < (int)wMK->mStMuDstMaker->muDst()->numberOfPrimaryVertices());
    StMuPrimaryVertex *V = wMK-> mStMuDstMaker->muDst()->primaryVertex(vertID);

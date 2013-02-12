@@ -94,11 +94,11 @@ void TrackHContainer::Fill(ProtoEvent &ev)
 {
    VecBosEvent& event = (VecBosEvent&) ev;
 
-   VecBosTrackVecIter iTrack = event.mTracks.begin();
+   VecBosTrackPtrSetIter iTrack = event.mTracks.begin();
 
    for ( ; iTrack!=event.mTracks.end(); ++iTrack)
    {
-      Fill(*iTrack);
+      Fill(**iTrack);
    }
 }
 

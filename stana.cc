@@ -198,12 +198,12 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    St_db_Maker *stDbMaker = new St_db_Maker("StarDb", "MySQL:StarDb", "MySQL:StarDb", "$STAR/StarDb");
 
    if (isMC) {
-     //      stDbMaker->SetMaxEntryTime(20101215, 0); // keep the same DB snapshot as used in BFC for embedding
+      //stDbMaker->SetMaxEntryTime(20101215, 0); // keep the same DB snapshot as used in BFC for embedding
       stDbMaker->SetFlavor("Wbose2", "bsmdpCalib");
       stDbMaker->SetFlavor("Wbose2", "bsmdeCalib");
    }
    else { // embedding samples
-      // run 11  data ???
+      // run 11 data ???
       stDbMaker->SetFlavor("Wbose2", "bsmdeCalib"); // Willie's abs gains E-plane, run 9
       stDbMaker->SetFlavor("Wbose2", "bsmdpCalib"); // P-plane
       stDbMaker->SetFlavor("sim",    "bemcCalib");  // use ideal gains for real data
@@ -211,7 +211,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    }
 
    // Load EEMC database
-   StEEmcDbMaker *mEEmcDatabase = new StEEmcDbMaker("eemcDb");
+   StEEmcDbMaker *stEEmcDbMaker = new StEEmcDbMaker("eemcDb");
 
 #if 0 // drop abs lumi for now
    if (!isMC && strstr(inMuDstFileListName, "fillListPhys")) {

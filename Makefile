@@ -139,8 +139,7 @@ wana: $(WANA_LIB) wana.o
 	@echo "$@ done"
 
 stana: stana.o
-	#$(LD) $(LDFLAGS) $(STAR_LIB_DIRS) $(STAR_LIBS) $(MYSQLLIBDIR) $(MYSQLLIB) $(UTILSLIBDIR) $(UTILSLIB) $(LIBS) stana.o -o $@
-	$(LD) $(LDFLAGS) $(STAR_LIB_DIRS) $(STAR_LIBS) $(MYSQLLIBDIR) $(MYSQLLIB) $(UTILSLIB) $(LIBS) stana.o -o $@
+	$(LD) $(LDFLAGS) $(STAR_LIB_DIRS) $(STAR_LIBS) $(MYSQLLIBDIR) $(MYSQLLIB) $(UTILSLIBDIR) $(UTILSLIB) $(LIBS) stana.o -o $@
 	@echo "$@ done"
 
 $(WANA_LIB): $(OBJS) $(WANA_DICT_OBJ)

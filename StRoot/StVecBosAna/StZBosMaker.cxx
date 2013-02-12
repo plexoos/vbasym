@@ -69,10 +69,13 @@ void StZBosMaker::findEndcap_Z_boson()
    hA[50]->Fill("inp", 1.); hA[60]->Fill("inp", 1.);
 
    // search for Zs
-   for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++)
+   VecBosVertexPtrSetIter iVertex = wMK->GetVecBosEvent()->mVertices.begin();
+
+   for (short iv=0 ; iVertex != wMK->GetVecBosEvent()->mVertices.end(); ++iVertex, iv++)
    {
+      VecBosVertex &V = **iVertex;
+
       hA[50]->Fill("vert", 1.); hA[60]->Fill("vert", 1.);
-      VecBosVertex &V = mVecBosEvent->mVertices[iv];
 
       // first loop over good barrel tracks
       for (uint it = 0; it < V.eleTrack.size(); it++)
@@ -221,10 +224,14 @@ void StZBosMaker::find_Z_boson()
    hA[0]->Fill("inp", 1.);
 
    // search for  Zs
-   for (uint iv = 0; iv < mVecBosEvent->mVertices.size(); iv++)
+   VecBosVertexPtrSetIter iVertex = wMK->GetVecBosEvent()->mVertices.begin();
+
+   for (short iv=0 ; iVertex != wMK->GetVecBosEvent()->mVertices.end(); ++iVertex, iv++)
    {
+      VecBosVertex &V = **iVertex;
+
       hA[0]->Fill("vert", 1.);
-      VecBosVertex &V = mVecBosEvent->mVertices[iv];
+
       hA[32]->Fill(V.eleTrack.size());
       if (V.eleTrack.size() < 2) continue;
       hA[0]->Fill("TT", 1.); // at least 2 isolated tracks exist

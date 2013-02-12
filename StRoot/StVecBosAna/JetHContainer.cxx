@@ -8,6 +8,7 @@
 #include "TF1.h"
 
 #include "VecBosEvent.h"
+#include "VecBosJet.h"
 
 
 ClassImp(JetHContainer)
@@ -61,7 +62,7 @@ void JetHContainer::Fill(ProtoEvent &ev)
 {
    VecBosEvent& event = (VecBosEvent&) ev;
 
-   StJetPtrSetIter iJet = event.mJets.begin();
+   VecBosJetPtrSetIter iJet = event.mJets.begin();
 
    for ( ; iJet!=event.mJets.end(); ++iJet)
    {

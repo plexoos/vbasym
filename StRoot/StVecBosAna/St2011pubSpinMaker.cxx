@@ -100,10 +100,13 @@ void St2011pubSpinMaker::bXingSort()
    float par_maxDsmThr = 58;
    float par_myET = 25; // monitoring cut
 
-   if ( wMK->GetVecBosEvent()->l2bitRnd) { // lumi monitor BHT3-random
+   if ( wMK->GetVecBosEvent()->l2bitRnd) // lumi monitor BHT3-random
+   {
       // avoid too much energy - can be W-events (1/milion :)
-      if (wMK-> GetVecBosEvent()->bemc.maxHtDsm < par_maxDsmThr)  {
-         hA[6]->Fill(spin4);  hA[0]->Fill("BG1", 1.);
+      if (wMK-> GetVecBosEvent()->bemc.maxHtDsm < par_maxDsmThr)
+      {
+         hA[6]->Fill(spin4);
+         hA[0]->Fill("BG1", 1.);
       }
       return; // LOGICAL ERROR - FIX IT LATER
    }
@@ -112,8 +115,13 @@ void St2011pubSpinMaker::bXingSort()
    //..... it is guaranteed ..... L2W-ET>13 did fired  ......
 
    // search for  Ws ............
-   for (uint iv = 0; iv < wMK->GetVecBosEvent()->mVertices.size(); iv++) {
-      VecBosVertex &V = wMK->GetVecBosEvent()->mVertices[iv];
+   VecBosVertexPtrSetIter iVertex = wMK->GetVecBosEvent()->mVertices.begin();
+
+   int iv = 0;
+
+   for ( ; iVertex != wMK->GetVecBosEvent()->mVertices.end(); ++iVertex, iv++)
+   {
+      VecBosVertex &V = **iVertex;
 
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          VecBosTrack &T = V.eleTrack[it];

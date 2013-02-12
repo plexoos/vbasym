@@ -113,29 +113,32 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
    VecBosEvent& event = (VecBosEvent&) ev;
 
    // Save only good vertices
-   VecBosVertexVecIter iVertex = event.mVertices.begin();
+   VecBosVertexPtrSetIter iVertex = event.mVertices.begin();
 
-   for ( ; iVertex!=event.mVertices.end(); ++iVertex)
+   for ( ; iVertex != event.mVertices.end(); ++iVertex)
    {
-      if ( !iVertex->IsGood() ) continue;
-      ((VertexHContainer*) fHists->d["vertices_good"])->Fill(*iVertex);
+      VecBosVertex &vertex = **iVertex;
+
+      if ( !vertex.IsGood() ) continue;
+      ((VertexHContainer*) fHists->d["vertices_good"])->Fill(vertex);
    }
 
    // Save only good tracks
-   VecBosTrackVecIter iTrack = event.mTracks.begin();
+   VecBosTrackPtrSetIter iTrack = event.mTracks.begin();
 
    for ( ; iTrack!=event.mTracks.end(); ++iTrack)
    {
-      if ( !iTrack->IsGood() ) continue;
+      VecBosTrack &track = **iTrack;
+      if ( !track.IsGood() ) continue;
 
-      ((TrackHContainer*) fHists->d["tracks_good"])->Fill(*iTrack);
+      ((TrackHContainer*) fHists->d["tracks_good"])->Fill(track);
 
-      if ( iTrack->IsBTrack() ) {
-         ((TrackHContainer*) fHists->d["tracks_barrel"])->Fill(*iTrack);
+      if ( track.IsBTrack() ) {
+         ((TrackHContainer*) fHists->d["tracks_barrel"])->Fill(track);
       }
 
-      if ( iTrack->IsETrack() ) {
-         ((TrackHContainer*) fHists->d["tracks_endcap"])->Fill(*iTrack);
+      if ( track.IsETrack() ) {
+         ((TrackHContainer*) fHists->d["tracks_endcap"])->Fill(track);
       }
    }
 }

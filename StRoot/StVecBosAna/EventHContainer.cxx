@@ -135,7 +135,7 @@ void EventHContainer::Fill(ProtoEvent &ev)
 
    ((TH1*) o["hRunId"])->Fill(event.runNo);
    ((TH1*) o["hZdcRate"])->Fill(event.zdcRate);
-   ((TH1*) o["hNumJets"])->Fill(event.GetNumJets());
+   ((TH1*) o["hNumJets"])->Fill(event.GetNumStJets());
    ((TH1*) o["hNumVertices"])->Fill(event.GetNumVertices());
    ((TH1*) o["hNumGoodVertices"])->Fill(event.GetNumGoodVertices());
    ((TH1*) o["hNumTracks"])->Fill(event.GetNumTracks());
