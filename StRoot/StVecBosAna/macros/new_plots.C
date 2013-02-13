@@ -38,7 +38,6 @@ void new_plots() {
   gStyle->SetFillColor(kYellow);
 // Plot the shit you want:
 
-/*
 
 //  MCChain.Draw("l2bitET");
   //MCChain.Draw("e.mP4JetRecoil.Pt():e.mWEvent.mP4WBoson.Pt()>>h1");
@@ -169,23 +168,19 @@ void new_plots() {
  TH1F *h7_5 = new TH1F("h7_5","; #Delta #phi;",40,-TMath::Pi(),TMath::Pi());
  WpMCChain.Project("h7_5","e.mBalanceDeltaPhiFromTracks","e.mP3BalanceFromTracks.Pt() > 0");
 
-*/
+
 
  TCanvas *c7 = new TCanvas("c7","Pt balance - MC",600,600);
  //gStyle->SetOptStat(0);
 
  c7->Divide(2,2);
  c7_1->cd();
- h7_1->SetFillColor(kYellow);
  h7_1->Draw();
  c7_2->cd();
- h7_2->SetFillColor(kYellow);
  h7_2->Draw();
  c7_3->cd();
- h7_3->SetFillColor(kYellow);
  h7_3->Draw();
  c7_4->cd();
- h7_4->SetFillColor(kYellow);
  h7_4->Draw();
 
  c7->Print("./plots/h7.eps");
