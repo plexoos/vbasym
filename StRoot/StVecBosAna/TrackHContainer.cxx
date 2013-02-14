@@ -106,7 +106,7 @@ void TrackHContainer::Fill(ProtoEvent &ev)
 /** */
 void TrackHContainer::Fill(VecBosTrack &track)
 {
-   ((TH1*) o["hTrackFlag"])->Fill(track.prMuTrack->flag());
+   //((TH1*) o["hTrackFlag"])->Fill(track.prMuTrack->flag());
    ((TH1*) o["hTrackType"])->Fill(track.mType);
    ((TH1*) o["hTrackEta"])->Fill(track.mP3AtDca.Eta());
    ((TH1*) o["hTrackPhi"])->Fill(track.mP3AtDca.Phi());
@@ -121,15 +121,15 @@ void TrackHContainer::Fill(VecBosTrack &track)
       ((TH1*) o["hTrackPhiAtBTow"])->Fill(track.mCoorAtBTow.Phi());
    }
 
-   ((TH1*) o["hTrackPt"])->Fill(track.prMuTrack->pt());
-   ((TH1*) o["hTrackHitsFit"])->Fill(track.prMuTrack->nHitsFit());
-   ((TH1*) o["hTrackHitsPoss"])->Fill(track.prMuTrack->nHitsPoss());
+   ((TH1*) o["hTrackPt"])->Fill(track.mP3AtDca.Pt());
+   //((TH1*) o["hTrackHitsFit"])->Fill(track.prMuTrack->nHitsFit());
+   //((TH1*) o["hTrackHitsPoss"])->Fill(track.prMuTrack->nHitsPoss());
    ((TH1*) o["hTrackBTowerId"])->Fill(track.mMatchedTower.id);
    ((TH1*) o["hTrackBClusterEnergy2x2"])->Fill(track.mCluster2x2.ET);
    ((TH1*) o["hTrackBClusterEnergy4x4"])->Fill(track.mCluster4x4.ET);
    ((TH1*) o["hTrackBClusterEnergyIsoRatio"])->Fill(track.mCluster2x2.ET/track.mCluster4x4.ET);
    ((TH1*) o["hTrackDistanceToCluster"])->Fill(track.CalcDistanceToCluster().Mag());
-   ((TH1*) o["hChargePrimaryTrack"])->Fill(track.prMuTrack->charge());
+   //((TH1*) o["hChargePrimaryTrack"])->Fill(track.prMuTrack->charge());
 
    //printf("hasMatchedCluster: %d\n", track.isMatch2Cl);
 }

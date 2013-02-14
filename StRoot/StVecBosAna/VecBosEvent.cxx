@@ -799,11 +799,13 @@ void VecBosEvent::Print(int opt, int isMC)
    printf("\n");
    Info("Print(int opt, int isMC)", "");
 
-   printf("My W2011event runNo=%d ID=%d  L2Wbits: ET=%d rnd=%d;  muDst: bx7=%d bx48=%d nVert=%d star: Bx7m=%d, Bx48=%d, mSpinPattern4Bits=%d \n",
+   printf("runNo: %d, ID: %d,  L2Wbits: ET=%d rnd=%d;  muDst: bx7=%d bx48=%d nVert=%d\n" \
+          "star: Bx7m=%d, Bx48=%d, mSpinPattern4Bits=%d \n",
       runNo, id, l2bitET, l2bitRnd, bx7, bx48, mVertices.size(), bxStar7, bxStar48, mSpinPattern4Bits);
+
    int  yyyymmdd,  hhmmss;
    getGmt_day_hour( yyyymmdd,  hhmmss);
-   printf("Event time is: day=%d, hour=%d (GMT)\n", yyyymmdd, hhmmss);
+   printf("Event time is: day=%08d, hour=%06d (GMT)\n", yyyymmdd, hhmmss);
 
    VecBosVertexPtrSetIter iVertex = mVertices.begin();
 
@@ -812,6 +814,7 @@ void VecBosEvent::Print(int opt, int isMC)
       VecBosVertex &vertex = **iVertex;
       vertex.Print();
    }
+   printf("\n");
 
    bemc.print(opt);
 }
@@ -820,13 +823,10 @@ void VecBosEvent::Print(int opt, int isMC)
 void VecBosEvent::getGmt_day_hour(int &yyyymmdd, int &hhmmss)
 {
    time_t rawtime = this->time;
-   struct tm *timeinfo = gmtime ( &rawtime );
+   struct tm *timeinfo = gmtime( &rawtime );
    char buffer [80];
    strftime (buffer, 80, "%k%M%S", timeinfo);
-   //puts (buffer);
    hhmmss = atoi(buffer);
    strftime (buffer, 80, "%G%m%d", timeinfo);
-   //puts (buffer);
    yyyymmdd = atoi(buffer);
-   //printf("day=%d, hour=%d\n",yyyymmdd,hhmmss);
 }

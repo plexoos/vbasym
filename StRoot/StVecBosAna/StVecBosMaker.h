@@ -35,7 +35,7 @@ class  StJetReader;
 class  StJets;
 class  StJet;
 class  TClonesArray;
-class  TTree;
+
 
 class StVecBosMaker : public StMaker
 {

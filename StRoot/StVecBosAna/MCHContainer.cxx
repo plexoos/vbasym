@@ -55,72 +55,72 @@ void MCHContainer::BookHists()
    o["hWenergy"] = hist = new TH1I("hWenergy", "; W energy [GeV]; Events", 100, 20., 200.);
    hist->SetOption("hist GRIDX");
 
-   o["hWmomentumX"] = hist = new TH1I("hWmomentumX", "; P^{W}_{x} [GeV/c]; Events", 100, -160., 160.);
+   o["hWmomentumX"]               = hist = new TH1I("hWmomentumX", "; P^{W}_{x} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
-   o["hWmomentumY"] = hist = new TH1I("hWmomentumY", "; P^{W}_{y} [GeV/c]; Events", 100, -160., 160.);
+   o["hWmomentumY"]               = hist = new TH1I("hWmomentumY", "; P^{W}_{y} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
-   o["hWmomentumZ"] = hist = new TH1I("hWmomentumZ", "; P^{W}_{z} [GeV/c]; Events", 100, -160., 160.);
+   o["hWmomentumZ"]               = hist = new TH1I("hWmomentumZ", "; P^{W}_{z} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
-   o["hWpt"] = hist = new TH1I("hWpt", "; P^{W}_{T} [GeV/c]; Events", 100, 0., 160.);
+   o["hWBosonPt"]                      = hist = new TH1I("hWBosonPt", "; P^{W}_{T} [GeV/c]; Events", 100, 0., 160.);
    hist->SetOption("hist GRIDX");
 
    o["hWrapidity"] = hist = new TH1I("hWrapidity", "; W pseudo-rapidity #eta; Events", 20, -4, 4);
    hist->SetOption("hist GRIDX");
 
-   o["hNeutrinoEnergy"] = hist = new TH1I("hNeutrinoEnergy", "; #nu energy [GeV]; Events", 50, 0., 200.);
+   o["hNeutrinoEnergy"]           = hist = new TH1I("hNeutrinoEnergy", "; #nu energy [GeV]; Events", 50, 0., 200.);
    hist->SetOption("hist GRIDX");
-   o["hNeutrinoMomentumX"] = hist = new TH1I("hNeutrinoMomentumX", "; P^{#nu}_{x} [GeV/c]; Events", 100, -150., 150.);
+   o["hNeutrinoMomentumX"]        = hist = new TH1I("hNeutrinoMomentumX", "; P^{#nu}_{x} [GeV/c]; Events", 100, -150., 150.);
    hist->SetOption("hist GRIDX");
-   o["hNeutrinoMomentumY"] = hist = new TH1I("hNeutrinoMomentumY", "; P^{#nu}_{y} [GeV/c]; Events", 100, -150., 150.);
+   o["hNeutrinoMomentumY"]        = hist = new TH1I("hNeutrinoMomentumY", "; P^{#nu}_{y} [GeV/c]; Events", 100, -150., 150.);
    hist->SetOption("hist GRIDX");
-   o["hNeutrinoMomentumZ"] = hist = new TH1I("hNeutrinoMomentumZ", "; P^{#nu}_{z} [GeV/c]; Events", 100, -150., 150.);
+   o["hNeutrinoMomentumZ"]        = hist = new TH1I("hNeutrinoMomentumZ", "; P^{#nu}_{z} [GeV/c]; Events", 100, -150., 150.);
    hist->SetOption("hist GRIDX");
-   o["hNeutrinoPt"] = hist = new TH1I("hNeutrinoPt", "; P^{#nu}_{T} [GeV/c]; Events", 100, 0., 150.);
+   o["hNeutrinoPt"]               = hist = new TH1I("hNeutrinoPt", "; P^{#nu}_{T} [GeV/c]; Events", 100, 0., 150.);
    hist->SetOption("hist GRIDX");
 
-   o["hElectronEnergy"] = hist = new TH1I("hElectronEnergy", "; electron energy [GeV]; Events", 50, 0., 200.);
+   o["hElectronEnergy"]           = hist = new TH1I("hElectronEnergy", "; electron energy [GeV]; Events", 50, 0., 200.);
    hist->SetOption("hist GRIDX");
-   o["hElectronMomentumX"] = hist = new TH1I("hElectronMomentumX", "; P^{#nu}_{x} [GeV/c]; Events", 100, -150., 150.);
+   o["hElectronMomentumX"]        = hist = new TH1I("hElectronMomentumX", "; P^{#nu}_{x} [GeV/c]; Events", 100, -150., 150.);
    hist->SetOption("hist GRIDX");
-   o["hElectronMomentumY"] = hist = new TH1I("hElectronMomentumY", "; P^{#nu}_{y} [GeV/c]; Events", 100, -150., 150.);
+   o["hElectronMomentumY"]        = hist = new TH1I("hElectronMomentumY", "; P^{#nu}_{y} [GeV/c]; Events", 100, -150., 150.);
    hist->SetOption("hist GRIDX");
-   o["hElectronMomentumZ"] = hist = new TH1I("hElectronMomentumZ", "; P^{#nu}_{z} [GeV/c]; Events", 100, -150., 150.);
+   o["hElectronMomentumZ"]        = hist = new TH1I("hElectronMomentumZ", "; P^{#nu}_{z} [GeV/c]; Events", 100, -150., 150.);
    hist->SetOption("hist GRIDX");
-   o["hElectronPt"] = hist = new TH1I("hElectronPt", "; P^{#nu}_{T} [GeV/c]; Events", 100, 0., 150.);
+   o["hElectronPt"]               = hist = new TH1I("hElectronPt", "; P^{#nu}_{T} [GeV/c]; Events", 100, 0., 150.);
    hist->SetOption("hist GRIDX");
 
    // tracks ID
    //o["hTrackID"] = hist = new TH1I("hTrackID", "; ; Events", 100, 0., 200.);
 
    // recoil
-   o["hRecEnergy"] = hist = new TH1I("hRecEenergy", "; Recoil energy [GeV]; Events", 100, 0., 200.);
+   o["hRecoilE"]                  = hist = new TH1I("hRecoilE", "; Recoil energy [GeV]; Events", 100, 0., 200.);
    hist->SetOption("hist GRIDX");
-   o["hRecMomentumX"] = hist = new TH1I("hRecMomentumX", "; P^{Recoil}_{x} [GeV/c]; Events", 100, -160., 160.);
+   o["hRecoilPx"]                 = hist = new TH1I("hRecoilPx", "; P^{Recoil}_{x} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
-   o["hRecMomentumY"] = hist = new TH1I("hRecMomentumY", "; P^{Recoil}_{y} [GeV/c]; Events", 100, -160., 160.);
+   o["hRecoilPy"]                 = hist = new TH1I("hRecoilPy", "; P^{Recoil}_{y} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
-   o["hRecMomentumZ"] = hist = new TH1I("hRecMomentumZ", "; P^{Recoil}_{z} [GeV/c]; Events", 100, -160., 160.);
+   o["hRecoilPz"]                 = hist = new TH1I("hRecoilPz", "; P^{Recoil}_{z} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
 
    //recoil in acceptance
-   o["hRecInAccEnergy"] = hist = new TH1I("hRecInAccEenergy", "; Recoil energy [GeV]; Events", 100, 0., 200.);
+   o["hRecInAccEnergy"]           = hist = new TH1I("hRecInAccEenergy", "; Recoil energy [GeV]; Events", 100, 0., 200.);
    hist->SetOption("hist GRIDX");
-   o["hRecInAccMomentumX"] = hist = new TH1I("hRecInAccMomentumX", "; P^{Recoil}_{x} [GeV/c]; Events", 100, -160., 160.);
+   o["hRecInAccMomentumX"]        = hist = new TH1I("hRecInAccMomentumX", "; P^{Recoil}_{x} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
-   o["hRecInAccMomentumY"] = hist = new TH1I("hRecInAccMomentumY", "; P^{Recoil}_{y} [GeV/c]; Events", 100, -160., 160.);
+   o["hRecInAccMomentumY"]        = hist = new TH1I("hRecInAccMomentumY", "; P^{Recoil}_{y} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
-   o["hRecInAccMomentumZ"] = hist = new TH1I("hRecInAccMomentumZ", "; P^{Recoil}_{z} [GeV/c]; Events", 100, -160., 160.);
+   o["hRecInAccMomentumZ"]        = hist = new TH1I("hRecInAccMomentumZ", "; P^{Recoil}_{z} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
 
    //recoil outside acceptance
 
-   o["hRecOutAccEnergy"] = hist = new TH1I("hRecOutAccEenergy", "; Recoil energy [GeV]; Events", 100, 0., 200.);
+   o["hRecOutAccEnergy"]     = hist = new TH1I("hRecOutAccEenergy", "; Recoil energy [GeV]; Events", 100, 0., 200.);
    hist->SetOption("hist GRIDX");
-   o["hRecOutAccMomentumX"] = hist = new TH1I("hRecOutAccMomentumX", "; P^{Recoil}_{x} [GeV/c]; Events", 100, -160., 160.);
+   o["hRecOutAccMomentumX"]  = hist = new TH1I("hRecOutAccMomentumX", "; P^{Recoil}_{x} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
-   o["hRecOutAccMomentumY"] = hist = new TH1I("hRecOutAccMomentumY", "; P^{Recoil}_{y} [GeV/c]; Events", 100, -160., 160.);
+   o["hRecOutAccMomentumY"]  = hist = new TH1I("hRecOutAccMomentumY", "; P^{Recoil}_{y} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
-   o["hRecOutAccMomentumZ"] = hist = new TH1I("hRecOutAccMomentumZ", "; P^{Recoil}_{z} [GeV/c]; Events", 100, -160., 160.);
+   o["hRecOutAccMomentumZ"]  = hist = new TH1I("hRecOutAccMomentumZ", "; P^{Recoil}_{z} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
 
    // recoil from tracks geant variables
@@ -130,6 +130,10 @@ void MCHContainer::BookHists()
    o["hHadRecoilFromTracksEta"] = hist = new TH1I("hHadRecoilFromTracksEta", "; #eta^{Recoil} (geant); Events", 100, -8., 8.);
    o["hHadRecoilFromTracksPt"]  = hist = new TH1I("hHadRecoilFromTracksPt", "; P_{T}^{Recoil} (geant); Events", 100, 0., 50.);
    o["hRecoilCorrelPythia"]     = hist = new TH2I("hRecoilCorrelPythia", "; P_{T}^{Recoil} (geant:pythia); P_{T}^{Recoil}", 100, 0., 50., 100, 0., 50.);
+
+   o["hJetRecoilPt"]            = hist = new TH1I("hJetRecoilPt", "; Jet Recoil P_{T}; Events", 50, 0., 50.);
+   o["hJetRecoilPtVsWBosonPt"]  = hist = new TH2I("hJetRecoilPtVsWBosonPt", "; W Boson P_{T}; Jet Recoil P_{T}", 50, 0., 50., 50, 0., 50.);
+   hist->SetOption("hist colz");
 
    // MC correction variables
    o["hEnergyRatio"] = hist = new TH1I("hEnergyRatio", "; E_{in}^{Recoil}/E_{out}^{Recoil}; Events", 100, 0., 4.);
@@ -147,7 +151,7 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hWmomentumX"])->Fill(event.mWEvent->mP4WBoson.Px());
    ((TH1*) o["hWmomentumY"])->Fill(event.mWEvent->mP4WBoson.Py());
    ((TH1*) o["hWmomentumZ"])->Fill(event.mWEvent->mP4WBoson.Pz());
-   ((TH1*) o["hWpt"])->Fill(event.mWEvent->mP4WBoson.Pt());
+   ((TH1*) o["hWBosonPt"])->Fill(event.mWEvent->mP4WBoson.Pt());
    ((TH1*) o["hWrapidity"])->Fill(event.mWEvent->mP4WBoson.Eta());;
 
    ((TH1*) o["hNeutrinoEnergy"])->Fill(event.mWEvent->mP4Neutrino.E());
@@ -163,10 +167,10 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hElectronPt"])->Fill(event.mWEvent->mP4Lepton.Pt());
 
    // recoil variables
-   ((TH1*) o["hRecEnergy"])->Fill(event.mWEvent->mP4Recoil.E());
-   ((TH1*) o["hRecMomentumX"])->Fill(event.mWEvent->mP4Recoil.Px());
-   ((TH1*) o["hRecMomentumY"])->Fill(event.mWEvent->mP4Recoil.Py());
-   ((TH1*) o["hRecMomentumZ"])->Fill(event.mWEvent->mP4Recoil.Pz());
+   ((TH1*) o["hRecoilE"])->Fill(event.mWEvent->mP4Recoil.E());
+   ((TH1*) o["hRecoilPx"])->Fill(event.mWEvent->mP4Recoil.Px());
+   ((TH1*) o["hRecoilPy"])->Fill(event.mWEvent->mP4Recoil.Py());
+   ((TH1*) o["hRecoilPz"])->Fill(event.mWEvent->mP4Recoil.Pz());
    ((TH1*) o["hRecInAccEnergy"])->Fill(event.mWEvent->mP4RecoilInAccept.E());
    ((TH1*) o["hRecInAccMomentumX"])->Fill(event.mWEvent->mP4RecoilInAccept.Px());
    ((TH1*) o["hRecInAccMomentumY"])->Fill(event.mWEvent->mP4RecoilInAccept.Py());
@@ -177,12 +181,15 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hRecOutAccMomentumZ"])->Fill(event.mWEvent->mP4RecoilOutAccept.Pz());
 
    // recoil from tracks geant variables
-   ((TH1*) o["hHadRecoilFromTracksPx"])->Fill(event.mP3RecoilFromTracks.Px(),   event.mP3RecoilFromTracks.Perp() != 0);
-   ((TH1*) o["hHadRecoilFromTracksPy"])->Fill(event.mP3RecoilFromTracks.Py(),   event.mP3RecoilFromTracks.Perp() != 0);
-   ((TH1*) o["hHadRecoilFromTracksPz"])->Fill(event.mP3RecoilFromTracks.Pz(),   event.mP3RecoilFromTracks.Perp() != 0);
-   ((TH1*) o["hHadRecoilFromTracksEta"])->Fill(event.mP3RecoilFromTracks.Eta(), event.mP3RecoilFromTracks.Perp() != 0);
-   ((TH1*) o["hHadRecoilFromTracksPt"])->Fill(event.mP3RecoilFromTracks.Pt(),   event.mP3RecoilFromTracks.Perp() != 0);
+   ((TH1*) o["hHadRecoilFromTracksPx"])->Fill(event.mP3RecoilFromTracks.Px());
+   ((TH1*) o["hHadRecoilFromTracksPy"])->Fill(event.mP3RecoilFromTracks.Py());
+   ((TH1*) o["hHadRecoilFromTracksPz"])->Fill(event.mP3RecoilFromTracks.Pz());
+   ((TH1*) o["hHadRecoilFromTracksEta"])->Fill(event.mP3RecoilFromTracks.Eta());
+   ((TH1*) o["hHadRecoilFromTracksPt"])->Fill(event.mP3RecoilFromTracks.Pt());
    ((TH2*) o["hRecoilCorrelPythia"])->Fill(event.mP3RecoilFromTracks.Pt(), event.mWEvent->mP4Recoil.Pt());
+
+   ((TH2*) o["hJetRecoilPt"])->Fill(event.mP4JetRecoil.Pt());
+   ((TH2*) o["hJetRecoilPtVsWBosonPt"])->Fill(event.mWEvent->mP4WBoson.Pt(), event.mP4JetRecoil.Pt());
 
    // MC correction variablel
    //((TH1*) o["hEnergyRatio"])->Fill(event.mWEvent->fEnergyRatio);

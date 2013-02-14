@@ -180,10 +180,10 @@ void VecBosTrack::print(int opt) const
 
    mP3AtDca.Print();
 
-   if (prMuTrack == 0) { printf("prMuTrack is NULL pointer???\n"); return; }
+   //if (!prMuTrack) { printf("prMuTrack is NULL pointer???\n"); return; }
 
-   printf("\tTrack glPT=%.2f GeV/c   isMatch2Cl=%d, mP3InNearCone=%.2f, awayTotET=%.2f mP3AtDca.Pt()=%.2f\n",
-          glMuTrack->pt(), isMatch2Cl, mP3InNearCone.Pt(), awayTotET, mP3AtDca.Pt());
+   printf("\tTrack: isMatch2Cl: %d, mP3InNearCone: %.2f, awayTotET: %.2f mP3AtDca.Pt(): %.2f\n",
+          isMatch2Cl, mP3InNearCone.Pt(), awayTotET, mP3AtDca.Pt());
 
    //mMatchedTower.print(opt);
    //mCluster2x2.print(opt);

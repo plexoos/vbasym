@@ -65,7 +65,8 @@ void VecBosVertex::clear()
 
 void VecBosVertex::Print(const Option_t* opt) const
 {
-   Info("Print(const Option_t* opt)", " Vertex mId=%d Z=%.1f cm  nTrack=%d\n", mId, z, mTracks.size());
+   printf("\n");
+   Info("Print(const Option_t* opt)", " Vertex mId=%d Z=%.1f cm  nTrack=%d", mId, z, mTracks.size());
 
    VecBosTrackPtrSetConstIter iTrack = mTracks.begin();
    for ( ; iTrack!=mTracks.end(); ++iTrack)

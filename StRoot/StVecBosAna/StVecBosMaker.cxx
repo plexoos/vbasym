@@ -616,11 +616,19 @@ void StVecBosMaker::ReadMuDstJets()
    mVecBosEvent->AddStJets(stJets, stJetsNoEndcap);
 
    //if (mStJetReader->getStJets(branchName)->eventId() != mVecBosEvent->id)
-   if (stJets->eventId() != mVecBosEvent->id)    Error("ReadMuDstJets", "Jet and W event ids do not match: %12d, %12d", stJets->eventId(), mVecBosEvent->id);
-   if (stJets->runId()   != mVecBosEvent->runNo) Error("ReadMuDstJets", "Jet and W run ids do not match: %12d, %12d",   stJets->runId(), mVecBosEvent->runNo);
+   if (stJets->eventId() != mVecBosEvent->id || stJets->runId() != mVecBosEvent->runNo)
+   {
+      Error("ReadMuDstJets", "Jet and W run ids do not match: %12d, %12d",   stJets->runId(),   mVecBosEvent->runNo);
+      Error("ReadMuDstJets", "Jet and W event ids do not match: %12d, %12d", stJets->eventId(), mVecBosEvent->id);
+      Fatal("ReadMuDstJets", "Cannot proceed");
+   }
 
-   if (stJetsNoEndcap->eventId() != mVecBosEvent->id)    Error("ReadMuDstJets", "Jet and W event ids do not match: %12d, %12d (no_endcap branch)", stJetsNoEndcap->eventId(), mVecBosEvent->id);
-   if (stJetsNoEndcap->runId()   != mVecBosEvent->runNo) Error("ReadMuDstJets", "Jet and W run ids do not match: %12d, %12d (no_endcap branch)", stJetsNoEndcap->runId(), mVecBosEvent->runNo);
+   if (stJetsNoEndcap->eventId() != mVecBosEvent->id || stJetsNoEndcap->runId() != mVecBosEvent->runNo)
+   {
+      Error("ReadMuDstJets", "Jet and W run ids do not match: %12d, %12d (no_endcap branch)",   stJetsNoEndcap->runId(),   mVecBosEvent->runNo);
+      Error("ReadMuDstJets", "Jet and W event ids do not match: %12d, %12d (no_endcap branch)", stJetsNoEndcap->eventId(), mVecBosEvent->id);
+      Fatal("ReadMuDstJets", "Cannot proceed");
+   }
 
    //mVecBosEvent->mNJets = stJets->nJets();
 }
