@@ -133,6 +133,7 @@ public:
    void           ProcessMC();
    void           MCanalysis();
    bool           IsRecoilJet(VecBosJet *vbJet) const;
+   bool           IsRecoilJet2(VecBosJet *vbJet) const;
    void           clear();
    void           Print(int flag = 0, int isMC = 0);
    void           getGmt_day_hour(int &yyyymmdd, int &hhmmss);
@@ -142,6 +143,7 @@ public:
    TVector3       CalcP3InConeBTow(VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
    TVector3       CalcP3InConeETow(VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
    TVector3       CalcP3InConeTpc (VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
+   TLorentzVector CalcJetRecoil() const;
 
 private:
 

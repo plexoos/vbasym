@@ -103,9 +103,9 @@ VecBosJet* VecBosTrack::FindClosestJet(VecBosJetPtrSet &jets)
       }
    }
 
-   if (closestJet && mMinDeltaRToJet <= mEvent->mTrackIsoDeltaR)
+   if (closestJet && mMinDeltaRToJet <= VecBosEvent::mTrackIsoDeltaR)
    {
-      //Info("FindClosestJet()", "Track is within jet: %f <= %f. Returning jet...", mMinDeltaRToJet, mEvent->mTrackIsoDeltaR);
+      //Info("FindClosestJet()", "Track is within jet: %f <= %f. Returning jet...", mMinDeltaRToJet, VecBosEvent::mTrackIsoDeltaR);
       mType |= VecBosTrack::kIN_JET;
       mJet = closestJet;
       return closestJet;

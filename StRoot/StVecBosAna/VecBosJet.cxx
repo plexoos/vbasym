@@ -47,7 +47,7 @@ void VecBosJet::Process()
       }
    }
 
-   if (mMinZDistToVertex < VecBosEvent::mMaxVertexJetDeltaZ && closestVertex) {
+   if (closestVertex && mMinZDistToVertex < VecBosEvent::mMaxVertexJetDeltaZ) {
       SetVertexId(closestVertex->mId);
    }
 }

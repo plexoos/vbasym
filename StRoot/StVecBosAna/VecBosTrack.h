@@ -114,6 +114,7 @@ public:
    float       GetClusterETFrac()      const { return (mCluster2x2.ET     + mP3AtDca.Pt())  / mP3InNearConeNoETow.Perp(); }
    TVector3    GetDistanceToCluster()  const { return mDistToCluster; }
    TVector3    CalcDistanceToCluster() const { return mCoorAtBTow - mCluster2x2.position; }
+   Short_t     GetVertexId()           const { return mVertexId; }
    void        SetVertexId(Short_t vId) { mVertexId = vId; }
    VecBosJet*  FindClosestJet(VecBosJetPtrSet &jets);
    void        clear();

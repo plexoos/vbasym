@@ -15,8 +15,8 @@ int main(int argc, char *argv[])
 {
    setbuf(stdout, NULL);
 
-   //Int_t maxEventsUser = -1;
-   Int_t maxEventsUser = 1000;
+   Int_t maxEventsUser = -1;
+   //Int_t maxEventsUser = 20000;
 
    TChain *vbChain = new TChain("t", "A tree with VecBosEvent events");
 

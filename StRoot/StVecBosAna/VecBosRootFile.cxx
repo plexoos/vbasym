@@ -81,6 +81,9 @@ void VecBosRootFile::BookHists()
    fHists->d["tracks"] = ph = new TrackHContainer(new TDirectoryFile("tracks", "tracks", "", this));
    fHistCuts[kCUT_NOCUT].insert(ph);
 
+   fHists->d["tracks_candidates"] = ph = new TrackHContainer(new TDirectoryFile("tracks_candidates", "tracks_candidates", "", this));
+   fHistCuts[kCUT_HAS_CANDIDATE_TRACK].insert(ph);
+
    fHists->d["tracks_good"] = ph = new TrackHContainer(new TDirectoryFile("tracks_good", "tracks_good", "", this));
    //fHistCuts[kCUT_TRACKS_GOOD].insert(ph);
 
@@ -90,8 +93,11 @@ void VecBosRootFile::BookHists()
    fHists->d["tracks_endcap"] = ph = new TrackHContainer(new TDirectoryFile("tracks_endcap", "tracks_endcap", "", this));
    //fHistCuts[kCUT_ENDCAP].insert(ph);
 
-   fHists->d["MC"] = ph = new MCHContainer(new TDirectoryFile("MC", "MC", "", this));
+   fHists->d["mc"] = ph = new MCHContainer(new TDirectoryFile("mc", "mc", "", this));
    fHistCuts[kCUT_NOCUT].insert(ph);
+
+   fHists->d["mc_recoil"] = ph = new MCHContainer(new TDirectoryFile("mc_recoil", "mc_recoil", "", this));
+   fHistCuts[kCUT_HAS_RECOIL].insert(ph);
 
    //fHists->d["kinema"]    = ph = new KinemaHContainer(new TDirectoryFile("kinema", "kinema", "", this));
 
@@ -106,11 +112,15 @@ void VecBosRootFile::SetHists(PlotHelper &hists) { fHists = &hists; }
 /** */
 void VecBosRootFile::Fill(ProtoEvent &ev)
 {
-   // Fill hists on event basis
-   //fHists->Fill(ev);
+   VecBosEvent& event = (VecBosEvent&) ev;
+
    Fill(ev, kCUT_NOCUT);
 
-   VecBosEvent& event = (VecBosEvent&) ev;
+   //if ( event.HasRecoil() )
+   //   Fill(ev, kCUT_HAS_RECOIL);
+
+   if ( event.HasCandidateTrack() )
+      Fill(ev, kCUT_HAS_CANDIDATE_TRACK);
 
    // Save only good vertices
    VecBosVertexPtrSetIter iVertex = event.mVertices.begin();

@@ -52,19 +52,17 @@ void MCHContainer::BookHists()
 
    fDir->cd();
 
-   o["hWenergy"] = hist = new TH1I("hWenergy", "; W energy [GeV]; Events", 100, 20., 200.);
+   o["hWBosonE"]                  = hist = new TH1I("hWBosonE", "; W energy [GeV]; Events", 100, 20., 200.);
    hist->SetOption("hist GRIDX");
-
-   o["hWmomentumX"]               = hist = new TH1I("hWmomentumX", "; P^{W}_{x} [GeV/c]; Events", 100, -160., 160.);
+   o["hWBosonPx"]                 = hist = new TH1I("hWBosonPx", "; P^{W}_{x} [GeV/c]; Events", 80, -40., 40.);
    hist->SetOption("hist GRIDX");
-   o["hWmomentumY"]               = hist = new TH1I("hWmomentumY", "; P^{W}_{y} [GeV/c]; Events", 100, -160., 160.);
+   o["hWBosonPy"]                 = hist = new TH1I("hWBosonPy", "; P^{W}_{y} [GeV/c]; Events", 80, -40., 40.);
    hist->SetOption("hist GRIDX");
-   o["hWmomentumZ"]               = hist = new TH1I("hWmomentumZ", "; P^{W}_{z} [GeV/c]; Events", 100, -160., 160.);
+   o["hWBosonPz"]                 = hist = new TH1I("hWBosonPz", "; P^{W}_{z} [GeV/c]; Events", 80, -40., 40.);
    hist->SetOption("hist GRIDX");
-   o["hWBosonPt"]                      = hist = new TH1I("hWBosonPt", "; P^{W}_{T} [GeV/c]; Events", 100, 0., 160.);
+   o["hWBosonPt"]                 = hist = new TH1I("hWBosonPt", "; P^{W}_{T} [GeV/c]; Events", 40, 0., 40.);
    hist->SetOption("hist GRIDX");
-
-   o["hWrapidity"] = hist = new TH1I("hWrapidity", "; W pseudo-rapidity #eta; Events", 20, -4, 4);
+   o["hWBosonEta"]                = hist = new TH1I("hWBosonEta", "; W pseudo-rapidity #eta; Events", 60, -6, 6);
    hist->SetOption("hist GRIDX");
 
    o["hNeutrinoEnergy"]           = hist = new TH1I("hNeutrinoEnergy", "; #nu energy [GeV]; Events", 50, 0., 200.);
@@ -78,19 +76,19 @@ void MCHContainer::BookHists()
    o["hNeutrinoPt"]               = hist = new TH1I("hNeutrinoPt", "; P^{#nu}_{T} [GeV/c]; Events", 100, 0., 150.);
    hist->SetOption("hist GRIDX");
 
-   o["hElectronEnergy"]           = hist = new TH1I("hElectronEnergy", "; electron energy [GeV]; Events", 50, 0., 200.);
+   o["hLeptonE"]                  = hist = new TH1I("hLeptonE", "; electron energy [GeV]; Events", 50, 0., 200.);
    hist->SetOption("hist GRIDX");
-   o["hElectronMomentumX"]        = hist = new TH1I("hElectronMomentumX", "; P^{#nu}_{x} [GeV/c]; Events", 100, -150., 150.);
+   o["hLeptonPx"]                 = hist = new TH1I("hLeptonPx", "; P^{#nu}_{x} [GeV/c]; Events", 100, -150., 150.);
    hist->SetOption("hist GRIDX");
-   o["hElectronMomentumY"]        = hist = new TH1I("hElectronMomentumY", "; P^{#nu}_{y} [GeV/c]; Events", 100, -150., 150.);
+   o["hLeptonPy"]                 = hist = new TH1I("hLeptonPy", "; P^{#nu}_{y} [GeV/c]; Events", 100, -150., 150.);
    hist->SetOption("hist GRIDX");
-   o["hElectronMomentumZ"]        = hist = new TH1I("hElectronMomentumZ", "; P^{#nu}_{z} [GeV/c]; Events", 100, -150., 150.);
+   o["hLeptonPz"]                 = hist = new TH1I("hLeptonPz", "; P^{#nu}_{z} [GeV/c]; Events", 100, -150., 150.);
    hist->SetOption("hist GRIDX");
-   o["hElectronPt"]               = hist = new TH1I("hElectronPt", "; P^{#nu}_{T} [GeV/c]; Events", 100, 0., 150.);
+   o["hLeptonPt"]                 = hist = new TH1I("hLeptonPt", "; P^{#nu}_{T} [GeV/c]; Events", 100, 0., 150.);
    hist->SetOption("hist GRIDX");
 
    // tracks ID
-   //o["hTrackID"] = hist = new TH1I("hTrackID", "; ; Events", 100, 0., 200.);
+   //o["hTrackID"]                = hist = new TH1I("hTrackID", "; ; Events", 100, 0., 200.);
 
    // recoil
    o["hRecoilE"]                  = hist = new TH1I("hRecoilE", "; Recoil energy [GeV]; Events", 100, 0., 200.);
@@ -112,28 +110,38 @@ void MCHContainer::BookHists()
    o["hRecInAccMomentumZ"]        = hist = new TH1I("hRecInAccMomentumZ", "; P^{Recoil}_{z} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
 
-   //recoil outside acceptance
-
-   o["hRecOutAccEnergy"]     = hist = new TH1I("hRecOutAccEenergy", "; Recoil energy [GeV]; Events", 100, 0., 200.);
+   //recoil outside of detector acceptance
+   o["hRecOutAccEnergy"]          = hist = new TH1I("hRecOutAccEenergy", "; Recoil energy [GeV]; Events", 100, 0., 200.);
    hist->SetOption("hist GRIDX");
-   o["hRecOutAccMomentumX"]  = hist = new TH1I("hRecOutAccMomentumX", "; P^{Recoil}_{x} [GeV/c]; Events", 100, -160., 160.);
+   o["hRecOutAccMomentumX"]       = hist = new TH1I("hRecOutAccMomentumX", "; P^{Recoil}_{x} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
-   o["hRecOutAccMomentumY"]  = hist = new TH1I("hRecOutAccMomentumY", "; P^{Recoil}_{y} [GeV/c]; Events", 100, -160., 160.);
+   o["hRecOutAccMomentumY"]       = hist = new TH1I("hRecOutAccMomentumY", "; P^{Recoil}_{y} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
-   o["hRecOutAccMomentumZ"]  = hist = new TH1I("hRecOutAccMomentumZ", "; P^{Recoil}_{z} [GeV/c]; Events", 100, -160., 160.);
+   o["hRecOutAccMomentumZ"]       = hist = new TH1I("hRecOutAccMomentumZ", "; P^{Recoil}_{z} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
 
    // recoil from tracks geant variables
-   o["hHadRecoilFromTracksPx"]  = hist = new TH1I("hHadRecoilFromTracksPx", "; P_{x}^{Recoil} (geant); Events", 100, -50., 50.);
-   o["hHadRecoilFromTracksPy"]  = hist = new TH1I("hHadRecoilFromTracksPy", "; P_{y}^{Recoil} (geant); Events", 100, -50., 50.);
-   o["hHadRecoilFromTracksPz"]  = hist = new TH1I("hHadRecoilFromTracksPz", "; P_{z}^{Recoil} (geant); Events", 100, -50., 50.);
-   o["hHadRecoilFromTracksEta"] = hist = new TH1I("hHadRecoilFromTracksEta", "; #eta^{Recoil} (geant); Events", 100, -8., 8.);
-   o["hHadRecoilFromTracksPt"]  = hist = new TH1I("hHadRecoilFromTracksPt", "; P_{T}^{Recoil} (geant); Events", 100, 0., 50.);
-   o["hRecoilCorrelPythia"]     = hist = new TH2I("hRecoilCorrelPythia", "; P_{T}^{Recoil} (geant:pythia); P_{T}^{Recoil}", 100, 0., 50., 100, 0., 50.);
+   o["hHadRecoilFromTracksPx"]   = hist = new TH1I("hHadRecoilFromTracksPx", "; P_{x}^{Recoil} (geant); Events", 100, -50., 50.);
+   o["hHadRecoilFromTracksPy"]   = hist = new TH1I("hHadRecoilFromTracksPy", "; P_{y}^{Recoil} (geant); Events", 100, -50., 50.);
+   o["hHadRecoilFromTracksPz"]   = hist = new TH1I("hHadRecoilFromTracksPz", "; P_{z}^{Recoil} (geant); Events", 100, -50., 50.);
+   o["hHadRecoilFromTracksEta"]  = hist = new TH1I("hHadRecoilFromTracksEta", "; #eta^{Recoil} (geant); Events", 100, -8., 8.);
+   o["hHadRecoilFromTracksPt"]   = hist = new TH1I("hHadRecoilFromTracksPt", "; P_{T}^{Recoil} (geant); Events", 100, 0., 50.);
+   o["hRecoilCorrelPythia"]      = hist = new TH2I("hRecoilCorrelPythia", "; P_{T}^{Recoil} (geant:pythia); P_{T}^{Recoil}", 100, 0., 50., 100, 0., 50.);
 
-   o["hJetRecoilPt"]            = hist = new TH1I("hJetRecoilPt", "; Jet Recoil P_{T}; Events", 50, 0., 50.);
-   o["hJetRecoilPtVsWBosonPt"]  = hist = new TH2I("hJetRecoilPtVsWBosonPt", "; W Boson P_{T}; Jet Recoil P_{T}", 50, 0., 50., 50, 0., 50.);
-   hist->SetOption("hist colz");
+   o["hJetRecoilPt"]             = hist = new TH1I("hJetRecoilPt", "; Jet-based Recoil P_{T}; Events", 50, 0., 50.);
+   o["hJetRecoilPt2"]            = hist = new TH1I("hJetRecoilPt2", "; Jet-based Recoil P_{T}; Events", 50, 0., 50.);
+   o["hJetRecoilPtVsWBosonPt"]   = hist = new TH2I("hJetRecoilPtVsWBosonPt", "; W Boson P_{T}; Jet-based Recoil P_{T}", 50, 0., 50., 50, 0., 50.);
+   hist->SetOption("colz");
+   o["hJetRecoilPtVsWBosonPt2"]  = hist = new TH2I("hJetRecoilPtVsWBosonPt2", "; W Boson P_{T}; Jet-based Recoil P_{T}", 50, 0., 50., 50, 0., 50.);
+   hist->SetOption("colz");
+
+   o["hTrackRecoilTpcPt"]           = hist = new TH1I("hTrackRecoilTpcPt", "; Track-based Recoil P_{T}; Events", 50, 0., 50.);
+   o["hTrackRecoilTpcPtVsWBosonPt"] = hist = new TH2I("hTrackRecoilTpcPtVsWBosonPt", "; W Boson P_{T}; Track-based Recoil P_{T}", 50, 0., 50., 50, 0., 50.);
+   hist->SetOption("colz");
+
+   o["hTrackRecoilTowPt"]           = hist = new TH1I("hTrackRecoilTowPt", "; Track-based Recoil P_{T}; Events", 50, 0., 50.);
+   o["hTrackRecoilTowPtVsWBosonPt"] = hist = new TH2I("hTrackRecoilTowPtVsWBosonPt", "; W Boson P_{T}; Track-based Recoil P_{T}", 50, 0., 50., 50, 0., 50.);
+   hist->SetOption("colz");
 
    // MC correction variables
    o["hEnergyRatio"] = hist = new TH1I("hEnergyRatio", "; E_{in}^{Recoil}/E_{out}^{Recoil}; Events", 100, 0., 4.);
@@ -147,12 +155,12 @@ void MCHContainer::Fill(ProtoEvent &ev)
 {
    VecBosEvent& event = (VecBosEvent&) ev;
 
-   ((TH1*) o["hWenergy"])->Fill(event.mWEvent->mP4WBoson.E());
-   ((TH1*) o["hWmomentumX"])->Fill(event.mWEvent->mP4WBoson.Px());
-   ((TH1*) o["hWmomentumY"])->Fill(event.mWEvent->mP4WBoson.Py());
-   ((TH1*) o["hWmomentumZ"])->Fill(event.mWEvent->mP4WBoson.Pz());
+   ((TH1*) o["hWBosonE"])->Fill(event.mWEvent->mP4WBoson.E());
+   ((TH1*) o["hWBosonPx"])->Fill(event.mWEvent->mP4WBoson.Px());
+   ((TH1*) o["hWBosonPy"])->Fill(event.mWEvent->mP4WBoson.Py());
+   ((TH1*) o["hWBosonPz"])->Fill(event.mWEvent->mP4WBoson.Pz());
    ((TH1*) o["hWBosonPt"])->Fill(event.mWEvent->mP4WBoson.Pt());
-   ((TH1*) o["hWrapidity"])->Fill(event.mWEvent->mP4WBoson.Eta());;
+   ((TH1*) o["hWBosonEta"])->Fill(event.mWEvent->mP4WBoson.Eta());;
 
    ((TH1*) o["hNeutrinoEnergy"])->Fill(event.mWEvent->mP4Neutrino.E());
    ((TH1*) o["hNeutrinoMomentumX"])->Fill(event.mWEvent->mP4Neutrino.Px());
@@ -160,11 +168,11 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hNeutrinoMomentumZ"])->Fill(event.mWEvent->mP4Neutrino.Pz());
    ((TH1*) o["hNeutrinoPt"])->Fill(event.mWEvent->mP4Neutrino.Pz());
 
-   ((TH1*) o["hElectronEnergy"])->Fill(event.mWEvent->mP4Lepton.E());
-   ((TH1*) o["hElectronMomentumX"])->Fill(event.mWEvent->mP4Lepton.Px());
-   ((TH1*) o["hElectronMomentumY"])->Fill(event.mWEvent->mP4Lepton.Py());
-   ((TH1*) o["hElectronMomentumZ"])->Fill(event.mWEvent->mP4Lepton.Pz());
-   ((TH1*) o["hElectronPt"])->Fill(event.mWEvent->mP4Lepton.Pt());
+   ((TH1*) o["hLeptonE"])->Fill(event.mWEvent->mP4Lepton.E());
+   ((TH1*) o["hLeptonPx"])->Fill(event.mWEvent->mP4Lepton.Px());
+   ((TH1*) o["hLeptonPy"])->Fill(event.mWEvent->mP4Lepton.Py());
+   ((TH1*) o["hLeptonPz"])->Fill(event.mWEvent->mP4Lepton.Pz());
+   ((TH1*) o["hLeptonPt"])->Fill(event.mWEvent->mP4Lepton.Pt());
 
    // recoil variables
    ((TH1*) o["hRecoilE"])->Fill(event.mWEvent->mP4Recoil.E());
@@ -186,10 +194,19 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hHadRecoilFromTracksPz"])->Fill(event.mP3RecoilFromTracks.Pz());
    ((TH1*) o["hHadRecoilFromTracksEta"])->Fill(event.mP3RecoilFromTracks.Eta());
    ((TH1*) o["hHadRecoilFromTracksPt"])->Fill(event.mP3RecoilFromTracks.Pt());
-   ((TH2*) o["hRecoilCorrelPythia"])->Fill(event.mP3RecoilFromTracks.Pt(), event.mWEvent->mP4Recoil.Pt());
+   ((TH1*) o["hRecoilCorrelPythia"])->Fill(event.mP3RecoilFromTracks.Pt(), event.mWEvent->mP4Recoil.Pt());
 
-   ((TH2*) o["hJetRecoilPt"])->Fill(event.mP4JetRecoil.Pt());
-   ((TH2*) o["hJetRecoilPtVsWBosonPt"])->Fill(event.mWEvent->mP4WBoson.Pt(), event.mP4JetRecoil.Pt());
+   ((TH1*) o["hJetRecoilPt"])->Fill(event.mP4JetRecoil.Pt());
+   ((TH1*) o["hJetRecoilPt2"])->Fill(event.CalcJetRecoil().Pt());
+   ((TH1*) o["hJetRecoilPtVsWBosonPt"])->Fill(event.mWEvent->mP4WBoson.Pt(), event.mP4JetRecoil.Pt());
+   ((TH1*) o["hJetRecoilPtVsWBosonPt2"])->Fill(event.mWEvent->mP4WBoson.Pt(), event.CalcJetRecoil().Pt());
+
+   ((TH1*) o["hTrackRecoilTpcPt"])->Fill(event.mP3TrackRecoilTpc.Pt());
+   ((TH1*) o["hTrackRecoilTpcPtVsWBosonPt"])->Fill(event.mWEvent->mP4WBoson.Pt(), event.mP3TrackRecoilTpc.Pt());
+
+   ((TH1*) o["hTrackRecoilTowPt"])->Fill(event.mP3TrackRecoilTow.Pt());
+   ((TH1*) o["hTrackRecoilTowPtVsWBosonPt"])->Fill(event.mWEvent->mP4WBoson.Pt(), event.mP3TrackRecoilTow.Pt());
+
 
    // MC correction variablel
    //((TH1*) o["hEnergyRatio"])->Fill(event.mWEvent->fEnergyRatio);

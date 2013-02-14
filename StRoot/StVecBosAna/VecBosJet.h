@@ -25,9 +25,10 @@ public:
    VecBosJet();
    VecBosJet(StJet &stMuVertex);
   
-   void SetVertexId(Short_t vId) { mVertexId = vId; }
-   void Process();
-   void clear();
+   Short_t  GetVertexId() const { return mVertexId; }
+   void     SetVertexId(Short_t vId) { mVertexId = vId; }
+   void     Process();
+   void     clear();
    virtual void Print(const Option_t* opt="") const;
 
    ClassDef(VecBosJet, 1);

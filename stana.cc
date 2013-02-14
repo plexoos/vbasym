@@ -76,7 +76,7 @@ int analyzeMuDst(
 
 int main(int argc, char *argv[])
 {
-   setbuf(stdout, NULL);
+   //setbuf(stdout, NULL);
 
    AnaInfo anaInfo;
    anaInfo.ProcessOptions(argc, argv);

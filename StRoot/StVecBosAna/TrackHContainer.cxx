@@ -57,6 +57,9 @@ void TrackHContainer::BookHists()
    o["hTrackPhi"] = hist = new TH1I("hTrackPhi", "; Track #phi; Num. of Tracks", 60, -M_PI, M_PI);
    hist->SetOption("hist GRIDX GRIDY");
 
+   o["hTrackPhiVsLeptonPhi"] = hist = new TH2I("hTrackPhiVsLeptonPhi", "; Lepton P_{T}; Track P_{T}", 50, -M_PI, M_PI, 50, -M_PI, M_PI);
+   hist->SetOption("colz");
+
    o["hTrackEtaAtBTow"] = hist = new TH1I("hTrackEtaAtBTow", "; Track #eta at BTOW; Num. of Tracks", 60, -3, 3);
    hist->SetOption("hist GRIDX GRIDY");
 
@@ -86,6 +89,9 @@ void TrackHContainer::BookHists()
 
    o["hChargePrimaryTrack"] = hist = new TH1I("hChargePrimaryTrack", "; Charge of the primary track; Num. of Tracks", 10, -2, 2);
    o["hTrackDistanceToCluster"] = hist = new TH1I("hTrackDistanceToCluster", "; Distance(Track-Cluster), cm; Num. of Tracks", 50, 0, 50);
+
+   o["hMinDeltaRToJet"] = hist = new TH1I("hMinDeltaRToJet", "; ; Num. of Tracks", 40, 0, 4);
+   hist->SetOption("hist GRIDX GRIDY");
 }
 
 
@@ -93,6 +99,10 @@ void TrackHContainer::BookHists()
 void TrackHContainer::Fill(ProtoEvent &ev)
 {
    VecBosEvent& event = (VecBosEvent&) ev;
+
+   if (event.mTracksCandidate.size() > 0) {
+      ((TH1*) o["hTrackPhiVsLeptonPhi"])->Fill(event.mWEvent->mP4Lepton.Phi(), (*event.mTracksCandidate.begin())->mP3AtDca.Phi());
+   }
 
    VecBosTrackPtrSetIter iTrack = event.mTracks.begin();
 
@@ -130,6 +140,7 @@ void TrackHContainer::Fill(VecBosTrack &track)
    ((TH1*) o["hTrackBClusterEnergyIsoRatio"])->Fill(track.mCluster2x2.ET/track.mCluster4x4.ET);
    ((TH1*) o["hTrackDistanceToCluster"])->Fill(track.CalcDistanceToCluster().Mag());
    //((TH1*) o["hChargePrimaryTrack"])->Fill(track.prMuTrack->charge());
+   ((TH1*) o["hMinDeltaRToJet"])->Fill(track.mMinDeltaRToJet);
 
    //printf("hasMatchedCluster: %d\n", track.isMatch2Cl);
 }
