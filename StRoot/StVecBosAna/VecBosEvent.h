@@ -89,10 +89,10 @@ public:
    Double_t            mPtKfactor;
    Float_t             mMinVertexDeltaZ;            // min distance along z between vertices
    TVector3            mP3BalanceFromTracks;
-   TVector3            mP3BalanceFromTracksDima;
+   TVector3            mP3BalanceFromTracks2;
    Double_t            mPtBalanceFromTracks;
    Double_t            mBalanceDeltaPhiFromTracks; 
-   Double_t            mBalanceDeltaPhiFromTracksDima; 
+   Double_t            mBalanceDeltaPhiFromTracks2; 
    Double_t            mPtBalanceCosPhiFromTracks; 
    Double_t            mHadRecoilFromTracksEta;
    Double_t            mHadRecoilFromTracksPt;

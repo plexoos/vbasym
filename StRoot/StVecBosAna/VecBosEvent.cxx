@@ -197,8 +197,8 @@ void VecBosEvent::Process()
    // Calculate the Pt balance as the vector sum: pt elec + pt recoil
    if  (mTracksCandidate.size() == 1)
    {
-      mP3BalanceFromTracksDima       = mP3RecoilFromTracks + (*mTracksCandidate.begin())->mP3AtDca;
-      mBalanceDeltaPhiFromTracksDima = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3RecoilFromTracks);
+      mP3BalanceFromTracks2       = mP3RecoilFromTracks + (*mTracksCandidate.begin())->mP3AtDca;
+      mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3RecoilFromTracks);
    }
 }
 
