@@ -75,6 +75,14 @@ void EventHContainer::BookHists()
    o["hNumTracksWithBCluster2"] = hist = new TH1I("hNumTracksWithBCluster2", "; Num. of Tracks with Barrel Cluster; Events", 5, 0, 5);
    hist->SetOption("hist GRIDX");
 
+   o["hRecoilFromTracks"] = hist = new TH1F("hRecoilFromTracks","Recoil from tracks; P_{T};",40,0.,45.);
+
+   o["hPtBalanceFromTracks"] = hist = new TH1F("hPtBalanceCosPhiFromTracks","P_{T}-balance from tracks; P_{T};",40,0.,60.);
+
+   o["hPtBalanceCosPhiFromTracks"] = hist = new TH1F("hPtBalanceCosPhiFromTracks","P_{T}-balance cos(#phi); P_{T};",40,-100.,100.);
+
+   o["hBalanceDeltaPhiFromTracks"] = hist = new TH1F("hBalanceDeltaPhiFromTracks","; #Delta #phi;",40,-TMath::Pi(),TMath::Pi());
+
    //shName = "hMassFitChi2ByChannel";
    //o[shName] = new TH1F(shName.c_str(), shName.c_str(), N_SILICON_CHANNELS, 0.5, N_SILICON_CHANNELS+0.5);
    //((TH1*) o[shName])->SetTitle("; Channel Id; #chi^{2};");
@@ -144,6 +152,10 @@ void EventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hNumETracks"])->Fill(event.GetNumETracks());
    ((TH1*) o["hNumTracksWithBCluster"])->Fill(event.GetNumTracksWithBCluster());
    //((TH1*) o["hNumTracksWithBCluster2"])->Fill(event.GetNumTracksWithBCluster2());
+   ((TH1*) o["hRecoilFromTracks"])->Fill(event.mP3RecoilFromTracks.Pt());
+   ((TH1*) o["hPtBalanceFromTracks"])->Fill(event.mP3BalanceFromTracks.Pt());
+   ((TH1*) o["hPtBalanceCosPhiFromTracks"])->Fill(event.mPtBalanceCosPhiFromTracks);
+   ((TH1*) o["hBalanceDeltaPhiFromTracks"])->Fill(event.mBalanceDeltaPhiFromTracks);
 }
 
 

@@ -3,8 +3,8 @@
 
 #include "TChain.h"
 
-#include "StVecBosAna/VecBosEvent.h"
-#include "StVecBosAna/VecBosRootFile.h"
+#include "StRoot/StVecBosAna/VecBosEvent.h"
+#include "StRoot/StVecBosAna/VecBosRootFile.h"
 
 #include "utils/utils.h"
 
@@ -15,12 +15,12 @@ int main(int argc, char *argv[])
 {
    setbuf(stdout, NULL);
 
-   Int_t maxEventsUser = -1;
-   //Int_t maxEventsUser = 20000;
+   //Int_t maxEventsUser = -1;
+   Int_t maxEventsUser = 10000;
 
    TChain *vbChain = new TChain("t", "A tree with VecBosEvent events");
 
-   vbChain->Add("/star/data05/scratch/smirnovd/wtree_run11/MC_list_Wp_2012_*.wtree.root");
+   vbChain->Add("/star/data05/scratch/fazio/wtree_run11_cut05/MC_list_Wp_2012_*.wtree.root");
 
    int numTotalEvents = vbChain->GetEntries();
 

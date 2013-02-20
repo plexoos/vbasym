@@ -197,8 +197,8 @@ void VecBosEvent::Process()
    // Calculate the Pt balance as the vector sum: pt elec + pt recoil
    if  (mTracksCandidate.size() == 1)
    {
-      mP3BalanceFromTracks       = mP3RecoilFromTracks + (*mTracksCandidate.begin())->mP3AtDca;
-      mBalanceDeltaPhiFromTracks = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3RecoilFromTracks);
+      mP3BalanceFromTracksDima       = mP3RecoilFromTracks + (*mTracksCandidate.begin())->mP3AtDca;
+      mBalanceDeltaPhiFromTracksDima = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3RecoilFromTracks);
    }
 }
 
@@ -317,10 +317,10 @@ void VecBosEvent::CalcRecoilFromTracks()
 
          mP3RecoilFromTracks = recoil;
 
-         //if (mP3RecoilFromTracks.Pt() > 0) {
-         //   mHadRecoilFromTracksEta  = mP3RecoilFromTracks.Eta();
-         //   mHadRecoilFromTracksPt   = mP3RecoilFromTracks.Perp();
-         //}
+         if (mP3RecoilFromTracks.Pt() > 0) {
+            mHadRecoilFromTracksEta  = mP3RecoilFromTracks.Eta();
+            mHadRecoilFromTracksPt   = mP3RecoilFromTracks.Perp();
+         }
 
          if  (mTracksCandidate.size() == 1)
          {
@@ -330,7 +330,7 @@ void VecBosEvent::CalcRecoilFromTracks()
             mP3BalanceFromTracks += prP3;
             mPtBalanceFromTracks  = mP3BalanceFromTracks.Pt();
             mBalanceDeltaPhiFromTracks = prP3.DeltaPhi(mP3BalanceFromTracks);
-            //mPtBalanceCosPhiFromTracks = mP3BalanceFromTracks.Pt()*cos(mBalanceDeltaPhiFromTracks) ;
+            mPtBalanceCosPhiFromTracks = mP3BalanceFromTracks.Pt()*cos(mBalanceDeltaPhiFromTracks) ;
          }
 
       } // close there is iso track

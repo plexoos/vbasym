@@ -2,7 +2,7 @@ void new_plots() {
 
 // Load the libraries:
 
-  gROOT->Macro("/star/u/fazio/offline/users/fazio/vbasym/macros/loadLibs.C"); 
+   gROOT->Macro("/star/u/fazio/offline/users/fazio/vbasym/macros/loadLibs.C"); 
 
 // Delete the histos:
 //   h*
@@ -20,24 +20,25 @@ void new_plots() {
   TChain WmMCChain("t");
   TChain WDataChain("t");
 
-   WpMCChain.Add("/star/data05/scratch/fazio/wtree_run11/MC_list_Wp_2012_*.wtree.root");
-   WmMCChain.Add("/star/data05/scratch/fazio/wtree_run11/MC_list_Wm_2012_*.wtree.root");
+   WpMCChain.Add("/star/data05/scratch/fazio/wtree_run11_cut05/MC_list_Wp_2012_*.wtree.root");
+   WmMCChain.Add("/star/data05/scratch/fazio/wtree_run11_cut05/MC_list_Wm_2012_*.wtree.root");
 
    // WpMCChain.Add("/star/u/fazio/offline/users/fazio/vbasym/MC_list_Wp_2012_00.wtree.root");
-   WDataChain.Add("/star/data05/scratch/fazio/wtree_run11/R*.wtree.root");
+   WDataChain.Add("/star/data05/scratch/fazio/wtree_run11_cut05/R*.wtree.root");
    //   WmMCChain.Add("/star/u/fazio/offline/users/fazio/vbasym/MC_list_Wm_2012_*.wtree.root");
 
 // Set a max number of entries:
-   WpMCChain.SetMaxEntryLoop(10000);
-   WmMCChain.SetMaxEntryLoop(10000);
+   WpMCChain.SetMaxEntryLoop(15000);
+   WmMCChain.SetMaxEntryLoop(15000);
 //................................
 
 
   gStyle->SetOptStat(10);
   gStyle->SetMarkerStyle(20);
   gStyle->SetFillColor(kYellow);
-// Plot the shit you want:
 
+
+// Plot the shit you want:
 
 //  MCChain.Draw("l2bitET");
   //MCChain.Draw("e.mP4JetRecoil.Pt():e.mWEvent.mP4WBoson.Pt()>>h1");
@@ -45,12 +46,14 @@ void new_plots() {
 
  TH2F *h1 = new TH2F("h1","W^{+} - Recoil from jets;Pt^{Gen}_{W} (rad);Pt^{Reco}_{W} (rad)",40,0,60,40,0,85);  
  TH2F *h1_2 = new TH2F("h1_2","W^{+} - Recoil from jets - TOTAL;Pt^{Gen}_{W} (rad);Pt^{Reco}_{W} (rad)",40,0,60,40,0,85);
- TH2F *h1_3 = new TH2F("h1_3","W^{-} - Recoil from jets;Pt^{Gen}_{W} (rad);Pt^{Reco}_{W} (rad)",40,0,60,40,0,85);  
- TH2F *h1_4 = new TH2F("h1_4","W^{-} - Recoil from jets - TOTAL;Pt^{Gen}_{W} (rad);Pt^{Reco}_{W} (rad)",40,0,60,40,0,85); 
+ TH2F *h1_3 = new TH2F("h1_3","W^{+} - Recoil from jets;Pt^{Gen}_{W} (rad);Pt^{Reco}_{W} (rad)",40,0,60,40,0,85);  
+ TH2F *h1_4 = new TH2F("h1_4","W^{+} - Recoil from jets - TOTAL;Pt^{Gen}_{W} (rad);Pt^{Reco}_{W} (rad)",40,0,60,40,0,85); 
  WpMCChain.Project("h1","e.mP4JetRecoil.Pt():e.mWEvent.mP4WBoson.Pt()"); 
  WpMCChain.Project("h1_2","e.mP4JetTotal.Pt():e.mWEvent.mP4WBoson.Pt()");
- WmMCChain.Project("h1_3","e.mP4JetRecoil.Pt():e.mWEvent.mP4WBoson.Pt()"); 
- WmMCChain.Project("h1_4","e.mP4JetTotal.Pt():e.mWEvent.mP4WBoson.Pt()");
+ WpMCChain.Project("h1_3","e.mP4JetRecoil.Pt():e.mWEvent.mP4WBoson.Pt()","e.mNumCandidateTracks==1 && e.mP4JetRecoil.Mag()>0 && e.mP4JetRecoil.Pt()<70 && e.@mJetsWithIsoTrack.size()==1"); 
+ WpMCChain.Project("h1_4","e.mP4JetTotal.Pt():e.mWEvent.mP4WBoson.Pt()","e.mNumCandidateTracks==1 && e.mP4JetRecoil.Mag()>0 && e.mP4JetRecoil.Pt()<70 && e.@mJetsWithIsoTrack.size()==1");
+ // WmMCChain.Project("h1_3","e.mP4JetRecoil.Pt():e.mWEvent.mP4WBoson.Pt()"); 
+ // WmMCChain.Project("h1_4","e.mP4JetTotal.Pt():e.mWEvent.mP4WBoson.Pt()");
  TCanvas *c1 = new TCanvas("c1","Recoil From Jets",500,500);
  c1->Divide(2,2);
  c1_1->SetLogz(1);
@@ -79,8 +82,10 @@ void new_plots() {
  TH2F *h2_4 = new TH2F("h2_4","W^{-} - Recoil from jets - TOTAL;#phi^{Gen}_{W} (rad);#phi^{Reco}_{W} (rad)",40,-TMath::Pi(),TMath::Pi(),40,-TMath::Pi(),TMath::Pi()); 
  WpMCChain.Project("h2","e.mP4JetRecoil.Phi():e.mWEvent.mP4WBoson.Phi()","e.mP4JetRecoil.Pt() > 0");
  WpMCChain.Project("h2_2","e.mP4JetTotal.Phi():e.mWEvent.mP4WBoson.Phi()","e.mP4JetRecoil.Pt() > 0"); 
- WmMCChain.Project("h2_3","e.mP4JetRecoil.Phi():e.mWEvent.mP4WBoson.Phi()","e.mP4JetRecoil.Pt() > 0");
- WmMCChain.Project("h2_4","e.mP4JetTotal.Phi():e.mWEvent.mP4WBoson.Phi()","e.mP4JetRecoil.Pt() > 0");
+ WpMCChain.Project("h2_3","e.mP4JetRecoil.Phi():e.mWEvent.mP4WBoson.Phi()","e.mNumCandidateTracks==1 && e.mP4JetRecoil.Mag()>0 && e.mP4JetRecoil.Pt()<70 && e.@mJetsWithIsoTrack.size()==1");
+ WpMCChain.Project("h2_4","e.mP4JetTotal.Phi():e.mWEvent.mP4WBoson.Phi()","e.mNumCandidateTracks==1 && e.mP4JetRecoil.Mag()>0 && e.mP4JetRecoil.Pt()<70 && e.@mJetsWithIsoTrack.size()==1");
+ // WmMCChain.Project("h2_3","e.mP4JetRecoil.Phi():e.mWEvent.mP4WBoson.Phi()","e.mP4JetRecoil.Pt() > 0");
+ // WmMCChain.Project("h2_4","e.mP4JetTotal.Phi():e.mWEvent.mP4WBoson.Phi()","e.mP4JetRecoil.Pt() > 0");
  TCanvas *c2 = new TCanvas("c2","Recoil From Jets",500,500);
  c2->Divide(2,2);
  c2_1->cd();
@@ -156,24 +161,27 @@ void new_plots() {
  TH1F *h7_1 = new TH1F("h7_1","Recoil from tracks; P_{T};",40,0.,45.);
  WpMCChain.Project("h7_1","e.mHadRecoilFromTracksPt","e.mHadRecoilFromTracksPt > 0");
 
+ TH1F *h7j_1 = new TH1F("h7j_1","Recoil from Jets; P_{T};",40,0.,45.);
+ WpMCChain.Project("h7j_1","e.mP4JetRecoil.Pt()","e.mNumCandidateTracks==1 && e.mP4JetRecoil.Mag()>0 && e.mP4JetRecoil.Pt()<70 && e.@mJetsWithIsoTrack.size()==1");
+
  TH1F *h7_2 = new TH1F("h7_2","electron candidate; P_{T};",40,0.,60.);
  WpMCChain.Project("h7_2","e.mTracksCandidate.mP3AtDca.Pt()","");
 
  TH1F *h7_3 = new TH1F("h7_3","P_{T} balance from tracks; P_{T};",40,0.,60.);
  WpMCChain.Project("h7_3","e.mP3BalanceFromTracks.Pt()","e.mP3BalanceFromTracks.Pt() > 0");
 
- TH1F *h7_4 = new TH1F("h7_4","P_{T}-balance cos(#phi); P_{T};",40,-100.,100.);
- WpMCChain.Project("h7_4","e.mPtBalanceCosPhiFromTracks","e.mP3BalanceFromTracks.Pt() > 0");
+ // TH1F *h7_4 = new TH1F("h7_4","P_{T}-balance cos(#phi); P_{T};",40,-100.,100.);
+ // WpMCChain.Project("h7_4","e.mPtBalanceCosPhiFromTracks","e.mP3BalanceFromTracks.Pt() > 0");
 
- TH1F *h7_5 = new TH1F("h7_5","; #Delta #phi;",40,-TMath::Pi(),TMath::Pi());
- WpMCChain.Project("h7_5","e.mBalanceDeltaPhiFromTracks","e.mP3BalanceFromTracks.Pt() > 0");
+ // TH1F *h7_5 = new TH1F("h7_5","; #Delta #phi;",40,-TMath::Pi(),TMath::Pi());
+ // WpMCChain.Project("h7_5","e.mBalanceDeltaPhiFromTracks","e.mP3BalanceFromTracks.Pt() > 0");
 
 
 
  TCanvas *c7 = new TCanvas("c7","Pt balance - MC",600,600);
  //gStyle->SetOptStat(0);
 
- c7->Divide(2,2);
+ c7->Divide(3,3);
  c7_1->cd();
  h7_1->Draw();
  c7_2->cd();
@@ -181,7 +189,9 @@ void new_plots() {
  c7_3->cd();
  h7_3->Draw();
  c7_4->cd();
- h7_4->Draw();
+ // h7_4->Draw();
+ c7_5->cd();
+ h7j_1->Draw();
 
  c7->Print("./plots/h7.eps");
 
@@ -190,7 +200,7 @@ void new_plots() {
  c7bis_1->cd();
  h7_3->Draw();
  c7bis_2->cd();
- h7_5->Draw();
+ // h7_5->Draw();
 
  c7bis->Print("./plots/h7bis.eps");
 
@@ -234,8 +244,6 @@ void new_plots() {
   h7d_5->Draw("e0");
 
  d7b->Print("./plots/h7dbis.eps");
-
-// */
 
  
  TH1F *h8_1 = new TH1F("h8_1","electron candidate - ratio 2x2/4x4; fraction: cluster 2x2/4x4 ET;",40,0.,1.);
@@ -297,6 +305,25 @@ void new_plots() {
  h8d_6->Draw("colz");
 
  c8d->Print("./plots/h8d.eps");
- 
+
+
+ TH2F *h9_1 = new TH2F("h9_1","Jet-P^{recoil}_{T}/P_{T}^{W}; ;",40,0.,60.,40,0.,60.);
+ WpMCChain.Project("h9_1", "e.mP4JetRecoil.Pt():mP4WBoson.Pt()");
+
+ TH2F *h9_2 = new TH2F("h9_2","Jet-P^{recoil}_{T}/P_{T}^{W}; ;",40,0.,60.,40,0.,60.);
+ WpMCChain.Project("h9_2", "e.mP4JetRecoil.Pt():mP4WBoson.Pt()","e.mNumCandidateTracks==1 && e.mP4JetRecoil.Mag()>0 && e.mP4JetRecoil.Pt()<70 && e.@mJetsWithIsoTrack.size()==1");
+
+ TCanvas *c9 = new TCanvas("c9","",500,500);
+
+
+ c9->Divide(1,2);
+ c9_1->cd();
+ c9_1->SetLogz(1);
+ h9_1->Draw("colz");
+ c9_2->SetLogz(1);
+ c9_2->cd();
+ h9_2->Draw("colz");
+
+ c9->Print("./plots/h9.eps");
 
 }
