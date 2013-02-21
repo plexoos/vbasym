@@ -168,13 +168,14 @@ void new_plots() {
  WpMCChain.Project("h7_2","e.mTracksCandidate.mP3AtDca.Pt()","");
 
  TH1F *h7_3 = new TH1F("h7_3","P_{T} balance from tracks; P_{T};",40,0.,60.);
- WpMCChain.Project("h7_3","e.mP3BalanceFromTracks.Pt()","e.mP3BalanceFromTracks.Pt() > 0");
+ WpMCChain.Project("h7_3","e.mP3BalanceFromTracks2.Pt()","e.mP3BalanceFromTracks2.Pt() > 0");
 
- // TH1F *h7_4 = new TH1F("h7_4","P_{T}-balance cos(#phi); P_{T};",40,-100.,100.);
- // WpMCChain.Project("h7_4","e.mPtBalanceCosPhiFromTracks","e.mP3BalanceFromTracks.Pt() > 0");
+ TH1F *h7_4 = new TH1F("h7_4","P_{T}-balance cos(#phi); P_{T};",40,-100.,100.);
+ WpMCChain.Project("h7_4","e.mPtBalanceCosPhiFromTracks2","e.mPtBalanceCosPhiFromTracks2 > 0");
 
  TH1F *h7_5 = new TH1F("h7_5","; #Delta #phi;",40,-TMath::Pi(),TMath::Pi());
- WpMCChain.Project("h7_5","e.mBalanceDeltaPhiFromTracks","e.mP3BalanceFromTracks.Pt() > 0");
+ WpMCChain.Project("h7_5","e.mBalanceDeltaPhiFromTracks2","");
+ // WpMCChain.Project("h7_5","e.mBalanceDeltaPhiFromTracks2","e.mP3BalanceFromTracks2.Pt() > 0");
 
 
 
@@ -189,7 +190,7 @@ void new_plots() {
  c7_3->cd();
  h7_3->Draw();
  c7_4->cd();
- // h7_4->Draw();
+ h7_4->Draw();
  c7_5->cd();
  h7j_1->Draw();
 
@@ -214,13 +215,13 @@ void new_plots() {
  WDataChain.Project("h7d_2","e.mTracksCandidate.mP3AtDca.Pt()");
 
  // TH1F *h7d_3 = new TH1F("h7d_3","P_{T} balance from tracks - data; P_{T};",40,0.,60.);
- // WDataChain.Project("h7d_3","e.mP3BalanceFromTracks.Pt()","e.mP3BalanceFromTracks.Pt() > 0");
+ // WDataChain.Project("h7d_3","e.mP3BalanceFromTracks2.Pt()","");
 
  TH1F *h7d_4 = new TH1F("h7d_4","P_{T}-balance cos(#phi) - data; P_{T};",40,-100.,100.);
- WDataChain.Project("h7d_4","e.mPtBalanceCosPhiFromTracks","e.mHadRecoilFromTracksPt > 0");
+ WDataChain.Project("h7d_4","e.mPtBalanceCosPhiFromTracks2","e.mHadRecoilFromTracksPt > 0");
 
  TH1F *h7d_5 = new TH1F("h7d_5","data; #Delta #phi;",40,-TMath::Pi(),TMath::Pi());
- WDataChain.Project("h7d_5","e.mBalanceDeltaPhiFromTracks","e.mHadRecoilFromTracksPt > 0");
+ WDataChain.Project("h7d_5","e.mBalanceDeltaPhiFromTracks2","e.mHadRecoilFromTracksPt > 0");
 
  TCanvas *d7 = new TCanvas("d7","Pt balance data",600,600);
 
@@ -249,7 +250,7 @@ void new_plots() {
  TH1F *h8_1 = new TH1F("h8_1","electron candidate - ratio 2x2/4x4; fraction: cluster 2x2/4x4 ET;",40,0.,1.);
  WpMCChain.Project("h8_1","e.mTracksCandidate.mCluster2x2.ET/e.mTracksCandidate.mP3InNearConeBTow.Pt()","");
  TH2F *h8_2 = new TH2F("h8_2","; P_{T}; P_{T}-balance cos(#phi)",40,0.,60.,40,-40,60);
- WpMCChain.Project("h8_2","e.mPtBalanceCosPhiFromTracks:e.mTracksCandidate.mCluster2x2.ET","e.mTracksCandidate.mCluster2x2.ET > 20");
+ WpMCChain.Project("h8_2","e.mPtBalanceCosPhiFromTracks2:e.mTracksCandidate.mCluster2x2.ET","e.mTracksCandidate.mCluster2x2.ET > 20");
 
  TCanvas *c8 = new TCanvas("c8","",500,500);
  //gStyle->SetOptStat(0);
@@ -267,18 +268,18 @@ void new_plots() {
  TH1F *h8d_1 = new TH1F("h8d_1","electron candidate - ratio 2x2/4x4 - data; fraction: cluster 2x2/4x4 ET;",40,0.,1.);
  WDataChain.Project("h8d_1","e.mTracksCandidate.mCluster2x2.ET/e.mTracksCandidate.mP3InNearConeBTow.Pt()","");
  TH2F *h8d_2 = new TH2F("h8d_2","; P_{T}; P_{T}-balance cos(#phi)",40,0.,60.,40,-40,60);
- WDataChain.Project("h8d_2","e.mPtBalanceCosPhiFromTracks:e.mTracksCandidate.mCluster2x2.ET");
+ WDataChain.Project("h8d_2","e.mPtBalanceCosPhiFromTracks2:e.mTracksCandidate.mCluster2x2.ET");
  TH2F *h8d_3 = new TH2F("h8d_3","2x2 cluster E_{T} > 20 GeV; P_{T}; P_{T}-balance cos(#phi)",40,0.,60.,40,-40,60);
- WDataChain.Project("h8d_3","e.mPtBalanceCosPhiFromTracks:e.mTracksCandidate.mCluster2x2.ET","e.mTracksCandidate.mCluster2x2.ET > 20");
+ WDataChain.Project("h8d_3","e.mPtBalanceCosPhiFromTracks2:e.mTracksCandidate.mCluster2x2.ET","e.mTracksCandidate.mCluster2x2.ET > 20");
 
  TH2F *h8d_4 = new TH2F("h8d_4","2x2 cluster E_{T} > 20 GeV && P_{T}^{recoil}>0; P_{T}; P_{T}-balance cos(#phi)",40,0.,60.,40,-40,60);
- WDataChain.Project("h8d_4","e.mPtBalanceCosPhiFromTracks:e.mTracksCandidate.mCluster2x2.ET","e.mTracksCandidate.mCluster2x2.ET > 20 && e.mHadRecoilFromTracksPt > 0");
+ WDataChain.Project("h8d_4","e.mPtBalanceCosPhiFromTracks2:e.mTracksCandidate.mCluster2x2.ET","e.mTracksCandidate.mCluster2x2.ET > 20 && e.mHadRecoilFromTracksPt > 0");
 
  TH2F *h8d_5 = new TH2F("h8d_5","2x2 cluster E_{T} > 20 GeV && P_{T}^{recoil}>0 && P_{T}^{ele}>15 GeV; P_{T}; P_{T}-balance cos(#phi)",40,0.,60.,40,-40,60);
- WDataChain.Project("h8d_5","e.mPtBalanceCosPhiFromTracks:e.mTracksCandidate.mCluster2x2.ET","e.mTracksCandidate.mCluster2x2.ET > 20 && e.mHadRecoilFromTracksPt > 0 && e.mTracksCandidate.mP3AtDca.Pt() > 15");
+ WDataChain.Project("h8d_5","e.mPtBalanceCosPhiFromTracks2:e.mTracksCandidate.mCluster2x2.ET","e.mTracksCandidate.mCluster2x2.ET > 20 && e.mHadRecoilFromTracksPt > 0 && e.mTracksCandidate.mP3AtDca.Pt() > 15");
 
  TH2F *h8d_6 = new TH2F("h8d_6","2x2 cluster E_{T} > 20 GeV && P_{T}^{recoil}>0 && P_{T}^{ele}>18 GeV && Isolation; P_{T}; P_{T}-balance cos(#phi)",40,0.,60.,40,-40,60);
- WDataChain.Project("h8d_6","e.mPtBalanceCosPhiFromTracks:e.mTracksCandidate.mCluster2x2.ET","e.mTracksCandidate.mCluster2x2.ET > 20 && e.mHadRecoilFromTracksPt > 0 && e.mTracksCandidate.mP3AtDca.Pt() > 18 ");
+ WDataChain.Project("h8d_6","e.mPtBalanceCosPhiFromTracks2:e.mTracksCandidate.mCluster2x2.ET","e.mTracksCandidate.mCluster2x2.ET > 20 && e.mHadRecoilFromTracksPt > 0 && e.mTracksCandidate.mP3AtDca.Pt() > 18 ");
 
  TCanvas *c8d = new TCanvas("c8d","",500,700);
 

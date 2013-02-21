@@ -160,9 +160,9 @@ void EventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hTrackRecoilTpcPt"])->Fill(event.mP3TrackRecoilTpc.Pt());
 
    ((TH1*) o["hRecoilFromTracks"])->Fill(event.mP3RecoilFromTracks.Pt());
-   ((TH1*) o["hPtBalanceFromTracks"])->Fill(event.mP3BalanceFromTracks.Pt());
-   ((TH1*) o["hPtBalanceCosPhiFromTracks"])->Fill(event.mPtBalanceCosPhiFromTracks);
-   ((TH1*) o["hBalanceDeltaPhiFromTracks"])->Fill(event.mBalanceDeltaPhiFromTracks);
+   ((TH1*) o["hPtBalanceFromTracks"])->Fill(event.mP3BalanceFromTracks2.Pt());
+   ((TH1*) o["hPtBalanceCosPhiFromTracks"])->Fill(event.mPtBalanceCosPhiFromTracks2);
+   ((TH1*) o["hBalanceDeltaPhiFromTracks"])->Fill(event.mBalanceDeltaPhiFromTracks2);
 }
 
 
