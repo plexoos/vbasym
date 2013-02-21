@@ -75,28 +75,14 @@ void EventHContainer::BookHists()
    o["hNumTracksWithBCluster2"] = hist = new TH1I("hNumTracksWithBCluster2", "; Num. of Tracks with Barrel Cluster; Events", 5, 0, 5);
    hist->SetOption("hist GRIDX");
 
-   o["hRecoilFromTracks"] = hist = new TH1F("hRecoilFromTracks","Recoil from tracks; P_{T};",40,0.,45.);
+   o["hJetRecoilPt"]               = hist = new TH1I("hJetRecoilPt", "Recoil from Jets; Jet-based Recoil P_{T}; Events", 50, 0, 50);
+   o["hTrackRecoilPt"]             = hist = new TH1I("hTrackRecoilPt", "Recoil from Tracks: TPC+TOW; Track-based Recoil P_{T}; Events;", 50, 0, 50);
+   o["hTrackRecoilTpcPt"]          = hist = new TH1I("hTrackRecoilTpcPt", "Recoil from Tracks: TPC only; Track-based Recoil P_{T}; Events", 50, 0, 50);
 
-   o["hPtBalanceFromTracks"] = hist = new TH1F("hPtBalanceCosPhiFromTracks","P_{T}-balance from tracks; P_{T};",40,0.,60.);
-
-   o["hPtBalanceCosPhiFromTracks"] = hist = new TH1F("hPtBalanceCosPhiFromTracks","P_{T}-balance cos(#phi); P_{T};",40,-100.,100.);
-
-   o["hBalanceDeltaPhiFromTracks"] = hist = new TH1F("hBalanceDeltaPhiFromTracks","; #Delta #phi;",40,-TMath::Pi(),TMath::Pi());
-
-   //shName = "hMassFitChi2ByChannel";
-   //o[shName] = new TH1F(shName.c_str(), shName.c_str(), N_SILICON_CHANNELS, 0.5, N_SILICON_CHANNELS+0.5);
-   //((TH1*) o[shName])->SetTitle("; Channel Id; #chi^{2};");
-   //((TH1*) o[shName])->SetOption("hist GRIDX");
-
-   //shName = "hMassFitMeanByChannel";
-   //o[shName] = new TH1F(shName.c_str(), shName.c_str(), N_SILICON_CHANNELS, 0.5, N_SILICON_CHANNELS+0.5);
-   //((TH1*) o[shName])->SetTitle("; Channel Id; Mean Mass;");
-   //((TH1*) o[shName])->SetOption("E1 GRIDX");
-
-   //shName = "hMassFitSigmaByChannel";
-   //o[shName] = new TH1F(shName.c_str(), shName.c_str(), N_SILICON_CHANNELS, 0.5, N_SILICON_CHANNELS+0.5);
-   //((TH1*) o[shName])->SetTitle("; Channel Id; Mass Width;");
-   //((TH1*) o[shName])->SetOption("E1 GRIDX");
+   o["hRecoilFromTracks"]          = hist = new TH1F("hRecoilFromTracks", "Recoil from tracks; P_{T};", 40, 0, 45);
+   o["hPtBalanceFromTracks"]       = hist = new TH1F("hPtBalanceCosPhiFromTracks", "P_{T}-balance from tracks; P_{T};", 40, 0, 60);
+   o["hPtBalanceCosPhiFromTracks"] = hist = new TH1F("hPtBalanceCosPhiFromTracks", "P_{T}-balance cos(#phi); P_{T};", 40, -100, 100);
+   o["hBalanceDeltaPhiFromTracks"] = hist = new TH1F("hBalanceDeltaPhiFromTracks", "; #Delta #phi;", 40, -TMath::Pi(), TMath::Pi());
 
    //DrawObjContainer        *oc;
    //DrawObjContainerMapIter  isubdir;
@@ -152,6 +138,11 @@ void EventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hNumETracks"])->Fill(event.GetNumETracks());
    ((TH1*) o["hNumTracksWithBCluster"])->Fill(event.GetNumTracksWithBCluster());
    //((TH1*) o["hNumTracksWithBCluster2"])->Fill(event.GetNumTracksWithBCluster2());
+
+   ((TH1*) o["hJetRecoilPt"])->Fill(event.GetJetRecoil().Pt());
+   ((TH1*) o["hTrackRecoilPt"])->Fill(event.GetTrackRecoil().Pt());
+   ((TH1*) o["hTrackRecoilTpcPt"])->Fill(event.mP3TrackRecoilTpc.Pt());
+
    ((TH1*) o["hRecoilFromTracks"])->Fill(event.mP3RecoilFromTracks.Pt());
    ((TH1*) o["hPtBalanceFromTracks"])->Fill(event.mP3BalanceFromTracks.Pt());
    ((TH1*) o["hPtBalanceCosPhiFromTracks"])->Fill(event.mPtBalanceCosPhiFromTracks);

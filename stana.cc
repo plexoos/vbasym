@@ -295,8 +295,10 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       stppAnaPars->setNhits(12);      // track->nHitsFit()>12
       stppAnaPars->setCutPtMin(0.2);  // track->pt() > 0.2
       stppAnaPars->setAbsEtaMax(2.0); // abs(track->eta())<1.6
-      //      stppAnaPars->setJetPtMin(3.5);
-      stppAnaPars->setJetPtMin(0.5);
+      //stppAnaPars->setJetPtMin(0.5);
+      //stppAnaPars->setJetPtMin(1.5);
+      //stppAnaPars->setJetPtMin(2.5);
+      stppAnaPars->setJetPtMin(3.5);
       stppAnaPars->setJetEtaMax(100.0);
       stppAnaPars->setJetEtaMin(0);
       stppAnaPars->setJetNmin(0);

@@ -245,31 +245,6 @@ void VecBosEvent::ProcessMC()
 }
 
 
-TLorentzVector VecBosEvent::CalcJetRecoil() const
-{
-   //Info("CalcJetRecoil", "Called...");
-   TLorentzVector p4JetRecoil;
-
-   VecBosJetPtrSetConstIter iJet = mJets.begin();
-   for ( ; iJet != mJets.end(); ++iJet)
-   {
-      VecBosJet *vbJet = *iJet;
-      //printf("\nstJet: ");
-      //utils::PrintTLorentzVector(*vbJet);
-
-      if ( IsRecoilJet2(vbJet) )
-      {
-         p4JetRecoil += *vbJet;
-      }
-   }
-
-   return p4JetRecoil;
-
-   //printf("\nmP4JetRecoil: ");
-   //utils::PrintTLorentzVector(mP4JetRecoil);
-}
-
-
 void VecBosEvent::CalcRecoilFromTracks()
 {
    VecBosVertexPtrSetIter iVertex = mVertices.begin();
@@ -407,16 +382,25 @@ void VecBosEvent::MCanalysis()
 
 bool VecBosEvent::IsRecoilJet(VecBosJet *vbJet) const
 {
-   //if (!mTracksCandidate.size()) {
-   //   Warning("IsCandidateTrackInJet(vbJet *vbJet)", "No candidate tracks in this event => track not in jet");
-   //   return false;
-   //}
-
    VecBosTrackPtrSetConstIter iTrack = mTracksCandidate.begin();
    for ( ; iTrack != mTracksCandidate.end(); ++iTrack)
    {
-      //printf("\ntrackCandidate: ");
-      //(*iTrack)->print();
+      VecBosTrack &track = **iTrack;
+      Double_t deltaR = vbJet->Vect().DeltaR( track.mP3AtDca );
+
+      if ( track.GetVertexId() == vbJet->GetVertexId() && deltaR > mTrackIsoDeltaR )
+         return true;
+   }
+
+   return false;
+}
+
+
+bool VecBosEvent::IsRecoilJetWithZVertexCut(VecBosJet *vbJet) const
+{
+   VecBosTrackPtrSetConstIter iTrack = mTracksCandidate.begin();
+   for ( ; iTrack != mTracksCandidate.end(); ++iTrack)
+   {
       Double_t deltaZ = fabs(vbJet->zVertex - (*iTrack)->mVertex->mPosition.Z());
 
       if (deltaZ > VecBosEvent::mMaxTrackJetDeltaZ) continue;
@@ -424,28 +408,10 @@ bool VecBosEvent::IsRecoilJet(VecBosJet *vbJet) const
       Double_t deltaR = vbJet->Vect().DeltaR((*iTrack)->mP3AtDca);
 
       if (deltaR > mTrackIsoDeltaR) {
-         //Info("IsRecoilJet(VecBosJet *vbJet)", "deltaR: %f", deltaR);
-         //Info("IsRecoilJet(VecBosJet *vbJet)", "deltaZ: %f = |%f - %f|", deltaZ, vbJet->zVertex, (*iTrack)->mVertex->mPosition.Z());
+         //Info("IsRecoilJetWithZVertexCut(VecBosJet *vbJet)", "deltaR: %f", deltaR);
+         //Info("IsRecoilJetWithZVertexCut(VecBosJet *vbJet)", "deltaZ: %f = |%f - %f|", deltaZ, vbJet->zVertex, (*iTrack)->mVertex->mPosition.Z());
          return true;
       }
-   }
-
-   return false;
-}
-
-
-bool VecBosEvent::IsRecoilJet2(VecBosJet *vbJet) const
-{
-   VecBosTrackPtrSetConstIter iTrack = mTracksCandidate.begin();
-   for ( ; iTrack != mTracksCandidate.end(); ++iTrack)
-   {
-      VecBosTrack *track = *iTrack;
-      //printf("\ntrackCandidate: ");
-      //track->print();
-      Double_t deltaR = vbJet->Vect().DeltaR( track->mP3AtDca );
-
-      if ( track->GetVertexId() == vbJet->GetVertexId() && deltaR > mTrackIsoDeltaR )
-         return true;
    }
 
    return false;
@@ -707,6 +673,17 @@ TVector3 VecBosEvent::CalcP3InConeTpc(VecBosTrack *vbTrack, UShort_t cone1d2d, F
    }
 
    return totalP3InCone;
+}
+
+
+TVector3 VecBosEvent::CalcP3Balance() const
+{
+   if (mTracksCandidate.size() < 1) {
+      Warning("CalcP3Balance", "No track/lepton candidate: Cannot calculate P3Balance");
+      return TVector3();
+   }
+
+   return mP3TrackRecoilTow + (*mTracksCandidate.begin())->mP3AtDca;
 }
 
 

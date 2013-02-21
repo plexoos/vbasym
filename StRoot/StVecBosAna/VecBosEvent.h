@@ -127,18 +127,20 @@ public:
    UShort_t       GetNumIsolatedTracks()  const { return mNumIsolatedTracks; }
    UShort_t       GetNumCandidateTracks() const { return mNumCandidateTracks; }
    UInt_t         GetNumTracksWithBCluster();
+   TLorentzVector GetJetRecoil()          const { return mP4JetRecoil; }
+   TVector3       GetTrackRecoil()        const { return mP3TrackRecoilTow; }
    void           SetCpuTimeEventAna(Double_t time) { mCpuTimeEventAna = time; }
    void           SetCpuTimeHistFill(Double_t time) { mCpuTimeHistFill = time; }
-   bool           HasGoodVertex()        const { return mNumGoodVertices    > 0 ? true : false; } // Checks if at least one good vertex exist in the event
-   bool           HasGoodTrack()         const { return mNumGoodTracks      > 0 ? true : false; }
-   bool           HasIsolatedTrack()     const { return mNumIsolatedTracks  > 0 ? true : false; }
-   bool           HasCandidateTrack()    const { return mNumCandidateTracks > 0 ? true : false; }
+   bool           HasGoodVertex()         const { return mNumGoodVertices    > 0 ? true : false; } // Checks if at least one good vertex exist in the event
+   bool           HasGoodTrack()          const { return mNumGoodTracks      > 0 ? true : false; }
+   bool           HasIsolatedTrack()      const { return mNumIsolatedTracks  > 0 ? true : false; }
+   bool           HasCandidateTrack()     const { return mNumCandidateTracks > 0 ? true : false; }
 
    void           Process();
    void           ProcessMC();
    void           MCanalysis();
    bool           IsRecoilJet(VecBosJet *vbJet) const;
-   bool           IsRecoilJet2(VecBosJet *vbJet) const;
+   bool           IsRecoilJetWithZVertexCut(VecBosJet *vbJet) const;
    void           clear();
    void           Print(int flag = 0, int isMC = 0);
    void           getGmt_day_hour(int &yyyymmdd, int &hhmmss);
@@ -148,7 +150,7 @@ public:
    TVector3       CalcP3InConeBTow(VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
    TVector3       CalcP3InConeETow(VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
    TVector3       CalcP3InConeTpc (VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
-   TLorentzVector CalcJetRecoil() const;
+   TVector3       CalcP3Balance() const;
 
 private:
 

@@ -41,7 +41,7 @@ public:
    int                     isMatch2Cl;         // result of cuts
    WevePointTower          mMatchedTower;
    const StMuTrack        *glMuTrack;          //!
-   const StMuTrack        *prMuTrack;          //!
+   const StMuTrack        *prMuTrack;          //
    StPhysicalHelixD        mHelix;             //!
    const VecBosVertex     *mVertex;            //! pointer to mother vertex
    Short_t                 mVertexId;          // mId of the mother vertex
@@ -85,16 +85,16 @@ public:
    static const float      mMaxEnergyInOppsCone;  //!
 
    // esmd shower info
-   int                     hitSector;
-   int                     esmdGlobStrip[mxEsmdPlane];
-   float                   esmdShower[mxEsmdPlane][41];
-   float                   esmdDca[mxEsmdPlane];
-   float                   esmdDcaGlob[mxEsmdPlane];
-   float                   esmdE[mxEsmdPlane];
-   int                     esmdNhit[mxEsmdPlane];
-   float                   esmdShowerCentroid[mxEsmdPlane];
-   float                   esmdShowerWidth[mxEsmdPlane];
-   TVector3                esmdXPcentroid;
+   int                     hitSector; //!
+   int                     esmdGlobStrip[mxEsmdPlane]; //!
+   float                   esmdShower[mxEsmdPlane][41]; //!
+   float                   esmdDca[mxEsmdPlane]; //!
+   float                   esmdDcaGlob[mxEsmdPlane]; //!
+   float                   esmdE[mxEsmdPlane]; //!
+   int                     esmdNhit[mxEsmdPlane]; //!
+   float                   esmdShowerCentroid[mxEsmdPlane]; //!
+   float                   esmdShowerWidth[mxEsmdPlane]; //!
+   TVector3                esmdXPcentroid; //!
 
    VecBosTrack();
 
