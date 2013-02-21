@@ -59,7 +59,7 @@ private:
    TTree          *mWtree;
    TString         mTreeName;
    TFile          *mTreeFile;
-   WeventDisplay  *wDisaply;
+   WeventDisplay  *mEventDisplay;
    WtpcFilter      mTpcFilter[mxTpcSec];    //allows sector dependent filter
    WtpcFilter      mTpcFilterE[mxTpcSec];   //allows sector dependent filter for endcap tracks
    int             mNumInputEvents;

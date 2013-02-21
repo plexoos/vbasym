@@ -11,47 +11,52 @@ ClassImp(VecBosTrack)
 using namespace std;
 
 
-VecBosTrack::VecBosTrack() : TObject(), mEvent(0), mType(kUNKNOWN), mHelix(),
+const float VecBosTrack::sMaxTrackClusterDist       = 7;  // cm
+const float VecBosTrack::sMinPt                     = 20; // GeV
+const float VecBosTrack::sMaxEnergyInOppsCone       = 40; // was 30 GeV
+const float VecBosTrack::sMinCandidateTrackClusterE = 20;
+
+
+VecBosTrack::VecBosTrack() : TObject(), mEvent(0), mVbType(kUNKNOWN), mHelix(),
+   isMatch2Cl(false), mMatchedTower(),
    mVertex(0), mVertexId(-1), mJet(0),
-   mP3AtDca(), mP3AtBTow(), mCoorAtBTow(),
+   mCluster2x2(), mCluster4x4(),
+   mP3AtDca(), mCoorAtBTow(),
    mP3InNearCone(), mP3InNearConeTow(), mP3InNearConeBTow(), mP3InNearConeETow(), mP3InNearConeNoETow(), mP3InNearConeTpc(),
    mP3InOppsCone(), mP3InOppsConeTow(), mP3InOppsConeBTow(), mP3InOppsConeETow(), mP3InOppsConeNoETow(), mP3InOppsConeTpc(),
+   smallNearTpcPT  (0),
    awayTpcPT       (0),
    awayEmcET       (0),
    awayBtowET      (0),
    awayEtowET      (0),
    awayTotET       (0),
-   smallNearTpcPT  (0),
    awayTotET_noEEMC(0),
    mNumTracksInNearCone(0),
    hadronicRecoil(), ptBalance(), ptBalance_noEEMC(), sPtBalance(0), sPtBalance_noEEMC(0),
    mMinDeltaZToJet(-1),            // nonsense value
    mMinDeltaRToJet(-1),            // nonsense value
    mDistToCluster(-10, -10, -10)   // nonsense value
+   //hitSector(-1), esmdXPcentroid()
 {
    clear();
 }
 
 
-const float VecBosTrack::mMaxTrackClusterDist = 7;  // cm
-const float VecBosTrack::mMinPt               = 20;
-const float VecBosTrack::mMaxEnergyInOppsCone = 40; // was 30 GeV
 
-
-//bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && !IsInJet() && mP3AtDca.Pt() >= mMinPt); }
-//bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && mP3AtDca.Pt() >= mMinPt); }
-bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && mCluster2x2.energy >= 20); }
+//bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && !IsInJet() && mP3AtDca.Pt() >= sMinPt); }
+//bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && mP3AtDca.Pt() >= sMinPt); }
+bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && mCluster2x2.energy >= sMinCandidateTrackClusterE); }
 
 
 void VecBosTrack::Process()
 {
    // Good track must come from a good vertex
    if (!mVertex || !mVertex->IsGood()) {
-      mType = kBAD;
+      mVbType = kBAD;
       return;
    }
 
-   mType     = kGOOD; // this track has a good vertex
+   mVbType     = kGOOD; // this track has a good vertex
    mVertexId = mVertex->mId;
 
    //if (mVecBosEvent->l2bitET && rank > 0 && primaryTrack->flag() == 301)
@@ -66,13 +71,13 @@ void VecBosTrack::Process()
    // Look for high Pt electron candidates
    if ( prMuTrack->pt() >= 1.0 && prMuTrack->flag() == 301 )
    {
-      mType |= kBARREL;
+      mVbType |= kBARREL;
       MatchTrack2BtowCluster();
       CalcEnergyInNearCone();
    }
    else if ( prMuTrack->pt() >= 1.0 && prMuTrack->flag() == 311 )
    {
-      mType |= kENDCAP;
+      mVbType |= kENDCAP;
       //ExtendTrack2Endcap();
    }
 }
@@ -91,7 +96,7 @@ VecBosJet* VecBosTrack::FindClosestJet(VecBosJetPtrSet &jets)
       Double_t deltaZ = fabs(vbJet->zVertex - mVertex->mPosition.Z());
 
       // Jet should come out of the same vertex
-      if (deltaZ > VecBosEvent::mMaxTrackJetDeltaZ) continue;
+      if (deltaZ > VecBosEvent::sMaxTrackJetDeltaZ) continue;
 
       Double_t deltaR = vbJet->Vect().DeltaR(mP3AtDca);
       //Info("FindClosestJet()", "deltaR: %f ", deltaR);
@@ -103,10 +108,10 @@ VecBosJet* VecBosTrack::FindClosestJet(VecBosJetPtrSet &jets)
       }
    }
 
-   if (closestJet && mMinDeltaRToJet <= VecBosEvent::mTrackIsoDeltaR)
+   if (closestJet && mMinDeltaRToJet <= VecBosEvent::sMinTrackIsoDeltaR)
    {
-      //Info("FindClosestJet()", "Track is within jet: %f <= %f. Returning jet...", mMinDeltaRToJet, VecBosEvent::mTrackIsoDeltaR);
-      mType |= VecBosTrack::kIN_JET;
+      //Info("FindClosestJet()", "Track is within jet: %f <= %f. Returning jet...", mMinDeltaRToJet, VecBosEvent::sMinTrackIsoDeltaR);
+      mVbType |= VecBosTrack::kIN_JET;
       mJet = closestJet;
       return closestJet;
    }
@@ -118,7 +123,7 @@ VecBosJet* VecBosTrack::FindClosestJet(VecBosJetPtrSet &jets)
 void VecBosTrack::clear()
 {
    mEvent                 = 0;
-   mType                  = kUNKNOWN;
+   mVbType                = kUNKNOWN;
    isMatch2Cl             = false;
    mMatchedTower.clear();
    glMuTrack              = 0;
@@ -129,21 +134,20 @@ void VecBosTrack::clear()
    mJet                   = 0;
    mCluster2x2.clear();
    mCluster4x4.clear();
-   mP3AtDca               = TVector3(0, 0, 0);
-   mP3AtBTow              = TVector3(0, 0, 0);
-   mCoorAtBTow            = TVector3(0, 0, 0);
-   mP3InNearCone          = TVector3(0, 0, 0);
-   mP3InNearConeTow       = TVector3(0, 0, 0);
-   mP3InNearConeBTow      = TVector3(0, 0, 0);
-   mP3InNearConeETow      = TVector3(0, 0, 0);
-   mP3InNearConeNoETow    = TVector3(0, 0, 0);
-   mP3InNearConeTpc       = TVector3(0, 0, 0);
-   mP3InOppsCone          = TVector3(0, 0, 0);
-   mP3InOppsConeTow       = TVector3(0, 0, 0);
-   mP3InOppsConeBTow      = TVector3(0, 0, 0);
-   mP3InOppsConeETow      = TVector3(0, 0, 0);
-   mP3InOppsConeNoETow    = TVector3(0, 0, 0);
-   mP3InOppsConeTpc       = TVector3(0, 0, 0);
+   mP3AtDca.SetXYZ(0, 0, 0);
+   mCoorAtBTow.SetXYZ(0, 0, 0);
+   mP3InNearCone.SetXYZ(0, 0, 0);
+   mP3InNearConeTow.SetXYZ(0, 0, 0);
+   mP3InNearConeBTow.SetXYZ(0, 0, 0);
+   mP3InNearConeETow.SetXYZ(0, 0, 0);
+   mP3InNearConeNoETow.SetXYZ(0, 0, 0);
+   mP3InNearConeTpc.SetXYZ(0, 0, 0);
+   mP3InOppsCone.SetXYZ(0, 0, 0);
+   mP3InOppsConeTow.SetXYZ(0, 0, 0);
+   mP3InOppsConeBTow.SetXYZ(0, 0, 0);
+   mP3InOppsConeETow.SetXYZ(0, 0, 0);
+   mP3InOppsConeNoETow.SetXYZ(0, 0, 0);
+   mP3InOppsConeTpc.SetXYZ(0, 0, 0);
    awayTpcPT              = 0;
    awayEmcET              = 0;
    awayBtowET             = 0;
@@ -161,15 +165,16 @@ void VecBosTrack::clear()
    mMinDeltaRToJet        = -1;
    mDistToCluster         = -1;
 
+   //hitSector              = -1;
+   //esmdXPcentroid.SetXYZ(0, 0, 0);
    memset(esmdGlobStrip, -999, sizeof(esmdGlobStrip));
+   memset(esmdShower, -999, sizeof(esmdShower));
    memset(esmdDca, -999., sizeof(esmdDca));
    memset(esmdDcaGlob, -999., sizeof(esmdDcaGlob));
    memset(esmdE, 0., sizeof(esmdE));
    memset(esmdNhit, 0, sizeof(esmdNhit));
    memset(esmdShowerCentroid, 999., sizeof(esmdShowerCentroid));
    memset(esmdShowerWidth, 999., sizeof(esmdShowerWidth));
-
-   esmdXPcentroid = TVector3(0, 0, 0);
 }
 
 
@@ -305,10 +310,10 @@ void VecBosTrack::MatchTrack2BtowCluster()
    //hA[199]->Fill(mCluster2x2.position.PseudoRapidity(), mDistToCluster.Mag());
    //hA[207]->Fill(mCluster2x2.position.PseudoRapidity(), mCluster2x2.ET);
 
-   if (mDistToCluster.Mag() <= mMaxTrackClusterDist)
+   if (mDistToCluster.Mag() <= sMaxTrackClusterDist)
    {
       isMatch2Cl = true; // cluster is matched to TPC track
-      mType |= kHAS_CLUSTER;
+      mVbType |= kHAS_CLUSTER;
    }
 
    //hA[20]->Fill("#Delta R", 1.);
@@ -345,13 +350,13 @@ void VecBosTrack::CalcEnergyInNearCone()
    mP3InOppsCone       = mP3InOppsConeTow  + mP3InOppsConeTpc; // XXX:ds: double counting? yes, see correction below
    mP3InOppsConeNoETow = mP3InOppsCone     - mP3InOppsConeETow;
 
-   if (GetClusterEnergyFrac() >= mEvent->mMinClusterEnergyFrac)
+   if (GetClusterEnergyFrac() >= mEvent->sMinClusterEnergyFrac)
    {
-      mType |= kISOLATED;
+      mVbType |= kISOLATED;
 
-      if ( mP3InOppsConeTow.Mag() < mMaxEnergyInOppsCone )
+      if ( mP3InOppsConeTow.Mag() < sMaxEnergyInOppsCone )
       {
-         mType |= kUNBALANCED;
+         mVbType |= kUNBALANCED;
       }
    }
    // else {
@@ -368,7 +373,7 @@ void VecBosTrack::CalcEnergyInNearCone()
 
    // Correct for double counting of electron track in near cone rarely
    // primTrPT<10 GeV & globPT>10 - handle this here
-   //if (mP3AtDca.Pt() > mEvent->mMinBTrackPt) mP3InNearCone -= mEvent->mMinBTrackPt;
+   //if (mP3AtDca.Pt() > mEvent->sMinBTrackPt) mP3InNearCone -= mEvent->sMinBTrackPt;
    //else                                      mP3InNearCone -= mP3AtDca.Pt();
 
    //float nearTotETfrac = mCluster2x2.ET / mP3InNearCone;

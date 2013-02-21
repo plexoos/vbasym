@@ -37,20 +37,20 @@ public:
                    };
 
    VecBosEvent            *mEvent;             //!
-   UInt_t                  mType;
-   int                     isMatch2Cl;         // result of cuts
+   UInt_t                  mVbType;
+   Bool_t                  isMatch2Cl;         // result of cuts
    WevePointTower          mMatchedTower;
    const StMuTrack        *glMuTrack;          //!
    const StMuTrack        *prMuTrack;          //
    StPhysicalHelixD        mHelix;             //!
    const VecBosVertex     *mVertex;            //! pointer to mother vertex
    Short_t                 mVertexId;          // mId of the mother vertex
-   VecBosJet              *mJet;               //! pointer to mother jet if exists
+   VecBosJet              *mJet;               //! pointer to mother/closest jet if exists
    WeveCluster             mCluster2x2;
    WeveCluster             mCluster4x4;
    TVector3                mP3AtDca;           // primary momentum vector
    TVector3                mP3AtBTow;          // momentum vector
-   TVector3                mCoorAtBTow;        // 
+   TVector3                mCoorAtBTow;        //
    TVector3                mP3InNearCone;
    TVector3                mP3InNearConeTow;
    TVector3                mP3InNearConeBTow;
@@ -80,10 +80,6 @@ public:
    float                   mMinDeltaRToJet;    // Min distance to a jet
    TVector3                mDistToCluster;     // Distance to cluster
 
-   static const float      mMaxTrackClusterDist;  //! cm, dist between projected track and center of cluster
-   static const float      mMinPt;                //!
-   static const float      mMaxEnergyInOppsCone;  //!
-
    // esmd shower info
    int                     hitSector; //!
    int                     esmdGlobStrip[mxEsmdPlane]; //!
@@ -96,15 +92,20 @@ public:
    float                   esmdShowerWidth[mxEsmdPlane]; //!
    TVector3                esmdXPcentroid; //!
 
+   static const float      sMaxTrackClusterDist;            //! cm, dist between projected track and center of cluster
+   static const float      sMinPt;                          //!
+   static const float      sMaxEnergyInOppsCone;            //!
+   static const float      sMinCandidateTrackClusterE;      //!
+
    VecBosTrack();
 
-   bool        IsGood()       const { return (mType & kGOOD)   == kGOOD   ? true : false; }
-   bool        IsBTrack()     const { return (mType & kBARREL) == kBARREL ? true : false; }
-   bool        IsETrack()     const { return (mType & kENDCAP) == kENDCAP ? true : false; }
-   bool        HasCluster()   const { return (mType & kHAS_CLUSTER) == kHAS_CLUSTER ? true : false; }
-   bool        IsIsolated()   const { return (mType & kISOLATED) == kISOLATED ? true : false; }
-   bool        IsInJet()      const { return (mType & kIN_JET) == kIN_JET ? true : false; }
-   bool        IsUnBalanced() const { return (mType & kUNBALANCED) == kUNBALANCED ? true : false; }
+   bool        IsGood()       const { return (mVbType & kGOOD)   == kGOOD   ? true : false; }
+   bool        IsBTrack()     const { return (mVbType & kBARREL) == kBARREL ? true : false; }
+   bool        IsETrack()     const { return (mVbType & kENDCAP) == kENDCAP ? true : false; }
+   bool        HasCluster()   const { return (mVbType & kHAS_CLUSTER) == kHAS_CLUSTER ? true : false; }
+   bool        IsIsolated()   const { return (mVbType & kISOLATED) == kISOLATED ? true : false; }
+   bool        IsInJet()      const { return (mVbType & kIN_JET) == kIN_JET ? true : false; }
+   bool        IsUnBalanced() const { return (mVbType & kUNBALANCED) == kUNBALANCED ? true : false; }
    bool        IsCandidate()  const;
    //bool        HasBarrelMatched();
    //bool        HasEndcapMatched();

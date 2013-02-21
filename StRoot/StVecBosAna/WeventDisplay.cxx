@@ -133,11 +133,11 @@ void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo, VecB
       te2->SetFillStyle(0); te2->SetLineStyle(3); te2->SetLineColor(kBlack);
 
       TVector3 rA = -rW; // away direction
-      bxT->SetY1(rA.Phi() - wMK->mVecBosEvent->mTrackIsoDeltaPhi);
-      bxT->SetY2(rA.Phi() + wMK->mVecBosEvent->mTrackIsoDeltaPhi);
+      bxT->SetY1(rA.Phi() - VecBosEvent::sMinTrackIsoDeltaPhi);
+      bxT->SetY2(rA.Phi() + VecBosEvent::sMinTrackIsoDeltaPhi);
 
-      bxE->SetY1(rA.Phi() - wMK->mVecBosEvent->mTrackIsoDeltaPhi);
-      bxE->SetY2(rA.Phi() + wMK->mVecBosEvent->mTrackIsoDeltaPhi);
+      bxE->SetY1(rA.Phi() - VecBosEvent::sMinTrackIsoDeltaPhi);
+      bxE->SetY2(rA.Phi() + VecBosEvent::sMinTrackIsoDeltaPhi);
 
 
       te1->Draw();   te2->Draw(); bxT->Draw("l");
@@ -162,7 +162,7 @@ void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo, VecB
       printf("WeventDisplay::Event ID  %s\n", txt);
       pvt->AddText(txt);
 
-      sprintf(txt, "TPC PT(GeV/c) near=%.1f  away=%.1f ", myTr.mP3InNearConeTpc, myTr.awayTpcPT);
+      sprintf(txt, "TPC PT(GeV/c) near=%.1f  away=%.1f ", myTr.mP3InNearConeTpc.Pt(), myTr.awayTpcPT);
       printf("WeventDisplay::Event TPC  %s\n", txt);
       pvt->AddText(txt);
 
@@ -170,11 +170,11 @@ void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo, VecB
       printf("WeventDisplay:: BTOW  %s\n", txt);
       pvt->AddText(txt);
 
-      sprintf(txt, "Emc (Btow+Etow) ET/GeV:   near= %.1f   away= %.1f", myTr.mP3InNearCone, myTr.awayEmcET);
+      sprintf(txt, "Emc (Btow+Etow) ET/GeV:   near= %.1f   away= %.1f", myTr.mP3InNearCone.Pt(), myTr.awayEmcET);
       printf("WeventDisplay:: BTOW+ETOW  %s\n", txt);
       pvt->AddText(txt);
 
-      sprintf(txt, "total ET/GeV:   near= %.1f   away= %.1f  ptBalance= %.1f", myTr.mP3InNearCone, myTr.awayTotET, myTr.ptBalance.Perp());
+      sprintf(txt, "total ET/GeV:   near= %.1f   away= %.1f  ptBalance= %.1f", myTr.mP3InNearCone.Pt(), myTr.awayTotET, myTr.ptBalance.Perp());
       printf("WeventDisplay:: BTOW  %s\n", txt);
       pvt->AddText(txt);
       // save dump of histos
@@ -214,11 +214,11 @@ void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo, VecB
       te2->SetFillStyle(0); te2->SetLineStyle(3); te2->SetLineColor(kBlack);
 
       TVector3 rA = -rW; // away direction
-      bxT->SetY1(rA.Phi() - wMK->mVecBosEvent->mTrackIsoDeltaPhi);
-      bxT->SetY2(rA.Phi() + wMK->mVecBosEvent->mTrackIsoDeltaPhi);
+      bxT->SetY1(rA.Phi() - VecBosEvent::sMinTrackIsoDeltaPhi);
+      bxT->SetY2(rA.Phi() + VecBosEvent::sMinTrackIsoDeltaPhi);
 
-      bxE->SetY1(rA.Phi() - wMK->mVecBosEvent->mTrackIsoDeltaPhi);
-      bxE->SetY2(rA.Phi() + wMK->mVecBosEvent->mTrackIsoDeltaPhi);
+      bxE->SetY1(rA.Phi() - VecBosEvent::sMinTrackIsoDeltaPhi);
+      bxE->SetY2(rA.Phi() + VecBosEvent::sMinTrackIsoDeltaPhi);
 
       te1->Draw();   te2->Draw(); bxT->Draw("l");
       etaBL_ln->Draw();  etaBR_ln->Draw(); etaEL_ln->Draw();
@@ -306,15 +306,15 @@ void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo, VecB
       sprintf(txt, "run=%d  eveID=%05d daq=%d vertex:mId=%d Z=%.0fcm ", runNo, eveID, daqSeq, myV.mId, myV.z);
       printf("WeventDisplay::Event ID  %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
-      sprintf(txt, "TPC PT(GeV/c) prim=%.1f  near=%.1f  away=%.1f ", myTr.prMuTrack->pt(), myTr.mP3InNearConeTpc, myTr.awayTpcPT);
+      sprintf(txt, "TPC PT(GeV/c) prim=%.1f  near=%.1f  away=%.1f ", myTr.prMuTrack->pt(), myTr.mP3InNearConeTpc.Pt(), myTr.awayTpcPT);
       printf("WeventDisplay::Event %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
 
-      sprintf(txt, "ETOW ET/GeV: 2x2=%.1f  EMC: near= %.1f   away= %.1f ", myTr.mCluster2x2.ET, myTr.mP3InNearCone, myTr.awayEmcET);
+      sprintf(txt, "ETOW ET/GeV: 2x2=%.1f  EMC: near= %.1f   away= %.1f ", myTr.mCluster2x2.ET, myTr.mP3InNearCone.Pt(), myTr.awayEmcET);
       printf("WeventDisplay:: %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
 
-      sprintf(txt, "total ET/GeV:   near= %.1f   away= %.1f  ptBalance= %.1f ", myTr.mP3InNearCone, myTr.awayTotET, myTr.ptBalance.Perp());
+      sprintf(txt, "total ET/GeV:   near= %.1f   away= %.1f  ptBalance= %.1f ", myTr.mP3InNearCone.Pt(), myTr.awayTotET, myTr.ptBalance.Perp());
       printf("WeventDisplay:: %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
 
@@ -471,7 +471,7 @@ void WeventDisplay::getPrimTracks( int vertID, int pointTowId)
       if (prTr->flag() != 301 && pointTowId > 0) continue; // TPC-only regular tracks for barrel candidate
       if (prTr->flag() != 301 && prTr->flag() != 311 && pointTowId < 0) continue; // TPC regular and short EEMC tracks for endcap candidate
       float hitFrac = 1.*prTr->nHitsFit() / prTr->nHitsPoss();
-      if (hitFrac < wMK->mVecBosEvent->mMinTrackHitFrac) continue;
+      if (hitFrac < VecBosEvent::sMinTrackHitFrac) continue;
       StThreeVectorF prPvect = prTr->p();
       TVector3 mP3AtDca = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
       float pT = prTr->pt();
@@ -497,7 +497,7 @@ void WeventDisplay::getPrimTracksFromTree(int vertID, int pointTowId)
       if (prTr->flag() != 301 && pointTowId > 0) continue; // TPC-only regular tracks for barrel candidate
       if (prTr->flag() != 301 && prTr->flag() != 311 && pointTowId < 0) continue; // TPC regular and short EEMC tracks for endcap candidate
       float hitFrac = 1.*prTr->nHitsFit() / prTr->nHitsPoss();
-      if (hitFrac < wMK->mVecBosEvent->mMinTrackHitFrac) continue;
+      if (hitFrac < VecBosEvent::sMinTrackHitFrac) continue;
       StThreeVectorF prPvect = prTr->p();
       TVector3 mP3AtDca = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
       float pT = prTr->pt();
@@ -532,7 +532,7 @@ void WeventDisplay::export2sketchup(const char *tit, VecBosVertex &myV, VecBosTr
       if (prTr->flag() <= 0) continue;
       if (prTr->flag() != 301) continue; // TPC-only regular tracks
       float hitFrac = 1.*prTr->nHitsFit() / prTr->nHitsPoss();
-      if (hitFrac < wMK->mVecBosEvent->mMinTrackHitFrac) continue;
+      if (hitFrac < VecBosEvent::sMinTrackHitFrac) continue;
       prTr->p();
       fprintf(fd, "track V %.1f %.3f %.3f  mP3AtDca:PT:eta:phi:Q %.1f %.3f  %.3f  %d\n", rV.x(), rV.y(), rV.z(), prTr->p().perp(), prTr->p().pseudoRapidity(), prTr->p().phi(), prTr->charge());
    }

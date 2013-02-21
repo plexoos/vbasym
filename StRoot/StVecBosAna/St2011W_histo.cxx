@@ -99,7 +99,7 @@ void StVecBosMaker::initHistos()
 
    hA[22] = h = new TH1F("muTrFitFrac", "Barrel: primary track in-selection & vertexZ; nFit/nPoss ", 50, 0, 1.1);
    Lx = h->GetListOfFunctions();
-   ln = new TLine(mVecBosEvent->mMinTrackHitFrac, 0, mVecBosEvent->mMinTrackHitFrac, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
+   ln = new TLine(VecBosEvent::sMinTrackHitFrac, 0, VecBosEvent::sMinTrackHitFrac, 1.e6);  ln->SetLineColor(kRed);  Lx->Add(ln);
 
    hA[23] = h = new TH1F("muTrRxyIn", "Barrel: primary track first hit  in-selection & vertexZ; Rxy (cm)", 60, 50, 170.);
    Lx = h->GetListOfFunctions();

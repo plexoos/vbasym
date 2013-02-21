@@ -78,7 +78,7 @@ public:
    VecBosJetPtrSet     mJetsWithIsoTrack;  //
    VecBosVertexPtrSet  mVertices;
    VecBosTrackPtrSet   mTracks;            // owns tracks
-   VecBosTrackPtrSet   mTracksCandidate;
+   VecBosTrackPtrSet   mTracksCandidate;   //
    WEvent             *mWEvent;
    TLorentzVector      mP4JetTotal;
    TLorentzVector      mP4JetFirst;
@@ -98,14 +98,13 @@ public:
    Double_t            mHadRecoilFromTracksEta;
    Double_t            mHadRecoilFromTracksPt;
 
-   static const float mTrackIsoDeltaR;       //! (rad) near-cone size
-   static const float mTrackIsoDeltaPhi;     //! (rad) away-'cone' size, approx. 40 deg.
-   static const float mMaxVertexJetDeltaZ;   //! distance between jet and vertex z coord, cm
-   static const float mMaxTrackJetDeltaZ;    //! distance between jet and track z coord, cm
-   static const float mMinTrackPt;           //!
-   static const float mMinBTrackPt;          //!
-   static const float mMinTrackHitFrac;      //!
-   static const float mMinClusterEnergyFrac; //!
+   static const float  sMinTrackIsoDeltaR;    //! (rad) near-cone size
+   static const float  sMinTrackIsoDeltaPhi;  //! (rad) away-'cone' size, approx. 40 deg.
+   static const float  sMaxVertexJetDeltaZ;   //! distance between jet and vertex z coord, cm
+   static const float  sMaxTrackJetDeltaZ;    //! distance between jet and track z coord, cm
+   static const float  sMinBTrackPt;          //!
+   static const float  sMinTrackHitFrac;      //!
+   static const float  sMinClusterEnergyFrac; //!
 
    VecBosEvent();
 
@@ -118,14 +117,17 @@ public:
    TClonesArray  *GetStJetsNoEndcap();
    UInt_t         GetNumStJets();
    UInt_t         GetNumStJetsNoEndcap();
-   UInt_t         GetNumVertices()        const { return mVertices.size(); }
-   UInt_t         GetNumTracks()          const { return mTracks.size(); }
-   UShort_t       GetNumGoodVertices()    const { return mNumGoodVertices; }
-   UShort_t       GetNumGoodTracks()      const { return mNumGoodTracks; }
-   UShort_t       GetNumBTracks()         const { return mNumBTracks; }
-   UShort_t       GetNumETracks()         const { return mNumETracks; }
-   UShort_t       GetNumIsolatedTracks()  const { return mNumIsolatedTracks; }
-   UShort_t       GetNumCandidateTracks() const { return mNumCandidateTracks; }
+   UInt_t         GetNumJets()             const { return mJets.size(); }
+   UInt_t         GetNumJetsRecoil()       const { return mJetsRecoil.size(); }
+   UShort_t       GetNumJetsWithIsoTrack() const { return mJetsWithIsoTrack.size(); }
+   UShort_t       GetNumVertices()         const { return mVertices.size(); }
+   UShort_t       GetNumTracks()           const { return mTracks.size(); }
+   UShort_t       GetNumGoodVertices()     const { return mNumGoodVertices; }
+   UShort_t       GetNumGoodTracks()       const { return mNumGoodTracks; }
+   UShort_t       GetNumBTracks()          const { return mNumBTracks; }
+   UShort_t       GetNumETracks()          const { return mNumETracks; }
+   UShort_t       GetNumIsolatedTracks()   const { return mNumIsolatedTracks; }
+   UShort_t       GetNumCandidateTracks()  const { return mNumCandidateTracks; }
    UInt_t         GetNumTracksWithBCluster();
    TLorentzVector GetJetRecoil()          const { return mP4JetRecoil; }
    TVector3       GetTrackRecoil()        const { return mP3TrackRecoilTow; }
@@ -135,6 +137,7 @@ public:
    bool           HasGoodTrack()          const { return mNumGoodTracks      > 0 ? true : false; }
    bool           HasIsolatedTrack()      const { return mNumIsolatedTracks  > 0 ? true : false; }
    bool           HasCandidateTrack()     const { return mNumCandidateTracks > 0 ? true : false; }
+   bool           HasJetRecoil()          const { return mP4JetRecoil.Mag()  > 0 ? true : false; }
 
    void           Process();
    void           ProcessMC();

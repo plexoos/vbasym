@@ -32,14 +32,13 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
 }
 
 
-const float VecBosEvent::mTrackIsoDeltaR       = 1.0;  // was 0.7
-const float VecBosEvent::mTrackIsoDeltaPhi     = 0.7;
-const float VecBosEvent::mMaxVertexJetDeltaZ   = 1;    // distance between jet and track z coord, cm
-const float VecBosEvent::mMaxTrackJetDeltaZ    = 3;    // distance between jet and track z coord, cm
-const float VecBosEvent::mMinTrackPt           = 20;
-const float VecBosEvent::mMinBTrackPt          = 10;
-const float VecBosEvent::mMinTrackHitFrac      = 0.51;
-const float VecBosEvent::mMinClusterEnergyFrac = 0.80; // was 0.88
+const float VecBosEvent::sMinTrackIsoDeltaR    = 0.7;  // was 0.7
+const float VecBosEvent::sMinTrackIsoDeltaPhi  = 0.7;
+const float VecBosEvent::sMaxVertexJetDeltaZ   = 1;    // distance between jet and track z coord, cm
+const float VecBosEvent::sMaxTrackJetDeltaZ    = 3;    // distance between jet and track z coord, cm
+const float VecBosEvent::sMinBTrackPt          = 10;
+const float VecBosEvent::sMinTrackHitFrac      = 0.51;
+const float VecBosEvent::sMinClusterEnergyFrac = 0.80; // was 0.88
 
 
 VecBosVertex* VecBosEvent::AddVertex(StMuPrimaryVertex &stMuVertex)
@@ -71,7 +70,6 @@ void VecBosEvent::AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex)
    vbTrack->mVertex    = vbVertex;
    vbTrack->mP3AtDca   = TVector3(stMuTrack->p().x(), stMuTrack->p().y(), stMuTrack->p().z());
 
-   //mTracks.push_back(vbTrack);
    mTracks.insert(vbTrack);
 
    if (vbVertex) {
@@ -182,7 +180,7 @@ void VecBosEvent::Process()
 
          if ( track.IsInJet() )
          {
-            //Info("Process()", "Track is a candidate and within jet: %f <= %f. Saving jet...", track.mMinDeltaRToJet, mTrackIsoDeltaR);
+            //Info("Process()", "Track is a candidate and within jet: %f <= %f. Saving jet...", track.mMinDeltaRToJet, sMinTrackIsoDeltaR);
             //utils::PrintTLorentzVector((TLorentzVector&) *track->mJet);
             mJetsWithIsoTrack.insert(track.mJet);
          }
@@ -388,7 +386,7 @@ bool VecBosEvent::IsRecoilJet(VecBosJet *vbJet) const
       VecBosTrack &track = **iTrack;
       Double_t deltaR = vbJet->Vect().DeltaR( track.mP3AtDca );
 
-      if ( track.GetVertexId() == vbJet->GetVertexId() && deltaR > mTrackIsoDeltaR )
+      if ( track.GetVertexId() == vbJet->GetVertexId() && deltaR > sMinTrackIsoDeltaR )
          return true;
    }
 
@@ -403,11 +401,11 @@ bool VecBosEvent::IsRecoilJetWithZVertexCut(VecBosJet *vbJet) const
    {
       Double_t deltaZ = fabs(vbJet->zVertex - (*iTrack)->mVertex->mPosition.Z());
 
-      if (deltaZ > VecBosEvent::mMaxTrackJetDeltaZ) continue;
+      if (deltaZ > sMaxTrackJetDeltaZ) continue;
 
       Double_t deltaR = vbJet->Vect().DeltaR((*iTrack)->mP3AtDca);
 
-      if (deltaR > mTrackIsoDeltaR) {
+      if (deltaR > sMinTrackIsoDeltaR) {
          //Info("IsRecoilJetWithZVertexCut(VecBosJet *vbJet)", "deltaR: %f", deltaR);
          //Info("IsRecoilJetWithZVertexCut(VecBosJet *vbJet)", "deltaZ: %f = |%f - %f|", deltaZ, vbJet->zVertex, (*iTrack)->mVertex->mPosition.Z());
          return true;
@@ -570,7 +568,7 @@ WeveCluster VecBosEvent::SumBTowPatch(int etaBin, int phiBin, int etaWidth, int 
 
 
 /**
- * Returns the  sum of all towers withing mTrackIsoDeltaR around the track
+ * Returns the  sum of all towers withing sMinTrackIsoDeltaR around the track
  * refAxis.
  * flag = 1: only delta phi cut; used for away (out of) cone cut
  * flag = 2: use 2D cut;         used for near cone cut
@@ -593,8 +591,8 @@ TVector3 VecBosEvent::CalcP3InConeBTow(VecBosTrack *vbTrack, UShort_t cone1d2d, 
       TVector3 towerCoord = gBCalTowerCoords[iBTow] - vbTrack->mVertex->mPosition;
       towerCoord.SetMag(energy); // it is 3D momentum in the event ref frame
 
-      if (cone1d2d == 1 && fabs(trackP3.DeltaPhi(towerCoord)) > mTrackIsoDeltaPhi) continue;
-      if (cone1d2d == 2 &&      trackP3.DeltaR(towerCoord)    > mTrackIsoDeltaR)   continue;
+      if (cone1d2d == 1 && fabs(trackP3.DeltaPhi(towerCoord)) > sMinTrackIsoDeltaPhi) continue;
+      if (cone1d2d == 2 &&      trackP3.DeltaR(towerCoord)    > sMinTrackIsoDeltaR)   continue;
 
       // XXX:ds: Another bug? The sum should be vector one
       //totalP3InCone += towerCoord.Perp();
@@ -627,8 +625,8 @@ TVector3 VecBosEvent::CalcP3InConeETow(VecBosTrack *vbTrack, UShort_t cone1d2d, 
          TVector3 towerCoord = gETowCoords[iphi][ieta] - vbTrack->mVertex->mPosition;
          towerCoord.SetMag(energy); // it is 3D momentum in the event ref frame
 
-         if (cone1d2d == 1 && fabs(trackP3.DeltaPhi(towerCoord)) > mTrackIsoDeltaPhi) continue;
-         if (cone1d2d == 2 &&      trackP3.DeltaR(towerCoord)    > mTrackIsoDeltaR)   continue;
+         if (cone1d2d == 1 && fabs(trackP3.DeltaPhi(towerCoord)) > sMinTrackIsoDeltaPhi) continue;
+         if (cone1d2d == 2 &&      trackP3.DeltaR(towerCoord)    > sMinTrackIsoDeltaR)   continue;
 
          // XXX:ds: Another bug? The sum should be vector one
          //ptsum += towerCoord.Perp();
@@ -660,11 +658,11 @@ TVector3 VecBosEvent::CalcP3InConeTpc(VecBosTrack *vbTrack, UShort_t cone1d2d, F
       // Don't count the same track
       //if (&*track == vbTrack) continue;
       // XXX:ds: move this requirement to the track class where appropriate
-      //if (track.GetFitHitFrac() < mMinTrackHitFrac) continue;
+      //if (track.GetFitHitFrac() < sMinTrackHitFrac) continue;
 
-      if (cone1d2d == 1 && fabs(trackP3.DeltaPhi(track.mP3AtDca)) > mTrackIsoDeltaPhi) continue;
+      if (cone1d2d == 1 && fabs(trackP3.DeltaPhi(track.mP3AtDca)) > sMinTrackIsoDeltaPhi) continue;
       if (cone1d2d == 2) {
-         if (trackP3.DeltaR(track.mP3AtDca) > mTrackIsoDeltaR) continue;
+         if (trackP3.DeltaR(track.mP3AtDca) > sMinTrackIsoDeltaR) continue;
          // Count the number of tracks in the cone
          vbTrack->mNumTracksInNearCone++;
       }
@@ -727,20 +725,20 @@ float VecBosEvent::SumTpcCone(int vertID, TVector3 refAxis, int flag, int pointT
 
       float hitFrac = float(stMuTrack->nHitsFit()) / stMuTrack->nHitsPoss();
 
-      if (hitFrac < mMinTrackHitFrac) continue;
+      if (hitFrac < sMinTrackHitFrac) continue;
 
       StThreeVectorF prPvect = stMuTrack->p();
       TVector3 vec3AtDca = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
 
       // printf(" prTrID=%4d  prTrEta=%.3f prTrPhi/deg=%.1f prPT=%.1f  nFitPts=%d\n", stMuTrack->id(),stMuTrack->eta(),stMuTrack->phi()/3.1416*180.,stMuTrack->pt(),stMuTrack->nHitsFit());
-      if (flag == 1 && fabs(refAxis.DeltaPhi(vec3AtDca)) > mVecBosEvent->mTrackIsoDeltaPhi) continue;
-      if (flag == 2 &&      refAxis.DeltaR(vec3AtDca)    > mVecBosEvent->mTrackIsoDeltaR)   continue;
+      if (flag == 1 && fabs(refAxis.DeltaPhi(vec3AtDca)) > mVecBosEvent->sMinTrackIsoDeltaPhi) continue;
+      if (flag == 2 &&      refAxis.DeltaR(vec3AtDca)    > mVecBosEvent->sMinTrackIsoDeltaR)   continue;
 
       float pT = stMuTrack->pt();
 
       // XXX:ds: Another bug? The sum should be vector one
       // separate quench for barrel and endcap candidates
-      if      (pT > mVecBosEvent->mMinBTrackPt && pointTowId > 0) ptSum += mVecBosEvent->mMinBTrackPt;
+      if      (pT > mVecBosEvent->sMinBTrackPt && pointTowId > 0) ptSum += mVecBosEvent->sMinBTrackPt;
       else if (pT > mMinETrackPt && pointTowId < 0)               ptSum += mMinETrackPt;
       else  ptSum += pT;
    }
@@ -809,8 +807,8 @@ void VecBosEvent::clear()
    mP3TrackRecoilTow.SetXYZ(0, 0, 0);
    mP3RecoilFromTracks.SetXYZ(0, 0, 0);
    mP3BalanceFromTracks.SetXYZ(0, 0, 0);
-   mPtKfactor               = 0;
-   mMinVertexDeltaZ         = -1;
+   mPtKfactor       =  0;
+   mMinVertexDeltaZ = -1;
 }
 
 

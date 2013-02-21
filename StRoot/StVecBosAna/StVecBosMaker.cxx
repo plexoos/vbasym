@@ -161,7 +161,7 @@ Int_t StVecBosMaker::Init()
    mGeomSmd = EEmcSmdGeom::instance();
    initGeom();
 
-   wDisaply = new WeventDisplay(this, par_maxDisplEve);
+   mEventDisplay = new WeventDisplay(this, par_maxDisplEve);
 
    if (isMC) { // load vertex reweighting histo
       // TString filename="/star/u/stevens4/wAnalysis/efficXsec/zVertReweight.root";
@@ -216,10 +216,10 @@ Int_t StVecBosMaker::InitRun(int runNo)
    //   "W selection highET>%.1f awayDelPhi<%.1frad  ptBalance>%.1fGeV  %.1f<leptonEta<%.1f ",
    //   mRunNo, coreTitle.Data(), par_l2bwTrgID, isMC,
    //   mMinNumPileupVertices, mCutVertexZ,
-   //   par_nFitPts, par_trackRin,  par_trackRout, mVecBosEvent->mMinBTrackPt,
+   //   par_nFitPts, par_trackRin,  par_trackRout, mVecBosEvent->sMinBTrackPt,
    //   par_kSigPed, par_AdcThres, par_maxADC, mMinBClusterEnergy, mMinBClusterEnergyIsoRatio, par_nearTotEtFrac,
-   //   mVecBosEvent->mMaxTrackClusterDist, mVecBosEvent->mTrackIsoDeltaR,
-   //   par_highET, mVecBosEvent->mTrackIsoDeltaPhi, par_ptBalance, mMinBTrackEta, mMaxBTrackEta
+   //   mVecBosEvent->mMaxTrackClusterDist, mVecBosEvent->sMinTrackIsoDeltaR,
+   //   par_highET, mVecBosEvent->sMinTrackIsoDeltaPhi, par_ptBalance, mMinBTrackEta, mMaxBTrackEta
    //) << endm;
 
    // endcap algo params
@@ -233,8 +233,8 @@ Int_t StVecBosMaker::InitRun(int runNo)
    //   mMinNumPileupVertices, mCutVertexZ,
    //   parE_nFitPts, parE_nHitFrac, parE_trackRin, parE_trackRout, mMinETrackPt,
    //   par_kSigPed, par_AdcThres, par_maxADC, parE_clustET, mMinEClusterEnergyIsoRatio, parE_nearTotEtFrac,
-   //   parE_delR3D, mVecBosEvent->mTrackIsoDeltaR,
-   //   par_highET, mVecBosEvent->mTrackIsoDeltaPhi, parE_ptBalance
+   //   parE_delR3D, mVecBosEvent->sMinTrackIsoDeltaR,
+   //   par_highET, mVecBosEvent->sMinTrackIsoDeltaPhi, parE_ptBalance
    //) << endl;
 
    cout << Form("\n EtowScaleFact=%.2f  BtowScaleFacor=%.2f" , mParETOWScale, mParBTOWScale) << endl;
@@ -272,7 +272,7 @@ Int_t StVecBosMaker::InitRun(int runNo)
          //Run 11 ?? XXX
 
          //Run 12 ??
-         mTpcFilter[iSector-1].setCuts(par_nFitPts, mVecBosEvent->mMinTrackHitFrac, Rin, Rout);
+         mTpcFilter[iSector-1].setCuts(par_nFitPts, mVecBosEvent->sMinTrackHitFrac, Rin, Rout);
          mTpcFilter[iSector-1].init("iSector", iSector, HListTpc, true);
 
          mTpcFilterE[iSector-1].setCuts(parE_nFitPts, parE_nHitFrac, RinE, RoutE);
@@ -429,7 +429,7 @@ Int_t StVecBosMaker::Make()
    // Restart stopwatch
    mStopWatch.Continue();
 
-   mVecBosRootFile->Fill(*mVecBosEvent);
+   //mVecBosRootFile->Fill(*mVecBosEvent);
    mVecBosEvent->SetCpuTimeHistFill( mStopWatch.CpuTime() );
 
    // Write event to tree
@@ -1350,17 +1350,17 @@ void StVecBosMaker::ReadMuDstVerticesTracks()
 
    if (mVecBosEvent->GetNumVertices() <= 0) return;
 
-   if (mVecBosEvent->l2bitET && nVerticesPosRank > 0) {
-      hA[0]->Fill("primVert", 1.);
-      hA[4]->Fill(mVecBosEvent->bx48);
-      hA[5]->Fill(mVecBosEvent->bx7);
-   }
+   //if (mVecBosEvent->l2bitET && nVerticesPosRank > 0) {
+   //   hA[0]->Fill("primVert", 1.);
+   //   hA[4]->Fill(mVecBosEvent->bx48);
+   //   hA[5]->Fill(mVecBosEvent->bx7);
+   //}
 
-   if (mVecBosEvent->l2EbitET) {
-      hE[0]->Fill("primVert", 1.);
-      hE[4]->Fill(mVecBosEvent->bx48);
-      hE[5]->Fill(mVecBosEvent->bx7);
-   }
+   //if (mVecBosEvent->l2EbitET) {
+   //   hE[0]->Fill("primVert", 1.);
+   //   hE[4]->Fill(mVecBosEvent->bx48);
+   //   hE[5]->Fill(mVecBosEvent->bx7);
+   //}
 
    // access L0-HT data
    StMuEvent *stMuEvent = mStMuDstMaker->muDst()->event();
@@ -1565,7 +1565,7 @@ void StVecBosMaker::ReadMuDstTracks(VecBosVertex* vbVertex)
          hE[28]->Fill(primaryTrack->p().mag(), dedx);
       }
 
-      bool barrelTrack = (mVecBosEvent->l2bitET && vbVertex->mRank > 0 && primaryTrack->flag() == 301 && pt > mVecBosEvent->mMinBTrackPt);
+      bool barrelTrack = (mVecBosEvent->l2bitET && vbVertex->mRank > 0 && primaryTrack->flag() == 301 && pt > mVecBosEvent->sMinBTrackPt);
 
       if (barrelTrack) hA[20]->Fill("ptOK", 1.); //good barrel candidate
 
@@ -1828,7 +1828,7 @@ void StVecBosMaker::FindWBoson()
 
          if (track.sPtBalance > par_ptBalance) {
             Info("FindWBoson", "WWWWWWWWWWWWWWWWWWWWW  Barrel");
-            wDisaply->exportEvent( "WB", vertex, track, iv);
+            mEventDisplay->exportEvent( "WB", vertex, track, iv);
             mVecBosEvent->Print();
          }
 
@@ -1940,7 +1940,7 @@ void StVecBosMaker::FindZBoson()
 
          TVector3 jetVec3(stJet->X(), stJet->Y(), stJet->Z());
 
-         if (jetVec3.DeltaR(track.mP3AtDca) < mVecBosEvent->mTrackIsoDeltaR) continue; // skip jets in candidate phi isolation cone
+         if (jetVec3.DeltaR(track.mP3AtDca) < mVecBosEvent->sMinTrackIsoDeltaR) continue; // skip jets in candidate phi isolation cone
 
          // form invariant mass
          float    e1 = track.mCluster2x2.energy;
@@ -1985,7 +1985,7 @@ void StVecBosMaker::CalcPtBalance()
             TVector3 jetVec; //vector for jet momentum
             jetVec.SetPtEtaPhi(jet->Pt(), jet->Eta(), jet->Phi());
 
-            if (jetVec.DeltaR(track.mP3AtDca) > mVecBosEvent->mTrackIsoDeltaR)
+            if (jetVec.DeltaR(track.mP3AtDca) > mVecBosEvent->sMinTrackIsoDeltaR)
                track.ptBalance += jetVec;
          }
 
@@ -2010,7 +2010,7 @@ void StVecBosMaker::CalcPtBalance()
             TVector3 jetVec; //vector for jet momentum
             jetVec.SetPtEtaPhi(jet->Pt(), jet->Eta(), jet->Phi());
 
-            if (jetVec.DeltaR(track.mP3AtDca) > mVecBosEvent->mTrackIsoDeltaR)
+            if (jetVec.DeltaR(track.mP3AtDca) > mVecBosEvent->sMinTrackIsoDeltaR)
                track.ptBalance_noEEMC += jetVec;
          }
 
@@ -2041,24 +2041,24 @@ float StVecBosMaker::SumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, 
       if (prTr->flag() != 301 && pointTowId > 0) continue; // TPC-only regular tracks for barrel candidate
       if (prTr->flag() != 301 && prTr->flag() != 311 && pointTowId < 0) continue; // TPC regular and short EEMC tracks for endcap candidate
       float hitFrac = 1.*prTr->nHitsFit() / prTr->nHitsPoss();
-      if (hitFrac < mVecBosEvent->mMinTrackHitFrac) continue;
+      if (hitFrac < mVecBosEvent->sMinTrackHitFrac) continue;
       StThreeVectorF prPvect = prTr->p();
       TVector3 mP3AtDca = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
       // printf(" prTrID=%4d  prTrEta=%.3f prTrPhi/deg=%.1f prPT=%.1f  nFitPts=%d\n", prTr->id(),prTr->eta(),prTr->phi()/3.1416*180.,prTr->pt(),prTr->nHitsFit());
       if (flag == 1) {
          float deltaPhi = refAxis.DeltaPhi(mP3AtDca);
-         if (fabs(deltaPhi) > mVecBosEvent->mTrackIsoDeltaPhi) continue;
+         if (fabs(deltaPhi) > mVecBosEvent->sMinTrackIsoDeltaPhi) continue;
       }
       if (flag == 2) {
          float deltaR = refAxis.DeltaR(mP3AtDca);
-         if (deltaR > mVecBosEvent->mTrackIsoDeltaR) continue;
+         if (deltaR > mVecBosEvent->sMinTrackIsoDeltaR) continue;
 
       }
       float pT = prTr->pt();
       //    printf(" passed pt=%.1f\n",pT);
 
       //separate quench for barrel and endcap candidates
-      if (pT > mVecBosEvent->mMinBTrackPt && pointTowId > 0) ptSum += mVecBosEvent->mMinBTrackPt;
+      if (pT > mVecBosEvent->sMinBTrackPt && pointTowId > 0) ptSum += mVecBosEvent->sMinBTrackPt;
       else if (pT > mMinETrackPt && pointTowId < 0) ptSum += mMinETrackPt;
       else  ptSum += pT;
    }
@@ -2224,7 +2224,7 @@ void StVecBosMaker::FindWBosonEndcap()
 
          if (T.sPtBalance > parE_ptBalance) { /***************************/
             printf("\n WWWWWWWWWWWWWWWWWWWWW  Endcap \n");
-            wDisaply->exportEvent( "WE", vertex, T, iv);
+            mEventDisplay->exportEvent( "WE", vertex, T, iv);
             mVecBosEvent->Print();
          }/***************************/
 
@@ -2310,7 +2310,7 @@ void StVecBosMaker::AnalyzeESMD()
             const StructEEmcStrip *stripPtr = mGeomSmd->getDca2Strip(iuv, T.mMatchedTower.R, &dca); // find pointed strip
 
             if (!stripPtr) {cout << "No Strip found" << endl; continue;}
-            if (fabs(dca) > 0.5 /*cm*/) {cout << "DCA to big" << endl; continue;}
+            if (fabs(dca) > 0.5) {cout << "DCA to big" << endl; continue;}  // in cm
 
             Float_t dcaGlob; //global extrapolation to smd plane
             const StructEEmcStrip *stripPtrGlob = mGeomSmd->getDca2Strip(iuv, T.mMatchedTower.Rglob, &dcaGlob); // find pointed strip

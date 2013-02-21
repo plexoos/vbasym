@@ -51,6 +51,12 @@ void EventHContainer::BookHists()
    o["hNumJets"] = hist = new TH1I("hNumJets", "; Num. of Jets; Events", 20, 0, 20);
    hist->SetOption("hist GRIDX");
 
+   o["hNumJetsRecoil"] = hist = new TH1I("hNumJetsRecoil", "; Num. of Jets in Recoil; Events", 10, 0, 10);
+   hist->SetOption("hist GRIDX");
+
+   o["hNumJetsWithIsoTrack"] = hist = new TH1I("hNumJetsWithIsoTrack", "; Num. of Jets w/ Iso Track; Events", 5, 0, 5);
+   hist->SetOption("hist GRIDX");
+
    o["hNumVertices"] = hist = new TH1I("hNumVertices", "; Num. of Vertices; Events", 10, 0, 10);
    hist->SetOption("hist GRIDX");
 
@@ -67,6 +73,12 @@ void EventHContainer::BookHists()
    hist->SetOption("hist GRIDX");
 
    o["hNumETracks"] = hist = new TH1I("hNumETracks", "; Num. of Endcap Tracks; Events", 10, 0, 10);
+   hist->SetOption("hist GRIDX");
+
+   o["hNumIsolatedTracks"] = hist = new TH1I("hNumIsolatedTracks", "; Num. of Isolated Tracks; Events", 10, 0, 10);
+   hist->SetOption("hist GRIDX");
+
+   o["hNumCandidateTracks"] = hist = new TH1I("hNumCandidateTracks", "; Num. of Candidate Tracks; Events", 10, 0, 10);
    hist->SetOption("hist GRIDX");
 
    o["hNumTracksWithBCluster"] = hist = new TH1I("hNumTracksWithBCluster", "; Num. of Tracks with Barrel Cluster; Events", 5, 0, 5);
@@ -129,13 +141,17 @@ void EventHContainer::Fill(ProtoEvent &ev)
 
    ((TH1*) o["hRunId"])->Fill(event.runNo);
    ((TH1*) o["hZdcRate"])->Fill(event.zdcRate);
-   ((TH1*) o["hNumJets"])->Fill(event.GetNumStJets());
+   ((TH1*) o["hNumJets"])->Fill(event.GetNumJets());
+   ((TH1*) o["hNumJetsRecoil"])->Fill(event.GetNumJetsRecoil());
+   ((TH1*) o["hNumJetsWithIsoTrack"])->Fill(event.GetNumJetsWithIsoTrack());
    ((TH1*) o["hNumVertices"])->Fill(event.GetNumVertices());
    ((TH1*) o["hNumGoodVertices"])->Fill(event.GetNumGoodVertices());
    ((TH1*) o["hNumTracks"])->Fill(event.GetNumTracks());
    ((TH1*) o["hNumGoodTracks"])->Fill(event.GetNumGoodTracks());
    ((TH1*) o["hNumBTracks"])->Fill(event.GetNumBTracks());
    ((TH1*) o["hNumETracks"])->Fill(event.GetNumETracks());
+   ((TH1*) o["hNumIsolatedTracks"])->Fill(event.GetNumIsolatedTracks());
+   ((TH1*) o["hNumCandidateTracks"])->Fill(event.GetNumCandidateTracks());
    ((TH1*) o["hNumTracksWithBCluster"])->Fill(event.GetNumTracksWithBCluster());
    //((TH1*) o["hNumTracksWithBCluster2"])->Fill(event.GetNumTracksWithBCluster2());
 

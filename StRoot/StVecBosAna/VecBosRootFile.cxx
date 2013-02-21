@@ -64,40 +64,48 @@ void VecBosRootFile::BookHists()
    fHists = new PlotHelper(this);
 
    fHists->d["event"]     = ph = new EventHContainer(new TDirectoryFile("event", "event", "", this));
-   fHistCuts[kCUT_NOCUT].insert(ph);
+   fHistCuts[kCUT_EVENT_NOCUT].insert(ph);
 
-   fHists->d["event_cut"] = ph = new EventHContainer(new TDirectoryFile("event_cut", "event_cut", "", this));
-   fHistCuts[kCUT_CUT].insert(ph);
+   fHists->d["event_has_jetrecoil"]     = ph = new EventHContainer(new TDirectoryFile("event_has_jetrecoil", "event_has_jetrecoil", "", this));
+   fHistCuts[kCUT_EVENT_HAS_JETRECOIL].insert(ph);
 
-   fHists->d["jets"] = ph = new JetHContainer(new TDirectoryFile("jets", "jets", "", this));
-   fHistCuts[kCUT_NOCUT].insert(ph);
+   fHists->d["event_has_candidate"]     = ph = new EventHContainer(new TDirectoryFile("event_has_candidate", "event_has_candidate", "", this));
+   fHistCuts[kCUT_EVENT_HAS_CANDIDATE_TRACK].insert(ph);
 
-   fHists->d["vertices"] = ph = new VertexHContainer(new TDirectoryFile("vertices", "vertices", "", this));
-   fHistCuts[kCUT_NOCUT].insert(ph);
+   fHists->d["event_jets"] = ph = new JetHContainer(new TDirectoryFile("event_jets", "event_jets", "", this));
+   fHistCuts[kCUT_EVENT_NOCUT].insert(ph);
 
-   fHists->d["vertices_good"] = ph = new VertexHContainer(new TDirectoryFile("vertices_good", "vertices_good", "", this));
-   //fHistCuts[kCUT_VERTICES_GOOD].insert(ph);
+   fHists->d["event_jets_has_jetrecoil"] = ph = new JetHContainer(new TDirectoryFile("event_jets_has_jetrecoil", "event_jets_has_jetrecoil", "", this));
+   fHistCuts[kCUT_EVENT_HAS_JETRECOIL].insert(ph);
 
-   fHists->d["tracks"] = ph = new TrackHContainer(new TDirectoryFile("tracks", "tracks", "", this));
-   fHistCuts[kCUT_NOCUT].insert(ph);
+   fHists->d["event_vertices"] = ph = new VertexHContainer(new TDirectoryFile("event_vertices", "event_vertices", "", this));
+   fHistCuts[kCUT_EVENT_NOCUT].insert(ph);
 
-   fHists->d["tracks_candidates"] = ph = new TrackHContainer(new TDirectoryFile("tracks_candidates", "tracks_candidates", "", this));
-   fHistCuts[kCUT_HAS_CANDIDATE_TRACK].insert(ph);
+   fHists->d["event_tracks"] = ph = new TrackHContainer(new TDirectoryFile("event_tracks", "event_tracks", "", this));
+   fHistCuts[kCUT_EVENT_NOCUT].insert(ph);
 
-   fHists->d["tracks_good"] = ph = new TrackHContainer(new TDirectoryFile("tracks_good", "tracks_good", "", this));
-   //fHistCuts[kCUT_TRACKS_GOOD].insert(ph);
+   fHists->d["event_tracks_has_candidate"] = ph = new TrackHContainer(new TDirectoryFile("event_tracks_has_candidate", "event_tracks_has_candidate", "", this));
+   fHistCuts[kCUT_EVENT_HAS_CANDIDATE_TRACK].insert(ph);
 
-   fHists->d["tracks_barrel"] = ph = new TrackHContainer(new TDirectoryFile("tracks_barrel", "tracks_barrel", "", this));
-   //fHistCuts[kCUT_BARREL].insert(ph);
+   //fHists->d["event_mc"] = ph = new MCHContainer(new TDirectoryFile("event_mc", "event_mc", "", this));
+   //fHistCuts[kCUT_EVENT_NOCUT].insert(ph);
 
-   fHists->d["tracks_endcap"] = ph = new TrackHContainer(new TDirectoryFile("tracks_endcap", "tracks_endcap", "", this));
-   //fHistCuts[kCUT_ENDCAP].insert(ph);
+   //fHists->d["event_mc_has_jetrecoil"] = ph = new MCHContainer(new TDirectoryFile("event_mc_has_jetrecoil", "event_mc_has_jetrecoil", "", this));
+   //fHistCuts[kCUT_EVENT_HAS_JETRECOIL].insert(ph);
 
-   fHists->d["mc"] = ph = new MCHContainer(new TDirectoryFile("mc", "mc", "", this));
-   fHistCuts[kCUT_NOCUT].insert(ph);
+   fHists->d["vertex"]           = ph = new VertexHContainer(new TDirectoryFile("vertex", "vertex", "", this));
+   fHists->d["vertex_good"]      = ph = new VertexHContainer(new TDirectoryFile("vertex_good", "vertex_good", "", this));
+   fHists->d["track"]            = ph = new TrackHContainer(new TDirectoryFile("track", "track", "", this));
+   fHists->d["track_candidates"] = ph = new TrackHContainer(new TDirectoryFile("track_candidates", "track_candidates", "", this));
 
-   fHists->d["mc_recoil"] = ph = new MCHContainer(new TDirectoryFile("mc_recoil", "mc_recoil", "", this));
-   fHistCuts[kCUT_HAS_RECOIL].insert(ph);
+   //fHists->d["tracks_good"] = ph = new TrackHContainer(new TDirectoryFile("tracks_good", "tracks_good", "", this));
+   ////fHistCuts[kCUT_TRACKS_GOOD].insert(ph);
+
+   //fHists->d["tracks_barrel"] = ph = new TrackHContainer(new TDirectoryFile("tracks_barrel", "tracks_barrel", "", this));
+   ////fHistCuts[kCUT_BARREL].insert(ph);
+
+   //fHists->d["tracks_endcap"] = ph = new TrackHContainer(new TDirectoryFile("tracks_endcap", "tracks_endcap", "", this));
+   ////fHistCuts[kCUT_ENDCAP].insert(ph);
 
    //fHists->d["kinema"]    = ph = new KinemaHContainer(new TDirectoryFile("kinema", "kinema", "", this));
 
@@ -114,43 +122,57 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
 {
    VecBosEvent& event = (VecBosEvent&) ev;
 
-   Fill(ev, kCUT_NOCUT);
+   Fill(ev, kCUT_EVENT_NOCUT);
 
-   //if ( event.HasRecoil() )
-   //   Fill(ev, kCUT_HAS_RECOIL);
+   if ( event.HasJetRecoil() )
+      Fill(ev, kCUT_EVENT_HAS_JETRECOIL);
 
    if ( event.HasCandidateTrack() )
-      Fill(ev, kCUT_HAS_CANDIDATE_TRACK);
+      Fill(ev, kCUT_EVENT_HAS_CANDIDATE_TRACK);
 
-   // Save only good vertices
+   // Fill vertex histos
    VecBosVertexPtrSetIter iVertex = event.mVertices.begin();
-
    for ( ; iVertex != event.mVertices.end(); ++iVertex)
    {
       VecBosVertex &vertex = **iVertex;
 
+      ((VertexHContainer*) fHists->d["vertex"])->Fill(vertex);
+
       if ( !vertex.IsGood() ) continue;
-      ((VertexHContainer*) fHists->d["vertices_good"])->Fill(vertex);
+
+      ((VertexHContainer*) fHists->d["vertex_good"])->Fill(vertex);
    }
 
-   // Save only good tracks
-   VecBosTrackPtrSetIter iTrack = event.mTracks.begin();
-
-   for ( ; iTrack!=event.mTracks.end(); ++iTrack)
+   // Fill track histos
+   VecBosTrackPtrSetConstIter iTrack = event.mTracks.begin();
+   for ( ; iTrack != event.mTracks.end(); ++iTrack)
    {
-      VecBosTrack &track = **iTrack;
-      if ( !track.IsGood() ) continue;
+      VecBosTrack track = **iTrack;
 
-      ((TrackHContainer*) fHists->d["tracks_good"])->Fill(track);
+      ((TrackHContainer*) fHists->d["track"])->Fill(track);
 
-      if ( track.IsBTrack() ) {
-         ((TrackHContainer*) fHists->d["tracks_barrel"])->Fill(track);
-      }
+      if ( !track.IsCandidate() ) continue;
 
-      if ( track.IsETrack() ) {
-         ((TrackHContainer*) fHists->d["tracks_endcap"])->Fill(track);
-      }
+      ((TrackHContainer*) fHists->d["track_candidates"])->Fill(track);
    }
+
+   //// Save only good tracks
+   //VecBosTrackPtrSetIter iTrack = event.mTracks.begin();
+   //for ( ; iTrack!=event.mTracks.end(); ++iTrack)
+   //{
+   //   VecBosTrack &track = **iTrack;
+   //   if ( !track.IsGood() ) continue;
+
+   //   ((TrackHContainer*) fHists->d["tracks_good"])->Fill(track);
+
+   //   if ( track.IsBTrack() ) {
+   //      ((TrackHContainer*) fHists->d["tracks_barrel"])->Fill(track);
+   //   }
+
+   //   if ( track.IsETrack() ) {
+   //      ((TrackHContainer*) fHists->d["tracks_endcap"])->Fill(track);
+   //   }
+   //}
 }
 
 

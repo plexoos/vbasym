@@ -99,6 +99,8 @@ void MCHContainer::BookHists()
    hist->SetOption("hist GRIDX");
    o["hRecoilPz"]                 = hist = new TH1I("hRecoilPz", "; P^{Recoil}_{z} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
+   o["hRecoilPt"]                 = hist = new TH1I("hRecoilPt", "; P^{Recoil}_{t} [GeV/c]; Events", 100, -160., 160.);
+   hist->SetOption("hist GRIDX");
 
    //recoil in acceptance
    o["hRecInAccEnergy"]           = hist = new TH1I("hRecInAccEenergy", "; Recoil energy [GeV]; Events", 100, 0., 200.);
@@ -108,6 +110,8 @@ void MCHContainer::BookHists()
    o["hRecInAccMomentumY"]        = hist = new TH1I("hRecInAccMomentumY", "; P^{Recoil}_{y} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
    o["hRecInAccMomentumZ"]        = hist = new TH1I("hRecInAccMomentumZ", "; P^{Recoil}_{z} [GeV/c]; Events", 100, -160., 160.);
+   hist->SetOption("hist GRIDX");
+   o["hRecoilInAcceptPt"]               = hist = new TH1I("hRecoilInAcceptPt", "; P^{Recoil}_{t} [GeV/c]; Events", 50, 0., 50.);
    hist->SetOption("hist GRIDX");
 
    //recoil outside of detector acceptance
@@ -119,6 +123,8 @@ void MCHContainer::BookHists()
    hist->SetOption("hist GRIDX");
    o["hRecOutAccMomentumZ"]       = hist = new TH1I("hRecOutAccMomentumZ", "; P^{Recoil}_{z} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
+   o["hRecOutAccPt"]              = hist = new TH1I("hRecOutAccPt", "; P^{Recoil}_{t} [GeV/c]; Events", 50, 0., 50.);
+   hist->SetOption("hist GRIDX");
 
    // recoil from tracks geant variables
    o["hHadRecoilFromTracksPx"]   = hist = new TH1I("hHadRecoilFromTracksPx", "; P_{x}^{Recoil} (geant); Events", 100, -50., 50.);
@@ -128,7 +134,7 @@ void MCHContainer::BookHists()
    o["hHadRecoilFromTracksPt"]   = hist = new TH1I("hHadRecoilFromTracksPt", "; P_{T}^{Recoil} (geant); Events", 100, 0., 50.);
    o["hRecoilCorrelPythia"]      = hist = new TH2I("hRecoilCorrelPythia", "; P_{T}^{Recoil} (geant:pythia); P_{T}^{Recoil}", 100, 0., 50., 100, 0., 50.);
 
-   o["hJetRecoilPtVsWBosonPt"]      = hist = new TH2I("hJetRecoilPtVsWBosonPt", "; W Boson P_{T}; Jet-based Recoil P_{T}", 50, 0., 50., 50, 0., 50.);
+   o["hJetRecoilPtVsWBosonPt"]   = hist = new TH2I("hJetRecoilPtVsWBosonPt", "; W Boson P_{T}; Jet-based Recoil P_{T}", 50, 0., 50., 50, 0., 50.);
    hist->SetOption("colz");
 
    o["hTrackRecoilPtVsWBosonPt"]    = hist = new TH2I("hTrackRecoilPtVsWBosonPt", "; W Boson P_{T}; Track-based Recoil P_{T}", 50, 0., 50., 50, 0., 50.);
@@ -177,16 +183,23 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hRecInAccMomentumX"])->Fill(event.mWEvent->mP4RecoilInAccept.Px());
    ((TH1*) o["hRecInAccMomentumY"])->Fill(event.mWEvent->mP4RecoilInAccept.Py());
    ((TH1*) o["hRecInAccMomentumZ"])->Fill(event.mWEvent->mP4RecoilInAccept.Pz());
+   ((TH1*) o["hRecoilInAcceptPt"])->Fill(event.mWEvent->mP4RecoilInAccept.Pt());
    ((TH1*) o["hRecOutAccEnergy"])->Fill(event.mWEvent->mP4RecoilOutAccept.E());
    ((TH1*) o["hRecOutAccMomentumX"])->Fill(event.mWEvent->mP4RecoilOutAccept.Px());
    ((TH1*) o["hRecOutAccMomentumY"])->Fill(event.mWEvent->mP4RecoilOutAccept.Py());
    ((TH1*) o["hRecOutAccMomentumZ"])->Fill(event.mWEvent->mP4RecoilOutAccept.Pz());
+   ((TH1*) o["hRecOutAccPt"])->Fill(event.mWEvent->mP4RecoilOutAccept.Pt());
 
    // recoil from tracks geant variables
    ((TH1*) o["hHadRecoilFromTracksPx"])->Fill(event.mP3RecoilFromTracks.Px());
    ((TH1*) o["hHadRecoilFromTracksPy"])->Fill(event.mP3RecoilFromTracks.Py());
    ((TH1*) o["hHadRecoilFromTracksPz"])->Fill(event.mP3RecoilFromTracks.Pz());
-   ((TH1*) o["hHadRecoilFromTracksEta"])->Fill(event.mP3RecoilFromTracks.Eta());
+
+   if (event.mP3RecoilFromTracks.Mag() > 0)
+      ((TH1*) o["hHadRecoilFromTracksEta"])->Fill(event.mP3RecoilFromTracks.Eta());
+   else
+      ((TH1*) o["hHadRecoilFromTracksEta"])->Fill(1e5);
+
    ((TH1*) o["hHadRecoilFromTracksPt"])->Fill(event.mP3RecoilFromTracks.Pt());
    ((TH1*) o["hRecoilCorrelPythia"])->Fill(event.mP3RecoilFromTracks.Pt(), event.mWEvent->mP4Recoil.Pt());
 

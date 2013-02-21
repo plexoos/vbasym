@@ -42,7 +42,6 @@ typedef VecBosJetVec::const_iterator   VecBosJetVecConstIter;
 
 inline bool operator==(const VecBosJet& lhs, const VecBosJet& rhs) { return (TLorentzVector) lhs == (TLorentzVector) rhs; }
 inline bool operator!=(const VecBosJet& lhs, const VecBosJet& rhs) { return !operator==(lhs,rhs); }
-//inline bool operator< (const VecBosJet& lhs, const VecBosJet& rhs) { return lhs.mTracks.size() < rhs.mTracks.size(); }
 inline bool operator< (const VecBosJet& lhs, const VecBosJet& rhs) { return lhs.E() < rhs.E(); }
 inline bool operator> (const VecBosJet& lhs, const VecBosJet& rhs) { return  operator< (rhs,lhs); }
 inline bool operator<=(const VecBosJet& lhs, const VecBosJet& rhs) { return !operator> (lhs,rhs); }

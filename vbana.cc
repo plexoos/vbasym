@@ -20,7 +20,8 @@ int main(int argc, char *argv[])
 
    TChain *vbChain = new TChain("t", "A tree with VecBosEvent events");
 
-   vbChain->Add("/star/data05/scratch/fazio/wtree_run11_cut05/MC_list_Wp_2012_*.wtree.root");
+   //vbChain->Add("/star/data05/scratch/fazio/wtree_run11_cut05/MC_list_Wp_2012_*.wtree.root");
+   vbChain->Add("/star/data05/scratch/fazio/wtree_run11_cut15/MC_list_Wp_2012_*.wtree.root");
 
    int numTotalEvents = vbChain->GetEntries();
 

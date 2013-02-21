@@ -57,7 +57,10 @@ void TrackHContainer::BookHists()
    o["hTrackPhi"] = hist = new TH1I("hTrackPhi", "; Track #phi; Num. of Tracks", 60, -M_PI, M_PI);
    hist->SetOption("hist GRIDX GRIDY");
 
-   o["hTrackPhiVsLeptonPhi"] = hist = new TH2I("hTrackPhiVsLeptonPhi", "; Lepton P_{T}; Track P_{T}", 50, -M_PI, M_PI, 50, -M_PI, M_PI);
+   o["hTrackPhiVsLeptonPhi"] = hist = new TH2I("hTrackPhiVsLeptonPhi", "; Lepton #phi; Track #phi", 50, -M_PI, M_PI, 50, -M_PI, M_PI);
+   hist->SetOption("colz");
+
+   o["hTrackPtVsLeptonPt"] = hist = new TH2I("hTrackPtVsLeptonPt", "; Lepton P_{T}; Track P_{T}", 50, 0, 50, 50, 0, 50);
    hist->SetOption("colz");
 
    o["hTrackEtaAtBTow"] = hist = new TH1I("hTrackEtaAtBTow", "; Track #eta at BTOW; Num. of Tracks", 60, -3, 3);
@@ -66,7 +69,10 @@ void TrackHContainer::BookHists()
    o["hTrackPhiAtBTow"] = hist = new TH1I("hTrackPhiAtBTow", "; Track #phi at BTOW; Num. of Tracks", 60, -M_PI, M_PI);
    hist->SetOption("hist GRIDX GRIDY");
 
-   o["hTrackPt"] = hist = new TH1I("hTrackPt", "; Track P_T; Num. of Tracks", 40, 0, 40);
+   o["hTrackPt"] = hist = new TH1I("hTrackPt", "; Track P_T; Num. of Tracks", 70, 0, 70);
+   hist->SetOption("hist GRIDX GRIDY XY");
+
+   o["hTrackEOverP"] = hist = new TH1I("hTrackEOverP", "; E/P; Num. of Tracks", 40, 0, 1.2);
    hist->SetOption("hist GRIDX GRIDY XY");
 
    o["hTrackHitsFit"] = hist = new TH1I("hTrackHitsFit", "; Track Num. of Fit Hits; Num. of Tracks", 50, 0, 50);
@@ -102,6 +108,7 @@ void TrackHContainer::Fill(ProtoEvent &ev)
 
    if (event.mTracksCandidate.size() > 0) {
       ((TH1*) o["hTrackPhiVsLeptonPhi"])->Fill(event.mWEvent->mP4Lepton.Phi(), (*event.mTracksCandidate.begin())->mP3AtDca.Phi());
+      ((TH1*) o["hTrackPtVsLeptonPt"])  ->Fill(event.mWEvent->mP4Lepton.Pt(), (*event.mTracksCandidate.begin())->mP3AtDca.Pt());
    }
 
    VecBosTrackPtrSetIter iTrack = event.mTracks.begin();
@@ -116,15 +123,15 @@ void TrackHContainer::Fill(ProtoEvent &ev)
 /** */
 void TrackHContainer::Fill(VecBosTrack &track)
 {
-   //((TH1*) o["hTrackFlag"])->Fill(track.prMuTrack->flag());
-   ((TH1*) o["hTrackType"])->Fill(track.mType);
+   ((TH1*) o["hTrackFlag"])->Fill(track.prMuTrack->flag());
+   ((TH1*) o["hTrackType"])->Fill(track.mVbType);
    ((TH1*) o["hTrackEta"])->Fill(track.mP3AtDca.Eta());
    ((TH1*) o["hTrackPhi"])->Fill(track.mP3AtDca.Phi());
 
    if (track.IsBTrack()) {
       //printf("", mP3AtBTow);
       //Info("Fill", "XXX");
-      //printf("mType: %x\n", track.mType);
+      //printf("mVbType: %x\n", track.mVbType);
       //track.mP3AtDca.Print();
       //track.mP3AtBTow.Print();
       ((TH1*) o["hTrackEtaAtBTow"])->Fill(track.mCoorAtBTow.Eta());
@@ -132,14 +139,15 @@ void TrackHContainer::Fill(VecBosTrack &track)
    }
 
    ((TH1*) o["hTrackPt"])->Fill(track.mP3AtDca.Pt());
-   //((TH1*) o["hTrackHitsFit"])->Fill(track.prMuTrack->nHitsFit());
-   //((TH1*) o["hTrackHitsPoss"])->Fill(track.prMuTrack->nHitsPoss());
+   ((TH1*) o["hTrackEOverP"])->Fill(track.mCluster2x2.energy/track.mP3AtDca.Mag());
+   ((TH1*) o["hTrackHitsFit"])->Fill(track.prMuTrack->nHitsFit());
+   ((TH1*) o["hTrackHitsPoss"])->Fill(track.prMuTrack->nHitsPoss());
    ((TH1*) o["hTrackBTowerId"])->Fill(track.mMatchedTower.id);
    ((TH1*) o["hTrackBClusterEnergy2x2"])->Fill(track.mCluster2x2.ET);
    ((TH1*) o["hTrackBClusterEnergy4x4"])->Fill(track.mCluster4x4.ET);
    ((TH1*) o["hTrackBClusterEnergyIsoRatio"])->Fill(track.mCluster2x2.ET/track.mCluster4x4.ET);
    ((TH1*) o["hTrackDistanceToCluster"])->Fill(track.CalcDistanceToCluster().Mag());
-   //((TH1*) o["hChargePrimaryTrack"])->Fill(track.prMuTrack->charge());
+   ((TH1*) o["hChargePrimaryTrack"])->Fill(track.prMuTrack->charge());
    ((TH1*) o["hMinDeltaRToJet"])->Fill(track.mMinDeltaRToJet);
 
    //printf("hasMatchedCluster: %d\n", track.isMatch2Cl);

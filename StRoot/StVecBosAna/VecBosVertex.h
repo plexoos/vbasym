@@ -55,21 +55,23 @@ typedef VecBosVertexVec::const_iterator   VecBosVertexVecConstIter;
 
 inline bool operator==(const VecBosVertex& lhs, const VecBosVertex& rhs) { return (TVector3) lhs.mPosition == (TVector3) lhs.mPosition; }
 inline bool operator!=(const VecBosVertex& lhs, const VecBosVertex& rhs) { return !operator==(lhs,rhs); }
-//inline bool operator< (const VecBosVertex& lhs, const VecBosVertex& rhs) { return lhs.mTracks.size() < rhs.mTracks.size(); }
 inline bool operator< (const VecBosVertex& lhs, const VecBosVertex& rhs) { return lhs.mRank < rhs.mRank; }
 inline bool operator> (const VecBosVertex& lhs, const VecBosVertex& rhs) { return  operator< (rhs,lhs); }
 inline bool operator<=(const VecBosVertex& lhs, const VecBosVertex& rhs) { return !operator> (lhs,rhs); }
 inline bool operator>=(const VecBosVertex& lhs, const VecBosVertex& rhs) { return !operator< (lhs,rhs); }
+
 
 struct CompareVecBosVertex
 {
    bool operator()(const VecBosVertex& lhs, const VecBosVertex& rhs) const { return lhs > rhs; }
 };
 
+
 struct CompareVecBosVertexPtr
 {
    bool operator()(const VecBosVertex* lhs, const VecBosVertex* rhs) const { return (*lhs) > (*rhs); }
 };
+
 
 typedef std::set<VecBosVertex, CompareVecBosVertex>     VecBosVertexSet;
 typedef VecBosVertexSet::iterator                       VecBosVertexSetIter;
