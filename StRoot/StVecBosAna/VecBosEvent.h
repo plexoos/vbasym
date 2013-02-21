@@ -93,7 +93,8 @@ public:
    Double_t            mPtBalanceFromTracks;
    Double_t            mBalanceDeltaPhiFromTracks; 
    Double_t            mBalanceDeltaPhiFromTracks2; 
-   Double_t            mPtBalanceCosPhiFromTracks; 
+   Double_t            mPtBalanceCosPhiFromTracks;  
+   Double_t            mPtBalanceCosPhiFromTracks2; 
    Double_t            mHadRecoilFromTracksEta;
    Double_t            mHadRecoilFromTracksPt;
 

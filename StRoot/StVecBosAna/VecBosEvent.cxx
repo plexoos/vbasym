@@ -198,7 +198,8 @@ void VecBosEvent::Process()
    if  (mTracksCandidate.size() == 1)
    {
       mP3BalanceFromTracks2       = mP3RecoilFromTracks + (*mTracksCandidate.begin())->mP3AtDca;
-      mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3RecoilFromTracks);
+      mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3BalanceFromTracks);
+      mPtBalanceCosPhiFromTracks2 = mP3BalanceFromTracks2.Pt()*cos(mBalanceDeltaPhiFromTracks2) ;
    }
 }
 
