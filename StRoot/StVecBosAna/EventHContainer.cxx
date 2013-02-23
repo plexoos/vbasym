@@ -91,8 +91,8 @@ void EventHContainer::BookHists()
    o["hTrackRecoilPt"]             = hist = new TH1I("hTrackRecoilPt", "Recoil from Tracks: TPC+TOW; Track-based Recoil P_{T}; Events;", 50, 0, 50);
    o["hTrackRecoilTpcPt"]          = hist = new TH1I("hTrackRecoilTpcPt", "Recoil from Tracks: TPC only; Track-based Recoil P_{T}; Events", 50, 0, 50);
 
-   o["hRecoilFromTracks"]          = hist = new TH1F("hRecoilFromTracks", "Recoil from tracks; P_{T};", 40, 0, 45);
-   o["hPtBalanceFromTracks"]       = hist = new TH1F("hPtBalanceCosPhiFromTracks", "P_{T}-balance from tracks; P_{T};", 40, 0, 60);
+   o["hPtRecoilFromTracks"]          = hist = new TH1F("hPtRecoilFromTracks", "Recoil from tracks; P_{T};", 40, 0, 45);
+   o["hPtBalanceFromTracks"]       = hist = new TH1F("hPtBalanceFromTracks", "P_{T}-balance from tracks; P_{T};", 40, 0, 60);
    o["hPtBalanceCosPhiFromTracks"] = hist = new TH1F("hPtBalanceCosPhiFromTracks", "P_{T}-balance cos(#phi); P_{T};", 40, -100, 100);
    o["hBalanceDeltaPhiFromTracks"] = hist = new TH1F("hBalanceDeltaPhiFromTracks", "; #Delta #phi;", 40, -TMath::Pi(), TMath::Pi());
 
@@ -159,7 +159,7 @@ void EventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hTrackRecoilPt"])->Fill(event.GetTrackRecoil().Pt());
    ((TH1*) o["hTrackRecoilTpcPt"])->Fill(event.mP3TrackRecoilTpc.Pt());
 
-   ((TH1*) o["hRecoilFromTracks"])->Fill(event.mP3RecoilFromTracks.Pt());
+   ((TH1*) o["hPtRecoilFromTracks"])->Fill(event.mP3RecoilFromTracks.Pt());
    ((TH1*) o["hPtBalanceFromTracks"])->Fill(event.mP3BalanceFromTracks2.Pt());
    ((TH1*) o["hPtBalanceCosPhiFromTracks"])->Fill(event.mPtBalanceCosPhiFromTracks2);
    ((TH1*) o["hBalanceDeltaPhiFromTracks"])->Fill(event.mBalanceDeltaPhiFromTracks2);

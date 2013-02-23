@@ -16,6 +16,7 @@ enum ECut {kCUT_UNKNOWN,  kCUT_EVENT_NOCUT,
            kCUT_BARREL, kCUT_ENDCAP, kCUT_CUT,
            kCUT_EVENT_HAS_CANDIDATE_TRACK,
            kCUT_EVENT_HAS_JETRECOIL,
+           kCUT_EVENT_HAS_TRACKRECOIL,
            kCUT_ELERACK};
 
 typedef std::map<ECut, std::set<PlotHelper*> >   Cut2PlotHelperMap;

@@ -69,6 +69,9 @@ void VecBosRootFile::BookHists()
    fHists->d["event_has_jetrecoil"]     = ph = new EventHContainer(new TDirectoryFile("event_has_jetrecoil", "event_has_jetrecoil", "", this));
    fHistCuts[kCUT_EVENT_HAS_JETRECOIL].insert(ph);
 
+   fHists->d["event_has_trackrecoil"]     = ph = new EventHContainer(new TDirectoryFile("event_has_trackrecoil", "event_has_trackrecoil", "", this));
+   fHistCuts[kCUT_EVENT_HAS_TRACKRECOIL].insert(ph);
+
    fHists->d["event_has_candidate"]     = ph = new EventHContainer(new TDirectoryFile("event_has_candidate", "event_has_candidate", "", this));
    fHistCuts[kCUT_EVENT_HAS_CANDIDATE_TRACK].insert(ph);
 
@@ -126,6 +129,9 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
 
    if ( event.HasJetRecoil() )
       Fill(ev, kCUT_EVENT_HAS_JETRECOIL);
+
+   if ( event.mP3RecoilFromTracks.Mag() > 0)
+      Fill(ev, kCUT_EVENT_HAS_TRACKRECOIL);
 
    if ( event.HasCandidateTrack() )
       Fill(ev, kCUT_EVENT_HAS_CANDIDATE_TRACK);

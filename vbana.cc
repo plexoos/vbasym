@@ -15,14 +15,13 @@ int main(int argc, char *argv[])
 {
    setbuf(stdout, NULL);
 
-   //Int_t maxEventsUser = -1;
-   Int_t maxEventsUser = 10000;
+   // Int_t maxEventsUser = -1;
+   Int_t maxEventsUser = 50000;
 
    TChain *vbChain = new TChain("t", "A tree with VecBosEvent events");
 
-<<<<<<< vbana.cc
-   // vbChain->Add("/star/data05/scratch/fazio/wtree_run11_cut05/MC_list_Wp_2012_*.wtree.root");
-   vbChain->Add("/star/data05/scratch/fazio/wtree_run11_cut05/R*.wtree.root");
+   // vbChain->Add("/star/data05/scratch/fazio/wtree_run11_cut35/MC_list_Wp_2012_*.wtree.root");
+   vbChain->Add("/star/data05/scratch/fazio/wtree_run11_cut35/R*.wtree.root");
 
    int numTotalEvents = vbChain->GetEntries();
 
@@ -32,7 +31,7 @@ int main(int argc, char *argv[])
 
    numTotalEvents = (maxEventsUser > 0 && maxEventsUser < numTotalEvents) ? maxEventsUser : numTotalEvents;
 
-   string histFileName = "vbana.root";
+   string histFileName = "vbana_cut35_data.root";
 
    Info("main", "numTotalEvents: %d", numTotalEvents);
    Info("main", "histFileName:   %s", histFileName.c_str());
