@@ -16,6 +16,7 @@
 #include "VecBosTrack.h"
 #include "VecBosVertex.h"
 
+#include "utils/utils.h"
 
 ClassImp(VecBosRootFile)
 
@@ -135,9 +136,16 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
 
    Fill(ev, kCUT_EVENT_NOCUT);
 
-   if ( event->HasJetRecoil() )
+   if ( event->HasJetRecoil() ) {
       Fill(ev, kCUT_EVENT_HAS_JETRECOIL);
       //((EventHContainer*) fHists->d["event_has_jetrecoil"])->Fill(ev);
+
+      if (event->GetNumJetsRecoil() == 0) {
+         Info("Fill", "RECOIL: %d", event->GetNumJetsRecoil());
+         utils::PrintTLorentzVector(event->mP4JetRecoil);
+         exit(-1);
+      }
+   }
 
    if ( event->mP3RecoilFromTracks.Mag() > 0)
       Fill(ev, kCUT_EVENT_HAS_TRACKRECOIL);

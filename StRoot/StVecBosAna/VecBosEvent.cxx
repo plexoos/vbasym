@@ -32,7 +32,7 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
 }
 
 
-const float VecBosEvent::sMinTrackIsoDeltaR    = 1.0;  // was 0.7
+const float VecBosEvent::sMinTrackIsoDeltaR    = 0.7;  // was 0.7
 const float VecBosEvent::sMinTrackIsoDeltaPhi  = 0.7;
 const float VecBosEvent::sMaxVertexJetDeltaZ   = 1;    // distance between jet and track z coord, cm
 const float VecBosEvent::sMaxTrackJetDeltaZ    = 3;    // distance between jet and track z coord, cm

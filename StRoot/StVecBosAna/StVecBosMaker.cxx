@@ -478,7 +478,7 @@ Int_t StVecBosMaker::Make()
    mNumAcceptedEvents++;
 
    // Add info to the event
-   CalcPtBalance();
+   //CalcPtBalance();
 
    // endcap specific analysis
    //if (hasMatchedTrack2ECluster) {

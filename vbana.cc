@@ -4,6 +4,8 @@
 #include "TChain.h"
 #include "TObject.h"
 #include "TIterator.h"
+#include "TROOT.h"
+#include "TStreamerInfo.h"
 
 #include "StRoot/StVecBosAna/VecBosEvent.h"
 #include "StRoot/StVecBosAna/VecBosRootFile.h"
@@ -15,22 +17,25 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+   gROOT->Macro("~/rootmacros/styles/style_masym.C");
+
    TStopwatch stopwatch;
 
    setbuf(stdout, NULL);
 
-   Int_t  nMaxUserEvents = -1;
+   //Int_t  nMaxUserEvents = -1;
    //Int_t  nMaxUserEvents = 10;
-   //Int_t  nMaxUserEvents = 5000;
-   //Bool_t isMc           = kFALSE;
-   Bool_t isMc           = kTRUE;
-   //string histFileName   = "vbana_cut15_data.root";
-   string histFileName   = "vbana_cut15_mc_5k.root";
-	//string filelist       = "./runlists/run11_wtree_cut15";
-	//string filelist       = "./runlists/run11_all_00";
-	//string filelist       = "./runlists/run11_wtree_cut15_test";
+   //Int_t  nMaxUserEvents = 390000;
+   Int_t  nMaxUserEvents = 100000;
+   Bool_t isMc           = kFALSE;
+   //Bool_t isMc           = kTRUE;
+   string histFileName   = "vbana_cut15_data_100k.root";
+   //string histFileName   = "vbana_cut35_data_100k.root";
+   //string histFileName   = "vbana_cut15_mc.root";
+   //string histFileName   = "vbana_cut35_mc.root";
 	//string filelist       = "./runlists/test";
-	string filelist       = "./runlists/MC_list_Wp_2012";
+	string filelist       = "./runlists/run11_all_goodsofar";
+	//string filelist       = "./runlists/MC_list_W_2012";
 
    Info("main", "nMaxUserEvents: %d", nMaxUserEvents);
    Info("main", "histFileName:   %s", histFileName.c_str());
@@ -49,12 +54,22 @@ int main(int argc, char *argv[])
       string fName    = string(((TObjString*) o)->GetName());
       //string fileName = "./R" + fName + ".wtree.root";
       string fileName = "/star/data05/scratch/fazio/wtree_run11_cut15/";
+      //string fileName = "/star/data05/scratch/fazio/wtree_run11_cut35/";
       fileName += (!isMc?"R":"") + fName + ".wtree.root";
 
       TFile *f = new TFile(fileName.c_str(), "READ");
 
       if (!f) { Error("main", "file not found. Skipping..."); delete f; continue; }
       if ( f->IsZombie() ) { Error("main", "file is zombie %s. Skipping...", fileName.c_str()); f->Close(); delete f; continue; }
+
+      TList *streamerList = f->GetStreamerInfoList();
+      TStreamerInfo *streamerInfo = (TStreamerInfo*) streamerList->FindObject("VecBosTrack"); // this is actually class name
+      //Int_t ver = streamerInfo->CompareContent();
+
+      //if (ver != 1) {
+      //   Error("main", "Wrong versio of VecBosTrack: %d. Skipping...", ver); f->Close(); delete f; 
+      //   continue;
+      //}
 
       cout << endl;
       Info("main", "Found file: %s", fileName.c_str());
@@ -107,14 +122,8 @@ int main(int argc, char *argv[])
 
    delete vecBosEvent;
 
-   //TChain *vbChain = new TChain("t", "A tree with VecBosEvent events");
-   //vbChain->Add("/star/data05/scratch/fazio/wtree_run11_cut05/MC_list_*.wtree.root");
-   //vbChain->Add("/star/data05/scratch/fazio/wtree_run11_cut05/R*.wtree.root");
-   //vbChain->Add("/star/data05/scratch/fazio/wtree_run11_cut15/MC_list_*.wtree.root");
-   //vbChain->Add("/star/data05/scratch/fazio/wtree_run11_cut15/R*.wtree.root");
-   //vbChain->Add("/star/data05/scratch/fazio/wtree_run11_cut35/MC_list_*.wtree.root");
-   //vbChain->Add("/star/data05/scratch/fazio/wtree_run11_cut35/R*.wtree.root");
-
+   string outDir = "../vbasym_results/" + histFileName;
+   vecBosRootFile.SaveAs((string) "^.*$", outDir);
    vecBosRootFile.Print();
    vecBosRootFile.Close();
 

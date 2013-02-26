@@ -208,8 +208,8 @@ void VecBosTrack::print(int opt) const
    //Info("print(int opt)", "");
    //Info("Print()", "this: %x", this);
    Info("Print", "mP3AtDca:");
-   Info("Print", "mVertexId: %2d", mVertexId);
    mP3AtDca.Print();
+   Info("Print", "mVertexId: %2d", mVertexId);
 
    //if (!prMuTrack) { printf("prMuTrack is NULL pointer???\n"); return; }
 

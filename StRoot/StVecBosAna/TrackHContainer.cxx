@@ -63,10 +63,13 @@ void TrackHContainer::BookHists()
    o["hTrackPhiAtBTow"] = hist = new TH1I("hTrackPhiAtBTow", "; Track #phi at BTOW; Num. of Tracks", 60, -M_PI, M_PI);
    hist->SetOption("hist GRIDX GRIDY");
 
-   o["hTrackPt"] = hist = new TH1I("hTrackPt", "; Track P_T; Num. of Tracks", 70, 0, 70);
+   o["hTrackPt"] = hist = new TH1I("hTrackPt", "; Track P_T; Num. of Tracks", 80, 0, 80);
    hist->SetOption("hist GRIDX GRIDY XY");
 
-   o["hTrackEOverP"] = hist = new TH1I("hTrackEOverP", "; E/P; Num. of Tracks", 50, 0, 1.5);
+   o["hTrackCluster2x2E"] = hist = new TH1I("hTrackCluster2x2E", "; Track Cluster E; Num. of Tracks", 80, 0, 80);
+   hist->SetOption("hist GRIDX GRIDY XY");
+
+   o["hTrackEOverP"] = hist = new TH1I("hTrackEOverP", "; E/P; Num. of Tracks", 50, 0, 2);
    hist->SetOption("hist GRIDX GRIDY XY");
 
    o["hTrackHitsFit"] = hist = new TH1I("hTrackHitsFit", "; Track Num. of Fit Hits; Num. of Tracks", 50, 0, 50);
@@ -92,6 +95,9 @@ void TrackHContainer::BookHists()
 
    o["hTrackBClusterEnergyIsoRatio"] = hist = new TH1I("hTrackBClusterEnergyIsoRatio", "; Barrel Cluster Energy Iso Ratio; Num. of Tracks", 55, 0, 1.1);
    hist->SetOption("hist GRIDX GRIDY");
+
+   o["hTrackClusterEnergyFrac"] = hist = new TH1I("hTrackClusterEnergyFrac", "; Isolation, Cluster Energy Frac.; Num. of Tracks", 55, 0, 1.1);
+   hist->SetOption("hist GRIDX GRIDY XY");
 
    o["hChargePrimaryTrack"] = hist = new TH1I("hChargePrimaryTrack", "; Charge of the primary track; Num. of Tracks", 10, -2, 2);
    o["hTrackDistanceToCluster"] = hist = new TH1I("hTrackDistanceToCluster", "; Distance(Track-Cluster), cm; Num. of Tracks", 50, 0, 50);
@@ -134,6 +140,7 @@ void TrackHContainer::Fill(VecBosTrack &track)
    }
 
    ((TH1*) o["hTrackPt"])->Fill(track.mP3AtDca.Pt());
+   ((TH1*) o["hTrackCluster2x2E"])->Fill(track.mCluster2x2.energy);
    ((TH1*) o["hTrackEOverP"])->Fill(track.mCluster2x2.energy/track.mP3AtDca.Mag());
    ((TH1*) o["hTrackHitsFit"])->Fill(track.prMuTrack->nHitsFit());
    ((TH1*) o["hTrackHitsPoss"])->Fill(track.prMuTrack->nHitsPoss());
@@ -143,6 +150,7 @@ void TrackHContainer::Fill(VecBosTrack &track)
    ((TH1*) o["hTrackCluster4x4E"])->Fill(track.mCluster4x4.energy);
    ((TH1*) o["hTrackCluster4x4Et"])->Fill(track.mCluster4x4.ET);
    ((TH1*) o["hTrackBClusterEnergyIsoRatio"])->Fill(track.mCluster2x2.ET/track.mCluster4x4.ET);
+   ((TH1*) o["hTrackClusterEnergyFrac"])->Fill(track.GetClusterEnergyFrac());
    ((TH1*) o["hTrackDistanceToCluster"])->Fill(track.CalcDistanceToCluster().Mag());
    ((TH1*) o["hChargePrimaryTrack"])->Fill(track.prMuTrack->charge());
    ((TH1*) o["hMinDeltaRToJet"])->Fill(track.mMinDeltaRToJet);
