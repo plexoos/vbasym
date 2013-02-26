@@ -32,19 +32,22 @@ public:
    float               mRankLog;
    int                 nEEMCMatch;   // # of matched endcap towers
    TVector3            mPosition;
-   VecBosTrackPtrSet   mTracks;      // these tracks are owned by the event
+   VecBosTrackPtrSet   mTracks;      //! these tracks are owned by the event
    VecBosTrackVec      eleTrack;     //!
    vector<StMuTrack*>  prTrList;     //!
 
    VecBosVertex();
    VecBosVertex(StMuPrimaryVertex &stMuVertex);
-   void SetPosition(const StThreeVectorF &vec);
-   bool IsGood() const { return (mType & kGOOD) == kGOOD ? true : false; }
-   void Process();
-   void clear();
+   ~VecBosVertex();
+
+   Short_t  GetId() const { return mId; }
+   void     SetPosition(const StThreeVectorF &vec);
+   bool     IsGood() const { return (mType & kGOOD) == kGOOD ? true : false; }
+   void     Process();
+   void     clear();
    virtual void Print(const Option_t* opt="") const;
 
-   ClassDef(VecBosVertex, 1);
+   ClassDef(VecBosVertex, 2);
 };
 
 

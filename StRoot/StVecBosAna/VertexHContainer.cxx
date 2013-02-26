@@ -51,13 +51,13 @@ void VertexHContainer::BookHists()
    o["hVertexRankLog"] = hist = new TH1I("hVertexRankLog", "; Vertex LogRank; Num. of Vertices", 60, -30, 30);
    hist->SetOption("hist GRIDX GRIDY XY");
 
-   o["hVertexXPosition"] = hist = new TH1I("hVertexXPosition", "; X Position, cm; Num. of Vertices", 50, -1, 1);
+   o["hVertexPositionX"] = hist = new TH1I("hVertexPositionX", "; X Position, cm; Num. of Vertices", 50, -1, 1);
    hist->SetOption("hist GRIDX GRIDY XY");
 
-   o["hVertexYPosition"] = hist = new TH1I("hVertexYPosition", "; Y Position, cm; Num. of Vertices", 50, -1, 1);
+   o["hVertexPositionY"] = hist = new TH1I("hVertexPositionY", "; Y Position, cm; Num. of Vertices", 50, -0.4, 0.4);
    hist->SetOption("hist GRIDX GRIDY XY");
 
-   o["hVertexZPosition"] = hist = new TH1I("hVertexZPosition", "; Z Position, cm; Num. of Vertices", 50, -200, 200);
+   o["hVertexPositionZ"] = hist = new TH1I("hVertexPositionZ", "; Z Position, cm; Num. of Vertices", 50, -200, 200);
    hist->SetOption("hist GRIDX GRIDY XY");
 }
 
@@ -82,9 +82,9 @@ void VertexHContainer::Fill(VecBosVertex &vertex)
    ((TH1*) o["hVertexId"])->Fill(vertex.mId);
    ((TH1*) o["hVertexRank"])->Fill(vertex.mRank);
    ((TH1*) o["hVertexRankLog"])->Fill(vertex.mRankLog);
-   ((TH1*) o["hVertexXPosition"])->Fill(vertex.mPosition.x());
-   ((TH1*) o["hVertexYPosition"])->Fill(vertex.mPosition.y());
-   ((TH1*) o["hVertexZPosition"])->Fill(vertex.mPosition.z());
+   ((TH1*) o["hVertexPositionX"])->Fill(vertex.mPosition.x());
+   ((TH1*) o["hVertexPositionY"])->Fill(vertex.mPosition.y());
+   ((TH1*) o["hVertexPositionZ"])->Fill(vertex.mPosition.z());
 }
 
 

@@ -4,6 +4,7 @@
 #include "TVector3.h"
 #include "TH1.h"
 #include "TLorentzVector.h"
+#include "TBuffer.h"
 
 #include "StMuDSTMaker/COMMON/StMuDst.h"
 #include "StMuDSTMaker/COMMON/StMuTrack.h"
@@ -73,12 +74,12 @@ public:
    WeveETOW            etow;               //!
    WeveEPRS            eprs;               //!
    WeveESMD            esmd;               //!
-   VecBosJetPtrSet     mJets;              // owns jets
-   VecBosJetPtrSet     mJetsRecoil;        //
-   VecBosJetPtrSet     mJetsWithIsoTrack;  //
-   VecBosVertexPtrSet  mVertices;
-   VecBosTrackPtrSet   mTracks;            // owns tracks
-   VecBosTrackPtrSet   mTracksCandidate;   //
+   VecBosJetPtrSet     mJets;              // jet owner
+   VecBosJetPtrSet     mJetsRecoil;        //!
+   VecBosJetPtrSet     mJetsWithIsoTrack;  //!
+   VecBosVertexPtrSet  mVertices;          //
+   VecBosTrackPtrSet   mTracks;            // track owner
+   VecBosTrackPtrSet   mTracksCandidate;   //!
    WEvent             *mWEvent;
    TLorentzVector      mP4JetTotal;
    TLorentzVector      mP4JetFirst;
@@ -107,6 +108,7 @@ public:
    static const float  sMinClusterEnergyFrac; //!
 
    VecBosEvent();
+   ~VecBosEvent();
 
    void           SetStMuDst(StMuDst *stMuDst) { mStMuDst = stMuDst; }
    VecBosVertex  *AddVertex(StMuPrimaryVertex &stMuVertex);
@@ -161,7 +163,13 @@ private:
    void           CalcRecoilFromTracks();
    void           CalcRecoilFromTracks2();
 
-   ClassDef(VecBosEvent, 2);
+   ClassDef(VecBosEvent, 3);
 };
+
+
+TBuffer &operator>>(TBuffer &buf, VecBosEvent *&vbEvent);
+TBuffer &operator<<(TBuffer &buf, VecBosEvent *&vbEvent);
+TBuffer &operator>>(TBuffer &buf, VecBosEvent &vbEvent);
+TBuffer &operator<<(TBuffer &buf, VecBosEvent &vbEvent);
 
 #endif

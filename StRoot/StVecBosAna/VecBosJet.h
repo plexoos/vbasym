@@ -24,6 +24,7 @@ public:
 
    VecBosJet();
    VecBosJet(StJet &stMuVertex);
+   ~VecBosJet();
   
    Short_t  GetVertexId() const { return mVertexId; }
    void     SetVertexId(Short_t vId) { mVertexId = vId; }

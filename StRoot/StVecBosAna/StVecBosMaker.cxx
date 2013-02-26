@@ -180,7 +180,7 @@ Int_t StVecBosMaker::Init()
 
       mWtree = new TTree("t", "mWtree");
       mVecBosEvent = new VecBosEvent();
-      mWtree->Branch("e", "VecBosEvent", &mVecBosEvent);
+      mWtree->Branch("e", "VecBosEvent", &mVecBosEvent, 128000, 0); // splitlevel=0. very important for custom streamers
    }
 
    assert(HList);
@@ -314,7 +314,7 @@ Int_t StVecBosMaker::InitRun(int runNo)
 Int_t StVecBosMaker::Finish()
 {
    if (mStMuDstMaker) {
-      LOG_INFO << endl << "Output tree file " << mTreeName << endl << endl;
+      cout << endl << "Output tree file " << mTreeName << endl << endl;
       mTreeFile->Write();
       mTreeFile->Close();
 

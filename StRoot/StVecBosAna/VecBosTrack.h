@@ -41,7 +41,7 @@ public:
    Bool_t                  isMatch2Cl;         // result of cuts
    WevePointTower          mMatchedTower;
    const StMuTrack        *glMuTrack;          //!
-   const StMuTrack        *prMuTrack;          //
+   StMuTrack              *prMuTrack;          //
    StPhysicalHelixD        mHelix;             //!
    const VecBosVertex     *mVertex;            //! pointer to mother vertex
    Short_t                 mVertexId;          // mId of the mother vertex
@@ -89,8 +89,8 @@ public:
    float                   esmdE[mxEsmdPlane]; //!
    int                     esmdNhit[mxEsmdPlane]; //!
    float                   esmdShowerCentroid[mxEsmdPlane]; //!
-   float                   esmdShowerWidth[mxEsmdPlane]; //!
-   TVector3                esmdXPcentroid; //!
+   float                   esmdShowerWidth[mxEsmdPlane];    //!
+   TVector3                esmdXPcentroid;                  //!
 
    static const float      sMaxTrackClusterDist;            //! cm, dist between projected track and center of cluster
    static const float      sMinPt;                          //!
@@ -98,6 +98,7 @@ public:
    static const float      sMinCandidateTrackClusterE;      //!
 
    VecBosTrack();
+   ~VecBosTrack();
 
    bool        IsGood()       const { return (mVbType & kGOOD)   == kGOOD   ? true : false; }
    bool        IsBTrack()     const { return (mVbType & kBARREL) == kBARREL ? true : false; }

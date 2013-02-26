@@ -17,11 +17,22 @@ const float VecBosTrack::sMaxEnergyInOppsCone       = 40; // was 30 GeV
 const float VecBosTrack::sMinCandidateTrackClusterE = 20;
 
 
-VecBosTrack::VecBosTrack() : TObject(), mEvent(0), mVbType(kUNKNOWN), mHelix(),
-   isMatch2Cl(false), mMatchedTower(),
-   mVertex(0), mVertexId(-1), mJet(0),
-   mCluster2x2(), mCluster4x4(),
-   mP3AtDca(), mCoorAtBTow(),
+VecBosTrack::VecBosTrack() : TObject(),
+   mEvent(0),
+   mVbType(kUNKNOWN),
+   isMatch2Cl(false),
+   mMatchedTower(),
+   glMuTrack(0),
+   prMuTrack(0),
+   mHelix(),
+   mVertex(0),
+   mVertexId(-1),
+   mJet(0),
+   mCluster2x2(),
+   mCluster4x4(),
+   mP3AtDca(),
+   mP3AtBTow(),
+   mCoorAtBTow(),
    mP3InNearCone(), mP3InNearConeTow(), mP3InNearConeBTow(), mP3InNearConeETow(), mP3InNearConeNoETow(), mP3InNearConeTpc(),
    mP3InOppsCone(), mP3InOppsConeTow(), mP3InOppsConeBTow(), mP3InOppsConeETow(), mP3InOppsConeNoETow(), mP3InOppsConeTpc(),
    smallNearTpcPT  (0),
@@ -32,15 +43,28 @@ VecBosTrack::VecBosTrack() : TObject(), mEvent(0), mVbType(kUNKNOWN), mHelix(),
    awayTotET       (0),
    awayTotET_noEEMC(0),
    mNumTracksInNearCone(0),
-   hadronicRecoil(), ptBalance(), ptBalance_noEEMC(), sPtBalance(0), sPtBalance_noEEMC(0),
+   hadronicRecoil(),
+   ptBalance(),
+   ptBalance_noEEMC(),
+   sPtBalance(0),
+   sPtBalance_noEEMC(0),
    mMinDeltaZToJet(-1),            // nonsense value
    mMinDeltaRToJet(-1),            // nonsense value
-   mDistToCluster(-10, -10, -10)   // nonsense value
-   //hitSector(-1), esmdXPcentroid()
+   mDistToCluster(-10, -10, -10),  // nonsense value
+   hitSector(-1),
+   esmdXPcentroid()
 {
    clear();
 }
 
+
+VecBosTrack::~VecBosTrack()
+{
+   //Info("~VecBosTrack()", "prMuTrack: %x, %d", prMuTrack, prMuTrack->nHitsFit());
+   //Info("~VecBosTrack()", "this: %x, prMuTrack: %x", this, prMuTrack);
+   if (prMuTrack) delete prMuTrack;
+   prMuTrack = 0;
+}
 
 
 //bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && !IsInJet() && mP3AtDca.Pt() >= sMinPt); }
@@ -56,8 +80,8 @@ void VecBosTrack::Process()
       return;
    }
 
-   mVbType     = kGOOD; // this track has a good vertex
-   mVertexId = mVertex->mId;
+   mVbType   = kGOOD; // this track has a good vertex
+   mVertexId = mVertex->GetId();
 
    //if (mVecBosEvent->l2bitET && rank > 0 && primaryTrack->flag() == 301)
       //XXX:ds:if (secID == 20) continue; //poorly calibrated sector for Run 9+11+12?
@@ -180,15 +204,17 @@ void VecBosTrack::clear()
 
 void VecBosTrack::print(int opt) const
 {
-   printf("\n");
-   Info("print(int opt)", "");
-
+   //printf("\n");
+   //Info("print(int opt)", "");
+   //Info("Print()", "this: %x", this);
+   Info("Print", "mP3AtDca:");
+   Info("Print", "mVertexId: %2d", mVertexId);
    mP3AtDca.Print();
 
    //if (!prMuTrack) { printf("prMuTrack is NULL pointer???\n"); return; }
 
-   printf("\tTrack: isMatch2Cl: %d, mP3InNearCone: %.2f, awayTotET: %.2f mP3AtDca.Pt(): %.2f\n",
-          isMatch2Cl, mP3InNearCone.Pt(), awayTotET, mP3AtDca.Pt());
+   //printf("\tTrack: isMatch2Cl: %d, mP3InNearCone: %.2f, awayTotET: %.2f mP3AtDca.Pt(): %.2f\n",
+   //       isMatch2Cl, mP3InNearCone.Pt(), awayTotET, mP3AtDca.Pt());
 
    //mMatchedTower.print(opt);
    //mCluster2x2.print(opt);
@@ -410,3 +436,19 @@ void VecBosTrack::CalcEnergyInNearCone()
    //   hE[49]->Fill(mP3InNearCone);
    //}
 }
+
+
+////______________________________________________________________________________
+//void VecBosTrack::Streamer(TBuffer &R__b)
+//{
+//   // Stream an object of class VecBosEvent.
+//   //Info("Streamer", "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx ");
+//   //printf("", "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx ");
+//   if (R__b.IsReading()) {
+//      R__b.ReadClassBuffer(VecBosTrack::Class(),this);
+//      //Info("Streamer", "IsReading XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx ");
+//   } else {
+//      //Info("Streamer", "IsWriting yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy ");
+//      R__b.WriteClassBuffer(VecBosTrack::Class(),this);
+//   }
+//}

@@ -28,17 +28,41 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mP3BalanceFromTracks(),
    mBalanceDeltaPhiFromTracks(0)
 {
-   clear();
+   //clear();
 }
 
 
-const float VecBosEvent::sMinTrackIsoDeltaR    = 0.7;  // was 0.7
+const float VecBosEvent::sMinTrackIsoDeltaR    = 1.0;  // was 0.7
 const float VecBosEvent::sMinTrackIsoDeltaPhi  = 0.7;
 const float VecBosEvent::sMaxVertexJetDeltaZ   = 1;    // distance between jet and track z coord, cm
 const float VecBosEvent::sMaxTrackJetDeltaZ    = 3;    // distance between jet and track z coord, cm
 const float VecBosEvent::sMinBTrackPt          = 10;
 const float VecBosEvent::sMinTrackHitFrac      = 0.51;
 const float VecBosEvent::sMinClusterEnergyFrac = 0.80; // was 0.88
+
+
+VecBosEvent::~VecBosEvent()
+{
+   //Info("~VecBosEvent()", "this: %x", this);
+
+   while(!mJets.empty()) delete *mJets.begin(), mJets.erase(mJets.begin());
+   //while(!mJetsRecoil.empty()) delete *mJetsRecoil.begin(), mJetsRecoil.erase(mJetsRecoil.begin());
+   //while(!mJetsWithIsoTrack.empty()) delete *mJetsWithIsoTrack.begin(), mJetsWithIsoTrack.erase(mJetsWithIsoTrack.begin());
+   //mJets.clear();
+   mJetsRecoil.clear();
+   mJetsWithIsoTrack.clear();
+
+   while(!mTracks.empty()) delete *mTracks.begin(), mTracks.erase(mTracks.begin());
+   //while(!mTracksCandidate.empty()) delete *mTracksCandidate.begin(), mTracksCandidate.erase(mTracksCandidate.begin());
+   //mTracks.clear();
+   mTracksCandidate.clear();
+
+   while(!mVertices.empty()) delete *mVertices.begin(), mVertices.erase(mVertices.begin());
+   //mVertices.clear(); // unnecessary?
+
+   if (mWEvent) delete mWEvent;
+   mWEvent = 0;
+}
 
 
 VecBosVertex* VecBosEvent::AddVertex(StMuPrimaryVertex &stMuVertex)
@@ -74,7 +98,7 @@ void VecBosEvent::AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex)
 
    if (vbVertex) {
       vbVertex->prTrList.push_back(stMuTrack);
-      vbVertex->eleTrack.push_back(*vbTrack);
+      //vbVertex->eleTrack.push_back(*vbTrack);
       vbVertex->mTracks.insert(vbTrack);
    }
 }
@@ -106,8 +130,8 @@ UInt_t        VecBosEvent::GetNumStJetsNoEndcap() { return mStJetsNoEndcap ? mSt
 UInt_t VecBosEvent::GetNumTracksWithBCluster()
 {
    UInt_t nTracks = 0;
-   VecBosVertexPtrSetIter iVertex = mVertices.begin();
 
+   VecBosVertexPtrSetIter iVertex = mVertices.begin();
    for ( ; iVertex != mVertices.end(); ++iVertex)
    {
       VecBosVertex       &vertex = **iVertex;
@@ -207,6 +231,8 @@ void VecBosEvent::ProcessJets()
 {
    //Info("Process", "Process jets");
 
+   mP4JetRecoil.SetXYZT(0, 0, 0, 0);
+
    VecBosJetPtrSetConstIter iJet = mJets.begin();
    mP4JetFirst = *iJet ? **iJet : TLorentzVector();
 
@@ -239,6 +265,7 @@ void VecBosEvent::ProcessMC()
    StMcEvent *mcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
    assert(mcEvent);
 
+   mWEvent = new WEvent();
    mWEvent->CalcRecoil(*mcEvent);
 }
 
@@ -378,6 +405,7 @@ void VecBosEvent::MCanalysis()
 }
 
 
+/** If there is no track candidate than there is no recoil. */
 bool VecBosEvent::IsRecoilJet(VecBosJet *vbJet) const
 {
    VecBosTrackPtrSetConstIter iTrack = mTracksCandidate.begin();
@@ -793,12 +821,13 @@ void VecBosEvent::clear()
    while(!mVertices.empty()) delete *mVertices.begin(), mVertices.erase(mVertices.begin());
    mVertices.clear(); // unnecessary?
 
-   while(!mTracks.empty()) delete *mTracks.begin(), mTracks.erase(mTracks.begin());
+   while(!mTracks.empty()) (*mTracks.begin())->prMuTrack = 0, delete *mTracks.begin(), mTracks.erase(mTracks.begin());
    mTracks.clear();
    mTracksCandidate.clear();
 
    if (mWEvent) delete mWEvent;
-   mWEvent = new WEvent();
+   mWEvent = 0;
+   //mWEvent = new WEvent();
 
    mP4JetTotal.SetXYZT(0, 0, 0, 0);
    mP4JetFirst.SetXYZT(0, 0, 0, 0);
@@ -817,13 +846,33 @@ void VecBosEvent::Print(int opt, int isMC)
    printf("\n");
    Info("Print(int opt, int isMC)", "");
 
-   printf("runNo: %d, ID: %d,  L2Wbits: ET=%d rnd=%d;  muDst: bx7=%d bx48=%d nVert=%d\n" \
+   printf("runNo: %d, ID: %d,  L2Wbits: ET=%d rnd=%d;  muDst: bx7=%d bx48=%d\n" \
           "star: Bx7m=%d, Bx48=%d, mSpinPattern4Bits=%d \n",
-      runNo, id, l2bitET, l2bitRnd, bx7, bx48, mVertices.size(), bxStar7, bxStar48, mSpinPattern4Bits);
+      runNo, id, l2bitET, l2bitRnd, bx7, bx48, bxStar7, bxStar48, mSpinPattern4Bits);
 
    int  yyyymmdd,  hhmmss;
    getGmt_day_hour( yyyymmdd,  hhmmss);
    printf("Event time is: day=%08d, hour=%06d (GMT)\n", yyyymmdd, hhmmss);
+
+   Info("Print", "GetNumJets(): %d", GetNumJets());
+   Info("Print", "GetNumVertices(): %d", GetNumVertices());
+   Info("Print", "GetNumTracks(): %d", GetNumTracks());
+   Info("Print", "GetNumCandidateTracks(): %d", GetNumCandidateTracks());
+   Info("Print", "mTracksCandidate.size(): %d", mTracksCandidate.size());
+
+   //Info("Print()", "mTracks: ");
+   //VecBosTrackPtrSetIter iTrack = mTracks.begin();
+   //for ( ; iTrack != mTracks.end(); ++iTrack)
+   //{
+   //   Info("Print()", "iTrack: %x", *iTrack);
+   //}
+
+   //Info("Print()", "mTracksCandidate:");
+   //iTrack = mTracksCandidate.begin();
+   //for ( ; iTrack != mTracksCandidate.end(); ++iTrack)
+   //{
+   //   Info("Print()", "iTrack: %x", *iTrack);
+   //}
 
    VecBosVertexPtrSetIter iVertex = mVertices.begin();
 
@@ -834,7 +883,7 @@ void VecBosEvent::Print(int opt, int isMC)
    }
    printf("\n");
 
-   bemc.print(opt);
+   //bemc.print(opt);
 }
 
 
@@ -847,4 +896,94 @@ void VecBosEvent::getGmt_day_hour(int &yyyymmdd, int &hhmmss)
    hhmmss = atoi(buffer);
    strftime (buffer, 80, "%G%m%d", timeinfo);
    yyyymmdd = atoi(buffer);
+}
+
+
+//TBuffer &operator>>(TBuffer &buf, VecBosEvent *&vbEvent)
+//{
+//   cout << "Read XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx " << endl;
+//   return buf;
+//}
+//
+//
+//TBuffer &operator<<(TBuffer &buf, VecBosEvent *&vbEvent)
+//{
+//   cout << "Write XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx " << endl;
+//   return  buf;
+//}
+//
+//
+//TBuffer &operator>>(TBuffer &buf, VecBosEvent &vbEvent)
+//{
+//   cout << "Read XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx " << endl;
+//   return buf;
+//}
+//
+//
+//TBuffer &operator<<(TBuffer &buf, VecBosEvent &vbEvent)
+//{
+//   cout << "Write XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx " << endl;
+//   return  buf;
+//}
+
+
+//______________________________________________________________________________
+void VecBosEvent::Streamer(TBuffer &R__b)
+{
+   // Stream an object of class VecBosEvent.
+   //Info("Streamer", "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx ");
+
+   if (R__b.IsReading()) {
+      R__b.ReadClassBuffer(VecBosEvent::Class(),this);
+
+      //Info("Streamer", "this: %x, mTracks.size(): %d, &mWEvent: %x, &mStJets: %x", this, mTracks.size(), mWEvent, mStJets);
+
+      VecBosTrackPtrSetIter iTrack = mTracks.begin();
+      for ( ; iTrack != mTracks.end(); ++iTrack)
+      {
+         VecBosTrack *track = *iTrack;
+
+         //Info("Streamer", "this: %x, prMuTrack: %x", track, track->prMuTrack);
+
+         // Set pointers to candidate tracks
+         if ( track->IsCandidate() ) {
+            //Info("Streamer", "mTracksCandidate found: %x", track);
+            mTracksCandidate.insert(track);
+         }
+
+         // Set pointers to tracks from vertex
+         VecBosVertexPtrSetIter iVertex = mVertices.begin();
+         for ( ; iVertex != mVertices.end(); ++iVertex)
+         {
+            VecBosVertex *vbVertex = *iVertex;
+
+            if ( track->GetVertexId() == vbVertex->GetId() ) 
+               vbVertex->mTracks.insert(track);
+         }
+      }
+
+      VecBosJetPtrSetConstIter iJet = mJets.begin();
+      for ( ; iJet != mJets.end(); ++iJet)
+      {
+         VecBosJet *vbJet = *iJet;
+         //Info("Streamer", "mJets this: %x", vbJet);
+
+         if ( IsRecoilJet(vbJet) )
+         {
+            //Info("Streamer", "Recoil jet found : %x", vbJet);
+            mJetsRecoil.insert(vbJet);
+         }
+      }
+
+      //VecBosVertexPtrSetIter iVertex = mVertices.begin();
+      //for ( ; iVertex != mVertices.end(); ++iVertex)
+      //{
+      //   VecBosVertex *vbVertex = *iVertex;
+      //   Info("Streamer", "mVertices this: %x", vbVertex);
+      //}
+
+   } else {
+      //Info("Streamer", "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy ");
+      R__b.WriteClassBuffer(VecBosEvent::Class(),this);
+   }
 }

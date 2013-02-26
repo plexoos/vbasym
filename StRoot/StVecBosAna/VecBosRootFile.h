@@ -34,17 +34,19 @@ protected:
    time_t             fMinTime;
    time_t             fMaxTime;
    //FILE              *fFilePhp;      //!
+   Bool_t             fIsMc;
 
 public:
 
    VecBosRootFile();
-   VecBosRootFile(const char* fname, Option_t* option = "", const char* ftitle = "", Int_t compress = 1);
+   VecBosRootFile(const char* fname, Option_t* option = "", Bool_t isMc=kFALSE, const char* ftitle = "", Int_t compress = 1);
    ~VecBosRootFile();
 
    using TObject::SaveAs;
 
    PlotHelper* GetHists();
    void SetHists(PlotHelper &hists);
+   void SetIsMc(Bool_t isMc) { fIsMc = isMc; }
    void Fill(ProtoEvent &ev);
    void Fill(ProtoEvent &ev, ECut cut);
    //void SetAnaGlobResult(AnaGlobResult *agr);

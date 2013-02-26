@@ -25,7 +25,8 @@ using namespace std;
 VecBosRootFile::VecBosRootFile() : TFile(),
    fHists(0), fHistCuts(),
    fMinFill(UINT_MAX), fMaxFill(0),
-   fMinTime(UINT_MAX), fMaxTime(0)
+   fMinTime(UINT_MAX), fMaxTime(0),
+   fIsMc(kFALSE)
    //fFilePhp(0)
 {
    gROOT->SetMacroPath("./:~/rootmacros/:");
@@ -35,11 +36,12 @@ VecBosRootFile::VecBosRootFile() : TFile(),
 }
 
 
-VecBosRootFile::VecBosRootFile(const char* fname, Option_t* option, const char* ftitle, Int_t compress) :
+VecBosRootFile::VecBosRootFile(const char* fname, Option_t* option, Bool_t isMc, const char* ftitle, Int_t compress) :
    TFile(fname, option, ftitle, compress),
    fHists(0), fHistCuts(),
    fMinFill(UINT_MAX), fMaxFill(0),
-   fMinTime(UINT_MAX), fMaxTime(0)
+   fMinTime(UINT_MAX), fMaxTime(0),
+   fIsMc(isMc)
    //fFilePhp(anaInfo.GetAnaInfoFile())
 {
    printf("Created ROOT file: %s\n", GetName());
@@ -90,12 +92,6 @@ void VecBosRootFile::BookHists()
    fHists->d["event_tracks_has_candidate"] = ph = new TrackHContainer(new TDirectoryFile("event_tracks_has_candidate", "event_tracks_has_candidate", "", this));
    fHistCuts[kCUT_EVENT_HAS_CANDIDATE_TRACK].insert(ph);
 
-   //fHists->d["event_mc"] = ph = new MCHContainer(new TDirectoryFile("event_mc", "event_mc", "", this));
-   //fHistCuts[kCUT_EVENT_NOCUT].insert(ph);
-
-   //fHists->d["event_mc_has_jetrecoil"] = ph = new MCHContainer(new TDirectoryFile("event_mc_has_jetrecoil", "event_mc_has_jetrecoil", "", this));
-   //fHistCuts[kCUT_EVENT_HAS_JETRECOIL].insert(ph);
-
    fHists->d["vertex"]           = ph = new VertexHContainer(new TDirectoryFile("vertex", "vertex", "", this));
    fHists->d["vertex_good"]      = ph = new VertexHContainer(new TDirectoryFile("vertex_good", "vertex_good", "", this));
    fHists->d["track"]            = ph = new TrackHContainer(new TDirectoryFile("track", "track", "", this));
@@ -112,6 +108,17 @@ void VecBosRootFile::BookHists()
 
    //fHists->d["kinema"]    = ph = new KinemaHContainer(new TDirectoryFile("kinema", "kinema", "", this));
 
+   if (!fIsMc) return;
+
+   fHists->d["event_mc"] = ph = new MCHContainer(new TDirectoryFile("event_mc", "event_mc", "", this));
+   fHistCuts[kCUT_EVENT_NOCUT].insert(ph);
+
+   fHists->d["event_mc_has_jetrecoil"] = ph = new MCHContainer(new TDirectoryFile("event_mc_has_jetrecoil", "event_mc_has_jetrecoil", "", this));
+   fHistCuts[kCUT_EVENT_HAS_JETRECOIL].insert(ph);
+
+   fHists->d["event_mc_has_trackrecoil"] = ph = new MCHContainer(new TDirectoryFile("event_mc_has_trackrecoil", "event_mc_has_trackrecoil", "", this));
+   fHistCuts[kCUT_EVENT_HAS_TRACKRECOIL].insert(ph);
+
    this->cd();
 }
 
@@ -123,22 +130,24 @@ void VecBosRootFile::SetHists(PlotHelper &hists) { fHists = &hists; }
 /** */
 void VecBosRootFile::Fill(ProtoEvent &ev)
 {
-   VecBosEvent& event = (VecBosEvent&) ev;
+   //VecBosEvent& event = (VecBosEvent&) ev;
+   VecBosEvent *event = (VecBosEvent*) &ev;
 
    Fill(ev, kCUT_EVENT_NOCUT);
 
-   if ( event.HasJetRecoil() )
+   if ( event->HasJetRecoil() )
       Fill(ev, kCUT_EVENT_HAS_JETRECOIL);
+      //((EventHContainer*) fHists->d["event_has_jetrecoil"])->Fill(ev);
 
-   if ( event.mP3RecoilFromTracks.Mag() > 0)
+   if ( event->mP3RecoilFromTracks.Mag() > 0)
       Fill(ev, kCUT_EVENT_HAS_TRACKRECOIL);
 
-   if ( event.HasCandidateTrack() )
+   if ( event->HasCandidateTrack() )
       Fill(ev, kCUT_EVENT_HAS_CANDIDATE_TRACK);
 
    // Fill vertex histos
-   VecBosVertexPtrSetIter iVertex = event.mVertices.begin();
-   for ( ; iVertex != event.mVertices.end(); ++iVertex)
+   VecBosVertexPtrSetIter iVertex = event->mVertices.begin();
+   for ( ; iVertex != event->mVertices.end(); ++iVertex)
    {
       VecBosVertex &vertex = **iVertex;
 
@@ -150,10 +159,10 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
    }
 
    // Fill track histos
-   VecBosTrackPtrSetConstIter iTrack = event.mTracks.begin();
-   for ( ; iTrack != event.mTracks.end(); ++iTrack)
+   VecBosTrackPtrSetConstIter iTrack = event->mTracks.begin();
+   for ( ; iTrack != event->mTracks.end(); ++iTrack)
    {
-      VecBosTrack track = **iTrack;
+      VecBosTrack &track = **iTrack;
 
       ((TrackHContainer*) fHists->d["track"])->Fill(track);
 
@@ -163,8 +172,8 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
    }
 
    //// Save only good tracks
-   //VecBosTrackPtrSetIter iTrack = event.mTracks.begin();
-   //for ( ; iTrack!=event.mTracks.end(); ++iTrack)
+   //VecBosTrackPtrSetIter iTrack = event->mTracks.begin();
+   //for ( ; iTrack!=event->mTracks.end(); ++iTrack)
    //{
    //   VecBosTrack &track = **iTrack;
    //   if ( !track.IsGood() ) continue;
@@ -184,6 +193,7 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
 
 /** */
 void VecBosRootFile::Fill(ProtoEvent &ev, ECut cut)
+//void VecBosRootFile::Fill(ProtoEvent *ev, ECut cut)
 {
    PlotHelperSet     hists = fHistCuts[cut];
    PlotHelperSetIter hi    = hists.begin();

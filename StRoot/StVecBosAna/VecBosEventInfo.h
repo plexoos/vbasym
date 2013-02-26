@@ -67,13 +67,13 @@ class WeveETOW   // info about ETOW
 {
 public:
    //raw ETOW hit
-   int etowIn;
-   float adc[mxEtowSec *mxEtowSub][mxEtowEta]; //[phibin][etabin]
-   float ene[mxEtowSec *mxEtowSub][mxEtowEta];
-   int stat[mxEtowSec *mxEtowSub][mxEtowEta];
+   int   etowIn;
+   float adc[mxEtowSec*mxEtowSub][mxEtowEta]; //[phibin][etabin]
+   float ene[mxEtowSec*mxEtowSub][mxEtowEta];
+   int   stat[mxEtowSec*mxEtowSub][mxEtowEta];
    float maxAdc;
-   int maxSec, maxSub, maxEta;
-   int maxHtDsm;
+   int   maxSec, maxSub, maxEta;
+   int   maxHtDsm;
 
    void clear() {
       memset(adc, 0, sizeof(adc));
@@ -92,10 +92,10 @@ class WeveEPRS   // info about EPRS
 {
 public:
    //raw EPRS hit
-   int eprsIn;
-   float adc[mxEtowSec *mxEtowSub][mxEtowEta][mxPrs]; //[phibin][etabin][layer]
-   float ene[mxEtowSec *mxEtowSub][mxEtowEta][mxPrs];
-   int stat[mxEtowSec *mxEtowSub][mxEtowEta][mxPrs];
+   int   eprsIn;
+   float adc[mxEtowSec*mxEtowSub][mxEtowEta][mxPrs]; //[phibin][etabin][layer]
+   float ene[mxEtowSec*mxEtowSub][mxEtowEta][mxPrs];
+   int   stat[mxEtowSec*mxEtowSub][mxEtowEta][mxPrs];
 
    void clear() {
       memset(adc, 0, sizeof(adc));

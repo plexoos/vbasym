@@ -26,6 +26,11 @@ VecBosJet::VecBosJet(StJet &stJet) :
   jetPhi    = Phi();
 }
 
+VecBosJet::~VecBosJet()
+{
+   //Info("~VecBosJet()", "this: %x", this);
+}
+
 
 /** */
 void VecBosJet::Process()
@@ -48,7 +53,7 @@ void VecBosJet::Process()
    }
 
    if (closestVertex && mMinZDistToVertex < VecBosEvent::sMaxVertexJetDeltaZ) {
-      SetVertexId(closestVertex->mId);
+      SetVertexId(closestVertex->GetId());
    }
 }
 

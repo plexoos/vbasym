@@ -27,6 +27,15 @@ VecBosVertex::VecBosVertex(StMuPrimaryVertex &stMuVertex) : TObject(),
 }
 
 
+VecBosVertex::~VecBosVertex()
+{
+   //Info("~VecBosVertex()", "this: %x, mtracks.size: %d", this, mTracks.size());
+   //while(!mTracks.empty()) delete *mTracks.begin(), mTracks.erase(mTracks.begin());
+   mTracks.clear();
+   eleTrack.clear();
+}
+
+
 void VecBosVertex::SetPosition(const StThreeVectorF &vec)
 {
    mPosition.SetX(vec.x());
@@ -65,8 +74,10 @@ void VecBosVertex::clear()
 
 void VecBosVertex::Print(const Option_t* opt) const
 {
-   printf("\n");
-   Info("Print(const Option_t* opt)", " Vertex mId=%d Z=%.1f cm  nTrack=%d", mId, z, mTracks.size());
+   //printf("\n");
+   //Info("Print(const Option_t* opt)", " Vertex mId=%d Z=%.1f cm", mId, z);
+   Info("Print", "mId: %2d, mRankLog: %6.2f, mTracks.size(): %d", mId, mRankLog, mTracks.size());
+   //Info("Print()", "this: %x", this);
 
    VecBosTrackPtrSetConstIter iTrack = mTracks.begin();
    for ( ; iTrack!=mTracks.end(); ++iTrack)
