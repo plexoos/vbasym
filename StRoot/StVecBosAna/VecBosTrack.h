@@ -111,6 +111,8 @@ public:
    //bool        HasBarrelMatched();
    //bool        HasEndcapMatched();
    void        Process();
+   TVector3    GetP3AtDca()            const { return mP3AtDca; }
+   TVector3    GetP3EScaled()          const { return mP3AtDca * ((Double_t) mCluster2x2.energy / mP3AtDca.Mag()); }
    float       GetFitHitFrac()         const { return float(prMuTrack->nHitsFit()) / prMuTrack->nHitsPoss(); }
    float       GetClusterEnergyFrac()  const { return (mCluster2x2.energy + mP3AtDca.Mag()) / mP3InNearConeNoETow.Mag(); }
    float       GetClusterETFrac()      const { return (mCluster2x2.ET     + mP3AtDca.Pt())  / mP3InNearConeNoETow.Perp(); }

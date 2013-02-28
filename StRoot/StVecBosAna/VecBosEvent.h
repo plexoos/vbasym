@@ -140,6 +140,7 @@ public:
    bool           HasIsolatedTrack()      const { return mNumIsolatedTracks  > 0 ? true : false; }
    bool           HasCandidateTrack()     const { return mNumCandidateTracks > 0 ? true : false; }
    bool           HasJetRecoil()          const { return mP4JetRecoil.Mag()  > 0 ? true : false; }
+   bool           PassCutFinal();
 
    void           Process();
    void           ProcessMC();
@@ -155,7 +156,7 @@ public:
    TVector3       CalcP3InConeBTow(VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
    TVector3       CalcP3InConeETow(VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
    TVector3       CalcP3InConeTpc (VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
-   TVector3       CalcP3Balance() const;
+   TVector3       CalcP3MissingEnergy() const;
 
 private:
 

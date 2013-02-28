@@ -17,25 +17,28 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-   gROOT->Macro("~/rootmacros/styles/style_masym.C");
+   gROOT->Macro("~/rootmacros/styles/style_vbana.C");
 
    TStopwatch stopwatch;
 
    setbuf(stdout, NULL);
 
-   //Int_t  nMaxUserEvents = -1;
+   Int_t  nMaxUserEvents = -1;
    //Int_t  nMaxUserEvents = 10;
-   //Int_t  nMaxUserEvents = 390000;
-   Int_t  nMaxUserEvents = 100000;
-   Bool_t isMc           = kFALSE;
-   //Bool_t isMc           = kTRUE;
-   string histFileName   = "vbana_cut15_data_100k.root";
+   //Int_t  nMaxUserEvents = 34000; // cut_35
+   //Int_t  nMaxUserEvents = 10;
+   //Bool_t isMc           = kFALSE;
+   Bool_t isMc           = kTRUE;
+   //string histFileName   = "vbana_cut15_data_final.root";
+   //string histFileName   = "vbana_cut35_data_final_test.root";
    //string histFileName   = "vbana_cut35_data_100k.root";
    //string histFileName   = "vbana_cut15_mc.root";
-   //string histFileName   = "vbana_cut35_mc.root";
-	//string filelist       = "./runlists/test";
-	string filelist       = "./runlists/run11_all_goodsofar";
-	//string filelist       = "./runlists/MC_list_W_2012";
+   string histFileName   = "vbana_cut35_mc.root";
+	//string filelist       = "./runlists/run11_redo_tmp";
+	//string filelist       = "./runlists/run11_all_goodsofar_cut15";
+	//string filelist       = "./runlists/run11_all_goodsofar_cut35";
+	//string filelist       = "./runlists/run11_all";
+	string filelist       = "./runlists/MC_list_W_2012";
 
    Info("main", "nMaxUserEvents: %d", nMaxUserEvents);
    Info("main", "histFileName:   %s", histFileName.c_str());
@@ -53,8 +56,8 @@ int main(int argc, char *argv[])
    {
       string fName    = string(((TObjString*) o)->GetName());
       //string fileName = "./R" + fName + ".wtree.root";
-      string fileName = "/star/data05/scratch/fazio/wtree_run11_cut15/";
-      //string fileName = "/star/data05/scratch/fazio/wtree_run11_cut35/";
+      //string fileName = "/star/data05/scratch/fazio/wtree_run11_cut15/";
+      string fileName = "/star/data05/scratch/fazio/wtree_run11_cut35/";
       fileName += (!isMc?"R":"") + fName + ".wtree.root";
 
       TFile *f = new TFile(fileName.c_str(), "READ");
@@ -100,7 +103,7 @@ int main(int argc, char *argv[])
 
       for (UInt_t iEvent=1; iEvent<=(UInt_t) nTreeEvents; iEvent++, nProcEvents++)
       {
-         if ( iEvent % UInt_t(nTreeEvents*0.1) == 0 )
+         if ( nTreeEvents >= 10 && iEvent % UInt_t(nTreeEvents*0.1) == 0 )
             Info("main", "Analyzing event %d", iEvent);
 
          vbTree->GetEntry(iEvent-1);
@@ -124,6 +127,7 @@ int main(int argc, char *argv[])
 
    string outDir = "../vbasym_results/" + histFileName;
    vecBosRootFile.SaveAs((string) "^.*$", outDir);
+   //vecBosRootFile.SaveAs((string) ".*TrackEOverP.*", outDir);
    vecBosRootFile.Print();
    vecBosRootFile.Close();
 

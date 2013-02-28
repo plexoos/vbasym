@@ -13,7 +13,7 @@ using namespace std;
 
 const float VecBosTrack::sMaxTrackClusterDist       = 7;  // cm
 const float VecBosTrack::sMinPt                     = 20; // GeV
-const float VecBosTrack::sMaxEnergyInOppsCone       = 40; // was 30 GeV
+const float VecBosTrack::sMaxEnergyInOppsCone       = 15; // was 40, was 30 GeV
 const float VecBosTrack::sMinCandidateTrackClusterE = 20;
 
 
@@ -70,6 +70,7 @@ VecBosTrack::~VecBosTrack()
 //bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && !IsInJet() && mP3AtDca.Pt() >= sMinPt); }
 //bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && mP3AtDca.Pt() >= sMinPt); }
 bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && mCluster2x2.energy >= sMinCandidateTrackClusterE); }
+//bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && mCluster2x2.energy >= sMinCandidateTrackClusterE && mCluster2x2.ET/mCluster4x4.ET > 0.9); }
 
 
 void VecBosTrack::Process()

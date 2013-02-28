@@ -432,6 +432,11 @@ Int_t StVecBosMaker::Make()
    //mVecBosRootFile->Fill(*mVecBosEvent);
    mVecBosEvent->SetCpuTimeHistFill( mStopWatch.CpuTime() );
 
+   // 
+   if (!mVecBosEvent->HasIsolatedTrack()) {
+      return kStOK;
+   }
+
    // Write event to tree
    mWtree->Fill();
 

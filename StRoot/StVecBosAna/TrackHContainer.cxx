@@ -70,7 +70,7 @@ void TrackHContainer::BookHists()
    hist->SetOption("hist GRIDX GRIDY XY");
 
    o["hTrackEOverP"] = hist = new TH1I("hTrackEOverP", "; E/P; Num. of Tracks", 50, 0, 2);
-   hist->SetOption("hist GRIDX GRIDY XY");
+   hist->SetOption("hist GRIDX GRIDY");
 
    o["hTrackHitsFit"] = hist = new TH1I("hTrackHitsFit", "; Track Num. of Fit Hits; Num. of Tracks", 50, 0, 50);
    hist->SetOption("hist GRIDX GRIDY");

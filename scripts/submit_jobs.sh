@@ -24,6 +24,7 @@ for runNumber in `cat $RUNLIST`
 do
    echo
    echo "Submitting job for runNumber = " $runNumber
-   star-submit-template -template $CODE_DIR/scripts/run11_job_template.xml -entities OUT_DIR=$OUT_DIR,codePath=$CODE_DIR,runNumber=$runNumber,STAR_VER=$STAR_VER,STANA_OPTIONS=$STANA_OPTIONS
+   #star-submit-template -template $CODE_DIR/scripts/run11_job_template.xml -entities OUT_DIR=$OUT_DIR,codePath=$CODE_DIR,runNumber=$runNumber,STAR_VER=$STAR_VER,STANA_OPTIONS=$STANA_OPTIONS
+   star-submit-template -template $CODE_DIR/scripts/run11_job_template_cut15.xml -entities OUT_DIR=$OUT_DIR,codePath=$CODE_DIR,runNumber=$runNumber,STAR_VER=$STAR_VER,STANA_OPTIONS=$STANA_OPTIONS
    echo
 done

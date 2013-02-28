@@ -146,6 +146,15 @@ UInt_t VecBosEvent::GetNumTracksWithBCluster()
 }
 
 
+bool VecBosEvent::PassCutFinal()
+{
+   if (mTracksCandidate.size() > 0 && CalcP3MissingEnergy().Pt() > 18)
+      return true;
+
+   return false;
+}
+
+
 void VecBosEvent::Process()
 {
    mMuDstNumVertices = mStMuDst->primaryVertices()->GetEntriesFast();
@@ -371,7 +380,7 @@ void VecBosEvent::CalcRecoilFromTracks2()
       mP3TrackRecoilTpc += track.mP3AtDca;
 
       if ( track.HasCluster() ) {
-         mP3TrackRecoilTow += track.mP3AtDca * ((Double_t) track.mCluster2x2.energy/track.mP3AtDca.Mag());
+         mP3TrackRecoilTow += track.GetP3EScaled();
       } else {
          mP3TrackRecoilTow += track.mP3AtDca;
       }
@@ -702,14 +711,15 @@ TVector3 VecBosEvent::CalcP3InConeTpc(VecBosTrack *vbTrack, UShort_t cone1d2d, F
 }
 
 
-TVector3 VecBosEvent::CalcP3Balance() const
+TVector3 VecBosEvent::CalcP3MissingEnergy() const
 {
    if (mTracksCandidate.size() < 1) {
-      Warning("CalcP3Balance", "No track/lepton candidate: Cannot calculate P3Balance");
+      Warning("CalcP3MissingEnergy", "No track/lepton candidate: Cannot calculate P3Balance");
       return TVector3();
    }
 
-   return mP3TrackRecoilTow + (*mTracksCandidate.begin())->mP3AtDca;
+   return mP3TrackRecoilTow + (*mTracksCandidate.begin())->GetP3EScaled();
+   //return mP4JetRecoil + (*mTracksCandidate.begin())->mCluster2x2.energy;
 }
 
 
@@ -962,6 +972,8 @@ void VecBosEvent::Streamer(TBuffer &R__b)
          }
       }
 
+      mP4JetRecoil.SetXYZT(0, 0, 0, 0);
+
       VecBosJetPtrSetConstIter iJet = mJets.begin();
       for ( ; iJet != mJets.end(); ++iJet)
       {
@@ -971,6 +983,7 @@ void VecBosEvent::Streamer(TBuffer &R__b)
          if ( IsRecoilJet(vbJet) )
          {
             //Info("Streamer", "Recoil jet found : %x", vbJet);
+            mP4JetRecoil += *vbJet;
             mJetsRecoil.insert(vbJet);
          }
       }

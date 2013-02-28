@@ -5,6 +5,7 @@
 #include <sstream>
 
 #include "TROOT.h"
+#include "TStyle.h"
 
 #include "EventHContainer.h"
 #include "JetHContainer.h"
@@ -78,11 +79,18 @@ void VecBosRootFile::BookHists()
    fHists->d["event_has_candidate"]     = ph = new EventHContainer(new TDirectoryFile("event_has_candidate", "event_has_candidate", "", this));
    fHistCuts[kCUT_EVENT_HAS_CANDIDATE_TRACK].insert(ph);
 
+   fHists->d["event_pass_final"]     = ph = new EventHContainer(new TDirectoryFile("event_pass_final", "event_pass_final", "", this));
+   fHistCuts[kCUT_EVENT_PASS_FINAL].insert(ph);
+
+   fHists->d["event_has_jetrecoil_pass_final"] = ph = new EventHContainer(new TDirectoryFile("event_has_jetrecoil_pass_final", "event_has_jetrecoil_pass_final", "", this));
+
    fHists->d["event_jets"] = ph = new JetHContainer(new TDirectoryFile("event_jets", "event_jets", "", this));
    fHistCuts[kCUT_EVENT_NOCUT].insert(ph);
 
    fHists->d["event_jets_has_jetrecoil"] = ph = new JetHContainer(new TDirectoryFile("event_jets_has_jetrecoil", "event_jets_has_jetrecoil", "", this));
    fHistCuts[kCUT_EVENT_HAS_JETRECOIL].insert(ph);
+
+   //fHists->d["event_jets_has_jetrecoil_pass_final"] = ph = new JetHContainer(new TDirectoryFile("event_jets_has_jetrecoil_pass_final", "event_jets_has_jetrecoil_pass_final", "", this));
 
    fHists->d["event_vertices"] = ph = new VertexHContainer(new TDirectoryFile("event_vertices", "event_vertices", "", this));
    fHistCuts[kCUT_EVENT_NOCUT].insert(ph);
@@ -93,10 +101,14 @@ void VecBosRootFile::BookHists()
    fHists->d["event_tracks_has_candidate"] = ph = new TrackHContainer(new TDirectoryFile("event_tracks_has_candidate", "event_tracks_has_candidate", "", this));
    fHistCuts[kCUT_EVENT_HAS_CANDIDATE_TRACK].insert(ph);
 
+   fHists->d["event_tracks_pass_final"] = ph = new TrackHContainer(new TDirectoryFile("event_tracks_pass_final", "event_tracks_pass_final", "", this));
+   fHistCuts[kCUT_EVENT_PASS_FINAL].insert(ph);
+
    fHists->d["vertex"]           = ph = new VertexHContainer(new TDirectoryFile("vertex", "vertex", "", this));
    fHists->d["vertex_good"]      = ph = new VertexHContainer(new TDirectoryFile("vertex_good", "vertex_good", "", this));
    fHists->d["track"]            = ph = new TrackHContainer(new TDirectoryFile("track", "track", "", this));
    fHists->d["track_candidates"] = ph = new TrackHContainer(new TDirectoryFile("track_candidates", "track_candidates", "", this));
+   fHists->d["track_pass_final"] = ph = new TrackHContainer(new TDirectoryFile("track_pass_final", "track_pass_final", "", this));
 
    //fHists->d["tracks_good"] = ph = new TrackHContainer(new TDirectoryFile("tracks_good", "tracks_good", "", this));
    ////fHistCuts[kCUT_TRACKS_GOOD].insert(ph);
@@ -140,6 +152,10 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
       Fill(ev, kCUT_EVENT_HAS_JETRECOIL);
       //((EventHContainer*) fHists->d["event_has_jetrecoil"])->Fill(ev);
 
+      if ( event->PassCutFinal() )
+         ((EventHContainer*) fHists->d["event_has_jetrecoil_pass_final"])->Fill(ev);
+         //((JetHContainer*) fHists->d["event_jets_has_jetrecoil_pass_final"])->Fill(ev);
+
       if (event->GetNumJetsRecoil() == 0) {
          Info("Fill", "RECOIL: %d", event->GetNumJetsRecoil());
          utils::PrintTLorentzVector(event->mP4JetRecoil);
@@ -152,6 +168,9 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
 
    if ( event->HasCandidateTrack() )
       Fill(ev, kCUT_EVENT_HAS_CANDIDATE_TRACK);
+
+   if ( event->PassCutFinal() )
+      Fill(ev, kCUT_EVENT_PASS_FINAL);
 
    // Fill vertex histos
    VecBosVertexPtrSetIter iVertex = event->mVertices.begin();
@@ -177,6 +196,10 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
       if ( !track.IsCandidate() ) continue;
 
       ((TrackHContainer*) fHists->d["track_candidates"])->Fill(track);
+
+      if ( !event->PassCutFinal() ) continue;
+
+      ((TrackHContainer*) fHists->d["track_pass_final"])->Fill(track);
    }
 
    //// Save only good tracks
@@ -225,7 +248,7 @@ void VecBosRootFile::SaveAs(string pattern, string dir)
    TCanvas canvas("canvas", "canvas", 1000, 600);
    canvas.UseCurrentStyle();
 
-   stringstream ssSignature("signature not defined");
+   stringstream ssSignature("");
 
    char strAnaTime[25];
    time_t currentTime = time(0);

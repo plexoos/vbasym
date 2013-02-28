@@ -48,13 +48,13 @@ void EventHContainer::BookHists()
    o["hZdcRate"] = hist = new TH1I("hZdcRate", "; ZDC Rate; Events", 50, 129e3, 134e3);
    hist->SetOption("hist GRIDX");
 
-   o["hNumJets"] = hist = new TH1I("hNumJets", "; Num. of Jets; Events", 20, 0, 20);
+   o["hNumJets"] = hist = new TH1I("hNumJets", "; Num. of Jets; Events", 15, 0, 15);
    hist->SetOption("hist GRIDX");
 
-   o["hNumJetsRecoil"] = hist = new TH1I("hNumJetsRecoil", "; Num. of Jets in Recoil; Events", 10, 0, 10);
+   o["hNumJetsRecoil"] = hist = new TH1I("hNumJetsRecoil", "; Num. of Jets in Recoil; Events", 15, 0, 15);
    hist->SetOption("hist GRIDX");
 
-   o["hNumJetsWithIsoTrack"] = hist = new TH1I("hNumJetsWithIsoTrack", "; Num. of Jets w/ Iso Track; Events", 5, 0, 5);
+   o["hNumJetsWithIsoTrack"] = hist = new TH1I("hNumJetsWithIsoTrack", "; Num. of Jets w/ Iso Track; Events", 15, 0, 15);
    hist->SetOption("hist GRIDX");
 
    o["hNumVertices"] = hist = new TH1I("hNumVertices", "; Num. of Vertices; Events", 10, 0, 10);
