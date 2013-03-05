@@ -30,11 +30,11 @@ int main(int argc, char *argv[])
    Bool_t isMc           = kFALSE;
    //Bool_t isMc           = kTRUE;
    //string histFileName   = "vbana_cut15_data_final.root";
-   string histFileName   = "vbana_cut35_data_final.root";
+   string histFileName   = "vbana_cut35_data_test.root";
    //string histFileName   = "vbana_cut35_data_100k.root";
    //string histFileName   = "vbana_cut15_mc.root";
    //string histFileName   = "vbana_cut35_mc.root";
-	string filelist       = "./runlists/run11_pp_transverse";
+	string filelist       = "./runlists/run11_pp_transverse2";
 	//string filelist       = "./runlists/run11_all_goodsofar_cut15";
 	//string filelist       = "./runlists/run11_all_goodsofar_cut35";
 	//string filelist       = "./runlists/run11_all";

@@ -228,8 +228,15 @@ void VecBosEvent::Process()
    // Calculate the Pt balance as the vector sum: pt elec + pt recoil
    if  (mTracksCandidate.size() == 1)
    {
-      mP3BalanceFromTracks2       = mP3RecoilFromTracks + (*mTracksCandidate.begin())->mP3AtDca;
-      mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3BalanceFromTracks);
+      TVector3 mP3JetRecoil; 
+      mP3JetRecoil.SetXYZ(mP4JetRecoil.Px(), mP4JetRecoil.Py(), mP4JetRecoil.Pz());
+
+      mP3BalanceFromJets       = mP3JetRecoil + (*mTracksCandidate.begin())->mP3AtDca;
+      mBalanceDeltaPhiFromJets = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3JetRecoil);
+      mPtBalanceCosPhiFromJets = mP3BalanceFromJets.Pt()*cos(mBalanceDeltaPhiFromJets) ;
+
+      mP3BalanceFromTracks2       = mP3TrackRecoilTow + (*mTracksCandidate.begin())->mP3AtDca;
+      mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3TrackRecoilTow);
       mPtBalanceCosPhiFromTracks2 = mP3BalanceFromTracks2.Pt()*cos(mBalanceDeltaPhiFromTracks2) ;
    }
 }
@@ -383,8 +390,22 @@ void VecBosEvent::CalcRecoilFromTracks2()
          mP3TrackRecoilTow += track.GetP3EScaled();
       } else {
          mP3TrackRecoilTow += track.mP3AtDca;
+         mP3TrackRecoilNeutrals += track.mP3AtDca;
       }
    }
+
+   // Process un-tracked BTOW hits
+   for (int i = 0; i < mxBtow; i++) {
+       float ene = bemc.eneTile[kBTow][i];
+       if (ene <= 0) continue;
+       TVector3 positionBtow[mxBtow]; // vs. tower ID
+       //  TVector3 calP = positionBtow[i] - TVector3(0, 0, vertex.mPosition.Z());
+       TVector3 calP = positionBtow[i] - TVector3(0, 0, trackCandidate.mVertex->mPosition.Z());
+       calP.SetMag(ene); // it is 3D momentum in the event ref frame
+
+         mP3TrackRecoilNeutrals += calP;
+   }
+
 }
 
 
