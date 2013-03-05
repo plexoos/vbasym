@@ -394,18 +394,38 @@ void VecBosEvent::CalcRecoilFromTracks2()
       }
    }
 
+
    // Process un-tracked BTOW hits
-   for (int i = 0; i < mxBtow; i++) {
-       float ene = bemc.eneTile[kBTow][i];
-       if (ene <= 0) continue;
-       TVector3 positionBtow[mxBtow]; // vs. tower ID
+   //   for (int i = 0; i < mxBtow; i++) {
+   //       float ene = bemc.eneTile[kBTow][i];
+
+   // Loop over all phi bins
+   for (int iphi = 0; iphi < mxEtowPhiBin; iphi++) {
+      for (int ieta = 0; ieta < mxEtowEta; ieta++) { // sum all eta rings
+         float energy = etow.ene[iphi][ieta];
+       if (energy <= 0) continue; // skip towers with no energy
+
+      // Correct BCal tower position to the vertex position
+
        //  TVector3 calP = positionBtow[i] - TVector3(0, 0, vertex.mPosition.Z());
-       TVector3 calP = positionBtow[i] - TVector3(0, 0, trackCandidate.mVertex->mPosition.Z());
-       calP.SetMag(ene); // it is 3D momentum in the event ref frame
+       //TVector3 calP = positionBtow[i] - TVector3(0, 0, trackCandidate.mVertex->mPosition.Z());
+       //       calP.SetMag(ene); 
+       TVector3 positionBtow[mxBtow]; // vs. tower ID
+         TVector3 towerP = gETowCoords[iphi][ieta] - trackCandidate.mVertex->mPosition;
+         towerP.SetMag(energy); // it is 3D momentum in the event ref frame
 
-         mP3TrackRecoilNeutrals += calP;
-   }
+	 //loop over tracks to and exclude towers with a matching track
+         VecBosTrackPtrSetIter iTr = mTracks.begin();
+         for (; iTr != mTracks.end(); ++iTr)
+         {
+            VecBosTrack &tr = **iTr;
+            TVector3 trP3 = tr.mP3AtDca;
+            if (trP3.DeltaR(towerP)    < sMinTrackIsoDeltaR)   continue;
 
+            mP3TrackRecoilNeutrals += towerP;
+         }
+      }
+   }  
 }
 
 
@@ -667,6 +687,7 @@ TVector3 VecBosEvent::CalcP3InConeBTow(VecBosTrack *vbTrack, UShort_t cone1d2d, 
  */
 TVector3 VecBosEvent::CalcP3InConeETow(VecBosTrack *vbTrack, UShort_t cone1d2d, Float_t scale)
 {
+
    TVector3 totalP3InCone;
 
    if (!vbTrack) return totalP3InCone;
