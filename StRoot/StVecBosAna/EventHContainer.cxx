@@ -88,13 +88,17 @@ void EventHContainer::BookHists()
    hist->SetOption("hist GRIDX");
 
    o["hJetRecoilPt"]               = hist = new TH1I("hJetRecoilPt", "Recoil from Jets; Jet-based Recoil P_{T}; Events", 60, 0, 60);
+
    o["hTrackRecoilPt"]             = hist = new TH1I("hTrackRecoilPt", "Recoil from Tracks: TPC+TOW; Track-based Recoil P_{T}; Events;", 50, 0, 50);
+
    o["hTrackRecoilTpcPt"]          = hist = new TH1I("hTrackRecoilTpcPt", "Recoil from Tracks: TPC only; Track-based Recoil P_{T}; Events", 50, 0, 50);
 
    o["hPtRecoilFromTracksOLD"]        = hist = new TH1F("hPtRecoilFromTracksOLD", "Recoil from tracks; P_{T};", 40, 0, 45);
 
    o["hPtBalanceFromTracks"]       = hist = new TH1F("hPtBalanceFromTracks", "P_{T}-balance from tracks; P_{T};", 40, 0, 60);
+
    o["hPtBalanceCosPhiFromTracks"] = hist = new TH1F("hPtBalanceCosPhiFromTracks", "P_{T}-balance cos(#phi); P_{T};", 40, -100, 100);
+
    o["hPhiBalanceCosPhiFromTracks"] = hist = new TH1F("hPhiBalanceCosPhiFromTracks", "P_{T}-balance; #phi;", 40, -TMath::Pi(),TMath::Pi());
 
    o["hBalanceDeltaPhiFromTracks"] = hist = new TH1F("hBalanceDeltaPhiFromTracks", "; #Delta #phi;", 40, -TMath::Pi(), TMath::Pi());

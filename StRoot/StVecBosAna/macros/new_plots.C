@@ -36,7 +36,7 @@ void new_plots() {
 
   gStyle->SetOptStat(10);
   gStyle->SetMarkerStyle(20);
-  gStyle->SetFillColor(kYellow);
+  gStyle->SetHistFillColor(kYellow);
 
 /*
 // Plot the shit you want:

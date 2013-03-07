@@ -31,7 +31,7 @@ VecBosRootFile::VecBosRootFile() : TFile(),
    fIsMc(kFALSE)
    //fFilePhp(0)
 {
-   gROOT->SetMacroPath("./:~/rootmacros/:");
+   gROOT->SetMacroPath("./:~/offline/users/fazio/vbasym/:");
    gROOT->Macro("styles/style_asym.C");
 
    BookHists();
@@ -48,7 +48,7 @@ VecBosRootFile::VecBosRootFile(const char* fname, Option_t* option, Bool_t isMc,
 {
    printf("Created ROOT file: %s\n", GetName());
 
-   gROOT->SetMacroPath("./:~/rootmacros/:");
+   gROOT->SetMacroPath("./:~/offline/users/fazio/vbasym/:");
    gROOT->Macro("styles/style_asym.C");
 
    BookHists();
