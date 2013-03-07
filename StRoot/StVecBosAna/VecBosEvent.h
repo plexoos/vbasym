@@ -137,6 +137,7 @@ public:
    UInt_t         GetNumTracksWithBCluster();
    TLorentzVector GetJetRecoil()          const { return mP4JetRecoil; }
    TVector3       GetTrackRecoil()        const { return mP3TrackRecoilTow; }
+   TVector3       GetElectronCandidate()    const { return (*mTracksCandidate.begin())->GetP3EScaled(); }
    void           SetCpuTimeEventAna(Double_t time) { mCpuTimeEventAna = time; }
    void           SetCpuTimeHistFill(Double_t time) { mCpuTimeHistFill = time; }
    bool           HasGoodVertex()         const { return mNumGoodVertices    > 0 ? true : false; } // Checks if at least one good vertex exist in the event

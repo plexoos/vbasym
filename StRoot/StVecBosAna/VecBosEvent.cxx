@@ -222,7 +222,7 @@ void VecBosEvent::Process()
 
    ProcessJets();
 
-   CalcRecoilFromTracks();
+   //   CalcRecoilFromTracks();
    CalcRecoilFromTracks2();
 
    // Calculate the Pt balance as the vector sum: pt elec + pt recoil
@@ -231,12 +231,13 @@ void VecBosEvent::Process()
       TVector3 mP3JetRecoil; 
       mP3JetRecoil.SetXYZ(mP4JetRecoil.Px(), mP4JetRecoil.Py(), mP4JetRecoil.Pz());
 
-      mP3BalanceFromJets       = mP3JetRecoil + (*mTracksCandidate.begin())->mP3AtDca;
-      mBalanceDeltaPhiFromJets = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3JetRecoil);
+      mP3BalanceFromJets       = mP3JetRecoil + (*mTracksCandidate.begin())->GetP3EScaled();
+      mBalanceDeltaPhiFromJets = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3JetRecoil);
       mPtBalanceCosPhiFromJets = mP3BalanceFromJets.Pt()*cos(mBalanceDeltaPhiFromJets) ;
 
-      mP3BalanceFromTracks2       = mP3TrackRecoilTow + (*mTracksCandidate.begin())->mP3AtDca;
-      mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3TrackRecoilTow);
+      //      mP3BalanceFromTracks2       = mP3TrackRecoilTow + (*mTracksCandidate.begin())->mP3AtDca;
+      mP3BalanceFromTracks2       = mP3TrackRecoilTow + (*mTracksCandidate.begin())->GetP3EScaled();
+      mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3TrackRecoilTow);
       mPtBalanceCosPhiFromTracks2 = mP3BalanceFromTracks2.Pt()*cos(mBalanceDeltaPhiFromTracks2) ;
    }
 }
@@ -286,6 +287,7 @@ void VecBosEvent::ProcessMC()
 }
 
 
+/*
 void VecBosEvent::CalcRecoilFromTracks()
 {
    VecBosVertexPtrSetIter iVertex = mVertices.begin();
@@ -303,18 +305,18 @@ void VecBosEvent::CalcRecoilFromTracks()
          if (prP3.Pt() <= 0) continue;   // iso track with a positive Pt
          //if(iTrack->HasCluster() == false) continue;  // iso Track must point to a cluster
 
-/*
-         //.... process BTOW hits
-         for (int i = 0; i < mxBtow; i++) {
-            float ene = bemc.eneTile[kBTow][i];
-            if (ene <= 0) continue;
-            TVector3 positionBtow[mxBtow]; // vs. tower ID
-            TVector3 primP = positionBtow[i] - TVector3(0, 0, vertex.mPosition.Z());
-            primP.SetMag(ene); // it is 3D momentum in the event ref frame
 
-            recoil += primP;
-         }
-*/
+         //.... process BTOW hits
+	 //         for (int i = 0; i < mxBtow; i++) {
+	   //            float ene = bemc.eneTile[kBTow][i];
+	    //            if (ene <= 0) continue;
+	    //            TVector3 positionBtow[mxBtow]; // vs. tower ID
+	    //            TVector3 primP = positionBtow[i] - TVector3(0, 0, vertex.mPosition.Z());
+	    //            primP.SetMag(ene); // it is 3D momentum in the event ref frame
+
+	    //            recoil += primP;
+	 //         }
+
 
          //loop over tracks with a good vertex
          VecBosTrackPtrSetIter rTrack = mTracks.begin();
@@ -353,7 +355,7 @@ void VecBosEvent::CalcRecoilFromTracks()
       } // close there is iso track
    }  // close loop ove vertices
 }
-
+*/
 
 void VecBosEvent::CalcRecoilFromTracks2()
 {

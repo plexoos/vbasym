@@ -93,7 +93,9 @@ void EventHContainer::BookHists()
 
    o["hTrackRecoilTpcPt"]          = hist = new TH1I("hTrackRecoilTpcPt", "Recoil from Tracks: TPC only; Track-based Recoil P_{T}; Events", 50, 0, 50);
 
-   o["hPtRecoilFromTracksOLD"]        = hist = new TH1F("hPtRecoilFromTracksOLD", "Recoil from tracks; P_{T};", 40, 0, 45);
+   o["hTrackRecoilWithNeutralsPt"] = hist = new TH1I("hTrackRecoilWithNeautralsPt", "Recoil from Tracks: TPS+emCal (also untracked clustera) ; Track-based Recoil P_{T}; Events", 50, 0, 50);
+
+   o["hTrackRecoilPtOLD"]        = hist = new TH1F("hTrackRecoilPtOLD", "Recoil from tracks; P_{T};", 40, 0, 45);
 
    o["hPtBalanceFromTracks"]       = hist = new TH1F("hPtBalanceFromTracks", "P_{T}-balance from tracks; P_{T};", 40, 0, 60);
 
@@ -102,6 +104,10 @@ void EventHContainer::BookHists()
    o["hPhiBalanceCosPhiFromTracks"] = hist = new TH1F("hPhiBalanceCosPhiFromTracks", "P_{T}-balance; #phi;", 40, -TMath::Pi(),TMath::Pi());
 
    o["hBalanceDeltaPhiFromTracks"] = hist = new TH1F("hBalanceDeltaPhiFromTracks", "; #Delta #phi;", 40, -TMath::Pi(), TMath::Pi());
+
+   o["hPtBalanceTracksNeutralsVsElecEt"] = hist = new TH2F("hPtBalanceTracksNeutralsVsElecEt","; E_{T}; P_{T}-balance cos(#phi)",40,0.,60.,40,-40,60);
+   hist->SetOption("colz LOGZ");
+
 
    //DrawObjContainer        *oc;
    //DrawObjContainerMapIter  isubdir;
@@ -165,12 +171,15 @@ void EventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hJetRecoilPt"])->Fill(event.GetJetRecoil().Pt());
    ((TH1*) o["hTrackRecoilPt"])->Fill(event.GetTrackRecoil().Pt());
    ((TH1*) o["hTrackRecoilTpcPt"])->Fill(event.mP3TrackRecoilTpc.Pt());
-   ((TH1*) o["hPtRecoilFromTracksOLD"])->Fill(event.mP3RecoilFromTracks.Pt());
+   ((TH1*) o["hTrackRecoilWithNeutralsPt"])->Fill(event.mP3TrackRecoilNeutrals.Pt());
+   ((TH1*) o["hTrackRecoilPtOLD"])->Fill(event.mP3RecoilFromTracks.Pt());
 
    ((TH1*) o["hPtBalanceFromTracks"])->Fill(event.mP3BalanceFromTracks2.Pt());
    ((TH1*) o["hPtBalanceCosPhiFromTracks"])->Fill(event.mPtBalanceCosPhiFromTracks2);
    ((TH1*) o["hPhiBalanceCosPhiFromTracks"])->Fill(event.mP3BalanceFromTracks2.Phi());
    ((TH1*) o["hBalanceDeltaPhiFromTracks"])->Fill(event.mBalanceDeltaPhiFromTracks2);
+   ((TH2*) o["hPtBalanceTracksNeutralsVsElecEt"])->Fill(event.mPtBalanceCosPhiFromTracks2, event.GetElectronCandidate().Pt());
+
 }
 
 
