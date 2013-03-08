@@ -235,9 +235,15 @@ void VecBosEvent::Process()
       mBalanceDeltaPhiFromJets = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3JetRecoil);
       mPtBalanceCosPhiFromJets = mP3BalanceFromJets.Pt()*cos(mBalanceDeltaPhiFromJets) ;
 
+
+      mP3BalanceFromTracks       = mP3TrackRecoilNeutrals + (*mTracksCandidate.begin())->GetP3EScaled();
+      mBalanceDeltaPhiFromTracks = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3TrackRecoilNeutrals);
+      mPtBalanceCosPhiFromTracks = mP3BalanceFromTracks.Pt()*cos(mBalanceDeltaPhiFromTracks) ;
+
       //      mP3BalanceFromTracks2       = mP3TrackRecoilTow + (*mTracksCandidate.begin())->mP3AtDca;
       mP3BalanceFromTracks2       = mP3TrackRecoilTow + (*mTracksCandidate.begin())->GetP3EScaled();
-      mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3TrackRecoilTow);
+      //      mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3TrackRecoilTow);
+      mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3TrackRecoilTow);
       mPtBalanceCosPhiFromTracks2 = mP3BalanceFromTracks2.Pt()*cos(mBalanceDeltaPhiFromTracks2) ;
    }
 }
