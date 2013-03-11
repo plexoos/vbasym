@@ -232,18 +232,18 @@ void VecBosEvent::Process()
       mP3JetRecoil.SetXYZ(mP4JetRecoil.Px(), mP4JetRecoil.Py(), mP4JetRecoil.Pz());
 
       mP3BalanceFromJets       = mP3JetRecoil + (*mTracksCandidate.begin())->GetP3EScaled();
-      mBalanceDeltaPhiFromJets = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3JetRecoil);
+      mBalanceDeltaPhiFromJets = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3BalanceFromJets);
       mPtBalanceCosPhiFromJets = mP3BalanceFromJets.Pt()*cos(mBalanceDeltaPhiFromJets) ;
 
 
-      mP3BalanceFromTracks       = mP3TrackRecoilNeutrals + (*mTracksCandidate.begin())->GetP3EScaled();
-      mBalanceDeltaPhiFromTracks = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3TrackRecoilNeutrals);
+      mP3BalanceFromTracks       = mP3TrackRecoilTpcNeutrals + (*mTracksCandidate.begin())->GetP3EScaled();
+      mBalanceDeltaPhiFromTracks = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3BalanceFromTracks);
       mPtBalanceCosPhiFromTracks = mP3BalanceFromTracks.Pt()*cos(mBalanceDeltaPhiFromTracks) ;
 
-      //      mP3BalanceFromTracks2       = mP3TrackRecoilTow + (*mTracksCandidate.begin())->mP3AtDca;
+      //mP3BalanceFromTracks2       = mP3TrackRecoilTow + (*mTracksCandidate.begin())->mP3AtDca;
       mP3BalanceFromTracks2       = mP3TrackRecoilTow + (*mTracksCandidate.begin())->GetP3EScaled();
       //      mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3TrackRecoilTow);
-      mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3TrackRecoilTow);
+      mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3BalanceFromTracks2);
       mPtBalanceCosPhiFromTracks2 = mP3BalanceFromTracks2.Pt()*cos(mBalanceDeltaPhiFromTracks2) ;
    }
 }
@@ -398,29 +398,23 @@ void VecBosEvent::CalcRecoilFromTracks2()
          mP3TrackRecoilTow += track.GetP3EScaled();
       } else {
          mP3TrackRecoilTow += track.mP3AtDca;
-         mP3TrackRecoilNeutrals += track.mP3AtDca;
+	 //   mP3TrackRecoilNeutrals += track.mP3AtDca;
       }
    }
 
 
    // Process un-tracked BTOW hits
-   //   for (int i = 0; i < mxBtow; i++) {
-   //       float ene = bemc.eneTile[kBTow][i];
-
-   // Loop over all phi bins
-   for (int iphi = 0; iphi < mxEtowPhiBin; iphi++) {
-      for (int ieta = 0; ieta < mxEtowEta; ieta++) { // sum all eta rings
-         float energy = etow.ene[iphi][ieta];
-       if (energy <= 0) continue; // skip towers with no energy
+   for (int iBTow = 0; iBTow < mxBtow; iBTow++) {
+      float energy = bemc.eneTile[kBTow][iBTow];
+      if (energy <= 0) continue; // skip towers with no energy
 
       // Correct BCal tower position to the vertex position
 
        //  TVector3 calP = positionBtow[i] - TVector3(0, 0, vertex.mPosition.Z());
        //TVector3 calP = positionBtow[i] - TVector3(0, 0, trackCandidate.mVertex->mPosition.Z());
-       //       calP.SetMag(ene); 
-       TVector3 positionBtow[mxBtow]; // vs. tower ID
-         TVector3 towerP = gETowCoords[iphi][ieta] - trackCandidate.mVertex->mPosition;
-         towerP.SetMag(energy); // it is 3D momentum in the event ref frame
+ 
+      TVector3 towerP = gBCalTowerCoords[iBTow] -  trackCandidate.mVertex->mPosition;
+      towerP.SetMag(energy); // it is 3D momentum in the event ref frame
 
 	 //loop over tracks to and exclude towers with a matching track
          VecBosTrackPtrSetIter iTr = mTracks.begin();
@@ -432,8 +426,10 @@ void VecBosEvent::CalcRecoilFromTracks2()
 
             mP3TrackRecoilNeutrals += towerP;
          }
-      }
-   }  
+   } 
+
+   mP3TrackRecoilTpcNeutrals =   mP3TrackRecoilTpc  +  mP3TrackRecoilNeutrals ; 
+
 }
 
 
