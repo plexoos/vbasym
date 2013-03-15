@@ -103,6 +103,7 @@ public:
    Double_t            mPtBalanceCosPhiFromJets; 
    Double_t            mHadRecoilFromTracksEta;
    Double_t            mHadRecoilFromTracksPt;
+   //   float               enecl;
 
    static const float  sMinTrackIsoDeltaR;    //! (rad) near-cone size
    static const float  sMinTrackIsoDeltaPhi;  //! (rad) away-'cone' size, approx. 40 deg.
