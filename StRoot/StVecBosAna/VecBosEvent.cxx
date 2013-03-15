@@ -340,18 +340,19 @@ void VecBosEvent::CalcRecoilFromTracks()
       //enecl = bemc.eneTile[kBTow][iBTow];
       if (enecl <= 0) continue; // skip towers with no energy
 
-      printf("tower energy: %f\n", enecl);
-      // Correct BCal tower position to the vertex position
+      //printf("tower energy: %f\n", enecl);
 
-       //  TVector3 calP = positionBtow[i] - TVector3(0, 0, vertex.mPosition.Z());
-       //TVector3 calP = positionBtow[i] - TVector3(0, 0, trackCandidate.mVertex->mPosition.Z());
+      // Correct BCal tower position to the vertex position
+      //  TVector3 calP = positionBtow[i] - TVector3(0, 0, vertex.mPosition.Z());
+      //TVector3 calP = positionBtow[i] - TVector3(0, 0, trackCandidate.mVertex->mPosition.Z());
  
       TVector3 towerP = gBCalTowerCoords[iBTow] -  trackCandidate.mVertex->mPosition;
       towerP.SetMag(enecl); // it is 3D momentum in the event ref frame
-      printf("tower Pt: %f\n", towerP.Pt());
+      TVector3 towCoord = gBCalTowerCoords[iBTow];
+      //printf("tower Pt: %f\n", towerP.Pt());
+      //printf("tower Coordinate: X=%f: Y=%f: Z=%f \n", towCoord.X(),towCoord.Y(),towCoord.Z() );
 
-      bool HasMatch; 
-      HasMatch  = false;      
+      bool HasMatch  = false;      
          //loop over tracks to and exclude towers with a matching track
          VecBosTrackPtrSetIter iTr = mTracks.begin();
          for (; iTr != mTracks.end(); ++iTr)
@@ -359,36 +360,39 @@ void VecBosEvent::CalcRecoilFromTracks()
             VecBosTrack &tr = **iTr;
             TVector3 trP3 = tr.mP3AtDca;
             TVector3 trCoorAtBTow = tr.GetCoordAtBTow(); 
+            //printf("Track coordinate at  BTower: %f\n", trCoorAtBTow.Mag() );
+            if (trCoorAtBTow.Mag() == 0.000000) continue; // track does not extend to barrel 
+            //printf("Track coordinate at BTower: X=%f Y=%f Z=%f \n", trCoorAtBTow.X(), trCoorAtBTow.Y(), trCoorAtBTow.Z() );
+
+
             //TVector3 trCoorAtBTow = (tr.mCoorAtBTow->position.x(),tr.mCoorAtBTow.position.y(),tr.mCoorAtBTow.position.z());
-            //printf("trCoorAtBTow: %f\n", trCoorAtBTow);  
          
             // if (trP3.DeltaR(towerP)    < 0.1) HasMatch = true;// Checks for a track matching the tower  
 	    // if (HasMatch == true)   continue;
-
-
             //-------------------------------------------------------------------
 
             //if ( mTracks->ExtendTrack2Barrel() == false) continue;
  
             // spacial separation (track - cluster)
-            TVector3 DistToCluster = (-10, -10, -10);  // nonsense value
-            DistToCluster = trCoorAtBTow - towerP;
-            printf("Distance track to Tower: %f\n", DistToCluster.Mag());   
+            TVector3 distToCluster = (-10, -10, -10);  // nonsense value
+            distToCluster = trCoorAtBTow - towCoord;
+            //printf("Distance track to Tower: %f\n", distToCluster.Mag());   
 
-            if (DistToCluster.Mag() <= VecBosTrack::sMaxTrackClusterDist)
+            if (distToCluster.Mag() <= VecBosTrack::sMaxTrackClusterDist)
             {
                HasMatch = true; // the TPC track maches to the tower
+               break;	    
 	    }
-            if (HasMatch) continue;
+            //if (HasMatch) continue;
             //---------------------------------------------------------------------------
 
 	 }
 
-	 printf("Tower has a match: %d\n",HasMatch);   
+	 //printf("Tower has a match: %d\n",HasMatch);   
        if (!HasMatch)
        {       
            mP3TrackRecoilNeutrals += towerP;
-           printf("Recoil neutrals Pt: %f\n", mP3TrackRecoilNeutrals.Pt());   
+           //printf("Recoil neutrals Pt: %f\n", mP3TrackRecoilNeutrals.Pt());   
        } 
       //mP3TrackRecoilNeutrals += towerP;
 
