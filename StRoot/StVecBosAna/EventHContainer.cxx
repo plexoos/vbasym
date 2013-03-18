@@ -196,7 +196,7 @@ void EventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hTrackRecoilPt"])->Fill(event.GetTrackRecoil().Pt());
    ((TH1*) o["hTrackRecoilTpcPt"])->Fill(event.mP3TrackRecoilTpc.Pt());
    ((TH1*) o["hTrackRecoilWithNeutralsPt"])->Fill(event.mP3TrackRecoilTpcNeutrals.Pt());
-   ((TH1*) o["hTrackRecoilUntrackedClustersPt"])->Fill(event.mP3RecoilNeutrals.Pt());
+   ((TH1*) o["hTrackRecoilUntrackedClustersPt"])->Fill(event.mP3TrackRecoilNeutrals.Pt());
 
    ((TH1*) o["hPtBalanceFromTracksNeutrals"])->Fill(event.mP3BalanceFromTracks.Pt());
    ((TH1*) o["hPtBalanceCosPhiFromTracksNeutrals"])->Fill(event.mPtBalanceCosPhiFromTracks);
