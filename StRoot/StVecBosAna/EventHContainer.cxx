@@ -95,7 +95,7 @@ void EventHContainer::BookHists()
 
    o["hTrackRecoilWithNeutralsPt"] = hist = new TH1I("hTrackRecoilWithNeautralsPt", "Recoil from Tracks: TPS+emCal (also untracked clustera) ; Track-based Recoil P_{T}; Events", 50, 0, 50);
 
-   o["hTrackRecoilPtOLD"]        = hist = new TH1F("hTrackRecoilPtOLD", "Recoil from tracks; P_{T};", 40, 0, 45);
+   o["hTrackRecoillUntrackedClustersPt"]        = hist = new TH1F("hTrackRecoillUntrackedClustersPt", "Recoil from tracks; P_{T};", 40, 0, 45);
 
 
    o["hPtBalanceFromTracksNeutrals"]       = hist = new TH1F("hPtBalanceFromTracksNeutrals", "P_{T}-balance from tracks; P_{T};", 40, 0, 60);
@@ -195,8 +195,8 @@ void EventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hJetRecoilPt"])->Fill(event.GetJetRecoil().Pt());
    ((TH1*) o["hTrackRecoilPt"])->Fill(event.GetTrackRecoil().Pt());
    ((TH1*) o["hTrackRecoilTpcPt"])->Fill(event.mP3TrackRecoilTpc.Pt());
-   ((TH1*) o["hTrackRecoilWithNeutralsPt"])->Fill(event.mP3TrackRecoilNeutrals.Pt());
-   ((TH1*) o["hTrackRecoilPtOLD"])->Fill(event.mP3RecoilFromTracks.Pt());
+   ((TH1*) o["hTrackRecoilWithNeutralsPt"])->Fill(event.mP3TrackRecoilTpcNeutrals.Pt());
+   ((TH1*) o["hTrackRecoilUntrackedClustersPt"])->Fill(event.mP3RecoilNeutrals.Pt());
 
    ((TH1*) o["hPtBalanceFromTracksNeutrals"])->Fill(event.mP3BalanceFromTracks.Pt());
    ((TH1*) o["hPtBalanceCosPhiFromTracksNeutrals"])->Fill(event.mPtBalanceCosPhiFromTracks);
