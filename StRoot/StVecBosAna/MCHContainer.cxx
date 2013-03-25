@@ -158,13 +158,22 @@ void MCHContainer::BookHists()
    o["hTrackRecoilTpcPtVsWBosonPt"] = hist = new TH2I("hTrackRecoilTpcPtVsWBosonPt", "; W Boson P_{T}; Track-based Recoil P_{T}", 50, 0., 50., 50, 0., 50.);
    hist->SetOption("colz LOGZ");
 
+   o["hTrackRecoilTpcNeutralsPtVsWBosonPt"] = hist = new TH2I("hTrackRecoilTpcNeutralsPtVsWBosonPt", "; W Boson P_{T}; Track-based Recoil P_{T}", 50, 0., 50., 50, 0., 50.);
+   hist->SetOption("colz LOGZ");
+
    o["hJetRecoilPtRelDiff"]   = hist = new TH1F("hJetRecoilPtRelDiff", "; Jet-based Recoil P_{T}, Rel. Diff.; ", 50, -2, 2.);
    hist->SetOption("hist");
 
    o["hTrackRecoilPtRelDiff"] = hist = new TH1F("hTrackRecoilPtRelDiff", "; Track-based Recoil P_{T}, Rel. Diff.; ", 50, -2, 2.);
    hist->SetOption("hist");
 
+   o["hTrackRecoilTpcNeutralsPtRelDiff"] = hist = new TH1F("hTrackRecoilTpcNeutralsPtRelDiff", "; Track-based Recoil P_{T}, Rel. Diff.; ", 50, -2, 2.);
+   hist->SetOption("hist");
+
    o["hJetTrackRecoilPtRelDiff"] = hist = new TH1F("hJetTrackRecoilPtRelDiff", "; Jet- Track-based Recoil P_{T}, Rel. Diff.; ", 50, -2, 2.);
+   hist->SetOption("hist");
+
+   o["hJetTrackTpcNeutralsRecoilPtRelDiff"] = hist = new TH1F("hJetTrackTpcNeutralsRecoilPtRelDiff", "; Jet- Track-based Recoil P_{T}, Rel. Diff.; ", 50, -2, 2.);
    hist->SetOption("hist");
 
    // MC correction variables
@@ -243,6 +252,7 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hTrackRecoilPtVsWBosonPt"])   ->Fill(event.mWEvent->mP4WBoson.Pt(), event.GetTrackRecoil().Pt());
    ((TH1*) o["hTrackRecoilPhiVsWBosonPhi"]) ->Fill(event.mWEvent->mP4WBoson.Phi(), event.GetTrackRecoil().Phi());
    ((TH1*) o["hTrackRecoilTpcPtVsWBosonPt"])->Fill(event.mWEvent->mP4WBoson.Pt(), event.mP3TrackRecoilTpc.Pt());
+   ((TH1*) o["hTrackRecoilTpcNeutralsPtVsWBosonPt"])->Fill(event.mWEvent->mP4WBoson.Pt(), event.GetTrackRecoilTpcNeutrals().Pt());
 
    Double_t recoilRelDiff = (event.GetJetRecoil().Pt() - event.mWEvent->mP4WBoson.Pt())/event.mWEvent->mP4WBoson.Pt();
    ((TH1*) o["hJetRecoilPtRelDiff"]) ->Fill( recoilRelDiff );
@@ -250,8 +260,14 @@ void MCHContainer::Fill(ProtoEvent &ev)
    recoilRelDiff = (event.GetTrackRecoil().Pt() - event.mWEvent->mP4WBoson.Pt())/event.mWEvent->mP4WBoson.Pt();
    ((TH1*) o["hTrackRecoilPtRelDiff"]) ->Fill( recoilRelDiff );
 
+   recoilRelDiff = (event.GetTrackRecoilTpcNeutrals().Pt() - event.mWEvent->mP4WBoson.Pt())/event.mWEvent->mP4WBoson.Pt();
+   ((TH1*) o["hTrackRecoilTpcNeutralsPtRelDiff"]) ->Fill( recoilRelDiff );
+
    recoilRelDiff = (event.GetTrackRecoil().Pt() - event.GetJetRecoil().Pt())/event.GetJetRecoil().Pt();
    ((TH1*) o["hJetTrackRecoilPtRelDiff"]) ->Fill( recoilRelDiff );
+
+   recoilRelDiff = (event.GetTrackRecoilTpcNeutrals().Pt() - event.GetJetRecoil().Pt())/event.GetJetRecoil().Pt();
+   ((TH1*) o["hJetTrackTpcNeutralsRecoilPtRelDiff"]) ->Fill( recoilRelDiff );
 
    // MC correction variablel
    //((TH1*) o["hEnergyRatio"])->Fill(event.mWEvent->fEnergyRatio);

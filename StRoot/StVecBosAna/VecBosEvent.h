@@ -139,7 +139,8 @@ public:
    UInt_t         GetNumTracksWithBCluster();
    TLorentzVector GetJetRecoil()          const { return mP4JetRecoil; }
    TVector3       GetTrackRecoil()        const { return mP3TrackRecoilTow; }
-   TVector3       GetTrackRecoilTpcNeutrals()        const { return mP3TrackRecoilTpcNeutrals; }
+   TVector3       GetTrackRecoilNeutrals()        const { return mP3TrackRecoilNeutrals; }
+   TVector3       GetTrackRecoilTpcNeutrals()     const { return mP3TrackRecoilTpcNeutrals; }
    TVector3       GetElectronCandidate()    const { return (*mTracksCandidate.begin())->GetP3EScaled(); }
    void           SetCpuTimeEventAna(Double_t time) { mCpuTimeEventAna = time; }
    void           SetCpuTimeHistFill(Double_t time) { mCpuTimeHistFill = time; }

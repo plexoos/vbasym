@@ -241,7 +241,7 @@ void VecBosEvent::Process()
       mPtBalanceCosPhiFromTracks = mP3BalanceFromTracks.Pt()*cos(mBalanceDeltaPhiFromTracks) ;
 
       //mP3BalanceFromTracks2       = mP3TrackRecoilTow + (*mTracksCandidate.begin())->mP3AtDca;
-      mP3BalanceFromTracks2       = mP3TrackRecoilTow + (*mTracksCandidate.begin())->GetP3EScaled();
+      mP3BalanceFromTracks2       = mP3TrackRecoilTpc + (*mTracksCandidate.begin())->GetP3EScaled();
       //      mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3TrackRecoilTow);
       mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3BalanceFromTracks2);
       mPtBalanceCosPhiFromTracks2 = mP3BalanceFromTracks2.Pt()*cos(mBalanceDeltaPhiFromTracks2) ;
@@ -352,6 +352,15 @@ void VecBosEvent::CalcRecoilFromTracks()
       //printf("tower Pt: %f\n", towerP.Pt());
       //printf("tower Coordinate: X=%f: Y=%f: Z=%f \n", towCoord.X(),towCoord.Y(),towCoord.Z() );
 
+
+      bool PartOfElecCandidate  = false;      
+      //Check if the tower belongs to the lectron 2x2 candidate
+      TVector3 distToCluster = (-10, -10, -10);  // nonsense value
+      distToCluster = trackCandidate.mCluster2x2.position - towCoord;
+      printf("Distance of tower to electron cluster: %f\n", distToCluster.Mag());         
+      if (distToCluster.Mag() <= 2*VecBosTrack::sMaxTrackClusterDist) PartOfElecCandidate = true;
+      printf("PartOfElecCandidate= %d\n", PartOfElecCandidate); 
+
       bool HasMatch  = false;      
          //loop over tracks to and exclude towers with a matching track
          VecBosTrackPtrSetIter iTr = mTracks.begin();
@@ -374,11 +383,11 @@ void VecBosEvent::CalcRecoilFromTracks()
             //if ( mTracks->ExtendTrack2Barrel() == false) continue;
  
             // spacial separation (track - cluster)
-            TVector3 distToCluster = (-10, -10, -10);  // nonsense value
-            distToCluster = trCoorAtBTow - towCoord;
-            //printf("Distance track to Tower: %f\n", distToCluster.Mag());   
+            TVector3 distToTower = (-10, -10, -10);  // nonsense value
+            distToTower = trCoorAtBTow - towCoord;
+            //printf("Distance track to Tower: %f\n", distToTower.Mag());   
 
-            if (distToCluster.Mag() <= VecBosTrack::sMaxTrackClusterDist)
+            if (distToTower.Mag() <= VecBosTrack::sMaxTrackClusterDist)
             {
                HasMatch = true; // the TPC track maches to the tower
                break;	    
