@@ -336,18 +336,18 @@ void VecBosEvent::CalcRecoilFromTracks()
 
    // Process un-tracked BTOW hits
    for (int iBTow = 0; iBTow < mxBtow; iBTow++) {
-      float enecl = bemc.eneTile[kBTow][iBTow];
-      //enecl = bemc.eneTile[kBTow][iBTow];
-      if (enecl <= 0) continue; // skip towers with no energy
+      float eneTo = bemc.eneTile[kBTow][iBTow];
+      //eneTo = bemc.eneTile[kBTow][iBTow];
+      if (eneTo <= 0.200) continue; // skip towers with energy below noise
 
-      //printf("tower energy: %f\n", enecl);
+      printf("tower energy: %f\n", eneTo);
 
       // Correct BCal tower position to the vertex position
       //  TVector3 calP = positionBtow[i] - TVector3(0, 0, vertex.mPosition.Z());
       //TVector3 calP = positionBtow[i] - TVector3(0, 0, trackCandidate.mVertex->mPosition.Z());
  
       TVector3 towerP = gBCalTowerCoords[iBTow] -  trackCandidate.mVertex->mPosition;
-      towerP.SetMag(enecl); // it is 3D momentum in the event ref frame
+      towerP.SetMag(eneTo); // it is 3D momentum in the event ref frame
       TVector3 towCoord = gBCalTowerCoords[iBTow];
       //printf("tower Pt: %f\n", towerP.Pt());
       //printf("tower Coordinate: X=%f: Y=%f: Z=%f \n", towCoord.X(),towCoord.Y(),towCoord.Z() );
@@ -398,7 +398,7 @@ void VecBosEvent::CalcRecoilFromTracks()
 	 }
 
 	 //printf("Tower has a match: %d\n",HasMatch);   
-       if (!HasMatch)
+       if (!HasMatch && !PartOfElecCandidate)
        {       
            mP3TrackRecoilNeutrals += towerP;
            //printf("Recoil neutrals Pt: %f\n", mP3TrackRecoilNeutrals.Pt());   

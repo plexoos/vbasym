@@ -13,14 +13,14 @@
    <command>
       starver &STAR_VER;
 
-      cp &codePath;/runlists/&RUNLIST_ID; &OUT_DIR;/lists_run11_cut35/&RUNLIST_ID;.lis
+      cp &codePath;/runlists/&RUNLIST_ID; &OUT_DIR;/lists_run11_cut10/&RUNLIST_ID;.lis
 
-      setenv RUNLIST &OUT_DIR;/lists_run11_cut35/&RUNLIST_ID;.lis
+      setenv RUNLIST &OUT_DIR;/lists_run11_cut10/&RUNLIST_ID;.lis
       setenv OPTIONS `echo &STANA_OPTIONS; | sed 's/_/ /g'`
       setenv OPT_JETS `echo $OPTIONS | awk '{print index($0,"-j")}'`
       setenv COMMAND "./stana -f $RUNLIST $OPTIONS"
 
-      if ($OPT_JETS == 0) ln -s &OUT_DIR;/jets_run11_cut35/jets_&RUNLIST_ID;.root
+      if ($OPT_JETS == 0) ln -s &OUT_DIR;/jets_run11_cut10/jets_&RUNLIST_ID;.root
       cp -r &codePath;/.sl53_gcc432 .
       cp -r &codePath;/stana .
       ls -al
@@ -47,19 +47,19 @@
       # Remove files and links
       if ($OPT_JETS == 0) rm jets_&RUNLIST_ID;.root
       chmod 664 *.hist.root jets_*.root *.wtree.root *.ps
-      chmod 664 &OUT_DIR;/log_run11_cut35/&RUNLIST_ID;_&STANA_OPTIONS;.log
-      touch     &OUT_DIR;/log_run11_cut35/&RUNLIST_ID;_&STANA_OPTIONS;.log
+      chmod 664 &OUT_DIR;/log_run11_cut10/&RUNLIST_ID;_&STANA_OPTIONS;.log
+      touch     &OUT_DIR;/log_run11_cut10/&RUNLIST_ID;_&STANA_OPTIONS;.log
       rm -fr ./.sl53_gcc432
       rm -fr ./stana
 
    </command>
 
-   <output fromScratch="*.hist.root"  toURL="file:&OUT_DIR;/data_run11_cut35/"/>
-   <output fromScratch="jets_*.root"  toURL="file:&OUT_DIR;/jets_run11_cut35/"/>
-   <output fromScratch="*.wtree.root" toURL="file:&OUT_DIR;/wtree_run11_cut35/"/>
+   <output fromScratch="*.hist.root"  toURL="file:&OUT_DIR;/data_run11_cut10/"/>
+   <output fromScratch="jets_*.root"  toURL="file:&OUT_DIR;/jets_run11_cut10/"/>
+   <output fromScratch="*.wtree.root" toURL="file:&OUT_DIR;/wtree_run11_cut10/"/>
    <output fromScratch="*.ps"         toURL="file:&OUT_DIR;/ps_run11/"/>
-   <stdout URL="file:&OUT_DIR;/log_run11_cut35/&RUNLIST_ID;_&STANA_OPTIONS;.log"/>
-   <stderr URL="file:&OUT_DIR;/log_run11_cut35/&RUNLIST_ID;_&STANA_OPTIONS;.log"/>
+   <stdout URL="file:&OUT_DIR;/log_run11_cut10/&RUNLIST_ID;_&STANA_OPTIONS;.log"/>
+   <stderr URL="file:&OUT_DIR;/log_run11_cut10/&RUNLIST_ID;_&STANA_OPTIONS;.log"/>
 
    <SandBox>
        <Package>
