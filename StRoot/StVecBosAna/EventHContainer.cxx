@@ -107,7 +107,7 @@ void EventHContainer::BookHists()
    o["hBalanceDeltaPhiFromTracksNeutrals"] = hist = new TH1F("hBalanceDeltaPhiFromTracksNeutrals", "; #Delta #phi;", 40, -TMath::Pi(), TMath::Pi());
 
    o["hPtBalanceTracksNeutralsVsElecEt"] = hist = new TH2F("hPtBalanceTracksNeutralsVsElecEt","; E_{T}^{electron}; P_{T}-balance cos(#phi)",40,0.,60.,40,-40,60);
-   hist->SetOption("colz logz");
+   hist->SetOption("colz LOGZ");
 
    o["hPtBalanceFromTracks"]       = hist = new TH1F("hPtBalanceFromTracks", "P_{T}-balance from tracks; P_{T};", 40, 0, 60);
 
@@ -129,7 +129,7 @@ void EventHContainer::BookHists()
 
    o["hBalanceDeltaPhiFromJets"] = hist = new TH1F("hBalanceDeltaPhiFromJets", "Jets; #Delta #phi;", 40, -TMath::Pi(), TMath::Pi());
 
-   o["hPtBalanceJetsNeutralsVsElecEt"] = hist = new TH2F("hPtBalanceJetsNeutralsVsElecEt","Jets; E_{T}^{electron}; P_{T}-balance cos(#phi)",40,0.,60.,40,-40,60);
+   o["hPtBalanceJetsVsElecEt"] = hist = new TH2F("hPtBalanceJetsVsElecEt","Jets; E_{T}^{electron}; P_{T}-balance cos(#phi)",40,0.,60.,40,-40,60);
    hist->SetOption("colz LOGZ");
 
 
@@ -219,7 +219,7 @@ void EventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hPhiBalanceCosPhiFromJets"])->Fill(event.mP3BalanceFromJets.Phi());
    ((TH1*) o["hBalanceDeltaPhiFromJets"])->Fill(event.mBalanceDeltaPhiFromJets);
    if (event.mTracksCandidate.size() > 0) {
-      ((TH2*) o["hPtBalanceJetsNeutralsVsElecEt"])->Fill(event.mPtBalanceCosPhiFromJets, event.GetElectronCandidate().Pt());
+      ((TH2*) o["hPtBalanceJetsVsElecEt"])->Fill(event.mPtBalanceCosPhiFromJets, event.GetElectronCandidate().Pt());
    }
 
 }
