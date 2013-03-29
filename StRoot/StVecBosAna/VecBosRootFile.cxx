@@ -163,7 +163,7 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
       }
    }
 
-   if ( event->mP3RecoilFromTracks.Mag() > 0)
+   if ( event->mP3TrackRecoilTpcNeutrals.Mag() > 0)
       Fill(ev, kCUT_EVENT_HAS_TRACKRECOIL);
 
    if ( event->HasCandidateTrack() )
