@@ -340,7 +340,7 @@ void VecBosEvent::CalcRecoilFromTracks()
       //eneTo = bemc.eneTile[kBTow][iBTow];
       if (eneTo <= 0.200) continue; // skip towers with energy below noise
 
-      printf("tower energy: %f\n", eneTo);
+      //printf("tower energy: %f\n", eneTo);
 
       // Correct BCal tower position to the vertex position
       //  TVector3 calP = positionBtow[i] - TVector3(0, 0, vertex.mPosition.Z());
@@ -359,7 +359,7 @@ void VecBosEvent::CalcRecoilFromTracks()
       distToCluster = trackCandidate.mCluster2x2.position - towCoord;
       printf("Distance of tower to electron cluster: %f\n", distToCluster.Mag());         
       if (distToCluster.Mag() <= 2*VecBosTrack::sMaxTrackClusterDist) PartOfElecCandidate = true;
-      printf("PartOfElecCandidate= %d\n", PartOfElecCandidate); 
+      //printf("PartOfElecCandidate= %d\n", PartOfElecCandidate); 
 
       bool HasMatch  = false;      
          //loop over tracks to and exclude towers with a matching track

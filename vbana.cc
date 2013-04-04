@@ -33,8 +33,8 @@ int main(int argc, char *argv[])
    //string histFileName   = "vbana_cut35_data.root";
    //string histFileName   = "vbana_cut35_data_100k.root";
    //string histFileName   = "vbana_cut15_mc.root";
-   //string histFileName   = "vbana_cut35_mc_wm.root";
-   string histFileName   = "vbana_cut10_mc_wp.root";
+   //string histFileName   = "vbana_cut05_mc_wm.root";
+   string histFileName   = "vbana_cut05_mc_wp.root";
 
         //string filelist       = "./runlists/run11_pp_transverse";
 	//string filelist       = "./runlists/run11_all_goodsofar_cut15";
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
       string fName    = string(((TObjString*) o)->GetName());
       //string fileName = "./R" + fName + ".wtree.root";
       //string fileName = "/star/data05/scratch/fazio/wtree_run11_cut15/";
-      string fileName = "/star/data05/scratch/fazio/wtree_run11_cut10/";
+      string fileName = "/star/data05/scratch/fazio/wtree_run11_cut05/";
       fileName += (!isMc?"R":"") + fName + ".wtree.root";
 
       TFile *f = new TFile(fileName.c_str(), "READ");
