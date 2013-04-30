@@ -2,7 +2,7 @@ void new_plots() {
 
 // Load the libraries:
 
-//   gROOT->Macro("/star/u/fazio/offline/users/fazio/vbasym/macros/loadLibs.C"); 
+// gROOT->Macro("/star/u/fazio/offline/users/fazio/vbasym/macros/loadLibs.C"); 
 
 // Delete the histos:
 //   h*
@@ -20,11 +20,11 @@ void new_plots() {
   TChain WmMCChain("t");
   TChain WDataChain("t");
 
-   WpMCChain.Add("/star/data05/scratch/fazio/wtree_run11_cut35/MC_list_Wp_2012_*.wtree.root");
-   WmMCChain.Add("/star/data05/scratch/fazio/wtree_run11_cut35/MC_list_Wm_2012_*.wtree.root");
+   WpMCChain.Add("/star/data05/scratch/fazio/wtree_run11_cut05/MC_list_Wp_2012_*.wtree.root");
+   WmMCChain.Add("/star/data05/scratch/fazio/wtree_run11_cut05/MC_list_Wm_2012_*.wtree.root");
 
    // WpMCChain.Add("/star/u/fazio/offline/users/fazio/vbasym/MC_list_Wp_2012_00.wtree.root");
-   WDataChain.Add("/star/data05/scratch/fazio/wtree_run11_cut35/R*.wtree.root");
+   WDataChain.Add("/star/data05/scratch/fazio/wtree_run11_cut05/R*.wtree.root");
    //   WmMCChain.Add("/star/u/fazio/offline/users/fazio/vbasym/MC_list_Wm_2012_*.wtree.root");
 
 // Set a max number of entries:
@@ -38,8 +38,10 @@ void new_plots() {
   gStyle->SetMarkerStyle(20);
   gStyle->SetHistFillColor(kYellow);
 
-/*
+
 // Plot the shit you want:
+
+/*
 
 //  MCChain.Draw("l2bitET");
   //MCChain.Draw("e.mP4JetRecoil.Pt():e.mWEvent.mP4WBoson.Pt()>>h1");
@@ -107,8 +109,8 @@ void new_plots() {
 
  TH2F *h3_1 = new TH2F("h3_1","W^{+} - Recoil from tracks;Pt^{Gen}_{W} (rad);Pt^{Reco}_{W} (rad)",40,0,40,40,0,40); 
  TH2F *h3_2 = new TH2F("h3_2","W^{-} - Recoil from tracks;Pt^{Gen}_{W} (rad);Pt^{Reco}_{W} (rad)",40,0,40,40,0,40); 
- WpMCChain.Project("h3_1","e.mP3RecoilFromTracks.Pt():e.mWEvent.mP4WBoson.Pt()","e.mP3RecoilFromTracks.Pt() > 2."); 
- WmMCChain.Project("h3_2","e.mP3RecoilFromTracks.Pt():e.mWEvent.mP4WBoson.Pt()","e.mP3RecoilFromTracks.Pt() > 2.");
+ WpMCChain.Project("h3_1","e.mP3TrackRecoilTpcNeutrals.Pt():e.mWEvent.mP4WBoson.Pt()","e.mP3TrackRecoilTpcNeutrals.Pt() > 2."); 
+ WmMCChain.Project("h3_2","e.mP3TrackRecoilTpcNeutrals.Pt():e.mWEvent.mP4WBoson.Pt()","e.mP3TrackRecoilTpcNeutrals.Pt() > 2.");
  TCanvas *c3 = new TCanvas("c3","Recoil From Tracks",500,500);
  c3->Divide(1,2);
  c3_1->SetLogz(1);
@@ -123,8 +125,8 @@ void new_plots() {
 
  TH2F *h4_1 = new TH2F("h4_1","W^{+} - Recoil from tracks;#phi^{Gen}_{W} (rad);#phi^{Reco}_{W} (rad)",40,-TMath::Pi(),TMath::Pi(),40,-TMath::Pi(),TMath::Pi());
  TH2F *h4_2 = new TH2F("h4_2","W^{-} - Recoil from tracks;#phi^{Gen}_{W} (rad);#phi^{Reco}_{W} (rad)",40,-TMath::Pi(),TMath::Pi(),40,-TMath::Pi(),TMath::Pi());
- WpMCChain.Project("h4_1","e.mP3RecoilFromTracks.Phi():e.mWEvent.mP4WBoson.Phi()","e.mP3RecoilFromTracks.Pt() > 0");
- WmMCChain.Project("h4_2","e.mP3RecoilFromTracks.Phi():e.mWEvent.mP4WBoson.Phi()","e.mP3RecoilFromTracks.Pt() > 0.");
+ WpMCChain.Project("h4_1","e.mP3TrackRecoilTpcNeutrals.Phi():e.mWEvent.mP4WBoson.Phi()","e.mP3TrackRecoilTpcNeutrals.Pt() > 0");
+ WmMCChain.Project("h4_2","e.mP3TrackRecoilTpcNeutrals.Phi():e.mWEvent.mP4WBoson.Phi()","e.mP3TrackRecoilTpcNeutrals.Pt() > 0.");
  TCanvas *c4 = new TCanvas("c4","Recoil From Tracks",500,500);
  c4->Divide(1,2);
  c4_1->cd();
@@ -158,7 +160,7 @@ void new_plots() {
  
 
  TH1F *h7_1 = new TH1F("h7_1","Recoil from tracks; P_{T};",40,0.,45.);
- WpMCChain.Project("h7_1","e.mHadRecoilFromTracksPt","e.mHadRecoilFromTracksPt > 0");
+ WpMCChain.Project("h7_1","e.mP3TrackRecoilTpcNeutrals.Pt()","e.mP3TrackRecoilTpcNeutrals.Pt() > 0");
 
  TH1F *h7j_1 = new TH1F("h7j_1","Recoil from Jets; P_{T};",40,0.,45.);
  WpMCChain.Project("h7j_1","e.mP4JetRecoil.Pt()","e.mNumCandidateTracks==1 && e.mP4JetRecoil.Mag()>0 && e.mP4JetRecoil.Pt()<70 && e.@mJetsWithIsoTrack.size()==1");
@@ -245,7 +247,7 @@ void new_plots() {
 
  d7b->Print("./plots/h7dbis.eps");
 
-
+*/
  
  TH1F *h8_1 = new TH1F("h8_1","electron candidate - ratio 2x2/4x4; fraction: cluster 2x2/4x4 ET;",40,0.,1.);
  WpMCChain.Project("h8_1","e.mTracksCandidate.mCluster2x2.ET/e.mTracksCandidate.mP3InNearConeBTow.Pt()","");
@@ -377,7 +379,7 @@ void new_plots() {
 
  c9->Print("./plots/h9.eps");
 
-*/
+
 
  TH1F *h10_1 = new TH1F("h10_1","Recoil from tracks P_(T)>3.5 GeV; P_{T};",40,0.,45.);
  WpMCChain.Project("h10_1","e.mHadRecoilFromTracksPt","e.mHadRecoilFromTracksPt > 3.5");

@@ -5,6 +5,6 @@ void loadLibs()
    loadSharedLibraries();
    gSystem->Load("StJets");
    gSystem->Load("~/rootmacros/utils/libutils.so");
-   gSystem->Load("./.sl53_gcc432/lib/libStVecBosAna.so");
+   gSystem->Load("~/offline/users/fazio/vbasym/.sl53_gcc432/lib/libStVecBosAna.so");
 
 }
