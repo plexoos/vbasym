@@ -149,7 +149,8 @@ UInt_t VecBosEvent::GetNumTracksWithBCluster()
 
 bool VecBosEvent::PassCutFinal()
 {
-   if (mTracksCandidate.size() > 0 && CalcP3MissingEnergy().Pt() > 18)
+  if (mTracksCandidate.size() > 0 && CalcP3MissingEnergy().Pt() > 18
+      && (*mTracksCandidate.begin())->GetP3EScaled().Mag() >= VecBosTrack::sMinCandidateTrackClusterE)
       return true;
 
    return false;
