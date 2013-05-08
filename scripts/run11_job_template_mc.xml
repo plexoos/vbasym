@@ -57,7 +57,7 @@
    <output fromScratch="*.hist.root"  toURL="file:&OUT_DIR;/data_run11_cut05/"/>
    <output fromScratch="jets_*.root"  toURL="file:&OUT_DIR;/jets_run11_cut05/"/>
    <output fromScratch="*.wtree.root" toURL="file:&OUT_DIR;/wtree_run11_cut05/"/>
-   <output fromScratch="*.ps"         toURL="file:&OUT_DIR;/ps_run11/"/>
+   <!--   <output fromScratch="*.ps"         toURL="file:&OUT_DIR;/ps_run11/"/>-->
    <stdout URL="file:&OUT_DIR;/log_run11_cut05/&RUNLIST_ID;_&STANA_OPTIONS;.log"/>
    <stderr URL="file:&OUT_DIR;/log_run11_cut05/&RUNLIST_ID;_&STANA_OPTIONS;.log"/>
 

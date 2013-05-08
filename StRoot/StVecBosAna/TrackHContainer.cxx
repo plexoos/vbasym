@@ -66,6 +66,9 @@ void TrackHContainer::BookHists()
    o["hTrackPt"] = hist = new TH1I("hTrackPt", "; Track P_T; Num. of Tracks", 80, 0, 80);
    hist->SetOption("hist GRIDX GRIDY XY");
 
+   o["hEcalScaledPt"] = hist = new TH1I("hEcalScaledPt", "; P_T; Num. of Tracks", 80, 0, 80);
+   hist->SetOption("hist GRIDX GRIDY XY");
+
    o["hTrackEOverP"] = hist = new TH1I("hTrackEOverP", "; E/P; Num. of Tracks", 50, 0, 2);
    hist->SetOption("hist GRIDX GRIDY");
 
@@ -137,6 +140,7 @@ void TrackHContainer::Fill(VecBosTrack &track)
    }
 
    ((TH1*) o["hTrackPt"])->Fill(track.mP3AtDca.Pt());
+   ((TH1*) o["hEcalScaledPt"])->Fill(track.GetP3EScaled().Pt());
    ((TH1*) o["hTrackEOverP"])->Fill(track.mCluster2x2.energy/track.mP3AtDca.Mag());
    ((TH1*) o["hTrackHitsFit"])->Fill(track.prMuTrack->nHitsFit());
    ((TH1*) o["hTrackHitsPoss"])->Fill(track.prMuTrack->nHitsPoss());

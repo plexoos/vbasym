@@ -108,7 +108,7 @@ void VecBosRootFile::BookHists()
    fHists->d["vertex_good"]      = ph = new VertexHContainer(new TDirectoryFile("vertex_good", "vertex_good", "", this));
    fHists->d["track"]            = ph = new TrackHContainer(new TDirectoryFile("track", "track", "", this));
    fHists->d["track_candidates"] = ph = new TrackHContainer(new TDirectoryFile("track_candidates", "track_candidates", "", this));
-   fHists->d["track_pass_final"] = ph = new TrackHContainer(new TDirectoryFile("track_pass_final", "track_pass_final", "", this));
+   fHists->d["track_cand_pass_final"] = ph = new TrackHContainer(new TDirectoryFile("track_cand_pass_final", "track_cand_pass_final", "", this));
 
    //fHists->d["tracks_good"] = ph = new TrackHContainer(new TDirectoryFile("tracks_good", "tracks_good", "", this));
    ////fHistCuts[kCUT_TRACKS_GOOD].insert(ph);
@@ -198,8 +198,9 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
       ((TrackHContainer*) fHists->d["track_candidates"])->Fill(track);
 
       if ( !event->PassCutFinal() ) continue;
-
-      ((TrackHContainer*) fHists->d["track_pass_final"])->Fill(track);
+ 
+      if ( track.GetP3EScaled().Pt() >= 25)
+      ((TrackHContainer*) fHists->d["track_cand_pass_final"])->Fill(track);
    }
 
    //// Save only good tracks

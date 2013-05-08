@@ -39,7 +39,7 @@ const float VecBosEvent::sMaxVertexJetDeltaZ   = 1;    // distance between jet a
 const float VecBosEvent::sMaxTrackJetDeltaZ    = 3;    // distance between jet and track z coord, cm
 const float VecBosEvent::sMinBTrackPt          = 10;
 const float VecBosEvent::sMinTrackHitFrac      = 0.51;
-const float VecBosEvent::sMinClusterEnergyFrac = 0.80; // was 0.88
+const float VecBosEvent::sMinClusterEnergyFrac = 0.90; // was 0.88
 
 
 VecBosEvent::~VecBosEvent()
@@ -150,7 +150,7 @@ UInt_t VecBosEvent::GetNumTracksWithBCluster()
 bool VecBosEvent::PassCutFinal()
 {
   if (mTracksCandidate.size() > 0 && CalcP3MissingEnergy().Pt() > 18
-      && (*mTracksCandidate.begin())->GetP3EScaled().Mag() >= VecBosTrack::sMinCandidateTrackClusterE)
+      && (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= VecBosTrack::sMinCandidateTrackClusterE)
       return true;
 
    return false;
@@ -748,7 +748,8 @@ TVector3 VecBosEvent::CalcP3MissingEnergy() const
       return TVector3();
    }
 
-   return mP3TrackRecoilTow + (*mTracksCandidate.begin())->GetP3EScaled();
+   return mP3TrackRecoilTpcNeutrals + (*mTracksCandidate.begin())->GetP3EScaled();
+   //return mP3TrackRecoilTow + (*mTracksCandidate.begin())->GetP3EScaled();
    //return mP4JetRecoil + (*mTracksCandidate.begin())->mCluster2x2.energy;
 }
 
