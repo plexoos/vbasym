@@ -118,6 +118,9 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    TString outF = inputFile;
    outF = outF.ReplaceAll(".MuDst.root", "");
    outF = outF.ReplaceAll(".lis", "");
+   TString runNo = outF;
+   runNo = runNo.ReplaceAll("R", "");   
+   int RunNo = runNo.Atoi();
 
    TString histFileName = histDir + outF + ".wana.hist.root";
 
@@ -125,6 +128,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    VecBosRootFile vecBosRootFile(histFileName, "recreate"); 
 
+   printf("RUN NUMBER is: %s\n", runNo.Data());
    printf("Output file: %s\n", outF.Data());
    printf("TRIG ID: L2BW=%d, L2EW=%d, isMC=%d, useJetFinder=%d\n", idL2BWtrg, idL2EWtrg, isMC, useJetFinder );
 
@@ -439,12 +443,13 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
    //// S.F. - added 16 Oct. 2012 - 
    //// calculate lumi from runs
-   //if(!isMC) {
-   //  St2011WlumiMaker *WlumiMk = new St2011WlumiMaker("lumi"); 
-   //  WlumiMk->AttachWalgoMaker(stVecBosMaker); 
-   //  WlumiMk->attachMuMaker(stMuDstMaker);
-   //  WlumiMk->setHList(HList);
-   //}
+   if(!isMC) {
+     St2011WlumiMaker *WlumiMk = new St2011WlumiMaker("lumi"); 
+     WlumiMk->AttachWalgoMaker(stVecBosMaker); 
+     WlumiMk->AttachMuMaker(stMuDstMaker);
+     WlumiMk->setHList(HList);
+     //WlumiMk->FinishRun(RunNo);
+   }
 
    if (isMC && useJetFinder == 2) {
       St2011pubMcMaker *pubMcMk = new St2011pubMcMaker("pubMc");
@@ -488,8 +493,10 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    }
 
    // S.F. - Must work on it--> hang on Dima ;)  
-   //  if(!isMC) 
-   //    WlumiMk->FinishRun(RunNo);
+   if(!isMC) {
+     St2011WlumiMaker *WlumiMk = new St2011WlumiMaker("lumi"); 
+     WlumiMk->FinishRun(RunNo);
+   }
 
    stChain->Finish();
    // delete stChain;

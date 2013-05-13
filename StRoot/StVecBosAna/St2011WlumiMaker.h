@@ -1,4 +1,4 @@
-// $Id: St2011WlumiMaker.h,v 1.1 2012/10/09 15:21:19 smirnovd Exp $
+// $Id: St2011WlumiMaker.h,v 1.2 2013/05/13 21:24:49 fazio Exp $
 //
 //*-- Author : Ross Corliss, MIT
 
@@ -53,8 +53,8 @@ class St2011WlumiMaker : public StMaker {
   virtual Int_t  Make();
   void setHList(TObjArray * x){HList=x;}
 
-  void attachWalgoMaker(StVecBosMaker *mk) { wMK=mk;}
-  void attachMuMaker(StMuDstMaker *mk) { muMK=mk;}
+  void AttachWalgoMaker(StVecBosMaker *mk) { wMK=mk;}
+  void AttachMuMaker(StMuDstMaker *mk) { muMK=mk;}
 
   virtual Int_t InitRun(int runumber); // Overload empty StMaker::InitRun 
   virtual Int_t FinishRun(int runumber); // Overload empty StMaker::FinishRun 
@@ -62,7 +62,7 @@ class St2011WlumiMaker : public StMaker {
 
   /// Displayed on session exit, leave it as-is please ...
   virtual const char *GetCVS() const {
-    static const char cvs[]="Tag $Name:  $ $Id: St2011WlumiMaker.h,v 1.1 2012/10/09 15:21:19 smirnovd Exp $ built "__DATE__" "__TIME__ ; 
+    static const char cvs[]="Tag $Name:  $ $Id: St2011WlumiMaker.h,v 1.2 2013/05/13 21:24:49 fazio Exp $ built "__DATE__" "__TIME__ ; 
     return cvs;
   }
 
@@ -73,6 +73,9 @@ class St2011WlumiMaker : public StMaker {
 
 
 // $Log: St2011WlumiMaker.h,v $
+// Revision 1.2  2013/05/13 21:24:49  fazio
+// *** empty log message ***
+//
 // Revision 1.1  2012/10/09 15:21:19  smirnovd
 // *** empty log message ***
 //

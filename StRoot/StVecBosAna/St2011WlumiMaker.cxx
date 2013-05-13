@@ -43,7 +43,7 @@ Int_t St2011WlumiMaker::FinishRun(int runnumber)
 {
   printf("Finishing Run %d (lumi)\n",runnumber);
 
-  char runName[9];
+  char runName[8];
   sprintf(runName,"%d",runnumber);
 
   float activeFraction=nActiveTowers*1.0/4800.0; //portion of the detector that was working.
@@ -58,26 +58,31 @@ Int_t St2011WlumiMaker::FinishRun(int runnumber)
   //then count the events in those two gaps.
   getAbortGapCounts(0,&nAbortGap1,&nAbortGap2);
 
-  hA[19]->Fill(runName,nBHT3_software_L0);
-  hA[20]->Fill(runName,nBHT3_hardware_L0);
-  hA[21]->Fill(runName,nAbortGap1);
-  hA[22]->Fill(runName,nAbortGap2);
+  
+  //hA[19]->Fill(runName,nBHT3_software_L0);
+  //hA[20]->Fill(runName,nBHT3_hardware_L0);
+  //hA[21]->Fill(runName,nAbortGap1);
+  //hA[22]->Fill(runName,nAbortGap2);
+  
   nBHT3triggers=(nBHT3_software_L0-nAbortGap1*111.0/11.0-nAbortGap2*109.0/9.0)*BHT3prescale;
-  hA[23]->Fill(runName,nBHT3triggers);
+
+  //hA[23]->Fill(runName,nBHT3triggers);
 
   effective_lumi=nBHT3triggers*1.0/BHT3xs;
-  hA[24]->Fill(runName,effective_lumi);
+  //hA[24]->Fill(runName,effective_lumi);
+
   //this value doesn't have any factors of activeFraction, because they cancel out:
   //ntotaltriggers=nBHT3triggers/activeFraction
   //total_lumi=ntotaltriggers/bht3xs
   //effective_lumi=total_lumi*activeFraction
 
   total_lumi=effective_lumi/activeFraction;
-  hA[16]->Fill(runName,total_lumi);
-  hA[17]->Fill(runName,activeFraction);
-  hA[18]->Fill(runName,nAbortGap1*120/11+nAbortGap2*120/9);
+  //hA[16]->Fill(runName,total_lumi);
+  //hA[17]->Fill(runName,activeFraction);
+  //hA[18]->Fill(runName,nAbortGap1*120/11+nAbortGap2*120/9);
   printf("eff_lumi=%f, active=%2.2f, nTowers=%d\n",effective_lumi,activeFraction,nActiveTowers);
 
+  /*
   for (int i=0;i<16;i++)
     {
       //printf("nBHT3[%d]=%d\n",i,nBHT3[i]);
@@ -87,14 +92,12 @@ Int_t St2011WlumiMaker::FinishRun(int runnumber)
       hA[50+i]->Fill(runName,nAbortGap1);
       hA[70+i]->Fill(runName,nAbortGap2);
     }
+  */
 
   TH1F* temp;
-  temp=(TH1F*)(HList->FindObject("muWET"));
-  hA[5]->Add(temp,1.0/activeFraction);//yield scaled by the active fraction
+  //temp=(TH1F*)(HList->FindObject("muWET"));
+  //hA[5]->Add(temp,1.0/activeFraction);//yield scaled by the active fraction
 
-
-  //temp=HList("");
-  //repeat for other histos.
 
 return 0;
 }
@@ -168,7 +171,7 @@ void St2011WlumiMaker::sortTrigger()
     if (wMK->passes_L0())
       {
 	nBHT3_software_L0++;
-	  hA[1]->Fill(weve->bx7);
+	// hA[1]->Fill(weve->bx7);
 	//printf("passes_L0\n");
 	for (int i=0;i<16;i++)
 	  {
