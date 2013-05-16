@@ -181,6 +181,7 @@ Int_t StVecBosMaker::Init()
       mWtree = new TTree("t", "mWtree");
       mVecBosEvent = new VecBosEvent();
       mWtree->Branch("e", "VecBosEvent", &mVecBosEvent, 128000, 0); // splitlevel=0. very important for custom streamers
+
    }
 
    assert(HList);
@@ -435,6 +436,11 @@ Int_t StVecBosMaker::Make()
    // 
    if (!mVecBosEvent->HasIsolatedTrack()) {
       return kStOK;
+   }
+
+   if (!isMC) { 
+     //   m2011WlumiMaker = new St2011WlumiMaker(); 
+     //  pippoefflumi = m2011WlumiMaker->effective_lumi;
    }
 
    // Write event to tree

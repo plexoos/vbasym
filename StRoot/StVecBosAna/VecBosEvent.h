@@ -104,6 +104,7 @@ public:
    Double_t            mHadRecoilFromTracksEta;
    Double_t            mHadRecoilFromTracksPt;
    //   float               enecl;
+   float mLumiEff;
 
    static const float  sMinTrackIsoDeltaR;    //! (rad) near-cone size
    static const float  sMinTrackIsoDeltaPhi;  //! (rad) away-'cone' size, approx. 40 deg.

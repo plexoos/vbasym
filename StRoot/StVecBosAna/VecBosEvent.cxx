@@ -27,7 +27,8 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mPtKfactor(0),
    mMinVertexDeltaZ(-1),
    mP3BalanceFromTracks(),
-   mBalanceDeltaPhiFromTracks(0)
+   mBalanceDeltaPhiFromTracks(0),
+   mLumiEff(0)
 {
    //clear();
 }
@@ -881,6 +882,7 @@ void VecBosEvent::clear()
    mP3BalanceFromTracks.SetXYZ(0, 0, 0);
    mPtKfactor       =  0;
    mMinVertexDeltaZ = -1;
+   mLumiEff     = -0;
 }
 
 

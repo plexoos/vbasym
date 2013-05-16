@@ -12,6 +12,9 @@ root4star -b -q 'analyzeMuDst.C(2e3,"st_W_12037041_raw_1400001.MuDst.root",0,1,5
 #include <cstdlib>
 #include <cassert>
 
+#include <iostream>
+#include <fstream>     
+
 #include "stana.h"
 
 #include "TObject.h"
@@ -181,6 +184,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    stMuDstMaker->SetStatus("PrimaryVertices", 1);
    stMuDstMaker->SetStatus("GlobalTracks", 1);
    stMuDstMaker->SetStatus("PrimaryTracks", 1);
+
 
    TChain *stMuDstMakerChain = stMuDstMaker->chain();
 
@@ -441,10 +445,12 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    stVecBosMaker->setHListTpc(HListTpc);
    st2011pubWanaMaker->setHList(HList);
 
+   St2011WlumiMaker *WlumiMk(NULL);
    //// S.F. - added 16 Oct. 2012 - 
    //// calculate lumi from runs
    if(!isMC) {
-     St2011WlumiMaker *WlumiMk = new St2011WlumiMaker("lumi"); 
+     //St2011WlumiMaker *WlumiMk = new St2011WlumiMaker("lumi"); 
+     WlumiMk = new St2011WlumiMaker("lumi"); 
      WlumiMk->AttachWalgoMaker(stVecBosMaker); 
      WlumiMk->AttachMuMaker(stMuDstMaker);
      WlumiMk->setHList(HList);
@@ -491,11 +497,29 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
 
       nProcEvents++;
    }
-
-   // S.F. - Must work on it--> hang on Dima ;)  
+  
    if(!isMC) {
-     St2011WlumiMaker *WlumiMk = new St2011WlumiMaker("lumi"); 
+     //St2011WlumiMaker *WlumiMk = new St2011WlumiMaker("lumi"); 
      WlumiMk->FinishRun(RunNo);
+     float efflumi = WlumiMk->effective_lumi;
+     float totlumi = WlumiMk->total_lumi;
+
+     cout << "Effective Luminosity:" << efflumi << endl;
+     cout << "Total Luminosity:" << totlumi << endl;
+
+     TString lumiEffName = "R" + runNo + "_lumi_effective.txt";  
+     ofstream lumie;
+     //lumie.open ("lumi_eff.txt");
+     lumie.open (lumiEffName);
+     lumie << efflumi;
+     lumie.close();
+
+     TString lumiTotName = "R" + runNo + "_lumi_total.txt"; 
+     ofstream lumit;
+     lumit.open (lumiTotName);
+     lumit << totlumi;
+     lumit.close();
+ 
    }
 
    stChain->Finish();
@@ -515,9 +539,10 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    printf("#sorting %s done %d of maxEventsUser = %d, CPU rate= %.1f Hz, total time %.1f minute(s) \n\n", inMuDstFileListName.c_str(), nProcEvents, numTotalEvents, rate, tMnt);
 
    if (vecBosRootFile.IsOpen()) {
+      printf("\n vecBosRootFile.IsOpen, continue\n");
       TDirectory *old = vecBosRootFile.mkdir("old");
       old->cd();
-      HList->ls();
+      //HList->ls();
       HList->Write();
       // Write TPC histos to new directory
       TDirectory *tpc = vecBosRootFile.mkdir("tpc");

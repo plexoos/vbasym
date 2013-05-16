@@ -18,6 +18,8 @@
 #include "WtpcFilter.h"
 #include "VecBosRootFile.h"
 
+//#include "St2011WlumiMaker.h" // S.F. May 2013
+
 
 class  TObjArray;
 class  StMuDstMaker;
@@ -36,6 +38,7 @@ class  StJets;
 class  StJet;
 class  TClonesArray;
 
+//class  St2011WlumiMaker; // S.F. May 2013
 
 class StVecBosMaker : public StMaker
 {
@@ -56,6 +59,7 @@ private:
    TString         mJetTreeBranchNameNoEndcap;
    TClonesArray   *mJets;
    VecBosEvent    *mVecBosEvent;
+   //   St2011WlumiMaker  *m2011WlumiMaker; // S.F. May 2013
    TTree          *mWtree;
    TString         mTreeName;
    TFile          *mTreeFile;
@@ -234,6 +238,8 @@ public:
    void  chainJetFile( const Char_t *name );
    Int_t getNumberOfEvents() { return mTreeChain->GetEntries(); }
    Int_t getEvent(Int_t event, Int_t eventJet);
+
+   //float pippoefflumi;
 
 protected:
 

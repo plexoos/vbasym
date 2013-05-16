@@ -46,7 +46,7 @@
 
       # Remove files and links
       if ($OPT_JETS == 0) rm jets_R&runNumber;.root
-      chmod 664 *.hist.root jets_*.root *.wtree.root *.ps
+      chmod 664 *.hist.root jets_*.root *.wtree.root *.ps *.txt
       chmod 664 &OUT_DIR;/log_run11_cut05/R&runNumber;_&STANA_OPTIONS;.log
       touch     &OUT_DIR;/log_run11_cut05/R&runNumber;_&STANA_OPTIONS;.log
       rm -fr ./.sl53_gcc432
@@ -57,6 +57,7 @@
    <output fromScratch="*.hist.root"  toURL="file:&OUT_DIR;/data_run11_cut05/"/>
    <output fromScratch="jets_*.root"  toURL="file:&OUT_DIR;/jets_run11_cut05/"/>
    <output fromScratch="*.wtree.root" toURL="file:&OUT_DIR;/wtree_run11_cut05/"/>
+   <output fromScratch="*.txt"         toURL="file:&OUT_DIR;/lumi_run11_cut05/"/>
    <!--   <output fromScratch="*.ps"         toURL="file:&OUT_DIR;/ps_run11/"/>-->
    <stdout URL="file:&OUT_DIR;/log_run11_cut05/R&runNumber;_&STANA_OPTIONS;.log"/>
    <stderr URL="file:&OUT_DIR;/log_run11_cut05/R&runNumber;_&STANA_OPTIONS;.log"/>

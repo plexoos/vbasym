@@ -1,4 +1,4 @@
-// $Id: St2011WlumiMaker.h,v 1.2 2013/05/13 21:24:49 fazio Exp $
+// $Id: St2011WlumiMaker.h,v 1.3 2013/05/16 16:16:09 fazio Exp $
 //
 //*-- Author : Ross Corliss, MIT
 
@@ -58,11 +58,14 @@ class St2011WlumiMaker : public StMaker {
 
   virtual Int_t InitRun(int runumber); // Overload empty StMaker::InitRun 
   virtual Int_t FinishRun(int runumber); // Overload empty StMaker::FinishRun 
+  
+  float effective_lumi;//pb^-1, effective integrated luminosity, given not all the detector is necessarily working.
+  float total_lumi;//pb^-1, total integrated luminosity if the whole detector were working.
 
 
   /// Displayed on session exit, leave it as-is please ...
   virtual const char *GetCVS() const {
-    static const char cvs[]="Tag $Name:  $ $Id: St2011WlumiMaker.h,v 1.2 2013/05/13 21:24:49 fazio Exp $ built "__DATE__" "__TIME__ ; 
+    static const char cvs[]="Tag $Name:  $ $Id: St2011WlumiMaker.h,v 1.3 2013/05/16 16:16:09 fazio Exp $ built "__DATE__" "__TIME__ ; 
     return cvs;
   }
 
@@ -73,6 +76,9 @@ class St2011WlumiMaker : public StMaker {
 
 
 // $Log: St2011WlumiMaker.h,v $
+// Revision 1.3  2013/05/16 16:16:09  fazio
+// *** empty log message ***
+//
 // Revision 1.2  2013/05/13 21:24:49  fazio
 // *** empty log message ***
 //
