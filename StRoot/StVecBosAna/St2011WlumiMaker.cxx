@@ -49,8 +49,8 @@ Int_t St2011WlumiMaker::FinishRun(int runnumber)
   float activeFraction=nActiveTowers*1.0/4800.0; //portion of the detector that was working.
   //float effective_lumi;//pb^-1, effective integrated luminosity, given not all the detector is necessarily working.
   //float total_lumi;//pb^-1, total integrated luminosity if the whole detector were working.
-  //int BHT3prescale=50;//recorded 1/n events:
-  int BHT3prescale=1;//recorded 1/n events: // S. Fazio 15 May 2013
+  int BHT3prescale=50;//recorded 1/n events:
+  //int BHT3prescale=1;//recorded 1/n events: // S. Fazio 15 May 2013
   int nBHT3triggers;//number of non-background BHT3 events roughly (nBHT3*BHT3prescale);
   float BHT3xs=520000;//pb . 520nb.
   int nAbortGap1, nAbortGap2; //number of counts in the first and second abort gap.
@@ -85,7 +85,7 @@ Int_t St2011WlumiMaker::FinishRun(int runnumber)
   //hA[16]->Fill(runName,total_lumi);
   //hA[17]->Fill(runName,activeFraction);
   //hA[18]->Fill(runName,nAbortGap1*120/11+nAbortGap2*120/9);
-  printf("eff_lumi (pb-1)=%f, active=%2.2f, nTowers=%d\n",effective_lumi,activeFraction,nActiveTowers);
+  printf("eff_lumi (pb-1)=%f, activeFraction=%2.2f, nActiveTowers=%d\n",effective_lumi,activeFraction,nActiveTowers);
   printf("total_lumi (pb-1)=%f \n",effective_lumi);
 
   /*
