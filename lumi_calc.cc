@@ -22,7 +22,8 @@ float lumiTot;
 float lumiEffSum;
 float lumiTotSum;
 
-string filelist       = "./runlists/run11_pp_transverse";
+//string filelist       = "./runlists/run11_pp_transverse";
+string filelist       = "./runlists/tempList.lis";
 
 TObject *o;
 TIter   *next = new TIter(utils::getFileList(filelist));

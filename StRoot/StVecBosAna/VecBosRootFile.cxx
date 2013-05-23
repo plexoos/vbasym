@@ -105,10 +105,18 @@ void VecBosRootFile::BookHists()
    fHistCuts[kCUT_EVENT_PASS_FINAL].insert(ph);
 
    fHists->d["vertex"]           = ph = new VertexHContainer(new TDirectoryFile("vertex", "vertex", "", this));
+
    fHists->d["vertex_good"]      = ph = new VertexHContainer(new TDirectoryFile("vertex_good", "vertex_good", "", this));
+
    fHists->d["track"]            = ph = new TrackHContainer(new TDirectoryFile("track", "track", "", this));
+
    fHists->d["track_candidates"] = ph = new TrackHContainer(new TDirectoryFile("track_candidates", "track_candidates", "", this));
+
    fHists->d["track_cand_pass_final"] = ph = new TrackHContainer(new TDirectoryFile("track_cand_pass_final", "track_cand_pass_final", "", this));
+
+   fHists->d["W+_track_cand_pass_final"] = ph = new TrackHContainer(new TDirectoryFile("W+_track_cand_pass_final", "W+_track_cand_pass_final", "", this));
+
+   fHists->d["W-_track_cand_pass_final"] = ph = new TrackHContainer(new TDirectoryFile("W-_track_cand_pass_final", "W-_track_cand_pass_final", "", this));
 
    //fHists->d["tracks_good"] = ph = new TrackHContainer(new TDirectoryFile("tracks_good", "tracks_good", "", this));
    ////fHistCuts[kCUT_TRACKS_GOOD].insert(ph);
@@ -199,8 +207,13 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
 
       if ( !event->PassCutFinal() ) continue;
  
-      if ( track.GetP3EScaled().Pt() >= 25)
+      if ( track.GetP3EScaled().Pt() >= 25){
       ((TrackHContainer*) fHists->d["track_cand_pass_final"])->Fill(track);
+         if ( track.prMuTrack->charge() > 0.)
+          ((TrackHContainer*) fHists->d["W+_track_cand_pass_final"])->Fill(track);
+         if ( track.prMuTrack->charge() < 0.)   
+          ((TrackHContainer*) fHists->d["W-_track_cand_pass_final"])->Fill(track);       
+      }
    }
 
    //// Save only good tracks
