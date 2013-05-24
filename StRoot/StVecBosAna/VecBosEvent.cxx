@@ -259,10 +259,10 @@ void VecBosEvent::Process()
       //      mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3TrackRecoilTow);
       mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3BalanceFromTracks2);
       mPtBalanceCosPhiFromTracks2 = mP3BalanceFromTracks2.Pt()*cos(mBalanceDeltaPhiFromTracks2) ;
-   }
 
-   mCandElecP3AtDca   = (*mTracksCandidate.begin())->GetP3AtDca();
-   mCandElecP3EScaled = (*mTracksCandidate.begin())->GetP3EScaled();
+      mCandElecP3AtDca   = (*mTracksCandidate.begin())->GetP3AtDca();
+      mCandElecP3EScaled = (*mTracksCandidate.begin())->GetP3EScaled();
+   }
 
 }
 
