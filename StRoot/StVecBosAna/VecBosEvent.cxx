@@ -27,6 +27,8 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mPtKfactor(0),
    mMinVertexDeltaZ(-1),
    mP3BalanceFromTracks(),
+   mCandElecP3AtDca(),
+   mCandElecP3EScaled(),
    mBalanceDeltaPhiFromTracks(0),
    mLumiEff(0)
 {
@@ -148,9 +150,19 @@ UInt_t VecBosEvent::GetNumTracksWithBCluster()
 }
 
 
+bool VecBosEvent::PassCutsExceptedPtBal()
+{
+  if (mTracksCandidate.size() > 0 
+      && (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= VecBosTrack::sMinCandidateTrackClusterE)
+      return true;
+
+   return false;
+}
+
 bool VecBosEvent::PassCutFinal()
 {
-  if (mTracksCandidate.size() > 0 && CalcP3MissingEnergy().Pt() > 18
+  //if (mTracksCandidate.size() > 0 && CalcP3MissingEnergy().Pt() > 18
+  if (mTracksCandidate.size() > 0 && mPtBalanceCosPhiFromTracks > 18
       && (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= VecBosTrack::sMinCandidateTrackClusterE)
       return true;
 
@@ -248,6 +260,10 @@ void VecBosEvent::Process()
       mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3BalanceFromTracks2);
       mPtBalanceCosPhiFromTracks2 = mP3BalanceFromTracks2.Pt()*cos(mBalanceDeltaPhiFromTracks2) ;
    }
+
+   mCandElecP3AtDca   = (*mTracksCandidate.begin())->GetP3AtDca();
+   mCandElecP3EScaled = (*mTracksCandidate.begin())->GetP3EScaled();
+
 }
 
 
@@ -880,6 +896,8 @@ void VecBosEvent::clear()
    mP3TrackRecoilTpcNeutrals.SetXYZ(0, 0, 0);
    mP3RecoilFromTracks.SetXYZ(0, 0, 0);
    mP3BalanceFromTracks.SetXYZ(0, 0, 0);
+   mCandElecP3AtDca.SetXYZ(0, 0, 0);
+   mCandElecP3EScaled.SetXYZ(0, 0, 0);
    mPtKfactor       =  0;
    mMinVertexDeltaZ = -1;
    mLumiEff     = -0;

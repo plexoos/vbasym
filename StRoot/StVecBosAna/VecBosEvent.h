@@ -103,6 +103,8 @@ public:
    Double_t            mPtBalanceCosPhiFromJets; 
    Double_t            mHadRecoilFromTracksEta;
    Double_t            mHadRecoilFromTracksPt;
+   TVector3            mCandElecP3AtDca; 
+   TVector3            mCandElecP3EScaled; 
    //   float               enecl;
    float mLumiEff;
 
@@ -150,6 +152,7 @@ public:
    bool           HasIsolatedTrack()      const { return mNumIsolatedTracks  > 0 ? true : false; }
    bool           HasCandidateTrack()     const { return mNumCandidateTracks > 0 ? true : false; }
    bool           HasJetRecoil()          const { return mP4JetRecoil.Mag()  > 0 ? true : false; }
+   bool           PassCutsExceptedPtBal();
    bool           PassCutFinal();
 
    void           Process();

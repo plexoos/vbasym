@@ -207,13 +207,14 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
 
       if ( !event->PassCutFinal() ) continue;
  
-      if ( track.GetP3EScaled().Pt() >= 25){
+      //if ( track.GetP3EScaled().Pt() >= 25){
       ((TrackHContainer*) fHists->d["track_cand_pass_final"])->Fill(track);
+
          if ( track.prMuTrack->charge() > 0.)
           ((TrackHContainer*) fHists->d["W+_track_cand_pass_final"])->Fill(track);
          if ( track.prMuTrack->charge() < 0.)   
           ((TrackHContainer*) fHists->d["W-_track_cand_pass_final"])->Fill(track);       
-      }
+      //}
    }
 
    //// Save only good tracks

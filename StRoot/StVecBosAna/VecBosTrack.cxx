@@ -14,7 +14,7 @@ using namespace std;
 const float VecBosTrack::sMaxTrackClusterDist       = 7;  // cm
 const float VecBosTrack::sMinPt                     = 20; // GeV
 const float VecBosTrack::sMaxEnergyInOppsCone       = 15; // was 40, was 30 GeV
-const float VecBosTrack::sMinCandidateTrackClusterE = 20;
+const float VecBosTrack::sMinCandidateTrackClusterE = 25;
 
 
 VecBosTrack::VecBosTrack() : TObject(),
