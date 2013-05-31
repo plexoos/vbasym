@@ -19,9 +19,9 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
 
 
  //float lumiDataTot = 24.28; // pb-1
- float lumiDataTot = 24.38; // pb-1
+ float lumiDataTot = 24.42; // pb-1
  //float lumiDataEff = 23.86; // pb-1
- float lumiDataEff = 23.95; // pb-1
+ float lumiDataEff = 23.99; // pb-1
  float lumiMC_Z = 955.15; // pb-1
  float lumiMC_WpToTauTau = 2136.49; // pb-1
  float lumiMC_WmToTauTau = 1995.34; // pb-1
@@ -39,6 +39,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
 
 
  // W total (W+ + W-)
+ TH1* hd_PtLepTPC = (TH1*)fileData->Get("track_cand_pass_final_QEToPT/hTrackPt");
  TH1* hd_PtLep = (TH1*)fileData->Get("track_cand_pass_final_QEToPT/hEcalScaledPt");
  TH1* hZ_PtLep = (TH1*)fileMCZ->Get("track_cand_pass_final_QEToPT/hEcalScaledPt");
  cout << hZ_PtLep->ClassName() << endl;
@@ -47,6 +48,10 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  TH1* hWptt_PtLep = (TH1*)fileMCWptt->Get("track_cand_pass_final_QEToPT/hEcalScaledPt");
  TH1* hWmtt_PtLep = (TH1*)fileMCWmtt->Get("track_cand_pass_final_QEToPT/hEcalScaledPt");
  TH1* hQ_PtLep = (TH1*)fileMCQCD->Get("track_cand_pass_final_QEToPT/hEcalScaledPt");
+
+ TH2* hd_QxEtoPt_Vs_Et = (TH2*)fileData->Get("track_cand_pass_final/hQxEtoPt_Vs_Et_PrimaryTrack");
+   cout << hd_QxEtoPt_Vs_Et->ClassName() << endl;
+ TH2* hd_QxEtoPt_Vs_Et_passCut = (TH2*)fileData->Get("track_cand_pass_final_QEToPT/hQxEtoPt_Vs_Et_PrimaryTrack");
 
  // W+
  TH1* hd_Wp_PtLep = (TH1*)fileData->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
@@ -68,6 +73,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  TCanvas *c1 = new TCanvas("c1","",800,800);
  c1->Divide(3,3);
 
+ hd_PtLepTPC->GetXaxis()->SetTitle("P_{T}^{lep}(TPC)");
  hd_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
  hZ_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
  hWp_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
@@ -88,6 +94,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  hWmtt_Wm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
  hQ_Wm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
 
+ hd_PtLepTPC->GetYaxis()->SetTitle("events");
  hd_PtLep->GetYaxis()->SetTitle("events");
  hZ_PtLep->GetYaxis()->SetTitle("events");
  hWp_PtLep->GetYaxis()->SetTitle("events");
@@ -108,10 +115,12 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  hWmtt_Wm_PtLep->GetYaxis()->SetTitle("events");
  hQ_Wm_PtLep->GetYaxis()->SetTitle("events");
 
+ hd_PtLepTPC->SetNameTitle("hd_PtLepTPC","Data");
  hd_PtLep->SetNameTitle("hd_PtLep","Data");
  hd_Wp_PtLep->SetNameTitle("hd_Wp_PtLep","Data (W+)");
  hd_Wm_PtLep->SetNameTitle("hd_Wm_PtLep","Data (W-)");
 
+ hd_PtLepTPC->SetTitleOffset(1.3,"y");
  hd_PtLep->SetTitleOffset(1.3,"y");
  hd_Wp_PtLep->SetTitleOffset(1.3,"y");
  hd_Wm_PtLep->SetTitleOffset(1.3,"y");
@@ -129,29 +138,31 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
 
 
  c1_1->cd();
+ hd_PtLepTPC->Draw();
+ c1_2->cd();
  hd_PtLep_1->SetNameTitle("hd_PtLep","Data");
  hd_PtLep_1->Draw();
- c1_2->cd();
+ c1_3->cd();
  hZ_PtLep_1->SetNameTitle("hZ_PtLep","Z^{0}->ee");
  hZ_PtLep_1->Draw();
- c1_3->cd();
+ c1_4->cd();
  hWp_PtLep->SetNameTitle("hWp_PtLep","W^{+}->ee");
  hWp_PtLep->Draw();
- c1_4->cd();
+ c1_5->cd();
  hWm_PtLep->SetNameTitle("hWp_PtLep","W^{-}->ee");
  hWm_PtLep->Draw();
- c1_5->cd();
+ c1_6->cd();
  hWptt_PtLep_1->SetNameTitle("hWp_PtLep","W^{+}->#tau#tau");
  hWptt_PtLep_1->Draw();
- c1_6->cd();
+ c1_7->cd();
  hWmtt_PtLep_1->SetNameTitle("hWp_PtLep","W^{-}->#tau#tau");
  hWmtt_PtLep_1->Draw();
- c1_7->cd();
+ c1_8->cd();
  hQ_PtLep->SetNameTitle("hQ_PtLep","QCD");
  hQ_PtLep->Draw();
 
- c1->Print(outPath + "/dataMC_1.eps");
- c1->Print(outPath + "/dataMC_1.png");
+ c1->Print(outPath + "/plot_1.eps");
+ c1->Print(outPath + "/plot_1.png");
 
  TCanvas *c2 = new TCanvas("c2","",800,800);
 
@@ -215,8 +226,8 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  hWmtt_PtLep_2->Draw();
 
 
- c2->Print(outPath + "/dataMC_2.eps");
- c2->Print(outPath + "/dataMC_2.png");
+ c2->Print(outPath + "/plot_2.eps");
+ c2->Print(outPath + "/plot_2.png");
 
 
  TCanvas *c3 = new TCanvas("c3","",800,400);
@@ -243,8 +254,8 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  hd_PtLep_2->SetNameTitle("hd_PtLep","data- Z^{0}->ee and W^{+-}->#tau#tau subtracted");
  hd_PtLep_2->Draw();
 
- c3->Print(outPath + "/dataMC_3.eps");
- c3->Print(outPath + "/dataMC_3.png");
+ c3->Print(outPath + "/plot_3.eps");
+ c3->Print(outPath + "/plot_3.png");
 
 
  // W+ sample
@@ -288,8 +299,8 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  hWptt_Wp_PtLep_2->Draw();
 
 
- c4->Print(outPath + "/dataMC_4.eps");
- c4->Print(outPath + "/dataMC_4.png");
+ c4->Print(outPath + "/plot_4.eps");
+ c4->Print(outPath + "/plot_4.png");
 
 
  TCanvas *c5 = new TCanvas("c5","",800,400);
@@ -314,8 +325,8 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  hd_Wp_PtLep_2->SetNameTitle("hd_Wp_PtLep","data (W+) - [Z^{0}->ee and W^{+}->#tau#tau subtracted]");
  hd_Wp_PtLep_2->Draw();
 
- c5->Print(outPath + "/dataMC_5.eps");
- c5->Print(outPath + "/dataMC_5.png");
+ c5->Print(outPath + "/plot_5.eps");
+ c5->Print(outPath + "/plot_5.png");
 
 
  // W- sample
@@ -360,8 +371,8 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  hWmtt_Wm_PtLep_2->Draw();
 
 
- c6->Print(outPath + "/dataMC_6.eps");
- c6->Print(outPath + "/dataMC_6.png");
+ c6->Print(outPath + "/plot_6.eps");
+ c6->Print(outPath + "/plot_6.png");
 
 
  TCanvas *c7 = new TCanvas("c7","",800,400);
@@ -386,8 +397,8 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  hd_Wm_PtLep_2->SetNameTitle("hd_Wm_PtLep","data (W-) - [Z^{0}->ee and W^{-}->#tau#tau subtracted]");
  hd_Wm_PtLep_2->Draw();
 
- c7->Print(outPath + "/dataMC_7.eps");
- c7->Print(outPath + "/dataMC_7.png");
+ c7->Print(outPath + "/plot_7.eps");
+ c7->Print(outPath + "/plot_7.png");
 
 
  // Calculate Signal/Bkgnd ratios and their errors:
@@ -473,6 +484,31 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  cout << "W- -> tau events = " << hWmtt_Wm_PtLep_2_integral << " +- " << hWmtt_Wm_PtLep_2_integral_err << endl;
  cout << "W- -> tau B/S    = " << 100*hWmtt_Wm_PtLep_2_BoS << "%" << " +- " << 100*hWmtt_Wm_PtLep_2_BoS_err << "%" << endl;
  cout << "************************************************ " << endl;
+
+
+ // plot the Q over Pt distributions:
+
+
+ TCanvas *c8 = new TCanvas("c8","",800,400);
+
+ c8-> SetTitle("Q/Pt");
+ c8->Divide(2,1);
+
+ c8_1->cd(); 
+ hd_QxEtoPt_Vs_Et->Draw();
+ //TLine *line1 = new TLine(0,0.4,c8_1->GetFrame()->GetX2(),0.4);
+ TLine *line1 = new TLine(0,0.4,80,0.4);
+ line1->SetLineColor(kRed);
+ line1->SetLineWidth(2);
+ line1->Draw();
+ line1->DrawLine(0,-0.4,80,-0.4);
+ line1->DrawLine(0,1.8,80,1.8);
+ line1->DrawLine(0,-1.4,80,-1.4);
+ c8_2->cd(); 
+ hd_QxEtoPt_Vs_Et_passCut->Draw();
+
+ c8->Print(outPath + "/plot_8.eps");
+ c8->Print(outPath + "/plot_8.png");
 
 
 }
