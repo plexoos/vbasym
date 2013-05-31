@@ -6,45 +6,45 @@
 ClassImp(St2011WlumiMaker)
 
 
-St2011WlumiMaker::St2011WlumiMaker(const char *name):StMaker(name)
+St2011WlumiMaker::St2011WlumiMaker(const char *name): StMaker(name)
 {
-  wMK   = 0;
-  muMK  = 0;
-  HList = 0;
+   wMK   = 0;
+   muMK  = 0;
+   HList = 0;
 }
 
 
 Int_t St2011WlumiMaker::Init()
 {
-  assert(wMK);
-  assert(muMK);
-  assert(HList);
-  initHistos();
-  return StMaker::Init();
+   assert(wMK);
+   assert(muMK);
+   assert(HList);
+   initHistos();
+   return StMaker::Init();
 }
 
 
 Int_t St2011WlumiMaker::InitRun  (int runumber)
 {
-  towerInfoIsCurrent=false; // make sure we check the tower info on the first event.
-  nActiveTowers=0;
-  for (int i=0;i<16;i++)  nBHT3[i]=0;
-  nBHT3_software_L0=0;
-  nBHT3_hardware_L0=0;
-  for (int i=0;i<120;i++)
-    for (int j=0;j<16;j++)
-    nBx[j][i]=0;
+   towerInfoIsCurrent = false; // make sure we check the tower info on the first event.
+   nActiveTowers = 0;
+   for (int i = 0; i < 16; i++)  nBHT3[i] = 0;
+   nBHT3_software_L0 = 0;
+   nBHT3_hardware_L0 = 0;
+   for (int i = 0; i < 120; i++)
+      for (int j = 0; j < 16; j++)
+         nBx[j][i] = 0;
 
-  return 0;
+   return 0;
 }
 
 
 Int_t St2011WlumiMaker::FinishRun(int runnumber)
 {
-  printf("Finishing Run %d (lumi)\n",runnumber);
+   printf("Finishing Run %d (lumi)\n", runnumber);
 
-  char runName[9];
-  sprintf(runName,"%d",runnumber);
+   char runName[9];
+   sprintf(runName, "%d", runnumber);
 
   float activeFraction=nActiveTowers*1.0/4800.0; //portion of the detector that was working.
   //float effective_lumi;//pb^-1, effective integrated luminosity, given not all the detector is necessarily working.
@@ -105,104 +105,102 @@ Int_t St2011WlumiMaker::FinishRun(int runnumber)
   //hA[5]->Add(temp,1.0/activeFraction);//yield scaled by the active fraction
 
 
-return 0;
+   return 0;
 }
 
 
 Int_t St2011WlumiMaker::Make()
 {
-  //  printf("in %s\n", GetName());
-  //hA[0]->Fill("",1.);
+   //  printf("in %s\n", GetName());
+   //hA[0]->Fill("",1.);
 
-  //if we haven't done it yet, calculate the working fraction of the bemc
-  if (!towerInfoIsCurrent) getActiveTowers();
+   //if we haven't done it yet, calculate the working fraction of the bemc
+   if (!towerInfoIsCurrent) getActiveTowers();
 
-  //fill various histograms and arrays with event data
-  sortTrigger();
+   //fill various histograms and arrays with event data
+   sortTrigger();
 
-  //  printf("Out of Make\n");
-  return kStOK;
+   //  printf("Out of Make\n");
+   return kStOK;
 }
 
 
 void St2011WlumiMaker::getActiveTowers()
 {
-  //count the number of good towers:
-  nActiveTowers=0;
-  WeveBEMC *barrel=&(wMK->mVecBosEvent->bemc);
-  for (int i=0;i<4800;i++)
-    if (barrel->statTile[0][i]==0)//[0]=kBtow
-      nActiveTowers++;
-  
-  //count good trigger patches?
-  
-  if (nActiveTowers>0)   towerInfoIsCurrent=true;
+   //count the number of good towers:
+   nActiveTowers = 0;
+   WeveBEMC *barrel = &(wMK->mVecBosEvent->bemc);
+   for (int i = 0; i < 4800; i++)
+      if (barrel->statTile[0][i] == 0) //[0]=kBtow
+         nActiveTowers++;
+
+   //count good trigger patches?
+
+   if (nActiveTowers > 0)   towerInfoIsCurrent = true;
 }
 
 
 void St2011WlumiMaker::sortTrigger()
 {
-  int thresh[16];
-  thresh[0]  = -1;
-  thresh[1]  = 14;
-  thresh[2]  = 36;
-  thresh[3]  = 56;
-  thresh[4]  = 78;
-  thresh[5]  = 98;
-  thresh[6]  = 119;
-  thresh[7]  = 139;
-  thresh[8]  = 161;
-  thresh[9]  = 181;
-  thresh[10] = 201;
-  thresh[11] = 222;
-  thresh[12] = 243;
-  thresh[13] = 263;
-  thresh[14] = 283;
-  thresh[15] = 306;
+   int thresh[16];
+   thresh[0]  = -1;
+   thresh[1]  = 14;
+   thresh[2]  = 36;
+   thresh[3]  = 56;
+   thresh[4]  = 78;
+   thresh[5]  = 98;
+   thresh[6]  = 119;
+   thresh[7]  = 139;
+   thresh[8]  = 161;
+   thresh[9]  = 181;
+   thresh[10] = 201;
+   thresh[11] = 222;
+   thresh[12] = 243;
+   thresh[13] = 263;
+   thresh[14] = 283;
+   thresh[15] = 306;
 
-  //printf("sortTrigger()\n");
-  //has access to whole W-algo-maker data via pointer 'wMK'
-  VecBosEvent *weve=wMK->mVecBosEvent;
+   //printf("sortTrigger()\n");
+   //has access to whole W-algo-maker data via pointer 'wMK'
+   VecBosEvent *weve = wMK->mVecBosEvent;
 
-  if (weve->l2bitET) {
-    //printf("ET\n");
-    hA[0]->Fill("L2W",1);
-    hA[0]->Fill("L2Wnormal",1);
-  }
-  if (weve->l2bitRnd) {
-    //printf("Rnd\n");
-    hA[0]->Fill("L2W",1);
-    hA[0]->Fill("L2Wrandom",1);
-    nBHT3_hardware_L0++;
-    if (wMK->passes_L0())
-      {
-	nBHT3_software_L0++;
-	// hA[1]->Fill(weve->bx7);
-	//printf("passes_L0\n");
-	for (int i=0;i<16;i++)
-	  {
-	    //printf("AwaySum[%d]=%d\n",i,weve->trigAwaySum[i]);
-	  if (weve->trigAwaySum[i]>thresh[i]) //for bg test
-	    {
-	      //printf("Passes coin(%d)!\n",i);
-	      nBHT3[i]++;
-	      //printf("Passes coin(%d)(%d)\n",i,nBHT3[i]);
-	      nBx[i][weve->bx7]++;
-	    }
-	  }
+   if (weve->l2bitET) {
+      //printf("ET\n");
+      hA[0]->Fill("L2W", 1);
+      hA[0]->Fill("L2Wnormal", 1);
+   }
+
+   //if (weve->l2bitRnd) {
+      //printf("Rnd\n");
+      hA[0]->Fill("L2W", 1);
+      hA[0]->Fill("L2Wrandom", 1);
+      nBHT3_hardware_L0++;
+      if (wMK->passes_L0()) {
+         nBHT3_software_L0++;
+         // hA[1]->Fill(weve->bx7);
+         //printf("passes_L0\n");
+         for (int i = 0; i < 16; i++) {
+            //printf("AwaySum[%d]=%d\n",i,weve->trigAwaySum[i]);
+            if (weve->trigAwaySum[i] > thresh[i]) { //for bg test
+               //printf("Passes coin(%d)!\n",i);
+               nBHT3[i]++;
+               //printf("Passes coin(%d)(%d)\n",i,nBHT3[i]);
+               nBx[i][weve->bx7]++;
+            }
+         }
       }
-  }
-  //printf("out of sort\n");
+   //}
+   //printf("out of sort\n");
 }
 
 
-void St2011WlumiMaker::getAbortGapCounts(int angle, int *n1, int* n2)
+void St2011WlumiMaker::getAbortGapCounts(int angle, int *n1, int *n2)
 {
-  //new, simple method:  count only over the last 8 bins of the gap.
-  *n1=0;
-  for (int i=32;i<=39;i++)
-    *n1+=nBx[angle][i];
-  *n2=0;
-  for (int i=112;i<=119;i++)
-    *n2+=nBx[angle][i];
+   //new, simple method:  count only over the last 8 bins of the gap.
+   *n1 = 0;
+   for (int i = 32; i <= 39; i++)
+      *n1 += nBx[angle][i];
+   *n2 = 0;
+   for (int i = 112; i <= 119; i++)
+      *n2 += nBx[angle][i];
 }

@@ -448,7 +448,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
    St2011WlumiMaker *WlumiMk(NULL);
    //// S.F. - added 16 Oct. 2012 - 
    //// calculate lumi from runs
-   if(!isMC) {
+   if (!isMC) {
      //St2011WlumiMaker *WlumiMk = new St2011WlumiMaker("lumi"); 
      WlumiMk = new St2011WlumiMaker("lumi"); 
      WlumiMk->AttachWalgoMaker(stVecBosMaker); 
@@ -498,7 +498,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       nProcEvents++;
    }
   
-   if(!isMC) {
+   if (!isMC) {
      //St2011WlumiMaker *WlumiMk = new St2011WlumiMaker("lumi"); 
      WlumiMk->FinishRun(RunNo);
      float efflumi = WlumiMk->effective_lumi;
