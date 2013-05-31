@@ -26,14 +26,12 @@ int main(int argc, char *argv[])
    Int_t  nMaxUserEvents = -1;
    //Int_t  nMaxUserEvents = 10;
    //Int_t  nMaxUserEvents = 34000; // cut_35
-   //Int_t  nMaxUserEvents = 500;
+   //Int_t  nMaxUserEvents = 1000;
    Bool_t isMc           = kFALSE;
    //Bool_t isMc           = kTRUE;
    string histFileName   = "vbana_cut05_data_final.root";
    //string histFileName   = "vbana_cut05_data_bad2.root";
-   //string histFileName   = "vbana_cut35_data.root";
-   //string histFileName   = "vbana_cut35_data_100k.root";
-   //string histFileName   = "vbana_cut15_mc.root";
+   //string histFileName   = "vbana_cut35_data_final.root";
    //string histFileName   = "vbana_cut05_mc_qcd.root";
    //string histFileName   = "vbana_cut05_mc_wm.root";
    //string histFileName   = "vbana_cut05_mc_wp.root";
@@ -43,9 +41,6 @@ int main(int argc, char *argv[])
 
         string filelist       = "./runlists/run11_pp_transverse";
         //string filelist       = "./runlists/run11_pp_transverse_bad2";
-	//string filelist       = "./runlists/run11_all_goodsofar_cut15";
-	//string filelist       = "./runlists/run11_all_goodsofar_cut35";
-	//string filelist       = "./runlists/run11_all";
 	//string filelist       = "./runlists/MC_list_QCD_2012";
 	//string filelist       = "./runlists/MC_list_Wm_2012";
 	//string filelist       = "./runlists/MC_list_Wp_2012";

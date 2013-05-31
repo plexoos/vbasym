@@ -18,10 +18,10 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  gStyle->SetOptStat("mruoi");
 
 
- // float lumiDataTot = 23.40; // pb-1
- float lumiDataTot = 24.28; // pb-1
- //float lumiDataEff = 22.99; // pb-1
- float lumiDataEff = 23.86; // pb-1
+ //float lumiDataTot = 24.28; // pb-1
+ float lumiDataTot = 24.38; // pb-1
+ //float lumiDataEff = 23.86; // pb-1
+ float lumiDataEff = 23.95; // pb-1
  float lumiMC_Z = 955.15; // pb-1
  float lumiMC_WpToTauTau = 2136.49; // pb-1
  float lumiMC_WmToTauTau = 1995.34; // pb-1
@@ -39,30 +39,30 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
 
 
  // W total (W+ + W-)
- TH1* hd_PtLep = (TH1*)fileData->Get("track_cand_pass_final/hEcalScaledPt");
- TH1* hZ_PtLep = (TH1*)fileMCZ->Get("track_cand_pass_final/hEcalScaledPt");
+ TH1* hd_PtLep = (TH1*)fileData->Get("track_cand_pass_final_QEToPT/hEcalScaledPt");
+ TH1* hZ_PtLep = (TH1*)fileMCZ->Get("track_cand_pass_final_QEToPT/hEcalScaledPt");
  cout << hZ_PtLep->ClassName() << endl;
- TH1* hWp_PtLep = (TH1*)fileMCWp->Get("track_cand_pass_final/hEcalScaledPt");
- TH1* hWm_PtLep = (TH1*)fileMCWm->Get("track_cand_pass_final/hEcalScaledPt");
- TH1* hWptt_PtLep = (TH1*)fileMCWptt->Get("track_cand_pass_final/hEcalScaledPt");
- TH1* hWmtt_PtLep = (TH1*)fileMCWmtt->Get("track_cand_pass_final/hEcalScaledPt");
- TH1* hQ_PtLep = (TH1*)fileMCQCD->Get("track_cand_pass_final/hEcalScaledPt");
+ TH1* hWp_PtLep = (TH1*)fileMCWp->Get("track_cand_pass_final_QEToPT/hEcalScaledPt");
+ TH1* hWm_PtLep = (TH1*)fileMCWm->Get("track_cand_pass_final_QEToPT/hEcalScaledPt");
+ TH1* hWptt_PtLep = (TH1*)fileMCWptt->Get("track_cand_pass_final_QEToPT/hEcalScaledPt");
+ TH1* hWmtt_PtLep = (TH1*)fileMCWmtt->Get("track_cand_pass_final_QEToPT/hEcalScaledPt");
+ TH1* hQ_PtLep = (TH1*)fileMCQCD->Get("track_cand_pass_final_QEToPT/hEcalScaledPt");
 
  // W+
- TH1* hd_Wp_PtLep = (TH1*)fileData->Get("W+_track_cand_pass_final/hEcalScaledPt");
- TH1* hZ_Wp_PtLep = (TH1*)fileMCZ->Get("W+_track_cand_pass_final/hEcalScaledPt");
- TH1* hWp_Wp_PtLep = (TH1*)fileMCWp->Get("W+_track_cand_pass_final/hEcalScaledPt");
- TH1* hWm_Wp_PtLep = (TH1*)fileMCWm->Get("W+_track_cand_pass_final/hEcalScaledPt");
- TH1* hWptt_Wp_PtLep = (TH1*)fileMCWptt->Get("W+_track_cand_pass_final/hEcalScaledPt");
- TH1* hQ_Wp_PtLep = (TH1*)fileMCQCD->Get("W+_track_cand_pass_final/hEcalScaledPt");
+ TH1* hd_Wp_PtLep = (TH1*)fileData->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
+ TH1* hZ_Wp_PtLep = (TH1*)fileMCZ->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
+ TH1* hWp_Wp_PtLep = (TH1*)fileMCWp->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
+ TH1* hWm_Wp_PtLep = (TH1*)fileMCWm->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
+ TH1* hWptt_Wp_PtLep = (TH1*)fileMCWptt->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
+ TH1* hQ_Wp_PtLep = (TH1*)fileMCQCD->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
 
  // W-
- TH1* hd_Wm_PtLep = (TH1*)fileData->Get("W-_track_cand_pass_final/hEcalScaledPt");
- TH1* hZ_Wm_PtLep = (TH1*)fileMCZ->Get("W-_track_cand_pass_final/hEcalScaledPt");
- TH1* hWp_Wm_PtLep = (TH1*)fileMCWp->Get("W-_track_cand_pass_final/hEcalScaledPt");
- TH1* hWm_Wm_PtLep = (TH1*)fileMCWm->Get("W-_track_cand_pass_final/hEcalScaledPt");
- TH1* hWmtt_Wm_PtLep = (TH1*)fileMCWmtt->Get("W-_track_cand_pass_final/hEcalScaledPt");
- TH1* hQ_Wm_PtLep = (TH1*)fileMCQCD->Get("W-_track_cand_pass_final/hEcalScaledPt");
+ TH1* hd_Wm_PtLep = (TH1*)fileData->Get("W-_track_cand_pass_final_QEToPT/hEcalScaledPt");
+ TH1* hZ_Wm_PtLep = (TH1*)fileMCZ->Get("W-_track_cand_pass_final_QEToPT/hEcalScaledPt");
+ TH1* hWp_Wm_PtLep = (TH1*)fileMCWp->Get("W-_track_cand_pass_final_QEToPT/hEcalScaledPt");
+ TH1* hWm_Wm_PtLep = (TH1*)fileMCWm->Get("W-_track_cand_pass_final_QEToPT/hEcalScaledPt");
+ TH1* hWmtt_Wm_PtLep = (TH1*)fileMCWmtt->Get("W-_track_cand_pass_final_QEToPT/hEcalScaledPt");
+ TH1* hQ_Wm_PtLep = (TH1*)fileMCQCD->Get("W-_track_cand_pass_final_QEToPT/hEcalScaledPt");
 
 
  TCanvas *c1 = new TCanvas("c1","",800,800);

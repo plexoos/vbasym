@@ -7,6 +7,8 @@
 
 #include "TF1.h"
 
+#include "TF2.h"
+
 #include "VecBosEvent.h"
 
 
@@ -100,6 +102,14 @@ void TrackHContainer::BookHists()
    hist->SetOption("hist GRIDX GRIDY XY");
 
    o["hChargePrimaryTrack"] = hist = new TH1I("hChargePrimaryTrack", "; Charge of the primary track; Num. of Tracks", 10, -2, 2);
+   o["hQoPt_PrimaryTrack"] = hist = new TH1F("hQoPt_PrimaryTrack", "; Q/P_{T} of the primary track; Num. of Tracks", 50, -0.1, 0.1);
+
+   o["hQoPt_Vs_Et_PrimaryTrack"] = hist = new TH2F("hQoPt_Vs_Et_PrimaryTrack", "Primary track; E_{T} 2x2 cluster; Q/P_{T}", 50, 0, 80, 50, -0.1, 0.1);
+   hist->SetOption("colz LOGZ");
+
+   o["hQxEtoPt_Vs_Et_PrimaryTrack"] = hist = new TH2F("hQxEtoPt_Vs_Et_PrimaryTrack", "Primary track; E_{T} 2x2 cluster; Q(TPC)*E_{T}(EMC)/P_{T}(TPC)", 50, 0, 80, 50, -3, 3);
+   hist->SetOption("colz LOGZ");
+
    o["hTrackDistanceToCluster"] = hist = new TH1I("hTrackDistanceToCluster", "; Distance(Track-Cluster), cm; Num. of Tracks", 50, 0, 50);
 
    o["hMinDeltaRToJet"] = hist = new TH1I("hMinDeltaRToJet", "; ; Num. of Tracks", 40, 0, 4);
@@ -153,6 +163,11 @@ void TrackHContainer::Fill(VecBosTrack &track)
    ((TH1*) o["hTrackClusterEnergyFrac"])->Fill(track.GetClusterEnergyFrac());
    ((TH1*) o["hTrackDistanceToCluster"])->Fill(track.CalcDistanceToCluster().Mag());
    ((TH1*) o["hChargePrimaryTrack"])->Fill(track.prMuTrack->charge());
+   ((TH1*) o["hQoPt_PrimaryTrack"])->Fill(track.prMuTrack->charge()/track.GetP3EScaled().Pt());
+   //  ((TH2*) o["hQoPt_Vs_Et_PrimaryTrack"])->Fill(track.mCluster2x2.ET, (track.prMuTrack->charge()/track.GetP3EScaled().Pt()));
+   ((TH2*) o["hQoPt_Vs_Et_PrimaryTrack"])->Fill(track.mCluster2x2.ET, (track.prMuTrack->charge()/track.mP3AtDca.Pt()));
+   ((TH2*) o["hQxEtoPt_Vs_Et_PrimaryTrack"])->Fill(track.mCluster2x2.ET, (track.prMuTrack->charge()*track.mCluster2x2.ET)/track.mP3AtDca.Pt());
+
    ((TH1*) o["hMinDeltaRToJet"])->Fill(track.mMinDeltaRToJet);
 
    //printf("hasMatchedCluster: %d\n", track.isMatch2Cl);
