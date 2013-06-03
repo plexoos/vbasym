@@ -82,6 +82,9 @@ void VecBosRootFile::BookHists()
    fHists->d["event_has_candidate_pt>10"]     = ph = new EventHContainer(new TDirectoryFile("event_has_candidate_pt>10", "event_has_candidate_pt>10", "", this));
    fHistCuts[kCUT_EVENT_HAS_CANDIDATE_TRACK_PT10].insert(ph);
 
+   fHists->d["event_pass_final_QEToPT_pt>10"]     = ph = new EventHContainer(new TDirectoryFile("event_pass_final_QEToPT_pt>10", "event_pass_final_QEToPT_pt>10", "", this));
+   fHistCuts[kCUT_EVENT_PASS_FINAL_QET_PT10].insert(ph);
+
    fHists->d["event_pass_final"]     = ph = new EventHContainer(new TDirectoryFile("event_pass_final", "event_pass_final", "", this));
    fHistCuts[kCUT_EVENT_PASS_FINAL].insert(ph);
 
@@ -122,15 +125,21 @@ void VecBosRootFile::BookHists()
 
    fHists->d["track_cand_pass_final"] = ph = new TrackHContainer(new TDirectoryFile("track_cand_pass_final", "track_cand_pass_final", "", this));
 
+   fHists->d["track_cand_pass_final_QEToPT"] = ph = new TrackHContainer(new TDirectoryFile("track_cand_pass_final_QEToPT", "track_cand_pass_final_QEToPT", "", this));
+
+   fHists->d["track_cand_pass_final_QEToPT_Pt>10"] = ph = new TrackHContainer(new TDirectoryFile("track_cand_pass_final_QEToPT_Pt>10", "track_cand_pass_final_QEToPT_Pt>10", "", this));
+
    fHists->d["W+_track_cand_pass_final"] = ph = new TrackHContainer(new TDirectoryFile("W+_track_cand_pass_final", "W+_track_cand_pass_final", "", this));
 
    fHists->d["W-_track_cand_pass_final"] = ph = new TrackHContainer(new TDirectoryFile("W-_track_cand_pass_final", "W-_track_cand_pass_final", "", this));
 
-   fHists->d["track_cand_pass_final_QEToPT"] = ph = new TrackHContainer(new TDirectoryFile("track_cand_pass_final_QEToPT", "track_cand_pass_final_QEToPT", "", this));
-
    fHists->d["W+_track_cand_pass_final_QEToPT"] = ph = new TrackHContainer(new TDirectoryFile("W+_track_cand_pass_final_QEToPT", "W+_track_cand_pass_final_QEToPT", "", this));
 
    fHists->d["W-_track_cand_pass_final_QEToPT"] = ph = new TrackHContainer(new TDirectoryFile("W-_track_cand_pass_final_QEToPT", "W-_track_cand_pass_final_QEToPT", "", this));
+
+   fHists->d["W+_track_cand_pass_final_QEToPT_Pt>10"] = ph = new TrackHContainer(new TDirectoryFile("W+_track_cand_pass_final_QEToPT_Pt>10", "W+_track_cand_pass_final_QEToPT_Pt>10", "", this));
+
+   fHists->d["W-_track_cand_pass_final_QEToPT_Pt>10"] = ph = new TrackHContainer(new TDirectoryFile("W-_track_cand_pass_final_QEToPT_Pt>10", "W-_track_cand_pass_final_QEToPT_Pt>10", "", this));
 
    fHists->d["track_cand_pass_qcd_QEToPT"] = ph = new TrackHContainer(new TDirectoryFile("track_cand_pass_qcd_QEToPT", "track_cand_pass_qcd_QEToPT", "", this));
 
@@ -193,6 +202,7 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
    if ( event->PassCutFinal() )
       Fill(ev, kCUT_EVENT_PASS_FINAL);
 
+
    // Fill vertex histos
    VecBosVertexPtrSetIter iVertex = event->mVertices.begin();
    for ( ; iVertex != event->mVertices.end(); ++iVertex)
@@ -218,10 +228,29 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
 
       ((TrackHContainer*) fHists->d["track_candidates"])->Fill(track);
 
-      if ( !event->PassCutsExceptedPtBal() ) continue;
- 
-      if ( event->mPtBalanceCosPhiFromTracks <= 18 ) // QCD events
+
+      if ( event->mCandElecP3EScaled.Pt() > 10 && 
+                 event->mPtBalanceCosPhiFromTracks > 18) // Pass final with Pt>10
       {
+	if ( abs((track.prMuTrack->charge()*track.mCluster2x2.ET)/track.mP3AtDca.Pt()) >= 0.4 && abs((track.prMuTrack->charge()*track.mCluster2x2.ET)/track.mP3AtDca.Pt()) <= 1.8 )
+         {
+             Fill(ev, kCUT_EVENT_PASS_FINAL_QET_PT10);
+             ((TrackHContainer*) fHists->d["track_cand_pass_final_QEToPT_Pt>10"])->Fill(track); 
+
+            if ( track.prMuTrack->charge() > 0.)
+               ((TrackHContainer*) fHists->d["W+_track_cand_pass_final_QEToPT_Pt>10"])->Fill(track);
+            if ( track.prMuTrack->charge() < 0.)   
+               ((TrackHContainer*) fHists->d["W-_track_cand_pass_final_QEToPT_Pt>10"])->Fill(track); 
+	 }
+      }
+
+
+      if ( !event->PassCutsExceptedPtBal() ) continue; // Pass Pt>25 GeV
+ 
+
+      if ( event->mPtBalanceCosPhiFromTracks <= 18 ) // select QCD events
+      {
+ 
          if ( abs((track.prMuTrack->charge()*track.mCluster2x2.ET)/track.mP3AtDca.Pt()) >= 0.4 && abs((track.prMuTrack->charge()*track.mCluster2x2.ET)/track.mP3AtDca.Pt()) <= 1.8 )
          {
             Fill(ev, kCUT_EVENT_PASS_QCD_QET);
@@ -233,7 +262,8 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
             if ( track.prMuTrack->charge() < 0.)   
                ((TrackHContainer*) fHists->d["W-_track_cand_pass_qcd_QEToPT"])->Fill(track); 
    	 }
-      }
+      } // end QCD events
+
 
       if ( !event->PassCutFinal() ) continue;
  

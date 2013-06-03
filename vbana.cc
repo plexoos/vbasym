@@ -23,10 +23,10 @@ int main(int argc, char *argv[])
 
    setbuf(stdout, NULL);
 
-   Int_t  nMaxUserEvents = -1;
+   //Int_t  nMaxUserEvents = -1;
    //Int_t  nMaxUserEvents = 10;
    //Int_t  nMaxUserEvents = 34000; // cut_35
-   //Int_t  nMaxUserEvents = 1000;
+   Int_t  nMaxUserEvents = 2000;
    Bool_t isMc           = kFALSE;
    //Bool_t isMc           = kTRUE;
    string histFileName   = "vbana_cut05_data_final.root";

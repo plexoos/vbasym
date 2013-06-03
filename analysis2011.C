@@ -53,6 +53,9 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
    cout << hd_QxEtoPt_Vs_Et->ClassName() << endl;
  TH2* hd_QxEtoPt_Vs_Et_passCut = (TH2*)fileData->Get("track_cand_pass_final_QEToPT/hQxEtoPt_Vs_Et_PrimaryTrack");
 
+ // TH1* hd_signal_PtLep = (TH1*)fileData->Get("track_candidates/hEcalScaledPt");
+
+
  // W+
  TH1* hd_Wp_PtLep = (TH1*)fileData->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
  TH1* hZ_Wp_PtLep = (TH1*)fileMCZ->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
@@ -60,6 +63,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  TH1* hWm_Wp_PtLep = (TH1*)fileMCWm->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
  TH1* hWptt_Wp_PtLep = (TH1*)fileMCWptt->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
  TH1* hQ_Wp_PtLep = (TH1*)fileMCQCD->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
+
 
  // W-
  TH1* hd_Wm_PtLep = (TH1*)fileData->Get("W-_track_cand_pass_final_QEToPT/hEcalScaledPt");
