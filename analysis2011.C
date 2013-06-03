@@ -71,6 +71,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  TH1* hQ_PtLepPt10 = (TH1*)fileMCQCD->Get("track_cand_pass_final_QEToPT_Pt>10/hEcalScaledPt");
 
  TH1* hd_PtLepQCD = (TH1*)fileData->Get("track_cand_pass_qcd_QEToPT/hEcalScaledPt");
+ TH1* hd_PtLepQCDPt10 = (TH1*)fileData->Get("track_cand_pass_qcd_QEToPT_Pt>10/hEcalScaledPt");
 
  TH2* hd_QxEtoPt_Vs_Et = (TH2*)fileData->Get("track_cand_pass_final/hQxEtoPt_Vs_Et_PrimaryTrack");
    cout << hd_QxEtoPt_Vs_Et->ClassName() << endl;
@@ -836,7 +837,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  c8_1->cd();
  hd_PtLepPt10_2->Draw();
  c8_2->cd();
- hd_PtLepQCD->Draw();
+ hd_PtLepQCD_Pt>10->Draw();
 
  c8->Print(outPath + "/plot_8.eps");
  c8->Print(outPath + "/plot_8.png");
