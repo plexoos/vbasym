@@ -16,7 +16,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  gStyle-> SetPadLeftMargin(0.13);
  gStyle-> SetStatFontSize(0.05);
  gStyle->SetOptStat("mruoi");
-
+ gStyle->SetPadRightMargin(0.25);
 
  //float lumiDataTot = 24.28; // pb-1
  float lumiDataTot = 24.42; // pb-1
@@ -78,6 +78,15 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  TH2* hd_QxEtoPt_Vs_Et_passCut = (TH2*)fileData->Get("track_cand_pass_final_QEToPT/hQxEtoPt_Vs_Et_PrimaryTrack");
 
 
+ TH2* hd_PtNeutrinoVsEle = (TH2*)fileData->Get("event_pass_final_QEToPT/hPtBalanceTracksNeutralsVsElecEt");
+ TH2* hd_PtNeutrinoVsEleNocut = (TH2*)fileData->Get("event_has_candidate_pt>10/hPtBalanceTracksNeutralsVsElecEt");
+
+ TH1* hWp_PtWReco = (TH1*)fileMCWp->Get("event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
+
+ TH1* hWp_PtRecoil_vs_PtWGen = (TH1*)fileMCWp->Get("event_mc_pass_final_QEToPT/hTrackRecoilTpcNeutralsPtVsWBosonPt");
+
+ TH1* hWp_PhiRecoil_vs_PhiWGen = (TH1*)fileMCWp->Get("event_mc_pass_final_QEToPT/hTrackRecoilPhiVsWBosonPhi");
+
 
  // W+
  TH1* hd_Wp_PtLep = (TH1*)fileData->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
@@ -93,6 +102,8 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  TH1* hWm_Wp_PtLepPt10 = (TH1*)fileMCWm->Get("W+_track_cand_pass_final_QEToPT_Pt>10/hEcalScaledPt");
  TH1* hWptt_Wp_PtLepPt10 = (TH1*)fileMCWptt->Get("W+_track_cand_pass_final_QEToPT_Pt>10/hEcalScaledPt");
  TH1* hQ_Wp_PtLepPt10 = (TH1*)fileMCQCD->Get("W+_track_cand_pass_final_QEToPT_Pt>10/hEcalScaledPt");
+
+ TH1* hWp_Wp_PtWGen = (TH1*)fileMCWp->Get("event_mc/hWBosonPt");
 
 
  // W-
@@ -837,7 +848,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  c8_1->cd();
  hd_PtLepPt10_2->Draw();
  c8_2->cd();
- hd_PtLepQCD_Pt>10->Draw();
+ hd_PtLepQCDPt10->Draw();
 
  c8->Print(outPath + "/plot_8.eps");
  c8->Print(outPath + "/plot_8.png");
@@ -867,5 +878,67 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  c9->Print(outPath + "/plot_9.eps");
  c9->Print(outPath + "/plot_9.png");
 
+
+ TCanvas *c10 = new TCanvas("c10","",800,400);
+
+ c10-> SetTitle("Reco vs Gen");
+
+ c10->Divide(2,1);
+
+ c10_1->cd();
+ hWp_Wp_PtWGen->SetNameTitle("hWp_Wp_PtWGen","GENERATED");
+ hWp_Wp_PtWGen->Draw();
+
+ c10_2->cd();
+ hWp_PtWReco->SetNameTitle("hWp_PtLep","RECONSTRUCTED");
+ hWp_PtWReco->Draw();
+
+ c10->Print(outPath + "/plot_10.eps");
+ c10->Print(outPath + "/plot_10.png");
+
+
+ TCanvas *c10b = new TCanvas("c10b","",800,400);
+
+ c10b-> SetTitle("Reco vs Gen");
+
+ c10b->Divide(2,1);
+
+ c10b_1->cd();
+ c10b_1->SetLogz(1); 
+ hWp_PtRecoil_vs_PtWGen->GetYaxis()->SetTitleOffset(1.1);
+ hWp_PtRecoil_vs_PtWGen-> SetStats(0);
+ hWp_PtRecoil_vs_PtWGen->Draw();
+
+ c10b_2->cd(); 
+ c10b_2->SetLogz(1);
+ hWp_PhiRecoil_vs_PhiWGen-> SetStats(0);
+ hWp_PhiRecoil_vs_PhiWGen->Draw();
+
+ c10b->Print(outPath + "/plot_10b.eps");
+ c10b->Print(outPath + "/plot_10b.png");
+
+
+ TCanvas *c11 = new TCanvas("c11","",800,400);
+
+ c11-> SetTitle("DATA - Neutrino vs electron");
+
+ c11->Divide(2,1);
+
+ c11_1->cd();
+ c11_1->SetLogz(1);  
+ hd_PtNeutrinoVsEleNocut->GetYaxis()->SetTitleOffset(1.1); 
+ hd_PtNeutrinoVsEleNocut-> SetStats(0); 
+ hd_PtNeutrinoVsEleNocut->Draw();
+ line1->DrawLine(0,18,60,18);
+ line1->DrawLine(25,-40,25,60);
+
+ c11_2->cd();
+ c11_2->SetLogz(1); 
+ hd_PtNeutrinoVsEle->GetYaxis()->SetTitleOffset(1.1); 
+ hd_PtNeutrinoVsEle-> SetStats(0);
+ hd_PtNeutrinoVsEle->Draw();
+
+ c11->Print(outPath + "/plot_11.eps");
+ c11->Print(outPath + "/plot_11.png");
 
 }

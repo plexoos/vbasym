@@ -168,6 +168,9 @@ void VecBosRootFile::BookHists()
    fHists->d["event_mc_has_trackrecoil"] = ph = new MCHContainer(new TDirectoryFile("event_mc_has_trackrecoil", "event_mc_has_trackrecoil", "", this));
    fHistCuts[kCUT_EVENT_HAS_TRACKRECOIL].insert(ph);
 
+   fHists->d["event_mc_pass_final_QEToPT"] = ph = new MCHContainer(new TDirectoryFile("event_mc_pass_final_QEToPT", "event_mc_pass_final_QEToPT", "", this));
+   fHistCuts[kCUT_EVENT_PASS_FINAL_QET].insert(ph);
+
    this->cd();
 }
 
