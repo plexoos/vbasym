@@ -13,7 +13,8 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
 
  //Styles:
  gStyle-> SetPadBottomMargin(0.15);
- gStyle-> SetPadLeftMargin(0.13);
+ //gStyle-> SetPadLeftMargin(0.13);
+ gStyle-> SetPadLeftMargin(0.17);
  gStyle-> SetStatFontSize(0.05);
  gStyle->SetOptStat("mruoi");
  gStyle->SetPadRightMargin(0.25);
@@ -83,6 +84,8 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
 
  TH1* hWp_PtWReco = (TH1*)fileMCWp->Get("event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
 
+ TH1* hWp_PtWGen = (TH1*)fileMCWp->Get("event_mc/hWBosonPt");
+
  TH1* hWp_PtRecoil_vs_PtWGen = (TH1*)fileMCWp->Get("event_mc_pass_final_QEToPT/hTrackRecoilTpcNeutralsPtVsWBosonPt");
 
  TH1* hWp_PhiRecoil_vs_PhiWGen = (TH1*)fileMCWp->Get("event_mc_pass_final_QEToPT/hTrackRecoilPhiVsWBosonPhi");
@@ -102,8 +105,6 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  TH1* hWm_Wp_PtLepPt15 = (TH1*)fileMCWm->Get("W+_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
  TH1* hWptt_Wp_PtLepPt15 = (TH1*)fileMCWptt->Get("W+_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
  TH1* hQ_Wp_PtLepPt15 = (TH1*)fileMCQCD->Get("W+_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
-
- TH1* hWp_Wp_PtWGen = (TH1*)fileMCWp->Get("event_mc/hWBosonPt");
 
 
  // W-
@@ -507,7 +508,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  c2c->Print(outPath + "/plot_2c.png");
 
 
- TCanvas *c2d = new TCanvas("c2d","W TOTAL - QCD data driven PIPPO!!!",800,400);
+ TCanvas *c2d = new TCanvas("c2d","W TOTAL - QCD data driven",800,400);
 
 
  TH1F *hd_PtLepQCD_1 = (TH1F*)hd_PtLepQCD->Clone("hd_PtLepQCD_1");
@@ -992,13 +993,18 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  c10-> SetTitle("Reco vs Gen");
 
  c10->Divide(2,1);
+ //c10->SetLeftMargin(0.2); 
 
  c10_1->cd();
- hWp_Wp_PtWGen->SetNameTitle("hWp_Wp_PtWGen","GENERATED");
- hWp_Wp_PtWGen->Draw();
+ //c10_1->SetLeftMargin(0.8); 
+ hWp_PtWGen->SetNameTitle("hWp_PtWGen","W^{+} GENERATED");
+ hWp_PtWGen->GetYaxis()->SetTitleOffset(1.8);
+ hWp_PtWGen->Draw();
 
  c10_2->cd();
- hWp_PtWReco->SetNameTitle("hWp_PtLep","RECONSTRUCTED");
+ hWp_PtWReco->SetNameTitle("hWp_PtWReco","W^{+} RECONSTRUCTED");
+ hWp_PtWReco->GetXaxis()->SetTitle("Tracks-based recoil P_{T} [GeV/c]");
+ hWp_PtWReco->GetYaxis()->SetTitleOffset(1.8);
  hWp_PtWReco->Draw();
 
  c10->Print(outPath + "/plot_10.eps");
