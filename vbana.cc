@@ -34,19 +34,19 @@ int main(int argc, char *argv[])
    //string histFileName   = "vbana_cut35_data_final.root";
    //string histFileName   = "vbana_cut05_mc_qcd.root";
    //string histFileName   = "vbana_cut05_mc_wm.root";
-   string histFileName   = "vbana_cut05_mc_wp.root";
+   //string histFileName   = "vbana_cut05_mc_wp.root";
    //string histFileName   = "vbana_cut05_mc_wm_to_tt.root";
    //string histFileName   = "vbana_cut05_mc_wp_to_tt.root";
-   //string histFileName   = "vbana_cut05_mc_z_to_ee.root";
+   string histFileName   = "vbana_cut05_mc_z_to_ee.root";
 
         //string filelist       = "./runlists/run11_pp_transverse";
         //string filelist       = "./runlists/run11_pp_transverse_bad2";
 	//string filelist       = "./runlists/MC_list_QCD_2012";
 	//string filelist       = "./runlists/MC_list_Wm_2012";
-	string filelist       = "./runlists/MC_list_Wp_2012";
+	//string filelist       = "./runlists/MC_list_Wp_2012";
 	//string filelist       = "./runlists/MC_list_WmToTauTau_2012";
 	//string filelist       = "./runlists/MC_list_WpToTauTau_2012";
-	//string filelist       = "./runlists/MC_list_Ztoee_2012";
+	string filelist       = "./runlists/MC_list_Ztoee_2012";
 
    Info("main", "nMaxUserEvents: %d", nMaxUserEvents);
    Info("main", "histFileName:   %s", histFileName.c_str());
