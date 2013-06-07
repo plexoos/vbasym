@@ -74,6 +74,24 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  TH1* hd_PtLepQCD = (TH1*)fileData->Get("track_cand_pass_qcd_QEToPT/hEcalScaledPt");
  TH1* hd_PtLepQCDPt15 = (TH1*)fileData->Get("track_cand_pass_qcd_QEToPT_Pt>15/hEcalScaledPt");
 
+ hd_PtLep->Rebin(3);  // 3 GeV per bin (originally 1 GeV)
+ hZ_PtLep->Rebin(3);
+ hWp_PtLep->Rebin(3); 
+ hWm_PtLep->Rebin(3);
+ hWptt_PtLep->Rebin(3);
+ hWmtt_PtLep->Rebin(3);
+ hQ_PtLep->Rebin(3);
+ hd_PtLepQCD->Rebin(3);
+ hd_PtLepPt15->Rebin(3);
+ hZ_PtLepPt15->Rebin(3);
+ hWp_PtLepPt15->Rebin(3); 
+ hWm_PtLepPt15->Rebin(3);
+ hWptt_PtLepPt15->Rebin(3);
+ hWmtt_PtLepPt15->Rebin(3);
+ hQ_PtLepPt15->Rebin(3);
+ hd_PtLepQCDPt15->Rebin(3);
+
+
  TH2* hd_QxEtoPt_Vs_Et = (TH2*)fileData->Get("track_cand_pass_final/hQxEtoPt_Vs_Et_PrimaryTrack");
    cout << hd_QxEtoPt_Vs_Et->ClassName() << endl;
  TH2* hd_QxEtoPt_Vs_Et_passCut = (TH2*)fileData->Get("track_cand_pass_final_QEToPT/hQxEtoPt_Vs_Et_PrimaryTrack");
@@ -106,6 +124,24 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  TH1* hWptt_Wp_PtLepPt15 = (TH1*)fileMCWptt->Get("W+_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
  TH1* hQ_Wp_PtLepPt15 = (TH1*)fileMCQCD->Get("W+_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
 
+ TH1* hd_Wp_PtLepQCD = (TH1*)fileData->Get("W+_track_cand_pass_qcd_QEToPT/hEcalScaledPt");
+ TH1* hd_Wp_PtLepQCDPt15 = (TH1*)fileData->Get("W+_track_cand_pass_qcd_QEToPT_Pt>15/hEcalScaledPt");
+
+ hd_Wp_PtLep->Rebin(3);
+ hZ_Wp_PtLep->Rebin(3);
+ hWp_Wp_PtLep->Rebin(3); 
+ hWm_Wp_PtLep->Rebin(3);
+ hWptt_Wp_PtLep->Rebin(3);
+ hQ_Wp_PtLep->Rebin(3);
+ hd_Wp_PtLepQCD->Rebin(3);
+ hd_Wp_PtLepPt15->Rebin(3);
+ hZ_Wp_PtLepPt15->Rebin(3);
+ hWp_Wp_PtLepPt15->Rebin(3); 
+ hWm_Wp_PtLepPt15->Rebin(3);
+ hWptt_Wp_PtLepPt15->Rebin(3);
+ hQ_Wp_PtLepPt15->Rebin(3);
+ hd_Wp_PtLepQCDPt15->Rebin(3);
+
 
  // W-
  TH1* hd_Wm_PtLep = (TH1*)fileData->Get("W-_track_cand_pass_final_QEToPT/hEcalScaledPt");
@@ -122,6 +158,25 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  TH1* hWmtt_Wm_PtLepPt15 = (TH1*)fileMCWmtt->Get("W-_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
  TH1* hQ_Wm_PtLepPt15 = (TH1*)fileMCQCD->Get("W-_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
 
+ TH1* hd_Wm_PtLepQCD = (TH1*)fileData->Get("W-_track_cand_pass_qcd_QEToPT/hEcalScaledPt");
+ TH1* hd_Wm_PtLepQCDPt15 = (TH1*)fileData->Get("W-_track_cand_pass_qcd_QEToPT_Pt>15/hEcalScaledPt");
+
+ hd_Wm_PtLep->Rebin(3);
+ hZ_Wm_PtLep->Rebin(3);
+ hWp_Wm_PtLep->Rebin(3); 
+ hWm_Wm_PtLep->Rebin(3);
+ hWmtt_Wm_PtLep->Rebin(3);
+ hQ_Wm_PtLep->Rebin(3);
+ hd_Wm_PtLepQCD->Rebin(3);
+ hd_Wm_PtLepPt15->Rebin(3);
+ hZ_Wm_PtLepPt15->Rebin(3);
+ hWp_Wm_PtLepPt15->Rebin(3); 
+ hWm_Wm_PtLepPt15->Rebin(3);
+ hWmtt_Wm_PtLepPt15->Rebin(3);
+ hQ_Wm_PtLepPt15->Rebin(3);
+ hd_Wm_PtLepQCDPt15->Rebin(3);
+
+ //-----------------------------------------------------------------------------------------------------------------
 
  hd_PtLepTPC->GetXaxis()->SetTitle("P_{T}^{lep}(TPC)");
  hd_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
@@ -419,7 +474,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  c2b->Print(outPath + "/plot_2b.png");
 
 
- TCanvas *c2c = new TCanvas("c2c","W TOTAL - QCD data driven",800,400);
+ TCanvas *c2c = new TCanvas("c2c","W TOTAL - QCD data driven - PtEle > 15 GeV",800,400);
 
 
  TH1F *hd_PtLepQCDPt15_1 = (TH1F*)hd_PtLepQCDPt15->Clone("hd_PtLepQCDPt15_1");
@@ -470,15 +525,19 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  cout << "PtLep QCD bin20 = " <<  bin 20 << endl;
  cout << "PtLep QCD bin21 = " <<  bin 21 << endl;
 
- Double_t integral15_18=  hd_PtLepPt15_2-> Integral(15,18);
+ // Double_t integral15_18=  hd_PtLepPt15_2-> Integral(15,18);
 
- Double_t integralQCD15_18= hd_PtLepQCDPt15-> Integral(15,18);
+ // Double_t integralQCD15_18= hd_PtLepQCDPt15-> Integral(15,18);
 
- float scaleQCD = integral15_18/integralQCD15_18;
+ Double_t integral5_6=  hd_PtLepPt15_2-> Integral(5,6);
 
- cout << "Integral of bin content in the interval PtLep=[15,18]GeV for Signal = " <<  integral15_18 << endl;
+ Double_t integralQCD5_6= hd_PtLepQCDPt15-> Integral(5,6);
 
- cout << "Integral of bin content in the interval PtLep=[15,18]GeV for QCD = " <<  integralQCD15_18 << endl;
+ float scaleQCD = integral5_6/integralQCD5_6;
+
+ cout << "Integral of bin content in the first bin for Signal = " <<  integral5_6 << endl;
+
+ cout << "Integral of bin content in the first bin for QCD = " <<  integralQCD5_6 << endl;
 
  cout << "QCD scale factor= " << scaleQCD << endl;
 
@@ -498,7 +557,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  // hd_PtLepPt15_2-> SetMinimum(30.);
  hd_PtLepPt15_2->Draw();
  hd_PtLepQCDPt15_2-> SetFillStyle(3448);
- hd_PtLepQCDPt15_2-> SetFillColor(kGreen);
+ hd_PtLepQCDPt15_2-> SetFillColor(kMagenta);
  hd_PtLepQCDPt15_2->Draw("same");
  c2c_2->cd();
  hd_PtLepPt15_3->Draw();
@@ -528,7 +587,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  c2d_1->cd();
  hd_PtLep_2->Draw();
  hd_PtLepQCD_2-> SetFillStyle(3448);
- hd_PtLepQCD_2-> SetFillColor(kGreen);
+ hd_PtLepQCD_2-> SetFillColor(kMagenta);
  hd_PtLepQCD_2->Draw("same");
  c2d_2->cd();
  hd_PtLep_3->Draw();
@@ -568,7 +627,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
 
 
 
- TCanvas *c3c = new TCanvas("c3c","W TOTAL sample",800,400);
+ TCanvas *c3c = new TCanvas("c3c","W TOTAL sample - PtEle > 15 GeV",800,400);
 
  c3c->Divide(2,1);
 
@@ -599,7 +658,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
 
  // W+ sample
 
- TCanvas *c4 = new TCanvas("c4","",800,800);
+ TCanvas *c4 = new TCanvas("c4","W+ sample",800,800);
 
  hZ_Wp_PtLep->Scale(scaleZ);
  hWptt_Wp_PtLep->Scale(scaleWptt);
@@ -610,7 +669,6 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  TH1F *hWptt_Wp_PtLep_2 = (TH1F*)hWptt_Wp_PtLep->Clone("hWptt_Wp_PtLep_2");
  TH1F *hd_Wp_PtLep_2 = (TH1F*)hd_Wp_PtLep->Clone("hd_Wp_PtLep_2");
 
- c4-> SetTitle("W+ sample");
  c4->Divide(2,2);
  c4_1->cd();
  c4_1->SetLogy(1);
@@ -642,7 +700,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  c4->Print(outPath + "/plot_4.png");
 
  
- TCanvas *c4b = new TCanvas("c4b","",800,800);
+ TCanvas *c4b = new TCanvas("c4b","W+ sample - PtEle > 15 GeV",800,800);
 
  hZ_Wp_PtLepPt15->Scale(scaleZ);
  hWptt_Wp_PtLepPt15->Scale(scaleWptt);
@@ -653,7 +711,6 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  TH1F *hWptt_Wp_PtLepPt15_2 = (TH1F*)hWptt_Wp_PtLepPt15->Clone("hWptt_Wp_PtLepPt15_2");
  TH1F *hd_Wp_PtLepPt15_2 = (TH1F*)hd_Wp_PtLepPt15->Clone("hd_Wp_PtLepPt15_2");
 
- c4b-> SetTitle("W+ sample");
  c4b->Divide(2,2);
  c4b_1->cd();
  c4b_1->SetLogy(1);
@@ -685,9 +742,86 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  c4b->Print(outPath + "/plot_4b.png");
 
 
+ TCanvas *c4c = new TCanvas("c4c","W+ sample - QCD data driven - PtEle > 15 GeV",800,400);
+
+
+ TH1F *hd_Wp_PtLepQCDPt15_1 = (TH1F*)hd_Wp_PtLepQCDPt15->Clone("hd_Wp_PtLepQCDPt15_1");
+
+ // Double_t integral_Wp_15_18=  hd_Wp_PtLepPt15_2-> Integral(15,18);
+
+ // Double_t integral_Wp_QCD15_18= hd_Wp_PtLepQCDPt15-> Integral(15,18);
+
+ Double_t integral_Wp_5_6=  hd_Wp_PtLepPt15_2-> Integral(5,6);
+
+ Double_t integral_Wp_QCD5_6= hd_Wp_PtLepQCDPt15-> Integral(5,6);
+
+ float scale_Wp_QCD = integral_Wp_5_6/integral_Wp_QCD5_6;
+
+ cout << "W+, Integral of bin content in the first bin for Signal = " <<  integral_Wp_5_6 << endl;
+
+ cout << "W+, Integral of bin content in the first bin for QCD = " <<  integral_Wp_QCD5_6 << endl;
+
+ cout << "W+, QCD scale factor= " << scale_Wp_QCD << endl;
+
+ hd_Wp_PtLepQCDPt15->Scale(scale_Wp_QCD); 
+
+ TH1F *hd_Wp_PtLepQCDPt15_2 = (TH1F*)hd_Wp_PtLepQCDPt15->Clone("hd_Wp_PtLepQCDPt15_2"); 
+
+ hd_Wp_PtLepPt15->Add(hd_Wp_PtLepPt15,hd_Wp_PtLepQCDPt15,1,-1);
+
+ TH1F *hd_Wp_PtLepPt15_3 = (TH1F*)hd_Wp_PtLepPt15->Clone("hd_Wp_PtLepPt15_3"); 
+ hd_Wp_PtLepPt15_3->SetNameTitle("hd_Wp_PtLepPt15_3","data- Z^{0}->ee, W^{+}->#tau#nu_{#tau} and QCD subtracted");
+
+
+ c4c->Divide(2,1);
+
+ c4c_1->cd();
+ // hd_Wp_PtLepPt15_2-> SetMinimum(30.);
+ hd_Wp_PtLepPt15_2->Draw();
+ hd_Wp_PtLepQCDPt15_2-> SetFillStyle(3448);
+ hd_Wp_PtLepQCDPt15_2-> SetFillColor(kMagenta);
+ hd_Wp_PtLepQCDPt15_2->Draw("same");
+ c4c_2->cd();
+ hd_Wp_PtLepPt15_3->Draw();
+
+
+ c4c->Print(outPath + "/plot_4c.eps");
+ c4c->Print(outPath + "/plot_4c.png");
+
+
+ TCanvas *c4d = new TCanvas("c4d","W+ sample - QCD data driven",800,400);
+
+
+ TH1F *hd_Wp_PtLepQCD_1 = (TH1F*)hd_Wp_PtLepQCD->Clone("hd_Wp_PtLepQCD_1");
+
+ hd_Wp_PtLepQCD->Scale(scale_Wp_QCD); 
+
+ TH1F *hd_Wp_PtLepQCD_2 = (TH1F*)hd_Wp_PtLepQCD->Clone("hd_Wp_PtLepQCD_2"); 
+
+ hd_Wp_PtLep->Add(hd_Wp_PtLep,hd_Wp_PtLepQCD,1,-1);
+
+ TH1F *hd_Wp_PtLep_3 = (TH1F*)hd_Wp_PtLep->Clone("hd_Wp_PtLep_3"); 
+ hd_Wp_PtLep_3->SetNameTitle("hd_Wp_PtLep_3","data- Z^{0}->ee, W^{+}->#tau#nu_{#tau} and QCD subtracted");
+
+
+ c4d->Divide(2,1);
+
+ c4d_1->cd();
+ hd_Wp_PtLep_2->Draw();
+ hd_Wp_PtLepQCD_2-> SetFillStyle(3448);
+ hd_Wp_PtLepQCD_2-> SetFillColor(kMagenta);
+ hd_Wp_PtLepQCD_2->Draw("same");
+ c4d_2->cd();
+ hd_Wp_PtLep_3->Draw();
+
+
+ c4d->Print(outPath + "/plot_4d.eps");
+ c4d->Print(outPath + "/plot_4d.png");
+
+
  TCanvas *c5 = new TCanvas("c5","",800,400);
 
- c5-> SetTitle("W+ sample");
+ c5-> SetTitle("W+ sample summary");
  c5->Divide(2,1);
 
  c5_1->cd();
@@ -704,8 +838,8 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
 
  c5_2->cd();
  c5_2->SetLogy(0);
- hd_Wp_PtLep_2->SetNameTitle("hd_Wp_PtLep","data (W+) - [Z^{0}->ee and W^{+}->#tau#nu_{#tau} subtracted]");
- hd_Wp_PtLep_2->Draw();
+ // hd_Wp_PtLep_2->SetNameTitle("hd_Wp_PtLep","data (W+) - [Z^{0}->ee and W^{+}->#tau#nu_{#tau} subtracted]");
+ hd_Wp_PtLep_3->Draw();
 
  c5->Print(outPath + "/plot_5.eps");
  c5->Print(outPath + "/plot_5.png");
@@ -713,7 +847,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
 
  TCanvas *c5b = new TCanvas("c5b","",800,400);
 
- c5b-> SetTitle("W+ sample");
+ c5b-> SetTitle("W+ sample  summary - PtEle > 15 GeV");
  c5b->Divide(2,1);
 
  c5b_1->cd();
@@ -730,8 +864,8 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
 
  c5b_2->cd();
  c5b_2->SetLogy(0);
- hd_Wp_PtLepPt15_2->SetNameTitle("hd_Wp_PtLepPt15","data (W+) - [Z^{0}->ee and W^{+}->#tau#nu_{#tau} subtracted]");
- hd_Wp_PtLepPt15_2->Draw();
+ //hd_Wp_PtLepPt15_2->SetNameTitle("hd_Wp_PtLepPt15","data (W+) - [Z^{0}->ee and W^{+}->#tau#nu_{#tau} subtracted]");
+ hd_Wp_PtLepPt15_3->Draw();
 
  c5b->Print(outPath + "/plot_5b.eps");
  c5b->Print(outPath + "/plot_5b.png");
@@ -826,13 +960,90 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  c6b->Print(outPath + "/plot_6b.png");
 
 
+ TCanvas *c6c = new TCanvas("c6c","W- sample - QCD data driven - PtEle > 15 GeV",800,400);
+
+
+ TH1F *hd_Wm_PtLepQCDPt15_1 = (TH1F*)hd_Wm_PtLepQCDPt15->Clone("hd_Wm_PtLepQCDPt15_1");
+
+ // Double_t integral_Wm_15_18=  hd_Wm_PtLepPt15_2-> Integral(15,18);
+
+ // Double_t integral_Wm_QCD15_18= hd_Wm_PtLepQCDPt15-> Integral(15,18);
+
+ Double_t integral_Wm_5_6=  hd_Wm_PtLepPt15_2-> Integral(5,6);
+
+ Double_t integral_Wm_QCD5_6= hd_Wm_PtLepQCDPt15-> Integral(5,6);
+
+ float scale_Wm_QCD = integral_Wm_5_6/integral_Wm_QCD5_6;
+
+ cout << "W-, Integral of bin content in the first bin for Signal = " <<  integral_Wm_5_6 << endl;
+
+ cout << "W-, Integral of bin content in the first bin for QCD = " <<  integral_Wm_QCD5_6 << endl;
+
+ cout << "W-, QCD scale factor= " << scale_Wm_QCD << endl;
+
+ hd_Wm_PtLepQCDPt15->Scale(scale_Wm_QCD); 
+
+ TH1F *hd_Wm_PtLepQCDPt15_2 = (TH1F*)hd_Wm_PtLepQCDPt15->Clone("hd_Wm_PtLepQCDPt15_2"); 
+
+ hd_Wm_PtLepPt15->Add(hd_Wm_PtLepPt15,hd_Wm_PtLepQCDPt15,1,-1);
+
+ TH1F *hd_Wm_PtLepPt15_3 = (TH1F*)hd_Wm_PtLepPt15->Clone("hd_Wm_PtLepPt15_3"); 
+ hd_Wm_PtLepPt15_3->SetNameTitle("hd_Wm_PtLepPt15_3","data- Z^{0}->ee, W^{-}->#tau#nu_{#tau} and QCD subtracted");
+
+
+ c6c->Divide(2,1);
+
+ c6c_1->cd();
+ // hd_Wp_PtLepPt15_2-> SetMinimum(30.);
+ hd_Wm_PtLepPt15_2->Draw();
+ hd_Wm_PtLepQCDPt15_2-> SetFillStyle(3448);
+ hd_Wm_PtLepQCDPt15_2-> SetFillColor(kMagenta);
+ hd_Wm_PtLepQCDPt15_2->Draw("same");
+ c6c_2->cd();
+ hd_Wm_PtLepPt15_3->Draw();
+
+
+ c6c->Print(outPath + "/plot_6c.eps");
+ c6c->Print(outPath + "/plot_6c.png");
+
+
+ TCanvas *c6d = new TCanvas("c6d","W- sample - QCD data driven",800,400);
+
+
+ TH1F *hd_Wm_PtLepQCD_1 = (TH1F*)hd_Wm_PtLepQCD->Clone("hd_Wm_PtLepQCD_1");
+
+ hd_Wm_PtLepQCD->Scale(scale_Wm_QCD); 
+
+ TH1F *hd_Wm_PtLepQCD_2 = (TH1F*)hd_Wm_PtLepQCD->Clone("hd_Wm_PtLepQCD_2"); 
+
+ hd_Wm_PtLep->Add(hd_Wm_PtLep,hd_Wm_PtLepQCD,1,-1);
+
+ TH1F *hd_Wm_PtLep_3 = (TH1F*)hd_Wm_PtLep->Clone("hd_Wm_PtLep_3"); 
+ hd_Wm_PtLep_3->SetNameTitle("hd_Wm_PtLep_3","data- Z^{0}->ee, W^{-}->#tau#nu_{#tau} and QCD subtracted");
+
+
+ c6d->Divide(2,1);
+
+ c6d_1->cd();
+ hd_Wm_PtLep_2->Draw();
+ hd_Wm_PtLepQCD_2-> SetFillStyle(3448);
+ hd_Wm_PtLepQCD_2-> SetFillColor(kMagenta);
+ hd_Wm_PtLepQCD_2->Draw("same");
+ c6d_2->cd();
+ hd_Wm_PtLep_3->Draw();
+
+
+ c6d->Print(outPath + "/plot_6d.eps");
+ c6d->Print(outPath + "/plot_6d.png");
+
+
  TCanvas *c7 = new TCanvas("c7","",800,400);
 
- c7-> SetTitle("W- sample");
+ c7-> SetTitle("W- sample summary ");
  c7->Divide(2,1);
 
  c7_1->cd(); 
- c7_1->SetLogy(1);
+ c7_1->SetLogy(0);
  hZ_Wm_PtLep_2-> SetFillStyle(3448);
  hZ_Wm_PtLep_2-> SetFillColor(kGreen);
  hd_Wm_PtLep_1->Draw();
@@ -844,9 +1055,9 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  hWmtt_Wm_PtLep_2->Draw("same");
 
  c7_2->cd();
- c7_2->SetLogy(1);
- hd_Wm_PtLep_2->SetNameTitle("hd_Wm_PtLep","data (W-) - [Z^{0}->ee and W^{-}->#tau#nu_{#tau} subtracted]");
- hd_Wm_PtLep_2->Draw();
+ c7_2->SetLogy(0);
+ // hd_Wm_PtLep_2->SetNameTitle("hd_Wm_PtLep","data (W-) - [Z^{0}->ee and W^{-}->#tau#nu_{#tau} subtracted]");
+ hd_Wm_PtLep_3->Draw();
 
  c7->Print(outPath + "/plot_7.eps");
  c7->Print(outPath + "/plot_7.png");
@@ -854,7 +1065,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
 
  TCanvas *c7b = new TCanvas("c7b","",800,400);
 
- c7b-> SetTitle("W- sample");
+ c7b-> SetTitle("W- sample summary - PtEle > 15 GeV");
  c7b->Divide(2,1);
 
  c7b_1->cd(); 
@@ -871,8 +1082,8 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
 
  c7b_2->cd();
  c7b_2->SetLogy(0);
- hd_Wm_PtLepPt15_2->SetNameTitle("hd_Wm_PtLepPt15","data (W-) - [Z^{0}->ee and W^{-}->#tau#nu_{#tau} subtracted]");
- hd_Wm_PtLepPt15_2->Draw();
+ //hd_Wm_PtLepPt15_2->SetNameTitle("hd_Wm_PtLepPt15","data (W-) - [Z^{0}->ee and W^{-}->#tau#nu_{#tau} subtracted]");
+ hd_Wm_PtLepPt15_3->Draw();
 
  c7b->Print(outPath + "/plot_7b.eps");
  c7b->Print(outPath + "/plot_7b.png");
@@ -891,12 +1102,17 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  float hWmtt_PtLep_2_integral= hWmtt_PtLep_2->Integral();
  float hWmtt_PtLep_1_integral= hWmtt_PtLep_1->Integral();
  float hWmtt_PtLep_2_integral_err= scaleWmtt*sqrt(hWmtt_PtLep_1_integral);
+ float hd_PtLepQCD_2_integral= hd_PtLepQCD_2->Integral();
+ float hd_PtLepQCD_1_integral= hd_PtLepQCD_1->Integral();
+ float hd_PtLepQCD_2_integral_err= scaleQCD*sqrt(hd_PtLepQCD_1_integral);
  float hZ_PtLep_2_BoS= hZ_PtLep_2_integral/hd_PtLep_1_integral;
  float hZ_PtLep_2_BoS_err= hZ_PtLep_2_integral_err/hd_PtLep_1_integral;
  float hWptt_PtLep_2_BoS= hWptt_PtLep_2_integral/hd_PtLep_1_integral;
  float hWptt_PtLep_2_BoS_err= hWptt_PtLep_2_integral_err/hd_PtLep_1_integral;
  float hWmtt_PtLep_2_BoS= hWmtt_PtLep_2_integral/hd_PtLep_1_integral;
  float hWmtt_PtLep_2_BoS_err= hWmtt_PtLep_2_integral_err/hd_PtLep_1_integral;
+ float hd_PtLepQCD_2_BoS= hd_PtLepQCD_2_integral/hd_PtLep_1_integral;
+ float hd_PtLepQCD_2_BoS_err= hd_PtLepQCD_2_integral_err/hd_PtLep_1_integral;
 
  float hd_Wp_PtLep_1_integral= hd_Wp_PtLep_1->Integral();
  float hZ_Wp_PtLep_2_integral= hZ_Wp_PtLep_2->Integral();
@@ -905,10 +1121,15 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  float hWptt_Wp_PtLep_2_integral= hWptt_Wp_PtLep_2->Integral();
  float hWptt_Wp_PtLep_1_integral= hWptt_Wp_PtLep_1->Integral();
  float hWptt_Wp_PtLep_2_integral_err= scaleWptt*sqrt(hWptt_Wp_PtLep_1_integral);
+ float hd_Wp_PtLepQCD_2_integral= hd_Wp_PtLepQCD_2->Integral();
+ float hd_Wp_PtLepQCD_1_integral= hd_Wp_PtLepQCD_1->Integral();
+ float hd_Wp_PtLepQCD_2_integral_err= scale_Wp_QCD*sqrt(hd_Wp_PtLepQCD_1_integral);
  float hZ_Wp_PtLep_2_BoS= hZ_Wp_PtLep_2_integral/hd_Wp_PtLep_1_integral;
  float hZ_Wp_PtLep_2_BoS_err= hZ_Wp_PtLep_2_integral_err/hd_Wp_PtLep_1_integral;
  float hWptt_Wp_PtLep_2_BoS= hWptt_Wp_PtLep_2_integral/hd_Wp_PtLep_1_integral;
  float hWptt_Wp_PtLep_2_BoS_err= hWptt_Wp_PtLep_2_integral_err/hd_Wp_PtLep_1_integral;
+ float hd_Wp_PtLepQCD_2_BoS= hd_Wp_PtLepQCD_2_integral/hd_Wp_PtLep_1_integral;
+ float hd_Wp_PtLepQCD_2_BoS_err= hd_Wp_PtLepQCD_2_integral_err/hd_Wp_PtLep_1_integral;
 
  float hd_Wm_PtLep_1_integral= hd_Wm_PtLep_1->Integral();
  float hZ_Wm_PtLep_2_integral= hZ_Wm_PtLep_2->Integral();
@@ -917,10 +1138,15 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  float hWmtt_Wm_PtLep_2_integral= hWmtt_Wm_PtLep_2->Integral();
  float hWmtt_Wm_PtLep_1_integral= hWmtt_Wm_PtLep_1->Integral();
  float hWmtt_Wm_PtLep_2_integral_err= scaleWmtt*sqrt(hWmtt_Wm_PtLep_1_integral);
+ float hd_Wm_PtLepQCD_2_integral= hd_Wm_PtLepQCD_2->Integral();
+ float hd_Wm_PtLepQCD_1_integral= hd_Wm_PtLepQCD_1->Integral();
+ float hd_Wm_PtLepQCD_2_integral_err= scale_Wm_QCD*sqrt(hd_Wm_PtLepQCD_1_integral);
  float hZ_Wm_PtLep_2_BoS= hZ_Wm_PtLep_2_integral/hd_Wm_PtLep_1_integral;
  float hZ_Wm_PtLep_2_BoS_err= hZ_Wm_PtLep_2_integral_err/hd_Wm_PtLep_1_integral;
  float hWmtt_Wm_PtLep_2_BoS= hWmtt_Wm_PtLep_2_integral/hd_Wm_PtLep_1_integral;
  float hWmtt_Wm_PtLep_2_BoS_err= hWmtt_Wm_PtLep_2_integral_err/hd_Wm_PtLep_1_integral;
+ float hd_Wm_PtLepQCD_2_BoS= hd_Wm_PtLepQCD_2_integral/hd_Wm_PtLep_1_integral;
+ float hd_Wm_PtLepQCD_2_BoS_err= hd_Wm_PtLepQCD_2_integral_err/hd_Wm_PtLep_1_integral;
 
 
  cout.precision(2);
@@ -936,6 +1162,8 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  cout << "W+ -> tau B/S    = " << 100*hWptt_PtLep_2_BoS << "%" << " +- " << 100*hWptt_PtLep_2_BoS_err << "%" << endl;
  cout << "W- -> tau events = " << hWmtt_PtLep_2_integral << " +- " << hWmtt_PtLep_2_integral_err << endl;
  cout << "W- -> tau B/S    = " << 100*hWmtt_PtLep_2_BoS << "%" << " +- " << 100*hWmtt_PtLep_2_BoS_err << "%" << endl;
+ cout << "QCD events       = " << hd_PtLepQCD_2_integral << " +- " << hd_PtLepQCD_2_integral_err << endl;
+ cout << "QCD B/S          = " << 100*hd_PtLepQCD_2_BoS << "%" << " +- " << 100*hd_PtLepQCD_2_BoS_err << "%" << endl;
 
  cout << " " << endl;
  cout << " " << endl;
@@ -948,6 +1176,8 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  cout << "Z0 -> ee B/S     = " << 100*hZ_Wp_PtLep_2_BoS << "%" << " +- " << 100*hZ_Wp_PtLep_2_BoS_err << "%" << endl;
  cout << "W+ -> tau events = " << hWptt_Wp_PtLep_2_integral << " +- " << hWptt_Wp_PtLep_2_integral_err << endl;
  cout << "W+ -> tau B/S    = " << 100*hWptt_Wp_PtLep_2_BoS << "%" << " +- " << 100*hWptt_Wp_PtLep_2_BoS_err << "%" << endl;
+ cout << "QCD events       = " << hd_Wp_PtLepQCD_2_integral << " +- " << hd_Wp_PtLepQCD_2_integral_err << endl;
+ cout << "QCD B/S          = " << 100*hd_Wp_PtLepQCD_2_BoS << "%" << " +- " << 100*hd_Wp_PtLepQCD_2_BoS_err << "%" << endl;
 
  cout << " " << endl;
  cout << " " << endl;
@@ -960,6 +1190,8 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  cout << "Z0 -> ee B/S     = " << 100*hZ_Wm_PtLep_2_BoS << "%" << " +- " << 100*hZ_Wm_PtLep_2_BoS_err << "%" << endl;
  cout << "W- -> tau events = " << hWmtt_Wm_PtLep_2_integral << " +- " << hWmtt_Wm_PtLep_2_integral_err << endl;
  cout << "W- -> tau B/S    = " << 100*hWmtt_Wm_PtLep_2_BoS << "%" << " +- " << 100*hWmtt_Wm_PtLep_2_BoS_err << "%" << endl;
+ cout << "QCD events       = " << hd_Wm_PtLepQCD_2_integral << " +- " << hd_Wm_PtLepQCD_2_integral_err << endl;
+ cout << "QCD B/S          = " << 100*hd_Wm_PtLepQCD_2_BoS << "%" << " +- " << 100*hd_Wm_PtLepQCD_2_BoS_err << "%" << endl;
  cout << "************************************************ " << endl;
 
 
