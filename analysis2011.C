@@ -597,7 +597,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  c2d->Print(outPath + "/plot_2d.png");
 
 
- TCanvas *c3 = new TCanvas("c3","W TOTAL sample",800,400);
+ TCanvas *c3 = new TCanvas("c3","W TOTAL sample summary",800,400);
 
  c3->Divide(2,1);
 
@@ -627,7 +627,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
 
 
 
- TCanvas *c3c = new TCanvas("c3c","W TOTAL sample - PtEle > 15 GeV",800,400);
+ TCanvas *c3c = new TCanvas("c3c","W TOTAL sample summary - PtEle > 15 GeV",800,400);
 
  c3c->Divide(2,1);
 
@@ -650,7 +650,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  c3c_2->cd();
  c3c_2->SetLogy(0);
  //hd_PtLepPt15_2->SetNameTitle("hd_PtLepPt15","data- Z^{0}->ee and W^{+-}->#tau#nu_{#tau} subtracted");
- hd_PtLepPt15_3->Draw();
+ hd_PtLepPt15_3->Draw("E0");
 
  c3c->Print(outPath + "/plot_3c.eps");
  c3c->Print(outPath + "/plot_3c.png");
@@ -847,7 +847,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
 
  TCanvas *c5b = new TCanvas("c5b","",800,400);
 
- c5b-> SetTitle("W+ sample  summary - PtEle > 15 GeV");
+ c5b-> SetTitle("W+ sample summary - PtEle > 15 GeV");
  c5b->Divide(2,1);
 
  c5b_1->cd();
