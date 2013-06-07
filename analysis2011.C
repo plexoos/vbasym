@@ -18,6 +18,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  gStyle-> SetStatFontSize(0.05);
  gStyle->SetOptStat("mruoi");
  gStyle->SetPadRightMargin(0.25);
+ gStyle->SetMarkerStyle(20);
 
  //float lumiDataTot = 24.28; // pb-1
  float lumiDataTot = 24.42; // pb-1
@@ -620,7 +621,8 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  c3_2->cd();
  c3_2->SetLogy(0);
  // hd_PtLep_2->SetNameTitle("hd_PtLep","data- Z^{0}->ee and W^{+-}->#tau#nu_{#tau} subtracted");
- hd_PtLep_3->Draw();
+ hd_PtLep_3->SetMarkerStyle(20);
+ hd_PtLep_3->Draw("E0");
 
  c3->Print(outPath + "/plot_3.eps");
  c3->Print(outPath + "/plot_3.png");
@@ -650,6 +652,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  c3c_2->cd();
  c3c_2->SetLogy(0);
  //hd_PtLepPt15_2->SetNameTitle("hd_PtLepPt15","data- Z^{0}->ee and W^{+-}->#tau#nu_{#tau} subtracted");
+ hd_PtLepPt15_3->SetMarkerStyle(20);
  hd_PtLepPt15_3->Draw("E0");
 
  c3c->Print(outPath + "/plot_3c.eps");
@@ -839,7 +842,8 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  c5_2->cd();
  c5_2->SetLogy(0);
  // hd_Wp_PtLep_2->SetNameTitle("hd_Wp_PtLep","data (W+) - [Z^{0}->ee and W^{+}->#tau#nu_{#tau} subtracted]");
- hd_Wp_PtLep_3->Draw();
+ hd_Wp_PtLep_3->SetMarkerStyle(20);
+ hd_Wp_PtLep_3->Draw("E0");
 
  c5->Print(outPath + "/plot_5.eps");
  c5->Print(outPath + "/plot_5.png");
@@ -865,7 +869,8 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  c5b_2->cd();
  c5b_2->SetLogy(0);
  //hd_Wp_PtLepPt15_2->SetNameTitle("hd_Wp_PtLepPt15","data (W+) - [Z^{0}->ee and W^{+}->#tau#nu_{#tau} subtracted]");
- hd_Wp_PtLepPt15_3->Draw();
+ hd_Wp_PtLepPt15_3->SetMarkerStyle(20);
+ hd_Wp_PtLepPt15_3->Draw("E0");
 
  c5b->Print(outPath + "/plot_5b.eps");
  c5b->Print(outPath + "/plot_5b.png");
@@ -1057,7 +1062,8 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  c7_2->cd();
  c7_2->SetLogy(0);
  // hd_Wm_PtLep_2->SetNameTitle("hd_Wm_PtLep","data (W-) - [Z^{0}->ee and W^{-}->#tau#nu_{#tau} subtracted]");
- hd_Wm_PtLep_3->Draw();
+ hd_Wm_PtLep_3->SetMarkerStyle(20);
+ hd_Wm_PtLep_3->Draw("E0");
 
  c7->Print(outPath + "/plot_7.eps");
  c7->Print(outPath + "/plot_7.png");
@@ -1083,7 +1089,8 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  c7b_2->cd();
  c7b_2->SetLogy(0);
  //hd_Wm_PtLepPt15_2->SetNameTitle("hd_Wm_PtLepPt15","data (W-) - [Z^{0}->ee and W^{-}->#tau#nu_{#tau} subtracted]");
- hd_Wm_PtLepPt15_3->Draw();
+ hd_Wm_PtLepPt15_3->SetMarkerStyle(20);
+ hd_Wm_PtLepPt15_3->Draw("E0");
 
  c7b->Print(outPath + "/plot_7b.eps");
  c7b->Print(outPath + "/plot_7b.png");
