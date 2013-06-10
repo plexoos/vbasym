@@ -6,12 +6,17 @@
 #include "TVector3.h"
 
 
-StEmcGeom  *gBTowGeom;
-StEmcGeom  *mBSmdGeom[mxBSmd];
-TVector3    gBCalTowerCoords[mxBtow];               // vs. tower ID
-TVector3    mBSmdStripCoords[mxBSmd][mxBStrips];    // vs. strip ID
-TVector3    gETowCoords[mxEtowSec *mxEtowSub][mxEtowEta];
-int         gMapBTowEtaPhiBin2Id[mxBTetaBin * mxBTphiBin];  // vs. (iEta, iPhi)
+using namespace std;
+
+
+StEmcGeom          *gBTowGeom;
+StEmcGeom          *mBSmdGeom[mxBSmd];
+TVector3            gBCalTowerCoords[mxBtow];               // vs. tower ID
+TVector3            mBSmdStripCoords[mxBSmd][mxBStrips];    // vs. strip ID
+TVector3            gETowCoords[mxEtowSec *mxEtowSub][mxEtowEta];
+int                 gMapBTowEtaPhiBin2Id[mxBTetaBin * mxBTphiBin];  // vs. (iEta, iPhi)
+EDoubleSpinState    aDoubleSpinStates[] = {kBU_YU, kBU_YD, kBD_YU, kBD_YD};
+DoubleSpinStateSet  gDoubleSpinStateSet(aDoubleSpinStates, aDoubleSpinStates+4); 
 
 
 /**
@@ -59,5 +64,22 @@ void PatchToEtaPhi(int patch, int *eta, int *phi)
       int n = patch % 10;
       *eta = 4 - n / 2;
       *phi = 1 - n % 2 + m * 2;
+   }
+}
+
+
+string AsString(EDoubleSpinState dss)
+{
+   switch (dss) {
+   case kBU_YU:
+	   return "uu";
+   case kBU_YD:
+	   return "ud";
+   case kBD_YU:
+	   return "du";
+   case kBD_YD:
+	   return "dd";
+   default:
+      return "UNK";
    }
 }

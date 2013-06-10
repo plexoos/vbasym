@@ -29,7 +29,6 @@ VecBosRootFile::VecBosRootFile() : TFile(),
    fMinFill(UINT_MAX), fMaxFill(0),
    fMinTime(UINT_MAX), fMaxTime(0),
    fIsMc(kFALSE)
-   //fFilePhp(0)
 {
    gROOT->SetMacroPath("./:~/offline/users/fazio/vbasym/:");
    gROOT->Macro("styles/style_asym.C");
@@ -38,13 +37,12 @@ VecBosRootFile::VecBosRootFile() : TFile(),
 }
 
 
-VecBosRootFile::VecBosRootFile(const char* fname, Option_t* option, Bool_t isMc, const char* ftitle, Int_t compress) :
+VecBosRootFile::VecBosRootFile(const char *fname, Option_t *option, Bool_t isMc, const char *ftitle, Int_t compress) :
    TFile(fname, option, ftitle, compress),
    fHists(0), fHistCuts(),
    fMinFill(UINT_MAX), fMaxFill(0),
    fMinTime(UINT_MAX), fMaxTime(0),
    fIsMc(isMc)
-   //fFilePhp(anaInfo.GetAnaInfoFile())
 {
    printf("Created ROOT file: %s\n", GetName());
 
@@ -57,7 +55,7 @@ VecBosRootFile::VecBosRootFile(const char* fname, Option_t* option, Bool_t isMc,
 
 VecBosRootFile::~VecBosRootFile()
 {
-   if (!fHists) { delete fHists; fHists = 0; }
+   //if (fHists) { delete fHists; fHists = 0; }
 }
 
 
@@ -67,25 +65,25 @@ void VecBosRootFile::BookHists()
 
    fHists = new PlotHelper(this);
 
-   fHists->d["event"]     = ph = new EventHContainer(new TDirectoryFile("event", "event", "", this));
+   fHists->d["event"] = ph = new EventHContainer(new TDirectoryFile("event", "event", "", this));
    fHistCuts[kCUT_EVENT_NOCUT].insert(ph);
 
-   fHists->d["event_has_jetrecoil"]     = ph = new EventHContainer(new TDirectoryFile("event_has_jetrecoil", "event_has_jetrecoil", "", this));
+   fHists->d["event_has_jetrecoil"] = ph = new EventHContainer(new TDirectoryFile("event_has_jetrecoil", "event_has_jetrecoil", "", this));
    fHistCuts[kCUT_EVENT_HAS_JETRECOIL].insert(ph);
 
-   fHists->d["event_has_trackrecoil"]     = ph = new EventHContainer(new TDirectoryFile("event_has_trackrecoil", "event_has_trackrecoil", "", this));
+   fHists->d["event_has_trackrecoil"] = ph = new EventHContainer(new TDirectoryFile("event_has_trackrecoil", "event_has_trackrecoil", "", this));
    fHistCuts[kCUT_EVENT_HAS_TRACKRECOIL].insert(ph);
 
-   fHists->d["event_has_candidate"]     = ph = new EventHContainer(new TDirectoryFile("event_has_candidate", "event_has_candidate", "", this));
+   fHists->d["event_has_candidate"] = ph = new EventHContainer(new TDirectoryFile("event_has_candidate", "event_has_candidate", "", this));
    fHistCuts[kCUT_EVENT_HAS_CANDIDATE_TRACK].insert(ph);
 
-   fHists->d["event_has_candidate_pt>15"]     = ph = new EventHContainer(new TDirectoryFile("event_has_candidate_pt>15", "event_has_candidate_pt>15", "", this));
+   fHists->d["event_has_candidate_pt>15"] = ph = new EventHContainer(new TDirectoryFile("event_has_candidate_pt>15", "event_has_candidate_pt>15", "", this));
    fHistCuts[kCUT_EVENT_HAS_CANDIDATE_TRACK_PT15].insert(ph);
 
-   fHists->d["event_pass_final_QEToPT_pt>15"]     = ph = new EventHContainer(new TDirectoryFile("event_pass_final_QEToPT_pt>15", "event_pass_final_QEToPT_pt>15", "", this));
+   fHists->d["event_pass_final_QEToPT_pt>15"] = ph = new EventHContainer(new TDirectoryFile("event_pass_final_QEToPT_pt>15", "event_pass_final_QEToPT_pt>15", "", this));
    fHistCuts[kCUT_EVENT_PASS_FINAL_QET_PT15].insert(ph);
 
-   fHists->d["event_pass_final"]     = ph = new EventHContainer(new TDirectoryFile("event_pass_final", "event_pass_final", "", this));
+   fHists->d["event_pass_final"] = ph = new EventHContainer(new TDirectoryFile("event_pass_final", "event_pass_final", "", this));
    fHistCuts[kCUT_EVENT_PASS_FINAL].insert(ph);
 
    fHists->d["event_pass_final_QEToPT"]     = ph = new EventHContainer(new TDirectoryFile("event_pass_final_QEToPT", "event_pass_final_QEToPT", "", this));
@@ -181,7 +179,7 @@ void VecBosRootFile::BookHists()
 }
 
 
-PlotHelper* VecBosRootFile::GetHists() { return fHists; }
+PlotHelper *VecBosRootFile::GetHists() { return fHists; }
 void VecBosRootFile::SetHists(PlotHelper &hists) { fHists = &hists; }
 
 
@@ -189,23 +187,18 @@ void VecBosRootFile::SetHists(PlotHelper &hists) { fHists = &hists; }
 void VecBosRootFile::Fill(ProtoEvent &ev)
 {
    //VecBosEvent& event = (VecBosEvent&) ev;
-   VecBosEvent *event = (VecBosEvent*) &ev;
+   VecBosEvent *event = (VecBosEvent *) &ev;
 
    Fill(ev, kCUT_EVENT_NOCUT);
 
-   if ( event->HasJetRecoil() ) {
+   if ( event->HasJetRecoil() )
+   {
       Fill(ev, kCUT_EVENT_HAS_JETRECOIL);
       //((EventHContainer*) fHists->d["event_has_jetrecoil"])->Fill(ev);
 
       if ( event->PassCutFinal() )
-         ((EventHContainer*) fHists->d["event_has_jetrecoil_pass_final"])->Fill(ev);
+         ((EventHContainer *) fHists->d["event_has_jetrecoil_pass_final"])->Fill(ev);
          //((JetHContainer*) fHists->d["event_jets_has_jetrecoil_pass_final"])->Fill(ev);
-
-      if (event->GetNumJetsRecoil() == 0) {
-         Info("Fill", "RECOIL: %d", event->GetNumJetsRecoil());
-         utils::PrintTLorentzVector(event->mP4JetRecoil);
-         exit(-1);
-      }
    }
 
    if ( event->mP3TrackRecoilTpcNeutrals.Mag() > 0)
@@ -223,15 +216,14 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
 
    // Fill vertex histos
    VecBosVertexPtrSetIter iVertex = event->mVertices.begin();
-   for ( ; iVertex != event->mVertices.end(); ++iVertex)
-   {
+   for ( ; iVertex != event->mVertices.end(); ++iVertex) {
       VecBosVertex &vertex = **iVertex;
 
-      ((VertexHContainer*) fHists->d["vertex"])->Fill(vertex);
+      ((VertexHContainer *) fHists->d["vertex"])->Fill(vertex);
 
       if ( !vertex.IsGood() ) continue;
 
-      ((VertexHContainer*) fHists->d["vertex_good"])->Fill(vertex);
+      ((VertexHContainer *) fHists->d["vertex_good"])->Fill(vertex);
    }
 
    // Fill track histos
@@ -240,19 +232,20 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
    {
       VecBosTrack &track = **iTrack;
 
-      ((TrackHContainer*) fHists->d["track"])->Fill(track);
+      ((TrackHContainer *) fHists->d["track"])->Fill(track);
 
       if ( !track.IsCandidate() ) continue;
 
-      ((TrackHContainer*) fHists->d["track_candidates"])->Fill(track);
+      ((TrackHContainer *) fHists->d["track_candidates"])->Fill(track);
 
 
-      if ( event->mCandElecP3EScaled.Pt() > 15 && 
-                 event->mPtBalanceCosPhiFromTracks > 18) // Pass final with Pt>15
+      if ( event->mCandElecP3EScaled.Pt() > 15 && event->mPtBalanceCosPhiFromTracks > 18) // Pass final with Pt>15
       {
-	if ( abs((track.prMuTrack->charge()*track.mCluster2x2.ET)/track.mP3AtDca.Pt()) >= 0.4 && abs((track.prMuTrack->charge()*track.mCluster2x2.ET)/track.mP3AtDca.Pt()) <= 1.8 )
+         if ( abs( (track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) >= 0.4 &&
+              abs( (track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) <= 1.8 )
          {
              Fill(ev, kCUT_EVENT_PASS_FINAL_QET_PT15);
+
              ((TrackHContainer*) fHists->d["track_cand_pass_final_QEToPT_Pt>15"])->Fill(track); 
 
             if ( track.prMuTrack->charge() > 0.)
@@ -263,13 +256,14 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
       }
 
 
-      if ( event->mCandElecP3EScaled.Pt() > 15 && 
-                 event->mPtBalanceCosPhiFromTracks <= 18) // Pass QCD with Pt>15
+      if ( event->mCandElecP3EScaled.Pt() > 15 && event->mPtBalanceCosPhiFromTracks <= 18) // Pass QCD with Pt>15
       {
-	if ( abs((track.prMuTrack->charge()*track.mCluster2x2.ET)/track.mP3AtDca.Pt()) >= 0.4 && abs((track.prMuTrack->charge()*track.mCluster2x2.ET)/track.mP3AtDca.Pt()) <= 1.8 )
+         if ( abs((track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) >= 0.4 &&
+              abs((track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) <= 1.8 )
          {
-             Fill(ev, kCUT_EVENT_PASS_QCD_QET_PT15);
-             ((TrackHContainer*) fHists->d["track_cand_pass_qcd_QEToPT_Pt>15"])->Fill(track); 
+            Fill(ev, kCUT_EVENT_PASS_QCD_QET_PT15);
+
+            ((TrackHContainer*) fHists->d["track_cand_pass_qcd_QEToPT_Pt>15"])->Fill(track); 
 
             if ( track.prMuTrack->charge() > 0.)
                ((TrackHContainer*) fHists->d["W+_track_cand_pass_qcd_QEToPT_Pt>15"])->Fill(track);
@@ -279,16 +273,16 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
       }
 
       if ( !event->PassCutsExceptedPtBal() ) continue; // Pass Pt>25 GeV
- 
 
-      if ( event->mPtBalanceCosPhiFromTracks <= 18 ) // select QCD events
-      {
- 
-         if ( abs((track.prMuTrack->charge()*track.mCluster2x2.ET)/track.mP3AtDca.Pt()) >= 0.4 && abs((track.prMuTrack->charge()*track.mCluster2x2.ET)/track.mP3AtDca.Pt()) <= 1.8 )
+
+      if ( event->mPtBalanceCosPhiFromTracks <= 18 ) { // select QCD events
+
+         if ( abs((track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) >= 0.4 &&
+              abs((track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) <= 1.8 )
          {
             Fill(ev, kCUT_EVENT_PASS_QCD_QET);
-      
-            ((TrackHContainer*) fHists->d["track_cand_pass_qcd_QEToPT"])->Fill(track);
+
+            ((TrackHContainer *) fHists->d["track_cand_pass_qcd_QEToPT"])->Fill(track);
 
             if ( track.prMuTrack->charge() > 0.)
                ((TrackHContainer*) fHists->d["W+_track_cand_pass_qcd_QEToPT"])->Fill(track);
@@ -299,20 +293,21 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
 
 
       if ( !event->PassCutFinal() ) continue;
- 
 
-      ((TrackHContainer*) fHists->d["track_cand_pass_final"])->Fill(track);
+
+      ((TrackHContainer *) fHists->d["track_cand_pass_final"])->Fill(track);
 
       if ( track.prMuTrack->charge() > 0.)
-          ((TrackHContainer*) fHists->d["W+_track_cand_pass_final"])->Fill(track);
-      if ( track.prMuTrack->charge() < 0.)   
-          ((TrackHContainer*) fHists->d["W-_track_cand_pass_final"])->Fill(track); 
-    
-      if ( abs((track.prMuTrack->charge()*track.mCluster2x2.ET)/track.mP3AtDca.Pt()) >= 0.4 && abs((track.prMuTrack->charge()*track.mCluster2x2.ET)/track.mP3AtDca.Pt()) <= 1.8 )
+         ((TrackHContainer *) fHists->d["W+_track_cand_pass_final"])->Fill(track);
+      if ( track.prMuTrack->charge() < 0.)
+         ((TrackHContainer *) fHists->d["W-_track_cand_pass_final"])->Fill(track);
+
+      if ( abs((track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) >= 0.4 &&
+           abs((track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) <= 1.8 )
       {
          Fill(ev, kCUT_EVENT_PASS_FINAL_QET);
 
-         ((TrackHContainer*) fHists->d["track_cand_pass_final_QEToPT"])->Fill(track);
+         ((TrackHContainer *) fHists->d["track_cand_pass_final_QEToPT"])->Fill(track);
 
          if ( track.prMuTrack->charge() > 0.)
          Fill(ev, kCUT_POSITIVE_EVENT_PASS_FINAL_QET);
@@ -321,7 +316,6 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
          Fill(ev, kCUT_NEGATIVE_EVENT_PASS_FINAL_QET);  
           ((TrackHContainer*) fHists->d["W-_track_cand_pass_final_QEToPT"])->Fill(track); 
       }
-
    }
 
    //// Save only good tracks
@@ -346,22 +340,14 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
 
 /** */
 void VecBosRootFile::Fill(ProtoEvent &ev, ECut cut)
-//void VecBosRootFile::Fill(ProtoEvent *ev, ECut cut)
 {
    PlotHelperSet     hists = fHistCuts[cut];
    PlotHelperSetIter hi    = hists.begin();
 
-   for ( ; hi!=hists.end(); ++hi) {
+   for ( ; hi != hists.end(); ++hi) {
       (*hi)->Fill(ev);
    }
 }
-
-
-/** */
-//void VecBosRootFile::SetAnaGlobResult(AnaGlobResult *agr)
-//{
-//   //fAnaGlobResult = agr;
-//}
 
 
 /** */
@@ -386,14 +372,6 @@ void VecBosRootFile::SaveAs(string pattern, string dir)
 
 
 /** */
-//void VecBosRootFile::UpdMinMax(EventConfig &mm)
-//{
-//   UpdMinMaxFill((UInt_t) mm.fMeasInfo->RUNID);
-//   UpdMinMaxTime(mm.fMeasInfo->fStartTime);
-//}
-
-
-/** */
 void VecBosRootFile::UpdMinMaxFill(UInt_t fillId)
 {
    if (fillId < fMinFill ) fMinFill = fillId;
@@ -410,7 +388,7 @@ void VecBosRootFile::UpdMinMaxTime(time_t time)
 
 
 /** */
-void VecBosRootFile::Print(const Option_t* opt) const
+void VecBosRootFile::Print(const Option_t *opt) const
 {
    Info("Print", "Called");
    //PrintAsPhp(fFilePhp);
@@ -434,7 +412,7 @@ void VecBosRootFile::PrintAsPhp(FILE *f) const
 
 
 /** */
-void VecBosRootFile::Close(Option_t* option)
+void VecBosRootFile::Close(Option_t *option)
 {
    fHists->Write();
    Info("Close", "%s", GetName());

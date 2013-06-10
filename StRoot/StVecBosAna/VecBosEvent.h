@@ -128,32 +128,35 @@ public:
    TClonesArray  *GetStJetsNoEndcap();
    UInt_t         GetNumStJets();
    UInt_t         GetNumStJetsNoEndcap();
-   UInt_t         GetNumJets()             const { return mJets.size(); }
-   UInt_t         GetNumJetsRecoil()       const { return mJetsRecoil.size(); }
-   UShort_t       GetNumJetsWithIsoTrack() const { return mJetsWithIsoTrack.size(); }
-   UShort_t       GetNumVertices()         const { return mVertices.size(); }
-   UShort_t       GetNumTracks()           const { return mTracks.size(); }
-   UShort_t       GetNumGoodVertices()     const { return mNumGoodVertices; }
-   UShort_t       GetNumGoodTracks()       const { return mNumGoodTracks; }
-   UShort_t       GetNumBTracks()          const { return mNumBTracks; }
-   UShort_t       GetNumETracks()          const { return mNumETracks; }
-   UShort_t       GetNumIsolatedTracks()   const { return mNumIsolatedTracks; }
-   UShort_t       GetNumCandidateTracks()  const { return mNumCandidateTracks; }
+   UInt_t         GetNumJets()                const { return mJets.size(); }
+   UInt_t         GetNumJetsRecoil()          const { return mJetsRecoil.size(); }
+   UShort_t       GetNumJetsWithIsoTrack()    const { return mJetsWithIsoTrack.size(); }
+   UShort_t       GetNumVertices()            const { return mVertices.size(); }
+   UShort_t       GetNumTracks()              const { return mTracks.size(); }
+   UShort_t       GetNumGoodVertices()        const { return mNumGoodVertices; }
+   UShort_t       GetNumGoodTracks()          const { return mNumGoodTracks; }
+   UShort_t       GetNumBTracks()             const { return mNumBTracks; }
+   UShort_t       GetNumETracks()             const { return mNumETracks; }
+   UShort_t       GetNumIsolatedTracks()      const { return mNumIsolatedTracks; }
+   UShort_t       GetNumCandidateTracks()     const { return mNumCandidateTracks; }
    UInt_t         GetNumTracksWithBCluster();
-   TLorentzVector GetJetRecoil()          const { return mP4JetRecoil; }
-   TVector3       GetTrackRecoil()        const { return mP3TrackRecoilTow; }
-   TVector3       GetTrackRecoilNeutrals()        const { return mP3TrackRecoilNeutrals; }
-   TVector3       GetTrackRecoilTpcNeutrals()     const { return mP3TrackRecoilTpcNeutrals; }
-   TVector3       GetElectronCandidate()    const { return (*mTracksCandidate.begin())->GetP3EScaled(); }
+   TLorentzVector GetJetRecoil()              const { return mP4JetRecoil; }
+   TVector3       GetTrackRecoil()            const { return mP3TrackRecoilTow; }
+   TVector3       GetTrackRecoilNeutrals()    const { return mP3TrackRecoilNeutrals; }
+   TVector3       GetTrackRecoilTpcNeutrals() const { return mP3TrackRecoilTpcNeutrals; }
+   TVector3       GetElectronCandidate()      const { return (*mTracksCandidate.begin())->GetP3EScaled(); }
    void           SetCpuTimeEventAna(Double_t time) { mCpuTimeEventAna = time; }
    void           SetCpuTimeHistFill(Double_t time) { mCpuTimeHistFill = time; }
-   bool           HasGoodVertex()         const { return mNumGoodVertices    > 0 ? true : false; } // Checks if at least one good vertex exist in the event
-   bool           HasGoodTrack()          const { return mNumGoodTracks      > 0 ? true : false; }
-   bool           HasIsolatedTrack()      const { return mNumIsolatedTracks  > 0 ? true : false; }
-   bool           HasCandidateTrack()     const { return mNumCandidateTracks > 0 ? true : false; }
-   bool           HasJetRecoil()          const { return mP4JetRecoil.Mag()  > 0 ? true : false; }
+   bool           HasGoodVertex()             const { return mNumGoodVertices    > 0 ? true : false; } // Checks if at least one good vertex exist in the event
+   bool           HasGoodTrack()              const { return mNumGoodTracks      > 0 ? true : false; }
+   bool           HasIsolatedTrack()          const { return mNumIsolatedTracks  > 0 ? true : false; }
+   bool           HasCandidateTrack()         const { return mNumCandidateTracks > 0 ? true : false; }
+   bool           HasJetRecoil()              const { return mP4JetRecoil.Mag()  > 0 ? true : false; }
    bool           PassCutsExceptedPtBal();
    bool           PassCutFinal();
+   bool           HasWLepton()   const;
+   bool           HasWNeutrino() const;
+   bool           HasW()         const;
 
    void           Process();
    void           ProcessMC();

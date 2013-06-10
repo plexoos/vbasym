@@ -45,6 +45,9 @@ const float VecBosEvent::sMinTrackHitFrac      = 0.51;
 const float VecBosEvent::sMinClusterEnergyFrac = 0.90; // was 0.88
 
 
+DoubleSpinStateSet doubleSpinStates;
+
+
 VecBosEvent::~VecBosEvent()
 {
    //Info("~VecBosEvent()", "this: %x", this);
@@ -152,22 +155,50 @@ UInt_t VecBosEvent::GetNumTracksWithBCluster()
 
 bool VecBosEvent::PassCutsExceptedPtBal()
 {
-  if (mTracksCandidate.size() > 0 
-      && (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= VecBosTrack::sMinCandidateTrackClusterE)
-      return true;
+  if ( mTracksCandidate.size() > 0 &&
+       (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= VecBosTrack::sMinCandidateTrackClusterE)
+  {
+     return true;
+  }
 
    return false;
 }
+
 
 bool VecBosEvent::PassCutFinal()
 {
   //if (mTracksCandidate.size() > 0 && CalcP3MissingEnergy().Pt() > 18
-  if (mTracksCandidate.size() > 0 && mPtBalanceCosPhiFromTracks > 18
-      && (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= VecBosTrack::sMinCandidateTrackClusterE)
-      return true;
+  if ( mTracksCandidate.size() > 0 && mPtBalanceCosPhiFromTracks > 18 &&
+       (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= VecBosTrack::sMinCandidateTrackClusterE)
+  {
+     return true;
+  }
 
    return false;
 }
+
+
+bool VecBosEvent::HasWLepton() const
+{
+   //if ( HasCandidateTrack() )
+   return false;
+}
+
+
+bool VecBosEvent::HasW() const
+{
+  if ( HasCandidateTrack() && mPtBalanceCosPhiFromTracks > 18 &&
+       (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= VecBosTrack::sMinCandidateTrackClusterE)
+  {
+     return true;
+  }
+
+   return false;
+}
+
+
+//if ( event->mCandElecP3EScaled.Pt() > 10 && event->mPtBalanceCosPhiFromTracks > 18)
+
 
 
 void VecBosEvent::Process()
@@ -178,6 +209,7 @@ void VecBosEvent::Process()
    mMuDstNumOTracks  = mStMuDst->otherTracks()->GetEntriesFast();
 
    UShort_t vertexId = 0;
+
    VecBosVertexPtrSetIter iVertex = mVertices.begin();
    for ( ; iVertex != mVertices.end(); ++iVertex, vertexId++)
    {
@@ -249,21 +281,19 @@ void VecBosEvent::Process()
       mBalanceDeltaPhiFromJets = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3BalanceFromJets);
       mPtBalanceCosPhiFromJets = mP3BalanceFromJets.Pt()*cos(mBalanceDeltaPhiFromJets) ;
 
-
       mP3BalanceFromTracks       = mP3TrackRecoilTpcNeutrals + (*mTracksCandidate.begin())->GetP3EScaled();
       mBalanceDeltaPhiFromTracks = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3BalanceFromTracks);
       mPtBalanceCosPhiFromTracks = mP3BalanceFromTracks.Pt()*cos(mBalanceDeltaPhiFromTracks) ;
 
       //mP3BalanceFromTracks2       = mP3TrackRecoilTow + (*mTracksCandidate.begin())->mP3AtDca;
       mP3BalanceFromTracks2       = mP3TrackRecoilTpc + (*mTracksCandidate.begin())->GetP3EScaled();
-      //      mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3TrackRecoilTow);
+      //mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3TrackRecoilTow);
       mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3BalanceFromTracks2);
       mPtBalanceCosPhiFromTracks2 = mP3BalanceFromTracks2.Pt()*cos(mBalanceDeltaPhiFromTracks2) ;
 
       mCandElecP3AtDca   = (*mTracksCandidate.begin())->GetP3AtDca();
       mCandElecP3EScaled = (*mTracksCandidate.begin())->GetP3EScaled();
    }
-
 }
 
 
@@ -309,7 +339,6 @@ void VecBosEvent::ProcessMC()
    mWEvent = new WEvent();
    mWEvent->CalcRecoil(*mcEvent);
 }
-
 
 
 void VecBosEvent::CalcRecoilFromTracks()

@@ -41,7 +41,6 @@ protected:
    Float_t            fMaxFill;
    time_t             fMinTime;
    time_t             fMaxTime;
-   //FILE              *fFilePhp;      //!
    Bool_t             fIsMc;
 
 public:
@@ -55,11 +54,9 @@ public:
    PlotHelper* GetHists();
    void SetHists(PlotHelper &hists);
    void SetIsMc(Bool_t isMc) { fIsMc = isMc; }
-   void Fill(ProtoEvent &ev);
-   void Fill(ProtoEvent &ev, ECut cut);
-   //void SetAnaGlobResult(AnaGlobResult *agr);
+   virtual void Fill(ProtoEvent &ev);
+   virtual void Fill(ProtoEvent &ev, ECut cut);
    void SaveAs(std::string pattern="^.*$", std::string dir=".");
-   //void UpdMinMax(EventConfig &mm);
 	void UpdMinMaxFill(UInt_t fillId);
 	void UpdMinMaxTime(time_t time);
    void Print(const Option_t* opt="") const;
@@ -73,5 +70,5 @@ private:
 
    ClassDef(VecBosRootFile, 1)
 };
-  
+
 #endif

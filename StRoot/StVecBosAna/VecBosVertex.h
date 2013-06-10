@@ -23,6 +23,8 @@ public:
 
    enum EVertexType {kUNKNOWN=0x0000, kBAD=0x1000, kGOOD=0x0001};
 
+   static const float  sMaxVertexAbsZ;  //!
+
    VecBosEvent        *mEvent;       //!
    EVertexType         mType;
    Short_t             mId;          // Unique vertex id. Updated when all vertices are set

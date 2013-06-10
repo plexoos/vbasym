@@ -4,6 +4,9 @@
 #include "VecBosEvent.h"
 
 
+const float VecBosVertex::sMaxVertexAbsZ = 100; // cm
+
+
 VecBosVertex::VecBosVertex() : TObject(), mEvent(0), mType(kUNKNOWN), mId(-1),
    mIdMuDst(-1), z(-1), mRank(-1), mRankLog(-1), nEEMCMatch(-1), mPosition(),
    mTracks(), eleTrack(), prTrList()
@@ -48,7 +51,7 @@ void VecBosVertex::SetPosition(const StThreeVectorF &vec)
 void VecBosVertex::Process()
 {
    //if ( (mRank > 0 || nEEMCMatch > 0) && fabs(mPosition.z()) <= 100)
-   if ( mRank > 0 && fabs(mPosition.z()) <= 100)
+   if ( mRank > 0 && fabs(mPosition.z()) <= sMaxVertexAbsZ)
    {
       mType = kGOOD;
    } else {

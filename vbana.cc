@@ -9,6 +9,7 @@
 
 #include "StRoot/StVecBosAna/VecBosEvent.h"
 #include "StRoot/StVecBosAna/VecBosRootFile.h"
+#include "StRoot/StVecBosAna/VecBosAsymRootFile.h"
 
 #include "utils/utils.h"
 
@@ -23,13 +24,14 @@ int main(int argc, char *argv[])
 
    setbuf(stdout, NULL);
 
-   Int_t  nMaxUserEvents = -1;
+   //Int_t  nMaxUserEvents = -1;
    //Int_t  nMaxUserEvents = 10;
    //Int_t  nMaxUserEvents = 34000; // cut_35
-   //Int_t  nMaxUserEvents = 2000;
+   Int_t  nMaxUserEvents = 2000;
    Bool_t isMc           = kFALSE;
    //Bool_t isMc           = kTRUE;
-   string histFileName   = "vbana_cut05_data_final.root";
+   string histFileName   = "vbana_mytest.root";
+   //string histFileName   = "vbana_cut05_data_final.root";
    //string histFileName   = "vbana_cut05_data_bad2.root";
    //string histFileName   = "vbana_cut35_data_final.root";
    //string histFileName   = "vbana_cut05_mc_qcd.root";
@@ -39,8 +41,9 @@ int main(int argc, char *argv[])
    //string histFileName   = "vbana_cut05_mc_wp_to_tt.root";
    //string histFileName   = "vbana_cut05_mc_z_to_ee.root";
 
-        string filelist       = "./runlists/run11_pp_transverse";
-        //string filelist       = "./runlists/run11_pp_transverse_bad2";
+   //string filelist       = "./runlists/run11_pp_transverse";
+   string filelist       = "./runlists/run11_pp_transverse_short";
+   //string filelist       = "./runlists/run11_pp_transverse_bad2";
 	//string filelist       = "./runlists/MC_list_QCD_2012";
 	//string filelist       = "./runlists/MC_list_Wm_2012";
 	//string filelist       = "./runlists/MC_list_Wp_2012";
@@ -52,9 +55,10 @@ int main(int argc, char *argv[])
    Info("main", "histFileName:   %s", histFileName.c_str());
    Info("main", "isMc:           %d", isMc);
 
-   VecBosRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc); 
+   //VecBosRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc);
+   VecBosAsymRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc);
    VecBosEvent    *vecBosEvent = new VecBosEvent();
-   
+
    TObject *o;
    TIter   *next = new TIter(utils::getFileList(filelist));
    UInt_t   nProcEvents = 0;
@@ -78,7 +82,7 @@ int main(int argc, char *argv[])
       //Int_t ver = streamerInfo->CompareContent();
 
       //if (ver != 1) {
-      //   Error("main", "Wrong versio of VecBosTrack: %d. Skipping...", ver); f->Close(); delete f; 
+      //   Error("main", "Wrong versio of VecBosTrack: %d. Skipping...", ver); f->Close(); delete f;
       //   continue;
       //}
 
@@ -120,7 +124,7 @@ int main(int argc, char *argv[])
       }
 
       //delete vecBosEvent;
-      //delete vbTree; 
+      //delete vbTree;
 
       f->Close();
       delete f;
@@ -134,7 +138,7 @@ int main(int argc, char *argv[])
    delete vecBosEvent;
 
    string outDir = "../vbasym_results/" + histFileName;
-   vecBosRootFile.SaveAs((string) "^.*$", outDir);
+   //vecBosRootFile.SaveAs((string) "^.*$", outDir);
    //vecBosRootFile.SaveAs((string) ".*TrackEOverP.*", outDir);
    vecBosRootFile.Print();
    vecBosRootFile.Close();

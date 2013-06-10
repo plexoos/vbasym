@@ -14,7 +14,7 @@ using namespace std;
 const float VecBosTrack::sMaxTrackClusterDist       = 7;  // cm
 const float VecBosTrack::sMinPt                     = 20; // GeV
 const float VecBosTrack::sMaxEnergyInOppsCone       = 15; // was 40, was 30 GeV
-const float VecBosTrack::sMinCandidateTrackClusterE = 25;
+const float VecBosTrack::sMinCandidateTrackClusterE = 25; // GeV
 
 
 VecBosTrack::VecBosTrack() : TObject(),
@@ -101,7 +101,12 @@ void VecBosTrack::Process()
    if ( prMuTrack->pt() >= 1.0 && prMuTrack->flag() == 301 )
    {
       mVbType |= kBARREL;
+
+      // Do not proced if the track cannot be extended to barrel
+      if ( !ExtendTrack2Barrel() ) return;
+
       MatchTrack2BtowCluster();
+
       CalcEnergyInNearCone();
    }
    else if ( prMuTrack->pt() >= 1.0 && prMuTrack->flag() == 311 )
@@ -291,9 +296,6 @@ bool VecBosTrack::ExtendTrack2Barrel()
 
 void VecBosTrack::MatchTrack2BtowCluster()
 {
-   // Do not proced if the track cannot be extended to barrel
-   if ( !ExtendTrack2Barrel() ) return;
-
    //if (mMatchedTower.id <= 0) return; // skip endcap towers
 
    //printf("******* matchCluster() nVert=%d\n",mVecBosEvent->mVertices.size());

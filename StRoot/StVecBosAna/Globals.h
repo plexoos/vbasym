@@ -10,6 +10,12 @@
 #include "WEventCluster.h"
 
 
+enum ESpinState        {kSPIN_DOWN = -1, kSPIN_NULL = 0, kSPIN_UP = +1};
+enum EDoubleSpinState  {kBU_YU = 5, kBU_YD = 6, kBD_YU = 9, kBD_YD = 10};
+
+typedef std::set<EDoubleSpinState>   DoubleSpinStateSet;
+typedef DoubleSpinStateSet::iterator DoubleSpinStateSetIter;
+
 inline bool operator==(const StJet& lhs, const StJet& rhs) { return (TLorentzVector) lhs == (TLorentzVector) rhs; }
 inline bool operator!=(const StJet& lhs, const StJet& rhs) { return !operator==(lhs,rhs); }
 inline bool operator< (const StJet& lhs, const StJet& rhs) { return lhs.E() < rhs.E(); }
@@ -36,8 +42,12 @@ extern TVector3    mBSmdStripCoords[mxBSmd][mxBStrips];    // vs. strip ID
 extern TVector3    gETowCoords[mxEtowSec *mxEtowSub][mxEtowEta];
 extern int         gMapBTowEtaPhiBin2Id[mxBTetaBin * mxBTphiBin];  // vs. (iEta, iPhi)
 
+extern EDoubleSpinState   aDoubleSpinStates[4];
+extern DoubleSpinStateSet gDoubleSpinStateSet;
 
-bool ConvertEtaPhi2Bins(float etaF, float phiF, int &kEta, int &kPhi);
-void PatchToEtaPhi(int patch, int *eta, int *phi);
+
+bool        ConvertEtaPhi2Bins(float etaF, float phiF, int &kEta, int &kPhi);
+void        PatchToEtaPhi(int patch, int *eta, int *phi);
+std::string AsString(EDoubleSpinState dss);
 
 #endif

@@ -433,14 +433,13 @@ Int_t StVecBosMaker::Make()
    //mVecBosRootFile->Fill(*mVecBosEvent);
    mVecBosEvent->SetCpuTimeHistFill( mStopWatch.CpuTime() );
 
-   // 
-   if (!mVecBosEvent->HasIsolatedTrack()) {
+   if ( !mVecBosEvent->HasIsolatedTrack() ) {
       return kStOK;
    }
 
    if (!isMC) { 
-     //   m2011WlumiMaker = new St2011WlumiMaker(); 
-     //  pippoefflumi = m2011WlumiMaker->effective_lumi;
+      //m2011WlumiMaker = new St2011WlumiMaker(); 
+      //pippoefflumi = m2011WlumiMaker->effective_lumi;
    }
 
    // Write event to tree

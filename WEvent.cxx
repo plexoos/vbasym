@@ -11,26 +11,26 @@ using namespace std;
 WEvent::WEvent() : TObject(), W(), l(), nu(), q(), recoil(), recoilInAccept(), fLeptonGen(0),
 fLeptonIndex(0), fNeutrinoIndex(0), fEnergyRatio(0), fPzRatio(0), fPtRatio(0), fPtCorr(0), fPtCorrAngle(0),
 fPzRatioInOut(0), fPtRatioInOut(0)
-{//{{{
-}//}}}
+{
+}
 
 
 /** */
 void WEvent::SetVectors()
-{//{{{
-}//}}}
+{
+}
 
 
 /** */
 void WEvent::RecoW()
-{//{{{
+{
    WReco = l + nu;
-}//}}}
+}
 
 
 /** */
 void WEvent::CalcRecoil(PyEvent &pyEvent)
-{//{{{
+{
    recoil.SetPxPyPzE(0, 0, 0, 0);
    recoilInAccept.SetPxPyPzE(0, 0, 0, 0);
 
@@ -54,12 +54,12 @@ void WEvent::CalcRecoil(PyEvent &pyEvent)
       }
    }
 
-}//}}}
+}
 
 
 /** */
 void WEvent::CalcEventEnergyRatio(PyEvent &pyEvent)
-{//{{{
+{
    Double_t eneTotal = 0, eneAccept = 0;
    TLorentzVector recoilPTotal;
    TLorentzVector recoilPInAccept;
@@ -102,4 +102,4 @@ void WEvent::CalcEventEnergyRatio(PyEvent &pyEvent)
 
    fPtCorr       = (recoilPTotal.Pt() - recoilPInAccept.Pt())/recoilPInAccept.Pt();
    fPtCorrAngle  = recoilPInAccept.Angle(recoilPTotal.Vect());
-}//}}}
+}
