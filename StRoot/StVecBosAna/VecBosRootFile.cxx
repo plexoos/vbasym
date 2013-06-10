@@ -91,6 +91,12 @@ void VecBosRootFile::BookHists()
    fHists->d["event_pass_final_QEToPT"]     = ph = new EventHContainer(new TDirectoryFile("event_pass_final_QEToPT", "event_pass_final_QEToPT", "", this));
    fHistCuts[kCUT_EVENT_PASS_FINAL_QET].insert(ph);
 
+   fHists->d["W+_event_pass_final_QEToPT"]     = ph = new EventHContainer(new TDirectoryFile("W+_event_pass_final_QEToPT", "W+_event_pass_final_QEToPT", "", this));
+   fHistCuts[kCUT_POSITIVE_EVENT_PASS_FINAL_QET].insert(ph);
+
+   fHists->d["W-_event_pass_final_QEToPT"]     = ph = new EventHContainer(new TDirectoryFile("W-_event_pass_final_QEToPT", "W-_event_pass_final_QEToPT", "", this));
+   fHistCuts[kCUT_NEGATIVE_EVENT_PASS_FINAL_QET].insert(ph);
+
    fHists->d["event_pass_qcd_QEToPT"]     = ph = new EventHContainer(new TDirectoryFile("event_pass_qcd_QEToPT", "event_pass_qcd_QEToPT", "", this));
    fHistCuts[kCUT_EVENT_PASS_QCD_QET].insert(ph);
 
@@ -286,7 +292,7 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
 
             if ( track.prMuTrack->charge() > 0.)
                ((TrackHContainer*) fHists->d["W+_track_cand_pass_qcd_QEToPT"])->Fill(track);
-            if ( track.prMuTrack->charge() < 0.)   
+            if ( track.prMuTrack->charge() < 0.) 
                ((TrackHContainer*) fHists->d["W-_track_cand_pass_qcd_QEToPT"])->Fill(track); 
    	 }
       } // end QCD events
@@ -309,8 +315,10 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
          ((TrackHContainer*) fHists->d["track_cand_pass_final_QEToPT"])->Fill(track);
 
          if ( track.prMuTrack->charge() > 0.)
+         Fill(ev, kCUT_POSITIVE_EVENT_PASS_FINAL_QET);
           ((TrackHContainer*) fHists->d["W+_track_cand_pass_final_QEToPT"])->Fill(track);
-         if ( track.prMuTrack->charge() < 0.)   
+         if ( track.prMuTrack->charge() < 0.) 
+         Fill(ev, kCUT_NEGATIVE_EVENT_PASS_FINAL_QET);  
           ((TrackHContainer*) fHists->d["W-_track_cand_pass_final_QEToPT"])->Fill(track); 
       }
 

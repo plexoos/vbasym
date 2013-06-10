@@ -101,9 +101,24 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  TH2* hd_PtNeutrinoVsEle = (TH2*)fileData->Get("event_pass_final_QEToPT/hPtBalanceTracksNeutralsVsElecEt");
  TH2* hd_PtNeutrinoVsEleNocut = (TH2*)fileData->Get("event_has_candidate_pt>15/hPtBalanceTracksNeutralsVsElecEt");
 
+ TH1* hd_PtWReco = (TH1*)fileData->Get("event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
+
  TH1* hWp_PtWReco = (TH1*)fileMCWp->Get("event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
 
  TH1* hWp_PtWGen = (TH1*)fileMCWp->Get("event_mc/hWBosonPt");
+
+ TH1* hWp_PtWGenOverReco = (TH1*)hWp_PtWReco->Clone("hWp_PtWGenOverReco");
+ hWp_PtWGenOverReco->Divide(hWp_PtWGen,hWp_PtWReco,1,1);
+
+ TH1* hd_PtWRecoCorrected = (TH1*)hd_PtWReco->Clone("hd_PtWRecoCorrected");
+ hd_PtWRecoCorrected->Multiply(hd_PtWReco,hWp_PtWGenOverReco,1,1);
+
+ TH1* hWm_PtWReco = (TH1*)fileMCWm->Get("event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
+
+ TH1* hWm_PtWGen = (TH1*)fileMCWm->Get("event_mc/hWBosonPt");
+
+ TH1* hWm_PtWRecoOverGen = (TH1*)hWm_PtWReco->Clone("hWm_PtWRecoOverGen");
+ hWm_PtWRecoOverGen->Divide(hWm_PtWReco,hWm_PtWGen,1,1);   
 
  TH1* hWp_PtRecoil_vs_PtWGen = (TH1*)fileMCWp->Get("event_mc_pass_final_QEToPT/hTrackRecoilTpcNeutralsPtVsWBosonPt");
 
@@ -143,6 +158,17 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  hQ_Wp_PtLepPt15->Rebin(3);
  hd_Wp_PtLepQCDPt15->Rebin(3);
 
+ TH1* hd_Wp_PtWReco = (TH1*)fileData->Get("W+_event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
+
+ TH1* hWp_Wp_PtWReco = (TH1*)fileMCWp->Get("W+_event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
+
+ TH1* hWp_Wp_PtWGenOverReco = (TH1*)hWp_Wp_PtWReco->Clone("hWp_Wp_PtWGenOverReco");
+ hWp_Wp_PtWGenOverReco->Divide(hWp_PtWGen,hWp_Wp_PtWReco,1,1);
+
+ TH1* hd_Wp_PtWRecoCorrected = (TH1*)hd_Wp_PtWReco->Clone("hd_Wp_PtWRecoCorrected");
+ hd_Wp_PtWRecoCorrected->Multiply(hd_Wp_PtWReco,hWp_Wp_PtWGenOverReco,1,1);
+
+
 
  // W-
  TH1* hd_Wm_PtLep = (TH1*)fileData->Get("W-_track_cand_pass_final_QEToPT/hEcalScaledPt");
@@ -176,6 +202,17 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  hWmtt_Wm_PtLepPt15->Rebin(3);
  hQ_Wm_PtLepPt15->Rebin(3);
  hd_Wm_PtLepQCDPt15->Rebin(3);
+
+ TH1* hd_Wm_PtWReco = (TH1*)fileData->Get("W-_event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
+
+ TH1* hWm_Wm_PtWReco = (TH1*)fileMCWm->Get("W-_event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
+
+ TH1* hWm_Wm_PtWGenOverReco = (TH1*)hWm_Wm_PtWReco->Clone("hWm_Wm_PtWGenOverReco");
+ hWm_Wm_PtWGenOverReco->Divide(hWm_PtWGen,hWm_Wm_PtWReco,1,1);
+
+ TH1* hd_Wm_PtWRecoCorrected = (TH1*)hd_Wm_PtWReco->Clone("hd_Wm_PtWRecoCorrected");
+ hd_Wm_PtWRecoCorrected->Multiply(hd_Wm_PtWReco,hWm_Wm_PtWGenOverReco,1,1);
+
 
  //-----------------------------------------------------------------------------------------------------------------
 
@@ -1250,25 +1287,102 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  c10->Print(outPath + "/plot_10.png");
 
 
+
  TCanvas *c10b = new TCanvas("c10b","",800,400);
 
  c10b-> SetTitle("Reco vs Gen");
 
  c10b->Divide(2,1);
 
- c10b_1->cd();
- c10b_1->SetLogz(1); 
+ c10b_1->cd(); 
+ hWm_PtWGen->SetNameTitle("hWm_PtWGen","W^{-} GENERATED");
+ hWm_PtWGen->GetYaxis()->SetTitleOffset(1.8);
+ hWm_PtWGen->Draw();
+
+ c10b_2->cd();
+ hWm_PtWReco->SetNameTitle("hWm_PtWReco","W^{-} RECONSTRUCTED");
+ hWm_PtWReco->GetXaxis()->SetTitle("Tracks-based recoil P_{T} [GeV/c]");
+ hWm_PtWReco->GetYaxis()->SetTitleOffset(1.8);
+ hWm_PtWReco->Draw();
+
+ c10b->Print(outPath + "/plot_10b.eps");
+ c10b->Print(outPath + "/plot_10b.png");
+
+ TCanvas *c10c = new TCanvas("c10c","",800,400);
+
+ c10c-> SetTitle("Reco vs Gen");
+
+ c10c->Divide(2,1);
+
+ c10c_1->cd();
+ c10c_1->SetLogz(1); 
  hWp_PtRecoil_vs_PtWGen->GetYaxis()->SetTitleOffset(1.1);
  hWp_PtRecoil_vs_PtWGen-> SetStats(0);
  hWp_PtRecoil_vs_PtWGen->Draw();
 
- c10b_2->cd(); 
- c10b_2->SetLogz(1);
+ c10c_2->cd(); 
+ c10c_2->SetLogz(1);
  hWp_PhiRecoil_vs_PhiWGen-> SetStats(0);
  hWp_PhiRecoil_vs_PhiWGen->Draw();
 
- c10b->Print(outPath + "/plot_10b.eps");
- c10b->Print(outPath + "/plot_10b.png");
+ c10c->Print(outPath + "/plot_10c.eps");
+ c10c->Print(outPath + "/plot_10c.png");
+
+
+ TCanvas *c10d = new TCanvas("c10d","",800,400);
+
+ c10d-> SetTitle("Reco vs Gen");
+
+ c10d->Divide(2,1);
+
+ c10d_1->cd();
+ c10d_1->SetLogz(1); 
+ hWp_Wp_PtWGenOverReco->SetNameTitle("hWp_Wp_PtWGenOverReco","W+ sample - MC Correction");
+ hWp_Wp_PtWGenOverReco->GetYaxis()->SetTitleOffset(1.1);
+ hWp_Wp_PtWGenOverReco->GetXaxis()->SetTitle("Tracks-based recoil P_{T} [GeV/c]");
+ hWp_Wp_PtWGenOverReco->GetYaxis()->SetTitle("w = W-P_{T}^{PYTHIA}/recoil P_{T}");
+ hWp_Wp_PtWGenOverReco->Draw();
+ //hWp_PtRecoil_vs_PtWGen->GetYaxis()->SetTitleOffset(1.1);
+ //hWp_PtRecoil_vs_PtWGen-> SetStats(0);
+ //hWp_PtRecoil_vs_PtWGen->Draw();
+ c10d_2->cd();
+ hd_Wp_PtWReco->SetNameTitle("hd_Wp_PtWReco","Data");
+ //hd_Wp_PtWReco->Draw();
+ hd_Wp_PtWRecoCorrected-> SetFillStyle(3448);
+ hd_Wp_PtWRecoCorrected-> SetFillColor(kGreen);
+ hd_Wp_PtWRecoCorrected->Draw();
+ hd_Wp_PtWReco->Draw("same");
+ hd_Wp_PtWRecoCorrected->Draw("same");
+
+ c10d->Print(outPath + "/plot_10d.eps");
+ c10d->Print(outPath + "/plot_10d.png");
+
+
+
+ TCanvas *c10e = new TCanvas("c10e","",800,400);
+
+ c10e-> SetTitle("Reco vs Gen");
+
+ c10e->Divide(2,1);
+
+ c10e_1->cd();
+ c10e_1->SetLogz(1); 
+ hWm_Wm_PtWGenOverReco->SetNameTitle("hWm_Wm_PtWGenOverReco","W- sample - MC Correction");
+ hWm_Wm_PtWGenOverReco->GetYaxis()->SetTitleOffset(1.1);
+ hWm_Wm_PtWGenOverReco->GetXaxis()->SetTitle("Tracks-based recoil P_{T} [GeV/c]");
+ hWm_Wm_PtWGenOverReco->GetYaxis()->SetTitle("w = W-P_{T}^{PYTHIA}/recoil P_{T}");
+ hWm_Wm_PtWGenOverReco->Draw();
+ c10e_2->cd();
+ hd_Wm_PtWReco->SetNameTitle("hd_Wm_PtWReco","Data");
+ //hd_Wm_PtWReco->Draw();
+ hd_Wm_PtWRecoCorrected-> SetFillStyle(3448);
+ hd_Wm_PtWRecoCorrected-> SetFillColor(kGreen);
+ hd_Wm_PtWRecoCorrected->Draw();
+ hd_Wm_PtWReco->Draw("same");
+ hd_Wm_PtWRecoCorrected->Draw("same");
+
+ c10e->Print(outPath + "/plot_10e.eps");
+ c10e->Print(outPath + "/plot_10e.png");
 
 
  TCanvas *c11 = new TCanvas("c11","",800,400);

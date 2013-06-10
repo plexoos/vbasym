@@ -89,13 +89,13 @@ void EventHContainer::BookHists()
    o["hNumTracksWithBCluster2"] = hist = new TH1I("hNumTracksWithBCluster2", "; Num. of Tracks with Barrel Cluster; Events", 5, 0, 5);
    hist->SetOption("hist GRIDX");
 
-   o["hJetRecoilPt"]               = hist = new TH1I("hJetRecoilPt", "Recoil from Jets; Jet-based Recoil P_{T}; Events", 40, 0, 40);
+   o["hJetRecoilPt"]               = hist = new TH1F("hJetRecoilPt", "Recoil from Jets; Jet-based Recoil P_{T}; Events", 40, 0, 40);
 
-   o["hTrackRecoilPt"]             = hist = new TH1I("hTrackRecoilPt", "Recoil from Tracks: TPC+TOW; Track-based Recoil P_{T}; Events;", 40, 0, 40);
+   o["hTrackRecoilPt"]             = hist = new TH1F("hTrackRecoilPt", "Recoil from Tracks: TPC+TOW; Track-based Recoil P_{T}; Events;", 40, 0, 40);
 
-   o["hTrackRecoilTpcPt"]          = hist = new TH1I("hTrackRecoilTpcPt", "Recoil from Tracks: TPC only; Track-based Recoil P_{T}; Events", 40, 0, 40);
+   o["hTrackRecoilTpcPt"]          = hist = new TH1F("hTrackRecoilTpcPt", "Recoil from Tracks: TPC only; Track-based Recoil P_{T}; Events", 40, 0, 40);
 
-   o["hTrackRecoilWithNeutralsPt"] = hist = new TH1I("hTrackRecoilWithNeutralsPt", "Recoil from Tracks: TPS+emCal (also untracked clustera) ; Track-based Recoil P_{T}; Events", 40, 0, 40);
+   o["hTrackRecoilWithNeutralsPt"] = hist = new TH1F("hTrackRecoilWithNeutralsPt", "Recoil from Tracks: TPS+emCal (also untracked clustera) ; Track-based Recoil P_{T}; Events", 40, 0, 40);
 
    o["hTrackRecoillUntrackedClustersPt"]        = hist = new TH1F("hTrackRecoillUntrackedClustersPt", "Recoil from tracks; P_{T};", 40, 0, 40);
 

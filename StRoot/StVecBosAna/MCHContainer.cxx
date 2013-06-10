@@ -52,17 +52,17 @@ void MCHContainer::BookHists()
 
    fDir->cd();
 
-   o["hWBosonE"]                  = hist = new TH1I("hWBosonE", "; W energy [GeV]; Events", 100, 20., 200.);
+   o["hWBosonE"]                  = hist = new TH1F("hWBosonE", "; W energy [GeV]; Events", 100, 20., 200.);
    hist->SetOption("hist GRIDX");
-   o["hWBosonPx"]                 = hist = new TH1I("hWBosonPx", "; P^{W}_{x} [GeV/c]; Events", 80, -40., 40.);
+   o["hWBosonPx"]                 = hist = new TH1F("hWBosonPx", "; P^{W}_{x} [GeV/c]; Events", 80, -40., 40.);
    hist->SetOption("hist GRIDX");
-   o["hWBosonPy"]                 = hist = new TH1I("hWBosonPy", "; P^{W}_{y} [GeV/c]; Events", 80, -40., 40.);
+   o["hWBosonPy"]                 = hist = new TH1F("hWBosonPy", "; P^{W}_{y} [GeV/c]; Events", 80, -40., 40.);
    hist->SetOption("hist GRIDX");
-   o["hWBosonPz"]                 = hist = new TH1I("hWBosonPz", "; P^{W}_{z} [GeV/c]; Events", 80, -40., 40.);
+   o["hWBosonPz"]                 = hist = new TH1F("hWBosonPz", "; P^{W}_{z} [GeV/c]; Events", 80, -40., 40.);
    hist->SetOption("hist GRIDX");
-   o["hWBosonPt"]                 = hist = new TH1I("hWBosonPt", "; P^{W}_{T} [GeV/c]; Events", 40, 0., 40.);
+   o["hWBosonPt"]                 = hist = new TH1F("hWBosonPt", "; P^{W}_{T} [GeV/c]; Events", 40, 0., 40.);
    hist->SetOption("hist GRIDX");
-   o["hWBosonEta"]                = hist = new TH1I("hWBosonEta", "; W pseudo-rapidity #eta; Events", 60, -6, 6);
+   o["hWBosonEta"]                = hist = new TH1F("hWBosonEta", "; W pseudo-rapidity #eta; Events", 60, -6, 6);
    hist->SetOption("hist GRIDX");
 
    o["hNeutrinoE"]           = hist = new TH1I("hNeutrinoE", "; #nu energy [GeV]; Events", 50, 0., 200.);
