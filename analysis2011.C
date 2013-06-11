@@ -158,11 +158,10 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
  hQ_Wp_PtLepPt15->Rebin(3);
  hd_Wp_PtLepQCDPt15->Rebin(3);
 
- TH1* hd_Wp_PtWReco = (TH1*)fileData->Get("W+_event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
-
+ TH1* hd_Wp_PtWReco  = (TH1*)fileData->Get("W+_event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
  TH1* hWp_Wp_PtWReco = (TH1*)fileMCWp->Get("W+_event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
 
- TH1* hWp_Wp_PtWGenOverReco = (TH1*)hWp_Wp_PtWReco->Clone("hWp_Wp_PtWGenOverReco");
+ TH1* hWp_Wp_PtWGenOverReco = (TH1*) hWp_Wp_PtWReco->Clone("hWp_Wp_PtWGenOverReco");
  hWp_Wp_PtWGenOverReco->Divide(hWp_PtWGen,hWp_Wp_PtWReco,1,1);
 
  TH1* hd_Wp_PtWRecoCorrected = (TH1*)hd_Wp_PtWReco->Clone("hd_Wp_PtWRecoCorrected");
@@ -1337,10 +1336,8 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
 
  c10d_1->cd();
  c10d_1->SetLogz(1); 
- hWp_Wp_PtWGenOverReco->SetNameTitle("hWp_Wp_PtWGenOverReco","W+ sample - MC Correction");
  hWp_Wp_PtWGenOverReco->GetYaxis()->SetTitleOffset(1.1);
- hWp_Wp_PtWGenOverReco->GetXaxis()->SetTitle("Tracks-based recoil P_{T} [GeV/c]");
- hWp_Wp_PtWGenOverReco->GetYaxis()->SetTitle("w = W-P_{T}^{PYTHIA}/recoil P_{T}");
+ hWp_Wp_PtWGenOverReco->SetTitle("W+ sample - MC Correction; Tracks-based recoil P_{T}, GeV/c; W P_{T}/Recoil P_{T}");
  hWp_Wp_PtWGenOverReco->Draw();
  //hWp_PtRecoil_vs_PtWGen->GetYaxis()->SetTitleOffset(1.1);
  //hWp_PtRecoil_vs_PtWGen-> SetStats(0);
@@ -1367,10 +1364,8 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
 
  c10e_1->cd();
  c10e_1->SetLogz(1); 
- hWm_Wm_PtWGenOverReco->SetNameTitle("hWm_Wm_PtWGenOverReco","W- sample - MC Correction");
  hWm_Wm_PtWGenOverReco->GetYaxis()->SetTitleOffset(1.1);
- hWm_Wm_PtWGenOverReco->GetXaxis()->SetTitle("Tracks-based recoil P_{T} [GeV/c]");
- hWm_Wm_PtWGenOverReco->GetYaxis()->SetTitle("w = W-P_{T}^{PYTHIA}/recoil P_{T}");
+ hWm_Wm_PtWGenOverReco->SetTitle("W- sample - MC Correction; Tracks-based recoil P_{T}, GeV/c; W P_{T}/Recoil P_{T}");
  hWm_Wm_PtWGenOverReco->Draw();
  c10e_2->cd();
  hd_Wm_PtWReco->SetNameTitle("hd_Wm_PtWReco","Data");
@@ -1387,7 +1382,7 @@ std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to f
 
  TCanvas *c11 = new TCanvas("c11","",800,400);
 
- c11-> SetTitle("DATA - Neutrino vs electron");
+ c11->SetTitle("DATA - Neutrino vs electron");
 
  c11->Divide(2,1);
 
