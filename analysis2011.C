@@ -162,6 +162,7 @@ void analysis2011()
 
    TH1 *hd_Wp_PtWRecoCorrected = (TH1*) hd_Wp_PtWReco->Clone("hd_Wp_PtWRecoCorrected");
    hd_Wp_PtWRecoCorrected->Multiply(hd_Wp_PtWReco, hWp_Wp_PtWGenOverReco, 1, 1);
+   hd_Wp_PtWRecoCorrected->Scale(hd_Wp_PtWReco->Integral()/hd_Wp_PtWRecoCorrected->Integral());
 
    // W-
    TH1 *hd_Wm_PtLep = (TH1 *)fileData->Get("W-_track_cand_pass_final_QEToPT/hEcalScaledPt");
@@ -205,6 +206,7 @@ void analysis2011()
 
    TH1 *hd_Wm_PtWRecoCorrected = (TH1 *)hd_Wm_PtWReco->Clone("hd_Wm_PtWRecoCorrected");
    hd_Wm_PtWRecoCorrected->Multiply(hd_Wm_PtWReco, hWm_Wm_PtWGenOverReco, 1, 1);
+   hd_Wm_PtWRecoCorrected->Scale(hd_Wm_PtWReco->Integral()/hd_Wm_PtWRecoCorrected->Integral());
 
 
    //-----------------------------------------------------------------------------------------------------------------
@@ -1338,9 +1340,9 @@ void analysis2011()
    c10d_2->cd();
    hd_Wp_PtWRecoCorrected->SetFillStyle(3448);
    hd_Wp_PtWRecoCorrected->SetFillColor(kGreen);
-   hd_Wp_PtWRecoCorrected->Draw();
+   //hd_Wp_PtWRecoCorrected->Draw();
    hd_Wp_PtWReco->SetTitle("Data");
-   hd_Wp_PtWReco->Draw("same");
+   hd_Wp_PtWReco->Draw();
    hd_Wp_PtWRecoCorrected->Draw("same");
 
    //c10d->Print(outPath + "/plot_10d.eps");
@@ -1361,10 +1363,10 @@ void analysis2011()
    c10e_2->cd();
    hd_Wm_PtWReco->SetNameTitle("hd_Wm_PtWReco", "Data");
    //hd_Wm_PtWReco->Draw();
-   hd_Wm_PtWRecoCorrected-> SetFillStyle(3448);
-   hd_Wm_PtWRecoCorrected-> SetFillColor(kGreen);
-   hd_Wm_PtWRecoCorrected->Draw();
-   hd_Wm_PtWReco->Draw("same");
+   hd_Wm_PtWRecoCorrected->SetFillStyle(3448);
+   hd_Wm_PtWRecoCorrected->SetFillColor(kGreen);
+   //hd_Wm_PtWRecoCorrected->Draw();
+   hd_Wm_PtWReco->Draw();
    hd_Wm_PtWRecoCorrected->Draw("same");
 
    //c10e->Print(outPath + "/plot_10e.eps");
