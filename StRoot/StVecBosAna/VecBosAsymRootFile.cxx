@@ -22,13 +22,6 @@ using namespace std;
 
 VecBosAsymRootFile::VecBosAsymRootFile() : VecBosRootFile()
 {
-   gROOT->SetMacroPath("./:~/offline/users/fazio/vbasym/:");
-   gROOT->Macro("styles/style_asym.C");
-
-   // delete histograms created in parent class
-   if (fHists) { delete fHists; fHists = 0; }
-   fHistCuts.clear();
-
    BookHists();
 }
 
@@ -36,15 +29,6 @@ VecBosAsymRootFile::VecBosAsymRootFile() : VecBosRootFile()
 VecBosAsymRootFile::VecBosAsymRootFile(const char *fname, Option_t *option, Bool_t isMc, const char *ftitle, Int_t compress) :
    VecBosRootFile(fname, option, isMc, ftitle, compress)
 {
-   printf("Created ROOT file: %s\n", GetName());
-
-   gROOT->SetMacroPath("./:~/offline/users/fazio/vbasym/:");
-   gROOT->Macro("styles/style_asym.C");
-
-   // delete histograms created in parent class
-   if (fHists) { delete fHists; fHists = 0; }
-   fHistCuts.clear();
-
    BookHists();
 }
 
@@ -57,6 +41,12 @@ VecBosAsymRootFile::~VecBosAsymRootFile()
 
 void VecBosAsymRootFile::BookHists()
 {
+   // delete histograms created in parent class
+   if (fHists) { delete fHists; fHists = 0; }
+   fHistCuts.clear();
+   //this->Delete("*;*");
+   //this->GetListOfKeys()->Delete();
+
    PlotHelper *ph;
 
    fHists = new PlotHelper(this);

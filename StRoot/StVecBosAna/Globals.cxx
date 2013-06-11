@@ -15,6 +15,13 @@ TVector3            gBCalTowerCoords[mxBtow];               // vs. tower ID
 TVector3            mBSmdStripCoords[mxBSmd][mxBStrips];    // vs. strip ID
 TVector3            gETowCoords[mxEtowSec *mxEtowSub][mxEtowEta];
 int                 gMapBTowEtaPhiBin2Id[mxBTetaBin * mxBTphiBin];  // vs. (iEta, iPhi)
+
+EBeamId    aBeams[] = {kBLUE_BEAM, kYELLOW_BEAM};
+BeamIdSet  gBeams(aBeams, aBeams+2); 
+
+ESingleSpinState    aSingleSpinStates[] = {kBU_Y0, kBD_Y0, kB0_YU, kB0_YD};
+SingleSpinStateSet  gSingleSpinStateSet(aSingleSpinStates, aSingleSpinStates+4); 
+
 EDoubleSpinState    aDoubleSpinStates[] = {kBU_YU, kBU_YD, kBD_YU, kBD_YD};
 DoubleSpinStateSet  gDoubleSpinStateSet(aDoubleSpinStates, aDoubleSpinStates+4); 
 
@@ -64,6 +71,36 @@ void PatchToEtaPhi(int patch, int *eta, int *phi)
       int n = patch % 10;
       *eta = 4 - n / 2;
       *phi = 1 - n % 2 + m * 2;
+   }
+}
+
+
+string AsString(EBeamId beamId)
+{
+   switch (beamId) {
+   case kBLUE_BEAM:
+	   return "BLU";
+   case kYELLOW_BEAM:
+	   return "YEL";
+   default:
+      return "UNK";
+   }
+}
+
+
+string AsString(ESingleSpinState dss)
+{
+   switch (dss) {
+   case kBU_Y0:
+	   return "u0";
+   case kBD_Y0:
+	   return "d0";
+   case kB0_YU:
+	   return "0u";
+   case kB0_YD:
+	   return "0d";
+   default:
+      return "UNK";
    }
 }
 

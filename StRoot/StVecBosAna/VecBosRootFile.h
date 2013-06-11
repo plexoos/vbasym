@@ -56,6 +56,8 @@ public:
    void SetIsMc(Bool_t isMc) { fIsMc = isMc; }
    virtual void Fill(ProtoEvent &ev);
    virtual void Fill(ProtoEvent &ev, ECut cut);
+   virtual void FillDerived();
+   virtual void PostFill();
    void SaveAs(std::string pattern="^.*$", std::string dir=".");
 	void UpdMinMaxFill(UInt_t fillId);
 	void UpdMinMaxTime(time_t time);

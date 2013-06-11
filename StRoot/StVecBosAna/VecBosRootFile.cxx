@@ -30,8 +30,8 @@ VecBosRootFile::VecBosRootFile() : TFile(),
    fMinTime(UINT_MAX), fMaxTime(0),
    fIsMc(kFALSE)
 {
-   gROOT->SetMacroPath("./:~/offline/users/fazio/vbasym/:");
-   gROOT->Macro("styles/style_asym.C");
+   //gROOT->SetMacroPath("./:~/rootmacros/:");
+   //gROOT->Macro("styles/style_vbana.C");
 
    BookHists();
 }
@@ -46,8 +46,8 @@ VecBosRootFile::VecBosRootFile(const char *fname, Option_t *option, Bool_t isMc,
 {
    printf("Created ROOT file: %s\n", GetName());
 
-   gROOT->SetMacroPath("./:~/offline/users/fazio/vbasym/:");
-   gROOT->Macro("styles/style_asym.C");
+   //gROOT->SetMacroPath("./:~/rootmacros/:");
+   //gROOT->Macro("styles/style_vbana.C");
 
    BookHists();
 }
@@ -348,6 +348,25 @@ void VecBosRootFile::Fill(ProtoEvent &ev, ECut cut)
       (*hi)->Fill(ev);
    }
 }
+
+
+/** */
+void VecBosRootFile::FillDerived()
+{
+   Info("FillDerived", "Called");
+
+   fHists->FillDerived();
+}
+
+
+/** */
+void VecBosRootFile::PostFill()
+{
+   Info("PostFill", "Called");
+
+   fHists->PostFill();
+}
+
 
 
 /** */
