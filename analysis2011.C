@@ -8,7 +8,7 @@ void analysis2011()
    //gROOT->Macro("/star/u/fazio/offline/users/fazio/vbasym/macros/loadLibs.C");
 
    TString inPath  = "/star/u/fazio/offline/users/fazio/vbasym/";
-   TString outPath = "~/vbasym_results/plots";
+   TString outPath = "../vbasym_results/plots";
 
    //Styles:
    gStyle->SetPadBottomMargin(0.15);
@@ -98,10 +98,13 @@ void analysis2011()
    TH2 *hd_PtNeutrinoVsEleNocut = (TH2 *)fileData->Get("event_has_candidate_pt>15/hPtBalanceTracksNeutralsVsElecEt");
 
    TH1 *hd_PtWReco = (TH1 *)fileData->Get("event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
+   hd_PtWReco->Rebin(2);
 
    TH1 *hWp_PtWReco = (TH1 *)fileMCWp->Get("event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
+   hWp_PtWReco->Rebin(2);
 
    TH1 *hWp_PtWGen = (TH1 *)fileMCWp->Get("event_mc/hWBosonPt");
+   hWp_PtWGen->Rebin(2);
 
    TH1 *hWp_PtWGenOverReco = (TH1 *)hWp_PtWReco->Clone("hWp_PtWGenOverReco");
    hWp_PtWGenOverReco->Divide(hWp_PtWGen, hWp_PtWReco, 1, 1);
@@ -156,6 +159,8 @@ void analysis2011()
 
    TH1 *hd_Wp_PtWReco  = (TH1*) fileData->Get("W+_event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
    TH1 *hWp_Wp_PtWReco = (TH1*) fileMCWp->Get("W+_event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
+   hd_Wp_PtWReco->Rebin(2);
+   hWp_Wp_PtWReco->Rebin(2);
 
    TH1 *hWp_Wp_PtWGenOverReco = (TH1 *) hWp_Wp_PtWReco->Clone("hWp_Wp_PtWGenOverReco");
    hWp_Wp_PtWGenOverReco->Divide(hWp_PtWGen, hWp_Wp_PtWReco, 1, 1);
@@ -1338,6 +1343,7 @@ void analysis2011()
    //hWp_PtRecoil_vs_PtWGen->Draw();
 
    c10d_2->cd();
+   hd_Wp_PtWReco->GetYaxis()->SetTitleOffset(1.2);
    hd_Wp_PtWRecoCorrected->SetFillStyle(3448);
    hd_Wp_PtWRecoCorrected->SetFillColor(kGreen);
    //hd_Wp_PtWRecoCorrected->Draw();
@@ -1362,6 +1368,7 @@ void analysis2011()
    hWm_Wm_PtWGenOverReco->Draw("E1");
    c10e_2->cd();
    hd_Wm_PtWReco->SetNameTitle("hd_Wm_PtWReco", "Data");
+   hd_Wm_PtWReco->GetYaxis()->SetTitleOffset(1.2);
    //hd_Wm_PtWReco->Draw();
    hd_Wm_PtWRecoCorrected->SetFillStyle(3448);
    hd_Wm_PtWRecoCorrected->SetFillColor(kGreen);

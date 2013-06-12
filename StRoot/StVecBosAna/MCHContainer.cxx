@@ -161,6 +161,9 @@ void MCHContainer::BookHists()
    o["hTrackRecoilTpcNeutralsPtVsWBosonPt"] = hist = new TH2I("hTrackRecoilTpcNeutralsPtVsWBosonPt", "; W Boson P_{T}; Track-based Recoil P_{T}", 50, 0., 50., 50, 0., 50.);
    hist->SetOption("colz LOGZ");
 
+   //   o["hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt"] = hist = new TH2F("hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt", "; W Boson P_{T} (GeV/c); Track-based corrected Recoil P_{T} (GeV/c) ", 40, 0., 40., 40, 0., 40.);
+   //hist->SetOption("colz LOGZ");
+
    o["hJetRecoilPtRelDiff"]   = hist = new TH1F("hJetRecoilPtRelDiff", "; Jet-based Recoil P_{T}, Rel. Diff.; ", 50, -2, 2.);
    hist->SetOption("hist");
 
@@ -253,6 +256,7 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hTrackRecoilPhiVsWBosonPhi"]) ->Fill(event.mWEvent->mP4WBoson.Phi(), event.GetTrackRecoil().Phi());
    ((TH1*) o["hTrackRecoilTpcPtVsWBosonPt"])->Fill(event.mWEvent->mP4WBoson.Pt(), event.mP3TrackRecoilTpc.Pt());
    ((TH1*) o["hTrackRecoilTpcNeutralsPtVsWBosonPt"])->Fill(event.mWEvent->mP4WBoson.Pt(), event.GetTrackRecoilTpcNeutrals().Pt());
+   //   ((TH2*) o["hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt"])->Fill(event.mWEvent->mP4WBoson.Pt(),event.GetTrackRecoilTpcNeutrals().Pt()*(event.mWEvent->mP4WBoson.Pt()/event.GetTrackRecoilTpcNeutrals().Pt()));
 
    Double_t recoilRelDiff = (event.GetJetRecoil().Pt() - event.mWEvent->mP4WBoson.Pt())/event.mWEvent->mP4WBoson.Pt();
    ((TH1*) o["hJetRecoilPtRelDiff"]) ->Fill( recoilRelDiff );
