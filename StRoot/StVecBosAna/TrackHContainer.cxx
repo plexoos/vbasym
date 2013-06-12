@@ -68,7 +68,7 @@ void TrackHContainer::BookHists()
    o["hTrackPt"] = hist = new TH1F("hTrackPt", "; Track P_T; Num. of Tracks", 80, 0, 80);
    hist->SetOption("hist GRIDX GRIDY XY");
 
-   o["hEcalScaledPt"] = hist = new TH1F("hEcalScaledPt", "; P_T; Num. of Tracks", 80, 0, 80);
+   o["hEcalScaledPt"] = hist = new TH1F("hEcalScaledPt", "; P_T; Num. of Tracks", 81, 0, 81);
    hist->SetOption("hist GRIDX GRIDY XY");
 
    o["hTrackEOverP"] = hist = new TH1I("hTrackEOverP", "; E/P; Num. of Tracks", 50, 0, 2);

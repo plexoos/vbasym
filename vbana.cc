@@ -9,7 +9,7 @@
 
 #include "StRoot/StVecBosAna/VecBosEvent.h"
 #include "StRoot/StVecBosAna/VecBosRootFile.h"
-#include "StRoot/StVecBosAna/VecBosAsymRootFile.h"
+//#include "StRoot/StVecBosAna/VecBosAsymRootFile.h"
 
 #include "utils/utils.h"
 
@@ -28,9 +28,9 @@ int main(int argc, char *argv[])
    //Int_t  nMaxUserEvents = 10;
    //Int_t  nMaxUserEvents = 34000; // cut_35
    //Int_t  nMaxUserEvents = 5000;
-   Bool_t isMc           = kFALSE;
-   //Bool_t isMc           = kTRUE;
-   string histFileName   = "vbana_mytest.root";
+   //Bool_t isMc           = kFALSE;
+   Bool_t isMc           = kTRUE;
+   //string histFileName   = "vbana_mytest.root";
    //string histFileName   = "vbana_cut05_data_final.root";
    //string histFileName   = "vbana_cut05_data_bad2.root";
    //string histFileName   = "vbana_cut35_data_final.root";
@@ -39,24 +39,25 @@ int main(int argc, char *argv[])
    //string histFileName   = "vbana_cut05_mc_wp.root";
    //string histFileName   = "vbana_cut05_mc_wm_to_tt.root";
    //string histFileName   = "vbana_cut05_mc_wp_to_tt.root";
-   //string histFileName   = "vbana_cut05_mc_z_to_ee.root";
+   string histFileName   = "vbana_cut05_mc_z_to_ee.root";
 
-   string filelist       = "./runlists/run11_pp_transverse";
+
+   //string filelist       = "./runlists/run11_pp_transverse";
    //string filelist       = "./runlists/run11_pp_transverse_short";
    //string filelist       = "./runlists/run11_pp_transverse_bad2";
-	//string filelist       = "./runlists/MC_list_QCD_2012";
-	//string filelist       = "./runlists/MC_list_Wm_2012";
-	//string filelist       = "./runlists/MC_list_Wp_2012";
-	//string filelist       = "./runlists/MC_list_WmToTauTau_2012";
-	//string filelist       = "./runlists/MC_list_WpToTauTau_2012";
-	//string filelist       = "./runlists/MC_list_Ztoee_2012";
+   //string filelist       = "./runlists/MC_list_QCD_2012";
+   //string filelist       = "./runlists/MC_list_Wm_2012";
+   //string filelist       = "./runlists/MC_list_Wp_2012";
+   //string filelist       = "./runlists/MC_list_WmToTauTau_2012";
+   //string filelist       = "./runlists/MC_list_WpToTauTau_2012";
+   string filelist       = "./runlists/MC_list_Ztoee_2012";
 
    Info("main", "nMaxUserEvents: %d", nMaxUserEvents);
    Info("main", "histFileName:   %s", histFileName.c_str());
    Info("main", "isMc:           %d", isMc);
 
-   //VecBosRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc);
-   VecBosAsymRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc);
+   VecBosRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc);
+   //VecBosAsymRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc); // to create the symmetry histograms 
    VecBosEvent    *vecBosEvent = new VecBosEvent();
 
    TObject *o;
