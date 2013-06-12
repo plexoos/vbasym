@@ -18,7 +18,7 @@ void analysis2011()
    gStyle->SetOptStat("mruoi");
    gStyle->SetPadRightMargin(0.25);
    gStyle->SetMarkerStyle(20);
-   gStyle->SetHistFillColor(kYellow);
+   //Style->SetHistFillColor(kYellow);
 
    //float lumiDataTot       = 24.28; // pb-1
    float lumiDataTot       = 24.42; // pb-1
@@ -877,6 +877,7 @@ void analysis2011()
    hWptt_Wp_PtLep_2-> SetStats(0);
    hWptt_Wp_PtLep_2->Draw("same");
    hZ_Wp_PtLep_2->Draw("same");
+   hd_Wp_PtLepQCD_2->Draw("same");
 
    c5_2->cd();
    c5_2->SetLogy(0);
@@ -904,6 +905,7 @@ void analysis2011()
    hWptt_Wp_PtLepPt15_2-> SetStats(0);
    hWptt_Wp_PtLepPt15_2->Draw("same");
    hZ_Wp_PtLepPt15_2->Draw("same");
+   hd_Wp_PtLepQCDPt15_2->Draw("same");
 
    c5b_2->cd();
    c5b_2->SetLogy(0);
@@ -1097,6 +1099,7 @@ void analysis2011()
    hWmtt_Wm_PtLep_2-> SetStats(0);
    hZ_Wm_PtLep_2->Draw("same");
    hWmtt_Wm_PtLep_2->Draw("same");
+   hd_Wm_PtLepQCD_2->Draw("same");
 
    c7_2->cd();
    c7_2->SetLogy(0);
@@ -1124,6 +1127,7 @@ void analysis2011()
    hWmtt_Wm_PtLepPt15_2-> SetStats(0);
    hZ_Wm_PtLepPt15_2->Draw("same");
    hWmtt_Wm_PtLepPt15_2->Draw("same");
+   hd_Wm_PtLepQCDPt15_2->Draw("same");
 
    c7b_2->cd();
    c7b_2->SetLogy(0);
