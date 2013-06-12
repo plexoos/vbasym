@@ -18,6 +18,7 @@ void analysis2011()
    gStyle->SetOptStat("mruoi");
    gStyle->SetPadRightMargin(0.25);
    gStyle->SetMarkerStyle(20);
+   gStyle->SetHistFillColor(kYellow);
 
    //float lumiDataTot       = 24.28; // pb-1
    float lumiDataTot       = 24.42; // pb-1
