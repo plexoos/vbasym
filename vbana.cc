@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
       //string fileName = "./R" + fName + ".wtree.root";
       //string fileName = "/star/data05/scratch/fazio/wtree_run11_cut15/";
       string fileName = "/star/data05/scratch/fazio/wtree_run11_cut05/";
-      fileName += (!isMc?"R":"") + fName + ".wtree.root";
+      fileName += (!isMc ? "R" : "") + fName + ".wtree.root";
 
       TFile *f = new TFile(fileName.c_str(), "READ");
 

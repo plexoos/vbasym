@@ -61,6 +61,7 @@ void MCHContainer::BookHists()
    o["hWBosonPz"]                 = hist = new TH1F("hWBosonPz", "; P^{W}_{z} [GeV/c]; Events", 80, -40., 40.);
    hist->SetOption("hist GRIDX");
    o["hWBosonPt"]                 = hist = new TH1F("hWBosonPt", "; P^{W}_{T} [GeV/c]; Events", 40, 0., 40.);
+   o["hWBosonPt_zoomin"]          = hist = new TH1F("hWBosonPt_zoomin", "; P^{W}_{T} [GeV/c]; Events", 20, 0., 10.);
    hist->SetOption("hist GRIDX");
    o["hWBosonEta"]                = hist = new TH1F("hWBosonEta", "; W pseudo-rapidity #eta; Events", 60, -6, 6);
    hist->SetOption("hist GRIDX");
@@ -196,6 +197,7 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hWBosonPy"])->Fill(event.mWEvent->mP4WBoson.Py());
    ((TH1*) o["hWBosonPz"])->Fill(event.mWEvent->mP4WBoson.Pz());
    ((TH1*) o["hWBosonPt"])->Fill(event.mWEvent->mP4WBoson.Pt());
+   ((TH1*) o["hWBosonPt_zoomin"])->Fill(event.mWEvent->mP4WBoson.Pt());
 
    if (event.mWEvent->mP4WBoson.Mag() > 0)
       ((TH1*) o["hWBosonEta"])->Fill(event.mWEvent->mP4WBoson.Eta());

@@ -8,7 +8,8 @@ void analysis2011()
    //gROOT->Macro("/star/u/fazio/offline/users/fazio/vbasym/macros/loadLibs.C");
 
    TString inPath  = "/star/u/fazio/offline/users/fazio/vbasym/";
-   TString outPath = "../vbasym_results/plots";
+   //TString inPath  = "~/vbasym_results/root_hists/";
+   TString outPath = "~/vbasym_results/plots/";
 
    //Styles:
    gStyle->SetPadBottomMargin(0.15);
@@ -18,7 +19,6 @@ void analysis2011()
    gStyle->SetOptStat("mruoi");
    gStyle->SetPadRightMargin(0.25);
    gStyle->SetMarkerStyle(20);
-   //Style->SetHistFillColor(kYellow);
 
    //float lumiDataTot       = 24.28; // pb-1
    float lumiDataTot       = 24.42; // pb-1
@@ -95,29 +95,23 @@ void analysis2011()
    TH2 *hd_QxEtoPt_Vs_Et_passCut = (TH2 *)fileData->Get("track_cand_pass_final_QEToPT/hQxEtoPt_Vs_Et_PrimaryTrack");
 
 
-   TH2 *hd_PtNeutrinoVsEle = (TH2 *)fileData->Get("event_pass_final_QEToPT/hPtBalanceTracksNeutralsVsElecEt");
-   TH2 *hd_PtNeutrinoVsEleNocut = (TH2 *)fileData->Get("event_has_candidate_pt>15/hPtBalanceTracksNeutralsVsElecEt");
+   TH2 *hd_PtNeutrinoVsEle      = (TH2*) fileData->Get("event_pass_final_QEToPT/hPtBalanceTracksNeutralsVsElecEt");
+   TH2 *hd_PtNeutrinoVsEleNocut = (TH2*) fileData->Get("event_has_candidate_pt>15/hPtBalanceTracksNeutralsVsElecEt");
+   TH1 *hd_PtWReco              = (TH1*) fileData->Get("event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
 
-   TH1 *hd_PtWReco = (TH1 *)fileData->Get("event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
-   hd_PtWReco->Rebin(2);
+   TH1 *hWp_PtWReco        = (TH1*) fileMCWp->Get("event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
+   TH1 *hWp_PtWGen         = (TH1*) fileMCWp->Get("event_mc/hWBosonPt");
+   TH1 *hWp_PtWGenOverReco = (TH1*) hWp_PtWReco->Clone("hWp_PtWGenOverReco");
 
-   TH1 *hWp_PtWReco = (TH1 *)fileMCWp->Get("event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
-   hWp_PtWReco->Rebin(2);
-
-   TH1 *hWp_PtWGen = (TH1 *)fileMCWp->Get("event_mc/hWBosonPt");
-   hWp_PtWGen->Rebin(2);
-
-   TH1 *hWp_PtWGenOverReco = (TH1 *)hWp_PtWReco->Clone("hWp_PtWGenOverReco");
    hWp_PtWGenOverReco->Divide(hWp_PtWGen, hWp_PtWReco, 1, 1);
 
    TH1 *hd_PtWRecoCorrected = (TH1 *)hd_PtWReco->Clone("hd_PtWRecoCorrected");
    hd_PtWRecoCorrected->Multiply(hd_PtWReco, hWp_PtWGenOverReco, 1, 1);
 
-   TH1 *hWm_PtWReco = (TH1 *)fileMCWm->Get("event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
+   TH1 *hWm_PtWReco = (TH1*) fileMCWm->Get("event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
+   TH1 *hWm_PtWGen  = (TH1*) fileMCWm->Get("event_mc/hWBosonPt");
 
-   TH1 *hWm_PtWGen = (TH1 *)fileMCWm->Get("event_mc/hWBosonPt");
-
-   TH1 *hWm_PtWRecoOverGen = (TH1 *)hWm_PtWReco->Clone("hWm_PtWRecoOverGen");
+   TH1 *hWm_PtWRecoOverGen = (TH1*) hWm_PtWReco->Clone("hWm_PtWRecoOverGen");
    hWm_PtWRecoOverGen->Divide(hWm_PtWReco, hWm_PtWGen, 1, 1);
 
    TH1 *hWp_PtRecoil_vs_PtWGen = (TH1 *)fileMCWp->Get("event_mc_pass_final_QEToPT/hTrackRecoilTpcNeutralsPtVsWBosonPt");
@@ -126,21 +120,21 @@ void analysis2011()
 
 
    // W+
-   TH1 *hd_Wp_PtLep = (TH1 *)fileData->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
-   TH1 *hZ_Wp_PtLep = (TH1 *)fileMCZ->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
-   TH1 *hWp_Wp_PtLep = (TH1 *)fileMCWp->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
-   TH1 *hWm_Wp_PtLep = (TH1 *)fileMCWm->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
-   TH1 *hWptt_Wp_PtLep = (TH1 *)fileMCWptt->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
-   TH1 *hQ_Wp_PtLep = (TH1 *)fileMCQCD->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
+   TH1 *hd_Wp_PtLep        = (TH1 *)fileData->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
+   TH1 *hZ_Wp_PtLep        = (TH1 *)fileMCZ->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
+   TH1 *hWp_Wp_PtLep       = (TH1 *)fileMCWp->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
+   TH1 *hWm_Wp_PtLep       = (TH1 *)fileMCWm->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
+   TH1 *hWptt_Wp_PtLep     = (TH1 *)fileMCWptt->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
+   TH1 *hQ_Wp_PtLep        = (TH1 *)fileMCQCD->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
 
-   TH1 *hd_Wp_PtLepPt15 = (TH1 *)fileData->Get("W+_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
-   TH1 *hZ_Wp_PtLepPt15 = (TH1 *)fileMCZ->Get("W+_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
-   TH1 *hWp_Wp_PtLepPt15 = (TH1 *)fileMCWp->Get("W+_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
-   TH1 *hWm_Wp_PtLepPt15 = (TH1 *)fileMCWm->Get("W+_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
+   TH1 *hd_Wp_PtLepPt15    = (TH1 *)fileData->Get("W+_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
+   TH1 *hZ_Wp_PtLepPt15    = (TH1 *)fileMCZ->Get("W+_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
+   TH1 *hWp_Wp_PtLepPt15   = (TH1 *)fileMCWp->Get("W+_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
+   TH1 *hWm_Wp_PtLepPt15   = (TH1 *)fileMCWm->Get("W+_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
    TH1 *hWptt_Wp_PtLepPt15 = (TH1 *)fileMCWptt->Get("W+_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
-   TH1 *hQ_Wp_PtLepPt15 = (TH1 *)fileMCQCD->Get("W+_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
+   TH1 *hQ_Wp_PtLepPt15    = (TH1 *)fileMCQCD->Get("W+_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
 
-   TH1 *hd_Wp_PtLepQCD = (TH1 *)fileData->Get("W+_track_cand_pass_qcd_QEToPT/hEcalScaledPt");
+   TH1 *hd_Wp_PtLepQCD     = (TH1 *)fileData->Get("W+_track_cand_pass_qcd_QEToPT/hEcalScaledPt");
    TH1 *hd_Wp_PtLepQCDPt15 = (TH1 *)fileData->Get("W+_track_cand_pass_qcd_QEToPT_Pt>15/hEcalScaledPt");
 
    hd_Wp_PtLep->Rebin(3);
@@ -160,8 +154,6 @@ void analysis2011()
 
    TH1 *hd_Wp_PtWReco  = (TH1*) fileData->Get("W+_event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
    TH1 *hWp_Wp_PtWReco = (TH1*) fileMCWp->Get("W+_event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
-   hd_Wp_PtWReco->Rebin(2);
-   hWp_Wp_PtWReco->Rebin(2);
 
    TH1 *hWp_Wp_PtWGenOverReco = (TH1 *) hWp_Wp_PtWReco->Clone("hWp_Wp_PtWGenOverReco");
    hWp_Wp_PtWGenOverReco->Divide(hWp_PtWGen, hWp_Wp_PtWReco, 1, 1);
@@ -169,7 +161,6 @@ void analysis2011()
    TH1 *hd_Wp_PtWRecoCorrected = (TH1*) hd_Wp_PtWReco->Clone("hd_Wp_PtWRecoCorrected");
    hd_Wp_PtWRecoCorrected->Multiply(hd_Wp_PtWReco, hWp_Wp_PtWGenOverReco, 1, 1);
    hd_Wp_PtWRecoCorrected->Scale(hd_Wp_PtWReco->Integral()/hd_Wp_PtWRecoCorrected->Integral());
-
 
    // W-
    TH1 *hd_Wm_PtLep = (TH1 *)fileData->Get("W-_track_cand_pass_final_QEToPT/hEcalScaledPt");
@@ -877,7 +868,6 @@ void analysis2011()
    hWptt_Wp_PtLep_2-> SetStats(0);
    hWptt_Wp_PtLep_2->Draw("same");
    hZ_Wp_PtLep_2->Draw("same");
-   hd_Wp_PtLepQCD_2->Draw("same");
 
    c5_2->cd();
    c5_2->SetLogy(0);
@@ -905,7 +895,6 @@ void analysis2011()
    hWptt_Wp_PtLepPt15_2-> SetStats(0);
    hWptt_Wp_PtLepPt15_2->Draw("same");
    hZ_Wp_PtLepPt15_2->Draw("same");
-   hd_Wp_PtLepQCDPt15_2->Draw("same");
 
    c5b_2->cd();
    c5b_2->SetLogy(0);
@@ -1099,7 +1088,6 @@ void analysis2011()
    hWmtt_Wm_PtLep_2-> SetStats(0);
    hZ_Wm_PtLep_2->Draw("same");
    hWmtt_Wm_PtLep_2->Draw("same");
-   hd_Wm_PtLepQCD_2->Draw("same");
 
    c7_2->cd();
    c7_2->SetLogy(0);
@@ -1127,7 +1115,6 @@ void analysis2011()
    hWmtt_Wm_PtLepPt15_2-> SetStats(0);
    hZ_Wm_PtLepPt15_2->Draw("same");
    hWmtt_Wm_PtLepPt15_2->Draw("same");
-   hd_Wm_PtLepQCDPt15_2->Draw("same");
 
    c7b_2->cd();
    c7b_2->SetLogy(0);
@@ -1277,14 +1264,16 @@ void analysis2011()
 
    c10_1->cd();
    //c10_1->SetLeftMargin(0.8);
-   hWp_PtWGen->SetNameTitle("hWp_PtWGen", "W^{+} GENERATED");
+   hWp_PtWGen->SetNameTitle("hWp_PtWGen", "Generated W+");
    hWp_PtWGen->GetYaxis()->SetTitleOffset(1.8);
+   hWp_PtWGen->SetFillColor(kYellow);
    hWp_PtWGen->Draw();
 
    c10_2->cd();
-   hWp_PtWReco->SetNameTitle("hWp_PtWReco", "W^{+} RECONSTRUCTED");
+   hWp_PtWReco->SetNameTitle("hWp_PtWReco", "Reconstructed W+");
    hWp_PtWReco->GetXaxis()->SetTitle("Tracks-based recoil P_{T} [GeV/c]");
    hWp_PtWReco->GetYaxis()->SetTitleOffset(1.8);
+   hWp_PtWReco->SetFillColor(kYellow);
    hWp_PtWReco->Draw();
 
    //c10->Print(outPath + "/plot_10.eps");
@@ -1299,12 +1288,12 @@ void analysis2011()
    c10b->Divide(2, 1);
 
    c10b_1->cd();
-   hWm_PtWGen->SetNameTitle("hWm_PtWGen", "W^{-} GENERATED");
+   hWm_PtWGen->SetNameTitle("hWm_PtWGen", "Generated W-");
    hWm_PtWGen->GetYaxis()->SetTitleOffset(1.8);
    hWm_PtWGen->Draw();
 
    c10b_2->cd();
-   hWm_PtWReco->SetNameTitle("hWm_PtWReco", "W^{-} RECONSTRUCTED");
+   hWm_PtWReco->SetNameTitle("hWm_PtWReco", "Reconstructed W-");
    hWm_PtWReco->GetXaxis()->SetTitle("Tracks-based recoil P_{T} [GeV/c]");
    hWm_PtWReco->GetYaxis()->SetTitleOffset(1.8);
    hWm_PtWReco->Draw();
@@ -1349,7 +1338,6 @@ void analysis2011()
    //hWp_PtRecoil_vs_PtWGen->Draw();
 
    c10d_2->cd();
-   hd_Wp_PtWReco->GetYaxis()->SetTitleOffset(1.2);
    hd_Wp_PtWRecoCorrected->SetFillStyle(3448);
    hd_Wp_PtWRecoCorrected->SetFillColor(kGreen);
    //hd_Wp_PtWRecoCorrected->Draw();
@@ -1374,7 +1362,6 @@ void analysis2011()
    hWm_Wm_PtWGenOverReco->Draw("E1");
    c10e_2->cd();
    hd_Wm_PtWReco->SetNameTitle("hd_Wm_PtWReco", "Data");
-   hd_Wm_PtWReco->GetYaxis()->SetTitleOffset(1.2);
    //hd_Wm_PtWReco->Draw();
    hd_Wm_PtWRecoCorrected->SetFillStyle(3448);
    hd_Wm_PtWRecoCorrected->SetFillColor(kGreen);
