@@ -7,9 +7,9 @@ void analysis2011()
    // Load the libraries:
    //gROOT->Macro("/star/u/fazio/offline/users/fazio/vbasym/macros/loadLibs.C");
 
-   //TString inPath  = "/star/u/fazio/offline/users/fazio/vbasym/";
-   TString inPath  = "~/vbasym_results/root_hists/";
-   TString outPath = "~/vbasym_results/plots/";
+   TString inPath  = "/star/u/fazio/offline/users/fazio/vbasym/";
+   //TString inPath  = "~/vbasym_results/root_hists/";
+   TString outPath = "../vbasym_results/plots/";
 
    //Styles:
    gStyle->SetPadBottomMargin(0.15);
@@ -1096,6 +1096,7 @@ void analysis2011()
    hWmtt_Wm_PtLep_2-> SetStats(0);
    hZ_Wm_PtLep_2->Draw("same");
    hWmtt_Wm_PtLep_2->Draw("same");
+   hd_Wm_PtLepQCD_2->Draw("same");
 
    c7_2->cd();
    c7_2->SetLogy(0);
@@ -1123,6 +1124,7 @@ void analysis2011()
    hWmtt_Wm_PtLepPt15_2-> SetStats(0);
    hZ_Wm_PtLepPt15_2->Draw("same");
    hWmtt_Wm_PtLepPt15_2->Draw("same");
+   hd_Wm_PtLepQCDPt15_2->Draw("same");
 
    c7b_2->cd();
    c7b_2->SetLogy(0);
