@@ -305,8 +305,28 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
            ((TrackHContainer *) fHists->d["W+_track_cand_pass_final"])->Fill(track);
         if ( track.prMuTrack->charge() < 0.)
            ((TrackHContainer *) fHists->d["W-_track_cand_pass_final"])->Fill(track);
+
+        if ( abs((track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) >= 0.4 &&
+                abs((track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) <= 1.8 )  //all cuts applied 
+        {
+            Fill(ev, kCUT_EVENT_PASS_FINAL_QET);
+
+            ((TrackHContainer *) fHists->d["track_cand_pass_final_QEToPT"])->Fill(track);
+
+            if ( track.prMuTrack->charge() > 0.)
+	    {
+	       Fill(ev, kCUT_POSITIVE_EVENT_PASS_FINAL_QET);
+               ((TrackHContainer*) fHists->d["W+_track_cand_pass_final_QEToPT"])->Fill(track);
+	    }
+            if ( track.prMuTrack->charge() < 0.) 
+	    { 
+               Fill(ev, kCUT_NEGATIVE_EVENT_PASS_FINAL_QET);  
+               ((TrackHContainer*) fHists->d["W-_track_cand_pass_final_QEToPT"])->Fill(track);
+	    }
+	} 
       }
 
+	/*
       if ( event->mCandElecP3EScaled.Pt() > 25 && event->mPtBalanceCosPhiFromTracks > 18 ) 
       {
 
@@ -318,14 +338,19 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
             ((TrackHContainer *) fHists->d["track_cand_pass_final_QEToPT"])->Fill(track);
 
             if ( track.prMuTrack->charge() > 0.)
-	      //Fill(ev, kCUT_POSITIVE_EVENT_PASS_FINAL_QET);
+	    {
+	       Fill(ev, kCUT_POSITIVE_EVENT_PASS_FINAL_QET);
                ((TrackHContainer*) fHists->d["W+_track_cand_pass_final_QEToPT"])->Fill(track);
+	    }
             if ( track.prMuTrack->charge() < 0.) 
-	      //Fill(ev, kCUT_NEGATIVE_EVENT_PASS_FINAL_QET);  
+	    { 
+               Fill(ev, kCUT_NEGATIVE_EVENT_PASS_FINAL_QET);  
                ((TrackHContainer*) fHists->d["W-_track_cand_pass_final_QEToPT"])->Fill(track);
+	    }
 	 } 
       }
 
+     
       if ( event->mCandElecP3EScaled.Pt() > 25 && event->mPtBalanceCosPhiFromTracks > 18 ) 
       {
 
@@ -339,7 +364,8 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
 	       Fill(ev, kCUT_NEGATIVE_EVENT_PASS_FINAL_QET); 
 	 } 
       }
-   
+      */
+
    } // end loop over tracks
 
 
