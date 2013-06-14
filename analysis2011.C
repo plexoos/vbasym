@@ -174,9 +174,21 @@ void analysis2011()
    hd_Wp_PtWRecoCorrected->Multiply(hd_Wp_PtWReco, hWp_Wp_PtWGenOverReco, 1, 1);
    hd_Wp_PtWRecoCorrected->Scale(hd_Wp_PtWReco->Integral()/hd_Wp_PtWRecoCorrected->Integral());
 
+   TH1 *hd_Wp_PtWRelativeCorr         = (TH1*) hd_Wp_PtWReco->Clone("hd_Wp_PtWRelativeCorr");
+   hd_Wp_PtWRelativeCorr->SetTitle("W+ data sample; Track-based Recoil P_{T}; Relative Correction");
+   hd_Wp_PtWRelativeCorr->Add(hd_Wp_PtWRecoCorrected,hd_Wp_PtWReco,1,-1);
+   hd_Wp_PtWRelativeCorr->Divide(hd_Wp_PtWRelativeCorr,hd_Wp_PtWReco,1,1);
+
+
    TH1 *hd_Wp_PtWRecoCorrected_zoomin = (TH1*) hd_Wp_PtWReco_zoomin->Clone("hd_Wp_PtWRecoCorrected_zoomin");
    hd_Wp_PtWRecoCorrected_zoomin->Multiply(hd_Wp_PtWReco_zoomin, hWp_Wp_PtWGenOverReco_zoomin, 1, 1);
    hd_Wp_PtWRecoCorrected_zoomin->Scale(hd_Wp_PtWReco_zoomin->Integral()/hd_Wp_PtWRecoCorrected_zoomin->Integral());
+
+   TH1 *hd_Wp_PtWRelativeCorr_zoomin  = (TH1*) hd_Wp_PtWReco_zoomin->Clone("hd_Wp_PtWRelativeCorr_zoomin");
+   hd_Wp_PtWRelativeCorr_zoomin->SetTitle("W+ data sample; Track-based Recoil P_{T}; Relative Correction");
+   hd_Wp_PtWRelativeCorr_zoomin->Add(hd_Wp_PtWRecoCorrected_zoomin,hd_Wp_PtWReco_zoomin,1,-1);
+   hd_Wp_PtWRelativeCorr_zoomin->Divide(hd_Wp_PtWRelativeCorr_zoomin,hd_Wp_PtWReco_zoomin,1,1);
+
 
 
    // W-
@@ -228,9 +240,20 @@ void analysis2011()
    hd_Wm_PtWRecoCorrected->Multiply(hd_Wm_PtWReco, hWm_Wm_PtWGenOverReco, 1, 1);
    hd_Wm_PtWRecoCorrected->Scale(hd_Wm_PtWReco->Integral()/hd_Wm_PtWRecoCorrected->Integral());
 
+   TH1 *hd_Wm_PtWRelativeCorr         = (TH1*) hd_Wm_PtWReco->Clone("hd_Wm_PtWRelativeCorr");
+   hd_Wm_PtWRelativeCorr->SetTitle("W- data sample; Track-based Recoil P_{T}; Relative Correction");
+   hd_Wm_PtWRelativeCorr->Add(hd_Wm_PtWRecoCorrected,hd_Wm_PtWReco,1,-1);
+   hd_Wm_PtWRelativeCorr->Divide(hd_Wm_PtWRelativeCorr,hd_Wm_PtWReco,1,1);
+
+
    TH1 *hd_Wm_PtWRecoCorrected_zoomin = (TH1*) hd_Wm_PtWReco_zoomin->Clone("hd_Wm_PtWRecoCorrected_zoomin");
    hd_Wm_PtWRecoCorrected_zoomin->Multiply(hd_Wm_PtWReco_zoomin, hWm_Wm_PtWGenOverReco_zoomin, 1, 1);
    hd_Wm_PtWRecoCorrected_zoomin->Scale(hd_Wm_PtWReco_zoomin->Integral()/hd_Wm_PtWRecoCorrected_zoomin->Integral());
+
+   TH1 *hd_Wm_PtWRelativeCorr_zoomin  = (TH1*) hd_Wm_PtWReco_zoomin->Clone("hd_Wm_PtWRelativeCorr_zoomin");
+   hd_Wm_PtWRelativeCorr_zoomin->SetTitle("W- data sample; Track-based Recoil P_{T}; Relative Correction");
+   hd_Wm_PtWRelativeCorr_zoomin->Add(hd_Wm_PtWRecoCorrected_zoomin,hd_Wm_PtWReco_zoomin,1,-1);
+   hd_Wm_PtWRelativeCorr_zoomin->Divide(hd_Wm_PtWRelativeCorr_zoomin,hd_Wm_PtWReco_zoomin,1,1);
 
 
    //-----------------------------------------------------------------------------------------------------------------
@@ -1397,7 +1420,7 @@ void analysis2011()
 
    c10d-> SetTitle("Reco vs Gen");
 
-   c10d->Divide(2, 1);
+   c10d->Divide(2, 2);
 
    c10d_1->cd();
    c10d_1->SetLogz(1);
@@ -1416,6 +1439,9 @@ void analysis2011()
    hd_Wp_PtWReco->Draw();
    hd_Wp_PtWRecoCorrected->Draw("same");
 
+   c10d_3->cd();
+   hd_Wp_PtWRelativeCorr->Draw();
+
    //c10d->Print(outPath + "/plot_10d.eps");
    c10d->Print(outPath + "/plot_10d.png");
 
@@ -1425,7 +1451,7 @@ void analysis2011()
 
    c10di-> SetTitle("Reco vs Gen zoom");
 
-   c10di->Divide(2, 1);
+   c10di->Divide(2, 2);
 
    c10di_1->cd();
    hWp_Wp_PtWGenOverReco_zoomin->GetYaxis()->SetTitleOffset(1.1);
@@ -1440,6 +1466,9 @@ void analysis2011()
    hd_Wp_PtWReco_zoomin->Draw();
    hd_Wp_PtWRecoCorrected_zoomin->Draw("same");
 
+   c10di_3->cd();
+   hd_Wp_PtWRelativeCorr_zoomin->Draw();
+
    c10di->SaveAs(outPath + "/plot_10di.png");
 
 
@@ -1448,7 +1477,7 @@ void analysis2011()
 
    c10e-> SetTitle("Reco vs Gen");
 
-   c10e->Divide(2, 1);
+   c10e->Divide(2, 2);
 
    c10e_1->cd();
    c10e_1->SetLogz(1);
@@ -1464,6 +1493,9 @@ void analysis2011()
    hd_Wm_PtWReco->Draw();
    hd_Wm_PtWRecoCorrected->Draw("same");
 
+   c10e_3->cd();
+   hd_Wm_PtWRelativeCorr->Draw();
+
    //c10e->Print(outPath + "/plot_10e.eps");
    c10e->Print(outPath + "/plot_10e.png");
 
@@ -1472,7 +1504,7 @@ void analysis2011()
 
    c10ei-> SetTitle("Reco vs Gen zoom");
 
-   c10ei->Divide(2, 1);
+   c10ei->Divide(2, 2);
 
    c10ei_1->cd();
    hWm_Wm_PtWGenOverReco_zoomin->GetYaxis()->SetTitleOffset(1.1);
@@ -1485,6 +1517,9 @@ void analysis2011()
    hd_Wm_PtWReco_zoomin->SetTitle("Data");
    hd_Wm_PtWReco_zoomin->Draw();
    hd_Wm_PtWRecoCorrected_zoomin->Draw("same");
+
+   c10ei_3->cd();
+   hd_Wm_PtWRelativeCorr_zoomin->Draw();
 
    c10ei->SaveAs(outPath + "/plot_10ei.png");
 
