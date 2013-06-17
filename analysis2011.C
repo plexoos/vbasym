@@ -170,6 +170,7 @@ void analysis2011()
    hWp_Wp_PtWGenOverReco->Divide(hWp_PtWGen, hWp_Wp_PtWReco, 1, 1,"B");
    hWp_Wp_PtWGenOverReco_zoomin->Divide(hWp_PtWGen_zoomin, hWp_Wp_PtWReco_zoomin, 1, 1,"B");
 
+
    TH1 *hd_Wp_PtWRecoCorrected        = (TH1*) hd_Wp_PtWReco->Clone("hd_Wp_PtWRecoCorrected");
    hd_Wp_PtWRecoCorrected->Multiply(hd_Wp_PtWReco, hWp_Wp_PtWGenOverReco, 1, 1);
    hd_Wp_PtWRecoCorrected->Scale(hd_Wp_PtWReco->Integral()/hd_Wp_PtWRecoCorrected->Integral());
@@ -189,6 +190,28 @@ void analysis2011()
    hd_Wp_PtWRelativeCorr_zoomin->Add(hd_Wp_PtWRecoCorrected_zoomin,hd_Wp_PtWReco_zoomin,1,-1);
    hd_Wp_PtWRelativeCorr_zoomin->Divide(hd_Wp_PtWRelativeCorr_zoomin,hd_Wp_PtWReco_zoomin,1,1);
 
+
+   float binCont;
+   Int_t binTotal  = hd_Wp_PtWRelativeCorr -> GetMaximumBin();
+   //cout << "BIN TOTAL !! " << binTotal << endl;
+   for (Int_t iBin = 1; iBin <= binTotal; iBin++) 
+   {
+       binCont = hd_Wp_PtWRelativeCorr -> GetBinContent(iBin);
+       binCont = fabs(binCont);      
+       //cout << "BINCONT!!!!!!!!!  " << binCont  << endl;
+       hd_Wp_PtWRelativeCorr -> SetBinContent(iBin, binCont);
+   }
+ 
+   float binCont_zoomin;
+   Int_t binTotal_zoomin = hd_Wp_PtWRelativeCorr_zoomin -> GetMaximumBin();
+   //cout << "BIN TOTAL ZOOM !! " << binTotal_zoomin << endl; 
+   for (Int_t iBin = 1; iBin <= binTotal_zoomin ; iBin++) 
+   {
+       binCont_zoomin = hd_Wp_PtWRelativeCorr_zoomin -> GetBinContent(iBin);
+       binCont_zoomin = fabs(binCont_zoomin);      
+       //cout << "BINCONT ZOOM!!!!!!!!!  " << binCont_zoomin  << endl;
+       hd_Wp_PtWRelativeCorr_zoomin -> SetBinContent(iBin, binCont_zoomin);
+   }
 
 
    // W-
@@ -254,6 +277,30 @@ void analysis2011()
    hd_Wm_PtWRelativeCorr_zoomin->SetTitle("W- data sample; Track-based Recoil P_{T}; Relative Correction");
    hd_Wm_PtWRelativeCorr_zoomin->Add(hd_Wm_PtWRecoCorrected_zoomin,hd_Wm_PtWReco_zoomin,1,-1);
    hd_Wm_PtWRelativeCorr_zoomin->Divide(hd_Wm_PtWRelativeCorr_zoomin,hd_Wm_PtWReco_zoomin,1,1);
+
+
+   binCont   = 0 ;
+   binTotal  = hd_Wm_PtWRelativeCorr -> GetMaximumBin();
+   //cout << "BIN TOTAL !! " << binTotal << endl;
+   for (Int_t iBin = 1; iBin <= binTotal; iBin++) 
+   {
+       binCont = hd_Wm_PtWRelativeCorr -> GetBinContent(iBin);
+       binCont = fabs(binCont);      
+       //cout << "BINCONT!!!!!!!!!  " << binCont  << endl;
+       hd_Wm_PtWRelativeCorr -> SetBinContent(iBin, binCont);
+   }
+ 
+   binCont_zoomin  = 0 ;
+   binTotal_zoomin = hd_Wm_PtWRelativeCorr_zoomin -> GetMaximumBin();
+   //cout << "BIN TOTAL ZOOM !! " << binTotal_zoomin << endl; 
+   for (Int_t iBin = 1; iBin <= binTotal_zoomin ; iBin++) 
+   {
+       binCont_zoomin = hd_Wm_PtWRelativeCorr_zoomin -> GetBinContent(iBin);
+       binCont_zoomin = fabs(binCont_zoomin);      
+       //cout << "BINCONT ZOOM!!!!!!!!!  " << binCont_zoomin  << endl;
+       hd_Wm_PtWRelativeCorr_zoomin -> SetBinContent(iBin, binCont_zoomin);
+   }
+
 
 
    //-----------------------------------------------------------------------------------------------------------------
