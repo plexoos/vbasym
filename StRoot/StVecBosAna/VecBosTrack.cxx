@@ -443,19 +443,3 @@ void VecBosTrack::CalcEnergyInNearCone()
    //   hE[49]->Fill(mP3InNearCone);
    //}
 }
-
-
-////______________________________________________________________________________
-//void VecBosTrack::Streamer(TBuffer &R__b)
-//{
-//   // Stream an object of class VecBosEvent.
-//   //Info("Streamer", "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx ");
-//   //printf("", "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx ");
-//   if (R__b.IsReading()) {
-//      R__b.ReadClassBuffer(VecBosTrack::Class(),this);
-//      //Info("Streamer", "IsReading XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx ");
-//   } else {
-//      //Info("Streamer", "IsWriting yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy ");
-//      R__b.WriteClassBuffer(VecBosTrack::Class(),this);
-//   }
-//}

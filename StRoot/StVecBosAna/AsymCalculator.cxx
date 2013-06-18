@@ -154,53 +154,6 @@ void AsymCalculator::CalcDelimAsymSqrtFormula(DrawObjContainer *oc)
 
 /** */
 /*
-void AsymCalculator::CalcOscillPhaseAsymSqrtFormula(TH2 &h2DetCounts_up, TH2 &h2DetCounts_down, TH1 &hAsym, DetLRSet detSet)
-{
-
-   for (int iBin=1; iBin<=hAsym.GetNbinsX(); iBin++)
-   {
-      TH1I *hDetCounts_up   = (TH1I*) h2DetCounts_up.ProjectionY("hDetCounts_up", iBin, iBin);
-      TH1I *hDetCounts_down = (TH1I*) h2DetCounts_down.ProjectionY("hDetCounts_down", iBin, iBin);
-
-      // Check if there are events in the histograms
-      if (!hDetCounts_up->Integral() && !hDetCounts_down->Integral()) continue;
-
-      //ValErrMap asymX90 = CalcDetAsymX90SqrtFormula(*hDetCounts_up, *hDetCounts_down);
-      //ValErrMap asymX45 = CalcDetAsymX45SqrtFormula(*hDetCounts_up, *hDetCounts_down);
-      //ValErrMap asymY45 = CalcDetAsymY45SqrtFormula(*hDetCounts_up, *hDetCounts_down);
-
-      ValErrMap asym = CalcDetAsymSqrtFormula(*hDetCounts_up, *hDetCounts_down, detSet);
-
-      // Add point to different asym type graphs
-      AsymTypeSetIter iAsymType = gRunConfig.fAsymTypes.begin();
-      for (; iAsymType!=gRunConfig.fAsymTypes.end(); ++iAsymType)
-      {
-         string sAsymType = gRunConfig.AsString(*iAsymType);
-
-         ValErrPair asymValErr = asym[sAsymType];
-
-         string shName = "gr" + string(hAsym.GetName()) + "_" + sAsymType;
-         TGraphErrors* graphErrs = (TGraphErrors*) hAsym.GetListOfFunctions()->FindObject(shName.c_str());
-
-         Double_t binCntr = hAsym.GetBinCenter(iBin);
-         utils::AppendToGraph(graphErrs, binCntr, asymValErr.first, 0, asymValErr.second);
-      }
-
-      //asymX45["phys"].first  = TMath::Sqrt(2)*asymX45["phys"].first;
-      //asymX45["phys"].second = TMath::Sqrt(2)*asymX45["phys"].second;
-      //cout << "test: " << asymX90["phys"] << ", " << asymX45["phys"] << endl;
-      //ValErrPair asymValErr = utils::CalcWeightedAvrgErr(asymX90["phys"], asymX45["phys"]);
-      //cout << "test: " << asymValErr << endl;
-
-      //hAsym.SetBinContent(iBin, asymValErr.first);
-      //hAsym.SetBinError(iBin, asymValErr.second);
-   }
-}
-*/
-
-
-/** */
-/*
 void AsymCalculator::CalcStripAsymmetryByProfile(DrawObjContainer *oc)
 {
    // Calculate asymmetries for each target position
@@ -296,11 +249,11 @@ void AsymCalculator::CalcKinEnergyAChAsym(DrawObjContainer *oc)
  * Takes two histograms binned in asimuthal angle phi for spin up and down.
  * Returns a hist hChAsym filled with asym values for each valid bin/channel.
  */
-TH1D* AsymCalculator::CalcAsimAsym(TH1I &hUp, TH1I &hDown, TH1D *hChAsym)
+void AsymCalculator::CalcAsimAsym(TH1I &hUp, TH1I &hDown, TH1D &hAsym)
 {
-   if (!hChAsym) {
-      hChAsym = new TH1D("hChAsym", "hChAsym", hUp.GetNbinsX(), hUp.GetXaxis()->GetXmin(), hUp.GetXaxis()->GetXmax());
-   }
+   //if (!hAsym) {
+   //   hAsym= new TH1D("hAsym", "hAsym", hUp.GetNbinsX(), hUp.GetXaxis()->GetXmin(), hUp.GetXaxis()->GetXmax());
+   //}
 
    for (int iAsimBin=1; iAsimBin<=hUp.GetNbinsX(); iAsimBin++)
    {
@@ -338,13 +291,72 @@ TH1D* AsymCalculator::CalcAsimAsym(TH1I &hUp, TH1I &hDown, TH1D *hChAsym)
          // Calculate Asym and dAsym
          ValErrPair chAsym = CalcAsym(nCountsUp, nCountsDown, totalCountsUp, totalCountsDown);
 
-         hChAsym->SetBinContent(iAsimBin, chAsym.first);
-         hChAsym->SetBinError(iAsimBin,   chAsym.second);
+         hAsym.SetBinContent(iAsimBin, chAsym.first);
+         hAsym.SetBinError(iAsimBin,   chAsym.second);
       }
    }
 
-   return hChAsym;
+   //return hAsym;
 }
+
+
+/** */
+void AsymCalculator::CalcAsimAsym(TH2I &hUp, TH2I &hDown, TH2D &hAsym)
+{
+   for (int iBinX=1; iBinX<=hAsym.GetNbinsX(); iBinX++)
+   {
+      TH1I *hUpSlice = (TH1I*) hUp.ProjectionY("hUpSlice", iBinX, iBinX);
+      TH1I *hDwSlice = (TH1I*) hDown.ProjectionY("hDwSlice", iBinX, iBinX);
+
+      TH1D hAsymSlice("hAsymSlice", "hAsymSlice", hUpSlice->GetNbinsX(), hUpSlice->GetXaxis()->GetXmin(), hUpSlice->GetXaxis()->GetXmax());
+
+      // Check if there are events in the histograms
+      if (!hUpSlice->Integral() && !hDwSlice->Integral()) continue;
+
+      CalcAsimAsym(*hUpSlice, *hDwSlice, hAsymSlice);
+
+      for (int iBinY=1; iBinY<=hAsym.GetNbinsY(); iBinY++)
+      {
+         Double_t asymVal = hAsymSlice.GetBinContent(iBinY);
+         Double_t asymErr = hAsymSlice.GetBinError(iBinY);
+
+         hAsym.SetBinContent(iBinX, iBinY, asymVal);
+         hAsym.SetBinError(iBinX, iBinY, asymErr);
+      }
+   }
+}
+
+
+/** */
+void AsymCalculator::FitAsimAsym(TH1D &hAsym)
+{
+   TF1 fitFunc("fitFunc", "[0] + [1]*sin(x + [2])", -M_PI, M_PI);
+   hAsym.Fit(&fitFunc);
+}
+
+
+/** */
+void AsymCalculator::FitAsimAsym(TH2D &hAsym, TH1D &hAsymAmplitude)
+{
+   for (int iBinX=1; iBinX<=hAsym.GetNbinsX(); iBinX++)
+   {
+      TH1D *hAsymSlice = (TH1D*) hAsym.ProjectionY("hAsymSlice", iBinX, iBinX);
+
+      FitAsimAsym(*hAsymSlice);
+
+      TF1* fitFunc = (TF1*) hAsymSlice->GetListOfFunctions()->FindObject("fitFunc");
+
+      if (fitFunc)
+      {
+         Double_t val = fitFunc->GetParameter(1);
+         Double_t err = fitFunc->GetParError(1);
+
+         hAsymAmplitude.SetBinContent(iBinX, val);
+         hAsymAmplitude.SetBinError(iBinX, err);
+      }
+   }
+}
+
 
 
 // Description : calculate Asymmetry

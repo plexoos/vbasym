@@ -10,6 +10,7 @@
 #include "WEventCluster.h"
 
 
+enum ESpinState        {kSPIN_DOWN = -1, kSPIN_NULL = 0, kSPIN_UP = +1};
 enum EBeamId           {kBLUE_BEAM = 1,  kYELLOW_BEAM = 2, kUNKNOWN_BEAM};
 enum EBeamSpinState    {kBLUE_UP = 4, kBLUE_DOWN = 8, kYELLOW_UP = 1, kYELLOW_DOWN = 2};
 enum ESingleSpinState  {kBU_Y0 = 4, kBD_Y0 = 8, kB0_YU = 1, kB0_YD = 2};
@@ -61,6 +62,7 @@ extern DoubleSpinStateSet gDoubleSpinStateSet;
 bool        ConvertEtaPhi2Bins(float etaF, float phiF, int &kEta, int &kPhi);
 void        PatchToEtaPhi(int patch, int *eta, int *phi);
 std::string AsString(EBeamId beamId);
+std::string AsString(EBeamId beamId, ESpinState spinState);
 std::string AsString(ESingleSpinState dss);
 std::string AsString(EDoubleSpinState dss);
 

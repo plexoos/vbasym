@@ -88,6 +88,21 @@ string AsString(EBeamId beamId)
 }
 
 
+string AsString(EBeamId beamId, ESpinState spinState)
+{
+   if (beamId == kBLUE_BEAM && spinState == kSPIN_UP)
+      return "u0";
+   if (beamId == kBLUE_BEAM && spinState == kSPIN_DOWN)
+      return "d0";
+   if (beamId == kYELLOW_BEAM && spinState == kSPIN_UP)
+      return "0u";
+   if (beamId == kYELLOW_BEAM && spinState == kSPIN_DOWN)
+      return "0d";
+
+   return "UNK";
+}
+
+
 string AsString(ESingleSpinState dss)
 {
    switch (dss) {

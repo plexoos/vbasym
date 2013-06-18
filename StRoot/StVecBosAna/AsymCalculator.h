@@ -14,7 +14,7 @@
 
 #include "TGraphErrors.h"
 #include "TH1.h"
-#include "TH1D.h"
+#include "TH2.h"
 
 #include "utils/ValErrPair.h"
 
@@ -29,11 +29,13 @@ public:
    ValErrMap     CalcDetAsymSqrtFormula    (TH1 &hUp, TH1 &hDown, DetLRSet detSet);
    void          CalcBunchAsymSqrtFormula(DrawObjContainer *oc);
    void          CalcDelimAsymSqrtFormula(DrawObjContainer *oc);
-   void          CalcOscillPhaseAsymSqrtFormula(TH2 &h2DetCounts_up, TH2 &h2DetCounts_down, TH1 &hAsym, DetLRSet detSet);
    void          CalcStripAsymmetryByProfile(DrawObjContainer *oc);
    void          CalcKinEnergyAChAsym(DrawObjContainer *oc);
 */
-   static TH1D*    CalcAsimAsym(TH1I &hUp, TH1I &hDown, TH1D* hChAsym=0);
+   static void   CalcAsimAsym(TH1I &hUp, TH1I &hDown, TH1D &hAsym);
+   static void   CalcAsimAsym(TH2I &h2DetCounts_up, TH2I &h2DetCounts_down, TH2D &hAsym);
+   static void   FitAsimAsym(TH1D &hAsym);
+   static void   FitAsimAsym(TH2D &hAsym, TH1D &hAsymAmplitude);
    //ValErrMap     CalcDetAsymSqrtFormula    (TH1 &hUp, TH1 &hDown, DetLRSet detSet);
 
    static ValErrPair CalcAsym(Double_t A, Double_t B, Double_t totalA, Double_t totalB);

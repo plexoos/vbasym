@@ -9,7 +9,7 @@
 
 #include "StRoot/StVecBosAna/VecBosEvent.h"
 #include "StRoot/StVecBosAna/VecBosRootFile.h"
-//#include "StRoot/StVecBosAna/VecBosAsymRootFile.h"
+#include "StRoot/StVecBosAna/VecBosAsymRootFile.h"
 
 #include "utils/utils.h"
 
@@ -58,8 +58,8 @@ int main(int argc, char *argv[])
    Info("main", "histFileName:   %s", histFileName.c_str());
    Info("main", "isMc:           %d", isMc);
 
-   VecBosRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc);
-   //VecBosAsymRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc); // to create the symmetry histograms 
+   //VecBosRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc);
+   VecBosAsymRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc); // to create the symmetry histograms 
    VecBosEvent    *vecBosEvent = new VecBosEvent();
 
    TObject *o;
