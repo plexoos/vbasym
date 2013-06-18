@@ -24,7 +24,7 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mP4JetTotal(), mP4JetFirst(), mP4JetRecoil(), mP3TrackRecoilTpc(), mP3TrackRecoilTow(),
    mP3TrackRecoilNeutrals(), mP3TrackRecoilTpcNeutrals(),
    mP3RecoilFromTracks(),
-   mPtKfactor(0),
+   mPtKfactor(0), mPtTrackRecoilWithNeutralsCorrected(0),
    mMinVertexDeltaZ(-1),
    mP3BalanceFromTracks(),
    mCandElecP3AtDca(),
@@ -262,8 +262,15 @@ void VecBosEvent::Process()
 
    CalcRecoilFromTracks();
 
+
    // Calculate the Pt balance as the vector sum: pt elec + pt recoil
    if  (mTracksCandidate.size() == 1) {
+
+      // Correct the recoil via MC 
+     // mPtTrackRecoilWithNeutralsCorrectedPt10 = mP3TrackRecoilTpcNeutrals.Pt() * (0.196 + 0.4606*mP3TrackRecoilTpcNeutrals.Pt() -0.02518*(pow(mP3TrackRecoilTpcNeutrals.Pt(),2)));
+
+      mPtTrackRecoilWithNeutralsCorrected     = mP3TrackRecoilTpcNeutrals.Pt() * (0.196 + 0.4606*mP3TrackRecoilTpcNeutrals.Pt() -0.02518*(pow(mP3TrackRecoilTpcNeutrals.Pt(),2)));
+
       TVector3 mP3JetRecoil;
       mP3JetRecoil.SetXYZ(mP4JetRecoil.Px(), mP4JetRecoil.Py(), mP4JetRecoil.Pz());
 
@@ -908,9 +915,10 @@ void VecBosEvent::clear()
    mP3BalanceFromTracks.SetXYZ(0, 0, 0);
    mCandElecP3AtDca.SetXYZ(0, 0, 0);
    mCandElecP3EScaled.SetXYZ(0, 0, 0);
-   mPtKfactor       =  0;
-   mMinVertexDeltaZ = -1;
-   mLumiEff     = -0;
+   mPtKfactor                          =  0;      
+   mPtTrackRecoilWithNeutralsCorrected =  0;
+   mMinVertexDeltaZ                    = -1;
+   mLumiEff                            = -0;
 }
 
 

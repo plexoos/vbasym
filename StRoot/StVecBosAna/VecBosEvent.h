@@ -101,6 +101,7 @@ public:
    Double_t            mPtBalanceCosPhiFromTracks;  
    Double_t            mPtBalanceCosPhiFromTracks2;  
    Double_t            mPtBalanceCosPhiFromJets; 
+   Double_t            mPtTrackRecoilWithNeutralsCorrected;
    Double_t            mHadRecoilFromTracksEta;
    Double_t            mHadRecoilFromTracksPt;
    TVector3            mCandElecP3AtDca; 
