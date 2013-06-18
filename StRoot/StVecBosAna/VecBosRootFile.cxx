@@ -191,14 +191,13 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
 
    Fill(ev, kCUT_EVENT_NOCUT);
 
-   if ( event->HasJetRecoil() )
-   {
+   if ( event->HasJetRecoil() ) {
       Fill(ev, kCUT_EVENT_HAS_JETRECOIL);
       //((EventHContainer*) fHists->d["event_has_jetrecoil"])->Fill(ev);
 
       if ( event->PassCutFinal() )
          ((EventHContainer *) fHists->d["event_has_jetrecoil_pass_final"])->Fill(ev);
-         //((JetHContainer*) fHists->d["event_jets_has_jetrecoil_pass_final"])->Fill(ev);
+      //((JetHContainer*) fHists->d["event_jets_has_jetrecoil_pass_final"])->Fill(ev);
    }
 
    if ( event->mP3TrackRecoilTpcNeutrals.Mag() > 0)
@@ -228,8 +227,7 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
 
    // Fill track histos
    VecBosTrackPtrSetConstIter iTrack = event->mTracks.begin();
-   for ( ; iTrack != event->mTracks.end(); ++iTrack)
-   {
+   for ( ; iTrack != event->mTracks.end(); ++iTrack) {
       VecBosTrack &track = **iTrack;
 
       ((TrackHContainer *) fHists->d["track"])->Fill(track);
@@ -239,91 +237,81 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
       ((TrackHContainer *) fHists->d["track_candidates"])->Fill(track);
 
 
-      if ( event->mCandElecP3EScaled.Pt() > 15 && event->mPtBalanceCosPhiFromTracks > 18) // Pass final with Pt>15
-      {
+      if ( event->mCandElecP3EScaled.Pt() > 15 && event->mPtBalanceCosPhiFromTracks > 18) { // Pass final with Pt>15
          if ( abs( (track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) >= 0.4 &&
-              abs( (track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) <= 1.8 )
-         {
-             Fill(ev, kCUT_EVENT_PASS_FINAL_QET_PT15);
+               abs( (track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) <= 1.8 ) {
+            Fill(ev, kCUT_EVENT_PASS_FINAL_QET_PT15);
 
-             ((TrackHContainer*) fHists->d["track_cand_pass_final_QEToPT_Pt>15"])->Fill(track); 
+            ((TrackHContainer *) fHists->d["track_cand_pass_final_QEToPT_Pt>15"])->Fill(track);
 
             if ( track.prMuTrack->charge() > 0.)
-               ((TrackHContainer*) fHists->d["W+_track_cand_pass_final_QEToPT_Pt>15"])->Fill(track);
-            if ( track.prMuTrack->charge() < 0.)   
-               ((TrackHContainer*) fHists->d["W-_track_cand_pass_final_QEToPT_Pt>15"])->Fill(track); 
-	 }
+               ((TrackHContainer *) fHists->d["W+_track_cand_pass_final_QEToPT_Pt>15"])->Fill(track);
+            if ( track.prMuTrack->charge() < 0.)
+               ((TrackHContainer *) fHists->d["W-_track_cand_pass_final_QEToPT_Pt>15"])->Fill(track);
+         }
       }
 
 
-      if ( event->mCandElecP3EScaled.Pt() > 15 && event->mPtBalanceCosPhiFromTracks <= 18) // Pass QCD with Pt>15
-      {
+      if ( event->mCandElecP3EScaled.Pt() > 15 && event->mPtBalanceCosPhiFromTracks <= 18) { // Pass QCD with Pt>15
          if ( abs((track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) >= 0.4 &&
-              abs((track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) <= 1.8 )
-         {
+               abs((track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) <= 1.8 ) {
             Fill(ev, kCUT_EVENT_PASS_QCD_QET_PT15);
 
-            ((TrackHContainer*) fHists->d["track_cand_pass_qcd_QEToPT_Pt>15"])->Fill(track); 
+            ((TrackHContainer *) fHists->d["track_cand_pass_qcd_QEToPT_Pt>15"])->Fill(track);
 
             if ( track.prMuTrack->charge() > 0.)
-               ((TrackHContainer*) fHists->d["W+_track_cand_pass_qcd_QEToPT_Pt>15"])->Fill(track);
-            if ( track.prMuTrack->charge() < 0.)   
-               ((TrackHContainer*) fHists->d["W-_track_cand_pass_qcd_QEToPT_Pt>15"])->Fill(track); 
-	 }
+               ((TrackHContainer *) fHists->d["W+_track_cand_pass_qcd_QEToPT_Pt>15"])->Fill(track);
+            if ( track.prMuTrack->charge() < 0.)
+               ((TrackHContainer *) fHists->d["W-_track_cand_pass_qcd_QEToPT_Pt>15"])->Fill(track);
+         }
       }
 
       ////      if ( !event->PassCutsExceptedPtBal() && event->mCandElecP3EScaled.Pt() > 25 ) continue; // Pass Pt>25 GeV
 
 
-      if ( event->mCandElecP3EScaled.Pt() > 25 && event->mPtBalanceCosPhiFromTracks <= 18 ) // select QCD events
-      { 
+      if ( event->mCandElecP3EScaled.Pt() > 25 && event->mPtBalanceCosPhiFromTracks <= 18 ) { // select QCD events
 
          if ( abs((track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) >= 0.4 &&
-              abs((track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) <= 1.8 )
-         {
+               abs((track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) <= 1.8 ) {
             Fill(ev, kCUT_EVENT_PASS_QCD_QET);
 
             ((TrackHContainer *) fHists->d["track_cand_pass_qcd_QEToPT"])->Fill(track);
 
             if ( track.prMuTrack->charge() > 0.)
-               ((TrackHContainer*) fHists->d["W+_track_cand_pass_qcd_QEToPT"])->Fill(track);
-            if ( track.prMuTrack->charge() < 0.) 
-               ((TrackHContainer*) fHists->d["W-_track_cand_pass_qcd_QEToPT"])->Fill(track); 
-   	 }
+               ((TrackHContainer *) fHists->d["W+_track_cand_pass_qcd_QEToPT"])->Fill(track);
+            if ( track.prMuTrack->charge() < 0.)
+               ((TrackHContainer *) fHists->d["W-_track_cand_pass_qcd_QEToPT"])->Fill(track);
+         }
       } // end QCD events
 
 
       //     if ( !event->PassCutFinal() ) continue;
 
-      if ( event->mCandElecP3EScaled.Pt() > 25 && event->mPtBalanceCosPhiFromTracks > 18 ) 
-      { 
+      if ( event->mCandElecP3EScaled.Pt() > 25 && event->mPtBalanceCosPhiFromTracks > 18 ) {
 
 
-        ((TrackHContainer *) fHists->d["track_cand_pass_final"])->Fill(track);
+         ((TrackHContainer *) fHists->d["track_cand_pass_final"])->Fill(track);
 
-        if ( track.prMuTrack->charge() > 0.)
-           ((TrackHContainer *) fHists->d["W+_track_cand_pass_final"])->Fill(track);
-        if ( track.prMuTrack->charge() < 0.)
-           ((TrackHContainer *) fHists->d["W-_track_cand_pass_final"])->Fill(track);
+         if ( track.prMuTrack->charge() > 0.)
+            ((TrackHContainer *) fHists->d["W+_track_cand_pass_final"])->Fill(track);
+         if ( track.prMuTrack->charge() < 0.)
+            ((TrackHContainer *) fHists->d["W-_track_cand_pass_final"])->Fill(track);
 
-        if ( abs((track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) >= 0.4 &&
-                abs((track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) <= 1.8 )  //all cuts applied 
-        {
+         if ( abs((track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) >= 0.4 &&
+               abs((track.prMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) <= 1.8 ) { //all cuts applied
             Fill(ev, kCUT_EVENT_PASS_FINAL_QET);
 
             ((TrackHContainer *) fHists->d["track_cand_pass_final_QEToPT"])->Fill(track);
 
-            if ( track.prMuTrack->charge() > 0.)
-	    {
-	       Fill(ev, kCUT_POSITIVE_EVENT_PASS_FINAL_QET);
-               ((TrackHContainer*) fHists->d["W+_track_cand_pass_final_QEToPT"])->Fill(track);
-	    }
-            if ( track.prMuTrack->charge() < 0.) 
-	    { 
-               Fill(ev, kCUT_NEGATIVE_EVENT_PASS_FINAL_QET);  
-               ((TrackHContainer*) fHists->d["W-_track_cand_pass_final_QEToPT"])->Fill(track);
-	    }
-	} 
+            if ( track.prMuTrack->charge() > 0.) {
+               Fill(ev, kCUT_POSITIVE_EVENT_PASS_FINAL_QET);
+               ((TrackHContainer *) fHists->d["W+_track_cand_pass_final_QEToPT"])->Fill(track);
+            }
+            if ( track.prMuTrack->charge() < 0.) {
+               Fill(ev, kCUT_NEGATIVE_EVENT_PASS_FINAL_QET);
+               ((TrackHContainer *) fHists->d["W-_track_cand_pass_final_QEToPT"])->Fill(track);
+            }
+         }
       }
 
    } // end loop over tracks

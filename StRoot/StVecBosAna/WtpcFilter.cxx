@@ -8,8 +8,8 @@
 
 #include "StMuDSTMaker/COMMON/StMuTrack.h"
 
+#include "Globals.h"
 #include "WtpcFilter.h"
-#include "WanaConst.h"
 
 
 WtpcFilter::WtpcFilter()

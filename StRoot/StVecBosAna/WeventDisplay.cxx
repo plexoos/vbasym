@@ -23,7 +23,6 @@
 #include "StEEmcUtil/StEEmcSmd/EEmcSmdGeom.h"
 
 #include "StVecBosMaker.h"
-#include "WanaConst.h"
 #include "Globals.h"
 #include "WeventDisplay.h"
 

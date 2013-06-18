@@ -6,7 +6,7 @@
 #include "StEmcUtil/geometry/StEmcGeom.h"
 #include "StSpinPool/StJets/StJet.h"
 
-#include "WanaConst.h"
+#include "Types.h"
 #include "WEventCluster.h"
 
 

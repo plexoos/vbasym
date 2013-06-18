@@ -19,7 +19,6 @@
 #include "StMcEvent/StMcTrack.hh"
 
 #include "Globals.h"
-#include "WanaConst.h"
 #include "VecBosEventInfo.h"
 #include "VecBosVertex.h"
 #include "VecBosTrack.h"
@@ -33,80 +32,77 @@ class StJet;
 
 class VecBosEvent : public ProtoEvent
 {
-protected:
-
-   StMuDst           *mStMuDst;          //!
 
 public:
 
-   int                 l2bitET;
-   int                 l2bitRnd;
-   int                 l2EbitET;
-   int                 l2EbitRnd;
-   int                 trigAwaySum[16];   // for lumi
-   int                 trigTotalSum;      // for lumi
-   int                 id;                // eventID
-   int                 runNo;
-   int                 time;
-   float               zdcRate;
-   int                 bx7;               //!
-   int                 bx48;              //! raw from muDst
-   int                 bxStar7;           //!
-   int                 bxStar48;          //!
-   int                 mSpinPattern4Bits; // using spinDb or -1 if failed
-	int                 mSpinDirection;    // use spinDbEnum to interpret the value
-   bool                zTag;
-   Double_t            mCpuTimeEventAna;
-   Double_t            mCpuTimeHistFill;
-   UShort_t            mMuDstNumGTracks;
-   UShort_t            mMuDstNumVertices;
-   UShort_t            mMuDstNumPTracks;
-   UShort_t            mMuDstNumOTracks;
-   UShort_t            mNumGoodVertices;
-   UShort_t            mNumGoodTracks;
-   UShort_t            mNumBTracks;
-   UShort_t            mNumETracks;
-   UShort_t            mNumIsolatedTracks;
-   UShort_t            mNumCandidateTracks;
-   StJets             *mStJets;            //!
-   StJets             *mStJetsNoEndcap;    //! jets noEEMC
-   WeveBEMC            bemc;               //!
-   WeveETOW            etow;               //!
-   WeveEPRS            eprs;               //!
-   WeveESMD            esmd;               //!
-   VecBosJetPtrSet     mJets;              // jet owner
-   VecBosJetPtrSet     mJetsRecoil;        //!
-   VecBosJetPtrSet     mJetsWithIsoTrack;  //!
-   VecBosVertexPtrSet  mVertices;          //
-   VecBosTrackPtrSet   mTracks;            // track owner
+   int                     l2bitET;
+   int                     l2bitRnd;
+   int                     l2EbitET;
+   int                     l2EbitRnd;
+   int                     trigAwaySum[16];   // for lumi
+   int                     trigTotalSum;      // for lumi
+   int                     id;                // eventID
+   int                     runNo;
+   int                     time;
+   float                   zdcRate;
+   int                     bx7;               //!
+   int                     bx48;              //! raw from muDst
+   int                     bxStar7;           //!
+   int                     bxStar48;          //!
+   int                     mSpinPattern4Bits; // using spinDb or -1 if failed
+	int                     mSpinDirection;    // use spinDbEnum to interpret the value
+   bool                    zTag;
+   Double_t                mCpuTimeEventAna;
+   Double_t                mCpuTimeHistFill;
+   UShort_t                mMuDstNumGTracks;
+   UShort_t                mMuDstNumVertices;
+   UShort_t                mMuDstNumPTracks;
+   UShort_t                mMuDstNumOTracks;
+   UShort_t                mNumGoodVertices;
+   UShort_t                mNumGoodTracks;
+   UShort_t                mNumBTracks;
+   UShort_t                mNumETracks;
+   UShort_t                mNumIsolatedTracks;
+   UShort_t                mNumCandidateTracks;
+   StJets                 *mStJets;            //!
+   StJets                 *mStJetsNoEndcap;    //! jets noEEMC
+   WeveBEMC                bemc;               //!
+   WeveETOW                etow;               //!
+   WeveEPRS                eprs;               //!
+   WeveESMD                esmd;               //!
+   VecBosJetPtrSet         mJets;              // jet owner
+   VecBosJetPtrSet         mJetsRecoil;        //!
+   VecBosJetPtrSet         mJetsWithIsoTrack;  //!
+   VecBosVertexPtrSet      mVertices;          //
+   VecBosTrackPtrSet       mTracks;            // track owner
    VecBosCandTrackPtrSet   mTracksCandidate;   //!
-   WEvent             *mWEvent;
-   TLorentzVector      mP4JetTotal;
-   TLorentzVector      mP4JetFirst;
-   TLorentzVector      mP4JetRecoil;
-   TVector3            mP3TrackRecoilTpc;
-   TVector3            mP3TrackRecoilTow;
-   TVector3            mP3TrackRecoilNeutrals;
-   TVector3            mP3TrackRecoilTpcNeutrals;
-   TVector3            mP3RecoilFromTracks;
-   Double_t            mPtKfactor;
-   Float_t             mMinVertexDeltaZ;            // min distance along z between vertices
-   TVector3            mP3BalanceFromTracks;
-   TVector3            mP3BalanceFromTracks2;
-   TVector3            mP3BalanceFromJets;
-   Double_t            mPtBalanceFromTracks;
-   Double_t            mBalanceDeltaPhiFromTracks; 
-   Double_t            mBalanceDeltaPhiFromTracks2;  
-   Double_t            mBalanceDeltaPhiFromJets; 
-   Double_t            mPtBalanceCosPhiFromTracks;  
-   Double_t            mPtBalanceCosPhiFromTracks2;  
-   Double_t            mPtBalanceCosPhiFromJets; 
-   Double_t            mPtTrackRecoilWithNeutralsCorrected;
-   Double_t            mHadRecoilFromTracksEta;
-   Double_t            mHadRecoilFromTracksPt;
-   TVector3            mCandElecP3AtDca; 
-   TVector3            mCandElecP3EScaled; 
-   //float               enecl;
+   WEvent                 *mWEvent;
+   TLorentzVector          mP4JetTotal;
+   TLorentzVector          mP4JetFirst;
+   TLorentzVector          mP4JetRecoil;
+   TVector3                mP3TrackRecoilTpc;
+   TVector3                mP3TrackRecoilTow;
+   TVector3                mP3TrackRecoilNeutrals;
+   TVector3                mP3TrackRecoilTpcNeutrals;
+   TVector3                mP3RecoilFromTracks;
+   Double_t                mPtKfactor;
+   Float_t                 mMinVertexDeltaZ;            // min distance along z between vertices
+   TVector3                mP3BalanceFromTracks;
+   TVector3                mP3BalanceFromTracks2;
+   TVector3                mP3BalanceFromJets;
+   Double_t                mPtBalanceFromTracks;
+   Double_t                mBalanceDeltaPhiFromTracks; 
+   Double_t                mBalanceDeltaPhiFromTracks2;  
+   Double_t                mBalanceDeltaPhiFromJets; 
+   Double_t                mPtBalanceCosPhiFromTracks;  
+   Double_t                mPtBalanceCosPhiFromTracks2;  
+   Double_t                mPtBalanceCosPhiFromJets; 
+   Double_t                mPtTrackRecoilWithNeutralsCorrected;
+   Double_t                mHadRecoilFromTracksEta;
+   Double_t                mHadRecoilFromTracksPt;
+   TVector3                mCandElecP3AtDca; 
+   TVector3                mCandElecP3EScaled; 
+   //float                   enecl;
    float mLumiEff;
 
    static const float  sMinTrackIsoDeltaR;    //! (rad) near-cone size
@@ -174,6 +170,10 @@ public:
    TVector3       CalcP3InConeETow(VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
    TVector3       CalcP3InConeTpc (VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
    TVector3       CalcP3MissingEnergy() const;
+
+protected:
+
+   StMuDst           *mStMuDst;          //!
 
 private:
 

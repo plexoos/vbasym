@@ -627,14 +627,14 @@ WeveCluster VecBosEvent::SumBTowPatch(int etaBin, int phiBin, int etaWidth, int 
    float  nomBTowRadius = gBTowGeom->Radius();
 
    for (int iEta = etaBin; iEta < etaBin + etaWidth; iEta++)
-   { // trim in eta-direction
-      if (iEta < 0) continue;
-      if (iEta >= mxBTetaBin) continue;
+   {
+      // trim in eta-direction
+      if (iEta < 0 || iEta >= mxBTetaBin) continue;
 
       for (int iPhi = phiBin; iPhi < phiBin + phiWidth; iPhi++)
       {
          // wrap up in the phi-direction
-         int   iPhi_p  = (iPhi + mxBTphiBin) % mxBTphiBin;         // keep it always positive
+         int   iPhi_p  = (iPhi + mxBTphiBin) % mxBTphiBin;  // keep it always positive
          int   towerId = gMapBTowEtaPhiBin2Id[ iEta + iPhi_p * mxBTetaBin];
          float energy  = bemc.eneTile[kBTow][towerId - 1];
 
@@ -688,7 +688,8 @@ TVector3 VecBosEvent::CalcP3InConeBTow(VecBosTrack *vbTrack, UShort_t cone1d2d, 
    TVector3 trackP3 = vbTrack->mP3AtDca * scale;
 
    // process BTOW hits
-   for (int iBTow = 0; iBTow < mxBtow; iBTow++) {
+   for (int iBTow = 0; iBTow < mxBtow; iBTow++)
+   {
       float energy = bemc.eneTile[kBTow][iBTow];
       if (energy <= 0) continue;
 

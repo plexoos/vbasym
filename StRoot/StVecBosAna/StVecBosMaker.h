@@ -207,7 +207,7 @@ private:
 
    void initHistos();
    void initEHistos();
-   void initGeom();
+   void InitGeom();
 
 public:
 
@@ -231,7 +231,6 @@ public:
    void         setMC(int x)                    { isMC = x; }
    void         setMaxDisplayEve(int n)         { par_maxDisplEve = n; }
    void         AttachSpinDb(StSpinDbMaker *mk) { mStSpinDbMaker = mk; }
-   //TVector3     RecoilFromTracksP3;
 
    // tree analysis
    void  chainFile( const Char_t *name );

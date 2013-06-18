@@ -6,7 +6,7 @@
 #include "TH2F.h"
 #include "TLine.h"
 
-#include "WanaConst.h"
+#include "Types.h"
 #include "VecBosVertex.h"
 
 

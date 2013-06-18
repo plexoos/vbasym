@@ -159,7 +159,7 @@ Int_t StVecBosMaker::Init()
 
    mGeomEmc = new EEmcGeomSimple();
    mGeomSmd = EEmcSmdGeom::instance();
-   initGeom();
+   InitGeom();
 
    mEventDisplay = new WeventDisplay(this, par_maxDisplEve);
 
@@ -181,7 +181,6 @@ Int_t StVecBosMaker::Init()
       mWtree = new TTree("t", "mWtree");
       mVecBosEvent = new VecBosEvent();
       mWtree->Branch("e", "VecBosEvent", &mVecBosEvent, 128000, 0); // splitlevel=0. very important for custom streamers
-
    }
 
    assert(HList);
@@ -343,7 +342,6 @@ void StVecBosMaker::Clear(const Option_t *)
    mVecBosEvent->clear();
    //delete mVecBosEvent;
    //mVecBosEvent = 0;
-   //RecoilFromTracksP3 = TVector3(0, 0, 0);
 }
 
 
@@ -512,7 +510,7 @@ Int_t StVecBosMaker::Make()
 }
 
 
-void StVecBosMaker::initGeom()
+void StVecBosMaker::InitGeom()
 {
    // BTOW
    memset(gMapBTowEtaPhiBin2Id, 0, sizeof(gMapBTowEtaPhiBin2Id));
@@ -769,7 +767,7 @@ int StVecBosMaker::ReadMuDstBTOW()
       //   gain = gains_BTOW[softID];
       //}
 
-      //printf("id=%d gain=%f\n",softID,gain);
+      //printf("id=%d gain=%f\n", softID, gain);
 
       // method for shifting energy scale
       gain = gain * mParBTOWScale; //(default is mParBTOWScale=1)
