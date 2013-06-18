@@ -19,6 +19,9 @@ void analysis2011()
    gStyle->SetOptStat("mruoi");
    gStyle->SetPadRightMargin(0.25);
    gStyle->SetMarkerStyle(20);
+   gStyle->SetStatX(0.99);
+   gStyle->SetOptFit(0111);
+
 
    //float lumiDataTot       = 24.28; // pb-1
    float lumiDataTot       = 24.42; // pb-1
@@ -1471,6 +1474,11 @@ void analysis2011()
 
    c10d_1->cd();
    c10d_1->SetLogz(1);
+
+   TF1 *fitPol2  = new TF1("fitPol2","pol2");
+   fitPol2 -> SetLineColor(kRed);
+   hWp_Wp_PtWGenOverReco -> Fit(fitPol2);
+
    hWp_Wp_PtWGenOverReco->GetYaxis()->SetTitleOffset(1.1);
    hWp_Wp_PtWGenOverReco->SetTitle("W+ sample - MC Correction; Tracks-based recoil P_{T} [GeV/c]; W P_{T}/Recoil P_{T}");
    hWp_Wp_PtWGenOverReco->Draw("E1");
@@ -1501,6 +1509,7 @@ void analysis2011()
    c10di->Divide(2, 2);
 
    c10di_1->cd();
+   hWp_Wp_PtWGenOverReco_zoomin -> Fit(fitPol2);
    hWp_Wp_PtWGenOverReco_zoomin->GetYaxis()->SetTitleOffset(1.1);
    hWp_Wp_PtWGenOverReco_zoomin->SetTitle("W+ sample - MC Correction; Tracks-based recoil P_{T} [GeV/c]; W P_{T}/Recoil P_{T}");
    hWp_Wp_PtWGenOverReco_zoomin->Draw("E1");
@@ -1527,7 +1536,7 @@ void analysis2011()
    c10e->Divide(2, 2);
 
    c10e_1->cd();
-   c10e_1->SetLogz(1);
+   hWm_Wm_PtWGenOverReco -> Fit(fitPol2);
    hWm_Wm_PtWGenOverReco->GetYaxis()->SetTitleOffset(1.1);
    hWm_Wm_PtWGenOverReco->SetTitle("W- sample - MC Correction; Tracks-based recoil P_{T} [GeV/c]; W P_{T}/Recoil P_{T}");
    hWm_Wm_PtWGenOverReco->Draw("E1");
@@ -1554,6 +1563,8 @@ void analysis2011()
    c10ei->Divide(2, 2);
 
    c10ei_1->cd();
+   //hWm_Wm_PtWGenOverReco_zoomin -> SetStats(0);
+   hWm_Wm_PtWGenOverReco_zoomin -> Fit(fitPol2);
    hWm_Wm_PtWGenOverReco_zoomin->GetYaxis()->SetTitleOffset(1.1);
    hWm_Wm_PtWGenOverReco_zoomin->SetTitle("W- sample - MC Correction; Tracks-based recoil P_{T} [GeV/c]; W P_{T}/Recoil P_{T}");
    hWm_Wm_PtWGenOverReco_zoomin->Draw("E1");
