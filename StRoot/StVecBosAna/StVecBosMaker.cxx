@@ -1444,8 +1444,7 @@ void StVecBosMaker::ReadMuDstVerticesTracks()
  *      = -x10 -> Bad fit, not enough points to start
  *
  *      = +x11 -> Short track pointing to EEMC
-*/
-/**
+ *
  * Saves all tracks
  *
  * Before: if

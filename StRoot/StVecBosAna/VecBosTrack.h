@@ -160,6 +160,18 @@ struct CompareVecBosTrackPtr
    bool operator()(const VecBosTrack* lhs, const VecBosTrack* rhs) const { return (*lhs) > (*rhs); }
 };
 
+/**
+ * Sorting based on the total cluster energy. Therefore valid only for tracks
+ * with cluster, i.e. candidates.
+ */
+struct CompareVecBosCandTrackPtr
+{
+   bool operator()(const VecBosTrack* lhs, const VecBosTrack* rhs) const
+   {
+      return lhs > rhs;
+   }
+};
+
 typedef std::set<VecBosTrack, CompareVecBosTrack>     VecBosTrackSet;
 typedef VecBosTrackSet::iterator                      VecBosTrackSetIter;
 typedef VecBosTrackSet::const_iterator                VecBosTrackSetConstIter;
@@ -167,5 +179,9 @@ typedef VecBosTrackSet::const_iterator                VecBosTrackSetConstIter;
 typedef std::set<VecBosTrack*, CompareVecBosTrackPtr> VecBosTrackPtrSet;
 typedef VecBosTrackPtrSet::iterator                   VecBosTrackPtrSetIter;
 typedef VecBosTrackPtrSet::const_iterator             VecBosTrackPtrSetConstIter;
+
+typedef std::set<VecBosTrack*, CompareVecBosCandTrackPtr> VecBosCandTrackPtrSet;
+typedef VecBosCandTrackPtrSet::iterator                   VecBosCandTrackPtrSetIter;
+typedef VecBosCandTrackPtrSet::const_iterator             VecBosCandTrackPtrSetConstIter;
 
 #endif

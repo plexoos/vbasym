@@ -69,11 +69,8 @@ VecBosTrack::~VecBosTrack()
 
 //bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && !IsInJet() && mP3AtDca.Pt() >= sMinPt); }
 //bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && mP3AtDca.Pt() >= sMinPt); }
-
 //bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && mCluster2x2.energy >= sMinCandidateTrackClusterE); }
-
 bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && IsIsolated()); }
-
 //bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && mCluster2x2.energy >= sMinCandidateTrackClusterE && mCluster2x2.ET/mCluster4x4.ET > 0.9); }
 
 
@@ -239,7 +236,6 @@ void VecBosTrack::print(int opt) const
 }
 
 
-/** */
 bool VecBosTrack::ExtendTrack2Barrel()
 {
    //printf("******* extendTracks() nVert=%d\n", mVecBosEvent->mVertices.size());
@@ -310,8 +306,7 @@ void VecBosTrack::MatchTrack2BtowCluster()
    //hA[34] ->Fill(mCluster2x2.adcSum, trackPT);
    //hA[110]->Fill(mCluster2x2.ET);
 
-   // Compute surroinding cluster energy
-   // 4x4 cluster lower left tower
+   // Compute surroinding cluster energy. 4x4 cluster lower left tower
    mCluster4x4 = mEvent->SumBTowPatch(mCluster2x2.iEta - 1, mCluster2x2.iPhi - 1, 4, 4, mVertex->z); // needed for lumi monitor
 
    //if (mCluster2x2.ET < mMinBClusterEnergy) continue; // too low energy

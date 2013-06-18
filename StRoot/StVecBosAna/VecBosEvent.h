@@ -79,7 +79,7 @@ public:
    VecBosJetPtrSet     mJetsWithIsoTrack;  //!
    VecBosVertexPtrSet  mVertices;          //
    VecBosTrackPtrSet   mTracks;            // track owner
-   VecBosTrackPtrSet   mTracksCandidate;   //!
+   VecBosCandTrackPtrSet   mTracksCandidate;   //!
    WEvent             *mWEvent;
    TLorentzVector      mP4JetTotal;
    TLorentzVector      mP4JetFirst;
@@ -106,7 +106,7 @@ public:
    Double_t            mHadRecoilFromTracksPt;
    TVector3            mCandElecP3AtDca; 
    TVector3            mCandElecP3EScaled; 
-   //   float               enecl;
+   //float               enecl;
    float mLumiEff;
 
    static const float  sMinTrackIsoDeltaR;    //! (rad) near-cone size

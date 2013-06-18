@@ -53,15 +53,12 @@ VecBosEvent::~VecBosEvent()
    //Info("~VecBosEvent()", "this: %x", this);
 
    while (!mJets.empty()) delete *mJets.begin(), mJets.erase(mJets.begin());
-   //while(!mJetsRecoil.empty()) delete *mJetsRecoil.begin(), mJetsRecoil.erase(mJetsRecoil.begin());
-   //while(!mJetsWithIsoTrack.empty()) delete *mJetsWithIsoTrack.begin(), mJetsWithIsoTrack.erase(mJetsWithIsoTrack.begin());
-   //mJets.clear();
+   //mJets.clear(); // unnecessary?
    mJetsRecoil.clear();
    mJetsWithIsoTrack.clear();
 
    while (!mTracks.empty()) delete *mTracks.begin(), mTracks.erase(mTracks.begin());
-   //while(!mTracksCandidate.empty()) delete *mTracksCandidate.begin(), mTracksCandidate.erase(mTracksCandidate.begin());
-   //mTracks.clear();
+   //mTracks.clear(); // unnecessary?
    mTracksCandidate.clear();
 
    while (!mVertices.empty()) delete *mVertices.begin(), mVertices.erase(mVertices.begin());
@@ -120,7 +117,8 @@ void VecBosEvent::AddStJets(StJets *stJets, StJets *stJetsNoEndcap)
    TIter         jetsIter(jets);
    jetsIter.Reset();
 
-   while ( StJet *stJet = (StJet *) jetsIter() ) {
+   while ( StJet *stJet = (StJet *) jetsIter() )
+   {
       VecBosJet *vbJet = new VecBosJet(*stJet);
       vbJet->mEvent = this;
       mJets.insert(vbJet);
@@ -155,7 +153,8 @@ UInt_t VecBosEvent::GetNumTracksWithBCluster()
 bool VecBosEvent::PassCutsExceptedPtBal()
 {
    if ( mTracksCandidate.size() > 0 &&
-         (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= VecBosTrack::sMinCandidateTrackClusterE) {
+        (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= VecBosTrack::sMinCandidateTrackClusterE)
+   {
       return true;
    }
 
@@ -167,7 +166,8 @@ bool VecBosEvent::PassCutFinal()
 {
    //if (mTracksCandidate.size() > 0 && CalcP3MissingEnergy().Pt() > 18
    if ( mTracksCandidate.size() > 0 && mPtBalanceCosPhiFromTracks > 18 &&
-         (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= VecBosTrack::sMinCandidateTrackClusterE) {
+        (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= VecBosTrack::sMinCandidateTrackClusterE)
+   {
       return true;
    }
 
@@ -185,7 +185,8 @@ bool VecBosEvent::HasWLepton() const
 bool VecBosEvent::HasW() const
 {
    if ( HasCandidateTrack() && mPtBalanceCosPhiFromTracks > 18 &&
-         (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= VecBosTrack::sMinCandidateTrackClusterE) {
+        (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= VecBosTrack::sMinCandidateTrackClusterE)
+   {
       return true;
    }
 
@@ -194,7 +195,6 @@ bool VecBosEvent::HasW() const
 
 
 //if ( event->mCandElecP3EScaled.Pt() > 10 && event->mPtBalanceCosPhiFromTracks > 18)
-
 
 
 void VecBosEvent::Process()
@@ -207,7 +207,8 @@ void VecBosEvent::Process()
    UShort_t vertexId = 0;
 
    VecBosVertexPtrSetIter iVertex = mVertices.begin();
-   for ( ; iVertex != mVertices.end(); ++iVertex, vertexId++) {
+   for ( ; iVertex != mVertices.end(); ++iVertex, vertexId++)
+   {
       VecBosVertex &vertex = **iVertex;
       vertex.Process();
       vertex.mId = vertexId;
@@ -218,7 +219,8 @@ void VecBosEvent::Process()
 
       VecBosVertexPtrSetIter iVertex2 = iVertex; // initialize with the current one
       ++iVertex2; // advance to the next one
-      for ( ; iVertex2 != mVertices.end(); ++iVertex2) {
+      for ( ; iVertex2 != mVertices.end(); ++iVertex2)
+      {
          VecBosVertex &vertex2 = **iVertex2;
          if ( !vertex2.IsGood()) continue;
 
@@ -232,14 +234,16 @@ void VecBosEvent::Process()
    // Process tracks
    //Info("Process", "Process tracks");
    VecBosTrackPtrSetIter iTrack = mTracks.begin();
-   for ( ; iTrack != mTracks.end(); ++iTrack) {
+   for ( ; iTrack != mTracks.end(); ++iTrack)
+   {
       VecBosTrack &track = **iTrack;
       track.Process();
 
-      if (track.IsGood())     mNumGoodTracks++;
-      if (track.IsBTrack())   mNumBTracks++;
-      if (track.IsETrack())   mNumETracks++;
-      if (track.IsIsolated()) {
+      if (track.IsGood())   mNumGoodTracks++;
+      if (track.IsBTrack()) mNumBTracks++;
+      if (track.IsETrack()) mNumETracks++;
+      if (track.IsIsolated())
+      {
          //Info("Process()", "Iso track found");
          mNumIsolatedTracks++;
 
@@ -259,42 +263,40 @@ void VecBosEvent::Process()
    }
 
    ProcessJets();
-
    CalcRecoilFromTracks();
 
 
    // Calculate the Pt balance as the vector sum: pt elec + pt recoil
-   if  (mTracksCandidate.size() == 1) {
-
-      // Correct the recoil via MC 
+   if  (mTracksCandidate.size() == 1)
+   {
+     // Correct the recoil via MC 
      // mPtTrackRecoilWithNeutralsCorrectedPt10 = mP3TrackRecoilTpcNeutrals.Pt() * (0.196 + 0.4606*mP3TrackRecoilTpcNeutrals.Pt() -0.02518*(pow(mP3TrackRecoilTpcNeutrals.Pt(),2)));
-
-      mPtTrackRecoilWithNeutralsCorrected     = mP3TrackRecoilTpcNeutrals.Pt() * (0.196 + 0.4606*mP3TrackRecoilTpcNeutrals.Pt() -0.02518*(pow(mP3TrackRecoilTpcNeutrals.Pt(),2)));
+      mPtTrackRecoilWithNeutralsCorrected     = mP3TrackRecoilTpcNeutrals.Pt() * (0.196 + 0.4606*mP3TrackRecoilTpcNeutrals.Pt() -0.02518*(pow(mP3TrackRecoilTpcNeutrals.Pt(), 2)));
 
       TVector3 mP3JetRecoil;
       mP3JetRecoil.SetXYZ(mP4JetRecoil.Px(), mP4JetRecoil.Py(), mP4JetRecoil.Pz());
 
-      mP3BalanceFromJets       = mP3JetRecoil + (*mTracksCandidate.begin())->GetP3EScaled();
-      mBalanceDeltaPhiFromJets = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3BalanceFromJets);
-      mPtBalanceCosPhiFromJets = mP3BalanceFromJets.Pt() * cos(mBalanceDeltaPhiFromJets) ;
+      mP3BalanceFromJets            = mP3JetRecoil + (*mTracksCandidate.begin())->GetP3EScaled();
+      mBalanceDeltaPhiFromJets      = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3BalanceFromJets);
+      mPtBalanceCosPhiFromJets      = mP3BalanceFromJets.Pt() * cos(mBalanceDeltaPhiFromJets) ;
 
-      mP3BalanceFromTracks       = mP3TrackRecoilTpcNeutrals + (*mTracksCandidate.begin())->GetP3EScaled();
-      mBalanceDeltaPhiFromTracks = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3BalanceFromTracks);
-      mPtBalanceCosPhiFromTracks = mP3BalanceFromTracks.Pt() * cos(mBalanceDeltaPhiFromTracks) ;
+      mP3BalanceFromTracks          = mP3TrackRecoilTpcNeutrals + (*mTracksCandidate.begin())->GetP3EScaled();
+      mBalanceDeltaPhiFromTracks    = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3BalanceFromTracks);
+      mPtBalanceCosPhiFromTracks    = mP3BalanceFromTracks.Pt() * cos(mBalanceDeltaPhiFromTracks) ;
 
       //mP3BalanceFromTracks2       = mP3TrackRecoilTow + (*mTracksCandidate.begin())->mP3AtDca;
-      mP3BalanceFromTracks2       = mP3TrackRecoilTpc + (*mTracksCandidate.begin())->GetP3EScaled();
+      mP3BalanceFromTracks2         = mP3TrackRecoilTpc + (*mTracksCandidate.begin())->GetP3EScaled();
       //mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3TrackRecoilTow);
-      mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3BalanceFromTracks2);
-      mPtBalanceCosPhiFromTracks2 = mP3BalanceFromTracks2.Pt() * cos(mBalanceDeltaPhiFromTracks2) ;
+      mBalanceDeltaPhiFromTracks2   = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3BalanceFromTracks2);
+      mPtBalanceCosPhiFromTracks2   = mP3BalanceFromTracks2.Pt() * cos(mBalanceDeltaPhiFromTracks2) ;
 
-      mCandElecP3AtDca   = (*mTracksCandidate.begin())->GetP3AtDca();
-      mCandElecP3EScaled = (*mTracksCandidate.begin())->GetP3EScaled();
+      mCandElecP3AtDca              = (*mTracksCandidate.begin())->GetP3AtDca();
+      mCandElecP3EScaled            = (*mTracksCandidate.begin())->GetP3EScaled();
    }
 }
 
 
-/**  Process jets */
+/** Process jets */
 void VecBosEvent::ProcessJets()
 {
    //Info("Process", "Process jets");
@@ -304,7 +306,8 @@ void VecBosEvent::ProcessJets()
    VecBosJetPtrSetConstIter iJet = mJets.begin();
    mP4JetFirst = *iJet ? **iJet : TLorentzVector();
 
-   for ( ; iJet != mJets.end(); ++iJet) {
+   for ( ; iJet != mJets.end(); ++iJet)
+   {
       VecBosJet *vbJet = *iJet;
       vbJet->Process();
       //printf("\nstJet: ");
@@ -347,8 +350,10 @@ void VecBosEvent::CalcRecoilFromTracks()
    //printf("\ntrackCandidate: ");
    //trackCandidate.mP3AtDca.Print();
 
+   // To calculate 
    VecBosTrackPtrSetIter iTrack = mTracks.begin();
-   for (; iTrack != mTracks.end(); ++iTrack) {
+   for (; iTrack != mTracks.end(); ++iTrack)
+   {
       VecBosTrack &track = **iTrack;
       //printf("\ntrack: ");
       //track.mP3AtDca.Print();
@@ -375,17 +380,17 @@ void VecBosEvent::CalcRecoilFromTracks()
       }
    }
 
-
    // Process un-tracked BTOW hits
-   for (int iBTow = 0; iBTow < mxBtow; iBTow++) {
+   for (int iBTow = 0; iBTow < mxBtow; iBTow++)
+   {
       float eneTo = bemc.eneTile[kBTow][iBTow];
-      //eneTo = bemc.eneTile[kBTow][iBTow];
+
       if (eneTo <= 0.200) continue; // skip towers with energy below noise
 
       //printf("tower energy: %f\n", eneTo);
 
       // Correct BCal tower position to the vertex position
-      //  TVector3 calP = positionBtow[i] - TVector3(0, 0, vertex.mPosition.Z());
+      //TVector3 calP = positionBtow[i] - TVector3(0, 0, vertex.mPosition.Z());
       //TVector3 calP = positionBtow[i] - TVector3(0, 0, trackCandidate.mVertex->mPosition.Z());
 
       TVector3 towerP = gBCalTowerCoords[iBTow] -  trackCandidate.mVertex->mPosition;
@@ -394,34 +399,32 @@ void VecBosEvent::CalcRecoilFromTracks()
       //printf("tower Pt: %f\n", towerP.Pt());
       //printf("tower Coordinate: X=%f: Y=%f: Z=%f \n", towCoord.X(),towCoord.Y(),towCoord.Z() );
 
+      bool hasMatch            = false;
+      bool PartOfElecCandidate = false;
 
-      bool PartOfElecCandidate  = false;
-      //Check if the tower belongs to the lectron 2x2 candidate
+      //Check if the tower belongs to the electron 2x2 candidate
       TVector3 distToCluster = (-10, -10, -10);  // nonsense value
       distToCluster = trackCandidate.mCluster2x2.position - towCoord;
       printf("Distance of tower to electron cluster: %f\n", distToCluster.Mag());
       if (distToCluster.Mag() <= 2 * VecBosTrack::sMaxTrackClusterDist) PartOfElecCandidate = true;
       //printf("PartOfElecCandidate= %d\n", PartOfElecCandidate);
 
-      bool HasMatch  = false;
-
       //loop over tracks to and exclude towers with a matching track
       VecBosTrackPtrSetIter iTr = mTracks.begin();
-      for (; iTr != mTracks.end(); ++iTr)
+      for ( ; iTr != mTracks.end(); ++iTr)
       {
-         VecBosTrack &tr = **iTr;
-         TVector3 trP3 = tr.mP3AtDca;
-         TVector3 trCoorAtBTow = tr.GetCoordAtBTow();
+         VecBosTrack &tr           = **iTr;
+         TVector3     trP3         = tr.mP3AtDca;
+         TVector3     trCoorAtBTow = tr.GetCoordAtBTow();
          //printf("Track coordinate at  BTower: %f\n", trCoorAtBTow.Mag() );
+
          if (trCoorAtBTow.Mag() == 0.000000) continue; // track does not extend to barrel
          //printf("Track coordinate at BTower: X=%f Y=%f Z=%f \n", trCoorAtBTow.X(), trCoorAtBTow.Y(), trCoorAtBTow.Z() );
 
          //TVector3 trCoorAtBTow = (tr.mCoorAtBTow->position.x(),tr.mCoorAtBTow.position.y(),tr.mCoorAtBTow.position.z());
 
-         // if (trP3.DeltaR(towerP)    < 0.1) HasMatch = true;// Checks for a track matching the tower
-         // if (HasMatch == true)   continue;
-         //-------------------------------------------------------------------
-
+         //if (trP3.DeltaR(towerP)    < 0.1) hasMatch = true;// Checks for a track matching the tower
+         //if (hasMatch == true)   continue;
          //if ( mTracks->ExtendTrack2Barrel() == false) continue;
 
          // spacial separation (track - cluster)
@@ -430,15 +433,13 @@ void VecBosEvent::CalcRecoilFromTracks()
          //printf("Distance track to Tower: %f\n", distToTower.Mag());
 
          if (distToTower.Mag() <= VecBosTrack::sMaxTrackClusterDist) {
-            HasMatch = true; // the TPC track maches to the tower
+            hasMatch = true; // the TPC track maches to the tower
             break;
          }
-         //if (HasMatch) continue;
-         //---------------------------------------------------------------------------
       }
 
-      //printf("Tower has a match: %d\n",HasMatch);
-      if (!HasMatch && !PartOfElecCandidate)
+      //printf("Tower has a match: %d\n",hasMatch);
+      if (!hasMatch && !PartOfElecCandidate)
       {
          mP3TrackRecoilNeutrals += towerP;
          //printf("Recoil neutrals Pt: %f\n", mP3TrackRecoilNeutrals.Pt());
@@ -484,7 +485,8 @@ void VecBosEvent::MCanalysis()
 bool VecBosEvent::IsRecoilJet(VecBosJet *vbJet) const
 {
    VecBosTrackPtrSetConstIter iTrack = mTracksCandidate.begin();
-   for ( ; iTrack != mTracksCandidate.end(); ++iTrack) {
+   for ( ; iTrack != mTracksCandidate.end(); ++iTrack)
+   {
       VecBosTrack &track = **iTrack;
       Double_t deltaR = vbJet->Vect().DeltaR( track.mP3AtDca );
 
@@ -624,11 +626,13 @@ WeveCluster VecBosEvent::SumBTowPatch(int etaBin, int phiBin, int etaWidth, int 
    double sumW          = 0;
    float  nomBTowRadius = gBTowGeom->Radius();
 
-   for (int iEta = etaBin; iEta < etaBin + etaWidth; iEta++) { // trim in eta-direction
+   for (int iEta = etaBin; iEta < etaBin + etaWidth; iEta++)
+   { // trim in eta-direction
       if (iEta < 0) continue;
       if (iEta >= mxBTetaBin) continue;
 
-      for (int iPhi = phiBin; iPhi < phiBin + phiWidth; iPhi++) {
+      for (int iPhi = phiBin; iPhi < phiBin + phiWidth; iPhi++)
+      {
          // wrap up in the phi-direction
          int   iPhi_p  = (iPhi + mxBTphiBin) % mxBTphiBin;         // keep it always positive
          int   towerId = gMapBTowEtaPhiBin2Id[ iEta + iPhi_p * mxBTetaBin];
