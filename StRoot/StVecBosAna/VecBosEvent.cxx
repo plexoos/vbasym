@@ -164,7 +164,7 @@ bool VecBosEvent::PassCutsExceptedPtBal()
 
 bool VecBosEvent::PassCutFinal()
 {
-   //if (mTracksCandidate.size() > 0 && CalcP3MissingEnergy().Pt() > 18
+   //if (mTracksCandidate.size() > 0 && GetMissingEnergy().Pt() > 18
    if ( mTracksCandidate.size() > 0 && mPtBalanceCosPhiFromTracks > 18 &&
         (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= VecBosTrack::sMinCandidateTrackClusterE)
    {
@@ -269,9 +269,9 @@ void VecBosEvent::Process()
    // Calculate the Pt balance as the vector sum: pt elec + pt recoil
    if  (mTracksCandidate.size() == 1)
    {
-     // Correct the recoil via MC 
-     // mPtTrackRecoilWithNeutralsCorrectedPt10 = mP3TrackRecoilTpcNeutrals.Pt() * (0.196 + 0.4606*mP3TrackRecoilTpcNeutrals.Pt() -0.02518*(pow(mP3TrackRecoilTpcNeutrals.Pt(),2)));
-      mPtTrackRecoilWithNeutralsCorrected     = mP3TrackRecoilTpcNeutrals.Pt() * (0.196 + 0.4606*mP3TrackRecoilTpcNeutrals.Pt() -0.02518*(pow(mP3TrackRecoilTpcNeutrals.Pt(), 2)));
+      // Correct the recoil via MC 
+      // mPtTrackRecoilWithNeutralsCorrectedPt10 = mP3TrackRecoilTpcNeutrals.Pt() * (0.196 + 0.4606*mP3TrackRecoilTpcNeutrals.Pt() -0.02518*(pow(mP3TrackRecoilTpcNeutrals.Pt(),2)));
+      mPtTrackRecoilWithNeutralsCorrected = mP3TrackRecoilTpcNeutrals.Pt() * (0.196 + 0.4606*mP3TrackRecoilTpcNeutrals.Pt() - 0.02518*(pow(mP3TrackRecoilTpcNeutrals.Pt(), 2)));
 
       TVector3 mP3JetRecoil;
       mP3JetRecoil.SetXYZ(mP4JetRecoil.Px(), mP4JetRecoil.Py(), mP4JetRecoil.Pz());
@@ -376,7 +376,6 @@ void VecBosEvent::CalcRecoilFromTracks()
       }
       else {
          mP3TrackRecoilTow += track.mP3AtDca;
-         //   mP3TrackRecoilNeutrals += track.mP3AtDca;
       }
    }
 
@@ -400,14 +399,14 @@ void VecBosEvent::CalcRecoilFromTracks()
       //printf("tower Coordinate: X=%f: Y=%f: Z=%f \n", towCoord.X(),towCoord.Y(),towCoord.Z() );
 
       bool hasMatch            = false;
-      bool PartOfElecCandidate = false;
+      bool partOfElecCandidate = false;
 
       //Check if the tower belongs to the electron 2x2 candidate
       TVector3 distToCluster = (-10, -10, -10);  // nonsense value
       distToCluster = trackCandidate.mCluster2x2.position - towCoord;
       printf("Distance of tower to electron cluster: %f\n", distToCluster.Mag());
-      if (distToCluster.Mag() <= 2 * VecBosTrack::sMaxTrackClusterDist) PartOfElecCandidate = true;
-      //printf("PartOfElecCandidate= %d\n", PartOfElecCandidate);
+      if (distToCluster.Mag() <= 2 * VecBosTrack::sMaxTrackClusterDist) partOfElecCandidate = true;
+      //printf("partOfElecCandidate= %d\n", partOfElecCandidate);
 
       //loop over tracks to and exclude towers with a matching track
       VecBosTrackPtrSetIter iTr = mTracks.begin();
@@ -428,7 +427,7 @@ void VecBosEvent::CalcRecoilFromTracks()
          //if ( mTracks->ExtendTrack2Barrel() == false) continue;
 
          // spacial separation (track - cluster)
-         TVector3 distToTower = (-10, -10, -10);  // nonsense value
+         TVector3 distToTower(-10, -10, -10);  // nonsense value
          distToTower = trCoorAtBTow - towCoord;
          //printf("Distance track to Tower: %f\n", distToTower.Mag());
 
@@ -439,7 +438,7 @@ void VecBosEvent::CalcRecoilFromTracks()
       }
 
       //printf("Tower has a match: %d\n",hasMatch);
-      if (!hasMatch && !PartOfElecCandidate)
+      if (!hasMatch && !partOfElecCandidate)
       {
          mP3TrackRecoilNeutrals += towerP;
          //printf("Recoil neutrals Pt: %f\n", mP3TrackRecoilNeutrals.Pt());
@@ -601,8 +600,10 @@ WeveCluster VecBosEvent::FindMaxBTow2x2(int etaBin, int phiBin, float zVert)
    // Just 4 cases of 2x2 clusters
    float maxET = 0;
 
-   for (int iEta = etaBin - 1; iEta <= etaBin; iEta++) {
-      for (int iPhi = phiBin - 1; iPhi <= phiBin; iPhi++) {
+   for (int iEta = etaBin - 1; iEta <= etaBin; iEta++)
+   {
+      for (int iPhi = phiBin - 1; iPhi <= phiBin; iPhi++)
+      {
          WeveCluster cluster = SumBTowPatch(iEta, iPhi, L, L, zVert);
          if (maxET > cluster.ET) continue;
          maxET = cluster.ET;
@@ -780,10 +781,10 @@ TVector3 VecBosEvent::CalcP3InConeTpc(VecBosTrack *vbTrack, UShort_t cone1d2d, F
 }
 
 
-TVector3 VecBosEvent::CalcP3MissingEnergy() const
+TVector3 VecBosEvent::GetMissingEnergy() const
 {
    if (mTracksCandidate.size() < 1) {
-      Warning("CalcP3MissingEnergy", "No track/lepton candidate: Cannot calculate P3Balance");
+      Warning("GetMissingEnergy", "No track/lepton candidate: Cannot calculate P3Balance");
       return TVector3();
    }
 

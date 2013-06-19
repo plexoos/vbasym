@@ -67,13 +67,11 @@ void VecBosAsymRootFile::BookHists()
 void VecBosAsymRootFile::Fill(ProtoEvent &ev)
 {
    VecBosEvent& event = (VecBosEvent&) ev;
-   //VecBosEvent *event = (VecBosEvent *) &ev;
 
    Fill(ev, kCUT_EVENT_NOCUT);
 
    if ( event.PassCutFinal() )
       Fill(ev, kCUT_EVENT_PASS_FINAL);
-
 }
 
 

@@ -107,8 +107,6 @@ int main(int argc, char *argv[])
          nTreeEvents = nExtraEvents > 0 ? nTreeEvents - nExtraEvents : nTreeEvents;
       }
 
-      //VecBosEvent    *vecBosEvent = new VecBosEvent();
-
       vbTree->SetBranchAddress("e", &vecBosEvent);
 
       //TBranch *eventBranch = vbTree->GetBranch("e");
@@ -125,9 +123,6 @@ int main(int argc, char *argv[])
          //vecBosEvent->Print();
          vecBosRootFile.Fill(*vecBosEvent);
       }
-
-      //delete vecBosEvent;
-      //delete vbTree;
 
       f->Close();
       delete f;

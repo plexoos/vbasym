@@ -70,7 +70,7 @@ VecBosTrack::~VecBosTrack()
 //bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && !IsInJet() && mP3AtDca.Pt() >= sMinPt); }
 //bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && mP3AtDca.Pt() >= sMinPt); }
 //bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && mCluster2x2.energy >= sMinCandidateTrackClusterE); }
-bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && IsIsolated()); }
+bool VecBosTrack::IsCandidate() const { return (HasCluster() && IsIsolated() && IsUnBalanced()); }
 //bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && mCluster2x2.energy >= sMinCandidateTrackClusterE && mCluster2x2.ET/mCluster4x4.ET > 0.9); }
 
 
@@ -238,6 +238,7 @@ void VecBosTrack::print(int opt) const
 
 bool VecBosTrack::ExtendTrack2Barrel()
 {
+   //Info("ExtendTrack2Barrel", "XXX");
    //printf("******* extendTracks() nVert=%d\n", mVecBosEvent->mVertices.size());
    //if (!mVecBosEvent->l2bitET) return; //fire barrel trigger
 
@@ -269,7 +270,6 @@ bool VecBosTrack::ExtendTrack2Barrel()
 
    mCoorAtBTow.SetXYZ(posAtBTow.x(), posAtBTow.y(), posAtBTow.z());
 
-   //Info("ExtendTrack2Barrel", "XXX");
    //mP3AtDca.Print();
    //mCoorAtBTow.Print();
 
@@ -284,7 +284,6 @@ bool VecBosTrack::ExtendTrack2Barrel()
    mMatchedTower.R    = mCoorAtBTow; //TVector3(posAtBTow.x(), posAtBTow.y(), posAtBTow.z());
    mMatchedTower.iEta = iEta;
    mMatchedTower.iPhi = iPhi;
-   //Print();
 
    return true;
 }

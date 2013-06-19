@@ -99,13 +99,13 @@ public:
    VecBosTrack();
    ~VecBosTrack();
 
-   bool        IsGood()       const { return (mVbType & kGOOD)   == kGOOD   ? true : false; }
-   bool        IsBTrack()     const { return (mVbType & kBARREL) == kBARREL ? true : false; }
-   bool        IsETrack()     const { return (mVbType & kENDCAP) == kENDCAP ? true : false; }
+   bool        IsGood()       const { return (mVbType & kGOOD)        == kGOOD        ? true : false; }
+   bool        IsBTrack()     const { return (mVbType & kBARREL)      == kBARREL      ? true : false; }
+   bool        IsETrack()     const { return (mVbType & kENDCAP)      == kENDCAP      ? true : false; }
    bool        HasCluster()   const { return (mVbType & kHAS_CLUSTER) == kHAS_CLUSTER ? true : false; }
-   bool        IsIsolated()   const { return (mVbType & kISOLATED) == kISOLATED ? true : false; }
-   bool        IsInJet()      const { return (mVbType & kIN_JET) == kIN_JET ? true : false; }
-   bool        IsUnBalanced() const { return (mVbType & kUNBALANCED) == kUNBALANCED ? true : false; }
+   bool        IsIsolated()   const { return (mVbType & kISOLATED)    == kISOLATED    ? true : false; }
+   bool        IsInJet()      const { return (mVbType & kIN_JET)      == kIN_JET      ? true : false; }
+   bool        IsUnBalanced() const { return (mVbType & kUNBALANCED)  == kUNBALANCED  ? true : false; }
    bool        IsCandidate()  const;
    //bool        HasBarrelMatched();
    //bool        HasEndcapMatched();
@@ -167,17 +167,17 @@ struct CompareVecBosCandTrackPtr
 {
    bool operator()(const VecBosTrack* lhs, const VecBosTrack* rhs) const
    {
-      return lhs > rhs;
+      return lhs->GetP3EScaled().Mag() > rhs->GetP3EScaled().Mag();
    }
 };
 
-typedef std::set<VecBosTrack, CompareVecBosTrack>     VecBosTrackSet;
-typedef VecBosTrackSet::iterator                      VecBosTrackSetIter;
-typedef VecBosTrackSet::const_iterator                VecBosTrackSetConstIter;
+typedef std::set<VecBosTrack, CompareVecBosTrack>         VecBosTrackSet;
+typedef VecBosTrackSet::iterator                          VecBosTrackSetIter;
+typedef VecBosTrackSet::const_iterator                    VecBosTrackSetConstIter;
 
-typedef std::set<VecBosTrack*, CompareVecBosTrackPtr> VecBosTrackPtrSet;
-typedef VecBosTrackPtrSet::iterator                   VecBosTrackPtrSetIter;
-typedef VecBosTrackPtrSet::const_iterator             VecBosTrackPtrSetConstIter;
+typedef std::set<VecBosTrack*, CompareVecBosTrackPtr>     VecBosTrackPtrSet;
+typedef VecBosTrackPtrSet::iterator                       VecBosTrackPtrSetIter;
+typedef VecBosTrackPtrSet::const_iterator                 VecBosTrackPtrSetConstIter;
 
 typedef std::set<VecBosTrack*, CompareVecBosCandTrackPtr> VecBosCandTrackPtrSet;
 typedef VecBosCandTrackPtrSet::iterator                   VecBosCandTrackPtrSetIter;

@@ -142,6 +142,8 @@ public:
    TVector3       GetTrackRecoilNeutrals()    const { return mP3TrackRecoilNeutrals; }
    TVector3       GetTrackRecoilTpcNeutrals() const { return mP3TrackRecoilTpcNeutrals; }
    TVector3       GetElectronCandidate()      const { return (*mTracksCandidate.begin())->GetP3EScaled(); }
+   TVector3       GetMissingEnergy()          const;
+   TVector3       GetWBoson()                 const { return (*mTracksCandidate.begin())->GetP3EScaled(); }
    void           SetCpuTimeEventAna(Double_t time) { mCpuTimeEventAna = time; }
    void           SetCpuTimeHistFill(Double_t time) { mCpuTimeHistFill = time; }
    bool           HasGoodVertex()             const { return mNumGoodVertices    > 0 ? true : false; } // Checks if at least one good vertex exist in the event
@@ -169,11 +171,10 @@ public:
    TVector3       CalcP3InConeBTow(VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
    TVector3       CalcP3InConeETow(VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
    TVector3       CalcP3InConeTpc (VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
-   TVector3       CalcP3MissingEnergy() const;
 
 protected:
 
-   StMuDst           *mStMuDst;          //!
+   StMuDst       *mStMuDst;          //!
 
 private:
 
