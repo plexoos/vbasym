@@ -119,9 +119,10 @@ void analysis2011()
    TH1 *hWm_PtWReco_zoomin        = (TH1*) fileMCWm->Get("event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt_zoomin");
    TH1 *hWm_PtWGen                = (TH1*) fileMCWm->Get("event_mc/hWBosonPt");
    TH1 *hWm_PtWGen_zoomin         = (TH1*) fileMCWm->Get("event_mc/hWBosonPt_zoomin");
-   TH1 *hWm_PtWGenOverReco        = (TH1*) hWm_PtWReco->Clone("hWm_PtWGenOverReco");
-   TH1 *hWm_PtWGenOverReco_zoomin = (TH1*) hWm_PtWReco_zoomin->Clone("hWm_PtWGenOverReco_zoomin");
-
+   //TH1 *hWm_PtWGenOverReco        = (TH1*) hWm_PtWReco->Clone("hWm_PtWGenOverReco");
+   //TH1 *hWm_PtWGenOverReco_zoomin = (TH1*) hWm_PtWReco_zoomin->Clone("hWm_PtWGenOverReco_zoomin");
+   TH2 *hWm_PtWGenOverReco        = (TH2*) fileMCWm->Get("event_mc_pass_final_QEToPT/hTrackRecoilTpcNeutralsPt_GenOverReco");
+   TH2 *hWm_PtWGenOverReco_zoomin = (TH2*) fileMCWm->Get("event_mc_pass_final_QEToPT/hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin");
 
 
    TH1 *hWp_PtRecoil_vs_PtWGen    = (TH1 *)fileMCWp->Get("event_mc_pass_final_QEToPT/hTrackRecoilTpcNeutralsPtVsWBosonPt");
@@ -1536,10 +1537,14 @@ void analysis2011()
    c10e->Divide(2, 2);
 
    c10e_1->cd();
-   hWm_Wm_PtWGenOverReco -> Fit(fitPol2);
-   hWm_Wm_PtWGenOverReco->GetYaxis()->SetTitleOffset(1.1);
-   hWm_Wm_PtWGenOverReco->SetTitle("W- sample - MC Correction; Tracks-based recoil P_{T} [GeV/c]; W P_{T}/Recoil P_{T}");
-   hWm_Wm_PtWGenOverReco->Draw("E1");
+   //hWm_Wm_PtWGenOverReco -> Fit(fitPol2);
+   //hWm_Wm_PtWGenOverReco->GetYaxis()->SetTitleOffset(1.1);
+   //hWm_Wm_PtWGenOverReco->SetTitle("W- sample - MC Correction; Tracks-based recoil P_{T} [GeV/c]; W P_{T}/Recoil P_{T}");
+   //hWm_Wm_PtWGenOverReco->Draw("E1");
+   hWm_PtWGenOverReco->ProfileX("hWm_PtWGenOverReco_pfx", 0, 20, "do");
+   //hWm_PtWGenOverReco->GetYaxis()->SetTitleOffset(1.1);
+   //hWm_PtWGenOverReco->SetTitle("W- sample - MC Correction; Tracks-based recoil P_{T} [GeV/c]; W P_{T}/Recoil P_{T}");
+   hWm_PtWGenOverReco_pfx->Draw();
    c10e_2->cd();
    hd_Wm_PtWReco->SetNameTitle("hd_Wm_PtWReco", "Data");
    //hd_Wm_PtWReco->Draw();
