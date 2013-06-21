@@ -23,7 +23,7 @@ public:
    Float_t       mMinZDistToVertex;  // distance to closest vertex along z
 
    VecBosJet();
-   VecBosJet(StJet &stMuVertex);
+   VecBosJet(StJet &stJet);
    ~VecBosJet();
   
    Short_t  GetVertexId() const { return mVertexId; }

@@ -13,7 +13,7 @@
 #include "utils/utils.h"
 
 #include "AsymCalculator.h"
-#include "VecBosEvent.h"
+#include "WBosEvent.h"
 
 
 ClassImp(AsymHContainer)
@@ -115,7 +115,7 @@ void AsymHContainer::BookHists()
 /** */
 void AsymHContainer::Fill(ProtoEvent &ev)
 {
-   VecBosEvent& event = (VecBosEvent&) ev;
+   WBosEvent& event = (WBosEvent&) ev;
 
    if ( gDoubleSpinStateSet.find((EDoubleSpinState) event.mSpinPattern4Bits) == gDoubleSpinStateSet.end())
       return;

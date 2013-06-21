@@ -26,6 +26,7 @@ VecBosJet::VecBosJet(StJet &stJet) :
   jetPhi    = Phi();
 }
 
+
 VecBosJet::~VecBosJet()
 {
    //Info("~VecBosJet()", "this: %x", this);
@@ -61,5 +62,4 @@ void VecBosJet::Process()
 void VecBosJet::Print(const Option_t* opt) const
 {
    Info("Print(const Option_t* opt)", "Jet mVertexId=%d, zVertex=%.1f cm, nTracks=%d\n", mVertexId, zVertex, nTracks);
-
 }

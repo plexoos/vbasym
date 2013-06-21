@@ -45,9 +45,6 @@ const float VecBosEvent::sMinTrackHitFrac      = 0.51;
 const float VecBosEvent::sMinClusterEnergyFrac = 0.90; // was 0.88
 
 
-DoubleSpinStateSet doubleSpinStates;
-
-
 VecBosEvent::~VecBosEvent()
 {
    //Info("~VecBosEvent()", "this: %x", this);
@@ -173,28 +170,6 @@ bool VecBosEvent::PassCutFinal()
 
    return false;
 }
-
-
-bool VecBosEvent::HasWLepton() const
-{
-   //if ( HasCandidateTrack() )
-   return false;
-}
-
-
-bool VecBosEvent::HasW() const
-{
-   if ( HasCandidateTrack() && mPtBalanceCosPhiFromTracks > 18 &&
-        (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= VecBosTrack::sMinCandidateTrackClusterE)
-   {
-      return true;
-   }
-
-   return false;
-}
-
-
-//if ( event->mCandElecP3EScaled.Pt() > 10 && event->mPtBalanceCosPhiFromTracks > 18)
 
 
 void VecBosEvent::Process()
@@ -644,8 +619,8 @@ WeveCluster VecBosEvent::SumBTowPatch(int etaBin, int phiBin, int etaWidth, int 
          if (energy <= 0) continue; // skip towers w/o energy
 
          float adc    = bemc.adcTile[kBTow][towerId - 1];
-         float delZ   = gBCalTowerCoords[towerId - 1].z() - zVert;
-         float cosine = nomBTowRadius / sqrt(nomBTowRadius * nomBTowRadius + delZ * delZ);
+         float deltaZ = gBCalTowerCoords[towerId - 1].z() - zVert;
+         float cosine = nomBTowRadius / sqrt(nomBTowRadius * nomBTowRadius + deltaZ * deltaZ);
          float ET     = energy * cosine;
          float logET  = log10(ET + 0.5);
 
@@ -778,19 +753,6 @@ TVector3 VecBosEvent::CalcP3InConeTpc(VecBosTrack *vbTrack, UShort_t cone1d2d, F
    }
 
    return totalP3InCone;
-}
-
-
-TVector3 VecBosEvent::GetMissingEnergy() const
-{
-   if (mTracksCandidate.size() < 1) {
-      Warning("GetMissingEnergy", "No track/lepton candidate: Cannot calculate P3Balance");
-      return TVector3();
-   }
-
-   return mP3TrackRecoilTpcNeutrals + (*mTracksCandidate.begin())->GetP3EScaled();
-   //return mP3TrackRecoilTow + (*mTracksCandidate.begin())->GetP3EScaled();
-   //return mP4JetRecoil + (*mTracksCandidate.begin())->mCluster2x2.energy;
 }
 
 
@@ -997,7 +959,8 @@ void VecBosEvent::Streamer(TBuffer &R__b)
       //Info("Streamer", "this: %x, mTracks.size(): %d, &mWEvent: %x, &mStJets: %x", this, mTracks.size(), mWEvent, mStJets);
 
       VecBosTrackPtrSetIter iTrack = mTracks.begin();
-      for ( ; iTrack != mTracks.end(); ++iTrack) {
+      for ( ; iTrack != mTracks.end(); ++iTrack)
+      {
          VecBosTrack *track = *iTrack;
 
          //Info("Streamer", "this: %x, prMuTrack: %x", track, track->prMuTrack);

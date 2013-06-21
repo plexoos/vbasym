@@ -15,6 +15,10 @@ public:
    WBosEvent();
    ~WBosEvent();
 
+   TVector3 GetElectronCandidate() const;
+   TVector3 GetMissingEnergy() const;
+   TVector3 GetVecBoson() const;
+
    ClassDef(WBosEvent, 1);
 };
 

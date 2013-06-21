@@ -272,7 +272,7 @@ Int_t StVecBosMaker::InitRun(int runNo)
          //Run 11 ?? XXX
 
          //Run 12 ??
-         mTpcFilter[iSector-1].setCuts(par_nFitPts, mVecBosEvent->sMinTrackHitFrac, Rin, Rout);
+         mTpcFilter[iSector-1].setCuts(par_nFitPts, VecBosEvent::sMinTrackHitFrac, Rin, Rout);
          mTpcFilter[iSector-1].init("iSector", iSector, HListTpc, true);
 
          mTpcFilterE[iSector-1].setCuts(parE_nFitPts, parE_nHitFrac, RinE, RoutE);
@@ -321,7 +321,7 @@ Int_t StVecBosMaker::Finish()
       if (hbxIdeal) {
          char txt[1000];
          sprintf(txt, "events T= %d %d", Tfirst, Tlast);
-         printf("Finish run=%d , events time range %s\n", mRunNo, txt);
+         printf("Finish run=%d, events time range %s\n", mRunNo, txt);
          hbxIdeal->GetYaxis()->SetTitle(txt);
       }
    }
@@ -345,11 +345,9 @@ void StVecBosMaker::Clear(const Option_t *)
 }
 
 
+/** Called every event. */
 Int_t StVecBosMaker::Make()
 {
-   // Create new event and connect it to the tree
-   //mVecBosEvent = new VecBosEvent();
-   //mWtree->Branch("mVecBosEvent", "VecBosEvent", &mVecBosEvent);
    mStopWatch.Start(); // restart mStopWatch
 
    mNumInputEvents++;
@@ -504,7 +502,8 @@ Int_t StVecBosMaker::Make()
 
    //mVecBosRootFile->Fill(*mVecBosEvent, kCUT_CUT);
 
-   if (mNumAcceptedEvents < 2 || mNumAcceptedEvents % 1000 == 1 ) mVecBosEvent->Print(0x0, isMC);
+   if (mNumAcceptedEvents < 2 || mNumAcceptedEvents % 1000 == 1 )
+      mVecBosEvent->Print(0x0, isMC);
 
    return kStOK;
 }
@@ -2048,7 +2047,7 @@ float StVecBosMaker::SumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, 
       if (prTr->flag() != 301 && pointTowId > 0) continue; // TPC-only regular tracks for barrel candidate
       if (prTr->flag() != 301 && prTr->flag() != 311 && pointTowId < 0) continue; // TPC regular and short EEMC tracks for endcap candidate
       float hitFrac = 1.*prTr->nHitsFit() / prTr->nHitsPoss();
-      if (hitFrac < mVecBosEvent->sMinTrackHitFrac) continue;
+      if (hitFrac < VecBosEvent::sMinTrackHitFrac) continue;
       StThreeVectorF prPvect = prTr->p();
       TVector3 mP3AtDca = TVector3(prPvect.x(), prPvect.y(), prPvect.z());
       // printf(" prTrID=%4d  prTrEta=%.3f prTrPhi/deg=%.1f prPT=%.1f  nFitPts=%d\n", prTr->id(),prTr->eta(),prTr->phi()/3.1416*180.,prTr->pt(),prTr->nHitsFit());
