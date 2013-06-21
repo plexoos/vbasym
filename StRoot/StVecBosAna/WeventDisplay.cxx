@@ -84,10 +84,9 @@ void WeventDisplay::clear()
 {
    hEmcET->Reset();
    hTpcET->Reset();
-   for (int iep = 0; iep < mxBSmd; iep++)  hBsmdAdc[iep]->Reset();
+   for (int iep = 0; iep < mxBSmd; iep++)       hBsmdAdc[iep]->Reset();
    for (int iuv = 0; iuv < mxEsmdPlane; iuv++)  hEsmdShower[iuv]->Reset();
    hEsmdXpt->Reset();
-
 }
 
 
@@ -242,7 +241,7 @@ void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo, VecB
          hEsmdShower[iuv]->Draw();
 
          //print Q/Pt warning
-         if ( iuv == 1 && myTr.prMuTrack->pt() >= 100.0 ) {
+         if ( iuv == 1 && myTr.mStMuTrack->pt() >= 100.0 ) {
             TLatex *tx = new TLatex(3, 0.9 * hEsmdShower[iuv]->GetMaximum(), "| Q/P_{T} | < 0.01");  tx->SetTextColor(kRed); tx->SetTextSize(0.1); tx->Draw();
          }
       }
@@ -305,7 +304,7 @@ void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo, VecB
       sprintf(txt, "run=%d  eveID=%05d daq=%d vertex:mId=%d Z=%.0fcm ", runNo, eveID, daqSeq, myV.mId, myV.z);
       printf("WeventDisplay::Event ID  %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
-      sprintf(txt, "TPC PT(GeV/c) prim=%.1f  near=%.1f  away=%.1f ", myTr.prMuTrack->pt(), myTr.mP3InNearConeTpc.Pt(), myTr.awayTpcPT);
+      sprintf(txt, "TPC PT(GeV/c) prim=%.1f  near=%.1f  away=%.1f ", myTr.mStMuTrack->pt(), myTr.mP3InNearConeTpc.Pt(), myTr.awayTpcPT);
       printf("WeventDisplay::Event %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
 
@@ -317,12 +316,12 @@ void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo, VecB
       printf("WeventDisplay:: %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
 
-      sprintf(txt, "Q/Pt = %.3f   : ESMD E/MeV  U plane= %.1f  V plane= %.1f ", (1.0 * myTr.prMuTrack->charge()) / myTr.prMuTrack->pt(), myTr.esmdE[0], myTr.esmdE[1]);
+      sprintf(txt, "Q/Pt = %.3f   : ESMD E/MeV  U plane= %.1f  V plane= %.1f ", (1.0 * myTr.mStMuTrack->charge()) / myTr.mStMuTrack->pt(), myTr.esmdE[0], myTr.esmdE[1]);
       printf("WeventDisplay:: %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
 
       float chi2 = myTr.glMuTrack->chi2(); if (chi2 > 999.) chi2 = -1.;
-      sprintf(txt, "Track: eta=%.1f Q=%d nFit=%d nPoss=%d r1=%.0f r2=%.0f chi2=%.1f", myTr.mMatchedTower.R.Eta(), myTr.prMuTrack->charge(), myTr.prMuTrack->nHitsFit(), myTr.prMuTrack->nHitsPoss(), myTr.glMuTrack->firstPoint().perp(), myTr.glMuTrack->lastPoint().perp(), chi2);
+      sprintf(txt, "Track: eta=%.1f Q=%d nFit=%d nPoss=%d r1=%.0f r2=%.0f chi2=%.1f", myTr.mMatchedTower.R.Eta(), myTr.mStMuTrack->charge(), myTr.mStMuTrack->nHitsFit(), myTr.mStMuTrack->nHitsPoss(), myTr.glMuTrack->firstPoint().perp(), myTr.glMuTrack->lastPoint().perp(), chi2);
       printf("WeventDisplay:: %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
 
@@ -361,7 +360,7 @@ void WeventDisplay::exportEvent( const char *tit, VecBosVertex &myV, VecBosTrack
 
    //printf("#xcheck-%s run=%d daqSeq=%d eveID=%7d vertID=%2d zVert=%.1f prTrID=%4d  prTrEta=%.3f prTrPhi/deg=%.1f globPT=%.1f hitTwId=%4d twAdc=%.1f clEta=%.3f clPhi/deg=%.1f  clET=%.1f\n",tit,
    //	 runNo,daqSeq,eveId,myV.id,myV.z,
-   //	 myTr.prMuTrack->id(),myTr.prMuTrack->eta(),myTr.prMuTrack->phi()/3.1416*180.,myTr.glMuTrack->pt(),
+   //	 myTr.mStMuTrack->id(),myTr.mStMuTrack->eta(),myTr.mStMuTrack->phi()/3.1416*180.,myTr.glMuTrack->pt(),
    //	 myTr.mMatchedTower.id,wMK->mVecBosEvent->bemc.adcTile[kBTow][myTr.mMatchedTower.id-1],
    //	 rTw.Eta(),rTw.Phi()/3.1416*180.,myTr.mCluster2x2.ET);
 
@@ -513,7 +512,8 @@ void WeventDisplay::export2sketchup(const char *tit, VecBosVertex &myV, VecBosTr
    int runNo = wMK->mStMuDstMaker->muDst()->event()->runId();
    char txt[1000];
    sprintf(txt, "display3D-%s_run%d.eventId%05d_vert%d.txt", tit, runNo, eveId, myV.mId);
-   FILE *fd = fopen(txt, "w"); assert(fd);
+   FILE *fd = fopen(txt, "w");
+   assert(fd);
 
    //........ DUMP PRIM TRACKS..........
    int vertID = myV.mId;
@@ -526,7 +526,9 @@ void WeventDisplay::export2sketchup(const char *tit, VecBosVertex &myV, VecBosTr
    assert(rank > 0 || (rank < 0 && V->nEEMCMatch()));
    const StThreeVectorF &rV = V->position();
    Int_t nPrimTrAll = wMK->mStMuDstMaker->muDst()->GetNPrimaryTrack();
-   for (int itr = 0; itr < nPrimTrAll; itr++) {
+
+   for (int itr = 0; itr < nPrimTrAll; itr++)
+   {
       StMuTrack *prTr = wMK->mStMuDstMaker->muDst()->primaryTracks(itr);
       if (prTr->flag() <= 0) continue;
       if (prTr->flag() != 301) continue; // TPC-only regular tracks
@@ -538,7 +540,8 @@ void WeventDisplay::export2sketchup(const char *tit, VecBosVertex &myV, VecBosTr
 
    // Dump BTOW towers
    float Rcylinder = gBTowGeom->Radius(), Rcylinder2 = Rcylinder * Rcylinder;
-   for (int i = 0; i < mxBtow; i++) {
+   for (int i = 0; i < mxBtow; i++)
+   {
       float ene = wMK->mVecBosEvent->bemc.eneTile[kBTow][i];
       if (ene <= 0) continue;
       float delZ = gBCalTowerCoords[i].z() - myV.z;
@@ -572,10 +575,9 @@ void WeventDisplay::export2sketchup(const char *tit, VecBosVertex &myV, VecBosTr
       }
    }
 
-   //.... DUMP reco electron ...
+   // DUMP reco electron
    float eleET = myTr.mCluster2x2.ET;
    fprintf(fd, "recoElectron V %.1f %.3f %.3f  ET:detEta:detPhi %.3f %.3f  %.3f\n", rV.x(), rV.y(), rV.z() , eleET, myTr.mMatchedTower.R.Eta(), myTr.mMatchedTower.R.Phi());
 
-   //... close event file
    fclose(fd);
 }

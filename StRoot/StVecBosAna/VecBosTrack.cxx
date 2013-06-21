@@ -23,7 +23,7 @@ VecBosTrack::VecBosTrack() : TObject(),
    isMatch2Cl(false),
    mMatchedTower(),
    glMuTrack(0),
-   prMuTrack(0),
+   mStMuTrack(0),
    mHelix(),
    mVertex(0),
    mVertexId(-1),
@@ -60,19 +60,18 @@ VecBosTrack::VecBosTrack() : TObject(),
 
 VecBosTrack::~VecBosTrack()
 {
-   //Info("~VecBosTrack()", "prMuTrack: %x, %d", prMuTrack, prMuTrack->nHitsFit());
-   //Info("~VecBosTrack()", "this: %x, prMuTrack: %x", this, prMuTrack);
-   if (prMuTrack) delete prMuTrack;
-   prMuTrack = 0;
+   //Info("~VecBosTrack()", "mStMuTrack: %x, %d", mStMuTrack, mStMuTrack->nHitsFit());
+   //Info("~VecBosTrack()", "this: %x, mStMuTrack: %x", this, mStMuTrack);
+   if (mStMuTrack) delete mStMuTrack;
+   mStMuTrack = 0;
 }
 
 
 //bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && !IsInJet() && mP3AtDca.Pt() >= sMinPt); }
 //bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && mP3AtDca.Pt() >= sMinPt); }
 //bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && mCluster2x2.energy >= sMinCandidateTrackClusterE); }
-bool VecBosTrack::IsCandidate() const { return (HasCluster() && IsIsolated() && IsUnBalanced()); }
 //bool VecBosTrack::IsCandidate() const { return (IsUnBalanced() && mCluster2x2.energy >= sMinCandidateTrackClusterE && mCluster2x2.ET/mCluster4x4.ET > 0.9); }
-
+bool VecBosTrack::IsCandidate() const { return (HasCluster() && IsIsolated() && IsUnBalanced() && PassedCutChargeSeparation()); }
 
 void VecBosTrack::Process()
 {
@@ -95,7 +94,7 @@ void VecBosTrack::Process()
    //XXX:ds:if (!barrelTrack && !endcapTrack) continue;
 
    // Look for high Pt electron candidates
-   if ( prMuTrack->pt() >= 1.0 && prMuTrack->flag() == 301 )
+   if ( mStMuTrack->pt() >= 1.0 && mStMuTrack->flag() == 301 )
    {
       mVbType |= kBARREL;
 
@@ -106,7 +105,7 @@ void VecBosTrack::Process()
 
       CalcEnergyInNearCone();
    }
-   else if ( prMuTrack->pt() >= 1.0 && prMuTrack->flag() == 311 )
+   else if ( mStMuTrack->pt() >= 1.0 && mStMuTrack->flag() == 311 )
    {
       mVbType |= kENDCAP;
       //ExtendTrack2Endcap();
@@ -158,7 +157,7 @@ void VecBosTrack::clear()
    isMatch2Cl             = false;
    mMatchedTower.clear();
    glMuTrack              = 0;
-   prMuTrack              = 0;
+   mStMuTrack             = 0;
    //mHelix               = St
    mVertex                = 0;
    mVertexId              = -1;
@@ -218,7 +217,7 @@ void VecBosTrack::print(int opt) const
    mP3AtDca.Print();
    Info("Print", "mVertexId: %2d", mVertexId);
 
-   //if (!prMuTrack) { printf("prMuTrack is NULL pointer???\n"); return; }
+   //if (!mStMuTrack) { printf("mStMuTrack is NULL pointer???\n"); return; }
 
    //printf("\tTrack: isMatch2Cl: %d, mP3InNearCone: %.2f, awayTotET: %.2f mP3AtDca.Pt(): %.2f\n",
    //       isMatch2Cl, mP3InNearCone.Pt(), awayTotET, mP3AtDca.Pt());
@@ -246,7 +245,7 @@ bool VecBosTrack::ExtendTrack2Barrel()
    //if (mP3AtDca.Eta() < mMinBTrackEta || mP3AtDca.Eta() > mMaxBTrackEta) continue;
 
    // extrapolate track to the barrel @ R=entrance
-   mHelix               = prMuTrack->outerHelix();
+   mHelix               = mStMuTrack->outerHelix();
    float  nomBTowRadius = gBTowGeom->Radius();
    pairD  segmentLength = mHelix.pathLength(nomBTowRadius); // XXX:ds: Length along the helix from the origin to the intersection point
    //printf(" R=%.1f path 1=%f, 2=%f, period=%f, R=%f\n", Rctb, segmentLength.first, segmentLength.second, mHelix.period(), 1./mHelix.curvature());
@@ -296,7 +295,7 @@ void VecBosTrack::MatchTrack2BtowCluster()
    //printf("******* matchCluster() nVert=%d\n",mVecBosEvent->mVertices.size());
    float nomBTowRadius = gBTowGeom->Radius();
 
-   //float trackPT = prMuTrack->momentum().perp();
+   //float trackPT = mStMuTrack->momentum().perp();
 
    // Choose 2x2 cluster with maximum ET
    mCluster2x2 = mEvent->FindMaxBTow2x2(mMatchedTower.iEta, mMatchedTower.iPhi, mVertex->z);
@@ -436,4 +435,16 @@ void VecBosTrack::CalcEnergyInNearCone()
    //   hE[48]->Fill(mP3InNearConeTow, mP3InNearConeTpc);
    //   hE[49]->Fill(mP3InNearCone);
    //}
+}
+
+
+bool VecBosTrack::PassedCutChargeSeparation() const
+{
+   if ( fabs( (GetChargeSign() * GetP3EScaled().Pt() ) / GetP3AtDca().Pt() ) >= 0.4 &&
+        fabs( (GetChargeSign() * GetP3EScaled().Pt() ) / GetP3AtDca().Pt() ) <= 1.8 )
+   {
+      return true;
+   }
+
+   return false;
 }

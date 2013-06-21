@@ -40,7 +40,7 @@ public:
    Bool_t                  isMatch2Cl;         // result of cuts
    WevePointTower          mMatchedTower;
    const StMuTrack        *glMuTrack;          //!
-   StMuTrack              *prMuTrack;          //
+   StMuTrack              *mStMuTrack;         //
    StPhysicalHelixD        mHelix;             //!
    const VecBosVertex     *mVertex;            //! pointer to mother vertex
    Short_t                 mVertexId;          // mId of the mother vertex
@@ -80,16 +80,16 @@ public:
    TVector3                mDistToCluster;     // Distance to cluster
 
    // esmd shower info
-   int                     hitSector; //!
-   int                     esmdGlobStrip[mxEsmdPlane]; //!
-   float                   esmdShower[mxEsmdPlane][41]; //!
-   float                   esmdDca[mxEsmdPlane]; //!
-   float                   esmdDcaGlob[mxEsmdPlane]; //!
-   float                   esmdE[mxEsmdPlane]; //!
-   int                     esmdNhit[mxEsmdPlane]; //!
-   float                   esmdShowerCentroid[mxEsmdPlane]; //!
-   float                   esmdShowerWidth[mxEsmdPlane];    //!
-   TVector3                esmdXPcentroid;                  //!
+   int                     hitSector;                       //! 
+   int                     esmdGlobStrip[mxEsmdPlane];      //! 
+   float                   esmdShower[mxEsmdPlane][41];     //! 
+   float                   esmdDca[mxEsmdPlane];            //! 
+   float                   esmdDcaGlob[mxEsmdPlane];        //! 
+   float                   esmdE[mxEsmdPlane];              //! 
+   int                     esmdNhit[mxEsmdPlane];           //! 
+   float                   esmdShowerCentroid[mxEsmdPlane]; //! 
+   float                   esmdShowerWidth[mxEsmdPlane];    //! 
+   TVector3                esmdXPcentroid;                  //! 
 
    static const float      sMaxTrackClusterDist;            //! cm, dist between projected track and center of cluster
    static const float      sMinPt;                          //!
@@ -107,22 +107,23 @@ public:
    bool        IsInJet()      const { return (mVbType & kIN_JET)      == kIN_JET      ? true : false; }
    bool        IsUnBalanced() const { return (mVbType & kUNBALANCED)  == kUNBALANCED  ? true : false; }
    bool        IsCandidate()  const;
-   //bool        HasBarrelMatched();
-   //bool        HasEndcapMatched();
    void        Process();
+   short       GetChargeSign()         const { return mStMuTrack->charge(); }
    TVector3    GetP3AtDca()            const { return mP3AtDca; }
    TVector3    GetP3EScaled()          const { return mP3AtDca * ((Double_t) mCluster2x2.energy / mP3AtDca.Mag()); }
-   float       GetFitHitFrac()         const { return float(prMuTrack->nHitsFit()) / prMuTrack->nHitsPoss(); }
+   float       GetFitHitFrac()         const { return float(mStMuTrack->nHitsFit()) / mStMuTrack->nHitsPoss(); }
    float       GetClusterEnergyFrac()  const { return (mCluster2x2.energy + mP3AtDca.Mag()) / mP3InNearConeNoETow.Mag(); }
    float       GetClusterETFrac()      const { return (mCluster2x2.ET     + mP3AtDca.Pt())  / mP3InNearConeNoETow.Perp(); }
    TVector3    GetDistanceToCluster()  const { return mDistToCluster; }
    TVector3    CalcDistanceToCluster() const { return mCoorAtBTow - mCluster2x2.position; }
-   TVector3    GetCoordAtBTow() const { return mCoorAtBTow; }
+   TVector3    GetCoordAtBTow()        const { return mCoorAtBTow; }
    Short_t     GetVertexId()           const { return mVertexId; }
    void        SetVertexId(Short_t vId) { mVertexId = vId; }
    VecBosJet*  FindClosestJet(VecBosJetPtrSet &jets);
    void        clear();
    void        print(int opt=0) const;
+
+   bool        PassedCutChargeSeparation() const;
 
 private:
 

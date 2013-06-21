@@ -70,7 +70,7 @@ void VecBosAsymRootFile::Fill(ProtoEvent &ev)
 
    Fill(ev, kCUT_EVENT_NOCUT);
 
-   if ( event.PassCutFinal() )
+   if ( event.PassedCutFinal() )
       Fill(ev, kCUT_EVENT_PASS_FINAL);
 }
 

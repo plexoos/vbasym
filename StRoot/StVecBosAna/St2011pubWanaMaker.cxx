@@ -76,7 +76,7 @@ void St2011pubWanaMaker::evalWeleTrackSign()
          // work with W-track
          float ET = track.mCluster2x2.ET;
          const StMuTrack *glTr = track.glMuTrack; assert(glTr);
-         const StMuTrack *prTr = track.prMuTrack; assert(prTr);
+         const StMuTrack *prTr = track.mStMuTrack; assert(prTr);
          float PT     = glTr->pt();
          float g_chrg = glTr->charge();
          float p_chrg = prTr->charge();

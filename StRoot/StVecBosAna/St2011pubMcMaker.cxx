@@ -144,7 +144,7 @@ void St2011pubMcMaker::doWanalysis()
          hA[33]->Fill(trueWpL - pLRecoMinus);
          hA[34]->Fill(trueWpL, pLRecoMinus);
 
-         const StMuTrack *prTr = T.prMuTrack; assert(prTr);
+         const StMuTrack *prTr = T.mStMuTrack; assert(prTr);
          float p_chrg = prTr->charge();
          if (p_chrg > 0) continue;
 

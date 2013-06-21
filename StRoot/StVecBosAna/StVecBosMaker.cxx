@@ -1758,11 +1758,11 @@ void StVecBosMaker::FindWBoson()
          if (track.mCluster2x2.ET / track.mP3InNearConeNoETow.Pt() > par_nearTotEtFrac) {
             if (track.sPtBalance_noEEMC > par_ptBalance ) { // only signed ptBalance cut
                hA[140]->Fill(track.mCluster2x2.ET);
-               hA[240]->Fill(track.prMuTrack->eta(), track.mCluster2x2.ET);
+               hA[240]->Fill(track.mStMuTrack->eta(), track.mCluster2x2.ET);
 
-               if (track.prMuTrack->charge() < 0) {
+               if (track.mStMuTrack->charge() < 0) {
                   hA[184 + 3]->Fill(track.mCluster2x2.ET);
-               } else if (track.prMuTrack->charge() > 0) {
+               } else if (track.mStMuTrack->charge() > 0) {
                   hA[184 + 4]->Fill(track.mCluster2x2.ET);
                }
             }
@@ -1770,8 +1770,8 @@ void StVecBosMaker::FindWBoson()
 
          // fill plot for background
          if (track.mCluster2x2.ET > par_highET) {
-            if (track.prMuTrack->charge() > 0)      hA[251]->Fill(track.mCluster2x2.ET / track.mP3InNearCone.Pt(), track.sPtBalance);
-            else if (track.prMuTrack->charge() < 0) hA[252]->Fill(track.mCluster2x2.ET / track.mP3InNearCone.Pt(), track.sPtBalance);
+            if (track.mStMuTrack->charge() > 0)      hA[251]->Fill(track.mCluster2x2.ET / track.mP3InNearCone.Pt(), track.sPtBalance);
+            else if (track.mStMuTrack->charge() < 0) hA[252]->Fill(track.mCluster2x2.ET / track.mP3InNearCone.Pt(), track.sPtBalance);
          }
 
          if (track.mCluster2x2.ET / track.mP3InNearCone.Pt() < par_nearTotEtFrac) continue; // too large nearET
@@ -1798,10 +1798,10 @@ void StVecBosMaker::FindWBoson()
             for (int j = 0; j <= 20; j++) {
                float pTBal_cut = 5. + ((float) j);
                if (track.sPtBalance < pTBal_cut) {
-                  if (track.prMuTrack->charge() < 0) {
+                  if (track.mStMuTrack->charge() < 0) {
                      hA[142 + i]->Fill(track.mCluster2x2.ET, j);
                   }
-                  else if (track.prMuTrack->charge() > 0) {
+                  else if (track.mStMuTrack->charge() > 0) {
                      hA[163 + i]->Fill(track.mCluster2x2.ET, j);
                   }
                }
@@ -1811,25 +1811,25 @@ void StVecBosMaker::FindWBoson()
          //plots for backg sub yield
          if (track.sPtBalance > par_ptBalance ) {
             hA[136]->Fill(track.mCluster2x2.ET);//signal
-            hA[241]->Fill(track.prMuTrack->eta(), track.mCluster2x2.ET);
+            hA[241]->Fill(track.mStMuTrack->eta(), track.mCluster2x2.ET);
             hA[62]->Fill(track.mMatchedTower.iEta , track.mCluster2x2.energy);
-            if (track.prMuTrack->charge() < 0) {
+            if (track.mStMuTrack->charge() < 0) {
                hA[184 + 1]->Fill(track.mCluster2x2.ET);
             }
-            else if (track.prMuTrack->charge() > 0) {
+            else if (track.mStMuTrack->charge() > 0) {
                hA[184 + 2]->Fill(track.mCluster2x2.ET);
             }
          }
          else {
             hA[137]->Fill(track.mCluster2x2.ET);//background
-            if (track.prMuTrack->charge() < 0) {
+            if (track.mStMuTrack->charge() < 0) {
                hA[184 + 5]->Fill(track.mCluster2x2.ET);
             }
-            else if (track.prMuTrack->charge() > 0) {
+            else if (track.mStMuTrack->charge() > 0) {
                hA[184 + 6]->Fill(track.mCluster2x2.ET);
             }
-            hA[202]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.prMuTrack->pt());
-            hA[204]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mCluster2x2.energy / track.prMuTrack->p().mag());
+            hA[202]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mStMuTrack->pt());
+            hA[204]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mCluster2x2.energy / track.mStMuTrack->p().mag());
          }
 
          if (track.sPtBalance > par_ptBalance) {
@@ -1854,19 +1854,19 @@ void StVecBosMaker::FindWBoson()
          hA[92]->Fill( track.mCluster2x2.ET, track.glMuTrack->dEdx() * 1e6);
          //hA[93]->Fill( track.mCluster2x2.ET,track.glMuTrack->dca(vertex.id).mag());
          int k = 0;
-         if (track.prMuTrack->charge() < 0) k = 1;
+         if (track.mStMuTrack->charge() < 0) k = 1;
          hA[94 + k]->Fill( track.mCluster2x2.ET, track.glMuTrack->dcaD());
          // h95 used above
 
          // plots to investigate east/west yield diff
          hA[200]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mCluster2x2.ET);
-         hA[201]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.prMuTrack->pt());
-         hA[203]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mCluster2x2.energy / track.prMuTrack->p().mag());
-         hA[205]->Fill(track.prMuTrack->lastPoint().pseudoRapidity(), track.prMuTrack->lastPoint().phi());
+         hA[201]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mStMuTrack->pt());
+         hA[203]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mCluster2x2.energy / track.mStMuTrack->p().mag());
+         hA[205]->Fill(track.mStMuTrack->lastPoint().pseudoRapidity(), track.mStMuTrack->lastPoint().phi());
 
          // Q/pT plot
          hA[100]->Fill(track.mCluster2x2.ET, track.glMuTrack->charge() / track.glMuTrack->pt());
-         hA[101]->Fill(track.mCluster2x2.ET, track.prMuTrack->charge() / track.prMuTrack->pt());
+         hA[101]->Fill(track.mCluster2x2.ET, track.mStMuTrack->charge() / track.mStMuTrack->pt());
 
          if (track.mCluster2x2.ET < par_highET) continue; // very likely Ws
 
@@ -1874,14 +1874,14 @@ void StVecBosMaker::FindWBoson()
          hA[96]->Fill(vertex.mIdMuDst);
          hA[97]->Fill(vertex.mRankLog);
          hA[98]->Fill(vertex.z);
-         hA[99]->Fill(track.prMuTrack->eta());
-         hA[190 + k]->Fill(track.prMuTrack->eta(), track.mCluster2x2.ET);
+         hA[99]->Fill(track.mStMuTrack->eta());
+         hA[190 + k]->Fill(track.mStMuTrack->eta(), track.mCluster2x2.ET);
 
          hA[20]->Fill("goldW", 1.);
          nGoldW++;
 
-         if (track.prMuTrack->charge() > 0)      nGoldWp++;
-         else if (track.prMuTrack->charge() < 0) nGoldWn++;
+         if (track.mStMuTrack->charge() > 0)      nGoldWp++;
+         else if (track.mStMuTrack->charge() < 0) nGoldWn++;
       } // loop over tracks
    } // loop over vertices
 
@@ -2092,13 +2092,13 @@ int StVecBosMaker::ExtendTrack2Endcap()
       {
          VecBosTrack &T = vertex.eleTrack[it];
 
-         if (T.prMuTrack->eta() < parE_trackEtaMin) continue; // to avoid extrapolation nonsense
+         if (T.mStMuTrack->eta() < parE_trackEtaMin) continue; // to avoid extrapolation nonsense
 
          // Do eta sorting at track level (tree analysis)
          if (T.mP3AtDca.Eta() < mMinETrackEta || T.mP3AtDca.Eta() > mMaxETrackEta) continue;
 
          // Extrapolate track to the disk perpendicular to the z-axis
-         const StPhysicalHelixD trkHlx       = T.prMuTrack->outerHelix();
+         const StPhysicalHelixD trkHlx       = T.mStMuTrack->outerHelix();
          StThreeVectorD         diskPosition = StThreeVectorD(0, 0, parE_zSMD);
          StThreeVectorD         diskNormal   = StThreeVectorD(0, 0, 1);
 
@@ -2122,7 +2122,7 @@ int StVecBosMaker::ExtendTrack2Endcap()
          bool inEtow = mGeomEmc->getTower(rCross, isec, isubSec, ietaBin, epsPhi, epsEta);
          if (!inEtow) continue;
          hE[20]->Fill("@E", 1.);
-         //printf("trk points EEMC tower isec=%d isub=%d ieta=%d epsPhi=%f epsEta=%f  trkPT=%f\n", isec,isubSec,ietaBin,epsPhi,epsEta,T.prMuTrack->pt());
+         //printf("trk points EEMC tower isec=%d isub=%d ieta=%d epsPhi=%f epsEta=%f  trkPT=%f\n", isec,isubSec,ietaBin,epsPhi,epsEta,T.mStMuTrack->pt());
 
          nTrE++;
          T.mMatchedTower.id   = -999; //set negative for endcap towers
@@ -2180,10 +2180,10 @@ void StVecBosMaker::FindWBosonEndcap()
          if (T.mCluster2x2.ET / T.mP3InNearConeNoETow.Pt() > parE_nearTotEtFrac) {
             if (T.sPtBalance_noEEMC > parE_ptBalance ) { //only signed ptBalance cut
                hE[140]->Fill(T.mCluster2x2.ET);
-               if (T.prMuTrack->charge() < 0) {
+               if (T.mStMuTrack->charge() < 0) {
                   hE[184 + 3]->Fill(T.mCluster2x2.ET);
                }
-               else if (T.prMuTrack->charge() > 0) {
+               else if (T.mStMuTrack->charge() > 0) {
                   hE[184 + 4]->Fill(T.mCluster2x2.ET);
                }
             }
@@ -2211,19 +2211,19 @@ void StVecBosMaker::FindWBosonEndcap()
          if (T.sPtBalance > parE_ptBalance ) {
             hE[136]->Fill(T.mCluster2x2.ET);//signal
             hE[62]->Fill(T.mMatchedTower.iEta , T.mCluster2x2.energy);
-            if (T.prMuTrack->charge() < 0) {
+            if (T.mStMuTrack->charge() < 0) {
                hE[184 + 1]->Fill(T.mCluster2x2.ET);
             }
-            else if (T.prMuTrack->charge() > 0) {
+            else if (T.mStMuTrack->charge() > 0) {
                hE[184 + 2]->Fill(T.mCluster2x2.ET);
             }
          }
          else {
             hE[137]->Fill(T.mCluster2x2.ET);//background
-            if (T.prMuTrack->charge() < 0) {
+            if (T.mStMuTrack->charge() < 0) {
                hE[184 + 5]->Fill(T.mCluster2x2.ET);
             }
-            else if (T.prMuTrack->charge() > 0) {
+            else if (T.mStMuTrack->charge() > 0) {
                hE[184 + 6]->Fill(T.mCluster2x2.ET);
             }
          }
@@ -2247,14 +2247,14 @@ void StVecBosMaker::FindWBosonEndcap()
          hE[90]->Fill( T.mCluster2x2.ET);
          hE[92]->Fill( T.mCluster2x2.ET, T.glMuTrack->dEdx() * 1e6);
          //hE[93]->Fill( T.mCluster2x2.ET,T.glMuTrack->dca().mag());
-         int k = 0; if (T.prMuTrack->charge() < 0) k = 1;
+         int k = 0; if (T.mStMuTrack->charge() < 0) k = 1;
          hE[94 + k]->Fill( T.mCluster2x2.ET, T.glMuTrack->dcaD());
          // h95 used above
 
          // do charge sign plot
          float ET = T.mCluster2x2.ET;
          const StMuTrack *glTr = T.glMuTrack; assert(glTr);
-         const StMuTrack *prTr = T.prMuTrack; assert(prTr);
+         const StMuTrack *prTr = T.mStMuTrack; assert(prTr);
          float g_chrg = glTr->charge();
          float p_chrg = prTr->charge();
          hE[200]->Fill(ET, g_chrg / glTr->pt());
@@ -2265,9 +2265,9 @@ void StVecBosMaker::FindWBosonEndcap()
          hE[96]->Fill(vertex.mIdMuDst);
          hE[97]->Fill(vertex.mRankLog);
          hE[98]->Fill(vertex.z);
-         hE[99]->Fill( T.prMuTrack->eta());
+         hE[99]->Fill( T.mStMuTrack->eta());
          hE[100]->Fill(T.mMatchedTower.R.X(), T.mMatchedTower.R.Y());
-         hE[190 + k]->Fill(T.prMuTrack->eta(), T.mCluster2x2.ET);
+         hE[190 + k]->Fill(T.mStMuTrack->eta(), T.mCluster2x2.ET);
          hE[20]->Fill("goldW", 1.);
          nGoldW++;
 

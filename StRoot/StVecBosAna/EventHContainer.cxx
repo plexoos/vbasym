@@ -10,6 +10,7 @@
 #include "TF2.h"
 
 #include "WBosEvent.h"
+#include "TrackHContainer.h"
 
 
 ClassImp(EventHContainer)
@@ -118,19 +119,21 @@ void EventHContainer::BookHists()
    o["hPtBalanceTracksVsElecEt"]    = hist = new TH2F("hPtBalanceTracksVsElecEt","; E_{T}^{electron}; P_{T}-balance cos(#phi)",40,0.,60.,40,-40,60);
    hist->SetOption("colz LOGZ");
 
-   o["hPtBalanceFromJets"]        = hist = new TH1F("hPtBalanceFromJets", "Jets; P_{T}-balance from tracks; P_{T};", 40, 0, 60);
-   o["hPtBalanceCosPhiFromJets"]  = hist = new TH1F("hPtBalanceCosPhiFromJets", "Jets; P_{T}-balance cos(#phi); P_{T};", 40, -100, 100);
-   o["hPhiBalanceCosPhiFromJets"] = hist = new TH1F("hPhiBalanceCosPhiFromJets", "Jets; P_{T}-balance; #phi;", 40, -TMath::Pi(),TMath::Pi());
-   o["hBalanceDeltaPhiFromJets"]  = hist = new TH1F("hBalanceDeltaPhiFromJets", "Jets; #Delta #phi;", 40, -TMath::Pi(), TMath::Pi());
-   o["hPtBalanceJetsVsElecEt"]    = hist = new TH2F("hPtBalanceJetsVsElecEt","Jets; E_{T}^{electron}; P_{T}-balance cos(#phi)",40,0.,60.,40,-40,60);
+   o["hPtBalanceFromJets"]          = hist = new TH1F("hPtBalanceFromJets", "Jets; P_{T}-balance from tracks; P_{T};", 40, 0, 60);
+   o["hPtBalanceCosPhiFromJets"]    = hist = new TH1F("hPtBalanceCosPhiFromJets", "Jets; P_{T}-balance cos(#phi); P_{T};", 40, -100, 100);
+   o["hPhiBalanceCosPhiFromJets"]   = hist = new TH1F("hPhiBalanceCosPhiFromJets", "Jets; P_{T}-balance; #phi;", 40, -TMath::Pi(),TMath::Pi());
+   o["hBalanceDeltaPhiFromJets"]    = hist = new TH1F("hBalanceDeltaPhiFromJets", "Jets; #Delta #phi;", 40, -TMath::Pi(), TMath::Pi());
+   o["hPtBalanceJetsVsElecEt"]      = hist = new TH2F("hPtBalanceJetsVsElecEt","Jets; E_{T}^{electron}; P_{T}-balance cos(#phi)",40,0.,60.,40,-40,60);
    hist->SetOption("colz LOGZ");
+
+
+   d["tracks"] = new TrackHContainer(new TDirectoryFile("tracks", "tracks", "", fDir));
 }
 
 
 /** */
 void EventHContainer::Fill(ProtoEvent &ev)
 {
-   //VecBosEvent& event = (VecBosEvent&) ev;
    WBosEvent& event = (WBosEvent&) ev;
 
    ((TH1*) o["hRunId"])->Fill(event.runNo);
@@ -163,7 +166,7 @@ void EventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hPhiBalanceCosPhiFromTracksNeutrals"])->Fill(event.mP3BalanceFromTracks.Phi());
    ((TH1*) o["hBalanceDeltaPhiFromTracksNeutrals"])->Fill(event.mBalanceDeltaPhiFromTracks);
    if (event.mTracksCandidate.size() > 0) {
-     ((TH2*) o["hPtBalanceTracksNeutralsVsElecEt"])->Fill( event.GetElectronCandidate().Pt(), event.mPtBalanceCosPhiFromTracks);
+     ((TH2*) o["hPtBalanceTracksNeutralsVsElecEt"])->Fill( event.GetElectronCandidateP3().Pt(), event.mPtBalanceCosPhiFromTracks);
    }
 
    ((TH1*) o["hPtBalanceFromTracks"])->Fill(event.mP3BalanceFromTracks2.Pt());
@@ -171,7 +174,7 @@ void EventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hPhiBalanceCosPhiFromTracks"])->Fill(event.mP3BalanceFromTracks2.Phi());
    ((TH1*) o["hBalanceDeltaPhiFromTracks"])->Fill(event.mBalanceDeltaPhiFromTracks2);
    if (event.mTracksCandidate.size() > 0) {
-     ((TH2*) o["hPtBalanceTracksVsElecEt"])->Fill(event.GetElectronCandidate().Pt(), event.mPtBalanceCosPhiFromTracks2);
+     ((TH2*) o["hPtBalanceTracksVsElecEt"])->Fill(event.GetElectronCandidateP3().Pt(), event.mPtBalanceCosPhiFromTracks2);
    }
 
    ((TH1*) o["hPtBalanceFromJets"])->Fill(event.mP3BalanceFromJets.Pt());
@@ -179,20 +182,28 @@ void EventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hPhiBalanceCosPhiFromJets"])->Fill(event.mP3BalanceFromJets.Phi());
    ((TH1*) o["hBalanceDeltaPhiFromJets"])->Fill(event.mBalanceDeltaPhiFromJets);
    if (event.mTracksCandidate.size() > 0) {
-     ((TH2*) o["hPtBalanceJetsVsElecEt"])->Fill(event.GetElectronCandidate().Pt(),event.mPtBalanceCosPhiFromJets);
+     ((TH2*) o["hPtBalanceJetsVsElecEt"])->Fill(event.GetElectronCandidateP3().Pt(),event.mPtBalanceCosPhiFromJets);
    }
+
+   d["tracks"]->Fill(ev);
 }
 
 
-/** */
-void EventHContainer::FillDerived()
+void EventHContainer::FillTracks(ProtoEvent &ev)
 {
-   Info("FillDerived()", "Called");
+   WBosEvent& event = (WBosEvent&) ev;
 }
 
 
-/** */
-void EventHContainer::PostFill()
-{
-   Info("PostFill", "Called");
-}
+///** */
+//void EventHContainer::FillDerived()
+//{
+//   Info("FillDerived()", "Called");
+//}
+//
+//
+///** */
+//void EventHContainer::PostFill()
+//{
+//   Info("PostFill", "Called");
+//}

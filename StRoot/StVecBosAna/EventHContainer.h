@@ -29,12 +29,12 @@ public:
    EventHContainer(TDirectory *dir);
    ~EventHContainer();
 
-   using PlotHelper::FillDerived;
-   using PlotHelper::PostFill;
-
    void Fill(ProtoEvent &ev);
-   void FillDerived();
-   void PostFill();
+   void FillTracks(ProtoEvent &ev);
+   //void FillDerived();
+   //void FillDerived(PlotHelper &oc);
+   //void PostFill();
+   //void PostFill(PlotHelper &oc);
 
 private:
 

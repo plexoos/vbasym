@@ -90,7 +90,7 @@ void VecBosEvent::AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex)
    VecBosTrack *vbTrack = new VecBosTrack();
 
    vbTrack->mEvent     = this;
-   vbTrack->prMuTrack  = stMuTrack;
+   vbTrack->mStMuTrack  = stMuTrack;
    vbTrack->glMuTrack  = stMuTrack->globalTrack();
    vbTrack->mVertex    = vbVertex;
    vbTrack->mP3AtDca   = TVector3(stMuTrack->p().x(), stMuTrack->p().y(), stMuTrack->p().z());
@@ -147,7 +147,7 @@ UInt_t VecBosEvent::GetNumTracksWithBCluster()
 }
 
 
-bool VecBosEvent::PassCutsExceptedPtBal()
+bool VecBosEvent::PassedCutExceptPtBal() const
 {
    if ( mTracksCandidate.size() > 0 &&
         (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= VecBosTrack::sMinCandidateTrackClusterE)
@@ -159,7 +159,7 @@ bool VecBosEvent::PassCutsExceptedPtBal()
 }
 
 
-bool VecBosEvent::PassCutFinal()
+bool VecBosEvent::PassedCutFinal() const
 {
    //if (mTracksCandidate.size() > 0 && GetMissingEnergy().Pt() > 18
    if ( mTracksCandidate.size() > 0 && mPtBalanceCosPhiFromTracks > 18 &&
@@ -875,7 +875,7 @@ void VecBosEvent::clear()
    while (!mVertices.empty()) delete *mVertices.begin(), mVertices.erase(mVertices.begin());
    mVertices.clear(); // unnecessary?
 
-   while (!mTracks.empty()) (*mTracks.begin())->prMuTrack = 0, delete * mTracks.begin(), mTracks.erase(mTracks.begin());
+   while (!mTracks.empty()) (*mTracks.begin())->mStMuTrack = 0, delete * mTracks.begin(), mTracks.erase(mTracks.begin());
    mTracks.clear();
    mTracksCandidate.clear();
 
@@ -974,7 +974,7 @@ void VecBosEvent::Streamer(TBuffer &R__b)
       {
          VecBosTrack *track = *iTrack;
 
-         //Info("Streamer", "this: %x, prMuTrack: %x", track, track->prMuTrack);
+         //Info("Streamer", "this: %x, mStMuTrack: %x", track, track->mStMuTrack);
 
          // Set pointers to candidate tracks
          if ( track->IsCandidate() ) {

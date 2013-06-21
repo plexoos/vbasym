@@ -15,7 +15,8 @@ public:
 
    WtpcFilter();
    void init(const char* core, int sec, TObjArray* HListX, bool barrel);
-   void setCuts(int x, float y, float r1, float r2) {
+   void setCuts(int x, float y, float r1, float r2)
+   {
       mMinNumHits = x;
       mMinHitFrac = y;
       mMinRadius  = r1;
@@ -23,7 +24,7 @@ public:
    }
 
    static int getTpcSec(float phiRad, float etaDet);
-   bool accept( const StMuTrack*  prMuTrack);
+   bool accept(const StMuTrack* prMuTrack);
 
 private:
 

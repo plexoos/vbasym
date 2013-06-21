@@ -126,7 +126,7 @@ void AsymHContainer::Fill(ProtoEvent &ev)
 
    if (event.mTracksCandidate.size() > 0)
    {
-      TVector3 eleCandidate = event.GetElectronCandidate();
+      TVector3 eleCandidate = event.GetElectronCandidateP3();
 
       string shName = "hLeptonPhiVsEta_" + sDblSpinState;
       ((TH2*) o[shName])->Fill(eleCandidate.Eta(), eleCandidate.Phi());

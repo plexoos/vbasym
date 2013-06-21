@@ -146,10 +146,10 @@ public:
    bool           HasGoodVertex()             const { return mNumGoodVertices    > 0 ? true : false; } // Checks if at least one good vertex exist in the event
    bool           HasGoodTrack()              const { return mNumGoodTracks      > 0 ? true : false; }
    bool           HasIsolatedTrack()          const { return mNumIsolatedTracks  > 0 ? true : false; }
-   bool           HasCandidateTrack()         const { return mNumCandidateTracks > 0 ? true : false; }
+   bool           HasCandidateEle()           const { return mTracksCandidate.size() > 0 ? true : false; }
    bool           HasJetRecoil()              const { return mP4JetRecoil.Mag()  > 0 ? true : false; }
-   bool           PassCutsExceptedPtBal();
-   bool           PassCutFinal();
+   bool           PassedCutExceptPtBal() const;
+   bool           PassedCutFinal() const;
 
    void           Process();
    void           ProcessMC();
