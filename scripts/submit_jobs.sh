@@ -7,8 +7,8 @@ OUT_DIR=/star/data05/scratch/fazio
 #STAR_VER=SL11d
 STAR_VER=SL12c
 #STANA_OPTIONS="-j_-n100"
-STANA_OPTIONS="-j"
-#STANA_OPTIONS=""
+#STANA_OPTIONS="-j"
+STANA_OPTIONS=""
 
 export $STAR_VER
 

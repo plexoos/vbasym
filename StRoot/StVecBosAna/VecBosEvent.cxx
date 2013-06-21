@@ -244,9 +244,20 @@ void VecBosEvent::Process()
    // Calculate the Pt balance as the vector sum: pt elec + pt recoil
    if  (mTracksCandidate.size() == 1)
    {
+
       // Correct the recoil via MC 
-      // mPtTrackRecoilWithNeutralsCorrectedPt10 = mP3TrackRecoilTpcNeutrals.Pt() * (0.196 + 0.4606*mP3TrackRecoilTpcNeutrals.Pt() -0.02518*(pow(mP3TrackRecoilTpcNeutrals.Pt(),2)));
-      mPtTrackRecoilWithNeutralsCorrected = mP3TrackRecoilTpcNeutrals.Pt() * (0.196 + 0.4606*mP3TrackRecoilTpcNeutrals.Pt() - 0.02518*(pow(mP3TrackRecoilTpcNeutrals.Pt(), 2)));
+
+     //      mPtTrackRecoilWithNeutralsCorrected = mP3TrackRecoilTpcNeutrals.Pt() * (0.196 + 0.4606*mP3TrackRecoilTpcNeutrals.Pt() - 0.02518*(pow(mP3TrackRecoilTpcNeutrals.Pt(), 2)));
+
+     if (mP3TrackRecoilTpcNeutrals.Pt() < 5) 
+     {
+       Double_t corrFact = 5.471 - 2.97 * mP3TrackRecoilTpcNeutrals.Pt() + 0.734 * (pow(mP3TrackRecoilTpcNeutrals.Pt(), 2)) - 0.0631 * (pow(mP3TrackRecoilTpcNeutrals.Pt(), 3));
+       mPtTrackRecoilWithNeutralsCorrected = mP3TrackRecoilTpcNeutrals.Pt() * corrFact ;   
+     }
+     else if  (mP3TrackRecoilTpcNeutrals.Pt() >= 5) 
+     {
+       mPtTrackRecoilWithNeutralsCorrected = mP3TrackRecoilTpcNeutrals.Pt() * 1.15;
+     }
 
       TVector3 mP3JetRecoil;
       mP3JetRecoil.SetXYZ(mP4JetRecoil.Px(), mP4JetRecoil.Py(), mP4JetRecoil.Pz());
