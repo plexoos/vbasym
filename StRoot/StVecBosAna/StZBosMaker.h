@@ -9,6 +9,7 @@
 #include "StMaker.h"
 #include "StVecBosMaker.h"
 
+
 class StMuDstMaker;
 class WeventDisplay;
 class VecBosTrack;
@@ -16,8 +17,9 @@ class VecBosTrack;
 
 class StZBosMaker : public StMaker
 {
+
 private:
-   // parameters
+
    float par_nearTotEtFracZ;
    float par_clusterEtZ;
    float par_delPhi12;
@@ -32,10 +34,11 @@ private:
    TH1           *hA[mxHA];
 
    void initHistos();
-   void find_Z_boson();
-   void findEndcap_Z_boson();
+   void FindZBosBarrel();
+   void FindZBosEndcap();
 
 public:
+
    StZBosMaker(const char *name = "2011Zalgo");
    virtual       ~StZBosMaker() {};
    virtual Int_t  Init();
@@ -48,14 +51,14 @@ public:
       return cvs;
    }
 
-   void setHList(TObjArray *x)             { HList = x;}
-   void AttachWalgoMaker(StVecBosMaker *mk) { wMK = mk;}
-   void attachMuMaker(StMuDstMaker *mk)    { muMK = mk;}
-   void setNearEtFrac(float x)             { par_nearTotEtFracZ = x; return;}
-   void setClusterMinEt(float x)           { par_clusterEtZ = x; return;}
-   void setPhi12Min(float x)               { par_delPhi12 = x; return;}
-   void setMinZMass(float x)               { par_minMassZ = x; return;}
-   void setMaxZMass(float x)               { par_maxMassZ = x; return;}
+   void setHList(TObjArray *x)              { HList = x; }
+   void AttachWalgoMaker(StVecBosMaker *mk) { wMK = mk; }
+   void attachMuMaker(StMuDstMaker *mk)     { muMK = mk; }
+   void setNearEtFrac(float x)              { par_nearTotEtFracZ = x; }
+   void setClusterMinEt(float x)            { par_clusterEtZ = x; }
+   void setPhi12Min(float x)                { par_delPhi12 = x; }
+   void setMinZMass(float x)                { par_minMassZ = x; }
+   void setMaxZMass(float x)                { par_maxMassZ = x; }
    void printJan(VecBosTrack *T);
 
    ClassDef(StZBosMaker, 0)

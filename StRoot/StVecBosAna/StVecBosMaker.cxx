@@ -1725,12 +1725,9 @@ bool StVecBosMaker::passes_L2()
 void StVecBosMaker::FindWBoson()
 {
    if (!mVecBosEvent->l2bitET) return;
+   if (mVecBosEvent->zTag) return; // Ignore events tagged as Z events
 
-   //printf("========= FindWBoson() \n");
    int nNoNear = 0, nNoAway = 0, nEta1 = 0, nGoldW = 0, nGoldWp = 0, nGoldWn = 0;
-
-   //remove events tagged as Zs
-   if (mVecBosEvent->zTag) return;
 
    // search for Ws
    VecBosVertexPtrSetIter iVertex = GetVecBosEvent()->mVertices.begin();
@@ -1742,13 +1739,14 @@ void StVecBosMaker::FindWBoson()
       for (uint it = 0; it < vertex.eleTrack.size(); it++)
       {
          VecBosTrack &track = vertex.eleTrack[it];
+
          if (track.mMatchedTower.id <= 0) continue; //skip endcap towers
          if (track.isMatch2Cl == false) continue;
 
          assert(track.mCluster2x2.nTower > 0); // internal logical error
          assert(track.mP3InNearCone.Pt() > 0);      // internal logical error
 
-         // make cut on lepton eta
+         // Make cut on lepton eta
          if (track.mP3AtDca.Eta() < mMinBTrackEta || track.mP3AtDca.Eta() > mMaxBTrackEta) continue;
 
          hA[20]->Fill("eta1", 1.);
@@ -1844,17 +1842,16 @@ void StVecBosMaker::FindWBoson()
          hA[20]->Fill("noAway", 1.0);
          nNoAway++;
 
-         //::::::::::::::::::::::::::::::::::::::::::::::::
-         //:::::accepted W events for x-section :::::::::::
-         //::::::::::::::::::::::::::::::::::::::::::::::::
+         // accepted W events for x-section
 
-         hA[113]->Fill( track.mCluster2x2.ET);//for Joe
-
+         hA[113]->Fill( track.mCluster2x2.ET); //for Joe
          hA[90]->Fill( track.mCluster2x2.ET);
          hA[92]->Fill( track.mCluster2x2.ET, track.glMuTrack->dEdx() * 1e6);
          //hA[93]->Fill( track.mCluster2x2.ET,track.glMuTrack->dca(vertex.id).mag());
+
          int k = 0;
          if (track.mStMuTrack->charge() < 0) k = 1;
+
          hA[94 + k]->Fill( track.mCluster2x2.ET, track.glMuTrack->dcaD());
          // h95 used above
 
@@ -1926,11 +1923,11 @@ void StVecBosMaker::FindZBoson()
          //electron like cut on jets
          //StJet *jet = GetJet(stJet);
          float maxClusterET = 0.;
-         int   totTowers  = stJet->nBtowers + stJet->nEtowers;
+         int   numAllJetTowers  = stJet->nBtowers + stJet->nEtowers;
 
-         for (int itow = 0; itow < totTowers; itow++) // loop over towers
+         for (int itow = 0; itow < numAllJetTowers; itow++) // loop over towers
          {
-            // Drop endcap towers
+            // Ignore endcap towers
             if (stJet->tower(itow)->detectorId() == kEndcapEmcTowerId) continue;
 
             int towerId = stJet->tower(itow)->towerId();

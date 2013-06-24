@@ -470,8 +470,8 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       st2011ZMaker->setNearEtFrac(0.88);
       st2011ZMaker->setClusterMinEt(15);
       st2011ZMaker->setPhi12Min(3.1416 / 2.);
-      st2011ZMaker->setMinZMass(73.); // Zmass -20%
-      st2011ZMaker->setMaxZMass(114.);// Zmass +20%
+      st2011ZMaker->setMinZMass(73.);   // Zmass -20%
+      st2011ZMaker->setMaxZMass(114.);  // Zmass +20%
    }
 
    Info("main()", "stChain->ls");
