@@ -126,13 +126,14 @@ public:
    void        clear();
    void        print(int opt=0) const;
 
+   void CheckChargeSeparation(); // move to private when VecBosEvent streamer is fixed
+
 private:
 
    bool ExtendTrack2Barrel();
    bool ExtendTrack2Endcap();
    bool MatchTrack2BtowCluster();
    void CalcEnergyInCones();       // Isolation and such
-   void CheckChargeSeparation();
 
    ClassDef(VecBosTrack, 1);
 };

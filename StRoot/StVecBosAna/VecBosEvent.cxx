@@ -976,6 +976,8 @@ void VecBosEvent::Streamer(TBuffer &R__b)
          VecBosTrack *track = *iTrack;
 
          //Info("Streamer", "this: %x, prMuTrack: %x", track, track->prMuTrack);
+         // XXX temporarily solutions
+         track->CheckChargeSeparation();
 
          // Set pointers to candidate tracks
          if ( track->IsCandidate() ) {
@@ -1006,14 +1008,6 @@ void VecBosEvent::Streamer(TBuffer &R__b)
             mJetsRecoil.insert(vbJet);
          }
       }
-
-      //VecBosVertexPtrSetIter iVertex = mVertices.begin();
-      //for ( ; iVertex != mVertices.end(); ++iVertex)
-      //{
-      //   VecBosVertex *vbVertex = *iVertex;
-      //   Info("Streamer", "mVertices this: %x", vbVertex);
-      //}
-
    }
    else {
       //Info("Streamer", "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy ");

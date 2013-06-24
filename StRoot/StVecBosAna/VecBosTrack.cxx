@@ -69,8 +69,8 @@ VecBosTrack::~VecBosTrack()
 
 bool VecBosTrack::IsCandidate() const
 {
-   //return (HasCluster() && IsIsolated() && IsUnBalanced() && HasCharge());
-   return (HasCluster() && IsIsolated() && IsUnBalanced() );
+   return (HasCluster() && IsIsolated() && IsUnBalanced() && HasCharge());
+   //return (HasCluster() && IsIsolated() && IsUnBalanced() );
 }
 
 
@@ -526,6 +526,6 @@ void VecBosTrack::CheckChargeSeparation()
    if ( fabs( (GetChargeSign() * GetP3EScaled().Pt() ) / GetP3AtDca().Pt() ) >= 0.4 &&
         fabs( (GetChargeSign() * GetP3EScaled().Pt() ) / GetP3AtDca().Pt() ) <= 1.8 )
    {
-      mVbType |= kUNBALANCED;
+      mVbType |= kHAS_CHARGE;
    }
 }
