@@ -147,6 +147,12 @@ void MCHContainer::BookHists()
    o["hJetRecoilPtVsWBosonPt"]      = hist = new TH2I("hJetRecoilPtVsWBosonPt", "; W Boson P_{T}; Jet-based Recoil P_{T}", 50, 0., 50., 50, 0., 50.);
    hist->SetOption("colz LOGZ");
 
+   o["hJetRecoilPt_GenOverReco"]   = hist = new TH2F("hJetRecoilPt_GenOverReco", ";Jet-based Recoil P_{T}; Correction factor",40, 0, 40, 50, 0, 20);
+   hist->SetOption("colz LOGZ");
+
+   o["hJetRecoilPt_GenOverReco_zoomin"]   = hist = new TH2F("hJetRecoilPt_GenOverReco_zoomin", ";Jet-based Recoil P_{T}; Correction factor",20, 0, 10, 50, 0, 20);
+   hist->SetOption("colz LOGZ");
+
    o["hJetRecoilPhiVsWBosonPhi"]    = hist = new TH2I("hJetRecoilPhiVsWBosonPhi", "; W Boson #phi; Jet-based Recoil #phi", 50, -M_PI, M_PI, 50, -M_PI, M_PI);
    hist->SetOption("colz LOGZ");
 
@@ -258,6 +264,8 @@ void MCHContainer::Fill(ProtoEvent &ev)
 
    ((TH1*) o["hJetRecoilPtVsWBosonPt"])     ->Fill(event.mWEvent->mP4WBoson.Pt(), event.GetJetRecoil().Pt());
    ((TH1*) o["hJetRecoilPhiVsWBosonPhi"])   ->Fill(event.mWEvent->mP4WBoson.Phi(), event.GetJetRecoil().Phi());
+   ((TH2*) o["hJetRecoilPt_GenOverReco"])->Fill(event.GetJetRecoil().Pt(), event.mWEvent->mP4WBoson.Pt()/event.GetJetRecoil().Pt());
+   ((TH2*) o["hJetRecoilPt_GenOverReco_zoomin"])->Fill(event.GetJetRecoil().Pt(), event.mWEvent->mP4WBoson.Pt()/event.GetJetRecoil().Pt());
    ((TH1*) o["hTrackRecoilPtVsWBosonPt"])   ->Fill(event.mWEvent->mP4WBoson.Pt(), event.GetTrackRecoil().Pt());
    ((TH1*) o["hTrackRecoilPhiVsWBosonPhi"]) ->Fill(event.mWEvent->mP4WBoson.Phi(), event.GetTrackRecoil().Phi());
    ((TH1*) o["hTrackRecoilTpcPtVsWBosonPt"])->Fill(event.mWEvent->mP4WBoson.Pt(), event.mP3TrackRecoilTpc.Pt());

@@ -92,6 +92,8 @@ void EventHContainer::BookHists()
 
    o["hJetRecoilPt"]               = hist = new TH1F("hJetRecoilPt", "Recoil from Jets; Jet-based Recoil P_{T}; Events", 40, 0, 40);
 
+   o["hJetRecoilPt_zoomin"]        = hist = new TH1F("hJetRecoilPt_zoomin", "Recoil from Jets; Jet-based Recoil P_{T}; Events", 20, 0, 10);
+
    o["hTrackRecoilPt"]             = hist = new TH1F("hTrackRecoilPt", "Recoil from Tracks: TPC+TOW; Track-based Recoil P_{T}; Events;", 40, 0, 40);
 
    o["hTrackRecoilTpcPt"]          = hist = new TH1F("hTrackRecoilTpcPt", "Recoil from Tracks: TPC only; Track-based Recoil P_{T}; Events", 40, 0, 40);
@@ -153,6 +155,7 @@ void EventHContainer::Fill(ProtoEvent &ev)
    //((TH1*) o["hNumTracksWithBCluster2"])->Fill(event.GetNumTracksWithBCluster2());
 
    ((TH1*) o["hJetRecoilPt"])->Fill(event.GetJetRecoil().Pt());
+   ((TH1*) o["hJetRecoilPt_zoomin"])->Fill(event.GetJetRecoil().Pt());
    ((TH1*) o["hTrackRecoilPt"])->Fill(event.GetTrackRecoil().Pt());
    ((TH1*) o["hTrackRecoilTpcPt"])->Fill(event.mP3TrackRecoilTpc.Pt());
    ((TH1*) o["hTrackRecoilWithNeutralsPt"])->Fill(event.GetTrackRecoilTpcNeutrals().Pt());

@@ -114,8 +114,10 @@ void analysis2011()
    // hWp_PtWGenOverReco->Divide(hWp_PtWGen, hWp_PtWReco,1,1,"B");
    // hWp_PtWGenOverReco_zoomin->Divide(hWp_PtWGen_zoomin, hWp_PtWReco_zoomin,1,1,"B");
 
-   TH1 *hd_PtWRecoCorrected       = (TH1 *)hd_PtWReco->Clone("hd_PtWRecoCorrected");
-   hd_PtWRecoCorrected->Multiply(hd_PtWReco, hWp_PtWGenOverReco, 1, 1);
+   //TH1 *hd_PtWRecoCorrected       = (TH1 *)hd_PtWReco->Clone("hd_PtWRecoCorrected");
+   //hd_PtWRecoCorrected->Multiply(hd_PtWReco, hWp_PtWGenOverReco, 1, 1);
+   TH1 *hd_PtWRecoCorrected       = (TH1*) fileData->Get("event_pass_final_QEToPT/hTrackRecoilWithNeutralsPtCorrected");
+   TH1 *hd_PtWRecoCorrected_zoomin= (TH1*) fileData->Get("event_pass_final_QEToPT/hTrackRecoilWithNeutralsPtCorrected_zoomin");
 
    TH1 *hWm_PtWReco               = (TH1*) fileMCWm->Get("event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
    TH1 *hWm_PtWReco_zoomin        = (TH1*) fileMCWm->Get("event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt_zoomin");
@@ -170,33 +172,36 @@ void analysis2011()
    TH1 *hWp_Wp_PtWReco               = (TH1*) fileMCWp->Get("W+_event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
    TH1 *hWp_Wp_PtWReco_zoomin        = (TH1*) fileMCWp->Get("W+_event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt_zoomin");
 
-   TH1 *hWp_Wp_PtWGenOverReco        = (TH1*) hWp_Wp_PtWReco->Clone("hWp_Wp_PtWGenOverReco");
-   TH1 *hWp_Wp_PtWGenOverReco_zoomin = (TH1*) hWp_Wp_PtWReco_zoomin->Clone("hWp_Wp_PtWGenOverReco_zoomin");
+   //TH1 *hWp_Wp_PtWGenOverReco        = (TH1*) hWp_Wp_PtWReco->Clone("hWp_Wp_PtWGenOverReco");
+   //TH1 *hWp_Wp_PtWGenOverReco_zoomin = (TH1*) hWp_Wp_PtWReco_zoomin->Clone("hWp_Wp_PtWGenOverReco_zoomin");
 
-   hWp_Wp_PtWGenOverReco->Divide(hWp_PtWGen, hWp_Wp_PtWReco, 1, 1,"B");
-   hWp_Wp_PtWGenOverReco_zoomin->Divide(hWp_PtWGen_zoomin, hWp_Wp_PtWReco_zoomin, 1, 1,"B");
+   //hWp_Wp_PtWGenOverReco->Divide(hWp_PtWGen, hWp_Wp_PtWReco, 1, 1,"B");
+   //hWp_Wp_PtWGenOverReco_zoomin->Divide(hWp_PtWGen_zoomin, hWp_Wp_PtWReco_zoomin, 1, 1,"B");
 
 
-   TH1 *hd_Wp_PtWRecoCorrected        = (TH1*) hd_Wp_PtWReco->Clone("hd_Wp_PtWRecoCorrected");
-   hd_Wp_PtWRecoCorrected->Multiply(hd_Wp_PtWReco, hWp_Wp_PtWGenOverReco, 1, 1);
-   hd_Wp_PtWRecoCorrected->Scale(hd_Wp_PtWReco->Integral()/hd_Wp_PtWRecoCorrected->Integral());
+   //TH1 *hd_Wp_PtWRecoCorrected        = (TH1*) hd_Wp_PtWReco->Clone("hd_Wp_PtWRecoCorrected");
+   //hd_Wp_PtWRecoCorrected->Multiply(hd_Wp_PtWReco, hWp_Wp_PtWGenOverReco, 1, 1);
+   //hd_Wp_PtWRecoCorrected->Scale(hd_Wp_PtWReco->Integral()/hd_Wp_PtWRecoCorrected->Integral());
+   TH1 *hd_Wp_PtWRecoCorrected          = (TH1*) fileData->Get("W+_event_pass_final_QEToPT/hTrackRecoilWithNeutralsPtCorrected");
+   TH1 *hd_Wp_PtWRecoCorrected_zoomin   = (TH1*) fileData->Get("W+_event_pass_final_QEToPT/hTrackRecoilWithNeutralsPtCorrected_zoomin");
 
+   /*
    TH1 *hd_Wp_PtWRelativeCorr         = (TH1*) hd_Wp_PtWReco->Clone("hd_Wp_PtWRelativeCorr");
    hd_Wp_PtWRelativeCorr->SetTitle("W+ data sample; Track-based Recoil P_{T}; Relative Correction");
    hd_Wp_PtWRelativeCorr->Add(hd_Wp_PtWRecoCorrected,hd_Wp_PtWReco,1,-1);
    hd_Wp_PtWRelativeCorr->Divide(hd_Wp_PtWRelativeCorr,hd_Wp_PtWReco,1,1);
 
 
-   TH1 *hd_Wp_PtWRecoCorrected_zoomin = (TH1*) hd_Wp_PtWReco_zoomin->Clone("hd_Wp_PtWRecoCorrected_zoomin");
-   hd_Wp_PtWRecoCorrected_zoomin->Multiply(hd_Wp_PtWReco_zoomin, hWp_Wp_PtWGenOverReco_zoomin, 1, 1);
-   hd_Wp_PtWRecoCorrected_zoomin->Scale(hd_Wp_PtWReco_zoomin->Integral()/hd_Wp_PtWRecoCorrected_zoomin->Integral());
+   //TH1 *hd_Wp_PtWRecoCorrected_zoomin = (TH1*) hd_Wp_PtWReco_zoomin->Clone("hd_Wp_PtWRecoCorrected_zoomin");
+   //hd_Wp_PtWRecoCorrected_zoomin->Multiply(hd_Wp_PtWReco_zoomin, hWp_Wp_PtWGenOverReco_zoomin, 1, 1);
+   //hd_Wp_PtWRecoCorrected_zoomin->Scale(hd_Wp_PtWReco_zoomin->Integral()/hd_Wp_PtWRecoCorrected_zoomin->Integral());
 
    TH1 *hd_Wp_PtWRelativeCorr_zoomin  = (TH1*) hd_Wp_PtWReco_zoomin->Clone("hd_Wp_PtWRelativeCorr_zoomin");
    hd_Wp_PtWRelativeCorr_zoomin->SetTitle("W+ data sample; Track-based Recoil P_{T}; Relative Correction");
    hd_Wp_PtWRelativeCorr_zoomin->Add(hd_Wp_PtWRecoCorrected_zoomin,hd_Wp_PtWReco_zoomin,1,-1);
    hd_Wp_PtWRelativeCorr_zoomin->Divide(hd_Wp_PtWRelativeCorr_zoomin,hd_Wp_PtWReco_zoomin,1,1);
 
-
+   /*
    float binCont;
    Int_t binTotal  = hd_Wp_PtWRelativeCorr -> GetMaximumBin();
    //cout << "BIN TOTAL !! " << binTotal << endl;
@@ -218,6 +223,7 @@ void analysis2011()
        //cout << "BINCONT ZOOM!!!!!!!!!  " << binCont_zoomin  << endl;
        hd_Wp_PtWRelativeCorr_zoomin -> SetBinContent(iBin, binCont_zoomin);
    }
+   */
 
 
    // W-
@@ -259,25 +265,28 @@ void analysis2011()
    TH1 *hWm_Wm_PtWReco               = (TH1 *)fileMCWm->Get("W-_event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt");
    TH1 *hWm_Wm_PtWReco_zoomin        = (TH1*) fileMCWm->Get("W-_event_pass_final_QEToPT/hTrackRecoilWithNeutralsPt_zoomin");
 
-   TH1 *hWm_Wm_PtWGenOverReco        = (TH1 *)hWm_Wm_PtWReco->Clone("hWm_Wm_PtWGenOverReco");
-   TH1 *hWm_Wm_PtWGenOverReco_zoomin = (TH1*) hWm_Wm_PtWReco_zoomin->Clone("hWm_Wm_PtWGenOverReco_zoomin");
+   //TH1 *hWm_Wm_PtWGenOverReco        = (TH1 *)hWm_Wm_PtWReco->Clone("hWm_Wm_PtWGenOverReco");
+   //TH1 *hWm_Wm_PtWGenOverReco_zoomin = (TH1*) hWm_Wm_PtWReco_zoomin->Clone("hWm_Wm_PtWGenOverReco_zoomin");
 
-   hWm_Wm_PtWGenOverReco->Divide(hWm_PtWGen, hWm_Wm_PtWReco, 1, 1,"B");
-   hWm_Wm_PtWGenOverReco_zoomin->Divide(hWm_PtWGen_zoomin, hWm_Wm_PtWReco_zoomin, 1, 1,"B");
+   //hWm_Wm_PtWGenOverReco->Divide(hWm_PtWGen, hWm_Wm_PtWReco, 1, 1,"B");
+   //hWm_Wm_PtWGenOverReco_zoomin->Divide(hWm_PtWGen_zoomin, hWm_Wm_PtWReco_zoomin, 1, 1,"B");
 
-   TH1 *hd_Wm_PtWRecoCorrected        = (TH1 *)hd_Wm_PtWReco->Clone("hd_Wm_PtWRecoCorrected");
-   hd_Wm_PtWRecoCorrected->Multiply(hd_Wm_PtWReco, hWm_Wm_PtWGenOverReco, 1, 1);
-   hd_Wm_PtWRecoCorrected->Scale(hd_Wm_PtWReco->Integral()/hd_Wm_PtWRecoCorrected->Integral());
+   //TH1 *hd_Wm_PtWRecoCorrected        = (TH1 *)hd_Wm_PtWReco->Clone("hd_Wm_PtWRecoCorrected");
+   //hd_Wm_PtWRecoCorrected->Multiply(hd_Wm_PtWReco, hWm_Wm_PtWGenOverReco, 1, 1);
+   //hd_Wm_PtWRecoCorrected->Scale(hd_Wm_PtWReco->Integral()/hd_Wm_PtWRecoCorrected->Integral());
 
+   TH1 *hd_Wm_PtWRecoCorrected          = (TH1*) fileData->Get("W-_event_pass_final_QEToPT/hTrackRecoilWithNeutralsPtCorrected");
+   TH1 *hd_Wm_PtWRecoCorrected_zoomin   = (TH1*) fileData->Get("W-_event_pass_final_QEToPT/hTrackRecoilWithNeutralsPtCorrected_zoomin");
+
+   /*
    TH1 *hd_Wm_PtWRelativeCorr         = (TH1*) hd_Wm_PtWReco->Clone("hd_Wm_PtWRelativeCorr");
    hd_Wm_PtWRelativeCorr->SetTitle("W- data sample; Track-based Recoil P_{T}; Relative Correction");
    hd_Wm_PtWRelativeCorr->Add(hd_Wm_PtWRecoCorrected,hd_Wm_PtWReco,1,-1);
    hd_Wm_PtWRelativeCorr->Divide(hd_Wm_PtWRelativeCorr,hd_Wm_PtWReco,1,1);
 
-
-   TH1 *hd_Wm_PtWRecoCorrected_zoomin = (TH1*) hd_Wm_PtWReco_zoomin->Clone("hd_Wm_PtWRecoCorrected_zoomin");
-   hd_Wm_PtWRecoCorrected_zoomin->Multiply(hd_Wm_PtWReco_zoomin, hWm_Wm_PtWGenOverReco_zoomin, 1, 1);
-   hd_Wm_PtWRecoCorrected_zoomin->Scale(hd_Wm_PtWReco_zoomin->Integral()/hd_Wm_PtWRecoCorrected_zoomin->Integral());
+   //TH1 *hd_Wm_PtWRecoCorrected_zoomin = (TH1*) hd_Wm_PtWReco_zoomin->Clone("hd_Wm_PtWRecoCorrected_zoomin");
+   //hd_Wm_PtWRecoCorrected_zoomin->Multiply(hd_Wm_PtWReco_zoomin, hWm_Wm_PtWGenOverReco_zoomin, 1, 1);
+   //hd_Wm_PtWRecoCorrected_zoomin->Scale(hd_Wm_PtWReco_zoomin->Integral()/hd_Wm_PtWRecoCorrected_zoomin->Integral());
 
    TH1 *hd_Wm_PtWRelativeCorr_zoomin  = (TH1*) hd_Wm_PtWReco_zoomin->Clone("hd_Wm_PtWRelativeCorr_zoomin");
    hd_Wm_PtWRelativeCorr_zoomin->SetTitle("W- data sample; Track-based Recoil P_{T}; Relative Correction");
@@ -306,7 +315,7 @@ void analysis2011()
        //cout << "BINCONT ZOOM!!!!!!!!!  " << binCont_zoomin  << endl;
        hd_Wm_PtWRelativeCorr_zoomin -> SetBinContent(iBin, binCont_zoomin);
    }
-
+   */
 
 
    //-----------------------------------------------------------------------------------------------------------------
@@ -1473,7 +1482,7 @@ void analysis2011()
 
    c10d-> SetTitle("Reco vs Gen");
 
-   c10d->Divide(2, 2);
+   c10d->Divide(2, 1);
 
    c10d_1->cd();
    c10d_1->SetLogz(1);
@@ -1497,7 +1506,7 @@ void analysis2011()
 
    //hWp_Wp_PtWGenOverReco -> Fit(fitPol2);
 
-   hWp_Wp_PtWGenOverReco->GetYaxis()->SetTitleOffset(1.1);
+   hWp_PtWGenOverReco->GetYaxis()->SetTitleOffset(1.1);
    //hWp_Wp_PtWGenOverReco->Draw("E1");
    hWp_PtWGenOverReco->ProfileX("hWp_PtWGenOverReco_pfx", 0, 40);
    hWp_PtWGenOverReco_pfx->SetTitle("W+ sample - MC Correction; Tracks-based recoil P_{T} [GeV/c]; W P_{T}/Recoil P_{T}");
@@ -1511,13 +1520,13 @@ void analysis2011()
    c10d_2->cd();
    hd_Wp_PtWRecoCorrected->SetFillStyle(3448);
    hd_Wp_PtWRecoCorrected->SetFillColor(kGreen);
-   //hd_Wp_PtWRecoCorrected->Draw();
+   hd_Wp_PtWRecoCorrected->Draw();
    hd_Wp_PtWReco->SetTitle("Data");
-   hd_Wp_PtWReco->Draw();
+   hd_Wp_PtWReco->Draw("same");
    hd_Wp_PtWRecoCorrected->Draw("same");
 
-   c10d_3->cd();
-   hd_Wp_PtWRelativeCorr->Draw();
+   //c10d_3->cd();
+   //hd_Wp_PtWRelativeCorr->Draw();
 
    //c10d->Print(outPath + "/plot_10d.eps");
    c10d->Print(outPath + "/plot_10d.png");
@@ -1528,11 +1537,11 @@ void analysis2011()
 
    c10di-> SetTitle("Reco vs Gen zoom");
 
-   c10di->Divide(2, 2);
+   c10di->Divide(2, 1);
 
    c10di_1->cd();
    //hWp_Wp_PtWGenOverReco_zoomin -> Fit(fitPol2);
-   hWp_Wp_PtWGenOverReco_zoomin->GetYaxis()->SetTitleOffset(1.1);
+   hWp_PtWGenOverReco_zoomin->GetYaxis()->SetTitleOffset(1.1);
    //hWp_Wp_PtWGenOverReco_zoomin->Draw("E1");
    hWp_PtWGenOverReco_zoomin->ProfileX("hWp_PtWGenOverReco_zoomin_pfx", 0, 20);
    hWp_PtWGenOverReco_zoomin_pfx->SetTitle("W+ sample - MC Correction; Tracks-based recoil P_{T} [GeV/c]; W P_{T}/Recoil P_{T}");
@@ -1546,13 +1555,13 @@ void analysis2011()
    c10di_2->cd();
    hd_Wp_PtWRecoCorrected_zoomin->SetFillStyle(3448);
    hd_Wp_PtWRecoCorrected_zoomin->SetFillColor(kGreen);
-   //hd_Wp_PtWRecoCorrected->Draw();
+   hd_Wp_PtWRecoCorrected_zoomin->Draw();
    hd_Wp_PtWReco_zoomin->SetTitle("Data");
-   hd_Wp_PtWReco_zoomin->Draw();
+   hd_Wp_PtWReco_zoomin->Draw("same");
    hd_Wp_PtWRecoCorrected_zoomin->Draw("same");
 
-   c10di_3->cd();
-   hd_Wp_PtWRelativeCorr_zoomin->Draw();
+   //c10di_3->cd();
+   //hd_Wp_PtWRelativeCorr_zoomin->Draw();
 
    c10di->SaveAs(outPath + "/plot_10di.png");
 
@@ -1562,11 +1571,11 @@ void analysis2011()
 
    c10e-> SetTitle("Reco vs Gen");
 
-   c10e->Divide(2, 2);
+   c10e->Divide(2, 1);
 
    c10e_1->cd();
    //hWm_Wm_PtWGenOverReco -> Fit(fitPol2);
-   hWm_Wm_PtWGenOverReco->GetYaxis()->SetTitleOffset(1.1);
+   hWm_PtWGenOverReco->GetYaxis()->SetTitleOffset(1.1);
    //hWm_Wm_PtWGenOverReco->Draw("E1");
    hWm_PtWGenOverReco->ProfileX("hWm_PtWGenOverReco_pfx", 0, 40);
    //hWm_PtWGenOverReco->GetYaxis()->SetTitleOffset(1.1);
@@ -1583,12 +1592,12 @@ void analysis2011()
    //hd_Wm_PtWReco->Draw();
    hd_Wm_PtWRecoCorrected->SetFillStyle(3448);
    hd_Wm_PtWRecoCorrected->SetFillColor(kGreen);
-   //hd_Wm_PtWRecoCorrected->Draw();
-   hd_Wm_PtWReco->Draw();
+   hd_Wm_PtWRecoCorrected->Draw();
+   hd_Wm_PtWReco->Draw("same");
    hd_Wm_PtWRecoCorrected->Draw("same");
 
-   c10e_3->cd();
-   hd_Wm_PtWRelativeCorr->Draw();
+   //c10e_3->cd();
+   //hd_Wm_PtWRelativeCorr->Draw();
 
    //c10e->Print(outPath + "/plot_10e.eps");
    c10e->Print(outPath + "/plot_10e.png");
@@ -1598,13 +1607,13 @@ void analysis2011()
 
    c10ei-> SetTitle("Reco vs Gen zoom");
 
-   c10ei->Divide(2, 2);
+   c10ei->Divide(2, 1);
 
    c10ei_1->cd();
    //hWm_Wm_PtWGenOverReco_zoomin -> SetStats(0);
 
    //hWm_Wm_PtWGenOverReco_zoomin -> Fit(fitPol2);
-   hWm_Wm_PtWGenOverReco_zoomin->GetYaxis()->SetTitleOffset(1.1);
+   hWm_PtWGenOverReco_zoomin->GetYaxis()->SetTitleOffset(1.1);
    hWm_PtWGenOverReco_zoomin->ProfileX("hWm_PtWGenOverReco_zoomin_pfx", 0, 20);
    //hWm_Wm_PtWGenOverReco_zoomin->Draw("E1");
    hWm_PtWGenOverReco_zoomin_pfx->SetMarkerColor(kRed);
@@ -1621,11 +1630,12 @@ void analysis2011()
    hd_Wm_PtWRecoCorrected_zoomin->SetFillStyle(3448);
    hd_Wm_PtWRecoCorrected_zoomin->SetFillColor(kGreen);
    hd_Wm_PtWReco_zoomin->SetTitle("Data");
-   hd_Wm_PtWReco_zoomin->Draw();
+   hd_Wm_PtWRecoCorrected_zoomin->Draw();
+   hd_Wm_PtWReco_zoomin->Draw("same");
    hd_Wm_PtWRecoCorrected_zoomin->Draw("same");
 
-   c10ei_3->cd();
-   hd_Wm_PtWRelativeCorr_zoomin->Draw();
+   //c10ei_3->cd();
+   //hd_Wm_PtWRelativeCorr_zoomin->Draw();
 
    c10ei->SaveAs(outPath + "/plot_10ei.png");
 
