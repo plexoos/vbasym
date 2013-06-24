@@ -8,8 +8,9 @@
 #include "TStyle.h"
 
 #include "AsymHContainer.h"
+#include "EventHContainer.h"
 #include "MCHContainer.h"
-#include "VecBosEvent.h"
+#include "WBosEvent.h"
 #include "VecBosTrack.h"
 #include "VecBosVertex.h"
 
@@ -51,11 +52,29 @@ void VecBosAsymRootFile::BookHists()
 
    fHists = new PlotHelper(this);
 
+   fHists->d["event"] = ph = new EventHContainer(new TDirectoryFile("event", "event", "", this));
+   fHistCuts[kCUT_EVENT_NOCUT].insert(ph);
+
    fHists->d["asym"] = ph = new AsymHContainer(new TDirectoryFile("asym", "asym", "", this));
    fHistCuts[kCUT_EVENT_NOCUT].insert(ph);
 
-   fHists->d["asym_final"] = ph = new AsymHContainer(new TDirectoryFile("asym_final", "asym_final", "", this));
-   fHistCuts[kCUT_EVENT_PASS_FINAL].insert(ph);
+   fHists->d["event_w"] = ph = new EventHContainer(new TDirectoryFile("event_w", "event_w", "", this));
+   fHistCuts[kCUT_EVENT_W].insert(ph);
+
+   fHists->d["asym_w"] = ph = new AsymHContainer(new TDirectoryFile("asym_w", "asym_w", "", this));
+   fHistCuts[kCUT_EVENT_W].insert(ph);
+
+   fHists->d["event_w_plus"] = ph = new EventHContainer(new TDirectoryFile("event_w_plus", "event_w_plus", "", this));
+   fHistCuts[kCUT_EVENT_W_PLUS].insert(ph);
+
+   fHists->d["asym_w_plus"] = ph = new AsymHContainer(new TDirectoryFile("asym_w_plus", "asym_w_plus", "", this));
+   fHistCuts[kCUT_EVENT_W_PLUS].insert(ph);
+
+   fHists->d["event_w_minus"] = ph = new EventHContainer(new TDirectoryFile("event_w_minus", "event_w_minus", "", this));
+   fHistCuts[kCUT_EVENT_W_MINUS].insert(ph);
+
+   fHists->d["asym_w_minus"] = ph = new AsymHContainer(new TDirectoryFile("asym_w_minus", "asym_w_minus", "", this));
+   fHistCuts[kCUT_EVENT_W_MINUS].insert(ph);
 
    if (!fIsMc) return;
 
@@ -66,12 +85,16 @@ void VecBosAsymRootFile::BookHists()
 /** */
 void VecBosAsymRootFile::Fill(ProtoEvent &ev)
 {
-   VecBosEvent& event = (VecBosEvent&) ev;
+   WBosEvent& w_event = (WBosEvent&) ev;
 
    Fill(ev, kCUT_EVENT_NOCUT);
 
-   if ( event.PassedCutFinal() )
-      Fill(ev, kCUT_EVENT_PASS_FINAL);
+   if ( w_event.PassedCutWBos() ) {
+      Fill(ev, kCUT_EVENT_W);
+
+      if ( w_event.PassedCutWBosPlus() )  Fill(ev, kCUT_EVENT_W_PLUS);
+      if ( w_event.PassedCutWBosMinus() ) Fill(ev, kCUT_EVENT_W_MINUS);
+   }
 }
 
 

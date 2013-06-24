@@ -241,7 +241,7 @@ void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo, VecB
          hEsmdShower[iuv]->Draw();
 
          //print Q/Pt warning
-         if ( iuv == 1 && myTr.mStMuTrack->pt() >= 100.0 ) {
+         if ( iuv == 1 && myTr.prMuTrack->pt() >= 100.0 ) {
             TLatex *tx = new TLatex(3, 0.9 * hEsmdShower[iuv]->GetMaximum(), "| Q/P_{T} | < 0.01");  tx->SetTextColor(kRed); tx->SetTextSize(0.1); tx->Draw();
          }
       }
@@ -304,7 +304,7 @@ void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo, VecB
       sprintf(txt, "run=%d  eveID=%05d daq=%d vertex:mId=%d Z=%.0fcm ", runNo, eveID, daqSeq, myV.mId, myV.z);
       printf("WeventDisplay::Event ID  %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
-      sprintf(txt, "TPC PT(GeV/c) prim=%.1f  near=%.1f  away=%.1f ", myTr.mStMuTrack->pt(), myTr.mP3InNearConeTpc.Pt(), myTr.awayTpcPT);
+      sprintf(txt, "TPC PT(GeV/c) prim=%.1f  near=%.1f  away=%.1f ", myTr.prMuTrack->pt(), myTr.mP3InNearConeTpc.Pt(), myTr.awayTpcPT);
       printf("WeventDisplay::Event %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
 
@@ -316,12 +316,12 @@ void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo, VecB
       printf("WeventDisplay:: %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
 
-      sprintf(txt, "Q/Pt = %.3f   : ESMD E/MeV  U plane= %.1f  V plane= %.1f ", (1.0 * myTr.mStMuTrack->charge()) / myTr.mStMuTrack->pt(), myTr.esmdE[0], myTr.esmdE[1]);
+      sprintf(txt, "Q/Pt = %.3f   : ESMD E/MeV  U plane= %.1f  V plane= %.1f ", (1.0 * myTr.prMuTrack->charge()) / myTr.prMuTrack->pt(), myTr.esmdE[0], myTr.esmdE[1]);
       printf("WeventDisplay:: %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
 
       float chi2 = myTr.glMuTrack->chi2(); if (chi2 > 999.) chi2 = -1.;
-      sprintf(txt, "Track: eta=%.1f Q=%d nFit=%d nPoss=%d r1=%.0f r2=%.0f chi2=%.1f", myTr.mMatchedTower.R.Eta(), myTr.mStMuTrack->charge(), myTr.mStMuTrack->nHitsFit(), myTr.mStMuTrack->nHitsPoss(), myTr.glMuTrack->firstPoint().perp(), myTr.glMuTrack->lastPoint().perp(), chi2);
+      sprintf(txt, "Track: eta=%.1f Q=%d nFit=%d nPoss=%d r1=%.0f r2=%.0f chi2=%.1f", myTr.mMatchedTower.R.Eta(), myTr.prMuTrack->charge(), myTr.prMuTrack->nHitsFit(), myTr.prMuTrack->nHitsPoss(), myTr.glMuTrack->firstPoint().perp(), myTr.glMuTrack->lastPoint().perp(), chi2);
       printf("WeventDisplay:: %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
 
@@ -360,7 +360,7 @@ void WeventDisplay::exportEvent( const char *tit, VecBosVertex &myV, VecBosTrack
 
    //printf("#xcheck-%s run=%d daqSeq=%d eveID=%7d vertID=%2d zVert=%.1f prTrID=%4d  prTrEta=%.3f prTrPhi/deg=%.1f globPT=%.1f hitTwId=%4d twAdc=%.1f clEta=%.3f clPhi/deg=%.1f  clET=%.1f\n",tit,
    //	 runNo,daqSeq,eveId,myV.id,myV.z,
-   //	 myTr.mStMuTrack->id(),myTr.mStMuTrack->eta(),myTr.mStMuTrack->phi()/3.1416*180.,myTr.glMuTrack->pt(),
+   //	 myTr.prMuTrack->id(),myTr.prMuTrack->eta(),myTr.prMuTrack->phi()/3.1416*180.,myTr.glMuTrack->pt(),
    //	 myTr.mMatchedTower.id,wMK->mVecBosEvent->bemc.adcTile[kBTow][myTr.mMatchedTower.id-1],
    //	 rTw.Eta(),rTw.Phi()/3.1416*180.,myTr.mCluster2x2.ET);
 

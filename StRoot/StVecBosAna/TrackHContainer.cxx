@@ -134,7 +134,7 @@ void TrackHContainer::Fill(ProtoEvent &ev)
 /** */
 void TrackHContainer::Fill(VecBosTrack &track)
 {
-   ((TH1*) o["hTrackFlag"])->Fill(track.mStMuTrack->flag());
+   ((TH1*) o["hTrackFlag"])->Fill(track.prMuTrack->flag());
    ((TH1*) o["hTrackVbType"])->Fill(track.mVbType);
    ((TH1*) o["hTrackEta"])->Fill(track.mP3AtDca.Eta());
    ((TH1*) o["hTrackPhi"])->Fill(track.mP3AtDca.Phi());
@@ -152,8 +152,8 @@ void TrackHContainer::Fill(VecBosTrack &track)
    ((TH1*) o["hTrackPt"])->Fill(track.mP3AtDca.Pt());
    ((TH1*) o["hEcalScaledPt"])->Fill(track.GetP3EScaled().Pt());
    ((TH1*) o["hTrackEOverP"])->Fill(track.mCluster2x2.energy/track.mP3AtDca.Mag());
-   ((TH1*) o["hTrackHitsFit"])->Fill(track.mStMuTrack->nHitsFit());
-   ((TH1*) o["hTrackHitsPoss"])->Fill(track.mStMuTrack->nHitsPoss());
+   ((TH1*) o["hTrackHitsFit"])->Fill(track.prMuTrack->nHitsFit());
+   ((TH1*) o["hTrackHitsPoss"])->Fill(track.prMuTrack->nHitsPoss());
    ((TH1*) o["hTrackBTowerId"])->Fill(track.mMatchedTower.id);
    ((TH1*) o["hTrackCluster2x2E"])->Fill(track.mCluster2x2.energy);
    ((TH1*) o["hTrackCluster2x2Et"])->Fill(track.mCluster2x2.ET);
@@ -162,11 +162,11 @@ void TrackHContainer::Fill(VecBosTrack &track)
    ((TH1*) o["hTrackBClusterEnergyIsoRatio"])->Fill(track.mCluster2x2.ET/track.mCluster4x4.ET);
    ((TH1*) o["hTrackClusterEnergyFrac"])->Fill(track.GetClusterEnergyFrac());
    ((TH1*) o["hTrackDistanceToCluster"])->Fill(track.CalcDistanceToCluster().Mag());
-   ((TH1*) o["hChargePrimaryTrack"])->Fill(track.mStMuTrack->charge());
-   ((TH1*) o["hQoPt_PrimaryTrack"])->Fill(track.mStMuTrack->charge()/track.GetP3EScaled().Pt());
-   //((TH2*) o["hQoPt_Vs_Et_PrimaryTrack"])->Fill(track.mCluster2x2.ET, (track.mStMuTrack->charge()/track.GetP3EScaled().Pt()));
-   ((TH2*) o["hQoPt_Vs_Et_PrimaryTrack"])->Fill(track.mCluster2x2.ET, (track.mStMuTrack->charge()/track.mP3AtDca.Pt()));
-   ((TH2*) o["hQxEtoPt_Vs_Et_PrimaryTrack"])->Fill(track.mCluster2x2.ET, (track.mStMuTrack->charge()*track.mCluster2x2.ET)/track.mP3AtDca.Pt());
+   ((TH1*) o["hChargePrimaryTrack"])->Fill(track.prMuTrack->charge());
+   ((TH1*) o["hQoPt_PrimaryTrack"])->Fill(track.prMuTrack->charge()/track.GetP3EScaled().Pt());
+   //((TH2*) o["hQoPt_Vs_Et_PrimaryTrack"])->Fill(track.mCluster2x2.ET, (track.prMuTrack->charge()/track.GetP3EScaled().Pt()));
+   ((TH2*) o["hQoPt_Vs_Et_PrimaryTrack"])->Fill(track.mCluster2x2.ET, (track.prMuTrack->charge()/track.mP3AtDca.Pt()));
+   ((TH2*) o["hQxEtoPt_Vs_Et_PrimaryTrack"])->Fill(track.mCluster2x2.ET, (track.prMuTrack->charge()*track.mCluster2x2.ET)/track.mP3AtDca.Pt());
 
    ((TH1*) o["hMinDeltaRToJet"])->Fill(track.mMinDeltaRToJet);
 

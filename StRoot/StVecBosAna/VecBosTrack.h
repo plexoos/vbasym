@@ -24,15 +24,16 @@ class VecBosTrack : public TObject
 {
 public:
 
-   enum ETrackType {kUNKNOWN     = 0x0000,
-                    kBAD         = 0x8000,
-                    kGOOD        = 0x0001,                     // comes from a good vertex
-                    kBARREL      = 0x0010, kENDCAP   = 0x0020, // from reco algo definition
-                    kHAS_CLUSTER = 0x0100,                     // has cluster above a threshold
-                    kISOLATED    = 0x0200,                     // cluster/cone energy > 0.88
-                    kIN_JET      = 0x0400,                     // track belongs to a jet
-                    kUNBALANCED  = 0x0800,                     // does not have much energy in opposite direction
-                    kCANDIDATE   = 0x1000                      // kHAS_CLUSTER && kISOLATED && !kIN_JET && !kBALANCED && Pt > XX GeV
+   enum ETrackType {kUNKNOWN     = 0x00000000,
+                    kBAD         = 0x00008000,
+                    kGOOD        = 0x00000001,                     // comes from a good vertex
+                    kBARREL      = 0x00000010, kENDCAP   = 0x0020, // from reco algo definition
+                    kHAS_CLUSTER = 0x00000100,                     // has cluster above a threshold
+                    kISOLATED    = 0x00000200,                     // cluster/cone energy > 0.88
+                    kIN_JET      = 0x00000400,                     // track belongs to a jet
+                    kUNBALANCED  = 0x00000800,                     // does not have much energy in opposite direction
+                    kHAS_CHARGE  = 0x00001000,                     // the charge of track can be measured
+                    kCANDIDATE   = 0x10000000                      // kHAS_CLUSTER && kISOLATED && !kIN_JET && !kBALANCED && Pt > XX GeV
                    };
 
    VecBosEvent            *mEvent;             //!
@@ -40,7 +41,8 @@ public:
    Bool_t                  isMatch2Cl;         // result of cuts
    WevePointTower          mMatchedTower;
    const StMuTrack        *glMuTrack;          //!
-   StMuTrack              *mStMuTrack;         //
+   //StMuTrack              *prMuTrack;         //
+   StMuTrack              *prMuTrack;         //
    StPhysicalHelixD        mHelix;             //!
    const VecBosVertex     *mVertex;            //! pointer to mother vertex
    Short_t                 mVertexId;          // mId of the mother vertex
@@ -106,12 +108,13 @@ public:
    bool        IsIsolated()   const { return (mVbType & kISOLATED)    == kISOLATED    ? true : false; }
    bool        IsInJet()      const { return (mVbType & kIN_JET)      == kIN_JET      ? true : false; }
    bool        IsUnBalanced() const { return (mVbType & kUNBALANCED)  == kUNBALANCED  ? true : false; }
+   bool        HasCharge()    const { return (mVbType & kHAS_CHARGE)  == kHAS_CHARGE  ? true : false; }
    bool        IsCandidate()  const;
    void        Process();
-   short       GetChargeSign()         const { return mStMuTrack->charge(); }
+   short       GetChargeSign()         const { return prMuTrack->charge(); }
    TVector3    GetP3AtDca()            const { return mP3AtDca; }
    TVector3    GetP3EScaled()          const { return mP3AtDca * ((Double_t) mCluster2x2.energy / mP3AtDca.Mag()); }
-   float       GetFitHitFrac()         const { return float(mStMuTrack->nHitsFit()) / mStMuTrack->nHitsPoss(); }
+   float       GetFitHitFrac()         const { return float(prMuTrack->nHitsFit()) / prMuTrack->nHitsPoss(); }
    float       GetClusterEnergyFrac()  const { return (mCluster2x2.energy + mP3AtDca.Mag()) / mP3InNearConeNoETow.Mag(); }
    float       GetClusterETFrac()      const { return (mCluster2x2.ET     + mP3AtDca.Pt())  / mP3InNearConeNoETow.Perp(); }
    TVector3    GetDistanceToCluster()  const { return mDistToCluster; }
@@ -123,13 +126,13 @@ public:
    void        clear();
    void        print(int opt=0) const;
 
-   bool        PassedCutChargeSeparation() const;
-
 private:
 
    bool ExtendTrack2Barrel();
-   void MatchTrack2BtowCluster();
-   void CalcEnergyInNearCone();
+   bool ExtendTrack2Endcap();
+   bool MatchTrack2BtowCluster();
+   void CalcEnergyInCones();       // Isolation and such
+   void CheckChargeSeparation();
 
    ClassDef(VecBosTrack, 1);
 };

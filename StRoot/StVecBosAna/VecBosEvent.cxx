@@ -90,7 +90,7 @@ void VecBosEvent::AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex)
    VecBosTrack *vbTrack = new VecBosTrack();
 
    vbTrack->mEvent     = this;
-   vbTrack->mStMuTrack  = stMuTrack;
+   vbTrack->prMuTrack = stMuTrack;
    vbTrack->glMuTrack  = stMuTrack->globalTrack();
    vbTrack->mVertex    = vbVertex;
    vbTrack->mP3AtDca   = TVector3(stMuTrack->p().x(), stMuTrack->p().y(), stMuTrack->p().z());
@@ -875,7 +875,7 @@ void VecBosEvent::clear()
    while (!mVertices.empty()) delete *mVertices.begin(), mVertices.erase(mVertices.begin());
    mVertices.clear(); // unnecessary?
 
-   while (!mTracks.empty()) (*mTracks.begin())->mStMuTrack = 0, delete * mTracks.begin(), mTracks.erase(mTracks.begin());
+   while (!mTracks.empty()) (*mTracks.begin())->prMuTrack = 0, delete * mTracks.begin(), mTracks.erase(mTracks.begin());
    mTracks.clear();
    mTracksCandidate.clear();
 
@@ -958,10 +958,11 @@ void VecBosEvent::getGmt_day_hour(int &yyyymmdd, int &hhmmss)
 }
 
 
-/** */
+/**
+ * Stream an object of class VecBosEvent.
+ */
 void VecBosEvent::Streamer(TBuffer &R__b)
 {
-   // Stream an object of class VecBosEvent.
    //Info("Streamer", "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx ");
 
    if (R__b.IsReading()) {
@@ -974,7 +975,7 @@ void VecBosEvent::Streamer(TBuffer &R__b)
       {
          VecBosTrack *track = *iTrack;
 
-         //Info("Streamer", "this: %x, mStMuTrack: %x", track, track->mStMuTrack);
+         //Info("Streamer", "this: %x, prMuTrack: %x", track, track->prMuTrack);
 
          // Set pointers to candidate tracks
          if ( track->IsCandidate() ) {

@@ -177,8 +177,6 @@ private:
    void  FindWBoson();
    void  FindWBosonEndcap();
    void  FindZBoson();
-   //void  RecoilFromTracks();
-   int   ExtendTrack2Endcap();
    void  FindNearJet();
    void  CalcPtBalance();
    void  esmdAnalysis();

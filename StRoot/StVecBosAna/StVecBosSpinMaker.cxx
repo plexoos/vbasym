@@ -240,7 +240,7 @@ void StVecBosSpinMaker::bXingSort()
          assert(T.mP3InNearCone.Pt() > 0); // internal logical error
 
          int iQ = 0; // plus
-         float p_Q = T.mStMuTrack->charge();
+         float p_Q = T.prMuTrack->charge();
          if ( p_Q < 0 ) iQ = 1; // minus
          float ET = T.mCluster2x2.ET;
 
@@ -259,10 +259,10 @@ void StVecBosSpinMaker::bXingSort()
 
          hA[0]->Fill("Wcut", 1.);
 
-         hA[30]->Fill(T.mStMuTrack->eta());
+         hA[30]->Fill(T.prMuTrack->eta());
          // allows spin specific cuts on eta
-         if (T.mStMuTrack->eta() < par_leptonEta1) continue;
-         if (T.mStMuTrack->eta() > par_leptonEta2) continue;
+         if (T.prMuTrack->eta() < par_leptonEta1) continue;
+         if (T.prMuTrack->eta() > par_leptonEta2) continue;
          hA[0]->Fill("eta", 1.);
 
          //::::::::::::::::::::::::::::::::::::::::::::::::
@@ -270,7 +270,7 @@ void StVecBosSpinMaker::bXingSort()
          //::::::::::::::::::::::::::::::::::::::::::::::::
 
          if (ET > par_myET) hA[0]->Fill("W25", 1.);
-         float q2pt = T.mStMuTrack->charge() / T.mStMuTrack->pt();
+         float q2pt = T.prMuTrack->charge() / T.prMuTrack->pt();
          if (ET > par_myET) hA[8]->Fill(q2pt);
          hA[9]->Fill(ET, q2pt);
 

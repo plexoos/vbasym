@@ -56,7 +56,7 @@ void StZBosMaker::printJan(VecBosTrack *T)
    int id = poiTw.id;
    float adc = wMK->mVecBosEvent->bemc.adcTile[ibp][id - 1];
    float frac = adc / 4096 * 60 / cl.ET;
-   printf("Ztower Q=%d pointTw: id=%d ADC=%.0f  2x2ET=%.1f frac=%.2f\n", T->mStMuTrack->charge(), id, adc, cl.ET, frac);
+   printf("Ztower Q=%d pointTw: id=%d ADC=%.0f  2x2ET=%.1f frac=%.2f\n", T->prMuTrack->charge(), id, adc, cl.ET, frac);
 }
 
 
@@ -147,7 +147,7 @@ void StZBosMaker::FindZBosBarrel()
             hA[0]->Fill("m2", 1.);
 
             float mass = sqrt(mass2);
-            int Q1Q2 = T1.mStMuTrack->charge() * T2.mStMuTrack->charge();
+            int Q1Q2 = T1.prMuTrack->charge() * T2.prMuTrack->charge();
             if (Q1Q2 == 1) { //..  same sign , can't be Z-> e+ e-
                hA[14]->Fill(mass);
                continue;
@@ -156,8 +156,8 @@ void StZBosMaker::FindZBosBarrel()
             // now only opposite sign
             hA[0]->Fill("QQ", 1.);
             hA[15]->Fill(mass);
-            hA[33]->Fill(T1.mCluster2x2.ET, T1.mStMuTrack->charge() / T1.mStMuTrack->pt());
-            hA[33]->Fill(T2.mCluster2x2.ET, T2.mStMuTrack->charge() / T2.mStMuTrack->pt());
+            hA[33]->Fill(T1.mCluster2x2.ET, T1.prMuTrack->charge() / T1.prMuTrack->pt());
+            hA[33]->Fill(T2.mCluster2x2.ET, T2.prMuTrack->charge() / T2.prMuTrack->pt());
             hA[34]->Fill(T1.mMatchedTower.iEta , T1.mCluster2x2.energy);
             hA[34]->Fill(T2.mMatchedTower.iEta , T2.mCluster2x2.energy);
             hA[35]->Fill(p1.Eta(), p2.Eta());
@@ -193,15 +193,15 @@ void StZBosMaker::FindZBosBarrel()
             hA[22]->Fill(T1.mCluster2x2.ET, T2.mCluster2x2.ET);
 
             hA[1]->Fill(mass);
-            hA[2]->Fill(T1.mStMuTrack->charge(), T2.mStMuTrack->charge());
-            hA[3]->Fill(T1.mStMuTrack->charge()*T2.mStMuTrack->charge());
+            hA[2]->Fill(T1.prMuTrack->charge(), T2.prMuTrack->charge());
+            hA[3]->Fill(T1.prMuTrack->charge()*T2.prMuTrack->charge());
             hA[4]->Fill(p1.Phi(), p2.Phi());
             hA[5]->Fill(del_phi);
-            hA[6]->Fill(mass, T1.mStMuTrack->charge() / T1.mP3AtDca.Perp()*T2.mStMuTrack->charge() / T1.mP3AtDca.Perp());
-            hA[7]->Fill(mass, T1.mStMuTrack->charge()*T2.mStMuTrack->charge());
+            hA[6]->Fill(mass, T1.prMuTrack->charge() / T1.mP3AtDca.Perp()*T2.prMuTrack->charge() / T1.mP3AtDca.Perp());
+            hA[7]->Fill(mass, T1.prMuTrack->charge()*T2.prMuTrack->charge());
             hA[8]->Fill(T1.mCluster2x2.ET);
 
-            if (T1.mStMuTrack->charge() > 0) {
+            if (T1.prMuTrack->charge() > 0) {
                hA[9]->Fill(p1.Eta(), p1.Phi());
                hA[10]->Fill(p2.Eta(), p2.Phi());
             }
@@ -300,17 +300,17 @@ void StZBosMaker::FindZBosEndcap()
             hA[79]->Fill(psum.Pt());
 
             float mass = sqrt(mass2);
-            int Q1Q2 = TB.mStMuTrack->charge() * TE.mStMuTrack->charge();
+            int Q1Q2 = TB.prMuTrack->charge() * TE.prMuTrack->charge();
             if (Q1Q2 == 1) { //..  same sign , can't be Z-> e+ e-
                hA[76]->Fill(mass);
-               hA[80]->Fill(TE.mCluster2x2.ET, TE.mStMuTrack->charge() / TE.mStMuTrack->pt());
+               hA[80]->Fill(TE.mCluster2x2.ET, TE.prMuTrack->charge() / TE.prMuTrack->pt());
                continue;
             }
 
             // now only opposite sign
             hA[70]->Fill("QQ", 1.);
             hA[75]->Fill(mass);
-            hA[81]->Fill(TE.mCluster2x2.ET, TE.mStMuTrack->charge() / TE.mStMuTrack->pt());
+            hA[81]->Fill(TE.mCluster2x2.ET, TE.prMuTrack->charge() / TE.prMuTrack->pt());
          }
 
          // 2) use highest ET endcap mCluster2x2 with no track requirement
