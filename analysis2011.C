@@ -110,6 +110,8 @@ void analysis2011()
    // TH1 *hWp_PtWGenOverReco_zoomin = (TH1*) hWp_PtWReco_zoomin->Clone("hWp_PtWGenOverReco_zoomin");
    TH2 *hWp_PtWGenOverReco        = (TH2*) fileMCWp->Get("event_mc_pass_final_QEToPT/hTrackRecoilTpcNeutralsPt_GenOverReco");
    TH2 *hWp_PtWGenOverReco_zoomin = (TH2*) fileMCWp->Get("event_mc_pass_final_QEToPT/hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin");
+   TH2 *hWp_Jets_PtWGenOverReco        = (TH2*) fileMCWp->Get("event_mc_pass_final_QEToPT/hJetRecoilPt_GenOverReco");
+   TH2 *hWp_Jets_PtWGenOverReco_zoomin = (TH2*) fileMCWp->Get("event_mc_pass_final_QEToPT/hJetRecoilPt_GenOverReco_zoomin");
 
    // hWp_PtWGenOverReco->Divide(hWp_PtWGen, hWp_PtWReco,1,1,"B");
    // hWp_PtWGenOverReco_zoomin->Divide(hWp_PtWGen_zoomin, hWp_PtWReco_zoomin,1,1,"B");
@@ -127,6 +129,8 @@ void analysis2011()
    // TH1 *hWm_PtWGenOverReco_zoomin = (TH1*) hWm_PtWReco_zoomin->Clone("hWm_PtWGenOverReco_zoomin");
    TH2 *hWm_PtWGenOverReco        = (TH2*) fileMCWm->Get("event_mc_pass_final_QEToPT/hTrackRecoilTpcNeutralsPt_GenOverReco");
    TH2 *hWm_PtWGenOverReco_zoomin = (TH2*) fileMCWm->Get("event_mc_pass_final_QEToPT/hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin");
+   TH2 *hWm_Jets_PtWGenOverReco        = (TH2*) fileMCWm->Get("event_mc_pass_final_QEToPT/hJetRecoilPt_GenOverReco");
+   TH2 *hWm_Jets_PtWGenOverReco_zoomin = (TH2*) fileMCWm->Get("event_mc_pass_final_QEToPT/hJetRecoilPt_GenOverReco_zoomin");
 
 
    TH1 *hWp_PtRecoil_vs_PtWGen    = (TH1 *)fileMCWp->Get("event_mc_pass_final_QEToPT/hTrackRecoilTpcNeutralsPtVsWBosonPt");
@@ -1509,6 +1513,7 @@ void analysis2011()
    hWp_PtWGenOverReco->GetYaxis()->SetTitleOffset(1.1);
    //hWp_Wp_PtWGenOverReco->Draw("E1");
    hWp_PtWGenOverReco->ProfileX("hWp_PtWGenOverReco_pfx", 0, 40);
+   hWp_Jets_PtWGenOverReco->ProfileX("hWp_Jets_PtWGenOverReco_pfx", 0, 40);
    hWp_PtWGenOverReco_pfx->SetTitle("W+ sample - MC Correction; Tracks-based recoil P_{T} [GeV/c]; W P_{T}/Recoil P_{T}");
    hWp_PtWGenOverReco_pfx->SetMarkerColor(kRed);
    hWp_PtWGenOverReco_pfx->SetLineColor(kRed);
@@ -1516,6 +1521,8 @@ void analysis2011()
    //hWp_PtWGenOverReco_pfx->Fit(fitPol5,"","",0,6);
    //hWp_PtWGenOverReco_pfx->Fit("pol0","+","",6,40);
    hWp_PtWGenOverReco_pfx->Draw();
+   hWp_Jets_PtWGenOverReco_pfx->SetLineColor(kGreen);
+   hWp_Jets_PtWGenOverReco_pfx->Draw("same");
 
    c10d_2->cd();
    hd_Wp_PtWRecoCorrected->SetFillStyle(3448);
@@ -1544,6 +1551,7 @@ void analysis2011()
    hWp_PtWGenOverReco_zoomin->GetYaxis()->SetTitleOffset(1.1);
    //hWp_Wp_PtWGenOverReco_zoomin->Draw("E1");
    hWp_PtWGenOverReco_zoomin->ProfileX("hWp_PtWGenOverReco_zoomin_pfx", 0, 20);
+   hWp_Jets_PtWGenOverReco_zoomin->ProfileX("hWp_Jets_PtWGenOverReco_zoomin_pfx", 0, 20);
    hWp_PtWGenOverReco_zoomin_pfx->SetTitle("W+ sample - MC Correction; Tracks-based recoil P_{T} [GeV/c]; W P_{T}/Recoil P_{T}");
    hWp_PtWGenOverReco_zoomin_pfx->SetLineColor(kRed);
    hWp_PtWGenOverReco_zoomin_pfx->SetMarkerColor(kRed);
@@ -1551,6 +1559,8 @@ void analysis2011()
    hWp_PtWGenOverReco_zoomin_pfx->Fit(fitPol3,"","",0,5);
    hWp_PtWGenOverReco_zoomin_pfx->Fit("pol0","+","",5,10);
    hWp_PtWGenOverReco_zoomin_pfx->Draw();
+   hWp_Jets_PtWGenOverReco_zoomin_pfx->SetLineColor(kGreen);
+   hWp_Jets_PtWGenOverReco_zoomin_pfx->Draw("same");
 
    c10di_2->cd();
    hd_Wp_PtWRecoCorrected_zoomin->SetFillStyle(3448);
@@ -1578,6 +1588,7 @@ void analysis2011()
    hWm_PtWGenOverReco->GetYaxis()->SetTitleOffset(1.1);
    //hWm_Wm_PtWGenOverReco->Draw("E1");
    hWm_PtWGenOverReco->ProfileX("hWm_PtWGenOverReco_pfx", 0, 40);
+   hWm_Jets_PtWGenOverReco->ProfileX("hWm_Jets_PtWGenOverReco_pfx", 0, 40);
    //hWm_PtWGenOverReco->GetYaxis()->SetTitleOffset(1.1);
    //hWm_PtWGenOverReco->SetTitle("W- sample - MC Correction; Tracks-based recoil P_{T} [GeV/c]; W P_{T}/Recoil P_{T}");
    hWm_PtWGenOverReco_pfx->SetTitle("W- sample - MC Correction; Tracks-based recoil P_{T} [GeV/c]; W P_{T}/Recoil P_{T}");
@@ -1587,6 +1598,8 @@ void analysis2011()
    //hWm_PtWGenOverReco_pfx->Fit(fitPol5,"","",0,6);
    //hWm_PtWGenOverReco_pfx->Fit("pol0","+","",6,40);
    hWm_PtWGenOverReco_pfx->Draw();
+   hWm_Jets_PtWGenOverReco_pfx->SetLineColor(kGreen);
+   hWm_Jets_PtWGenOverReco_pfx->Draw("same");
    c10e_2->cd();
    hd_Wm_PtWReco->SetNameTitle("hd_Wm_PtWReco", "Data");
    //hd_Wm_PtWReco->Draw();
@@ -1615,6 +1628,7 @@ void analysis2011()
    //hWm_Wm_PtWGenOverReco_zoomin -> Fit(fitPol2);
    hWm_PtWGenOverReco_zoomin->GetYaxis()->SetTitleOffset(1.1);
    hWm_PtWGenOverReco_zoomin->ProfileX("hWm_PtWGenOverReco_zoomin_pfx", 0, 20);
+   hWm_Jets_PtWGenOverReco_zoomin->ProfileX("hWm_Jets_PtWGenOverReco_zoomin_pfx", 0, 20);
    //hWm_Wm_PtWGenOverReco_zoomin->Draw("E1");
    hWm_PtWGenOverReco_zoomin_pfx->SetMarkerColor(kRed);
    hWm_PtWGenOverReco_zoomin_pfx->SetTitle("W- sample - MC Correction; Tracks-based recoil P_{T} [GeV/c]; W P_{T}/Recoil P_{T}");
@@ -1624,6 +1638,8 @@ void analysis2011()
    hWm_PtWGenOverReco_zoomin_pfx->Fit(fitPol3,"","",0,5);
    hWm_PtWGenOverReco_zoomin_pfx->Fit("pol0","+","",5,10);
    hWm_PtWGenOverReco_zoomin_pfx->Draw();
+   hWm_Jets_PtWGenOverReco_zoomin_pfx->SetLineColor(kGreen);
+   hWm_Jets_PtWGenOverReco_zoomin_pfx->Draw("same");
 
 
    c10ei_2->cd();
