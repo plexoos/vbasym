@@ -123,7 +123,7 @@ public:
    Short_t     GetVertexId()           const { return mVertexId; }
    void        SetVertexId(Short_t vId) { mVertexId = vId; }
    VecBosJet*  FindClosestJet(VecBosJetPtrSet &jets);
-   void        clear();
+   virtual void Clear(const Option_t* opt="");
    void        print(int opt=0) const;
 
    void CheckChargeSeparation(); // move to private when VecBosEvent streamer is fixed

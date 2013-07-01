@@ -54,7 +54,7 @@ VecBosTrack::VecBosTrack() : TObject(),
    hitSector(-1),
    esmdXPcentroid()
 {
-   clear();
+   Clear();
 }
 
 
@@ -144,7 +144,7 @@ VecBosJet* VecBosTrack::FindClosestJet(VecBosJetPtrSet &jets)
 }
 
 
-void VecBosTrack::clear()
+void VecBosTrack::Clear(const Option_t*)
 {
    mEvent                 = 0;
    mVbType                = kUNKNOWN;

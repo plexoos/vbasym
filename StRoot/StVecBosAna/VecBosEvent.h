@@ -151,14 +151,15 @@ public:
    bool           PassedCutExceptPtBal() const;
    bool           PassedCutFinal() const;
 
-   void           Process();
+   virtual void   Process();
    void           ProcessMC();
    void           MCanalysis();
    bool           IsRecoilJet(VecBosJet *vbJet) const;
    bool           IsRecoilJetWithZVertexCut(VecBosJet *vbJet) const;
-   void           clear();
-   void           Print(int flag = 0, int isMC = 0);
-   void           getGmt_day_hour(int &yyyymmdd, int &hhmmss);
+   virtual void   Clear(const Option_t* opt="");
+   virtual void   Print(const Option_t* opt="") const;
+   //virtual void   Streamer(TBuffer &R__b);
+   void           getGmt_day_hour(int &yyyymmdd, int &hhmmss) const;
 
    WeveCluster    FindMaxBTow2x2(int iEta, int iPhi, float zVert);
    WeveCluster    SumBTowPatch  (int iEta, int iPhi, int Leta, int  Lphi, float zVert);
@@ -168,13 +169,11 @@ public:
 
 protected:
 
-   StMuDst       *mStMuDst;          //!
+   void     ProcessJets();
+   void     CalcRecoilFromTracks();
+   void     CalcRecoilFromTracks2();
 
-private:
-
-   void           ProcessJets();
-   void           CalcRecoilFromTracks();
-   void           CalcRecoilFromTracks2();
+   StMuDst* mStMuDst;          //!
 
    ClassDef(VecBosEvent, 3);
 };

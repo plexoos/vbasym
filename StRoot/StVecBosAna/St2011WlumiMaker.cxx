@@ -100,7 +100,7 @@ Int_t St2011WlumiMaker::FinishRun(int runnumber)
      }
    */
 
-   TH1F *temp;
+   //TH1F *temp;
    //temp=(TH1F*)(HList->FindObject("muWET"));
    //hA[5]->Add(temp,1.0/activeFraction);//yield scaled by the active fraction
 

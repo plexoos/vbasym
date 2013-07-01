@@ -35,22 +35,10 @@ TVector3 ZBosEvent::GetElectronCandidateP3() const
 }
 
 
-TVector3 ZBosEvent::GetMissingEnergyP3() const
-{
-   //if (mTracksCandidate.size() < 1) {
-   //   Warning("GetMissingEnergyP3", "No track/lepton candidate: Cannot calculate P3Balance");
-   //   return TVector3();
-   //}
-
-   return -1*(GetTrackRecoilTpcNeutrals() + GetElectronCandidateP3());
-   //return mP3TrackRecoilTow + GetElectronCandidateP3();
-   //return mP4JetRecoil + GetElectronCandidateP3();
-}
-
 
 TVector3 ZBosEvent::GetVecBosonP3() const
 {
-   return -1*(GetElectronCandidateP3() + GetMissingEnergyP3());
+   return -1*(GetElectronCandidateP3()); // XXX wrong, needs to be fixed
 }
 
 

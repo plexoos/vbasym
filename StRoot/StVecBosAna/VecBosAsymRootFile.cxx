@@ -89,11 +89,11 @@ void VecBosAsymRootFile::Fill(ProtoEvent &ev)
 
    Fill(ev, kCUT_EVENT_NOCUT);
 
-   if ( w_event.PassedCutWBos() ) {
+   if ( w_event.PassedCutWBos(WBosEvent::sMinElectronPtHard) ) {
       Fill(ev, kCUT_EVENT_W);
 
-      if ( w_event.PassedCutWBosPlus() )  Fill(ev, kCUT_EVENT_W_PLUS);
-      if ( w_event.PassedCutWBosMinus() ) Fill(ev, kCUT_EVENT_W_MINUS);
+      if ( w_event.PassedCutWBosPlus(WBosEvent::sMinElectronPtHard) )  Fill(ev, kCUT_EVENT_W_PLUS);
+      if ( w_event.PassedCutWBosMinus(WBosEvent::sMinElectronPtHard) ) Fill(ev, kCUT_EVENT_W_MINUS);
    }
 }
 

@@ -40,12 +40,12 @@ Int_t St2011pubMcMaker::Make()
 {
    //printf("-----------in %s\n", GetName());
    //only get geant particle info for W MC
-   ////if (wMK->isMC == 8 || wMK->isMC == 30 || wMK->isMC == 20) { //S.F. oct 12, 2012 
-      if (doMCanalysis()) {
-         doWanalysis();
-         doWefficiency();
-      }
-   ////  }
+   //if (wMK->isMC == 8 || wMK->isMC == 30 || wMK->isMC == 20) { //S.F. oct 12, 2012 
+   if (doMCanalysis()) {
+      doWanalysis();
+      doWefficiency();
+   }
+   //}
    return kStOK;
 }
 
@@ -261,9 +261,10 @@ bool St2011pubMcMaker::doMCanalysis()
    assert(mMcEvent);
 
    //initialize momentum vectors
-   StThreeVectorF pW;        float eW;
-   StThreeVectorF pNeutrino; //float eNeutrino;
-   StThreeVectorF pElectron; //float eElectron;
+   float eW;
+   StThreeVectorF pW;
+   StThreeVectorF pNeutrino;
+   StThreeVectorF pElectron;
 
    StMcVertex *V = mMcEvent->primaryVertex();
    mVertex = TVector3(V->position().x(), V->position().y(), V->position().z());

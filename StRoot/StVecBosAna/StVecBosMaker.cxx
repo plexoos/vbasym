@@ -339,7 +339,7 @@ Int_t StVecBosMaker::FinishRun(int runNo)
 
 void StVecBosMaker::Clear(const Option_t *)
 {
-   mVecBosEvent->clear();
+   mVecBosEvent->Clear();
    //delete mVecBosEvent;
    //mVecBosEvent = 0;
 }
@@ -503,7 +503,7 @@ Int_t StVecBosMaker::Make()
    //mVecBosRootFile->Fill(*mVecBosEvent, kCUT_CUT);
 
    if (mNumAcceptedEvents < 2 || mNumAcceptedEvents % 1000 == 1 )
-      mVecBosEvent->Print(0x0, isMC);
+      mVecBosEvent->Print();
 
    return kStOK;
 }

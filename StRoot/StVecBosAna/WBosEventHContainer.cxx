@@ -110,7 +110,7 @@ void WBosEventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hPhiBalanceCosPhiFromTracksNeutrals"])->Fill(event.mP3BalanceFromTracks.Phi());
    ((TH1*) o["hBalanceDeltaPhiFromTracksNeutrals"])->Fill(event.mBalanceDeltaPhiFromTracks);
    if (event.mTracksCandidate.size() > 0) {
-     ((TH2*) o["hPtBalanceTracksNeutralsVsElecEt"])->Fill( event.GetElectronCandidateP3().Pt(), event.mPtBalanceCosPhiFromTracks);
+     ((TH2*) o["hPtBalanceTracksNeutralsVsElecEt"])->Fill( event.GetElectronP3().Pt(), event.mPtBalanceCosPhiFromTracks);
    }
 
    ((TH1*) o["hPtBalanceFromTracks"])->Fill(event.mP3BalanceFromTracks2.Pt());
@@ -118,7 +118,7 @@ void WBosEventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hPhiBalanceCosPhiFromTracks"])->Fill(event.mP3BalanceFromTracks2.Phi());
    ((TH1*) o["hBalanceDeltaPhiFromTracks"])->Fill(event.mBalanceDeltaPhiFromTracks2);
    if (event.mTracksCandidate.size() > 0) {
-     ((TH2*) o["hPtBalanceTracksVsElecEt"])->Fill(event.GetElectronCandidateP3().Pt(), event.mPtBalanceCosPhiFromTracks2);
+     ((TH2*) o["hPtBalanceTracksVsElecEt"])->Fill(event.GetElectronP3().Pt(), event.mPtBalanceCosPhiFromTracks2);
    }
 
    ((TH1*) o["hPtBalanceFromJets"])->Fill(event.mP3BalanceFromJets.Pt());
@@ -126,7 +126,7 @@ void WBosEventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hPhiBalanceCosPhiFromJets"])->Fill(event.mP3BalanceFromJets.Phi());
    ((TH1*) o["hBalanceDeltaPhiFromJets"])->Fill(event.mBalanceDeltaPhiFromJets);
    if (event.mTracksCandidate.size() > 0) {
-     ((TH2*) o["hPtBalanceJetsVsElecEt"])->Fill(event.GetElectronCandidateP3().Pt(),event.mPtBalanceCosPhiFromJets);
+     ((TH2*) o["hPtBalanceJetsVsElecEt"])->Fill(event.GetElectronP3().Pt(),event.mPtBalanceCosPhiFromJets);
    }
 }
 
