@@ -23,7 +23,6 @@ public:
    TVector3     GetVecBosonP3() const;
    virtual void Process();
    virtual void Clear(const Option_t* opt="");
-   //virtual void Streamer(TBuffer &R__b);
    bool         PassedCutWBos(float minElePt=sMinElectronPtLight) const;
    bool         PassedCutWBosPlus(float minElePt=sMinElectronPtLight) const;
    bool         PassedCutWBosMinus(float minElePt=sMinElectronPtLight) const;

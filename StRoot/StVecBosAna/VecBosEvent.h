@@ -158,7 +158,6 @@ public:
    bool           IsRecoilJetWithZVertexCut(VecBosJet *vbJet) const;
    virtual void   Clear(const Option_t* opt="");
    virtual void   Print(const Option_t* opt="") const;
-   //virtual void   Streamer(TBuffer &R__b);
    void           getGmt_day_hour(int &yyyymmdd, int &hhmmss) const;
 
    WeveCluster    FindMaxBTow2x2(int iEta, int iPhi, float zVert);
