@@ -39,7 +39,8 @@ public:
                 OPTION_SET_CALIB_ALPHA = 0x20001000,
                 OPTION_SET_CALIB_DL    = 0x20002000,
                 OPTION_DET_DISABLE     = 0x20000001,
-                OPTION_SUFFIX          = 0x20000002};
+                OPTION_SUFFIX          = 0x20000002,
+                OPTION_JETS_PT_MIN     = 0x20000003};
 
    // Various histogramming and running modes
    enum Mode   {MODE_GRAPH             = 0x02000000, MODE_NO_GRAPH     = 0x82000000};
@@ -55,6 +56,7 @@ public:
    std::string      fSuffix;            // Additional unique identifier for analysis job
    ULong_t          fModes;
    Bool_t           fDoReconstructJets;
+   Float_t          fJetPtMin;
    Bool_t           fIsMc;
    Bool_t           fSaveHists;
    time_t           fAnaDateTime;       // Date/time when data analysis started

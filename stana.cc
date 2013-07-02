@@ -60,10 +60,7 @@ using namespace std;
 
 
 int analyzeMuDst(
-   UInt_t   maxEventsUser       = 0,
-   string   inMuDstFileListName = "st_W_12037063_raw_1380001_1201.MuDst.root",
-   bool     isMC                = false,   // 0 = run9-data  200 = new MC w/ EEss in BFC
-   int      useJetFinder        = 0,       // 0 - no jets = badWalgo; 1 generate jet trees; 2 read jet trees
+   AnaInfo& anaInfo,
    int      idL2BWtrg           = 0,       // offline Ids  needed for real data
    int      idL2EWtrg           = 0,       // run 9 L2EW
    // make those below  empty for scheduler
@@ -73,7 +70,7 @@ int analyzeMuDst(
    string   wtreeDir            = "",
    bool     spinSort            = true,
    bool     findZ               = false,
-   int      geant               = false
+   bool     geant               = false
 );
 
 
@@ -85,18 +82,19 @@ int main(int argc, char *argv[])
    anaInfo.ProcessOptions(argc, argv);
    anaInfo.VerifyOptions();
 
-   int  useJetFinder = anaInfo.fDoReconstructJets ? 1 : 2;
-   bool isMC         = anaInfo.fIsMc; 
-
-   return analyzeMuDst(anaInfo.fMaxEventsUser, anaInfo.GetListName(), isMC, useJetFinder, 320801, 320851);
+   return analyzeMuDst(anaInfo, 320801, 320851);
 }
 
 
-int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
-   int useJetFinder, int idL2BWtrg, int idL2EWtrg, string muDir, string jetDir,
-   string histDir, string wtreeDir, bool spinSort, bool findZ, int geant)
+int analyzeMuDst(AnaInfo& anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
+   string jetDir, string histDir, string wtreeDir, bool spinSort, bool findZ, bool geant)
 {
-   string eemcSetupPath = "/afs/rhic.bnl.gov/star/users/kocolosk/public/StarTrigSimuSetup/";
+   UInt_t  maxEventsUser       = anaInfo.fMaxEventsUser;
+   string  inMuDstFileListName = anaInfo.GetListName();
+   bool    isMC                = anaInfo.fIsMc;                      // 0: run9-data; 200: new MC w/ EEss in BFC
+   int     useJetFinder        = anaInfo.fDoReconstructJets ? 1 : 2; // 0: no jets = badWalgo; 1: generate jet trees; 2 read jet trees
+   Float_t jetPtMin            = anaInfo.fJetPtMin;
+   //string eemcSetupPath = "/afs/rhic.bnl.gov/star/users/kocolosk/public/StarTrigSimuSetup/";
 
    if (isMC && useJetFinder == 2) geant = true;
 
@@ -303,10 +301,7 @@ int analyzeMuDst(UInt_t maxEventsUser, string inMuDstFileListName, bool isMC,
       stppAnaPars->setNhits(12);      // track->nHitsFit()>12
       stppAnaPars->setCutPtMin(0.2);  // track->pt() > 0.2
       stppAnaPars->setAbsEtaMax(2.0); // abs(track->eta())<1.6
-      stppAnaPars->setJetPtMin(0.5);
-      //stppAnaPars->setJetPtMin(1.0);
-      //stppAnaPars->setJetPtMin(2.5);
-      //stppAnaPars->setJetPtMin(3.5);
+      stppAnaPars->setJetPtMin(jetPtMin);
       stppAnaPars->setJetEtaMax(100.0);
       stppAnaPars->setJetEtaMin(0);
       stppAnaPars->setJetNmin(0);

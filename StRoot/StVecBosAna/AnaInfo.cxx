@@ -21,6 +21,7 @@ AnaInfo::AnaInfo() : TObject(),
    fSuffix(""),
    fModes(0),
    fDoReconstructJets(kFALSE),
+   fJetPtMin(0.5),
    fIsMc(kFALSE),
    fSaveHists(kFALSE),
    fAnaDateTime(0),
@@ -122,6 +123,7 @@ void AnaInfo::ProcessOptions(int argc, char **argv)
       {"sfx",                 required_argument,   0,   AnaInfo::OPTION_SUFFIX},
       {"list",                required_argument,   0,   'f'},
       {"jets",                no_argument,         0,   'j'},
+      {"jets-pt-min",         required_argument,   0,   AnaInfo::OPTION_JETS_PT_MIN},
       {"mc",                  no_argument,         0,   'm'},
       {"plots",               no_argument,         0,   'p'},
       {"hists",               no_argument,         0,   'p'},
@@ -154,6 +156,12 @@ void AnaInfo::ProcessOptions(int argc, char **argv)
 
       case 'j':
          fDoReconstructJets = kTRUE;
+         break;
+
+      case AnaInfo::OPTION_JETS_PT_MIN:
+         sstr.str("");
+         sstr << optarg;
+         sstr >> fJetPtMin;
          break;
 
       case 'm':
