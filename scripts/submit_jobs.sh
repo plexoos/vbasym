@@ -1,15 +1,18 @@
 #!/bin/sh
+#
+# Takes one argument:
+#
+# RUNLIST is the name of the runlist file in $CODE_DIR/runlist/
+#
 
 RUNLIST=$1
 CODE_DIR=~/vbasym/
-OUT_DIR=~/stana_out/
 #STAR_VER=SL11d
 STAR_VER=SL12c
-#STANA_OPTIONS="-j_-n100"
-#STANA_OPTIONS="-j"
-STANA_OPTIONS=""
-
-export $STAR_VER
+#STANA_OPTIONS="--jpm_0.5_-n1000_--jets"
+STANA_OPTIONS="--jpm_0.5_--jets"
+#STANA_OPTIONS="--jpm_0.5"
+OUT_DIR=~/stana_out/${RUNLIST}_${STANA_OPTIONS}
 
 echo
 echo RUNLIST       = $RUNLIST
@@ -19,18 +22,17 @@ echo STAR_VER      = $STAR_VER
 echo STANA_OPTIONS = $STANA_OPTIONS
 echo
 
-mkdir -p $OUT_DIR/list_run11_cut05
-mkdir -p $OUT_DIR/log_run11_cut05
-mkdir -p $OUT_DIR/jets_run11_cut05
-mkdir -p $OUT_DIR/data_run11_cut05
-mkdir -p $OUT_DIR/jets_run11_cut05
-mkdir -p $OUT_DIR/wtree_run11_cut05
-mkdir -p $OUT_DIR/lumi_run11_cut05
+mkdir -p $OUT_DIR/lists
+mkdir -p $OUT_DIR/log
+mkdir -p $OUT_DIR/jets
+mkdir -p $OUT_DIR/hist
+mkdir -p $OUT_DIR/tree
+mkdir -p $OUT_DIR/lumi
 
-for RUN_ID in `cat $RUNLIST`
+for RUN_ID in `cat $CODE_DIR/runlists/$RUNLIST`
 do
    echo
-   echo "Submitting job for RUN_ID = " $RUN_ID
-   star-submit-template -template $CODE_DIR/scripts/run11_job_template.xml -entities OUT_DIR=$OUT_DIR,codePath=$CODE_DIR,RUN_ID=$RUN_ID,STAR_VER=$STAR_VER,STANA_OPTIONS=$STANA_OPTIONS
+   echo "Submitting job for RUN_ID =" $RUN_ID
+   star-submit-template -template $CODE_DIR/scripts/run11_job_template.xml -entities OUT_DIR=$OUT_DIR,CODE_DIR=$CODE_DIR,RUN_ID=$RUN_ID,STAR_VER=$STAR_VER,STANA_OPTIONS=$STANA_OPTIONS
    echo
 done

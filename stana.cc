@@ -13,7 +13,7 @@ root4star -b -q 'analyzeMuDst.C(2e3,"st_W_12037041_raw_1400001.MuDst.root",0,1,5
 #include <cassert>
 
 #include <iostream>
-#include <fstream>     
+#include <fstream>
 
 #include "stana.h"
 
@@ -60,14 +60,11 @@ using namespace std;
 
 
 int analyzeMuDst(
-   AnaInfo& anaInfo,
+   AnaInfo &anaInfo,
    int      idL2BWtrg           = 0,       // offline Ids  needed for real data
    int      idL2EWtrg           = 0,       // run 9 L2EW
    // make those below  empty for scheduler
    string   muDir               = "",
-   string   jetDir              = "",
-   string   histDir             = "",
-   string   wtreeDir            = "",
    bool     spinSort            = true,
    bool     findZ               = false,
    bool     geant               = false
@@ -86,8 +83,8 @@ int main(int argc, char *argv[])
 }
 
 
-int analyzeMuDst(AnaInfo& anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
-   string jetDir, string histDir, string wtreeDir, bool spinSort, bool findZ, bool geant)
+int analyzeMuDst(AnaInfo &anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
+                 bool spinSort, bool findZ, bool geant)
 {
    UInt_t  maxEventsUser       = anaInfo.fMaxEventsUser;
    string  inMuDstFileListName = anaInfo.GetListName();
@@ -120,14 +117,14 @@ int analyzeMuDst(AnaInfo& anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
    outF = outF.ReplaceAll(".MuDst.root", "");
    outF = outF.ReplaceAll(".lis", "");
    TString runNo = outF;
-   runNo = runNo.ReplaceAll("R", "");   
+   runNo = runNo.ReplaceAll("R", "");
    int RunNo = runNo.Atoi();
 
-   TString histFileName = histDir + outF + ".wana.hist.root";
+   TString histFileName = outF + "_hist.root";
 
    cout << "Output histo file " << histFileName << endl;
 
-   VecBosRootFile vecBosRootFile(histFileName, "recreate"); 
+   VecBosRootFile vecBosRootFile(histFileName, "recreate");
 
    printf("RUN NUMBER is: %s\n", runNo.Data());
    printf("Output file: %s\n", outF.Data());
@@ -146,17 +143,15 @@ int analyzeMuDst(AnaInfo& anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
    TObjArray *HList    = new TObjArray();
    TObjArray *HListTpc = new TObjArray();
 
-   if (isMC && useJetFinder == 2)
-   {
+   if (isMC && useJetFinder == 2) {
       // get geant file
       StIOMaker *stIOMaker = new StIOMaker();
 
       TObject *o;
       TIter   *next = new TIter(utils::getFileList(inMuDstFileListName.c_str()));
 
-      while (next && (o = (*next)()) )
-      {
-         TString geantFileName = TString(((TObjString*) o)->GetName());
+      while (next && (o = (*next)()) ) {
+         TString geantFileName = TString(((TObjString *) o)->GetName());
          geantFileName.ReplaceAll("eve_mu", "eve_geant");
          geantFileName.ReplaceAll("MuDst", "geant");
 
@@ -228,8 +223,7 @@ int analyzeMuDst(AnaInfo& anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
    }
 #endif
 
-   if (isMC && useJetFinder == 2)
-   {
+   if (isMC && useJetFinder == 2) {
       StMcEventMaker *mcEventMaker = new StMcEventMaker();
       mcEventMaker->doPrintEventInfo  = false;
       mcEventMaker->doPrintMemoryInfo = false;
@@ -257,7 +251,7 @@ int analyzeMuDst(AnaInfo& anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
       assert(simuTrig);
       simuTrig->setHList(HList);
       //simuTrig->setMC(isMC); // must be before individual detectors, to be passed
-      simuTrig->setMC(2); // must be before individual detectors, to be passed 
+      simuTrig->setMC(2); // must be before individual detectors, to be passed
       simuTrig->useBbc();
       simuTrig->useEemc(0); // default=0: just process ADC, 1,2: comp w/trgData, see .
       assert(simuTrig->eemc);
@@ -267,7 +261,7 @@ int analyzeMuDst(AnaInfo& anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
    }
 
    // Jet finder code
-   TString jetFile = jetDir + "jets_" + outF + ".root";
+   TString jetFile = outF + "_jets.root";
    cout << "BEGIN: Jet finder/reader on jetFile=\"" << jetFile << "\"" << endl;
 
    if (useJetFinder == 1) {
@@ -280,23 +274,23 @@ int analyzeMuDst(AnaInfo& anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
       bool use2006TowerCuts = true;
 
       // 4p maker using 100% tower energy correction
-      StBET4pMaker* stBET4pMakerFrac100 = new StBET4pMaker("BET4pMakerFrac100", stMuDstMaker, doTowerSwapFix, new StjTowerEnergyCorrectionForTracksFraction(1.0));
+      StBET4pMaker *stBET4pMakerFrac100 = new StBET4pMaker("BET4pMakerFrac100", stMuDstMaker, doTowerSwapFix, new StjTowerEnergyCorrectionForTracksFraction(1.0));
       stBET4pMakerFrac100->setUse2003Cuts(use2003TowerCuts);
       stBET4pMakerFrac100->setUseEndcap(true);
       stBET4pMakerFrac100->setUse2006Cuts(use2006TowerCuts);
 
       // 4p maker using 100% tower energy correction (no endcap)
-      StBET4pMaker* stBET4pMakerFrac100_noEEMC = new StBET4pMaker("BET4pMakerFrac100_noEEMC", stMuDstMaker, doTowerSwapFix, new StjTowerEnergyCorrectionForTracksFraction(1.0));
+      StBET4pMaker *stBET4pMakerFrac100_noEEMC = new StBET4pMaker("BET4pMakerFrac100_noEEMC", stMuDstMaker, doTowerSwapFix, new StjTowerEnergyCorrectionForTracksFraction(1.0));
       stBET4pMakerFrac100_noEEMC->setUse2003Cuts(use2003TowerCuts);
       stBET4pMakerFrac100_noEEMC->setUseEndcap(false);
       stBET4pMakerFrac100_noEEMC->setUse2006Cuts(use2006TowerCuts);
 
       // Instantiate the stJetMaker and SkimEventMaker
-      StJetMaker* stJetMaker = new StJetMaker("stJetMaker", stMuDstMaker, jetFile);
+      StJetMaker *stJetMaker = new StJetMaker("stJetMaker", stMuDstMaker, jetFile);
       //StJetSkimEventMaker* skimEventMaker = new StJetSkimEventMaker("StJetSkimEventMaker", stMuDstMaker,outSkimFile);
 
       // set the analysis cuts: (see StJetMaker/StppJetAnalyzer.h -> class StppAnaPars )
-      StppAnaPars* stppAnaPars = new StppAnaPars();
+      StppAnaPars *stppAnaPars = new StppAnaPars();
       stppAnaPars->setFlagMin(0);     // track->flag() > 0
       stppAnaPars->setNhits(12);      // track->nHitsFit()>12
       stppAnaPars->setCutPtMin(0.2);  // track->pt() > 0.2
@@ -307,7 +301,7 @@ int analyzeMuDst(AnaInfo& anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
       stppAnaPars->setJetNmin(0);
 
       // Setup the cone finder (See StJetFinder/StConeJetFinder.h -> class StConePars)
-      StConePars* stConePars = new StConePars();
+      StConePars *stConePars = new StConePars();
       stConePars->setGridSpacing(105, -3.0, 3.0, 120, -TMath::Pi(), TMath::Pi());  //include EEMC
       stConePars->setConeRadius(0.7);    // default=0.7
       stConePars->setSeedEtMin(0.5);
@@ -331,8 +325,7 @@ int analyzeMuDst(AnaInfo& anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
       int t1 = time(0);
       TStopwatch stopwatch;
 
-      for (UInt_t iev=1; iev<=numTotalEvents; iev++)
-      {
+      for (UInt_t iev = 1; iev <= numTotalEvents; iev++) {
          printf("\n");
          Info("analyzeMuDst(...)", "Analyzing event %d", iev);
 
@@ -364,21 +357,20 @@ int analyzeMuDst(AnaInfo& anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
       delete stChain;
 
       return 1;
-   } 
+   }
    // the jet reconstruction ends here
 
 
    if (useJetFinder == 2) {
       cout << "Configure to read jet trees " << endl;
-      StJetReader* stJetReader = new StJetReader();
+      StJetReader *stJetReader = new StJetReader();
       stJetReader->InitFile(jetFile);
    }
 
    StSpinDbMaker *stSpinDbMaker = new StSpinDbMaker("stSpinDbMaker");
    StVecBosMaker *stVecBosMaker = new StVecBosMaker("StVecBosMaker", &vecBosRootFile);
 
-   if (spinSort)
-   {
+   if (spinSort) {
       //stSpinDbMaker = new StSpinDbMaker("stSpinDbMaker");
       stVecBosMaker->AttachSpinDb(stSpinDbMaker);
 
@@ -386,8 +378,7 @@ int analyzeMuDst(AnaInfo& anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
 
       StVecBosSpinMaker *stVecBosSpinMaker[mxSM];
 
-      for (int kk = 0; kk < mxSM; kk++)
-      {
+      for (int kk = 0; kk < mxSM; kk++) {
          char ttx[100];
          sprintf(ttx, "%cspin", 'A' + kk);
          printf("add spinMaker %s %d \n", ttx, kk);
@@ -415,23 +406,23 @@ int analyzeMuDst(AnaInfo& anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
       stVecBosMaker->setTrigID(idL2BWtrg, idL2EWtrg);
    }
 
-   TString treeFileName = wtreeDir + outF + ".wtree.root";
+   TString treeFileName = outF + "_tree.root";
 
    stVecBosMaker->SetTreeName(treeFileName);
 
    if (useJetFinder == 2)
       stVecBosMaker->setJetTreeBranch("ConeJets12_100", "ConeJets12_100_noEEMC"); //select jet tree braches used
 
-   ////stVecBosMaker->setMaxDisplayEve(10); // only first N events will get displayed
+   //stVecBosMaker->setMaxDisplayEve(10); // only first N events will get displayed
    //set energy scale (works for data and MC - be careful!)
-   // S.F. - We must be carefull to put correct numbers for run 2011 for both data and MC separately! 
+   // S.F. - We must be carefull to put correct numbers for run 2011 for both data and MC separately!
    //stVecBosMaker->setBtowScale(1.0);
    //stVecBosMaker->setEtowScale(1.0);
 
    // evaluation of result, has full acess to W-algo internal data including
    // overwrite - be careful
 
-   St2011pubWanaMaker* st2011pubWanaMaker = new St2011pubWanaMaker();
+   St2011pubWanaMaker *st2011pubWanaMaker = new St2011pubWanaMaker();
    st2011pubWanaMaker->AttachWalgoMaker(stVecBosMaker);
 
    //Collect all output histograms
@@ -441,15 +432,15 @@ int analyzeMuDst(AnaInfo& anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
    st2011pubWanaMaker->setHList(HList);
 
    St2011WlumiMaker *WlumiMk(NULL);
-   //// S.F. - added 16 Oct. 2012 - 
-   //// calculate lumi from runs
+   // S.F. - added 16 Oct. 2012 -
+   // calculate lumi from runs
    if (!isMC) {
-     //St2011WlumiMaker *WlumiMk = new St2011WlumiMaker("lumi"); 
-     WlumiMk = new St2011WlumiMaker("lumi"); 
-     WlumiMk->AttachWalgoMaker(stVecBosMaker); 
-     WlumiMk->AttachMuMaker(stMuDstMaker);
-     WlumiMk->setHList(HList);
-     //WlumiMk->FinishRun(RunNo);
+      //St2011WlumiMaker *WlumiMk = new St2011WlumiMaker("lumi");
+      WlumiMk = new St2011WlumiMaker("lumi");
+      WlumiMk->AttachWalgoMaker(stVecBosMaker);
+      WlumiMk->AttachMuMaker(stMuDstMaker);
+      WlumiMk->setHList(HList);
+      //WlumiMk->FinishRun(RunNo);
    }
 
    if (isMC && useJetFinder == 2) {
@@ -478,8 +469,7 @@ int analyzeMuDst(AnaInfo& anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
    int t1 = time(0);
    TStopwatch stopwatch;
 
-   for (UInt_t iev=1; iev<=numTotalEvents; iev++)
-   {
+   for (UInt_t iev = 1; iev <= numTotalEvents; iev++) {
       printf("\n");
       Info("analyzeMuDst(...)", "Analyzing event %d", iev);
 
@@ -487,34 +477,32 @@ int analyzeMuDst(AnaInfo& anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
 
       stChain->Clear();
       int stat = stChain->Make();
-      
+
       if (stat != kStOk && stat != kStSkip) break; // EOF or input error
 
       nProcEvents++;
    }
-  
+
    if (!isMC) {
-     //St2011WlumiMaker *WlumiMk = new St2011WlumiMaker("lumi"); 
-     WlumiMk->FinishRun(RunNo);
-     float efflumi = WlumiMk->effective_lumi;
-     float totlumi = WlumiMk->total_lumi;
+      //St2011WlumiMaker *WlumiMk = new St2011WlumiMaker("lumi");
+      WlumiMk->FinishRun(RunNo);
+      float efflumi = WlumiMk->effective_lumi;
+      float totlumi = WlumiMk->total_lumi;
 
-     cout << "Effective Luminosity:" << efflumi << endl;
-     cout << "Total Luminosity:" << totlumi << endl;
+      cout << "Effective Luminosity:" << efflumi << endl;
+      cout << "Total Luminosity:" << totlumi << endl;
 
-     TString lumiEffName = "R" + runNo + "_lumi_effective.txt";  
-     ofstream lumie;
-     //lumie.open ("lumi_eff.txt");
-     lumie.open (lumiEffName);
-     lumie << efflumi;
-     lumie.close();
+      TString lumiEffName = "R" + runNo + "_lumi_effective.txt";
+      ofstream lumie;
+      lumie.open(lumiEffName);
+      lumie << efflumi;
+      lumie.close();
 
-     TString lumiTotName = "R" + runNo + "_lumi_total.txt"; 
-     ofstream lumit;
-     lumit.open (lumiTotName);
-     lumit << totlumi;
-     lumit.close();
- 
+      TString lumiTotName = "R" + runNo + "_lumi_total.txt";
+      ofstream lumit;
+      lumit.open(lumiTotName);
+      lumit << totlumi;
+      lumit.close();
    }
 
    stChain->Finish();
@@ -542,10 +530,10 @@ int analyzeMuDst(AnaInfo& anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
       // Write TPC histos to new directory
       TDirectory *tpc = vecBosRootFile.mkdir("tpc");
       tpc->cd();
-      // HListTpc->Write();
+      //HListTpc->Write();
    }
    else {
-      printf("\n Failed to open Histo-file -->%s<, continue\n", histFileName.Data());
+      printf("\n Failed to open histo-file %s, continue\n", histFileName.Data());
    }
 
    //vecBosRootFile.SaveAs((string) "^.*$", (string) "../vbasym_results/images_test/");

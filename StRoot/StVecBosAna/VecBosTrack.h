@@ -41,8 +41,7 @@ public:
    Bool_t                  isMatch2Cl;         // result of cuts
    WevePointTower          mMatchedTower;
    const StMuTrack        *glMuTrack;          //!
-   //StMuTrack              *prMuTrack;         //
-   StMuTrack              *prMuTrack;         //
+   StMuTrack              *mStMuTrack;         //
    StPhysicalHelixD        mHelix;             //!
    const VecBosVertex     *mVertex;            //! pointer to mother vertex
    Short_t                 mVertexId;          // mId of the mother vertex
@@ -111,10 +110,10 @@ public:
    bool        HasCharge()    const { return (mVbType & kHAS_CHARGE)  == kHAS_CHARGE  ? true : false; }
    bool        IsCandidate()  const;
    void        Process();
-   short       GetChargeSign()         const { return prMuTrack->charge(); }
+   short       GetChargeSign()         const { return mStMuTrack->charge(); }
    TVector3    GetP3AtDca()            const { return mP3AtDca; }
    TVector3    GetP3EScaled()          const { return mP3AtDca * ((Double_t) mCluster2x2.energy / mP3AtDca.Mag()); }
-   float       GetFitHitFrac()         const { return float(prMuTrack->nHitsFit()) / prMuTrack->nHitsPoss(); }
+   float       GetFitHitFrac()         const { return float(mStMuTrack->nHitsFit()) / mStMuTrack->nHitsPoss(); }
    float       GetClusterEnergyFrac()  const { return (mCluster2x2.energy + mP3AtDca.Mag()) / mP3InNearConeNoETow.Mag(); }
    float       GetClusterETFrac()      const { return (mCluster2x2.ET     + mP3AtDca.Pt())  / mP3InNearConeNoETow.Perp(); }
    TVector3    GetDistanceToCluster()  const { return mDistToCluster; }
@@ -132,7 +131,7 @@ private:
 
    bool ExtendTrack2Barrel();
    bool ExtendTrack2Endcap();
-   bool MatchTrack2BtowCluster();
+   bool MatchTrack2BarrelCluster();
    void CalcEnergyInCones();       // Isolation and such
 
    ClassDef(VecBosTrack, 1);

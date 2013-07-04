@@ -106,12 +106,10 @@ void WEvent::CalcRecoil(StMcEvent &stMcEvent)
       return;
    }
 
-
    // Loop over tracks
    std::vector<StMcTrack*, std::allocator<StMcTrack*> >::const_iterator iParticle     = stMcEvent.tracks().begin();
    std::vector<StMcTrack*, std::allocator<StMcTrack*> >::const_iterator lastParticle  = stMcEvent.tracks().end();
 
-   //for ( UInt_t iTrack = 0 ; iParticle!=lastParticle; ++iParticle, ++iTrack)
    for ( ; iParticle!=lastParticle; ++iParticle)
    {
       const StMcTrack *mcTrack = *iParticle;

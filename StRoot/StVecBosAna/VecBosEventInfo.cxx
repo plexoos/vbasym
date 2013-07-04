@@ -5,7 +5,8 @@
 ClassImp(WeveBEMC)
 
 
-void WeveBEMC::clear() {
+void WeveBEMC::clear()
+{
    memset(adcTile,   0, sizeof(adcTile));
    memset(eneTile,   0, sizeof(eneTile));
    memset(statTile, -1, sizeof(statTile)); // default all dead

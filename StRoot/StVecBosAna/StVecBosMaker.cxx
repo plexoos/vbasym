@@ -1,5 +1,4 @@
 #include <limits>
-//#include <math.h>
 #include <string>
 
 #include "TF1.h"
@@ -39,6 +38,7 @@
 #include "StJetMaker/StJetSkimEventMaker.h"
 
 #include "Globals.h"
+#include "WBosEvent.h"
 #include "WeventDisplay.h"
 #include "StVecBosMaker.h"
 
@@ -117,7 +117,8 @@ StVecBosMaker::StVecBosMaker(const char *name, VecBosRootFile *vbFile): StMaker(
    mMinETrackEta                = 0.7;  // bracket acceptance
    mMaxETrackEta                = 2.5;  // bracket acceptance
    parE_ptBalance               = 14.;  // (GeV), ele cluster vector + jet sum vector
-   //... track
+
+   // track
    parE_nFitPts                 = 5;    // hits on the track
    parE_nHitFrac                = 0.51;
    parE_trackRin                = 120;
@@ -150,7 +151,7 @@ Int_t StVecBosMaker::Init()
    else { // not used
       //setup for reading in tree
       //mVecBosEvent = new VecBosEvent();
-      //mTreeChain-> SetBranchAddress("mVecBosEvent", &mVecBosEvent);
+      //mTreeChain->SetBranchAddress("mVecBosEvent", &mVecBosEvent);
    }
 
    gBTowGeom       = StEmcGeom::instance("bemc");
@@ -179,7 +180,7 @@ Int_t StVecBosMaker::Init()
       mTreeFile->cd();
 
       mWtree = new TTree("t", "mWtree");
-      mVecBosEvent = new VecBosEvent();
+      mVecBosEvent = new WBosEvent();
       mWtree->Branch("e", "VecBosEvent", &mVecBosEvent, 128000, 0); // splitlevel=0. very important for custom streamers
    }
 
@@ -435,7 +436,6 @@ Int_t StVecBosMaker::Make()
 
    if (!isMC) { 
       //m2011WlumiMaker = new St2011WlumiMaker(); 
-      //pippoefflumi = m2011WlumiMaker->effective_lumi;
    }
 
    // Write event to tree
@@ -542,7 +542,7 @@ void StVecBosMaker::InitGeom()
       for (int towerId = 1; towerId <= mxBStrips; towerId++) {
          float x, y, z;
          assert( mBSmdGeom[iep]->getXYZ(towerId, x, y, z) == 0);
-         mBSmdStripCoords[iep][towerId - 1] = TVector3(x, y, z);
+         gBSmdStripCoords[iep][towerId - 1] = TVector3(x, y, z);
       }
    }
 
@@ -595,7 +595,7 @@ void StVecBosMaker::FillNormHists()
          for (int isub = 0; isub < mxEtowSub; isub++) {
             for (int ieta = 0; ieta < mxEtowEta; ieta++) {
                if (mVecBosEvent->etow.stat[isec * mxEtowSub + isub][ieta] == 0) {
-                  WeveCluster c = sumEtowPatch(ieta, isec * mxEtowSub + isub, 1, 1, mVecBosEvent->mVertices[0].z);
+                  WeveCluster c = SumETowPatch(ieta, isec * mxEtowSub + isub, 1, 1, mVecBosEvent->mVertices[0].z);
 
                   if (c.ET > maxEtowET) maxEtowET = c.ET;
                }
@@ -614,7 +614,7 @@ void StVecBosMaker::ReadMuDstJets()
 {
    //if (mStJetReader == 0) {
    //   mVecBosEvent->mNJets = 0;
-   //   return 0;
+   //   return;
    //}
 
    StJets* stJets         = GetStJets(mJetTreeBranchName);
@@ -639,13 +639,6 @@ void StVecBosMaker::ReadMuDstJets()
 
    //mVecBosEvent->mNJets = stJets->nJets();
 }
-
-
-//StJets* StVecBosMaker::GetStJets(int i) const
-//{
-//  TBranch* branch = (TBranch*) mStJetReader->tree()->GetListOfBranches()->At(i);
-//  return branch ? *(StJets**)branch->GetAddress() : 0;
-//}
 
 
 StJets* StVecBosMaker::GetStJets(const char* bname) const
@@ -685,42 +678,6 @@ StJets* StVecBosMaker::GetStJetsFromTree(TString branchName)
 {
    TBranch *branch = mJetTreeChain->GetBranch(branchName);
    return branch ? *(StJets **)branch->GetAddress() : 0;
-}
-
-
-Int_t StVecBosMaker::getEvent(Int_t i, Int_t ijet)
-{
-   Int_t stat    = mTreeChain->GetEntry(i);
-   Int_t statJet = mJetTreeChain->GetEntry(ijet);
-
-   if (!stat && !statJet) return kStEOF;
-
-   return kStOK;
-}
-
-
-void StVecBosMaker::chainFile( const Char_t *file )
-{
-   TString fname = file;
-   cout << "Chain W tree files" << endl;
-
-   if ( !fname.Contains("tree.root") ) return;
-
-   cout << "+ " << fname << endl;
-   mTreeChain->Add(fname);
-}
-
-
-void StVecBosMaker::chainJetFile( const Char_t *file )
-{
-
-   TString fname = file;
-   cout << "Chain jet tree files" << endl;
-
-   if ( !fname.Contains("jets_") ) return;
-
-   cout << "+ " << fname << endl;
-   mJetTreeChain->Add(fname);
 }
 
 
@@ -1152,38 +1109,41 @@ void StVecBosMaker::ReadMuDstBSMD()
    StMuEmcCollection *emc = mStMuDstMaker->muDst()->muEmcCollection();
 
    if (!emc) {
-      gMessMgr->Warning() << "No EMC data for this muDst event" << endm;    return;
+      gMessMgr->Warning() << "No EMC data for this muDst event" << endm;
+      return;
    }
 
    // BSMD
-   for (int iEP = bsmde; iEP <= bsmdp; iEP++)
-   { // official BSMD plane IDs
+   for (int iEP = bsmde; iEP <= bsmdp; iEP++) // official BSMD plane IDs
+   {
       int iep = iEP - 3;
       assert(bsmde == 3); // what a hack
-      int nh = emc->getNSmdHits(iEP);
-      //printf("muDst BSMD-%c nHit=%d\n",cPlane[iep],nh);
+      int nHits = emc->getNSmdHits(iEP);
+      //printf("muDst BSMD-%c nHit=%d\n",cPlane[iep],nHits);
       int n5 = 0, n1 = 0, n2 = 0, n3 = 0, n4 = 0;
 
-      for (int i = 0; i < nh; i++)
+      for (int i = 0; i < nHits; i++)
       {
          StMuEmcHit *hit = emc->getSmdHit(i, iEP);
-         float  adc = hit->getAdc();
-         int softID = hit->getId();
+         float  adc  = hit->getAdc();
+         int stripId = hit->getId();
 
          int statPed, statOfl, statGain;
-         mBarrelTables->getStatus(iEP, softID, statPed, "pedestal");
-         mBarrelTables->getStatus(iEP, softID, statOfl);
-         mBarrelTables->getStatus(iEP, softID, statGain, "calib");
+         mBarrelTables->getStatus(iEP, stripId, statPed, "pedestal");
+         mBarrelTables->getStatus(iEP, stripId, statOfl);
+         mBarrelTables->getStatus(iEP, stripId, statGain, "calib");
 
-         if (statPed != 1) { mVecBosEvent->bemc.statBsmd[iep][softID - 1] = 1; n1++; continue; }
-         if (statOfl != 1) { mVecBosEvent->bemc.statBsmd[iep][softID - 1] = 2; n2++; continue; }
-         if (statGain < 1 || statGain > 19) { mVecBosEvent->bemc.statBsmd[iep][softID - 1] = 4; n3++; continue; }
+         if (statPed != 1) { mVecBosEvent->bemc.statBsmd[iep][stripId - 1] = 1; n1++; continue; }
+         if (statOfl != 1) { mVecBosEvent->bemc.statBsmd[iep][stripId - 1] = 2; n2++; continue; }
+         if (statGain < 1 || statGain > 19) {
+            mVecBosEvent->bemc.statBsmd[iep][stripId - 1] = 4; n3++; continue;
+         }
 
          float pedRes, sigPed, gain;
          int capID = 0; // just one value for ped residua in pp500, 2009 run
 
-         mBarrelTables->getPedestal(iEP, softID, capID, pedRes, sigPed);
-         mBarrelTables->getCalib(iEP, softID, 1, gain);
+         mBarrelTables->getPedestal(iEP, stripId, capID, pedRes, sigPed);
+         mBarrelTables->getCalib(iEP, stripId, 1, gain);
 
          if (isMC) { // overwrite it based on genat DE & private calibration
             float par_bsmdAbsGain = 6e6; // tmp arbitrary absolute calib of bsmd, was 3e6
@@ -1198,16 +1158,20 @@ void StVecBosMaker::ReadMuDstBSMD()
          }
 
          n5++;
-         assert(softID >= 1);      assert(softID <= mxBStrips);
-         int id0 = softID - 1;
-         mVecBosEvent->bemc.adcBsmd[ iep][id0] = adc;
+         assert(stripId >= 1 && stripId <= mxBStrips);
+         int id0 = stripId - 1;
+         mVecBosEvent->bemc.adcBsmd[iep][id0] = adc;
          hA[70 + 10 * iep]->Fill(adc);
 
-         //if(mNumInputEvents<3 || i <20 )printf("  i=%d, smd%c id=%d, m=%d adc=%.3f pedRes=%.1f, sigP=%.1f stat: O=%d P=%d G=%d  gain=%.2f\n",i,cPlane[iep],softID,1+id0/150,adc,pedRes,sigPed, statOfl,statPed,statGain, gain);
+         //if(mNumInputEvents<3 || i <20 )printf("  i=%d, smd%c id=%d, m=%d
+         // adc=%.3f pedRes=%.1f, sigP=%.1f stat: O=%d P=%d G=%d
+         // gain=%.2f\n",i,cPlane[iep],stripId,1+id0/150,adc,pedRes,sigPed,
+         // statOfl,statPed,statGain, gain);
       }
 
       if (mNumTrigEvents % 5000 == 1) {
-         LOG_INFO << Form("unpackMuBSMD-%c() nBbad: ped=%d stat=%d gain=%d ; nAdc: %d>0, %d>thres", cPlane[iep], n1, n2, n3, n4, n5) << endm;
+         LOG_INFO << Form("unpackMuBSMD-%c() nBbad: ped=%d stat=%d gain=%d ; nAdc: %d>0, %d>thres",
+                     cPlane[iep], n1, n2, n3, n4, n5) << endm;
       }
    }
 }
@@ -1756,11 +1720,11 @@ void StVecBosMaker::FindWBoson()
          if (track.mCluster2x2.ET / track.mP3InNearConeNoETow.Pt() > par_nearTotEtFrac) {
             if (track.sPtBalance_noEEMC > par_ptBalance ) { // only signed ptBalance cut
                hA[140]->Fill(track.mCluster2x2.ET);
-               hA[240]->Fill(track.prMuTrack->eta(), track.mCluster2x2.ET);
+               hA[240]->Fill(track.mStMuTrack->eta(), track.mCluster2x2.ET);
 
-               if (track.prMuTrack->charge() < 0) {
+               if (track.mStMuTrack->charge() < 0) {
                   hA[184 + 3]->Fill(track.mCluster2x2.ET);
-               } else if (track.prMuTrack->charge() > 0) {
+               } else if (track.mStMuTrack->charge() > 0) {
                   hA[184 + 4]->Fill(track.mCluster2x2.ET);
                }
             }
@@ -1768,8 +1732,8 @@ void StVecBosMaker::FindWBoson()
 
          // fill plot for background
          if (track.mCluster2x2.ET > par_highET) {
-            if (track.prMuTrack->charge() > 0)      hA[251]->Fill(track.mCluster2x2.ET / track.mP3InNearCone.Pt(), track.sPtBalance);
-            else if (track.prMuTrack->charge() < 0) hA[252]->Fill(track.mCluster2x2.ET / track.mP3InNearCone.Pt(), track.sPtBalance);
+            if (track.mStMuTrack->charge() > 0)      hA[251]->Fill(track.mCluster2x2.ET / track.mP3InNearCone.Pt(), track.sPtBalance);
+            else if (track.mStMuTrack->charge() < 0) hA[252]->Fill(track.mCluster2x2.ET / track.mP3InNearCone.Pt(), track.sPtBalance);
          }
 
          if (track.mCluster2x2.ET / track.mP3InNearCone.Pt() < par_nearTotEtFrac) continue; // too large nearET
@@ -1796,10 +1760,10 @@ void StVecBosMaker::FindWBoson()
             for (int j = 0; j <= 20; j++) {
                float pTBal_cut = 5. + ((float) j);
                if (track.sPtBalance < pTBal_cut) {
-                  if (track.prMuTrack->charge() < 0) {
+                  if (track.mStMuTrack->charge() < 0) {
                      hA[142 + i]->Fill(track.mCluster2x2.ET, j);
                   }
-                  else if (track.prMuTrack->charge() > 0) {
+                  else if (track.mStMuTrack->charge() > 0) {
                      hA[163 + i]->Fill(track.mCluster2x2.ET, j);
                   }
                }
@@ -1809,30 +1773,30 @@ void StVecBosMaker::FindWBoson()
          //plots for backg sub yield
          if (track.sPtBalance > par_ptBalance ) {
             hA[136]->Fill(track.mCluster2x2.ET);//signal
-            hA[241]->Fill(track.prMuTrack->eta(), track.mCluster2x2.ET);
+            hA[241]->Fill(track.mStMuTrack->eta(), track.mCluster2x2.ET);
             hA[62]->Fill(track.mMatchedTower.iEta , track.mCluster2x2.energy);
-            if (track.prMuTrack->charge() < 0) {
+            if (track.mStMuTrack->charge() < 0) {
                hA[184 + 1]->Fill(track.mCluster2x2.ET);
             }
-            else if (track.prMuTrack->charge() > 0) {
+            else if (track.mStMuTrack->charge() > 0) {
                hA[184 + 2]->Fill(track.mCluster2x2.ET);
             }
          }
          else {
             hA[137]->Fill(track.mCluster2x2.ET);//background
-            if (track.prMuTrack->charge() < 0) {
+            if (track.mStMuTrack->charge() < 0) {
                hA[184 + 5]->Fill(track.mCluster2x2.ET);
             }
-            else if (track.prMuTrack->charge() > 0) {
+            else if (track.mStMuTrack->charge() > 0) {
                hA[184 + 6]->Fill(track.mCluster2x2.ET);
             }
-            hA[202]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.prMuTrack->pt());
-            hA[204]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mCluster2x2.energy / track.prMuTrack->p().mag());
+            hA[202]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mStMuTrack->pt());
+            hA[204]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mCluster2x2.energy / track.mStMuTrack->p().mag());
          }
 
          if (track.sPtBalance > par_ptBalance) {
             Info("FindWBoson", "WWWWWWWWWWWWWWWWWWWWW  Barrel");
-            mEventDisplay->exportEvent( "WB", vertex, track, iv);
+            mEventDisplay->exportEvent("WB", vertex, track, iv);
             mVecBosEvent->Print();
          }
 
@@ -1843,27 +1807,26 @@ void StVecBosMaker::FindWBoson()
          nNoAway++;
 
          // accepted W events for x-section
-
-         hA[113]->Fill( track.mCluster2x2.ET); //for Joe
-         hA[90]->Fill( track.mCluster2x2.ET);
-         hA[92]->Fill( track.mCluster2x2.ET, track.glMuTrack->dEdx() * 1e6);
+         hA[113]->Fill(track.mCluster2x2.ET); // for Joe
+         hA[90]->Fill (track.mCluster2x2.ET);
+         hA[92]->Fill (track.mCluster2x2.ET, track.glMuTrack->dEdx() * 1e6);
          //hA[93]->Fill( track.mCluster2x2.ET,track.glMuTrack->dca(vertex.id).mag());
 
          int k = 0;
-         if (track.prMuTrack->charge() < 0) k = 1;
+         if (track.mStMuTrack->charge() < 0) k = 1;
 
          hA[94 + k]->Fill( track.mCluster2x2.ET, track.glMuTrack->dcaD());
          // h95 used above
 
          // plots to investigate east/west yield diff
          hA[200]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mCluster2x2.ET);
-         hA[201]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.prMuTrack->pt());
-         hA[203]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mCluster2x2.energy / track.prMuTrack->p().mag());
-         hA[205]->Fill(track.prMuTrack->lastPoint().pseudoRapidity(), track.prMuTrack->lastPoint().phi());
+         hA[201]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mStMuTrack->pt());
+         hA[203]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mCluster2x2.energy / track.mStMuTrack->p().mag());
+         hA[205]->Fill(track.mStMuTrack->lastPoint().pseudoRapidity(), track.mStMuTrack->lastPoint().phi());
 
          // Q/pT plot
          hA[100]->Fill(track.mCluster2x2.ET, track.glMuTrack->charge() / track.glMuTrack->pt());
-         hA[101]->Fill(track.mCluster2x2.ET, track.prMuTrack->charge() / track.prMuTrack->pt());
+         hA[101]->Fill(track.mCluster2x2.ET, track.mStMuTrack->charge() / track.mStMuTrack->pt());
 
          if (track.mCluster2x2.ET < par_highET) continue; // very likely Ws
 
@@ -1871,14 +1834,14 @@ void StVecBosMaker::FindWBoson()
          hA[96]->Fill(vertex.mIdMuDst);
          hA[97]->Fill(vertex.mRankLog);
          hA[98]->Fill(vertex.z);
-         hA[99]->Fill(track.prMuTrack->eta());
-         hA[190 + k]->Fill(track.prMuTrack->eta(), track.mCluster2x2.ET);
+         hA[99]->Fill(track.mStMuTrack->eta());
+         hA[190 + k]->Fill(track.mStMuTrack->eta(), track.mCluster2x2.ET);
 
          hA[20]->Fill("goldW", 1.);
          nGoldW++;
 
-         if (track.prMuTrack->charge() > 0)      nGoldWp++;
-         else if (track.prMuTrack->charge() < 0) nGoldWn++;
+         if (track.mStMuTrack->charge() > 0)      nGoldWp++;
+         else if (track.mStMuTrack->charge() < 0) nGoldWn++;
       } // loop over tracks
    } // loop over vertices
 
@@ -2086,115 +2049,115 @@ void StVecBosMaker::FindWBosonEndcap()
 
       for (uint it = 0; it < vertex.eleTrack.size(); it++) 
       {
-         VecBosTrack &T = vertex.eleTrack[it];
-         if (T.mMatchedTower.id >= 0) continue; //skip barrel towers
-         if (T.isMatch2Cl == false) continue;
-         assert(T.mCluster2x2.nTower > 0); // internal logical error
-         // XXX:ds: assert(T.mP3InNearCone.Pt() > 0); // internal logical error
-         if (T.mP3InNearCone.Pt() < 0) continue; // internal logical error
+         VecBosTrack &track = vertex.eleTrack[it];
+         if (track.mMatchedTower.id >= 0) continue; //skip barrel towers
+         if (track.isMatch2Cl == false) continue;
+         assert(track.mCluster2x2.nTower > 0); // internal logical error
+         // XXX:ds: assert(track.mP3InNearCone.Pt() > 0); // internal logical error
+         if (track.mP3InNearCone.Pt() < 0) continue; // internal logical error
 
          //signal plots w/o EEMC in veto
-         if (T.mCluster2x2.ET / T.mP3InNearConeNoETow.Pt() > parE_nearTotEtFrac) {
-            if (T.sPtBalance_noEEMC > parE_ptBalance ) { //only signed ptBalance cut
-               hE[140]->Fill(T.mCluster2x2.ET);
-               if (T.prMuTrack->charge() < 0) {
-                  hE[184 + 3]->Fill(T.mCluster2x2.ET);
+         if (track.mCluster2x2.ET / track.mP3InNearConeNoETow.Pt() > parE_nearTotEtFrac) {
+            if (track.sPtBalance_noEEMC > parE_ptBalance ) { //only signed ptBalance cut
+               hE[140]->Fill(track.mCluster2x2.ET);
+               if (track.mStMuTrack->charge() < 0) {
+                  hE[184 + 3]->Fill(track.mCluster2x2.ET);
                }
-               else if (T.prMuTrack->charge() > 0) {
-                  hE[184 + 4]->Fill(T.mCluster2x2.ET);
+               else if (track.mStMuTrack->charge() > 0) {
+                  hE[184 + 4]->Fill(track.mCluster2x2.ET);
                }
             }
          }
 
-         if (T.mCluster2x2.ET / T.mP3InNearCone.Pt() < parE_nearTotEtFrac) continue; // too large nearET
+         if (track.mCluster2x2.ET / track.mP3InNearCone.Pt() < parE_nearTotEtFrac) continue; // too large nearET
 
          hE[20]->Fill("noNear", 1.);
          nNoNear++;
-         hE[112]->Fill(T.mCluster2x2.ET); // for Joe
-         hE[50]->Fill(T.awayTpcPT);
-         hE[51]->Fill(T.awayBtowET);
-         hE[54]->Fill(T.awayTotET);
-         hE[52]->Fill(T.mCluster2x2.ET, T.awayTotET);
-         hE[53]->Fill(T.mCluster2x2.ET, T.awayEmcET);
-         hE[55]->Fill(T.awayEtowET);
-         hE[60]->Fill(T.mCluster2x2.ET, T.awayTpcPT);
+         hE[112]->Fill(track.mCluster2x2.ET); // for Joe
+         hE[50]->Fill(track.awayTpcPT);
+         hE[51]->Fill(track.awayBtowET);
+         hE[54]->Fill(track.awayTotET);
+         hE[52]->Fill(track.mCluster2x2.ET, track.awayTotET);
+         hE[53]->Fill(track.mCluster2x2.ET, track.awayEmcET);
+         hE[55]->Fill(track.awayEtowET);
+         hE[60]->Fill(track.mCluster2x2.ET, track.awayTpcPT);
 
-         hE[132]->Fill(T.mCluster2x2.ET, T.ptBalance.Perp());
-         hE[133]->Fill(T.awayTotET, T.ptBalance.Perp());
-         hE[134]->Fill(T.mCluster2x2.ET, T.sPtBalance);
-         hE[135]->Fill(T.awayTotET, T.sPtBalance);
+         hE[132]->Fill(track.mCluster2x2.ET, track.ptBalance.Perp());
+         hE[133]->Fill(track.awayTotET, track.ptBalance.Perp());
+         hE[134]->Fill(track.mCluster2x2.ET, track.sPtBalance);
+         hE[135]->Fill(track.awayTotET, track.sPtBalance);
 
          //plots for backg sub yield
-         if (T.sPtBalance > parE_ptBalance ) {
-            hE[136]->Fill(T.mCluster2x2.ET);//signal
-            hE[62]->Fill(T.mMatchedTower.iEta , T.mCluster2x2.energy);
-            if (T.prMuTrack->charge() < 0) {
-               hE[184 + 1]->Fill(T.mCluster2x2.ET);
+         if (track.sPtBalance > parE_ptBalance) {
+            hE[136]->Fill(track.mCluster2x2.ET);//signal
+            hE[62]->Fill(track.mMatchedTower.iEta , track.mCluster2x2.energy);
+            if (track.mStMuTrack->charge() < 0) {
+               hE[184 + 1]->Fill(track.mCluster2x2.ET);
             }
-            else if (T.prMuTrack->charge() > 0) {
-               hE[184 + 2]->Fill(T.mCluster2x2.ET);
+            else if (track.mStMuTrack->charge() > 0) {
+               hE[184 + 2]->Fill(track.mCluster2x2.ET);
             }
          }
          else {
-            hE[137]->Fill(T.mCluster2x2.ET);//background
-            if (T.prMuTrack->charge() < 0) {
-               hE[184 + 5]->Fill(T.mCluster2x2.ET);
+            hE[137]->Fill(track.mCluster2x2.ET);//background
+            if (track.mStMuTrack->charge() < 0) {
+               hE[184 + 5]->Fill(track.mCluster2x2.ET);
             }
-            else if (T.prMuTrack->charge() > 0) {
-               hE[184 + 6]->Fill(T.mCluster2x2.ET);
+            else if (track.mStMuTrack->charge() > 0) {
+               hE[184 + 6]->Fill(track.mCluster2x2.ET);
             }
          }
 
-         if (T.sPtBalance > parE_ptBalance) { /***************************/
-            printf("\n WWWWWWWWWWWWWWWWWWWWW  Endcap \n");
-            mEventDisplay->exportEvent( "WE", vertex, T, iv);
+         if (track.sPtBalance > parE_ptBalance) {
+            Info("FindWBoson", "WWWWWWWWWWWWWWWWWWWWW  Endcap");
+            mEventDisplay->exportEvent("WE", vertex, track, iv);
             mVecBosEvent->Print();
-         }/***************************/
+         }
 
-         //put final W cut here
-         if (T.sPtBalance < parE_ptBalance)  continue;
+         // Put final W cut here
+         if (track.sPtBalance < parE_ptBalance)  continue;
          //::::::::::::::::::::::::::::::::::::::::::::::::
          //:::::accepted W events for x-section :::::::::::
          //::::::::::::::::::::::::::::::::::::::::::::::::
 
          hE[20]->Fill("noAway", 1.0);
          nNoAway++;
-         hE[113]->Fill( T.mCluster2x2.ET);//for Joe
+         hE[113]->Fill( track.mCluster2x2.ET);//for Joe
 
-         hE[90]->Fill( T.mCluster2x2.ET);
-         hE[92]->Fill( T.mCluster2x2.ET, T.glMuTrack->dEdx() * 1e6);
-         //hE[93]->Fill( T.mCluster2x2.ET,T.glMuTrack->dca().mag());
-         int k = 0; if (T.prMuTrack->charge() < 0) k = 1;
-         hE[94 + k]->Fill( T.mCluster2x2.ET, T.glMuTrack->dcaD());
+         hE[90]->Fill( track.mCluster2x2.ET);
+         hE[92]->Fill( track.mCluster2x2.ET, track.glMuTrack->dEdx() * 1e6);
+         //hE[93]->Fill( track.mCluster2x2.ET,track.glMuTrack->dca().mag());
+         int k = 0; if (track.mStMuTrack->charge() < 0) k = 1;
+         hE[94 + k]->Fill( track.mCluster2x2.ET, track.glMuTrack->dcaD());
          // h95 used above
 
          // do charge sign plot
-         float ET = T.mCluster2x2.ET;
-         const StMuTrack *glTr = T.glMuTrack; assert(glTr);
-         const StMuTrack *prTr = T.prMuTrack; assert(prTr);
+         float ET = track.mCluster2x2.ET;
+         const StMuTrack *glTr = track.glMuTrack; assert(glTr);
+         const StMuTrack *prTr = track.mStMuTrack; assert(prTr);
          float g_chrg = glTr->charge();
          float p_chrg = prTr->charge();
          hE[200]->Fill(ET, g_chrg / glTr->pt());
          hE[201]->Fill(ET, p_chrg / prTr->pt());
 
-         if (T.mCluster2x2.ET < par_highET) continue; // very likely Ws
-         hE[91]->Fill(T.mCluster2x2.position.PseudoRapidity(), T.mCluster2x2.position.Phi());
+         if (track.mCluster2x2.ET < par_highET) continue; // very likely Ws
+         hE[91]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mCluster2x2.position.Phi());
          hE[96]->Fill(vertex.mIdMuDst);
          hE[97]->Fill(vertex.mRankLog);
          hE[98]->Fill(vertex.z);
-         hE[99]->Fill( T.prMuTrack->eta());
-         hE[100]->Fill(T.mMatchedTower.R.X(), T.mMatchedTower.R.Y());
-         hE[190 + k]->Fill(T.prMuTrack->eta(), T.mCluster2x2.ET);
+         hE[99]->Fill( track.mStMuTrack->eta());
+         hE[100]->Fill(track.mMatchedTower.R.X(), track.mMatchedTower.R.Y());
+         hE[190 + k]->Fill(track.mStMuTrack->eta(), track.mCluster2x2.ET);
          hE[20]->Fill("goldW", 1.);
          nGoldW++;
 
-      }// loop over tracks
-   }// loop over vertices
+      } // loop over tracks
+   } // loop over vertices
+
    if (nNoNear > 0) hE[0]->Fill("noNear", 1.);
    if (nNoAway > 0) hE[0]->Fill("noAway", 1.);
    if (nGoldW > 0)
       hE[0]->Fill("goldW", 1.);
-
 }
 
 
@@ -2303,103 +2266,4 @@ void StVecBosMaker::AnalyzeEPRS()
          //do some clustering of EPRS deposits and plot histos
       }
    }
-}
-
-
-WeveCluster StVecBosMaker::maxEtow2x1(int iEta, int iPhi, float zVert)
-{
-   //printf("   maxEtow2x1  seed iEta=%d iPhi=%d \n",iEta, iPhi);
-
-   WeveCluster maxCL;
-   // just 4 cases of 2x1 clusters
-   float maxET = 0;
-   int I0 = iEta - 1;
-   int J0 = iPhi - 1;
-   for (int I = I0; I <= I0 + 1; I++) { // try along eta dir
-      WeveCluster CL = sumEtowPatch(I, iPhi, 2, 1, zVert);
-      if (maxET > CL.ET) continue;
-      maxET = CL.ET;
-      maxCL = CL;
-      //printf(" maxEtow2x1 A  newMaxETSum=%.1f iEta=%d iPhi=%d \n",maxET, I,iPhi);
-   }
-
-   for (int J = J0; J <= J0 + 1; J++) { // try along phi dir
-      WeveCluster CL = sumEtowPatch(iEta, J, 1, 2, zVert);
-      if (maxET > CL.ET) continue;
-      maxET = CL.ET;
-      maxCL = CL;
-      //printf(" maxEtow2x1 B  newMaxETSum=%.1f iEta=%d iPhi=%d \n",maxET,iEta,J);
-   }
-   //printf(" final inpEve=%d SumET2x2=%.1f \n",mNumInputEvents,maxET);
-   return maxCL;
-}
-
-
-WeveCluster StVecBosMaker::maxEtow2x2(int iEta, int iPhi, float zVert)
-{
-   //printf("   maxEtow2x2  seed iEta=%d iPhi=%d \n",iEta, iPhi);
-   const int L = 2; // size of the summed square
-
-   WeveCluster maxCL;
-   // just 4 cases of 2x1 clusters
-   float maxET = 0;
-   int I0 = iEta - 1;
-   int J0 = iPhi - 1;
-   for (int I = I0; I <= I0 + 1; I++) {
-      for (int J = J0; J <= J0 + 1; J++) {
-         WeveCluster CL = sumEtowPatch(I, J, L, L, zVert);
-         if (maxET > CL.ET) continue;
-         maxET = CL.ET;
-         maxCL = CL;
-         //printf(" maxEtow2x2 A  newMaxETSum=%.1f iEta=%d iPhi=%d \n",maxET, I,iPhi);
-      }
-   }// 4 combinations done
-
-   //printf(" final inpEve=%d SumET2x2=%.1f \n",mNumInputEvents,maxET);
-   return maxCL;
-}
-
-
-WeveCluster StVecBosMaker::sumEtowPatch(int iEta, int iPhi, int Leta, int  Lphi, float zVert)
-{
-   //printf("     eveID=%d etowPatch seed iEta=%d[+%d] iPhi=%d[+%d] zVert=%.0f \n",mVecBosEvent.id,iEta,Leta, iPhi,Lphi,zVert);
-   WeveCluster CL; // object is small, not to much overhead in creating it
-   CL.iEta = iEta;
-   CL.iPhi = iPhi;
-   TVector3 R;
-   double sumW = 0;
-
-   for (int i = iEta; i < iEta + Leta; i++) { // trim in eta-direction
-      if (i < 0) continue;
-      if (i >= mxEtowEta) continue;
-      for (int j = iPhi; j < iPhi + Lphi; j++) { // wrap up in the phi-direction
-         int jj = (j + mxEtowPhiBin) % mxEtowPhiBin; // keep it always positive
-         //if(L<5) printf("n=%2d  i=%d jj=%d\n",CL.nTower,i,jj);
-
-         float ene = mVecBosEvent->etow.ene[jj][i];
-         if (ene <= 0) continue; // skip towers w/o energy
-         float adc   = mVecBosEvent->etow.adc[jj][i];
-         float delZ  = gETowCoords[jj][i].z() - zVert;
-         float Rxy   = gETowCoords[jj][i].Perp();
-         float e2et  = Rxy / sqrt(Rxy * Rxy + delZ * delZ);
-         float ET    = ene * e2et;
-         float logET = log10(ET + 0.5);
-         CL.nTower++;
-         CL.energy += ene;
-         CL.ET += ET;
-         CL.adcSum += adc;
-         if (logET > 0) {
-            R += logET * gETowCoords[jj][i];
-            sumW += logET;
-         }
-      }
-      //printf("      in etowPatch: iEta=%d  nTw=%d, ET=%.1f adcSum=%.1f\n",i,CL.nTower,CL.ET,CL.adcSum);
-      if (sumW > 0) {
-         CL.position = 1. / sumW * R; // weighted cluster position
-      }
-      else {
-         CL.position = TVector3(0, 0, 999);
-      }
-   }
-   return CL;
 }

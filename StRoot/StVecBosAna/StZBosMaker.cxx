@@ -50,21 +50,23 @@ Int_t StZBosMaker::Make()
 
 void StZBosMaker::printJan(VecBosTrack *T)
 {
-   int ibp = kBTow;
    WevePointTower poiTw = T->mMatchedTower;
-   WeveCluster cl = T->mCluster2x2;
-   int id = poiTw.id;
-   float adc = wMK->mVecBosEvent->bemc.adcTile[ibp][id - 1];
-   float frac = adc / 4096 * 60 / cl.ET;
-   printf("Ztower Q=%d pointTw: id=%d ADC=%.0f  2x2ET=%.1f frac=%.2f\n", T->prMuTrack->charge(), id, adc, cl.ET, frac);
+   WeveCluster cluster  = T->mCluster2x2;
+
+   int ibp    = kBTow;
+   int id     = poiTw.id;
+   float adc  = wMK->mVecBosEvent->bemc.adcTile[ibp][id - 1];
+   float frac = adc / 4096 * 60 / cluster.ET;
+
+   printf("Ztower Q=%d pointTw: id=%d ADC=%.0f  2x2ET=%.1f frac=%.2f\n", T->mStMuTrack->charge(), id, adc, cluster.ET, frac);
 }
 
 
 void StZBosMaker::FindZBosBarrel()
 {
-   VecBosEvent *mVecBosEvent = wMK->mVecBosEvent;
+   VecBosEvent *vecBosEvent = wMK->mVecBosEvent;
 
-   hA[31]->Fill(mVecBosEvent->mVertices.size());
+   hA[31]->Fill(vecBosEvent->mVertices.size());
    hA[0]->Fill("inp", 1.);
 
    // search for  Zs
@@ -147,7 +149,7 @@ void StZBosMaker::FindZBosBarrel()
             hA[0]->Fill("m2", 1.);
 
             float mass = sqrt(mass2);
-            int Q1Q2 = T1.prMuTrack->charge() * T2.prMuTrack->charge();
+            int Q1Q2 = T1.mStMuTrack->charge() * T2.mStMuTrack->charge();
             if (Q1Q2 == 1) { //..  same sign , can't be Z-> e+ e-
                hA[14]->Fill(mass);
                continue;
@@ -156,8 +158,8 @@ void StZBosMaker::FindZBosBarrel()
             // now only opposite sign
             hA[0]->Fill("QQ", 1.);
             hA[15]->Fill(mass);
-            hA[33]->Fill(T1.mCluster2x2.ET, T1.prMuTrack->charge() / T1.prMuTrack->pt());
-            hA[33]->Fill(T2.mCluster2x2.ET, T2.prMuTrack->charge() / T2.prMuTrack->pt());
+            hA[33]->Fill(T1.mCluster2x2.ET, T1.mStMuTrack->charge() / T1.mStMuTrack->pt());
+            hA[33]->Fill(T2.mCluster2x2.ET, T2.mStMuTrack->charge() / T2.mStMuTrack->pt());
             hA[34]->Fill(T1.mMatchedTower.iEta , T1.mCluster2x2.energy);
             hA[34]->Fill(T2.mMatchedTower.iEta , T2.mCluster2x2.energy);
             hA[35]->Fill(p1.Eta(), p2.Eta());
@@ -166,17 +168,15 @@ void StZBosMaker::FindZBosBarrel()
 
 #if 0
             printf("RCC:  Found Z w/ invmass=%f\n", mass);
-            printJan(&T1);
-            printJan(&T2);
 
-            if (!wMK->isMC || (wMK->isMC && mVecBosEvent->id < 500) ) {
+            if (!wMK->isMC || (wMK->isMC && vecBosEvent->id < 500) ) {
                printf("\n ZZZZZZZZZZZZZZZZZZZ\n");
                if (mass < par_minMassZ)
                   wMK->wDisaply->exportEvent("Zlow", V, T1);
                else
                   wMK->wDisaply->exportEvent("Zgood", V, T1);
                printf("RCC:  Found Z w/ invmass=%f\n", mass);
-               mVecBosEvent->print();
+               vecBosEvent->print();
             }
 #endif
 
@@ -193,15 +193,15 @@ void StZBosMaker::FindZBosBarrel()
             hA[22]->Fill(T1.mCluster2x2.ET, T2.mCluster2x2.ET);
 
             hA[1]->Fill(mass);
-            hA[2]->Fill(T1.prMuTrack->charge(), T2.prMuTrack->charge());
-            hA[3]->Fill(T1.prMuTrack->charge()*T2.prMuTrack->charge());
+            hA[2]->Fill(T1.mStMuTrack->charge(), T2.mStMuTrack->charge());
+            hA[3]->Fill(T1.mStMuTrack->charge()*T2.mStMuTrack->charge());
             hA[4]->Fill(p1.Phi(), p2.Phi());
             hA[5]->Fill(del_phi);
-            hA[6]->Fill(mass, T1.prMuTrack->charge() / T1.mP3AtDca.Perp()*T2.prMuTrack->charge() / T1.mP3AtDca.Perp());
-            hA[7]->Fill(mass, T1.prMuTrack->charge()*T2.prMuTrack->charge());
+            hA[6]->Fill(mass, T1.mStMuTrack->charge() / T1.mP3AtDca.Perp()*T2.mStMuTrack->charge() / T1.mP3AtDca.Perp());
+            hA[7]->Fill(mass, T1.mStMuTrack->charge()*T2.mStMuTrack->charge());
             hA[8]->Fill(T1.mCluster2x2.ET);
 
-            if (T1.prMuTrack->charge() > 0) {
+            if (T1.mStMuTrack->charge() > 0) {
                hA[9]->Fill(p1.Eta(), p1.Phi());
                hA[10]->Fill(p2.Eta(), p2.Phi());
             }
@@ -221,7 +221,7 @@ void StZBosMaker::FindZBosBarrel()
 
 void StZBosMaker::FindZBosEndcap()
 {
-   VecBosEvent *mVecBosEvent = wMK->mVecBosEvent;
+   VecBosEvent *vecBosEvent = wMK->mVecBosEvent;
 
    hA[50]->Fill("inp", 1.); hA[60]->Fill("inp", 1.);
 
@@ -300,17 +300,17 @@ void StZBosMaker::FindZBosEndcap()
             hA[79]->Fill(psum.Pt());
 
             float mass = sqrt(mass2);
-            int Q1Q2 = TB.prMuTrack->charge() * TE.prMuTrack->charge();
+            int Q1Q2 = TB.mStMuTrack->charge() * TE.mStMuTrack->charge();
             if (Q1Q2 == 1) { //..  same sign , can't be Z-> e+ e-
                hA[76]->Fill(mass);
-               hA[80]->Fill(TE.mCluster2x2.ET, TE.prMuTrack->charge() / TE.prMuTrack->pt());
+               hA[80]->Fill(TE.mCluster2x2.ET, TE.mStMuTrack->charge() / TE.mStMuTrack->pt());
                continue;
             }
 
             // now only opposite sign
             hA[70]->Fill("QQ", 1.);
             hA[75]->Fill(mass);
-            hA[81]->Fill(TE.mCluster2x2.ET, TE.prMuTrack->charge() / TE.prMuTrack->pt());
+            hA[81]->Fill(TE.mCluster2x2.ET, TE.mStMuTrack->charge() / TE.mStMuTrack->pt());
          }
 
          // 2) use highest ET endcap mCluster2x2 with no track requirement
@@ -320,7 +320,7 @@ void StZBosMaker::FindZBosEndcap()
          for (int iEta = 0; iEta < 12; iEta++) { //loop over eta bins
             for (int iPhi = 0; iPhi < 60; iPhi++) { //loop over phi bins
 
-               WeveCluster eclust = wMK->maxEtow2x2(iEta, iPhi, V.z);
+               WeveCluster eclust = vecBosEvent->FindMaxETow2x2(iEta, iPhi, V.z);
                if (eclust.ET < par_clusterEtZ) continue;
                if (maxET > eclust.ET) continue;
                else {
@@ -333,7 +333,7 @@ void StZBosMaker::FindZBosEndcap()
          if (maxCluster.ET <= 1.0) continue; //remove low E clusters
 
          // Apply cuts to max ETOW cluster and isolation sums
-         WeveCluster mCluster4x4 = wMK->sumEtowPatch(maxCluster.iEta - 1, maxCluster.iPhi - 1, 4, 4, V.z);
+         WeveCluster mCluster4x4 = vecBosEvent->SumETowPatch(maxCluster.iEta-1, maxCluster.iPhi-1, 4, 4, V.z);
          hA[54]->Fill(maxCluster.ET / mCluster4x4.ET);
          if (maxCluster.ET / mCluster4x4.ET < wMK->mMinEClusterEnergyIsoRatio) continue;
          hA[55]->Fill(maxCluster.ET);

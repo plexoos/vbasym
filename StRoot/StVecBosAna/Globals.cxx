@@ -12,7 +12,7 @@ using namespace std;
 StEmcGeom          *gBTowGeom;
 StEmcGeom          *mBSmdGeom[mxBSmd];
 TVector3            gBCalTowerCoords[mxBtow];               // vs. tower ID
-TVector3            mBSmdStripCoords[mxBSmd][mxBStrips];    // vs. strip ID
+TVector3            gBSmdStripCoords[mxBSmd][mxBStrips];    // vs. strip ID
 TVector3            gETowCoords[mxEtowSec *mxEtowSub][mxEtowEta];
 int                 gMapBTowEtaPhiBin2Id[mxBTetaBin * mxBTphiBin];  // vs. (iEta, iPhi)
 

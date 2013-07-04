@@ -30,62 +30,42 @@ int main(int argc, char *argv[])
    //Bool_t isMc           = kFALSE;
    Bool_t isMc           = kTRUE;
 
-   //string histFileName   = "vbana_mytest.root";
-   //string histFileName   = "vbana_cut05_data_final.root";
-   //string histFileName   = "vbana_cut05_data_bad2.root";
-   //string histFileName   = "vbana_cut35_data_final.root";
-   //string histFileName   = "vbana_cut05_mc_qcd.root";
-   //string histFileName   = "vbana_cut05_mc_wm.root";
-   string histFileName   = "vbana_cut05_mc_wp.root";
-   //string histFileName   = "vbana_cut05_mc_wm_to_tt.root";
-   //string histFileName   = "vbana_cut05_mc_wp_to_tt.root";
-   //string histFileName   = "vbana_cut05_mc_z_to_ee.root";
+   //string filelist       = "run11_pp_transverse";
+   //string filelist       = "MC_list_QCD_2012";
+   string filelist       = "MC_list_Wm_2012";
+   //string filelist       = "MC_list_Wp_2012";
+   //string filelist       = "MC_list_WmToTauTau_2012";
+   //string filelist       = "MC_list_WpToTauTau_2012";
+   //string filelist       = "MC_list_Ztoee_2012";
 
+   string stana_options  = "--jpm_0.5";
+   stana_options = (isMc ? "-m_" : "") + stana_options;
 
-   //string filelist       = "./runlists/run11_pp_transverse";
-   //string filelist       = "./runlists/run11_pp_transverse_short";
-   //string filelist       = "./runlists/run11_pp_transverse_bad2";
-   //string filelist       = "./runlists/MC_list_QCD_2012";
-   //string filelist       = "./runlists/MC_list_Wm_2012";
-   string filelist       = "./runlists/MC_list_Wp_2012";
-   //string filelist       = "./runlists/MC_list_WmToTauTau_2012";
-   //string filelist       = "./runlists/MC_list_WpToTauTau_2012";
-   //string filelist       = "./runlists/MC_list_Ztoee_2012";
+   string histFileName = "~/stana_out/" + filelist + "_" + stana_options + "/hist/vbana.root";
 
    Info("main", "nMaxUserEvents: %d", nMaxUserEvents);
    Info("main", "histFileName:   %s", histFileName.c_str());
    Info("main", "isMc:           %d", isMc);
 
-   VecBosRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc);
-   //VecBosAsymRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc); // to create the symmetry histograms 
-   VecBosEvent    *vecBosEvent = new VecBosEvent();
+   //VecBosRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc);
+   VecBosAsymRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc); // to create the symmetry histograms 
+   VecBosEvent *vecBosEvent = new VecBosEvent();
 
    TObject *o;
-   TIter   *next = new TIter(utils::getFileList(filelist));
+   TIter   *next = new TIter(utils::getFileList("./runlists/"+filelist));
    UInt_t   nProcEvents = 0;
 
    // Loop over the runs and record the time of the last flattop measurement in the fill
    while (next && (o = (*next)()) )
    {
       string fName    = string(((TObjString*) o)->GetName());
-      //string fileName = "./R" + fName + ".wtree.root";
-      //string fileName = "/star/data05/scratch/fazio/wtree_run11_cut15/";
-      string fileName = "/star/data05/scratch/fazio/wtree_run11_cut05/";
-      fileName += (!isMc ? "R" : "") + fName + ".wtree.root";
+      string fileName = "~/stana_out/" + filelist + "_" + stana_options + "/tree/";
+      fileName += (isMc ? "" : "R") + fName + "_tree.root";
 
       TFile *f = new TFile(fileName.c_str(), "READ");
 
       if (!f) { Error("main", "file not found. Skipping..."); delete f; continue; }
       if ( f->IsZombie() ) { Error("main", "file is zombie %s. Skipping...", fileName.c_str()); f->Close(); delete f; continue; }
-
-      TList *streamerList = f->GetStreamerInfoList();
-      TStreamerInfo *streamerInfo = (TStreamerInfo*) streamerList->FindObject("VecBosTrack"); // this is actually class name
-      //Int_t ver = streamerInfo->CompareContent();
-
-      //if (ver != 1) {
-      //   Error("main", "Wrong versio of VecBosTrack: %d. Skipping...", ver); f->Close(); delete f;
-      //   continue;
-      //}
 
       cout << endl;
       Info("main", "Found file: %s", fileName.c_str());
@@ -106,11 +86,6 @@ int main(int argc, char *argv[])
       }
 
       vbTree->SetBranchAddress("e", &vecBosEvent);
-
-      //TBranch *eventBranch = vbTree->GetBranch("e");
-      //eventBranch->SetAddress(&vecBosEvent);
-      //eventBranch->SetAutoDelete(kTRUE);
-      //vbTree->SetBranchStatus("e.*.prMuTrack", 0);
 
       for (UInt_t iEvent=1; iEvent<=(UInt_t) nTreeEvents; iEvent++, nProcEvents++)
       {

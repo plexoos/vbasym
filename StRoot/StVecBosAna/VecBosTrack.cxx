@@ -23,7 +23,7 @@ VecBosTrack::VecBosTrack() : TObject(),
    isMatch2Cl(false),
    mMatchedTower(),
    glMuTrack(0),
-   prMuTrack(0),
+   mStMuTrack(0),
    mHelix(),
    mVertex(0),
    mVertexId(-1),
@@ -60,17 +60,16 @@ VecBosTrack::VecBosTrack() : TObject(),
 
 VecBosTrack::~VecBosTrack()
 {
-   //Info("~VecBosTrack()", "prMuTrack: %x, %d", prMuTrack, prMuTrack->nHitsFit());
-   //Info("~VecBosTrack()", "this: %x, prMuTrack: %x", this, prMuTrack);
-   if (prMuTrack) delete prMuTrack;
-   prMuTrack = 0;
+   //Info("~VecBosTrack()", "mStMuTrack: %x, %d", mStMuTrack, mStMuTrack->nHitsFit());
+   //Info("~VecBosTrack()", "this: %x, mStMuTrack: %x", this, mStMuTrack);
+   if (mStMuTrack) delete mStMuTrack;
+   mStMuTrack = 0;
 }
 
 
 bool VecBosTrack::IsCandidate() const
 {
    return (HasCluster() && IsIsolated() && IsUnBalanced() && HasCharge());
-   //return (HasCluster() && IsIsolated() && IsUnBalanced() );
 }
 
 
@@ -96,7 +95,7 @@ void VecBosTrack::Process()
    if ( ExtendTrack2Barrel() )
    {
       // Do not proced if the track cannot be extended to barrel
-      if ( !MatchTrack2BtowCluster() ) return;
+      if ( !MatchTrack2BarrelCluster() ) return;
 
       CalcEnergyInCones();
       CheckChargeSeparation();
@@ -151,7 +150,7 @@ void VecBosTrack::Clear(const Option_t*)
    isMatch2Cl             = false;
    mMatchedTower.clear();
    glMuTrack              = 0;
-   prMuTrack             = 0;
+   mStMuTrack             = 0;
    //mHelix               = St
    mVertex                = 0;
    mVertexId              = -1;
@@ -211,7 +210,7 @@ void VecBosTrack::print(int opt) const
    mP3AtDca.Print();
    Info("Print", "mVertexId: %2d", mVertexId);
 
-   //if (!prMuTrack) { printf("prMuTrack is NULL pointer???\n"); return; }
+   //if (!mStMuTrack) { printf("mStMuTrack is NULL pointer???\n"); return; }
 
    //printf("\tTrack: isMatch2Cl: %d, mP3InNearCone: %.2f, awayTotET: %.2f mP3AtDca.Pt(): %.2f\n",
    //       isMatch2Cl, mP3InNearCone.Pt(), awayTotET, mP3AtDca.Pt());
@@ -232,7 +231,7 @@ void VecBosTrack::print(int opt) const
 bool VecBosTrack::ExtendTrack2Barrel()
 {
    // Initial rejection: XXX The Pt cut may need to be reconsidered
-   if ( prMuTrack->pt() < 1.0 || prMuTrack->flag() != 301 )
+   if ( mStMuTrack->pt() < 1.0 || mStMuTrack->flag() != 301 )
       return false;
 
    //printf("******* extendTracks() nVert=%d\n", mVecBosEvent->mVertices.size());
@@ -242,7 +241,7 @@ bool VecBosTrack::ExtendTrack2Barrel()
    //if (mP3AtDca.Eta() < mMinBTrackEta || mP3AtDca.Eta() > mMaxBTrackEta) continue;
 
    // extrapolate track to the barrel @ R=entrance
-   mHelix               = prMuTrack->outerHelix();
+   mHelix               = mStMuTrack->outerHelix();
    float  nomBTowRadius = gBTowGeom->Radius();
    pairD  segmentLength = mHelix.pathLength(nomBTowRadius); // XXX:ds: Length along the helix from the origin to the intersection point
    //printf(" R=%.1f path 1=%f, 2=%f, period=%f, R=%f\n", Rctb, segmentLength.first, segmentLength.second, mHelix.period(), 1./mHelix.curvature());
@@ -292,7 +291,7 @@ bool VecBosTrack::ExtendTrack2Barrel()
 
 bool VecBosTrack::ExtendTrack2Endcap()
 {
-   if ( prMuTrack->pt() < 1.0 || prMuTrack->flag() != 311 )
+   if ( mStMuTrack->pt() < 1.0 || mStMuTrack->flag() != 311 )
       return false;
 
    //printf("******* extendTracksEndcap() nVert=%d\n",mVecBosEvent.vertex.size());
@@ -311,13 +310,13 @@ bool VecBosTrack::ExtendTrack2Endcap()
    //   {
    //      VecBosTrack &T = vertex.eleTrack[it];
 
-   //      if (T.prMuTrack->eta() < parE_trackEtaMin) continue; // to avoid extrapolation nonsense
+   //      if (T.mStMuTrack->eta() < parE_trackEtaMin) continue; // to avoid extrapolation nonsense
 
    //      // Do eta sorting at track level (tree analysis)
    //      if (T.mP3AtDca.Eta() < mMinETrackEta || T.mP3AtDca.Eta() > mMaxETrackEta) continue;
 
    //      // Extrapolate track to the disk perpendicular to the z-axis
-   //      const StPhysicalHelixD trkHlx       = T.prMuTrack->outerHelix();
+   //      const StPhysicalHelixD trkHlx       = T.mStMuTrack->outerHelix();
    //      StThreeVectorD         diskPosition = StThreeVectorD(0, 0, parE_zSMD);
    //      StThreeVectorD         diskNormal   = StThreeVectorD(0, 0, 1);
 
@@ -341,7 +340,7 @@ bool VecBosTrack::ExtendTrack2Endcap()
    //      bool inEtow = mGeomEmc->getTower(rCross, isec, isubSec, ietaBin, epsPhi, epsEta);
    //      if (!inEtow) continue;
    //      hE[20]->Fill("@E", 1.);
-   //      //printf("trk points EEMC tower isec=%d isub=%d ieta=%d epsPhi=%f epsEta=%f  trkPT=%f\n", isec,isubSec,ietaBin,epsPhi,epsEta,T.prMuTrack->pt());
+   //      //printf("trk points EEMC tower isec=%d isub=%d ieta=%d epsPhi=%f epsEta=%f  trkPT=%f\n", isec,isubSec,ietaBin,epsPhi,epsEta,T.mStMuTrack->pt());
 
    //      nTrE++;
    //      T.mMatchedTower.id   = -999; //set negative for endcap towers
@@ -372,14 +371,14 @@ bool VecBosTrack::ExtendTrack2Endcap()
 }
 
 
-bool VecBosTrack::MatchTrack2BtowCluster()
+bool VecBosTrack::MatchTrack2BarrelCluster()
 {
    //if (mMatchedTower.id <= 0) return; // skip endcap towers
 
    //printf("******* matchCluster() nVert=%d\n",mVecBosEvent->mVertices.size());
    float nomBTowRadius = gBTowGeom->Radius();
 
-   //float trackPT = prMuTrack->momentum().perp();
+   //float trackPT = mStMuTrack->momentum().perp();
 
    // Choose 2x2 cluster with maximum ET
    mCluster2x2 = mEvent->FindMaxBTow2x2(mMatchedTower.iEta, mMatchedTower.iPhi, mVertex->z);
@@ -393,7 +392,7 @@ bool VecBosTrack::MatchTrack2BtowCluster()
 
    //if (mCluster2x2.ET < mMinBClusterEnergy) continue; // too low energy
 
-   //hA[20] ->Fill("CL", 1.);
+   //hA[20] ->Fill("cluster", 1.);
    //hA[206]->Fill(mCluster2x2.position.PseudoRapidity(), mCluster2x2.ET);
    //hA[37] ->Fill(mCluster4x4.ET);
    //hA[38] ->Fill(mCluster2x2.energy, mCluster4x4.energy - mCluster2x2.energy);

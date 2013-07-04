@@ -42,6 +42,12 @@ TVector3 ZBosEvent::GetVecBosonP3() const
 }
 
 
+void ZBosEvent::Clear(const Option_t*)
+{
+   VecBosEvent::Clear();
+}
+
+
 bool ZBosEvent::PassedCutWBos(float minElePt) const
 {
    if ( HasCandidateEle() && mPtBalanceCosPhiFromTracks >= sMinNeutrinoPt &&

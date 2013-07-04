@@ -35,12 +35,8 @@ TVector3 WBosEvent::GetNeutrinoP3() const { return mNeutrinoP3; }
 
 TVector3 WBosEvent::GetMissingEnergyP3() const
 {
-   //if (mTracksCandidate.size() < 1) {
-   //   Warning("GetMissingEnergyP3", "No track/lepton candidate: Cannot calculate P3Balance");
-   //   return TVector3();
-   //}
-
    return -1*(GetTrackRecoilTpcNeutrals() + GetElectronP3());
+   // Other definitions
    //return mP3TrackRecoilTow + GetElectronP3();
    //return mP4JetRecoil + GetElectronP3();
 }
@@ -48,7 +44,7 @@ TVector3 WBosEvent::GetMissingEnergyP3() const
 
 TVector3 WBosEvent::GetVecBosonP3() const
 {
-   return -1*(GetElectronP3() + GetMissingEnergyP3());
+   return -1*(GetElectronP3() + GetNeutrinoP3());
 }
 
 
@@ -60,7 +56,7 @@ void WBosEvent::Process()
    if ( !PassedCutWBos() ) return;
 
    mElectronP3 = GetElectronP3();
-   mNeutrinoP3 = GetMissingEnergyP3(); // we use only x and y components, and reconstruct z
+   mNeutrinoP3 = GetMissingEnergyP3(); // here we use only x and y components, and reconstruct z
 
    ReconstructNeutrinoZ();
 }
@@ -71,16 +67,6 @@ void WBosEvent::Clear(const Option_t*)
    VecBosEvent::Clear();
    mElectronP3.SetXYZ(0, 0, 0);
    mNeutrinoP3.SetXYZ(0, 0, 0);
-}
-
-
-void WBosEvent::Streamer(TBuffer &R__b)
-{
-   //Info("Streamer", "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx ");
-   VecBosEvent::Streamer(R__b);
-
-   // Perhaps a temporary solution...
-   ReconstructNeutrinoZ();
 }
 
 

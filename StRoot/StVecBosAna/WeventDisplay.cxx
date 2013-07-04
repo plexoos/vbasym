@@ -30,10 +30,10 @@
 WeventDisplay::WeventDisplay(StVecBosMaker *mk, int mxEv)
 {
    maxEve = mxEv;
-   wMK = mk;
+   wMK    = mk;
    const float PI = TMath::Pi();
-   const char cPlane[ mxBSmd] = {'E', 'P'};
-   const char cEsmdPlane[ mxEsmdPlane] = {'U', 'V'};
+   const char cPlane[mxBSmd] = {'E', 'P'};
+   const char cEsmdPlane[mxEsmdPlane] = {'U', 'V'};
    char txt1[100], txt2[1000];
 
    // barrel
@@ -47,10 +47,8 @@ WeventDisplay::WeventDisplay(StVecBosMaker *mk, int mxEv)
    bxE = new TBox(-1.3, 0, 1, 2.);  bxE->SetFillStyle(0); bxE->SetLineStyle(2);
    bxE->SetX2(2.2);
 
-
-   hEmcET = new TH2F("eveBtowET", "EMC  ET sum, Z=[0.3,30]GeV; event eta ; phi", 38, -1.4, 2.4, 63, -PI, PI);
-
-   hTpcET = new TH2F("eveTpcET", "TPC PT sum, Z[0.3,10]GeV/c; event eta ; phi", 32, -1.6, 1.6, 63, -PI, PI);
+   hEmcET = new TH2F("eveBtowET", "EMC ET sum, Z=[0.3,30]GeV; event eta ; phi", 38, -1.4, 2.4, 63, -PI, PI);
+   hTpcET = new TH2F("eveTpcET",  "TPC PT sum, Z[0.3,10]GeV/c; event eta ; phi", 32, -1.6, 1.6, 63, -PI, PI);
 
    for (int iep = 0; iep < mxBSmd; iep++) {
       sprintf(txt1, "eveBsmdAdc_%c", cPlane[iep]);
@@ -58,14 +56,14 @@ WeventDisplay::WeventDisplay(StVecBosMaker *mk, int mxEv)
       hBsmdAdc[iep] = new TH2F(txt1, txt2, 26, -1.3, 1.3, 63, -PI, PI);
    }
 
-   //ESMD shower shape
+   // ESMD shower shape
    for (int iuv = 0; iuv < mxEsmdPlane; iuv++) {
       sprintf(txt1, "eveEsmdShower_%c", cEsmdPlane[iuv]);
       sprintf(txt2, "ESMD_%c Shower Shape; i_strip position - track position (cm) ; MeV", cEsmdPlane[iuv]);
       hEsmdShower[iuv] = new TH1F(txt1, txt2, 41, -10.25, 10.25);
    }
-   hEsmdXpt = new TH2F("eveEsmdXpt", "ESMD Cross Point; X (cm); Y (cm)", 100, 0., 100, 100, 0., 100.);
 
+   hEsmdXpt = new TH2F("eveEsmdXpt", "ESMD Cross Point; X (cm); Y (cm)", 100, 0., 100, 100, 0., 100.);
 
 #if 0
    //---- smart code from Willie
@@ -76,7 +74,6 @@ WeventDisplay::WeventDisplay(StVecBosMaker *mk, int mxEv)
       etaphibinsA[i] = wMK->mSmdEGeom->PhiB()[i];
    hBsmdEtaAdc = new TH2F("eveBsmdEtaAdc", " Event: BSMD-Eta ADC vs. eta & phi; pseudorapidity; azimuth", mxBetaStrMod * 2, etabinsA, mxBMod2Pi, etaphibinsA);
 #endif
-
 }
 
 
@@ -90,7 +87,8 @@ void WeventDisplay::clear()
 }
 
 
-void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo, VecBosVertex &myV, VecBosTrack &myTr)
+void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo,
+   VecBosVertex &myV, VecBosTrack &myTr)
 {
    if (maxEve <= 0) return;
    maxEve--;
@@ -106,21 +104,24 @@ void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo, VecB
    TCanvas *c0; TPaveText *pvt;
    string detector = tit;
 
-   if (detector.compare("WB") == 0) { //barrel event display
+   if (detector.compare("WB") == 0) { // barrel event display
       sprintf(txt, "display-%s%.0f_run%d.eventId%05dvert%d", tit, myTr.mCluster2x2.ET, runNo, eveID, myV.mId);
       TFile hf(Form("%s.root", txt), "recreate"); //TFile hf(txt,"recreate");
       c0 = new TCanvas(txt, txt, 850, 600);
       c0->cd();
 
       TString tt = txt;
+
       TPad *cU = new TPad(tt + "U", tt + "U", 0., 0.2, 1., 1.); cU->Draw();
       TPad *cD = new TPad(tt + "D", tt + "D", 0., 0., 1., 0.2); cD->Draw();
       cU->cd();
+
       TPad *cU1 = new TPad(tt + "U1", tt + "U1", 0., 0., 0.24, 1.); cU1->Draw();
       TPad *cU2 = new TPad(tt + "U2", tt + "U2", 0.24, 0., 0.55, 1.); cU2->Draw();
       TPad *cU3 = new TPad(tt + "U3", tt + "U3", 0.55, 0., 1., 1.);  cU3->Draw();
       cU3->Divide(2, 1);
-      cU1->cd(); hTpcET->Draw("colz");
+      cU1->cd();
+      hTpcET->Draw("colz");
 
       TVector3 rW = myTr.mMatchedTower.R;
       rW.SetZ(rW.z() - myV.z);
@@ -137,23 +138,26 @@ void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo, VecB
       bxE->SetY1(rA.Phi() - VecBosEvent::sMinTrackIsoDeltaPhi);
       bxE->SetY2(rA.Phi() + VecBosEvent::sMinTrackIsoDeltaPhi);
 
-
-      te1->Draw();   te2->Draw(); bxT->Draw("l");
-      etaBL_ln->Draw();  etaBR_ln->Draw(); etaEL_ln->Draw();
+      te1->Draw(); te2->Draw(); bxT->Draw("l");
+      etaBL_ln->Draw(); etaBR_ln->Draw(); etaEL_ln->Draw();
 
       cU2->cd();    hEmcET->Draw("colz");
       te1->Draw();  te2->Draw(); bxE->Draw("l");
       etaBL_ln->Draw();  etaBR_ln->Draw();
       etaEL_ln->Draw();  etaER_ln->Draw();
 
-      for (int iep = 0; iep < mxBSmd; iep++) {
+      for (int iep = 0; iep < mxBSmd; iep++)
+      {
          cU3->cd(1 + iep);
          hBsmdAdc[iep]->Draw("colz");
-         te1->Draw();  te2->Draw();  bxT->Draw("l");
-         etaBL_ln->Draw();  etaBR_ln->Draw();
+         te1->Draw();
+         te2->Draw();
+         bxT->Draw("l");
+         etaBL_ln->Draw();
+         etaBR_ln->Draw();
       }
 
-      //........... text information .............
+      // text information
       pvt = new TPaveText(0, 0., 1, 1, "br");
       cD->cd();
       sprintf(txt, "run=%d  eveID=%05d daq=%d vertex:mId=%d Z=%.0fcm", runNo, eveID, daqSeq, myV.mId, myV.z);
@@ -183,7 +187,7 @@ void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo, VecB
          hf.Close();
       }
    }
-   else if (detector.compare("WE") == 0) { //endcap event display
+   else if (detector.compare("WE") == 0) { // endcap event display
       sprintf(txt, "display-%s%.0f_run%d.eventId%05dvert%d", tit, myTr.mCluster2x2.ET, runNo, eveID, myV.mId);
       TFile hf(Form("%s.root", txt), "recreate");
       c0 = new TCanvas(txt, txt, 1750, 1300);
@@ -221,8 +225,9 @@ void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo, VecB
       te1->Draw();   te2->Draw(); bxT->Draw("l");
       etaBL_ln->Draw();  etaBR_ln->Draw(); etaEL_ln->Draw();
 
-      cLU2->cd();    hEmcET->Draw("colz");
-      te1->Draw();  te2->Draw(); bxE->Draw("l");
+      cLU2->cd(); 
+      hEmcET->Draw("colz");
+      te1->Draw(); te2->Draw(); bxE->Draw("l");
       etaBL_ln->Draw();  etaBR_ln->Draw();
       etaEL_ln->Draw();  etaER_ln->Draw();
 
@@ -241,7 +246,7 @@ void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo, VecB
          hEsmdShower[iuv]->Draw();
 
          //print Q/Pt warning
-         if ( iuv == 1 && myTr.prMuTrack->pt() >= 100.0 ) {
+         if ( iuv == 1 && myTr.mStMuTrack->pt() >= 100.0 ) {
             TLatex *tx = new TLatex(3, 0.9 * hEsmdShower[iuv]->GetMaximum(), "| Q/P_{T} | < 0.01");  tx->SetTextColor(kRed); tx->SetTextSize(0.1); tx->Draw();
          }
       }
@@ -255,6 +260,7 @@ void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo, VecB
       int secLoop[3] = {myTr.hitSector - 2, myTr.hitSector - 1, myTr.hitSector};
       if (secLoop[0] < 0) secLoop[0] = 11;
       if (secLoop[2] > 11) secLoop[2] = 0;
+
       for (int iuv = 0; iuv < mxEsmdPlane; iuv++) {
          for (int isec = 0; isec < 3; isec++) {
             for (int k = 0; k < 288; k++) { //loop all strips
@@ -297,14 +303,14 @@ void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo, VecB
          tl->SetLineColor(kBlue); tl->Draw(); //sector boundaries
       }
 
-      //........... text information .............
+      // text information
       pvt = new TPaveText(0, 0., 1, 1, "br");
       TH1F *hText = new TH1F("text", " ", 1, 0, 1);
       cLD->cd();
       sprintf(txt, "run=%d  eveID=%05d daq=%d vertex:mId=%d Z=%.0fcm ", runNo, eveID, daqSeq, myV.mId, myV.z);
       printf("WeventDisplay::Event ID  %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
-      sprintf(txt, "TPC PT(GeV/c) prim=%.1f  near=%.1f  away=%.1f ", myTr.prMuTrack->pt(), myTr.mP3InNearConeTpc.Pt(), myTr.awayTpcPT);
+      sprintf(txt, "TPC PT(GeV/c) prim=%.1f  near=%.1f  away=%.1f ", myTr.mStMuTrack->pt(), myTr.mP3InNearConeTpc.Pt(), myTr.awayTpcPT);
       printf("WeventDisplay::Event %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
 
@@ -316,12 +322,12 @@ void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo, VecB
       printf("WeventDisplay:: %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
 
-      sprintf(txt, "Q/Pt = %.3f   : ESMD E/MeV  U plane= %.1f  V plane= %.1f ", (1.0 * myTr.prMuTrack->charge()) / myTr.prMuTrack->pt(), myTr.esmdE[0], myTr.esmdE[1]);
+      sprintf(txt, "Q/Pt = %.3f   : ESMD E/MeV  U plane= %.1f  V plane= %.1f ", (1.0 * myTr.mStMuTrack->charge()) / myTr.mStMuTrack->pt(), myTr.esmdE[0], myTr.esmdE[1]);
       printf("WeventDisplay:: %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
 
       float chi2 = myTr.glMuTrack->chi2(); if (chi2 > 999.) chi2 = -1.;
-      sprintf(txt, "Track: eta=%.1f Q=%d nFit=%d nPoss=%d r1=%.0f r2=%.0f chi2=%.1f", myTr.mMatchedTower.R.Eta(), myTr.prMuTrack->charge(), myTr.prMuTrack->nHitsFit(), myTr.prMuTrack->nHitsPoss(), myTr.glMuTrack->firstPoint().perp(), myTr.glMuTrack->lastPoint().perp(), chi2);
+      sprintf(txt, "Track: eta=%.1f Q=%d nFit=%d nPoss=%d r1=%.0f r2=%.0f chi2=%.1f", myTr.mMatchedTower.R.Eta(), myTr.mStMuTrack->charge(), myTr.mStMuTrack->nHitsFit(), myTr.mStMuTrack->nHitsPoss(), myTr.glMuTrack->firstPoint().perp(), myTr.glMuTrack->lastPoint().perp(), chi2);
       printf("WeventDisplay:: %s\n", txt);
       pvt->AddText(txt); hText->SetTitle(Form("%s%s", hText->GetTitle(), txt));
 
@@ -342,32 +348,33 @@ void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo, VecB
 }
 
 
-void WeventDisplay::exportEvent( const char *tit, VecBosVertex &myV, VecBosTrack &myTr, int vertexIndex)
+void WeventDisplay::exportEvent(const char *detType, VecBosVertex &myV,
+   VecBosTrack &myTr, int vertexIndex)
 {
    if (maxEve <= 0) return;
    clear();
 
-   int eveId = wMK->mVecBosEvent->id; //wMK->mStMuDstMaker->muDst()->event()->eventId();
-   int runNo = wMK->mVecBosEvent->runNo; //wMK->mStMuDstMaker->muDst()->event()->runId();
+   int eveId = wMK->mVecBosEvent->id;
+   int runNo = wMK->mVecBosEvent->runNo;
 
    const char *afile = ""; //wMK->mStMuDstMaker->GetFile();
    int len    = strlen(afile);
    int daqSeq = atoi(afile + (len - 18));
-   //  printf("DDD %s len=%d %d =%s=\n",afile,len,daqSeq,afile+(len-15));
+   //printf("DDD %s len=%d %d =%s=\n",afile,len,daqSeq,afile+(len-15));
 
    TVector3 rTw = myTr.mCluster2x2.position;
    rTw.SetZ(rTw.z() - myV.z);
 
-   //printf("#xcheck-%s run=%d daqSeq=%d eveID=%7d vertID=%2d zVert=%.1f prTrID=%4d  prTrEta=%.3f prTrPhi/deg=%.1f globPT=%.1f hitTwId=%4d twAdc=%.1f clEta=%.3f clPhi/deg=%.1f  clET=%.1f\n",tit,
+   //printf("#xcheck-%s run=%d daqSeq=%d eveID=%7d vertID=%2d zVert=%.1f prTrID=%4d  prTrEta=%.3f prTrPhi/deg=%.1f globPT=%.1f hitTwId=%4d twAdc=%.1f clEta=%.3f clPhi/deg=%.1f  clET=%.1f\n",detType,
    //	 runNo,daqSeq,eveId,myV.id,myV.z,
-   //	 myTr.prMuTrack->id(),myTr.prMuTrack->eta(),myTr.prMuTrack->phi()/3.1416*180.,myTr.glMuTrack->pt(),
+   //	 myTr.mStMuTrack->id(),myTr.mStMuTrack->eta(),myTr.mStMuTrack->phi()/3.1416*180.,myTr.glMuTrack->pt(),
    //	 myTr.mMatchedTower.id,wMK->mVecBosEvent->bemc.adcTile[kBTow][myTr.mMatchedTower.id-1],
    //	 rTw.Eta(),rTw.Phi()/3.1416*180.,myTr.mCluster2x2.ET);
 
    float zVert = myV.z;
-   printf("WeventDisplay-%s::export run=%d eve=%d\n", tit, runNo, eveId);
+   printf("WeventDisplay-%s::export run=%d eve=%d\n", detType, runNo, eveId);
 
-   //.... process BTOW hits
+   // process BTOW hits
    for (int i = 0; i < mxBtow; i++) {
       float ene = wMK->mVecBosEvent->bemc.eneTile[kBTow][i];
       if (ene <= 0) continue;
@@ -380,7 +387,7 @@ void WeventDisplay::exportEvent( const char *tit, VecBosVertex &myV, VecBosTrack
       hEmcET->Fill(eveEta, evePhi, ET);
    }
 
-   //.... store ETOW hits
+   // store ETOW hits
    for (int i = 0; i < mxEtowPhiBin; i++) {
       for (int j = 0; j < mxEtowEta; j++) {
          float ene = wMK->mVecBosEvent->etow.ene[i][j];
@@ -395,7 +402,9 @@ void WeventDisplay::exportEvent( const char *tit, VecBosVertex &myV, VecBosTrack
       }
    }
 
-   hEmcET->SetMinimum(0.3);  hEmcET->SetMaximum(30.);
+   hEmcET->SetMinimum(0.3);
+   hEmcET->SetMaximum(30.);
+
    // compute approximate event eta for barrel
    float x, y, z;
    float Rcylinder = gBTowGeom->Radius();
@@ -414,41 +423,44 @@ void WeventDisplay::exportEvent( const char *tit, VecBosVertex &myV, VecBosTrack
    etaER_ln->SetX1(etaR);  etaER_ln->SetX2(etaR);
 
 
-   //... TPC
-   hTpcET->SetMinimum(0.3); hTpcET->SetMaximum(10.);
+   // TPC
+   hTpcET->SetMinimum(0.3);
+   hTpcET->SetMaximum(10.);
+
    if (wMK->mStMuDstMaker)
       getPrimTracks( myV.mId, myTr.mMatchedTower.id);
    //XXX:ds else
    //   getPrimTracksFromTree(vertexIndex, myTr.mMatchedTower.id);
 
-   //.... BSMD-Eta, -Phi
-
-   for (int iep = 0; iep < mxBSmd; iep++) {
-      hBsmdAdc[iep]->SetMinimum(30); hBsmdAdc[iep]->SetMaximum(999);
+   // BSMD-Eta, -Phi
+   for (int iep = 0; iep < mxBSmd; iep++)
+   {
+      hBsmdAdc[iep]->SetMinimum(30);
+      hBsmdAdc[iep]->SetMaximum(999);
       for (int i = 0; i < mxBStrips; i++) {
          float adc = wMK->mVecBosEvent->bemc.adcBsmd[iep][i];
          if (adc <= 0) continue;
-         TVector3 r = mBSmdStripCoords[iep][i];
+         TVector3 r = gBSmdStripCoords[iep][i];
          float z1 = r.z() - zVert;
          r.SetZ(z1);
          hBsmdAdc[iep]->Fill(r.Eta(), r.Phi(), adc);
       }
-   }// end of eta,phi-planes
+   }
 
-   //.... ESMD shower shape
+   // ESMD shower shape
    for (int iuv = 0; iuv < mxEsmdPlane; iuv++)
       for (int j = 0; j < 41; j++)
          hEsmdShower[iuv]->SetBinContent(j + 1, myTr.esmdShower[iuv][j]);
 
-   //...  ESMD cluster picture
+   // ESMD cluster picture
    //initialize histo centred at track extrapolation
-   TVector3 rW = myTr.mMatchedTower.R; //z is at SMD depth
+   TVector3 rW = myTr.mMatchedTower.R; // z is at SMD depth
    float width = 65.;
    hEsmdXpt->SetBins(130, rW.X() - width, rW.X() + width, 130, rW.Y() - width, rW.Y() + width);
 
-   //.... produce plot & save
-   draw(tit, eveId, daqSeq, runNo, myV, myTr);
-   //export2sketchup(tit,myV, myTr);
+   // produce plot & save
+   draw(detType, eveId, daqSeq, runNo, myV, myTr);
+   //export2sketchup(detType,myV, myTr);
 }
 
 
@@ -515,7 +527,7 @@ void WeventDisplay::export2sketchup(const char *tit, VecBosVertex &myV, VecBosTr
    FILE *fd = fopen(txt, "w");
    assert(fd);
 
-   //........ DUMP PRIM TRACKS..........
+   // DUMP PRIM TRACKS
    int vertID = myV.mId;
    assert(vertID >= 0);
    assert(vertID < (int)wMK->mStMuDstMaker->muDst()->numberOfPrimaryVertices());
@@ -558,7 +570,7 @@ void WeventDisplay::export2sketchup(const char *tit, VecBosVertex &myV, VecBosTr
       for (int i = 0; i < mxBStrips; i++) {
          float adc = wMK->mVecBosEvent->bemc.adcBsmd[iep][i];
          if (adc <= 0) continue;
-         TVector3 r = mBSmdStripCoords[iep][i];
+         TVector3 r = gBSmdStripCoords[iep][i];
          fprintf(fd, "bsmd%c V %.1f %.3f %.3f  adc:detEta:detPhi %.3f %.3f  %.3f\n", cPlane[iep], rV.x(), rV.y(), rV.z(), adc, r.Eta(), r.Phi() );
       }
    }

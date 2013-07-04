@@ -90,7 +90,7 @@ void VecBosEvent::AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex)
    VecBosTrack *vbTrack = new VecBosTrack();
 
    vbTrack->mEvent     = this;
-   vbTrack->prMuTrack = stMuTrack;
+   vbTrack->mStMuTrack = stMuTrack;
    vbTrack->glMuTrack  = stMuTrack->globalTrack();
    vbTrack->mVertex    = vbVertex;
    vbTrack->mP3AtDca   = TVector3(stMuTrack->p().x(), stMuTrack->p().y(), stMuTrack->p().z());
@@ -303,8 +303,6 @@ void VecBosEvent::ProcessJets()
 
 void VecBosEvent::ProcessMC()
 {
-   //Info("ProcessMC()", "test...");
-
    StMcEvent *mcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
    assert(mcEvent);
 
@@ -513,6 +511,106 @@ WeveCluster VecBosEvent::FindMaxBTow2x2(int etaBin, int phiBin, float zVert)
 
    //printf(" final inpEve=%d SumET2x2=%.1f \n",nInpEve,maxET);
    return maxCL;
+}
+
+
+WeveCluster VecBosEvent::FindMaxETow2x1(int iEta, int iPhi, float zVert)
+{
+   //printf("   FindMaxETow2x1  seed iEta=%d iPhi=%d \n",iEta, iPhi);
+
+   WeveCluster maxCL;
+   // just 4 cases of 2x1 clusters
+   float maxET = 0;
+   int I0 = iEta - 1;
+   int J0 = iPhi - 1;
+   for (int I = I0; I <= I0 + 1; I++) { // try along eta dir
+      WeveCluster cluster = SumETowPatch(I, iPhi, 2, 1, zVert);
+      if (maxET > cluster.ET) continue;
+      maxET = cluster.ET;
+      maxCL = cluster;
+      //printf(" FindMaxETow2x1 A  newMaxETSum=%.1f iEta=%d iPhi=%d \n",maxET, I,iPhi);
+   }
+
+   for (int J = J0; J <= J0 + 1; J++) { // try along phi dir
+      WeveCluster cluster = SumETowPatch(iEta, J, 1, 2, zVert);
+      if (maxET > cluster.ET) continue;
+      maxET = cluster.ET;
+      maxCL = cluster;
+      //printf(" FindMaxETow2x1 B  newMaxETSum=%.1f iEta=%d iPhi=%d \n",maxET,iEta,J);
+   }
+   //printf(" final inpEve=%d SumET2x2=%.1f \n",mNumInputEvents,maxET);
+   return maxCL;
+}
+
+
+WeveCluster VecBosEvent::FindMaxETow2x2(int iEta, int iPhi, float zVert)
+{
+   //printf("FindMaxETow2x2  seed iEta=%d iPhi=%d \n",iEta, iPhi);
+   const int L = 2; // size of the summed square
+
+   WeveCluster maxCL;
+   // just 4 cases of 2x1 clusters
+   float maxET = 0;
+   int I0 = iEta - 1;
+   int J0 = iPhi - 1;
+   for (int I = I0; I <= I0 + 1; I++) {
+      for (int J = J0; J <= J0 + 1; J++) {
+         WeveCluster cluster = SumETowPatch(I, J, L, L, zVert);
+         if (maxET > cluster.ET) continue;
+         maxET = cluster.ET;
+         maxCL = cluster;
+         //printf(" FindMaxETow2x2 A  newMaxETSum=%.1f iEta=%d iPhi=%d \n",maxET, I,iPhi);
+      }
+   }// 4 combinations done
+
+   //printf(" final inpEve=%d SumET2x2=%.1f \n",mNumInputEvents,maxET);
+   return maxCL;
+}
+
+
+WeveCluster VecBosEvent::SumETowPatch(int iEta, int iPhi, int Leta, int  Lphi, float zVert)
+{
+   //printf("eveID=%d etowPatch seed iEta=%d[+%d] iPhi=%d[+%d] zVert=%.0f\n", id, iEta, Leta, iPhi, Lphi, zVert);
+   WeveCluster cluster; // object is small, not to much overhead in creating it
+   cluster.iEta = iEta;
+   cluster.iPhi = iPhi;
+   TVector3 R;
+   double sumW = 0;
+
+   for (int i = iEta; i < iEta + Leta; i++) { // trim in eta-direction
+      if (i < 0) continue;
+      if (i >= mxEtowEta) continue;
+      for (int j = iPhi; j < iPhi + Lphi; j++) { // wrap up in the phi-direction
+         int jj = (j + mxEtowPhiBin) % mxEtowPhiBin; // keep it always positive
+         //if(L<5) printf("n=%2d  i=%d jj=%d\n",cluster.nTower,i,jj);
+
+         float ene = etow.ene[jj][i];
+         if (ene <= 0) continue; // skip towers w/o energy
+
+         float adc   = etow.adc[jj][i];
+         float delZ  = gETowCoords[jj][i].z() - zVert;
+         float Rxy   = gETowCoords[jj][i].Perp();
+         float e2et  = Rxy / sqrt(Rxy * Rxy + delZ * delZ);
+         float ET    = ene * e2et;
+         float logET = log10(ET + 0.5);
+         cluster.nTower++;
+         cluster.energy += ene;
+         cluster.ET     += ET;
+         cluster.adcSum += adc;
+         if (logET > 0) {
+            R += logET * gETowCoords[jj][i];
+            sumW += logET;
+         }
+      }
+      //printf("      in etowPatch: iEta=%d  nTw=%d, ET=%.1f adcSum=%.1f\n",i,cluster.nTower,cluster.ET,cluster.adcSum);
+      if (sumW > 0) {
+         cluster.position = 1. / sumW * R; // weighted cluster position
+      }
+      else {
+         cluster.position = TVector3(0, 0, 999);
+      }
+   }
+   return cluster;
 }
 
 
@@ -784,7 +882,7 @@ void VecBosEvent::Clear(const Option_t*)
    while (!mVertices.empty()) delete *mVertices.begin(), mVertices.erase(mVertices.begin());
    mVertices.clear(); // unnecessary?
 
-   while (!mTracks.empty()) (*mTracks.begin())->prMuTrack = 0, delete * mTracks.begin(), mTracks.erase(mTracks.begin());
+   while (!mTracks.empty()) (*mTracks.begin())->mStMuTrack = 0, delete * mTracks.begin(), mTracks.erase(mTracks.begin());
    mTracks.clear();
    mTracksCandidate.clear();
 
@@ -884,9 +982,7 @@ void VecBosEvent::Streamer(TBuffer &R__b)
       for ( ; iTrack != mTracks.end(); ++iTrack) {
          VecBosTrack *track = *iTrack;
 
-         //Info("Streamer", "this: %x, prMuTrack: %x", track, track->prMuTrack);
-         // XXX temporary solution
-         track->CheckChargeSeparation();
+         //Info("Streamer", "this: %x, mStMuTrack: %x", track, track->mStMuTrack);
 
          // Set pointers to candidate tracks
          if ( track->IsCandidate() ) {

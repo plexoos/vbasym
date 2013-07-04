@@ -36,9 +36,9 @@ protected:
 
    void      ReconstructNeutrinoZ();
 
-   float     mWBosMass;   //!
-   TVector3  mElectronP3; //!
-   TVector3  mNeutrinoP3; //!
+   float     mWBosMass;   //
+   TVector3  mElectronP3; //
+   TVector3  mNeutrinoP3; //
 
    ClassDef(WBosEvent, 1);
 };

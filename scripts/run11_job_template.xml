@@ -13,21 +13,21 @@
    <command>
       starver &STAR_VER;
 
-      cp $FILELIST &OUT_DIR;/lists_run11_cut05/R&RUN_ID;.lis
+      cp $FILELIST &OUT_DIR;/lists/R&RUN_ID;.lis
 
-      setenv RUNLIST &OUT_DIR;/lists_run11_cut05/R&RUN_ID;.lis
-      setenv OPTIONS `echo &STANA_OPTIONS; | sed 's/_/ /g'`
-      setenv OPT_JETS `echo $OPTIONS | awk '{print index($0,"-j")}'`
-      setenv COMMAND "./stana -f $RUNLIST $OPTIONS"
+      setenv RUNLIST  &OUT_DIR;/lists/R&RUN_ID;.lis
+      setenv OPTIONS  `echo &STANA_OPTIONS; | sed 's/_/ /g'`
+      setenv OPT_JETS `echo $OPTIONS | awk '{print index($0,"--jets")}'`
+      setenv COMMAND  "./stana -f $RUNLIST $OPTIONS"
 
-      if ($OPT_JETS == 0) ln -s &OUT_DIR;/jets_run11_cut05/jets_R&RUN_ID;.root
-      cp -r &codePath;/.sl53_gcc432 .
-      cp -r &codePath;/stana .
+      if ($OPT_JETS == 0) ln -s &OUT_DIR;_--jets/jets/R&RUN_ID;_jets.root
+      cp -r &CODE_DIR;/.sl53_gcc432 .
+      cp -r &CODE_DIR;/stana .
       ls -al
 
       echo
       echo "OUT_DIR:        " &OUT_DIR;
-      echo "codePath:       " &codePath;
+      echo "CODE_DIR:       " &CODE_DIR;
       echo "RUN_ID:         " &RUN_ID;
       echo "STAR_VER:       " &STAR_VER;
       echo "STANA_OPTIONS:  " &STANA_OPTIONS;
@@ -45,25 +45,25 @@
       `$COMMAND`
 
       # Remove files and links
-      if ($OPT_JETS == 0) rm jets_R&RUN_ID;.root
-      chmod 664 *.hist.root jets_*.root *.wtree.root *.ps *.txt
-      chmod 664 &OUT_DIR;/log_run11_cut05/R&RUN_ID;_&STANA_OPTIONS;.log
-      touch     &OUT_DIR;/log_run11_cut05/R&RUN_ID;_&STANA_OPTIONS;.log
+      if ($OPT_JETS == 0) rm R&RUN_ID;_jets.root
+      chmod 664 *_hist.root *_jets.root *_tree.root *.ps *.txt
+      chmod 664 &OUT_DIR;/log/R&RUN_ID;.log
+      touch     &OUT_DIR;/log/R&RUN_ID;.log
       rm -fr ./.sl53_gcc432
       rm -fr ./stana
 
    </command>
 
-   <output fromScratch="*.hist.root"  toURL="file:&OUT_DIR;/data_run11_cut05/"/>
-   <output fromScratch="jets_*.root"  toURL="file:&OUT_DIR;/jets_run11_cut05/"/>
-   <output fromScratch="*.wtree.root" toURL="file:&OUT_DIR;/wtree_run11_cut05/"/>
-   <output fromScratch="*.txt"        toURL="file:&OUT_DIR;/lumi_run11_cut05/"/>
-   <stdout URL="file:&OUT_DIR;/log_run11_cut05/R&RUN_ID;_&STANA_OPTIONS;.log"/>
-   <stderr URL="file:&OUT_DIR;/log_run11_cut05/R&RUN_ID;_&STANA_OPTIONS;.log"/>
+   <output fromScratch="*_jets.root" toURL="file:&OUT_DIR;/jets/"/>
+   <output fromScratch="*_hist.root" toURL="file:&OUT_DIR;/hist/"/>
+   <output fromScratch="*_tree.root" toURL="file:&OUT_DIR;/tree/"/>
+   <output fromScratch="*.txt"       toURL="file:&OUT_DIR;/lumi/"/>
+   <stdout URL="file:&OUT_DIR;/log/R&RUN_ID;.log"/>
+   <stderr URL="file:&OUT_DIR;/log/R&RUN_ID;.log"/>
 
    <SandBox>
        <Package>
-          <File>file:&codePath;/.sl53_gcc432</File>
+          <File>file:&CODE_DIR;/.sl53_gcc432</File>
        </Package>
    </SandBox>
 

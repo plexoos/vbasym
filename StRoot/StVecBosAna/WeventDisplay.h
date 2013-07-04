@@ -34,7 +34,7 @@ public:
    TBox          bsmd;
    StVecBosMaker *wMK;
 
-   WeventDisplay( StVecBosMaker *mk, int mxEv);
+   WeventDisplay(StVecBosMaker *mk, int mxEv);
    void clear();
    void exportEvent(const char *tit, VecBosVertex &myV, VecBosTrack &myTr, int vertexIndex);
    void export2sketchup(const char *tit, VecBosVertex &myV, VecBosTrack &myTr);

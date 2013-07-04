@@ -47,7 +47,7 @@ typedef StJetPtrSet::const_iterator       StJetPtrSetConstIter;
 extern StEmcGeom  *gBTowGeom;
 extern StEmcGeom  *mBSmdGeom[mxBSmd];
 extern TVector3    gBCalTowerCoords[mxBtow];               // vs. tower ID
-extern TVector3    mBSmdStripCoords[mxBSmd][mxBStrips];    // vs. strip ID
+extern TVector3    gBSmdStripCoords[mxBSmd][mxBStrips];    // vs. strip ID
 extern TVector3    gETowCoords[mxEtowSec *mxEtowSub][mxEtowEta];
 extern int         gMapBTowEtaPhiBin2Id[mxBTetaBin * mxBTphiBin];  // vs. (iEta, iPhi)
 

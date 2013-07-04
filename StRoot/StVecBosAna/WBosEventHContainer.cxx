@@ -44,29 +44,20 @@ void WBosEventHContainer::BookHists()
 
    fDir->cd();
 
-   o["hNumCandidateTracks"] = hist = new TH1I("hNumCandidateTracks", "; Num. of Candidate Tracks; Events", 10, 0, 10);
-   hist->SetOption("hist GRIDX");
-
-   o["hNumTracksWithBCluster"] = hist = new TH1I("hNumTracksWithBCluster", "; Num. of Tracks with Barrel Cluster; Events", 5, 0, 5);
-   hist->SetOption("hist GRIDX");
-
-   o["hNumTracksWithBCluster2"] = hist = new TH1I("hNumTracksWithBCluster2", "; Num. of Tracks with Barrel Cluster; Events", 5, 0, 5);
-   hist->SetOption("hist GRIDX");
+   o["hElectronPt"]  = hist = new TH1I("hElectronPt", "; Electron P_{T}; Events", 20, 15, 55);
+   o["hElectronPhi"] = hist = new TH1I("hElectronPhi", "; Electron #phi; Events", 16, -M_PI, M_PI);
+   o["hElectronEta"] = hist = new TH1I("hElectronEta", "; Electron #eta; Events", 20, -2, 2);
+   o["hNeutrinoPt"]  = hist = new TH1I("hNeutrinoPt", "; Neutrino P_{T}; Events", 20, 15, 55);
+   o["hNeutrinoPhi"] = hist = new TH1I("hNeutrinoPhi", "; Neutrino #phi; Events", 16, -M_PI, M_PI);
+   o["hNeutrinoEta"] = hist = new TH1I("hNeutrinoEta", "; Neutrino #eta; Events", 20, -2, 2);
 
    o["hJetRecoilPt"]               = hist = new TH1F("hJetRecoilPt", "Recoil from Jets; Jet-based Recoil P_{T}; Events", 40, 0, 40);
-
    o["hTrackRecoilPt"]             = hist = new TH1F("hTrackRecoilPt", "Recoil from Tracks: TPC+TOW; Track-based Recoil P_{T}; Events;", 40, 0, 40);
-
    o["hTrackRecoilTpcPt"]          = hist = new TH1F("hTrackRecoilTpcPt", "Recoil from Tracks: TPC only; Track-based Recoil P_{T}; Events", 40, 0, 40);
-
    o["hTrackRecoilWithNeutralsPt"] = hist = new TH1F("hTrackRecoilWithNeutralsPt", "Recoil from Tracks: TPC+emCal (also trackless clusters) ; Track-based Recoil P_{T}; Events", 40, 0, 40);
-
    o["hTrackRecoilWithNeutralsPtCorrected"] = hist = new TH1F("hTrackRecoilWithNeutralsPtCorrected", "Recoil from Tracks: TPC+emCal (CORRECTED) ; Track-based Recoil P_{T}; Events", 40, 0, 40);
-
    o["hTrackRecoilWithNeutralsPt_zoomin"] = hist = new TH1F("hTrackRecoilWithNeutralsPt_zoomin", "Recoil from Tracks: TPC+emCal (also trackless clusters) ; Track-based Recoil P_{T}; Events", 20, 0, 10);
-
    o["hTrackRecoilWithNeutralsPtCorrected_zoomin"] = hist = new TH1F("hTrackRecoilWithNeutralsPtCorrected_zoomin", "Recoil from Tracks: TPC+emCal (CORRECTED) ; Track-based Recoil P_{T}; Events", 20, 0, 10);
-
    o["hTrackRecoillUntrackedClustersPt"]    = hist = new TH1F("hTrackRecoillUntrackedClustersPt", "Recoil from tracks; P_{T};", 40, 0, 40);
    o["hPtBalanceFromTracksNeutrals"]        = hist = new TH1F("hPtBalanceFromTracksNeutrals", "P_{T}-balance from tracks; P_{T};", 40, 0, 60);
    o["hPtBalanceCosPhiFromTracksNeutrals"]  = hist = new TH1F("hPtBalanceCosPhiFromTracksNeutrals", "P_{T}-balance cos(#phi); P_{T};", 40, -100, 100);
@@ -96,6 +87,14 @@ void WBosEventHContainer::Fill(ProtoEvent &ev)
 {
    WBosEvent& event = (WBosEvent&) ev;
 
+   ((TH1*) o["hElectronPt"])->Fill (event.GetElectronP3().Pt());
+   ((TH1*) o["hElectronPhi"])->Fill(event.GetElectronP3().Phi());
+   ((TH1*) o["hElectronEta"])->Fill(event.GetElectronP3().Eta());
+
+   ((TH1*) o["hNeutrinoPt"])->Fill (event.GetNeutrinoP3().Pt());
+   ((TH1*) o["hNeutrinoPhi"])->Fill(event.GetNeutrinoP3().Phi());
+   ((TH1*) o["hNeutrinoEta"])->Fill(event.GetNeutrinoP3().Eta());
+
    ((TH1*) o["hJetRecoilPt"])->Fill(event.GetJetRecoil().Pt());
    ((TH1*) o["hTrackRecoilPt"])->Fill(event.GetTrackRecoil().Pt());
    ((TH1*) o["hTrackRecoilTpcPt"])->Fill(event.mP3TrackRecoilTpc.Pt());
@@ -109,25 +108,19 @@ void WBosEventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hPtBalanceCosPhiFromTracksNeutrals"])->Fill(event.mPtBalanceCosPhiFromTracks);
    ((TH1*) o["hPhiBalanceCosPhiFromTracksNeutrals"])->Fill(event.mP3BalanceFromTracks.Phi());
    ((TH1*) o["hBalanceDeltaPhiFromTracksNeutrals"])->Fill(event.mBalanceDeltaPhiFromTracks);
-   if (event.mTracksCandidate.size() > 0) {
-     ((TH2*) o["hPtBalanceTracksNeutralsVsElecEt"])->Fill( event.GetElectronP3().Pt(), event.mPtBalanceCosPhiFromTracks);
-   }
+   ((TH2*) o["hPtBalanceTracksNeutralsVsElecEt"])->Fill(event.GetElectronP3().Pt(), event.mPtBalanceCosPhiFromTracks);
 
    ((TH1*) o["hPtBalanceFromTracks"])->Fill(event.mP3BalanceFromTracks2.Pt());
    ((TH1*) o["hPtBalanceCosPhiFromTracks"])->Fill(event.mPtBalanceCosPhiFromTracks2);
    ((TH1*) o["hPhiBalanceCosPhiFromTracks"])->Fill(event.mP3BalanceFromTracks2.Phi());
    ((TH1*) o["hBalanceDeltaPhiFromTracks"])->Fill(event.mBalanceDeltaPhiFromTracks2);
-   if (event.mTracksCandidate.size() > 0) {
-     ((TH2*) o["hPtBalanceTracksVsElecEt"])->Fill(event.GetElectronP3().Pt(), event.mPtBalanceCosPhiFromTracks2);
-   }
+   ((TH2*) o["hPtBalanceTracksVsElecEt"])->Fill(event.GetElectronP3().Pt(), event.mPtBalanceCosPhiFromTracks2);
 
    ((TH1*) o["hPtBalanceFromJets"])->Fill(event.mP3BalanceFromJets.Pt());
    ((TH1*) o["hPtBalanceCosPhiFromJets"])->Fill(event.mPtBalanceCosPhiFromJets);
    ((TH1*) o["hPhiBalanceCosPhiFromJets"])->Fill(event.mP3BalanceFromJets.Phi());
    ((TH1*) o["hBalanceDeltaPhiFromJets"])->Fill(event.mBalanceDeltaPhiFromJets);
-   if (event.mTracksCandidate.size() > 0) {
-     ((TH2*) o["hPtBalanceJetsVsElecEt"])->Fill(event.GetElectronP3().Pt(),event.mPtBalanceCosPhiFromJets);
-   }
+   ((TH2*) o["hPtBalanceJetsVsElecEt"])->Fill(event.GetElectronP3().Pt(), event.mPtBalanceCosPhiFromJets);
 }
 
 

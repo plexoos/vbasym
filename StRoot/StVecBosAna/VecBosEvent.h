@@ -75,7 +75,7 @@ public:
    VecBosJetPtrSet         mJetsWithIsoTrack;  //!
    VecBosVertexPtrSet      mVertices;          //
    VecBosTrackPtrSet       mTracks;            // track owner
-   VecBosCandTrackPtrSet   mTracksCandidate;   //! candidate tracks sorted by cluster energy
+   VecBosCandTrackPtrSet   mTracksCandidate;   // candidate tracks sorted by cluster energy
    WEvent                 *mWEvent;
    TLorentzVector          mP4JetTotal;
    TLorentzVector          mP4JetFirst;
@@ -102,8 +102,7 @@ public:
    Double_t                mHadRecoilFromTracksPt;
    TVector3                mCandElecP3AtDca; 
    TVector3                mCandElecP3EScaled; 
-   //float                   enecl;
-   float mLumiEff;
+   float                   mLumiEff;
 
    static const float  sMinTrackIsoDeltaR;    //! (rad) near-cone size
    static const float  sMinTrackIsoDeltaPhi;  //! (rad) away-'cone' size, approx. 40 deg.
@@ -161,7 +160,10 @@ public:
    void           getGmt_day_hour(int &yyyymmdd, int &hhmmss) const;
 
    WeveCluster    FindMaxBTow2x2(int iEta, int iPhi, float zVert);
+   WeveCluster    FindMaxETow2x1(int iEta, int iPhi, float zVert);
+   WeveCluster    FindMaxETow2x2(int iEta, int iPhi, float zVert);
    WeveCluster    SumBTowPatch  (int iEta, int iPhi, int Leta, int  Lphi, float zVert);
+   WeveCluster    SumETowPatch  (int iEta, int iPhi, int Leta, int  Lphi, float zVert);
    TVector3       CalcP3InConeBTow(VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
    TVector3       CalcP3InConeETow(VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
    TVector3       CalcP3InConeTpc (VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);

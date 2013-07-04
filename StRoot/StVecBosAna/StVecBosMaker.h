@@ -18,8 +18,6 @@
 #include "WtpcFilter.h"
 #include "VecBosRootFile.h"
 
-//#include "St2011WlumiMaker.h" // S.F. May 2013
-
 
 class  TObjArray;
 class  StMuDstMaker;
@@ -38,7 +36,6 @@ class  StJets;
 class  StJet;
 class  TClonesArray;
 
-//class  St2011WlumiMaker; // S.F. May 2013
 
 class StVecBosMaker : public StMaker
 {
@@ -59,7 +56,6 @@ private:
    TString         mJetTreeBranchNameNoEndcap;
    TClonesArray   *mJets;
    VecBosEvent    *mVecBosEvent;
-   //   St2011WlumiMaker  *m2011WlumiMaker; // S.F. May 2013
    TTree          *mWtree;
    TString         mTreeName;
    TFile          *mTreeFile;
@@ -181,8 +177,6 @@ private:
    void  CalcPtBalance();
    void  esmdAnalysis();
 
-   // jets
-   //StJets*       GetStJets(int i) const;              // to make it backward compatible with SL09g
    StJets*       GetStJets(const char* bname) const;  // to make it backward compatible with SL09g
    StJets*       GetStJetsFromTree(TString branchName);
    StJet*        GetJet(int i) { return (StJet*) mVecBosEvent->mStJets->jets()->At(i); }
@@ -190,9 +184,6 @@ private:
    TClonesArray* GetJetsTreeAnalysis(TString branchName);
 
    //float       SumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, int pointTowId); //uses track vector saved in tree
-   WeveCluster maxEtow2x1(int iEta, int iPhi, float zVert);
-   WeveCluster maxEtow2x2(int iEta, int iPhi, float zVert);
-   WeveCluster sumEtowPatch(int iEta, int iPhi, int Leta, int  Lphi, float zVert);
 
    // histograms
    enum {mxHA = 300};
@@ -231,12 +222,7 @@ public:
    void         AttachSpinDb(StSpinDbMaker *mk) { mStSpinDbMaker = mk; }
 
    // tree analysis
-   void  chainFile( const Char_t *name );
-   void  chainJetFile( const Char_t *name );
    Int_t getNumberOfEvents() { return mTreeChain->GetEntries(); }
-   Int_t getEvent(Int_t event, Int_t eventJet);
-
-   //float pippoefflumi;
 
 protected:
 

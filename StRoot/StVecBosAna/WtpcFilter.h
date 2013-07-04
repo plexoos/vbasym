@@ -24,7 +24,7 @@ public:
    }
 
    static int getTpcSec(float phiRad, float etaDet);
-   bool accept(const StMuTrack* prMuTrack);
+   bool accept(const StMuTrack* mStMuTrack);
 
 private:
 
