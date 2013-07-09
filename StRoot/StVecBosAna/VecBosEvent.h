@@ -32,7 +32,6 @@ class StJet;
 
 class VecBosEvent : public ProtoEvent
 {
-
 public:
 
    int                     l2bitET;

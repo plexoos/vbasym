@@ -9,9 +9,10 @@ FILELIST=$1
 CODE_DIR=~/vbasym/
 #STAR_VER=SL11d
 STAR_VER=SL12c
+#STANA_OPTIONS=$2
 #STANA_OPTIONS="-m_--jpm_0.5_-n1000_--jets"
-STANA_OPTIONS="-m_--jpm_0.5_--jets"
-#STANA_OPTIONS="-m_--jpm_0.5"
+#STANA_OPTIONS="-m_--jpm_0.5_--jets"
+STANA_OPTIONS="-m_--jpm_0.5"
 OUT_DIR=~/stana_out/${FILELIST}_${STANA_OPTIONS}
 
 echo
@@ -29,9 +30,7 @@ mkdir -p $OUT_DIR/hist
 mkdir -p $OUT_DIR/tree
 mkdir -p $OUT_DIR/lumi
 
-FILELISTS=(`find ${CODE_DIR}/runlists/ -regextype posix-egrep -regex '^.*/runlists/'${FILELIST}'_[0-9]{2}$' -printf '%f\n'`)
-
-for MY_FILELIST in ${FILELISTS[@]}
+for MY_FILELIST in `cat $CODE_DIR/runlists/$FILELIST`
 do
    echo
    echo "Submitting job for MY_FILELIST =" $MY_FILELIST

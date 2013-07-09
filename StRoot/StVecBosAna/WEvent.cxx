@@ -80,7 +80,6 @@ void WEvent::CalcRecoil(PyEvent &pyEvent)
    // XXX:ds: z componennt should be removed
    fPtCorrAngle  = mP4RecoilInAccept.Angle(mP4Recoil.Vect());
 
-
    fPtCorr       = mP4Recoil.Pt()/mP4RecoilInAccept.Pt();
 }
 
@@ -107,8 +106,8 @@ void WEvent::CalcRecoil(StMcEvent &stMcEvent)
    }
 
    // Loop over tracks
-   std::vector<StMcTrack*, std::allocator<StMcTrack*> >::const_iterator iParticle     = stMcEvent.tracks().begin();
-   std::vector<StMcTrack*, std::allocator<StMcTrack*> >::const_iterator lastParticle  = stMcEvent.tracks().end();
+   std::vector<StMcTrack*, std::allocator<StMcTrack*> >::const_iterator iParticle    = stMcEvent.tracks().begin();
+   std::vector<StMcTrack*, std::allocator<StMcTrack*> >::const_iterator lastParticle = stMcEvent.tracks().end();
 
    for ( ; iParticle!=lastParticle; ++iParticle)
    {
@@ -121,12 +120,16 @@ void WEvent::CalcRecoil(StMcEvent &stMcEvent)
          continue;
       }
 
-      //cout << endl;
-      //cout << *mcTrack << endl;
-      //cout << endl;
+      //cout << endl << *mcTrack << endl << endl;
 
       // Pure MC particles
-      TLorentzVector particleP4(mcTrack->fourMomentum().px(), mcTrack->fourMomentum().py(), mcTrack->fourMomentum().pz(), mcTrack->fourMomentum().e());
+      TLorentzVector particleP4(mcTrack->fourMomentum().px(), mcTrack->fourMomentum().py(),
+         mcTrack->fourMomentum().pz(), mcTrack->fourMomentum().e());
+
+      //if (particleP4.Pt() == 0) {
+      //   Warning("CalcRecoil(StMcEvent &stMcEvent)", "MC particle has zero Pt. Skipping it...");
+      //   continue;
+      //}
 
       // Consider pure MC particles
       if (mcTrack->key() == 0 && mcTrack->parent())
@@ -164,6 +167,9 @@ void WEvent::CalcRecoil(StMcEvent &stMcEvent)
    //utils::PrintTLorentzVector(mP4Total);
    //cout << endl;
 
+   if (mP4Lepton.Mag() == 0 || mP4Neutrino.Mag() == 0)
+      return;
+
    mP4Recoil  = mP4Total;
    mP4Recoil -= mP4Lepton;
    mP4Recoil -= mP4Neutrino;
@@ -174,7 +180,7 @@ void WEvent::CalcRecoil(StMcEvent &stMcEvent)
       mP4RecoilOutAccept -= mP4Lepton;
 
    if (mP4Neutrino.Eta() > -1.1 && mP4Neutrino.Eta() < 2.0)
-      mP4RecoilInAccept -= mP4Neutrino;
+      mP4RecoilInAccept  -= mP4Neutrino;
    else 
       mP4RecoilOutAccept -= mP4Neutrino;
 

@@ -113,21 +113,21 @@ int analyzeMuDst(AnaInfo &anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
    printf("Input inputFile: %s\n", inputFile.c_str());
    printf("Input inMuDstFileListName: %s\n", inMuDstFileListName.c_str());
 
-   TString outF = inputFile;
-   outF = outF.ReplaceAll(".MuDst.root", "");
-   outF = outF.ReplaceAll(".lis", "");
-   TString runNo = outF;
+   TString outputFile = inputFile;
+   outputFile = outputFile.ReplaceAll(".MuDst.root", "");
+   outputFile = outputFile.ReplaceAll(".lis", "");
+   TString runNo = outputFile;
    runNo = runNo.ReplaceAll("R", "");
    int RunNo = runNo.Atoi();
 
-   TString histFileName = outF + "_hist.root";
+   TString histFileName = outputFile + "_hist.root";
 
    cout << "Output histo file " << histFileName << endl;
 
    VecBosRootFile vecBosRootFile(histFileName, "recreate");
 
    printf("RUN NUMBER is: %s\n", runNo.Data());
-   printf("Output file: %s\n", outF.Data());
+   printf("Output file: %s\n", outputFile.Data());
    printf("TRIG ID: L2BW=%d, L2EW=%d, isMC=%d, useJetFinder=%d\n", idL2BWtrg, idL2EWtrg, isMC, useJetFinder );
 
    // Logger business
@@ -261,7 +261,7 @@ int analyzeMuDst(AnaInfo &anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
    }
 
    // Jet finder code
-   TString jetFile = outF + "_jets.root";
+   TString jetFile = outputFile + "_jets.root";
    cout << "BEGIN: Jet finder/reader on jetFile=\"" << jetFile << "\"" << endl;
 
    if (useJetFinder == 1) {
@@ -406,7 +406,7 @@ int analyzeMuDst(AnaInfo &anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
       stVecBosMaker->setTrigID(idL2BWtrg, idL2EWtrg);
    }
 
-   TString treeFileName = outF + "_tree.root";
+   TString treeFileName = outputFile + "_tree.root";
 
    stVecBosMaker->SetTreeName(treeFileName);
 
@@ -443,11 +443,11 @@ int analyzeMuDst(AnaInfo &anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
       //WlumiMk->FinishRun(RunNo);
    }
 
-   if (isMC && useJetFinder == 2) {
-      St2011pubMcMaker *pubMcMk = new St2011pubMcMaker("pubMc");
-      pubMcMk->AttachWalgoMaker(stVecBosMaker);
-      pubMcMk->setHList(HList);
-   }
+   //if (isMC && useJetFinder == 2) {
+   //   St2011pubMcMaker *pubMcMk = new St2011pubMcMaker("pubMc");
+   //   pubMcMk->AttachWalgoMaker(stVecBosMaker);
+   //   pubMcMk->setHList(HList);
+   //}
 
    if (findZ) {
       StZBosMaker *st2011ZMaker = new StZBosMaker("Z");

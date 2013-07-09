@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<job filesPerHour="60" maxFilesPerProcess="500" fileListSyntax="xrootd" inputOrder="runnumber" simulateSubmission="false" name="&RUN_ID;">
+<job filesPerHour="100" maxFilesPerProcess="500" fileListSyntax="xrootd" inputOrder="runnumber" simulateSubmission="false" name="&RUN_ID;">
    <ResourceUsage>
       <StorageSpace>
          <MinStorage>20</MinStorage>
@@ -51,6 +51,8 @@
       touch     &OUT_DIR;/log/R&RUN_ID;.log
       rm -fr ./.sl53_gcc432
       rm -fr ./stana
+
+      echo "End of stana: tralala"
 
    </command>
 

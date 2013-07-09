@@ -35,7 +35,6 @@ TVector3 ZBosEvent::GetElectronCandidateP3() const
 }
 
 
-
 TVector3 ZBosEvent::GetVecBosonP3() const
 {
    return -1*(GetElectronCandidateP3()); // XXX wrong, needs to be fixed

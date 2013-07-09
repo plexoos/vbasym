@@ -47,7 +47,6 @@ TVector3 WBosEvent::GetVecBosonP3() const
    return -1*(GetElectronP3() + GetNeutrinoP3());
 }
 
-
 void WBosEvent::Process()
 {
    VecBosEvent::Process();
@@ -122,4 +121,21 @@ void WBosEvent::ReconstructNeutrinoZ()
    double p_nu_z2  = (-b - sqrt(d) ) / 2 / a;
 
    mNeutrinoP3.SetZ(p_nu_z1 < p_nu_z2 ? p_nu_z1 : p_nu_z2);
+}
+
+
+void WBosEvent::Streamer(TBuffer &R__b)
+{
+   //VecBosEvent::Streamer(R__b);
+
+   if (R__b.IsReading()) {
+      //Info("Streamer", "Reading...");
+      R__b.ReadClassBuffer(WBosEvent::Class(), this);
+
+      //Info("Streamer", "this: %x, mTracks.size(): %d, &mWEvent: %x, &mStJets: %x", this, mTracks.size(), mWEvent, mStJets);
+   }
+   else {
+      //Info("Streamer", "Writing... ");
+      R__b.WriteClassBuffer(WBosEvent::Class(), this);
+   }
 }

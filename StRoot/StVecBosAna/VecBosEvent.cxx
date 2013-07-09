@@ -233,7 +233,6 @@ void VecBosEvent::Process()
    ProcessJets();
    CalcRecoilFromTracks();
 
-
    // Calculate the Pt balance as the vector sum: pt elec + pt recoil
    if  (mTracksCandidate.size() == 1) {
       // Correct the recoil via MC
@@ -374,13 +373,14 @@ void VecBosEvent::CalcRecoilFromTracks()
       //Check if the tower belongs to the electron 2x2 candidate
       TVector3 distToCluster = (-10, -10, -10);  // nonsense value
       distToCluster = trackCandidate.mCluster2x2.position - towCoord;
-      printf("Distance of tower to electron cluster: %f\n", distToCluster.Mag());
+      //printf("Distance of tower to electron cluster: %f\n", distToCluster.Mag());
       if (distToCluster.Mag() <= 2 * VecBosTrack::sMaxTrackClusterDist) partOfElecCandidate = true;
       //printf("partOfElecCandidate= %d\n", partOfElecCandidate);
 
       //loop over tracks to and exclude towers with a matching track
       VecBosTrackPtrSetIter iTr = mTracks.begin();
-      for ( ; iTr != mTracks.end(); ++iTr) {
+      for ( ; iTr != mTracks.end(); ++iTr)
+      {
          VecBosTrack &tr           = **iTr;
          TVector3     trP3         = tr.mP3AtDca;
          TVector3     trCoorAtBTow = tr.GetCoordAtBTow();
@@ -971,9 +971,8 @@ void VecBosEvent::getGmt_day_hour(int &yyyymmdd, int &hhmmss) const
  */
 void VecBosEvent::Streamer(TBuffer &R__b)
 {
-   //Info("Streamer", "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx ");
-
    if (R__b.IsReading()) {
+      //Info("Streamer", "Reading...");
       R__b.ReadClassBuffer(VecBosEvent::Class(), this);
 
       //Info("Streamer", "this: %x, mTracks.size(): %d, &mWEvent: %x, &mStJets: %x", this, mTracks.size(), mWEvent, mStJets);
@@ -1015,7 +1014,7 @@ void VecBosEvent::Streamer(TBuffer &R__b)
       }
    }
    else {
-      //Info("Streamer", "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy ");
+      //Info("Streamer", "Writing... ");
       R__b.WriteClassBuffer(VecBosEvent::Class(), this);
    }
 }

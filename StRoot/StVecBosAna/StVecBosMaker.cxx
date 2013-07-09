@@ -181,7 +181,9 @@ Int_t StVecBosMaker::Init()
 
       mWtree = new TTree("t", "mWtree");
       mVecBosEvent = new WBosEvent();
-      mWtree->Branch("e", "VecBosEvent", &mVecBosEvent, 128000, 0); // splitlevel=0. very important for custom streamers
+      mWtree->Branch("e", "WBosEvent", &mVecBosEvent, 128000, 0); // splitlevel=0. very important for custom streamers
+      //mWtree->Branch("e", "WBosEvent", &mVecBosEvent, 128000, 1); // splitlevel=0. very important for custom streamers
+      //mWtree->Branch("e", "WBosEvent", &mVecBosEvent); // splitlevel=0. very important for custom streamers
    }
 
    assert(HList);
