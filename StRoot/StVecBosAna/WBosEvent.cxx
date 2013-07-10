@@ -120,7 +120,7 @@ void WBosEvent::ReconstructNeutrinoZ()
    double p_nu_z1  = (-b + sqrt(d) ) / 2 / a;
    double p_nu_z2  = (-b - sqrt(d) ) / 2 / a;
 
-   mNeutrinoP3.SetZ(p_nu_z1 < p_nu_z2 ? p_nu_z1 : p_nu_z2);
+   mNeutrinoP3.SetZ(fabs(p_nu_z1) < fabs(p_nu_z2) ? p_nu_z1 : p_nu_z2);
 }
 
 

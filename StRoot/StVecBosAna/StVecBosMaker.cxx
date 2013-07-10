@@ -323,7 +323,7 @@ Int_t StVecBosMaker::Finish()
 
       if (hbxIdeal) {
          char txt[1000];
-         sprintf(txt, "events T= %d %d", Tfirst, Tlast);
+         sprintf(txt, "events T = %d %d", Tfirst, Tlast);
          printf("Finish run=%d, events time range %s\n", mRunNo, txt);
          hbxIdeal->GetYaxis()->SetTitle(txt);
       }
