@@ -205,7 +205,7 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
    if ( event.HasCandidateEle() )
       Fill(ev, kCUT_EVENT_HAS_CANDIDATE_TRACK);
 
-   if ( event.HasCandidateEle() && event.mCandElecP3EScaled.Pt() > 15)
+   if ( event.HasCandidateEle() && event.GetElectronP3().Pt() > 15)
       Fill(ev, kCUT_EVENT_HAS_CANDIDATE_TRACK_PT15);
 
    if ( event.PassedCutFinal() ) {
@@ -239,7 +239,7 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
       ((TrackHContainer *) fHists->d["track_candidates"])->Fill(track);
 
       // Pass final with Pt>15
-      if ( event.mCandElecP3EScaled.Pt() > 15 && event.mPtBalanceCosPhiFromTracks > 18)
+      if ( event.GetElectronP3().Pt() > 15 && event.mPtBalanceCosPhiFromTracks > 18)
       {
          if ( abs( (track.mStMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) >= 0.4 &&
               abs( (track.mStMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) <= 1.8 )
@@ -257,7 +257,7 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
       }
 
       // Pass QCD with Pt>15
-      if ( event.mCandElecP3EScaled.Pt() > 15 && event.mPtBalanceCosPhiFromTracks <= 18)
+      if ( event.GetElectronP3().Pt() > 15 && event.mPtBalanceCosPhiFromTracks <= 18)
       {
          if ( abs((track.mStMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) >= 0.4 &&
               abs((track.mStMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) <= 1.8 )
@@ -275,7 +275,7 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
       }
 
       // select QCD events
-      if ( event.mCandElecP3EScaled.Pt() > 25 && event.mPtBalanceCosPhiFromTracks <= 18 )
+      if ( event.GetElectronP3().Pt() > 25 && event.mPtBalanceCosPhiFromTracks <= 18 )
       {
          if ( abs((track.mStMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) >= 0.4 &&
               abs((track.mStMuTrack->charge()*track.mCluster2x2.ET) / track.mP3AtDca.Pt()) <= 1.8 )
@@ -293,7 +293,7 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
       } // end QCD events
 
 
-      if ( event.mCandElecP3EScaled.Pt() > 25 && event.mPtBalanceCosPhiFromTracks > 18 ) {
+      if ( event.GetElectronP3().Pt() > 25 && event.mPtBalanceCosPhiFromTracks > 18 ) {
 
          ( (TrackHContainer*) fHists->d["track_cand_pass_final"])->Fill(track);
 

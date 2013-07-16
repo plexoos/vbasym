@@ -99,8 +99,6 @@ public:
    Double_t                mPtTrackRecoilWithNeutralsCorrected;
    Double_t                mHadRecoilFromTracksEta;
    Double_t                mHadRecoilFromTracksPt;
-   TVector3                mCandElecP3AtDca; 
-   TVector3                mCandElecP3EScaled; 
    float                   mLumiEff;
 
    static const float  sMinTrackIsoDeltaR;    //! (rad) near-cone size

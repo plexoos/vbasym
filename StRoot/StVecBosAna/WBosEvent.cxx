@@ -29,11 +29,11 @@ VecBosTrack& WBosEvent::GetElectronTrack() const
 }
 
 
-TVector3 WBosEvent::GetElectronP3() const { return (*mTracksCandidate.begin())->GetP3EScaled(); }
+TVector3 WBosEvent::GetElectronP3() const { return mElectronP3; }
 TVector3 WBosEvent::GetNeutrinoP3() const { return mNeutrinoP3; }
 
 
-TVector3 WBosEvent::GetMissingEnergyP3() const
+TVector3 WBosEvent::CalcMissingEnergyP3() const
 {
    //return -1*(GetTrackRecoilTpcNeutrals() + GetElectronP3());
    return -1*(CalcTrackRecoilTpcNeutralsCorrected() + GetElectronP3());
@@ -52,7 +52,6 @@ TVector3 WBosEvent::GetVecBosonP3() const
 void WBosEvent::Process()
 {
    VecBosEvent::Process();
-
    ProcessPersistent();
 }
 
@@ -64,8 +63,8 @@ void WBosEvent::ProcessPersistent()
    // Proceed only if this is a W event, i.e. it conforms to W event signature
    if ( !PassedCutWBos() ) return;
 
-   mElectronP3 = GetElectronP3();
-   mNeutrinoP3 = GetMissingEnergyP3(); // here we use only x and y components, and reconstruct z
+   mElectronP3 = (*mTracksCandidate.begin())->GetP3EScaled();
+   mNeutrinoP3 = CalcMissingEnergyP3(); // here we use only x and y components, and reconstruct z
 
    ReconstructNeutrinoZ();
 }

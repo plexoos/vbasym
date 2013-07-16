@@ -27,8 +27,6 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mPtKfactor(0), mPtTrackRecoilWithNeutralsCorrected(0),
    mMinVertexDeltaZ(-1),
    mP3BalanceFromTracks(),
-   mCandElecP3AtDca(),
-   mCandElecP3EScaled(),
    mBalanceDeltaPhiFromTracks(0),
    mLumiEff(0)
 {
@@ -258,29 +256,20 @@ void VecBosEvent::Process()
 
    // Calculate the Pt balance as the vector sum: pt elec + pt recoil
    if  (mTracksCandidate.size() == 1) {
-      // Correct the recoil via MC
 
       mPtTrackRecoilWithNeutralsCorrected = CalcTrackRecoilTpcNeutralsCorrected().Pt();
 
-      TVector3 mP3JetRecoil;
-      mP3JetRecoil.SetXYZ(mP4JetRecoil.Px(), mP4JetRecoil.Py(), mP4JetRecoil.Pz());
+      mP3BalanceFromJets          = mP4JetRecoil.Vect() + (*mTracksCandidate.begin())->GetP3EScaled();
+      mBalanceDeltaPhiFromJets    = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3BalanceFromJets);
+      mPtBalanceCosPhiFromJets    = mP3BalanceFromJets.Pt() * cos(mBalanceDeltaPhiFromJets) ;
 
-      mP3BalanceFromJets            = mP3JetRecoil + (*mTracksCandidate.begin())->GetP3EScaled();
-      mBalanceDeltaPhiFromJets      = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3BalanceFromJets);
-      mPtBalanceCosPhiFromJets      = mP3BalanceFromJets.Pt() * cos(mBalanceDeltaPhiFromJets) ;
+      mP3BalanceFromTracks        = mP3TrackRecoilTpcNeutrals + (*mTracksCandidate.begin())->GetP3EScaled();
+      mBalanceDeltaPhiFromTracks  = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3BalanceFromTracks);
+      mPtBalanceCosPhiFromTracks  = mP3BalanceFromTracks.Pt() * cos(mBalanceDeltaPhiFromTracks) ;
 
-      mP3BalanceFromTracks          = mP3TrackRecoilTpcNeutrals + (*mTracksCandidate.begin())->GetP3EScaled();
-      mBalanceDeltaPhiFromTracks    = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3BalanceFromTracks);
-      mPtBalanceCosPhiFromTracks    = mP3BalanceFromTracks.Pt() * cos(mBalanceDeltaPhiFromTracks) ;
-
-      //mP3BalanceFromTracks2       = mP3TrackRecoilTow + (*mTracksCandidate.begin())->mP3AtDca;
-      mP3BalanceFromTracks2         = mP3TrackRecoilTpc + (*mTracksCandidate.begin())->GetP3EScaled();
-      //mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3TrackRecoilTow);
-      mBalanceDeltaPhiFromTracks2   = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3BalanceFromTracks2);
-      mPtBalanceCosPhiFromTracks2   = mP3BalanceFromTracks2.Pt() * cos(mBalanceDeltaPhiFromTracks2) ;
-
-      mCandElecP3AtDca              = (*mTracksCandidate.begin())->GetP3AtDca();
-      mCandElecP3EScaled            = (*mTracksCandidate.begin())->GetP3EScaled();
+      mP3BalanceFromTracks2       = mP3TrackRecoilTpc + (*mTracksCandidate.begin())->GetP3EScaled();
+      mBalanceDeltaPhiFromTracks2 = (*mTracksCandidate.begin())->mP3AtDca.DeltaPhi(mP3BalanceFromTracks2);
+      mPtBalanceCosPhiFromTracks2 = mP3BalanceFromTracks2.Pt() * cos(mBalanceDeltaPhiFromTracks2) ;
    }
 }
 
@@ -954,8 +943,6 @@ void VecBosEvent::Clear(const Option_t*)
    mP3TrackRecoilTpcNeutrals.SetXYZ(0, 0, 0);
    mP3RecoilFromTracks.SetXYZ(0, 0, 0);
    mP3BalanceFromTracks.SetXYZ(0, 0, 0);
-   mCandElecP3AtDca.SetXYZ(0, 0, 0);
-   mCandElecP3EScaled.SetXYZ(0, 0, 0);
    mPtKfactor                          =  0;
    mPtTrackRecoilWithNeutralsCorrected =  0;
    mMinVertexDeltaZ                    = -1;

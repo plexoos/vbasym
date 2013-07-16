@@ -19,7 +19,7 @@ public:
    VecBosTrack& GetElectronTrack() const;
    TVector3     GetElectronP3() const;
    TVector3     GetNeutrinoP3() const;
-   TVector3     GetMissingEnergyP3() const;
+   TVector3     CalcMissingEnergyP3() const;
    TVector3     GetVecBosonP3() const;
    virtual void Process();
    virtual void ProcessPersistent();
