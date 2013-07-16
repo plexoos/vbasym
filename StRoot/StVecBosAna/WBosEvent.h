@@ -22,6 +22,7 @@ public:
    TVector3     GetMissingEnergyP3() const;
    TVector3     GetVecBosonP3() const;
    virtual void Process();
+   virtual void ProcessPersistent();
    virtual void Clear(const Option_t* opt="");
    bool         PassedCutWBos(float minElePt=sMinElectronPtLight) const;
    bool         PassedCutWBosPlus(float minElePt=sMinElectronPtLight) const;

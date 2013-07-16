@@ -139,6 +139,7 @@ public:
    TVector3       GetTrackRecoil()            const { return mP3TrackRecoilTow; }
    TVector3       GetTrackRecoilNeutrals()    const { return mP3TrackRecoilNeutrals; }
    TVector3       GetTrackRecoilTpcNeutrals() const { return mP3TrackRecoilTpcNeutrals; }
+   TVector3       CalcTrackRecoilTpcNeutralsCorrected() const;
    void           SetCpuTimeEventAna(Double_t time) { mCpuTimeEventAna = time; }
    void           SetCpuTimeHistFill(Double_t time) { mCpuTimeHistFill = time; }
    bool           HasGoodVertex()             const { return mNumGoodVertices    > 0 ? true : false; } // Checks if at least one good vertex exist in the event
@@ -150,6 +151,7 @@ public:
    bool           PassedCutFinal() const;
 
    virtual void   Process();
+   virtual void   ProcessPersistent();
    void           ProcessMC();
    void           MCanalysis();
    bool           IsRecoilJet(VecBosJet *vbJet) const;

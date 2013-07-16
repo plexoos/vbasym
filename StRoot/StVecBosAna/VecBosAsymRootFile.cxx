@@ -79,6 +79,9 @@ void VecBosAsymRootFile::BookHists()
 
    if (!fIsMc) return;
 
+   fHists->d["event_mc"] = ph = new MCHContainer(new TDirectoryFile("event_mc", "event_mc", "", this));
+   fHistCuts[kCUT_EVENT_W].insert(ph);
+
    this->cd();
 }
 

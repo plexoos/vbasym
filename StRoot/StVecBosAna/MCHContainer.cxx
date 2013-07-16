@@ -7,7 +7,7 @@
 
 #include "TF1.h"
 
-#include "VecBosEvent.h"
+#include "WBosEvent.h"
 #include "StVecBosMaker.h"
 #include "StEmcUtil/geometry/StEmcGeom.h"
 
@@ -88,14 +88,24 @@ void MCHContainer::BookHists()
    o["hLeptonPt"]                 = hist = new TH1I("hLeptonPt", "; P^{#nu}_{T} [GeV/c]; Events", 80, 0., 80.);
    hist->SetOption("hist GRIDX");
 
-   o["hTrackPhiVsLeptonPhi"]      = hist = new TH2I("hTrackPhiVsLeptonPhi", "; Lepton #phi; Track #phi", 50, -M_PI, M_PI, 50, -M_PI, M_PI);
-   hist->SetOption("colz LOGZ GRIDX GRIDY");
+   o["hTrackPtVsLeptonPt"]    = hist = new TH2I("hTrackPtVsLeptonPt", "; Lepton P_{T}; Track P_{T}", 50, 0, 50, 50, 0, 50);
 
-   o["hTrackPtVsLeptonPt"]        = hist = new TH2I("hTrackPtVsLeptonPt", "; Lepton P_{T}; Track P_{T}", 50, 0, 50, 50, 0, 50);
-   hist->SetOption("colz LOGZ GRIDX GRIDY");
-
-   o["hTrackCluster2x2EVsLeptonPt"] = hist = new TH2I("hTrackCluster2x2EVsLeptonPt", "; Lepton P_{T}; Track Cluster E_{T}", 60, 0, 60, 60, 0, 60);
-   hist->SetOption("colz LOGZ GRIDX GRIDY");
+   o["hRecoVsGenLeptonPhi"]   = hist = new TH2I("hRecoVsGenLeptonPhi", "; Gen. Lepton #phi; Reco. Lepton #phi", 50, -M_PI, M_PI, 50, -M_PI, M_PI);
+   hist->SetOption("colz LOGZ");
+   o["hRecoVsGenLeptonPt"]    = hist = new TH2I("hRecoVsGenLeptonPt",  "; Gen. Lepton P_{T}; Reco. Lepton P_{T}", 50, 10, 60, 50, 10, 60);
+   hist->SetOption("colz LOGZ");
+   o["hRecoVsGenLeptonPz"]    = hist = new TH2I("hRecoVsGenLeptonPz",  "; Gen. Lepton P_{z}; Reco. Lepton P_{z}", 50, -50, 50, 50, -50, 50);
+   hist->SetOption("colz LOGZ");
+   o["hRecoVsGenLeptonEta"]   = hist = new TH2I("hRecoVsGenLeptonEta", "; Gen. Lepton #eta; Reco. Lepton #eta", 50, -2, 2, 50, -2, 2);
+   hist->SetOption("colz LOGZ");
+   o["hRecoVsGenNeutrinoPhi"] = hist = new TH2I("hRecoVsGenNeutrinoPhi", "; Gen. Neutrino #phi; Reco. Neutrino #phi", 50, -M_PI, M_PI, 50, -M_PI, M_PI);
+   hist->SetOption("colz LOGZ");
+   o["hRecoVsGenNeutrinoPt"]  = hist = new TH2I("hRecoVsGenNeutrinoPt",  "; Gen. Neutrino P_{T}; Reco. Neutrino P_{T}", 50, 10, 60, 50, 10, 60);
+   hist->SetOption("colz LOGZ");
+   o["hRecoVsGenNeutrinoPz"]  = hist = new TH2I("hRecoVsGenNeutrinoPz",  "; Gen. Neutrino P_{z}; Reco. Neutrino P_{z}", 50, -70, 70, 50, -70, 70);
+   hist->SetOption("colz LOGZ");
+   o["hRecoVsGenNeutrinoEta"] = hist = new TH2I("hRecoVsGenNeutrinoEta", "; Gen. Neutrino #eta; Reco. Neutrino #eta", 50, -2, 2, 50, -2, 2);
+   hist->SetOption("colz LOGZ");
 
    // tracks ID
    //o["hTrackID"]                = hist = new TH1I("hTrackID", "; ; Events", 100, 0., 200.);
@@ -200,7 +210,7 @@ void MCHContainer::BookHists()
 
 void MCHContainer::Fill(ProtoEvent &ev)
 {
-   VecBosEvent& event = (VecBosEvent&) ev;
+   WBosEvent& event = (WBosEvent&) ev;
 
    ((TH1*) o["hWBosonE"])->Fill(event.mWEvent->mP4WBoson.E());
    ((TH1*) o["hWBosonPx"])->Fill(event.mWEvent->mP4WBoson.Px());
@@ -227,11 +237,17 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hLeptonPt"])->Fill(event.mWEvent->mP4Lepton.Pt());
 
    if (event.mTracksCandidate.size() > 0) {
-      ((TH1*) o["hTrackPhiVsLeptonPhi"])->Fill(event.mWEvent->mP4Lepton.Phi(), (*event.mTracksCandidate.begin())->mP3AtDca.Phi());
-      ((TH1*) o["hTrackPtVsLeptonPt"])  ->Fill(event.mWEvent->mP4Lepton.Pt(),  (*event.mTracksCandidate.begin())->mP3AtDca.Pt());
-      ((TH1*) o["hTrackCluster2x2EVsLeptonPt"])  ->Fill(event.mWEvent->mP4Lepton.Pt(),  (*event.mTracksCandidate.begin())->mCluster2x2.ET);
-   }
+      ((TH1*) o["hTrackPtVsLeptonPt"])   ->Fill(event.mWEvent->mP4Lepton.Pt(),   (*event.mTracksCandidate.begin())->mP3AtDca.Pt());
 
+      ((TH1*) o["hRecoVsGenLeptonPhi"])  ->Fill(event.mWEvent->mP4Lepton.Phi(),   event.GetElectronP3().Phi());
+      ((TH1*) o["hRecoVsGenLeptonPt"])   ->Fill(event.mWEvent->mP4Lepton.Pt(),    event.GetElectronP3().Pt());
+      ((TH1*) o["hRecoVsGenLeptonPz"])   ->Fill(event.mWEvent->mP4Lepton.Pz(),    event.GetElectronP3().Pz());
+      ((TH1*) o["hRecoVsGenLeptonEta"])  ->Fill(event.mWEvent->mP4Lepton.Eta(),   event.GetElectronP3().Eta());
+      ((TH1*) o["hRecoVsGenNeutrinoPhi"])->Fill(event.mWEvent->mP4Neutrino.Phi(), event.GetNeutrinoP3().Phi());
+      ((TH1*) o["hRecoVsGenNeutrinoPt"]) ->Fill(event.mWEvent->mP4Neutrino.Pt(),  event.GetNeutrinoP3().Pt());
+      ((TH1*) o["hRecoVsGenNeutrinoPz"]) ->Fill(event.mWEvent->mP4Neutrino.Pz(),  event.GetNeutrinoP3().Pz());
+      ((TH1*) o["hRecoVsGenNeutrinoEta"])->Fill(event.mWEvent->mP4Neutrino.Eta(), event.GetNeutrinoP3().Eta());
+   }
 
    // recoil variables
    ((TH1*) o["hRecoilE"])->Fill(event.mWEvent->mP4Recoil.E());

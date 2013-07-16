@@ -35,7 +35,9 @@ TVector3 WBosEvent::GetNeutrinoP3() const { return mNeutrinoP3; }
 
 TVector3 WBosEvent::GetMissingEnergyP3() const
 {
-   return -1*(GetTrackRecoilTpcNeutrals() + GetElectronP3());
+   //return -1*(GetTrackRecoilTpcNeutrals() + GetElectronP3());
+   return -1*(CalcTrackRecoilTpcNeutralsCorrected() + GetElectronP3());
+
    // Other definitions
    //return mP3TrackRecoilTow + GetElectronP3();
    //return mP4JetRecoil + GetElectronP3();
@@ -50,6 +52,14 @@ TVector3 WBosEvent::GetVecBosonP3() const
 void WBosEvent::Process()
 {
    VecBosEvent::Process();
+
+   ProcessPersistent();
+}
+
+
+void WBosEvent::ProcessPersistent()
+{
+   VecBosEvent::ProcessPersistent();
 
    // Proceed only if this is a W event, i.e. it conforms to W event signature
    if ( !PassedCutWBos() ) return;
@@ -132,6 +142,7 @@ void WBosEvent::Streamer(TBuffer &R__b)
       //Info("Streamer", "Reading...");
       R__b.ReadClassBuffer(WBosEvent::Class(), this);
 
+      ProcessPersistent();
       //Info("Streamer", "this: %x, mTracks.size(): %d, &mWEvent: %x, &mStJets: %x", this, mTracks.size(), mWEvent, mStJets);
    }
    else {

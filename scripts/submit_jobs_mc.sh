@@ -36,4 +36,5 @@ do
    echo "Submitting job for MY_FILELIST =" $MY_FILELIST
    star-submit-template -template $CODE_DIR/scripts/run11_job_template_mc.xml -entities OUT_DIR=$OUT_DIR,CODE_DIR=$CODE_DIR,MY_FILELIST=$MY_FILELIST,STAR_VER=$STAR_VER,STANA_OPTIONS=$STANA_OPTIONS
    echo
+   sleep 3
 done

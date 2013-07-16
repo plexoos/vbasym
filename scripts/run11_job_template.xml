@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<job filesPerHour="100" maxFilesPerProcess="500" fileListSyntax="xrootd" inputOrder="runnumber" simulateSubmission="false" name="&RUN_ID;">
+<job filesPerHour="150" maxFilesPerProcess="500" fileListSyntax="xrootd" inputOrder="runnumber" simulateSubmission="false" name="&RUN_ID;">
    <ResourceUsage>
       <StorageSpace>
          <MinStorage>20</MinStorage>

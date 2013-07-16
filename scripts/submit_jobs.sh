@@ -12,7 +12,7 @@ STAR_VER=SL12c
 #STANA_OPTIONS=$2
 #STANA_OPTIONS="--jpm_0.5_-n1000_--jets"
 #STANA_OPTIONS="--jpm_3.5_--jets"
-STANA_OPTIONS="--jpm_0.5"
+STANA_OPTIONS="--jpm_0.5_--jets"
 OUT_DIR=~/stana_out/${RUNLIST}_${STANA_OPTIONS}
 
 echo
@@ -36,4 +36,5 @@ do
    echo "Submitting job for RUN_ID =" $RUN_ID
    star-submit-template -template $CODE_DIR/scripts/run11_job_template.xml -entities OUT_DIR=$OUT_DIR,CODE_DIR=$CODE_DIR,RUN_ID=$RUN_ID,STAR_VER=$STAR_VER,STANA_OPTIONS=$STANA_OPTIONS
    echo
+   sleep 3
 done

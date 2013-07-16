@@ -146,6 +146,29 @@ UInt_t VecBosEvent::GetNumTracksWithBCluster()
 }
 
 
+TVector3 VecBosEvent::CalcTrackRecoilTpcNeutralsCorrected() const
+{
+   TVector3 trackRecoilCorrected(GetTrackRecoilTpcNeutrals());
+   Double_t corrFact = 1.;
+
+   //mP3TrackRecoilTpcNeutrals.Pt() * (0.196 + 0.4606*mP3TrackRecoilTpcNeutrals.Pt() - 0.02518*(pow(mP3TrackRecoilTpcNeutrals.Pt(), 2)));
+
+   if (trackRecoilCorrected.Pt() < 5) {
+      corrFact = 5.471 - 2.9700 * trackRecoilCorrected.Pt() +
+                         0.7340 * pow(trackRecoilCorrected.Pt(), 2) -
+                         0.0631 * pow(trackRecoilCorrected.Pt(), 3);
+   }
+   else if  (trackRecoilCorrected.Pt() >= 5) {
+      corrFact = 1.15;
+   }
+
+   trackRecoilCorrected.SetX(corrFact * trackRecoilCorrected.X());
+   trackRecoilCorrected.SetY(corrFact * trackRecoilCorrected.Y());
+
+   return trackRecoilCorrected;
+}
+
+
 bool VecBosEvent::PassedCutExceptPtBal() const
 {
    if ( mTracksCandidate.size() > 0 &&
@@ -237,15 +260,7 @@ void VecBosEvent::Process()
    if  (mTracksCandidate.size() == 1) {
       // Correct the recoil via MC
 
-      //mPtTrackRecoilWithNeutralsCorrected = mP3TrackRecoilTpcNeutrals.Pt() * (0.196 + 0.4606*mP3TrackRecoilTpcNeutrals.Pt() - 0.02518*(pow(mP3TrackRecoilTpcNeutrals.Pt(), 2)));
-
-      if (mP3TrackRecoilTpcNeutrals.Pt() < 5) {
-         Double_t corrFact = 5.471 - 2.97 * mP3TrackRecoilTpcNeutrals.Pt() + 0.734 * (pow(mP3TrackRecoilTpcNeutrals.Pt(), 2)) - 0.0631 * (pow(mP3TrackRecoilTpcNeutrals.Pt(), 3));
-         mPtTrackRecoilWithNeutralsCorrected = mP3TrackRecoilTpcNeutrals.Pt() * corrFact ;
-      }
-      else if  (mP3TrackRecoilTpcNeutrals.Pt() >= 5) {
-         mPtTrackRecoilWithNeutralsCorrected = mP3TrackRecoilTpcNeutrals.Pt() * 1.15;
-      }
+      mPtTrackRecoilWithNeutralsCorrected = CalcTrackRecoilTpcNeutralsCorrected().Pt();
 
       TVector3 mP3JetRecoil;
       mP3JetRecoil.SetXYZ(mP4JetRecoil.Px(), mP4JetRecoil.Py(), mP4JetRecoil.Pz());
@@ -266,6 +281,46 @@ void VecBosEvent::Process()
 
       mCandElecP3AtDca              = (*mTracksCandidate.begin())->GetP3AtDca();
       mCandElecP3EScaled            = (*mTracksCandidate.begin())->GetP3EScaled();
+   }
+}
+
+
+void VecBosEvent::ProcessPersistent()
+{
+   VecBosTrackPtrSetIter iTrack = mTracks.begin();
+   for ( ; iTrack != mTracks.end(); ++iTrack) {
+      VecBosTrack *track = *iTrack;
+
+      //Info("Streamer", "this: %x, mStMuTrack: %x", track, track->mStMuTrack);
+
+      // Set pointers to candidate tracks
+      if ( track->IsCandidate() ) {
+         //Info("Streamer", "mTracksCandidate found: %x", track);
+         mTracksCandidate.insert(track);
+      }
+
+      // Set pointers to tracks from vertex
+      VecBosVertexPtrSetIter iVertex = mVertices.begin();
+      for ( ; iVertex != mVertices.end(); ++iVertex) {
+         VecBosVertex *vbVertex = *iVertex;
+
+         if ( track->GetVertexId() == vbVertex->GetId() )
+            vbVertex->mTracks.insert(track);
+      }
+   }
+
+   mP4JetRecoil.SetXYZT(0, 0, 0, 0);
+
+   VecBosJetPtrSetConstIter iJet = mJets.begin();
+   for ( ; iJet != mJets.end(); ++iJet) {
+      VecBosJet *vbJet = *iJet;
+      //Info("Streamer", "mJets this: %x", vbJet);
+
+      if ( IsRecoilJet(vbJet) ) {
+         //Info("Streamer", "Recoil jet found : %x", vbJet);
+         mP4JetRecoil += *vbJet;
+         mJetsRecoil.insert(vbJet);
+      }
    }
 }
 
@@ -976,42 +1031,7 @@ void VecBosEvent::Streamer(TBuffer &R__b)
       R__b.ReadClassBuffer(VecBosEvent::Class(), this);
 
       //Info("Streamer", "this: %x, mTracks.size(): %d, &mWEvent: %x, &mStJets: %x", this, mTracks.size(), mWEvent, mStJets);
-
-      VecBosTrackPtrSetIter iTrack = mTracks.begin();
-      for ( ; iTrack != mTracks.end(); ++iTrack) {
-         VecBosTrack *track = *iTrack;
-
-         //Info("Streamer", "this: %x, mStMuTrack: %x", track, track->mStMuTrack);
-
-         // Set pointers to candidate tracks
-         if ( track->IsCandidate() ) {
-            //Info("Streamer", "mTracksCandidate found: %x", track);
-            mTracksCandidate.insert(track);
-         }
-
-         // Set pointers to tracks from vertex
-         VecBosVertexPtrSetIter iVertex = mVertices.begin();
-         for ( ; iVertex != mVertices.end(); ++iVertex) {
-            VecBosVertex *vbVertex = *iVertex;
-
-            if ( track->GetVertexId() == vbVertex->GetId() )
-               vbVertex->mTracks.insert(track);
-         }
-      }
-
-      mP4JetRecoil.SetXYZT(0, 0, 0, 0);
-
-      VecBosJetPtrSetConstIter iJet = mJets.begin();
-      for ( ; iJet != mJets.end(); ++iJet) {
-         VecBosJet *vbJet = *iJet;
-         //Info("Streamer", "mJets this: %x", vbJet);
-
-         if ( IsRecoilJet(vbJet) ) {
-            //Info("Streamer", "Recoil jet found : %x", vbJet);
-            mP4JetRecoil += *vbJet;
-            mJetsRecoil.insert(vbJet);
-         }
-      }
+      ProcessPersistent();
    }
    else {
       //Info("Streamer", "Writing... ");

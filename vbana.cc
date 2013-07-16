@@ -6,7 +6,7 @@
 #include "TROOT.h"
 #include "TStreamerInfo.h"
 
-#include "StRoot/StVecBosAna/VecBosEvent.h"
+#include "StRoot/StVecBosAna/WBosEvent.h"
 #include "StRoot/StVecBosAna/VecBosRootFile.h"
 #include "StRoot/StVecBosAna/VecBosAsymRootFile.h"
 
@@ -24,15 +24,15 @@ int main(int argc, char *argv[])
    setbuf(stdout, NULL);
 
    Int_t  nMaxUserEvents = -1;
-   //Int_t  nMaxUserEvents = 1000;
+   //Int_t  nMaxUserEvents = 10000;
 
    //Bool_t isMc           = kFALSE;
    Bool_t isMc           = kTRUE;
 
    //string filelist       = "run11_pp_transverse";
    //string filelist       = "MC_list_QCD_2012";
-   string filelist       = "MC_list_Wm_2012";
-   //string filelist       = "MC_list_Wp_2012";
+   //string filelist       = "MC_list_Wm_2012";
+   string filelist       = "MC_list_Wp_2012";
    //string filelist       = "MC_list_WmToTauTau_2012";
    //string filelist       = "MC_list_WpToTauTau_2012";
    //string filelist       = "MC_list_Ztoee_2012";
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 
    //VecBosRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc);
    VecBosAsymRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc); // to create the symmetry histograms 
-   VecBosEvent *vecBosEvent = new VecBosEvent();
+   WBosEvent *wBosEvent = new WBosEvent();
 
    TObject *o;
    TIter   *next = new TIter(utils::getFileList("./runlists/"+filelist));
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
          nTreeEvents = nExtraEvents > 0 ? nTreeEvents - nExtraEvents : nTreeEvents;
       }
 
-      vbTree->SetBranchAddress("e", &vecBosEvent);
+      vbTree->SetBranchAddress("e", &wBosEvent);
 
       for (UInt_t iEvent=1; iEvent<=(UInt_t) nTreeEvents; iEvent++, nProcEvents++)
       {
@@ -92,8 +92,8 @@ int main(int argc, char *argv[])
             Info("main", "Analyzing event %d", iEvent);
 
          vbTree->GetEntry(iEvent-1);
-         //vecBosEvent->Print();
-         vecBosRootFile.Fill(*vecBosEvent);
+         //wBosEvent->Print();
+         vecBosRootFile.Fill(*wBosEvent);
       }
 
       f->Close();
@@ -105,13 +105,13 @@ int main(int argc, char *argv[])
       if (nMaxUserEvents > 0 && nProcEvents >= nMaxUserEvents) break;
    }
 
-   delete vecBosEvent;
+   delete wBosEvent;
 
    vecBosRootFile.FillDerived();
    vecBosRootFile.PostFill();
 
-   //string outDir = "../vbasym_results/" + histFileName;
-   //vecBosRootFile.SaveAs((string) "^.*$", outDir);
+   string outDir = "../vbasym_results/" + filelist;
+   vecBosRootFile.SaveAs((string) "^.*$", outDir);
    //vecBosRootFile.SaveAs((string) ".*TrackEOverP.*", outDir);
    vecBosRootFile.Print();
    vecBosRootFile.Close();
