@@ -12,7 +12,7 @@ STAR_VER=SL12c
 #STANA_OPTIONS=$2
 #STANA_OPTIONS="--jpm_0.5_-n1000_--jets"
 #STANA_OPTIONS="--jpm_3.5_--jets"
-STANA_OPTIONS="--jpm_0.5_--jets"
+STANA_OPTIONS="--jpm_0.5"
 OUT_DIR=~/stana_out/${RUNLIST}_${STANA_OPTIONS}
 
 echo

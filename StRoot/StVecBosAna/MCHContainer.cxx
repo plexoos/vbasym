@@ -54,10 +54,6 @@ void MCHContainer::BookHists()
 
    o["hWBosonE"]                  = hist = new TH1F("hWBosonE", "; W energy [GeV]; Events", 100, 20., 200.);
    hist->SetOption("hist GRIDX");
-   o["hWBosonPx"]                 = hist = new TH1F("hWBosonPx", "; P^{W}_{x} [GeV/c]; Events", 80, -40., 40.);
-   hist->SetOption("hist GRIDX");
-   o["hWBosonPy"]                 = hist = new TH1F("hWBosonPy", "; P^{W}_{y} [GeV/c]; Events", 80, -40., 40.);
-   hist->SetOption("hist GRIDX");
    o["hWBosonPz"]                 = hist = new TH1F("hWBosonPz", "; P^{W}_{z} [GeV/c]; Events", 80, -40., 40.);
    hist->SetOption("hist GRIDX");
    o["hWBosonPt"]                 = hist = new TH1F("hWBosonPt", "; P^{W}_{T} [GeV/c]; Events", 40, 0., 40.);
@@ -98,6 +94,7 @@ void MCHContainer::BookHists()
    hist->SetOption("colz LOGZ");
    o["hRecoVsGenLeptonEta"]   = hist = new TH2I("hRecoVsGenLeptonEta", "; Gen. Lepton #eta; Reco. Lepton #eta", 50, -2, 2, 50, -2, 2);
    hist->SetOption("colz LOGZ");
+
    o["hRecoVsGenNeutrinoPhi"] = hist = new TH2I("hRecoVsGenNeutrinoPhi", "; Gen. Neutrino #phi; Reco. Neutrino #phi", 50, -M_PI, M_PI, 50, -M_PI, M_PI);
    hist->SetOption("colz LOGZ");
    o["hRecoVsGenNeutrinoPt"]  = hist = new TH2I("hRecoVsGenNeutrinoPt",  "; Gen. Neutrino P_{T}; Reco. Neutrino P_{T}", 50, 10, 60, 50, 10, 60);
@@ -105,6 +102,15 @@ void MCHContainer::BookHists()
    o["hRecoVsGenNeutrinoPz"]  = hist = new TH2I("hRecoVsGenNeutrinoPz",  "; Gen. Neutrino P_{z}; Reco. Neutrino P_{z}", 50, -70, 70, 50, -70, 70);
    hist->SetOption("colz LOGZ");
    o["hRecoVsGenNeutrinoEta"] = hist = new TH2I("hRecoVsGenNeutrinoEta", "; Gen. Neutrino #eta; Reco. Neutrino #eta", 50, -2, 2, 50, -2, 2);
+   hist->SetOption("colz LOGZ");
+
+   o["hRecoVsGenWBosonPhi"] = hist = new TH2I("hRecoVsGenWBosonPhi", "; Gen. W Boson #phi; Reco. W Boson #phi", 50, -M_PI, M_PI, 50, -M_PI, M_PI);
+   hist->SetOption("colz LOGZ");
+   o["hRecoVsGenWBosonPt"]  = hist = new TH2I("hRecoVsGenWBosonPt",  "; Gen. W Boson P_{T}; Reco. W Boson P_{T}", 50, 0, 25, 50, 0, 25);
+   hist->SetOption("colz LOGZ");
+   o["hRecoVsGenWBosonPz"]  = hist = new TH2I("hRecoVsGenWBosonPz",  "; Gen. W Boson P_{z}; Reco. W Boson P_{z}", 50, -80, 80, 50, -80, 80);
+   hist->SetOption("colz LOGZ");
+   o["hRecoVsGenWBosonEta"] = hist = new TH2I("hRecoVsGenWBosonEta", "; Gen. W Boson #eta; Reco. W Boson #eta", 50, -6, 6, 50, -6, 6);
    hist->SetOption("colz LOGZ");
 
    // tracks ID
@@ -131,7 +137,7 @@ void MCHContainer::BookHists()
    hist->SetOption("hist GRIDX");
    o["hRecInAccMomentumZ"]        = hist = new TH1I("hRecInAccMomentumZ", "; P^{Recoil}_{z} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
-   o["hRecoilInAcceptPt"]               = hist = new TH1I("hRecoilInAcceptPt", "; P^{Recoil}_{t} [GeV/c]; Events", 50, 0., 50.);
+   o["hRecoilInAcceptPt"]         = hist = new TH1I("hRecoilInAcceptPt", "; P^{Recoil}_{t} [GeV/c]; Events", 50, 0., 50.);
    hist->SetOption("hist GRIDX");
 
    //recoil outside of detector acceptance
@@ -212,9 +218,7 @@ void MCHContainer::Fill(ProtoEvent &ev)
 {
    WBosEvent& event = (WBosEvent&) ev;
 
-   ((TH1*) o["hWBosonE"])->Fill(event.mWEvent->mP4WBoson.E());
-   ((TH1*) o["hWBosonPx"])->Fill(event.mWEvent->mP4WBoson.Px());
-   ((TH1*) o["hWBosonPy"])->Fill(event.mWEvent->mP4WBoson.Py());
+   ((TH1*) o["hWBosonE"]) ->Fill(event.mWEvent->mP4WBoson.E());
    ((TH1*) o["hWBosonPz"])->Fill(event.mWEvent->mP4WBoson.Pz());
    ((TH1*) o["hWBosonPt"])->Fill(event.mWEvent->mP4WBoson.Pt());
    ((TH1*) o["hWBosonPt_zoomin"])->Fill(event.mWEvent->mP4WBoson.Pt());
@@ -224,30 +228,34 @@ void MCHContainer::Fill(ProtoEvent &ev)
    else
       ((TH1*) o["hWBosonEta"])->Fill(1e5);
 
-   ((TH1*) o["hNeutrinoE"])->Fill(event.mWEvent->mP4Neutrino.E());
+   ((TH1*) o["hNeutrinoE"]) ->Fill(event.mWEvent->mP4Neutrino.E());
    ((TH1*) o["hNeutrinoPx"])->Fill(event.mWEvent->mP4Neutrino.Px());
    ((TH1*) o["hNeutrinoPy"])->Fill(event.mWEvent->mP4Neutrino.Py());
    ((TH1*) o["hNeutrinoPz"])->Fill(event.mWEvent->mP4Neutrino.Pz());
    ((TH1*) o["hNeutrinoPt"])->Fill(event.mWEvent->mP4Neutrino.Pz());
 
-   ((TH1*) o["hLeptonE"])->Fill(event.mWEvent->mP4Lepton.E());
+   ((TH1*) o["hLeptonE"]) ->Fill(event.mWEvent->mP4Lepton.E());
    ((TH1*) o["hLeptonPx"])->Fill(event.mWEvent->mP4Lepton.Px());
    ((TH1*) o["hLeptonPy"])->Fill(event.mWEvent->mP4Lepton.Py());
    ((TH1*) o["hLeptonPz"])->Fill(event.mWEvent->mP4Lepton.Pz());
    ((TH1*) o["hLeptonPt"])->Fill(event.mWEvent->mP4Lepton.Pt());
 
-   if (event.mTracksCandidate.size() > 0) {
-      ((TH1*) o["hTrackPtVsLeptonPt"])   ->Fill(event.mWEvent->mP4Lepton.Pt(),   (*event.mTracksCandidate.begin())->mP3AtDca.Pt());
+   ((TH1*) o["hTrackPtVsLeptonPt"])   ->Fill(event.mWEvent->mP4Lepton.Pt(),   (*event.mTracksCandidate.begin())->mP3AtDca.Pt());
 
-      ((TH1*) o["hRecoVsGenLeptonPhi"])  ->Fill(event.mWEvent->mP4Lepton.Phi(),   event.GetElectronP3().Phi());
-      ((TH1*) o["hRecoVsGenLeptonPt"])   ->Fill(event.mWEvent->mP4Lepton.Pt(),    event.GetElectronP3().Pt());
-      ((TH1*) o["hRecoVsGenLeptonPz"])   ->Fill(event.mWEvent->mP4Lepton.Pz(),    event.GetElectronP3().Pz());
-      ((TH1*) o["hRecoVsGenLeptonEta"])  ->Fill(event.mWEvent->mP4Lepton.Eta(),   event.GetElectronP3().Eta());
-      ((TH1*) o["hRecoVsGenNeutrinoPhi"])->Fill(event.mWEvent->mP4Neutrino.Phi(), event.GetNeutrinoP3().Phi());
-      ((TH1*) o["hRecoVsGenNeutrinoPt"]) ->Fill(event.mWEvent->mP4Neutrino.Pt(),  event.GetNeutrinoP3().Pt());
-      ((TH1*) o["hRecoVsGenNeutrinoPz"]) ->Fill(event.mWEvent->mP4Neutrino.Pz(),  event.GetNeutrinoP3().Pz());
-      ((TH1*) o["hRecoVsGenNeutrinoEta"])->Fill(event.mWEvent->mP4Neutrino.Eta(), event.GetNeutrinoP3().Eta());
-   }
+   ((TH1*) o["hRecoVsGenLeptonPhi"])  ->Fill(event.mWEvent->mP4Lepton.Phi(),   event.GetElectronP3().Phi());
+   ((TH1*) o["hRecoVsGenLeptonPt"])   ->Fill(event.mWEvent->mP4Lepton.Pt(),    event.GetElectronP3().Pt());
+   ((TH1*) o["hRecoVsGenLeptonPz"])   ->Fill(event.mWEvent->mP4Lepton.Pz(),    event.GetElectronP3().Pz());
+   ((TH1*) o["hRecoVsGenLeptonEta"])  ->Fill(event.mWEvent->mP4Lepton.Eta(),   event.GetElectronP3().Eta());
+
+   ((TH1*) o["hRecoVsGenNeutrinoPhi"])->Fill(event.mWEvent->mP4Neutrino.Phi(), event.GetNeutrinoP3().Phi());
+   ((TH1*) o["hRecoVsGenNeutrinoPt"]) ->Fill(event.mWEvent->mP4Neutrino.Pt(),  event.GetNeutrinoP3().Pt());
+   ((TH1*) o["hRecoVsGenNeutrinoPz"]) ->Fill(event.mWEvent->mP4Neutrino.Pz(),  event.GetNeutrinoP3().Pz());
+   ((TH1*) o["hRecoVsGenNeutrinoEta"])->Fill(event.mWEvent->mP4Neutrino.Eta(), event.GetNeutrinoP3().Eta());
+
+   ((TH1*) o["hRecoVsGenWBosonPhi"])  ->Fill(event.mWEvent->mP4WBoson.Phi(),   event.GetVecBosonP3().Phi());
+   ((TH1*) o["hRecoVsGenWBosonPt"])   ->Fill(event.mWEvent->mP4WBoson.Pt(),    event.GetVecBosonP3().Pt());
+   ((TH1*) o["hRecoVsGenWBosonPz"])   ->Fill(event.mWEvent->mP4WBoson.Pz(),    event.GetVecBosonP3().Pz());
+   ((TH1*) o["hRecoVsGenWBosonEta"])  ->Fill(event.mWEvent->mP4WBoson.Eta(),   event.GetVecBosonP3().Eta());
 
    // recoil variables
    ((TH1*) o["hRecoilE"])->Fill(event.mWEvent->mP4Recoil.E());
@@ -278,17 +286,17 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hHadRecoilFromTracksPt"])->Fill(event.mP3RecoilFromTracks.Pt());
    ((TH1*) o["hRecoilCorrelPythia"])->Fill(event.mP3RecoilFromTracks.Pt(), event.mWEvent->mP4Recoil.Pt());
 
-   ((TH1*) o["hJetRecoilPtVsWBosonPt"])     ->Fill(event.mWEvent->mP4WBoson.Pt(), event.GetJetRecoil().Pt());
-   ((TH1*) o["hJetRecoilPhiVsWBosonPhi"])   ->Fill(event.mWEvent->mP4WBoson.Phi(), event.GetJetRecoil().Phi());
-   ((TH2*) o["hJetRecoilPt_GenOverReco"])->Fill(event.GetJetRecoil().Pt(), event.mWEvent->mP4WBoson.Pt()/event.GetJetRecoil().Pt());
+   ((TH1*) o["hJetRecoilPtVsWBosonPt"])         ->Fill(event.mWEvent->mP4WBoson.Pt(), event.GetJetRecoil().Pt());
+   ((TH1*) o["hJetRecoilPhiVsWBosonPhi"])       ->Fill(event.mWEvent->mP4WBoson.Phi(), event.GetJetRecoil().Phi());
+   ((TH2*) o["hJetRecoilPt_GenOverReco"])       ->Fill(event.GetJetRecoil().Pt(), event.mWEvent->mP4WBoson.Pt()/event.GetJetRecoil().Pt());
    ((TH2*) o["hJetRecoilPt_GenOverReco_zoomin"])->Fill(event.GetJetRecoil().Pt(), event.mWEvent->mP4WBoson.Pt()/event.GetJetRecoil().Pt());
-   ((TH1*) o["hTrackRecoilPtVsWBosonPt"])   ->Fill(event.mWEvent->mP4WBoson.Pt(), event.GetTrackRecoil().Pt());
-   ((TH1*) o["hTrackRecoilPhiVsWBosonPhi"]) ->Fill(event.mWEvent->mP4WBoson.Phi(), event.GetTrackRecoil().Phi());
-   ((TH1*) o["hTrackRecoilTpcPtVsWBosonPt"])->Fill(event.mWEvent->mP4WBoson.Pt(), event.mP3TrackRecoilTpc.Pt());
-   ((TH1*) o["hTrackRecoilTpcNeutralsPtVsWBosonPt"])->Fill(event.mWEvent->mP4WBoson.Pt(), event.GetTrackRecoilTpcNeutrals().Pt());
+   ((TH1*) o["hTrackRecoilPtVsWBosonPt"])       ->Fill(event.mWEvent->mP4WBoson.Pt(), event.GetTrackRecoil().Pt());
+   ((TH1*) o["hTrackRecoilPhiVsWBosonPhi"])     ->Fill(event.mWEvent->mP4WBoson.Phi(), event.GetTrackRecoil().Phi());
+   ((TH1*) o["hTrackRecoilTpcPtVsWBosonPt"])    ->Fill(event.mWEvent->mP4WBoson.Pt(), event.mP3TrackRecoilTpc.Pt());
+   ((TH1*) o["hTrackRecoilTpcNeutralsPtVsWBosonPt"])  ->Fill(event.mWEvent->mP4WBoson.Pt(), event.GetTrackRecoilTpcNeutrals().Pt());
    ((TH2*) o["hTrackRecoilTpcNeutralsPt_GenOverReco"])->Fill(event.GetTrackRecoilTpcNeutrals().Pt(), event.mWEvent->mP4WBoson.Pt()/event.GetTrackRecoilTpcNeutrals().Pt());
    ((TH2*) o["hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin"])->Fill(event.GetTrackRecoilTpcNeutrals().Pt(), event.mWEvent->mP4WBoson.Pt()/event.GetTrackRecoilTpcNeutrals().Pt());
-   //   ((TH2*) o["hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt"])->Fill(event.mWEvent->mP4WBoson.Pt(),event.GetTrackRecoilTpcNeutrals().Pt()*(event.mWEvent->mP4WBoson.Pt()/event.GetTrackRecoilTpcNeutrals().Pt()));
+   //((TH2*) o["hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt"])->Fill(event.mWEvent->mP4WBoson.Pt(),event.GetTrackRecoilTpcNeutrals().Pt()*(event.mWEvent->mP4WBoson.Pt()/event.GetTrackRecoilTpcNeutrals().Pt()));
 
    Double_t recoilRelDiff = (event.GetJetRecoil().Pt() - event.mWEvent->mP4WBoson.Pt())/event.mWEvent->mP4WBoson.Pt();
    ((TH1*) o["hJetRecoilPtRelDiff"]) ->Fill( recoilRelDiff );

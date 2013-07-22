@@ -156,7 +156,7 @@ TVector3 VecBosEvent::CalcTrackRecoilTpcNeutralsCorrected() const
                          0.7340 * pow(trackRecoilCorrected.Pt(), 2) -
                          0.0631 * pow(trackRecoilCorrected.Pt(), 3);
    }
-   else if  (trackRecoilCorrected.Pt() >= 5) {
+   else {
       corrFact = 1.15;
    }
 

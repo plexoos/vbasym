@@ -56,9 +56,6 @@ void VecBosAsymRootFile::BookHists()
    fHists->d["event"] = ph = new EventHContainer(new TDirectoryFile("event", "event", "", this));
    fHistCuts[kCUT_EVENT_NOCUT].insert(ph);
 
-   fHists->d["asym"] = ph = new AsymHContainer(new TDirectoryFile("asym", "asym", "", this));
-   fHistCuts[kCUT_EVENT_NOCUT].insert(ph);
-
    fHists->d["event_w"] = ph = new WBosEventHContainer(new TDirectoryFile("event_w", "event_w", "", this));
    fHistCuts[kCUT_EVENT_W].insert(ph);
 
@@ -91,7 +88,7 @@ void VecBosAsymRootFile::Fill(ProtoEvent &ev)
 {
    WBosEvent& w_event = (WBosEvent&) ev;
 
-   Fill(ev, kCUT_EVENT_NOCUT);
+   //Fill(ev, kCUT_EVENT_NOCUT);
 
    if ( w_event.PassedCutWBos(WBosEvent::sMinElectronPtHard) )
    {

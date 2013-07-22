@@ -26,13 +26,13 @@ int main(int argc, char *argv[])
    Int_t  nMaxUserEvents = -1;
    //Int_t  nMaxUserEvents = 10000;
 
-   //Bool_t isMc           = kFALSE;
-   Bool_t isMc           = kTRUE;
+   Bool_t isMc           = kFALSE;
+   //Bool_t isMc           = kTRUE;
 
-   //string filelist       = "run11_pp_transverse";
+   string filelist       = "run11_pp_transverse";
    //string filelist       = "MC_list_QCD_2012";
    //string filelist       = "MC_list_Wm_2012";
-   string filelist       = "MC_list_Wp_2012";
+   //string filelist       = "MC_list_Wp_2012";
    //string filelist       = "MC_list_WmToTauTau_2012";
    //string filelist       = "MC_list_WpToTauTau_2012";
    //string filelist       = "MC_list_Ztoee_2012";

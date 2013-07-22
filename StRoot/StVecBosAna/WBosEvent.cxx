@@ -44,10 +44,8 @@ TVector3 WBosEvent::CalcMissingEnergyP3() const
 }
 
 
-TVector3 WBosEvent::GetVecBosonP3() const
-{
-   return -1*(GetElectronP3() + GetNeutrinoP3());
-}
+TVector3 WBosEvent::GetVecBosonP3() const { return GetElectronP3() + GetNeutrinoP3(); }
+
 
 void WBosEvent::Process()
 {
@@ -116,14 +114,18 @@ bool WBosEvent::PassedCutQcdBkg(float minElePt) const
 
 void WBosEvent::ReconstructNeutrinoZ()
 {
+   //Info("ReconstructNeutrinoZ", " ");
    double A = mWBosMass*mWBosMass/2 + mElectronP3.Px() * mNeutrinoP3.Px() + mElectronP3.Py() * mNeutrinoP3.Py();
    double a = mElectronP3.Pt() * mElectronP3.Pt();
    double b = -2 * A * mElectronP3.Pz();
    double c = mNeutrinoP3.Pt() * mNeutrinoP3.Pt() * mElectronP3.Mag() * mElectronP3.Mag() - A*A;
 
+    //mElectronP3.Print();
+    //mNeutrinoP3.Print();
+
    double d = b*b - 4*a*c;
    if (d < 0 ) {
-      Warning("ReconstructNeutrinoZ", "Problem reconstructing neutrino d: %f will be set to 0", d);
+      Warning("ReconstructNeutrinoZ", "Problem reconstructing neutrino, d=%f will be set to 0", d);
       d = 0;
    }
    double p_nu_z1  = (-b + sqrt(d) ) / 2 / a;
@@ -141,7 +143,7 @@ void WBosEvent::Streamer(TBuffer &R__b)
       //Info("Streamer", "Reading...");
       R__b.ReadClassBuffer(WBosEvent::Class(), this);
 
-      ProcessPersistent();
+      //ProcessPersistent();
       //Info("Streamer", "this: %x, mTracks.size(): %d, &mWEvent: %x, &mStJets: %x", this, mTracks.size(), mWEvent, mStJets);
    }
    else {

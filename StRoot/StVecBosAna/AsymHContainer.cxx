@@ -59,6 +59,10 @@ void AsymHContainer::BookHists()
       o[shName] = hist = new TH2I(shName.c_str(), "; Lepton P_{T}; Lepton #phi;", 10, 0, 50, 8, -M_PI, M_PI);
       hist->SetOption("colz");
 
+      shName = "hWBosonPhiVsEta_" + sDblSpinState;
+      o[shName] = hist = new TH2I(shName.c_str(), "; W Boson #eta; W Boson #phi;", 6, -6, 6, 8, -M_PI, M_PI);
+      hist->SetOption("colz");
+
       shName = "hWBosonPhiVsPt_" + sDblSpinState;
       o[shName] = hist = new TH2I(shName.c_str(), "; W Boson P_{T}; W Boson #phi;", 10, 0, 10, 8, -M_PI, M_PI);
       hist->SetOption("colz");
@@ -84,6 +88,10 @@ void AsymHContainer::BookHists()
       shName = "hLeptonPhi_PtProj_" + sSnglSpinState;
       o[shName] = hist = new TH1I(shName.c_str(), "; Lepton #phi; Events;", 8, -M_PI, M_PI);
       hist->SetOption("E1 GRIDX GRIDY");
+
+      shName = "hWBosonPhiVsEta_" + sSnglSpinState;
+      o[shName] = hist = new TH2I(shName.c_str(), "; W Boson #eta; W Boson #phi;", 6, -6, 6, 8, -M_PI, M_PI);
+      hist->SetOption("colz");
 
       shName = "hWBosonPhiVsPt_" + sSnglSpinState;
       o[shName] = hist = new TH2I(shName.c_str(), "; W Boson P_{T}; W Boson #phi;", 10, 0, 10, 8, -M_PI, M_PI);
@@ -117,6 +125,14 @@ void AsymHContainer::BookHists()
 
       shName = "hLeptonAsymAmpVsPt_" + sBeam;
       o[shName] = hist = new TH1D(shName.c_str(), "; Lepton P_{T}; Asym Amp.;", 10, 0, 50);
+      hist->SetOption("E1 GRIDX GRIDY");
+
+      shName = "hWBosonAsymVsPhiVsEta_" + sBeam;
+      o[shName] = hist = new TH2D(shName.c_str(), "; W Boson #eta; W Boson #phi;", 6, -6, 6, 8, -M_PI, M_PI);
+      hist->SetOption("colz");
+
+      shName = "hWBosonAsymAmpVsEta_" + sBeam;
+      o[shName] = hist = new TH1D(shName.c_str(), "; W Boson #eta; Asym Amp.;", 6, -6, 6);
       hist->SetOption("E1 GRIDX GRIDY");
 
       shName = "hWBosonAsymVsPhiVsPt_" + sBeam;
@@ -158,6 +174,9 @@ void AsymHContainer::Fill(ProtoEvent &ev)
 
       shName = "hWBosonPhiVsPt_" + sDblSpinState;
       ((TH2*) o[shName])->Fill(wBoson.Pt(), wBoson.Phi());
+
+      shName = "hWBosonPhiVsEta_" + sDblSpinState;
+      ((TH2*) o[shName])->Fill(wBoson.Eta(), wBoson.Phi());
    }
 }
 
@@ -179,6 +198,8 @@ void AsymHContainer::FillDerived()
       TH1* hLeptonPhi_EtaProj_sngl = (TH1*) o["hLeptonPhi_EtaProj_" + sSnglSpinState];
       TH2* hLeptonPhiVsPt_sngl     = (TH2*) o["hLeptonPhiVsPt_"     + sSnglSpinState];
       TH1* hLeptonPhi_PtProj_sngl  = (TH1*) o["hLeptonPhi_PtProj_"  + sSnglSpinState];
+      TH2* hWBosonPhiVsEta_sngl    = (TH2*) o["hWBosonPhiVsEta_"    + sSnglSpinState];
+      //TH1* hWBosonPhi_EtaProj_sngl = (TH1*) o["hWBosonPhi_EtaProj_" + sSnglSpinState];
       TH2* hWBosonPhiVsPt_sngl     = (TH2*) o["hWBosonPhiVsPt_"     + sSnglSpinState];
       TH1* hWBosonPhi_PtProj_sngl  = (TH1*) o["hWBosonPhi_PtProj_"  + sSnglSpinState];
 
@@ -190,11 +211,13 @@ void AsymHContainer::FillDerived()
 
          TH2* hLeptonPhiVsEta_dbl = (TH2*) o["hLeptonPhiVsEta_" + sDblSpinState];
          TH2* hLeptonPhiVsPt_dbl  = (TH2*) o["hLeptonPhiVsPt_"  + sDblSpinState];
+         TH2* hWBosonPhiVsEta_dbl = (TH2*) o["hWBosonPhiVsEta_" + sDblSpinState];
          TH2* hWBosonPhiVsPt_dbl  = (TH2*) o["hWBosonPhiVsPt_"  + sDblSpinState];
 
          if (dss & sss) {
             hLeptonPhiVsEta_sngl->Add(hLeptonPhiVsEta_dbl);
             hLeptonPhiVsPt_sngl->Add(hLeptonPhiVsPt_dbl);
+            hWBosonPhiVsEta_sngl->Add(hWBosonPhiVsEta_dbl);
             hWBosonPhiVsPt_sngl->Add(hWBosonPhiVsPt_dbl);
          }
       }
@@ -262,5 +285,13 @@ void AsymHContainer::PostFill()
 
       AsymCalculator::CalcAsimAsym(*hWBosonPhiVsPt_up, *hWBosonPhiVsPt_dn, *hWBosonAsymVsPhiVsPt_);
       AsymCalculator::FitAsimAsym(*hWBosonAsymVsPhiVsPt_, *hWBosonAsymAmpVsPt_);
+
+      TH2I* hWBosonPhiVsEta_up     = (TH2I*) o["hWBosonPhiVsEta_" + sSpinUp];
+      TH2I* hWBosonPhiVsEta_dn     = (TH2I*) o["hWBosonPhiVsEta_" + sSpinDn];
+      TH2D* hWBosonAsymVsPhiVsEta_ = (TH2D*) o["hWBosonAsymVsPhiVsEta_" + sBeam];
+      TH1D* hWBosonAsymAmpVsEta_   = (TH1D*) o["hWBosonAsymAmpVsEta_" + sBeam];
+
+      AsymCalculator::CalcAsimAsym(*hWBosonPhiVsEta_up, *hWBosonPhiVsEta_dn, *hWBosonAsymVsPhiVsEta_);
+      AsymCalculator::FitAsimAsym(*hWBosonAsymVsPhiVsEta_, *hWBosonAsymAmpVsEta_);
    }
 }
