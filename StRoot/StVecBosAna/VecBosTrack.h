@@ -11,7 +11,7 @@
 #include "StarClassLibrary/StPhysicalHelix.hh"
 
 #include "Globals.h"
-#include "WEventCluster.h"
+#include "VecBosCluster.h"
 #include "VecBosJet.h"
 
 

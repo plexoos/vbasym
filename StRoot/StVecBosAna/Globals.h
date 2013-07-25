@@ -7,7 +7,7 @@
 #include "StSpinPool/StJets/StJet.h"
 
 #include "Types.h"
-#include "WEventCluster.h"
+#include "VecBosCluster.h"
 
 
 enum ESpinState        {kSPIN_DOWN = -1, kSPIN_NULL = 0, kSPIN_UP = +1};

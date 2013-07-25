@@ -1,5 +1,5 @@
-#ifndef WEventCluster_h
-#define WEventCluster_h
+#ifndef VecBosCluster_h
+#define VecBosCluster_h
 
 
 #include "TLorentzVector.h"
