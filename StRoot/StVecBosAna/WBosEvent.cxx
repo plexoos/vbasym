@@ -79,7 +79,7 @@ void WBosEvent::Clear(const Option_t*)
 bool WBosEvent::PassedCutWBos(float minElePt) const
 {
    if ( HasCandidateEle() && mPtBalanceCosPhiFromTracks >= sMinNeutrinoPt &&
-        (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= minElePt)
+        mElectronP3.Pt() >= minElePt)
    {
       return true;
    }
@@ -103,7 +103,7 @@ bool WBosEvent::PassedCutWBosMinus(float minElePt) const
 bool WBosEvent::PassedCutQcdBkg(float minElePt) const
 {
    if ( HasCandidateEle() && mPtBalanceCosPhiFromTracks < sMinNeutrinoPt &&
-        (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= minElePt)
+        mElectronP3.Pt() >= minElePt)
    {
       return true;
    }

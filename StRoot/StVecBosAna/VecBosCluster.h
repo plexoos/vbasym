@@ -2,28 +2,35 @@
 #define WEventCluster_h
 
 
+#include "TLorentzVector.h"
 #include "TVector3.h"
 
 
-// info BTOW cluster
-class WeveCluster
+// Info BTOW cluster
+class VecBosCluster
 {
 public:
    float    energy;
    float    ET;
    float    adcSum;
-   int      nTower;           // with non-zero ADC>kSigPed
-   int      iEta, iPhi;       // lower-left corner of the cluster, can be negative, L2-indexing convention
-   //int      iEtaE[4], iPhiE[4]; //index of cluster towers
-   TVector3 position; // 3D ln(E) weighted sume of tower positions
+   int      nTower;       // with non-zero ADC>kSigPed
+   int      iEta, iPhi;   // lower-left corner of the cluster, can be negative, L2-indexing convention
+   TVector3 position;     // 3D ln(E) weighted sume of tower positions
 
-   WeveCluster();
-   ~WeveCluster();
+   VecBosCluster();
+   ~VecBosCluster();
 
    void clear();
    void print(int flag=0) const;
 
-   ClassDef(WeveCluster, 1);
+protected:
+
+   UShort_t       mSize;       //! size of the cluster, i.e. number of towers along each side, e.g. mSizexmSize
+   TLorentzVector mTowerBand1; //!
+   TLorentzVector mTowerBand2; //!
+   TLorentzVector mTowerBand3; //!
+
+   ClassDef(VecBosCluster, 1);
 };
 
 

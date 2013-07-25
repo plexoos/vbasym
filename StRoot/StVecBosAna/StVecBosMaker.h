@@ -46,6 +46,58 @@ class StVecBosMaker : public StMaker
    friend class St2011WlumiMaker;
    friend class StZBosMaker;
 
+public:
+
+   StVecBosMaker(const char *name = "StVecBosMaker", VecBosRootFile *vbFile = 0);
+   virtual ~StVecBosMaker() {};
+
+   virtual Int_t Init();
+   virtual Int_t Make();
+   virtual Int_t Finish();
+   virtual Int_t InitRun (int runumber);
+   virtual void  Clear(const Option_t* = "");
+   virtual Int_t FinishRun(int runumber);
+
+   VecBosEvent* GetVecBosEvent()                { return mVecBosEvent; }
+   float        GetMinBClusterEnergyIsoRatio()  { return mMinBClusterEnergyIsoRatio; }
+   float        GetNearTotEtFrac()              { return par_nearTotEtFrac; }
+   float        GetPtBalance()                  { return par_ptBalance; }
+   void         setTrigID(int l2bw, int l2ew)   { par_l2bwTrgID = l2bw; parE_l2ewTrgID = l2ew; }
+   void         setHList(TObjArray *x)          { HList    = x; }
+   void         setHListTpc(TObjArray *x)       { HListTpc = x; }
+   void         setMC(int x)                    { mIsMc = x; }
+   void         setMaxDisplayEve(int n)         { par_maxDisplEve = n; }
+   void         AttachSpinDb(StSpinDbMaker *mk) { mStSpinDbMaker = mk; }
+
+   // tree analysis
+   Int_t getNumberOfEvents() { return mTreeChain->GetEntries(); }
+
+   void setVertexCuts(float zm, int npv) { mCutVertexZ = zm; mMinNumPileupVertices = npv; }
+   void setEleTrackCuts(int nfp, int hfr, float rin, float rout, float mpt) { par_nFitPts = nfp; par_trackRin = rin;  par_trackRout = rout; }
+   void setWbosonCuts(float a, float fr2,  float bal, float etaLow, float etaHigh) {
+      par_highET = a; par_nearTotEtFrac = fr2;  par_ptBalance = bal;  mMinBTrackEta = etaLow; mMaxBTrackEta = etaHigh;
+   }
+   void setE_WbosonCuts(float a, float fr2,  float bal, float etaLow, float etaHigh) {
+      parE_highET = a; parE_nearTotEtFrac = fr2;  parE_ptBalance = bal;  mMinETrackEta = etaLow; mMaxETrackEta = etaHigh;
+   }
+   void setEmcCuts(int ksp , float madc, float clet, float fr1, float dr) {
+      par_kSigPed = ksp; par_maxADC = madc; mMinBClusterEnergy = clet;
+      mMinBClusterEnergyIsoRatio = fr1;
+   }
+   void SetEtowScale(float x) { mParETOWScale = x; }
+   void SetBtowScale(float x) { mParBTOWScale = x; }
+   void setL0AdcThresh(int x) { par_l0emulAdcThresh = x; }
+   void setL2ClusterThresh(float x) { par_l2emulClusterThresh = x; }
+   void setL2SeedThresh(float x) { par_l2emulSeedThresh = x; }
+   void setJetTreeBranch(TString jetTreeBranch, TString jetTreeBranch_noEEMC) {
+      mJetTreeBranchName         = jetTreeBranch;
+      mJetTreeBranchNameNoEndcap = jetTreeBranch_noEEMC;
+   }
+
+   void setGainsFile(char *x) {gains_file = x; use_gains_file = 1;}
+   void SetTreeName(TString x) { mTreeName = x; }
+   void setNameReweight(char* x) {nameReweight=x;}
+
 private:
   
    TStopwatch      mStopWatch;
@@ -55,8 +107,8 @@ private:
    TString         mJetTreeBranchName;
    TString         mJetTreeBranchNameNoEndcap;
    TClonesArray   *mJets;
-   WBosEvent    *mVecBosEvent;
-   TTree          *mWtree;
+   WBosEvent      *mVecBosEvent;
+   TTree          *mVecBosTree;
    TString         mTreeName;
    TFile          *mTreeFile;
    WeventDisplay  *mEventDisplay;
@@ -67,7 +119,7 @@ private:
    int             mNumAcceptedEvents;      // event counters
    int             mRunNo;
    int             nRun;
-   int             isMC;                    //0 for real data
+   int             mIsMc;                   // 0 for real data
    int             Tfirst;
    int             Tlast;
 
@@ -103,41 +155,6 @@ private:
    TString coreTitle;
    TH1F* hReweight;
    char* nameReweight;
-
-public: // to overwrite default params from .C macro
-
-   void setVertexCuts(float zm, int npv) {
-      mCutVertexZ = zm; mMinNumPileupVertices = npv;
-   }
-   void setEleTrackCuts(int nfp, int hfr, float rin, float rout, float mpt) {
-      par_nFitPts = nfp;
-      par_trackRin = rin;  par_trackRout = rout;
-   }
-   void setWbosonCuts(float a, float fr2,  float bal, float etaLow, float etaHigh) {
-      par_highET = a; par_nearTotEtFrac = fr2;  par_ptBalance = bal;  mMinBTrackEta = etaLow; mMaxBTrackEta = etaHigh;
-   }
-   void setE_WbosonCuts(float a, float fr2,  float bal, float etaLow, float etaHigh) {
-      parE_highET = a; parE_nearTotEtFrac = fr2;  parE_ptBalance = bal;  mMinETrackEta = etaLow; mMaxETrackEta = etaHigh;
-   }
-   void setEmcCuts(int ksp , float madc, float clet, float fr1, float dr) {
-      par_kSigPed = ksp; par_maxADC = madc; mMinBClusterEnergy = clet;
-      mMinBClusterEnergyIsoRatio = fr1;
-   }
-   void SetEtowScale(float x) { mParETOWScale = x; }
-   void SetBtowScale(float x) { mParBTOWScale = x; }
-   void setL0AdcThresh(int x) { par_l0emulAdcThresh = x; }
-   void setL2ClusterThresh(float x) { par_l2emulClusterThresh = x; }
-   void setL2SeedThresh(float x) { par_l2emulSeedThresh = x; }
-   void setJetTreeBranch(TString jetTreeBranch, TString jetTreeBranch_noEEMC) {
-      mJetTreeBranchName         = jetTreeBranch;
-      mJetTreeBranchNameNoEndcap = jetTreeBranch_noEEMC;
-   }
-
-   void setGainsFile(char *x) {gains_file = x; use_gains_file = 1;}
-   void SetTreeName(TString x) { mTreeName = x; }
-   void setNameReweight(char* x) {nameReweight=x;}
-
-private:
 
    // not used in the algo
    int par_DsmThres, parE_DsmThres;
@@ -197,32 +214,6 @@ private:
    void initHistos();
    void initEHistos();
    void InitGeom();
-
-public:
-
-   StVecBosMaker(const char *name = "StVecBosMaker", VecBosRootFile *vbFile = 0);
-   virtual ~StVecBosMaker() {};
-
-   virtual Int_t Init();
-   virtual Int_t Make();
-   virtual Int_t Finish();
-   virtual Int_t InitRun (int runumber);
-   virtual void  Clear(const Option_t* = "");
-   virtual Int_t FinishRun(int runumber);
-
-   VecBosEvent* GetVecBosEvent()                { return mVecBosEvent; }
-   float        GetMinBClusterEnergyIsoRatio()  { return mMinBClusterEnergyIsoRatio; }
-   float        GetNearTotEtFrac()              { return par_nearTotEtFrac; }
-   float        GetPtBalance()                  { return par_ptBalance; }
-   void         setTrigID(int l2bw, int l2ew)   { par_l2bwTrgID = l2bw; parE_l2ewTrgID = l2ew; }
-   void         setHList(TObjArray *x)          { HList    = x; }
-   void         setHListTpc(TObjArray *x)       { HListTpc = x; }
-   void         setMC(int x)                    { isMC = x; }
-   void         setMaxDisplayEve(int n)         { par_maxDisplEve = n; }
-   void         AttachSpinDb(StSpinDbMaker *mk) { mStSpinDbMaker = mk; }
-
-   // tree analysis
-   Int_t getNumberOfEvents() { return mTreeChain->GetEntries(); }
 
 protected:
 

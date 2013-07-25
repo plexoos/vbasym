@@ -1,11 +1,12 @@
 #ifndef VecBosEvent_h
 #define VecBosEvent_h
 
-#include "TVector3.h"
+#include "TBuffer.h"
 #include "TH1.h"
 #include "TLorentzVector.h"
-#include "TBuffer.h"
+#include "TVector3.h"
 
+#include "StMuDSTMaker/COMMON/StMuDstMaker.h"
 #include "StMuDSTMaker/COMMON/StMuDst.h"
 #include "StMuDSTMaker/COMMON/StMuTrack.h"
 #include "StMuDSTMaker/COMMON/StMuPrimaryVertex.h"
@@ -112,7 +113,7 @@ public:
    VecBosEvent();
    ~VecBosEvent();
 
-   void           SetStMuDst(StMuDst *stMuDst) { mStMuDst = stMuDst; }
+   void           InitUsing(StMuDstMaker* stMuDstMaker);
    VecBosVertex  *AddVertex(StMuPrimaryVertex &stMuVertex);
    void           AddVertex(VecBosVertex *vbVertex);
    void           AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex = 0);
@@ -151,18 +152,17 @@ public:
    virtual void   Process();
    virtual void   ProcessPersistent();
    void           ProcessMC();
-   void           MCanalysis();
    bool           IsRecoilJet(VecBosJet *vbJet) const;
    bool           IsRecoilJetWithZVertexCut(VecBosJet *vbJet) const;
    virtual void   Clear(const Option_t* opt="");
    virtual void   Print(const Option_t* opt="") const;
-   void           getGmt_day_hour(int &yyyymmdd, int &hhmmss) const;
+   void           GetGmt_day_hour(int &yyyymmdd, int &hhmmss) const;
 
-   WeveCluster    FindMaxBTow2x2(int iEta, int iPhi, float zVert);
-   WeveCluster    FindMaxETow2x1(int iEta, int iPhi, float zVert);
-   WeveCluster    FindMaxETow2x2(int iEta, int iPhi, float zVert);
-   WeveCluster    SumBTowPatch  (int iEta, int iPhi, int Leta, int  Lphi, float zVert);
-   WeveCluster    SumETowPatch  (int iEta, int iPhi, int Leta, int  Lphi, float zVert);
+   VecBosCluster    FindMaxBTow2x2(int iEta, int iPhi, float zVert);
+   VecBosCluster    FindMaxETow2x1(int iEta, int iPhi, float zVert);
+   VecBosCluster    FindMaxETow2x2(int iEta, int iPhi, float zVert);
+   VecBosCluster    SumBTowPatch  (int iEta, int iPhi, int Leta, int  Lphi, float zVert);
+   VecBosCluster    SumETowPatch  (int iEta, int iPhi, int Leta, int  Lphi, float zVert);
    TVector3       CalcP3InConeBTow(VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
    TVector3       CalcP3InConeETow(VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
    TVector3       CalcP3InConeTpc (VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
@@ -171,7 +171,6 @@ protected:
 
    void     ProcessJets();
    void     CalcRecoilFromTracks();
-   void     CalcRecoilFromTracks2();
 
    StMuDst* mStMuDst;          //!
 

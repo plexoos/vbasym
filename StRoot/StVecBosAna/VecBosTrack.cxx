@@ -28,6 +28,7 @@ VecBosTrack::VecBosTrack() : TObject(),
    mVertex(0),
    mVertexId(-1),
    mJet(0),
+   mCluster1x1(),
    mCluster2x2(),
    mCluster4x4(),
    mP3AtDca(),
@@ -374,10 +375,7 @@ bool VecBosTrack::ExtendTrack2Endcap()
 bool VecBosTrack::MatchTrack2BarrelCluster()
 {
    //if (mMatchedTower.id <= 0) return; // skip endcap towers
-
    //printf("******* matchCluster() nVert=%d\n",mVecBosEvent->mVertices.size());
-   float nomBTowRadius = gBTowGeom->Radius();
-
    //float trackPT = mStMuTrack->momentum().perp();
 
    // Choose 2x2 cluster with maximum ET
@@ -436,8 +434,7 @@ bool VecBosTrack::MatchTrack2BarrelCluster()
 
 
 /**
- * Calculates the energy in the cone around the track+cluster (electron
- * candidate).
+ * Calculates the energy in the cone around the track.
  */
 void VecBosTrack::CalcEnergyInCones()
 {
@@ -448,7 +445,7 @@ void VecBosTrack::CalcEnergyInCones()
 
    mP3InNearConeTow    = mP3InNearConeBTow + mP3InNearConeETow;
    mP3InNearCone       = mP3InNearConeBTow + mP3InNearConeETow + mP3InNearConeTpc; // XXX:ds: double counting? yes, see correction below
-   mP3InNearConeNoETow = mP3InNearConeBTow                     + mP3InNearConeTpc;
+   mP3InNearConeNoETow = mP3InNearConeBTow + mP3InNearConeTpc;
 
    mP3InOppsConeBTow   = mEvent->CalcP3InConeBTow(this, 1, -1); // '1'=1D cone
    mP3InOppsConeETow   = mEvent->CalcP3InConeETow(this, 1, -1); // '1'=1D cone

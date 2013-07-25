@@ -46,8 +46,9 @@ public:
    const VecBosVertex     *mVertex;            //! pointer to mother vertex
    Short_t                 mVertexId;          // mId of the mother vertex
    VecBosJet              *mJet;               //! pointer to mother/closest jet if exists
-   WeveCluster             mCluster2x2;
-   WeveCluster             mCluster4x4;
+   VecBosCluster             mCluster1x1;        //!
+   VecBosCluster             mCluster2x2;
+   VecBosCluster             mCluster4x4;
    TVector3                mP3AtDca;           // primary momentum vector
    TVector3                mP3AtBTow;          // momentum vector
    TVector3                mCoorAtBTow;        //

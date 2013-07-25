@@ -64,6 +64,22 @@ VecBosEvent::~VecBosEvent()
 }
 
 
+void VecBosEvent::InitUsing(StMuDstMaker* stMuDstMaker)
+{
+   id      = stMuDstMaker->muDst()->event()->eventId();
+   runNo   = stMuDstMaker->muDst()->event()->runId();
+   time    = stMuDstMaker->muDst()->event()->eventInfo().time();
+   zdcRate = stMuDstMaker->muDst()->event()->runInfo().zdcCoincidenceRate();
+
+   mStMuDst = stMuDstMaker->muDst();
+
+   mMuDstNumVertices = mStMuDst->primaryVertices()->GetEntriesFast();
+   mMuDstNumGTracks  = mStMuDst->globalTracks()->GetEntriesFast();
+   mMuDstNumPTracks  = mStMuDst->primaryTracks()->GetEntriesFast();
+   mMuDstNumOTracks  = mStMuDst->otherTracks()->GetEntriesFast();
+}
+
+
 VecBosVertex *VecBosEvent::AddVertex(StMuPrimaryVertex &stMuVertex)
 {
    VecBosVertex *vbVertex = new VecBosVertex(stMuVertex);
@@ -170,7 +186,7 @@ TVector3 VecBosEvent::CalcTrackRecoilTpcNeutralsCorrected() const
 bool VecBosEvent::PassedCutExceptPtBal() const
 {
    if ( mTracksCandidate.size() > 0 &&
-         (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= VecBosTrack::sMinCandidateTrackClusterE) {
+        (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= VecBosTrack::sMinCandidateTrackClusterE) {
       return true;
    }
 
@@ -182,7 +198,7 @@ bool VecBosEvent::PassedCutFinal() const
 {
    //if (mTracksCandidate.size() > 0 && GetMissingEnergy().Pt() > 18
    if ( mTracksCandidate.size() > 0 && mPtBalanceCosPhiFromTracks > 18 &&
-         (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= VecBosTrack::sMinCandidateTrackClusterE) {
+        (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= VecBosTrack::sMinCandidateTrackClusterE) {
       return true;
    }
 
@@ -192,11 +208,6 @@ bool VecBosEvent::PassedCutFinal() const
 
 void VecBosEvent::Process()
 {
-   mMuDstNumVertices = mStMuDst->primaryVertices()->GetEntriesFast();
-   mMuDstNumGTracks  = mStMuDst->globalTracks()->GetEntriesFast();
-   mMuDstNumPTracks  = mStMuDst->primaryTracks()->GetEntriesFast();
-   mMuDstNumOTracks  = mStMuDst->otherTracks()->GetEntriesFast();
-
    UShort_t vertexId = 0;
 
    VecBosVertexPtrSetIter iVertex = mVertices.begin();
@@ -374,12 +385,12 @@ void VecBosEvent::CalcRecoilFromTracks()
       //utils::PrintTLorentzVector(*stJet);
 
       if ( track.mVertex != trackCandidate.mVertex ) {
-         //Info("CalcRecoilFromTracks2", "track.mVertex != trackCandidate.mVertex");
+         //Info("CalcRecoilFromTracks", "track.mVertex != trackCandidate.mVertex");
          continue;
       }
 
       if ( track == trackCandidate ) {
-         //Info("CalcRecoilFromTracks2", "track, %x == trackCandidate, %x", track, trackCandidate);
+         //Info("CalcRecoilFromTracks", "track, %x == trackCandidate, %x", track, trackCandidate);
          continue;
       }
 
@@ -466,32 +477,6 @@ void VecBosEvent::CalcRecoilFromTracks()
 }
 
 
-void VecBosEvent::MCanalysis()
-{
-   /*
-      VecBosTrackPtrVecIter iTrack = mTracksCandidate.begin();
-      for (; iTrack !=  mTracksCandidate.end(); ++iTrack)
-      {
-
-        //if ((*iTrack)->IsGood() == false) continue;      // Track has a good vertex
-        //if ((*iTrack)->IsIsolated() == false) continue;   // Track is not the electro
-        //if(iTrack->HasCluster() == false) continue;  // Track points to a cluster
-
-        TVector3 prP3 = (*iTrack)->mP3AtDca;
-         if (prP3.Pt() > 27)
-         {
-           //Full W cuts applied at this point
-
-           //hadronic recoil and correlations with W from pythia
-           //TVector3 hadronicPt(T.hadronicRecoil.X(), T.hadronicRecoil.Y(), 0); //transverse momentum vector
-
-           //mPtKfactor = mWEvent->mRecoilP4.Pt()/mHadronicRecoilPt;
-         }
-      }
-   */
-}
-
-
 /** If there is no track candidate than there is no recoil. */
 bool VecBosEvent::IsRecoilJet(VecBosJet *vbJet) const
 {
@@ -533,19 +518,19 @@ bool VecBosEvent::IsRecoilJetWithZVertexCut(VecBosJet *vbJet) const
  * For a given eta-phi bin considers all combinations of 2x2 bin clusters around it
  * and returns one with the maximum ET.
  */
-WeveCluster VecBosEvent::FindMaxBTow2x2(int etaBin, int phiBin, float zVert)
+VecBosCluster VecBosEvent::FindMaxBTow2x2(int etaBin, int phiBin, float zVert)
 {
    //Info("FindMaxBTow2x2(int etaBin, int phiBin, float zVert)", "seed etaBin=%d phiBin=%d \n",etaBin, phiBin);
    const int L = 2; // size of the summed square
 
-   WeveCluster maxCL;
+   VecBosCluster maxCL;
 
    // Just 4 cases of 2x2 clusters
    float maxET = 0;
 
    for (int iEta = etaBin - 1; iEta <= etaBin; iEta++) {
       for (int iPhi = phiBin - 1; iPhi <= phiBin; iPhi++) {
-         WeveCluster cluster = SumBTowPatch(iEta, iPhi, L, L, zVert);
+         VecBosCluster cluster = SumBTowPatch(iEta, iPhi, L, L, zVert);
          if (maxET > cluster.ET) continue;
          maxET = cluster.ET;
          maxCL = cluster;
@@ -558,17 +543,17 @@ WeveCluster VecBosEvent::FindMaxBTow2x2(int etaBin, int phiBin, float zVert)
 }
 
 
-WeveCluster VecBosEvent::FindMaxETow2x1(int iEta, int iPhi, float zVert)
+VecBosCluster VecBosEvent::FindMaxETow2x1(int iEta, int iPhi, float zVert)
 {
    //printf("   FindMaxETow2x1  seed iEta=%d iPhi=%d \n",iEta, iPhi);
 
-   WeveCluster maxCL;
+   VecBosCluster maxCL;
    // just 4 cases of 2x1 clusters
    float maxET = 0;
    int I0 = iEta - 1;
    int J0 = iPhi - 1;
    for (int I = I0; I <= I0 + 1; I++) { // try along eta dir
-      WeveCluster cluster = SumETowPatch(I, iPhi, 2, 1, zVert);
+      VecBosCluster cluster = SumETowPatch(I, iPhi, 2, 1, zVert);
       if (maxET > cluster.ET) continue;
       maxET = cluster.ET;
       maxCL = cluster;
@@ -576,7 +561,7 @@ WeveCluster VecBosEvent::FindMaxETow2x1(int iEta, int iPhi, float zVert)
    }
 
    for (int J = J0; J <= J0 + 1; J++) { // try along phi dir
-      WeveCluster cluster = SumETowPatch(iEta, J, 1, 2, zVert);
+      VecBosCluster cluster = SumETowPatch(iEta, J, 1, 2, zVert);
       if (maxET > cluster.ET) continue;
       maxET = cluster.ET;
       maxCL = cluster;
@@ -587,19 +572,19 @@ WeveCluster VecBosEvent::FindMaxETow2x1(int iEta, int iPhi, float zVert)
 }
 
 
-WeveCluster VecBosEvent::FindMaxETow2x2(int iEta, int iPhi, float zVert)
+VecBosCluster VecBosEvent::FindMaxETow2x2(int iEta, int iPhi, float zVert)
 {
    //printf("FindMaxETow2x2  seed iEta=%d iPhi=%d \n",iEta, iPhi);
    const int L = 2; // size of the summed square
 
-   WeveCluster maxCL;
+   VecBosCluster maxCL;
    // just 4 cases of 2x1 clusters
    float maxET = 0;
    int I0 = iEta - 1;
    int J0 = iPhi - 1;
    for (int I = I0; I <= I0 + 1; I++) {
       for (int J = J0; J <= J0 + 1; J++) {
-         WeveCluster cluster = SumETowPatch(I, J, L, L, zVert);
+         VecBosCluster cluster = SumETowPatch(I, J, L, L, zVert);
          if (maxET > cluster.ET) continue;
          maxET = cluster.ET;
          maxCL = cluster;
@@ -612,10 +597,10 @@ WeveCluster VecBosEvent::FindMaxETow2x2(int iEta, int iPhi, float zVert)
 }
 
 
-WeveCluster VecBosEvent::SumETowPatch(int iEta, int iPhi, int Leta, int  Lphi, float zVert)
+VecBosCluster VecBosEvent::SumETowPatch(int iEta, int iPhi, int Leta, int  Lphi, float zVert)
 {
    //printf("eveID=%d etowPatch seed iEta=%d[+%d] iPhi=%d[+%d] zVert=%.0f\n", id, iEta, Leta, iPhi, Lphi, zVert);
-   WeveCluster cluster; // object is small, not to much overhead in creating it
+   VecBosCluster cluster; // object is small, not to much overhead in creating it
    cluster.iEta = iEta;
    cluster.iPhi = iPhi;
    TVector3 R;
@@ -658,27 +643,29 @@ WeveCluster VecBosEvent::SumETowPatch(int iEta, int iPhi, int Leta, int  Lphi, f
 }
 
 
-WeveCluster VecBosEvent::SumBTowPatch(int etaBin, int phiBin, int etaWidth, int  phiWidth, float zVert)
+VecBosCluster VecBosEvent::SumBTowPatch(int etaBin, int phiBin, int etaWidth, int  phiWidth, float zVert)
 {
    //printf("eveID=%d btow Square seed etaBin=%d[+%d] phiBin=%d[+%d] zVert=%.0f\n", id, etaBin, etaWidth, phiBin, phiWidth, zVert);
-   WeveCluster cluster; // object is small, not to much overhead in creating it
+   VecBosCluster cluster; // object is small, not to much overhead in creating it
    cluster.iEta = etaBin;
    cluster.iPhi = phiBin;
    TVector3 cluCoord;
    double sumW          = 0;
    float  nomBTowRadius = gBTowGeom->Radius();
 
-   for (int iEta = etaBin; iEta < etaBin + etaWidth; iEta++) {
+   for (int iEta = etaBin; iEta < etaBin + etaWidth; iEta++)
+   {
       // trim in eta-direction
       if (iEta < 0 || iEta >= mxBTetaBin) continue;
 
-      for (int iPhi = phiBin; iPhi < phiBin + phiWidth; iPhi++) {
+      for (int iPhi = phiBin; iPhi < phiBin + phiWidth; iPhi++)
+      {
          // wrap up in the phi-direction
          int   iPhi_p  = (iPhi + mxBTphiBin) % mxBTphiBin;  // keep it always positive
          int   towerId = gMapBTowEtaPhiBin2Id[ iEta + iPhi_p * mxBTetaBin];
          float energy  = bemc.eneTile[kBTow][towerId - 1];
 
-         //if (L<5) printf("n=%2d  iEta=%d iPhi_p=%d\n",cluster.nTower,iEta,iPhi_p);
+         //if (L<5) printf("n=%2d  iEta=%d iPhi_p=%d\n", cluster.nTower,iEta,iPhi_p);
 
          if (energy <= 0) continue; // skip towers w/o energy
 
@@ -728,7 +715,8 @@ TVector3 VecBosEvent::CalcP3InConeBTow(VecBosTrack *vbTrack, UShort_t cone1d2d, 
    TVector3 trackP3 = vbTrack->mP3AtDca * scale;
 
    // process BTOW hits
-   for (int iBTow = 0; iBTow < mxBtow; iBTow++) {
+   for (int iBTow = 0; iBTow < mxBtow; iBTow++)
+   {
       float energy = bemc.eneTile[kBTow][iBTow];
       if (energy <= 0) continue;
 
@@ -754,7 +742,6 @@ TVector3 VecBosEvent::CalcP3InConeBTow(VecBosTrack *vbTrack, UShort_t cone1d2d, 
  */
 TVector3 VecBosEvent::CalcP3InConeETow(VecBosTrack *vbTrack, UShort_t cone1d2d, Float_t scale)
 {
-
    TVector3 totalP3InCone;
 
    if (!vbTrack) return totalP3InCone;
@@ -794,7 +781,8 @@ TVector3 VecBosEvent::CalcP3InConeTpc(VecBosTrack *vbTrack, UShort_t cone1d2d, F
    TVector3 trackP3 = vbTrack->mP3AtDca * scale;
 
    VecBosTrackPtrSetIter iTrack = mTracks.begin();
-   for ( ; iTrack != mTracks.end(); ++iTrack) {
+   for ( ; iTrack != mTracks.end(); ++iTrack)
+   {
       VecBosTrack &track = **iTrack;
       // Skip tracks from different vertices XXX:ds: Later can consider
       // vertices in some close proximity to this one
@@ -961,7 +949,7 @@ void VecBosEvent::Print(const Option_t* opt) const
           runNo, id, l2bitET, l2bitRnd, bx7, bx48, bxStar7, bxStar48, mSpinPattern4Bits);
 
    int  yyyymmdd,  hhmmss;
-   getGmt_day_hour( yyyymmdd,  hhmmss);
+   GetGmt_day_hour( yyyymmdd,  hhmmss);
    printf("Event time is: day=%08d, hour=%06d (GMT)\n", yyyymmdd, hhmmss);
 
    Info("Print", "GetNumJets(): %d", GetNumJets());
@@ -996,9 +984,9 @@ void VecBosEvent::Print(const Option_t* opt) const
 }
 
 
-void VecBosEvent::getGmt_day_hour(int &yyyymmdd, int &hhmmss) const
+void VecBosEvent::GetGmt_day_hour(int &yyyymmdd, int &hhmmss) const
 {
-   time_t rawtime = this->time;
+   time_t rawtime = time;
    struct tm *timeinfo = gmtime( &rawtime );
    char buffer [80];
    strftime (buffer, 80, "%k%M%S", timeinfo);

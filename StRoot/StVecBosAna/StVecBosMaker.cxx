@@ -49,8 +49,9 @@ ClassImp(StVecBosMaker)
 StVecBosMaker::StVecBosMaker(const char *name, VecBosRootFile *vbFile): StMaker(name),
    mStopWatch(), mStMuDstMaker(0), mStJetReader(0), mVecBosRootFile(vbFile),
    mJetTreeBranchName(), mJetTreeBranchNameNoEndcap(),
-   mJets(0), mVecBosEvent(0), mWtree(0),
+   mJets(0), mVecBosEvent(0), mVecBosTree(0),
    mNumInputEvents(0), mNumTrigEvents(0), mNumAcceptedEvents(0),
+   mRunNo(0), nRun(0), mIsMc(0),
    Tfirst(numeric_limits<int>::max()), Tlast(numeric_limits<int>::min()),
    par_l2bwTrgID(0), parE_l2ewTrgID(0),
    mParETOWScale(1.0), mParBTOWScale(1.0)   // for old the Endcap geometr you need ~1.3
@@ -61,7 +62,7 @@ StVecBosMaker::StVecBosMaker(const char *name, VecBosRootFile *vbFile): StMaker(
 
    if (!mStMuDstMaker) { // load tree if no MuDst
       Info("StVecBosMaker", "MuDst maker is not defined. Creating W tree");
-      mTreeChain = new TChain("mWtree", "W candidate events");
+      mTreeChain = new TChain("mVecBosTree", "W candidate events");
       index = 0;
    }
 
@@ -127,8 +128,6 @@ StVecBosMaker::StVecBosMaker(const char *name, VecBosRootFile *vbFile): StMaker(
    parE_nSmdStrip               = 20;
    parE_highET                  = 25.;  // (GeV), cut-off for final Endcap W-cluster
 
-   mRunNo                       = 0;
-   nRun                         = 0;
    hbxIdeal                     = 0;
 
    // irrelevant for W analysis
@@ -164,7 +163,7 @@ Int_t StVecBosMaker::Init()
 
    mEventDisplay = new WeventDisplay(this, par_maxDisplEve);
 
-   if (isMC) { // load vertex reweighting histo
+   if (mIsMc) { // load vertex reweighting histo
       // TString filename="/star/u/stevens4/wAnalysis/efficXsec/zVertReweight.root";
       //TString filename="/star/u/fazio/offline/users/fazio/vbasym/zVertReweight.root";
       //TFile* reweightFile = new TFile(filename);
@@ -179,11 +178,11 @@ Int_t StVecBosMaker::Init()
       mTreeFile = new TFile(mTreeName, "recreate");
       mTreeFile->cd();
 
-      mWtree = new TTree("t", "mWtree");
+      mVecBosTree = new TTree("t", "mVecBosTree");
       mVecBosEvent = new WBosEvent();
-      mWtree->Branch("e", "WBosEvent", &mVecBosEvent, 128000, 0); // splitlevel=0. very important for custom streamers
-      //mWtree->Branch("e", "WBosEvent", &mVecBosEvent, 128000, 1); // splitlevel=0. very important for custom streamers
-      //mWtree->Branch("e", "WBosEvent", &mVecBosEvent); // splitlevel=0. very important for custom streamers
+      mVecBosTree->Branch("e", "WBosEvent", &mVecBosEvent, 128000, 0); // splitlevel=0. very important for custom streamers
+      //mVecBosTree->Branch("e", "WBosEvent", &mVecBosEvent, 128000, 1); // splitlevel=0. very important for custom streamers
+      //mVecBosTree->Branch("e", "WBosEvent", &mVecBosEvent); // splitlevel=0. very important for custom streamers
    }
 
    assert(HList);
@@ -200,7 +199,7 @@ Int_t StVecBosMaker::InitRun(int runNo)
 {
    Info("InitRun", "Called for run %d", runNo);
 
-   //if (!isMC) assert(mRunNo == 0); // to prevent run merging - it was not tested
+   //if (!mIsMc) assert(mRunNo == 0); // to prevent run merging - it was not tested
 
    if (mStMuDstMaker) {
       mBarrelTables->loadTables(this);
@@ -212,12 +211,12 @@ Int_t StVecBosMaker::InitRun(int runNo)
 
    // barrel algo params
    //LOG_INFO << Form("::InitRun(%d) %s done\n" \
-   //   "Barrel W-algo params: trigID L2BW=%d isMC=%d\n" \
+   //   "Barrel W-algo params: trigID L2BW=%d mIsMc=%d\n" \
    //   "TPC: nPileupVert>%d, vertex |Z|<%.1fcm, primEleTrack: nFit>%d, hitFrac>%.2f Rin<%.1fcm, Rout>%.1fcm, PT>%.1fGeV/c\n" \
    //   "BTOW ADC: kSigPed=%d AdcThr>%d maxAdc>%.0f clustET>%.1f GeV  ET2x2/ET4x4>%0.2f  ET2x2/mP3InNearCone.Pt()>%0.2f\n" \
    //   "dist(track-clust)<%.1fcm, nearDelR<%.1f\n" \
    //   "W selection highET>%.1f awayDelPhi<%.1frad  ptBalance>%.1fGeV  %.1f<leptonEta<%.1f ",
-   //   mRunNo, coreTitle.Data(), par_l2bwTrgID, isMC,
+   //   mRunNo, coreTitle.Data(), par_l2bwTrgID, mIsMc,
    //   mMinNumPileupVertices, mCutVertexZ,
    //   par_nFitPts, par_trackRin,  par_trackRout, mVecBosEvent->sMinBTrackPt,
    //   par_kSigPed, par_AdcThres, par_maxADC, mMinBClusterEnergy, mMinBClusterEnergyIsoRatio, par_nearTotEtFrac,
@@ -227,12 +226,12 @@ Int_t StVecBosMaker::InitRun(int runNo)
 
    // endcap algo params
    //cout << Form("\n" \
-   //   "Endcap W-algo params: trigID: L2EW=%d isMC=%d\n" \
+   //   "Endcap W-algo params: trigID: L2EW=%d mIsMc=%d\n" \
    //   "TPC: nPileupVert>%d, vertex |Z|<%.1fcm, primEleTrack: nFit>%d, hitFrac>%.2f Rin<%.1fcm, Rout>%.1fcm, PT>%.1fGeV/c\n" \
    //   "ETOW ADC: kSigPed=%d AdcThr>%d maxAdc>%.0f clustET>%.1f GeV  ET2x1/ET4x4>%0.2f  ET2x1/mP3InNearCone.Pt()>%0.2f\n" \
    //   "dist(track-clust)<%.1fcm, nearDelR<%.1f\n" \
    //   "W selection highET>%.1f awayDelPhi<%.1frad  ptBalance>%.1fGeV ",
-   //   parE_l2ewTrgID, isMC,
+   //   parE_l2ewTrgID, mIsMc,
    //   mMinNumPileupVertices, mCutVertexZ,
    //   parE_nFitPts, parE_nHitFrac, parE_trackRin, parE_trackRout, mMinETrackPt,
    //   par_kSigPed, par_AdcThres, par_maxADC, parE_clustET, mMinEClusterEnergyIsoRatio, parE_nearTotEtFrac,
@@ -364,17 +363,12 @@ Int_t StVecBosMaker::Make()
       return kStOK;
    }
 
-   mVecBosEvent->id      = mStMuDstMaker->muDst()->event()->eventId();
-   mVecBosEvent->runNo   = mStMuDstMaker->muDst()->event()->runId();
-   mVecBosEvent->time    = mStMuDstMaker->muDst()->event()->eventInfo().time();
-   mVecBosEvent->zdcRate = mStMuDstMaker->muDst()->event()->runInfo().zdcCoincidenceRate();
+   mVecBosEvent->InitUsing(mStMuDstMaker);
 
-   mVecBosEvent->SetStMuDst(mStMuDstMaker->muDst());
+   int time = mVecBosEvent->time;
 
-   int T = mVecBosEvent->time;
-
-   Tlast  = (Tlast  < T) ? T : Tlast;
-   Tfirst = (Tfirst > T) ? T : Tfirst;
+   Tlast  = (Tlast  < time) ? time : Tlast;
+   Tfirst = (Tfirst > time) ? time : Tfirst;
 
    const char *afile = mStMuDstMaker->GetFile();
 
@@ -401,7 +395,6 @@ Int_t StVecBosMaker::Make()
    // Skip entire event if no valid trig ID
    if ( btrig != 0 && etrig != 0 ) {
       Info("Make()", "No trigger bit in neither BTOW nor ETOW. Skipping event...");
-      //mWtree->Fill();
       mStopWatch.Stop();
       return kStOK;
    }
@@ -416,11 +409,11 @@ Int_t StVecBosMaker::Make()
    // Save all vertices from MuDst into event. Add tracks in the event. See the
    // function for the cuts imposed on the track quality
    ReadMuDstVerticesTracks();
-   ReadMuDstJets();   // Get input jet info
+   ReadMuDstJets(); // Get input jet info
 
    mVecBosEvent->Process();
 
-   if (isMC) {
+   if (mIsMc) {
       mVecBosEvent->ProcessMC();   
    }
 
@@ -429,22 +422,18 @@ Int_t StVecBosMaker::Make()
    // Restart stopwatch
    mStopWatch.Continue();
 
-   //mVecBosRootFile->Fill(*mVecBosEvent);
    mVecBosEvent->SetCpuTimeHistFill( mStopWatch.CpuTime() );
 
    if ( !mVecBosEvent->HasIsolatedTrack() ) {
       return kStOK;
    }
 
-   if (!isMC) { 
+   if (!mIsMc) { 
       //m2011WlumiMaker = new St2011WlumiMaker(); 
    }
 
    // Write event to tree
-   mWtree->Fill();
-
-   //if (mVecBosEvent->HasGoodVertex())
-   //   mVecBosRootFile->Fill(*mVecBosEvent, kCUT_VERTICES_GOOD);
+   mVecBosTree->Fill();
 
    //XXX:ds: if (mVecBosEvent->GetNumVertices())
    //XXX:ds:    FillTowHit(true);  // fill 2D tower "hit" histos for vertex found and L2BW trigger (beam background analysis, remove any time JS)
@@ -579,7 +568,7 @@ void StVecBosMaker::FillNormHists()
          float phiF = gBCalTowerCoords[i].Phi();
 
          ConvertEtaPhi2Bins(etaF, phiF, ieta, iphi);
-         WeveCluster c = mVecBosEvent->FindMaxBTow2x2(ieta, iphi, mVecBosEvent->mVertices[0].z);
+         VecBosCluster c = mVecBosEvent->FindMaxBTow2x2(ieta, iphi, mVecBosEvent->mVertices[0].z);
 
          if (c.ET > maxBtowET) maxBtowET = c.ET;
       }
@@ -597,7 +586,7 @@ void StVecBosMaker::FillNormHists()
          for (int isub = 0; isub < mxEtowSub; isub++) {
             for (int ieta = 0; ieta < mxEtowEta; ieta++) {
                if (mVecBosEvent->etow.stat[isec * mxEtowSub + isub][ieta] == 0) {
-                  WeveCluster c = SumETowPatch(ieta, isec * mxEtowSub + isub, 1, 1, mVecBosEvent->mVertices[0].z);
+                  VecBosCluster c = SumETowPatch(ieta, isec * mxEtowSub + isub, 1, 1, mVecBosEvent->mVertices[0].z);
 
                   if (c.ET > maxEtowET) maxEtowET = c.ET;
                }
@@ -837,7 +826,7 @@ int StVecBosMaker::ReadMuDstETOW()
 // Returns non-zero on abort
 int StVecBosMaker::ReadMuDstBarrelTrig()
 {
-   if (isMC) {
+   if (mIsMc) {
       // When the trigger emulator is ready, this should hook into that
       // instead of the two functions used below.  For now, check that it passes both
       // L0 and L2, and set the l2bitET flag to true if so.
@@ -1005,7 +994,7 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
 // return non-zero on abort
 int StVecBosMaker::ReadMuDstEndcapTrig()
 {
-   if (isMC) {
+   if (mIsMc) {
       if (mVecBosEvent->etow.maxAdc < 10. / 60.*4096)
          return -1; //L2 is HT
       hE[0]->Fill("L2ewET", 1.);
@@ -1147,7 +1136,7 @@ void StVecBosMaker::ReadMuDstBSMD()
          mBarrelTables->getPedestal(iEP, stripId, capID, pedRes, sigPed);
          mBarrelTables->getCalib(iEP, stripId, 1, gain);
 
-         if (isMC) { // overwrite it based on genat DE & private calibration
+         if (mIsMc) { // overwrite it based on genat DE & private calibration
             float par_bsmdAbsGain = 6e6; // tmp arbitrary absolute calib of bsmd, was 3e6
             float  de = hit->getEnergy();// Geant energy deposit (GeV)
             adc = de * par_bsmdAbsGain;
@@ -1679,7 +1668,7 @@ bool StVecBosMaker::passes_L2()
       float phiF = gBCalTowerCoords[i].Phi();
 
       ConvertEtaPhi2Bins(etaF, phiF, ieta, iphi);
-      WeveCluster c = mVecBosEvent->FindMaxBTow2x2(ieta, iphi, 0);
+      VecBosCluster c = mVecBosEvent->FindMaxBTow2x2(ieta, iphi, 0);
 
       if (c.ET > par_l2emulClusterThresh) return true;
    }

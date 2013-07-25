@@ -2,21 +2,27 @@
 #include "WEventCluster.h"
 
 
-WeveCluster::WeveCluster() { clear(); }
+VecBosCluster::VecBosCluster() :
+   energy(0), ET(0), adcSum(0), nTower(0),
+   iEta(0), iPhi(0), position(),
+   mTowerBand1(), mTowerBand2(), mTowerBand3()
+{
+   clear();
+}
 
 
-WeveCluster::~WeveCluster()
+VecBosCluster::~VecBosCluster()
 { }
 
 
-void WeveCluster::print(int flag) const
+void VecBosCluster::print(int flag) const
 {
    printf("   Cluster ET=%.1f E=%.1f GeV, sumAdc=%.0f nTw=%d iEta=%d, iPhi=%d XYZ(%.0f,%.0f,%.0f)cm\n",
       ET, energy, adcSum, nTower, iEta, iPhi, position.x(), position.y(), position.z());
 }
 
 
-void WeveCluster::clear()
+void VecBosCluster::clear()
 {
    position = TVector3(0, 0, 0);
    ET = energy = adcSum = 0;

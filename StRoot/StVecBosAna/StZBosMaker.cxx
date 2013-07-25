@@ -51,7 +51,7 @@ Int_t StZBosMaker::Make()
 void StZBosMaker::printJan(VecBosTrack *T)
 {
    WevePointTower poiTw = T->mMatchedTower;
-   WeveCluster cluster  = T->mCluster2x2;
+   VecBosCluster cluster  = T->mCluster2x2;
 
    int ibp    = kBTow;
    int id     = poiTw.id;
@@ -315,12 +315,12 @@ void StZBosMaker::FindZBosEndcap()
 
          // 2) use highest ET endcap mCluster2x2 with no track requirement
          float maxET = 0;
-         WeveCluster maxCluster;
+         VecBosCluster maxCluster;
 
          for (int iEta = 0; iEta < 12; iEta++) { //loop over eta bins
             for (int iPhi = 0; iPhi < 60; iPhi++) { //loop over phi bins
 
-               WeveCluster eclust = vecBosEvent->FindMaxETow2x2(iEta, iPhi, V.z);
+               VecBosCluster eclust = vecBosEvent->FindMaxETow2x2(iEta, iPhi, V.z);
                if (eclust.ET < par_clusterEtZ) continue;
                if (maxET > eclust.ET) continue;
                else {
@@ -333,7 +333,7 @@ void StZBosMaker::FindZBosEndcap()
          if (maxCluster.ET <= 1.0) continue; //remove low E clusters
 
          // Apply cuts to max ETOW cluster and isolation sums
-         WeveCluster mCluster4x4 = vecBosEvent->SumETowPatch(maxCluster.iEta-1, maxCluster.iPhi-1, 4, 4, V.z);
+         VecBosCluster mCluster4x4 = vecBosEvent->SumETowPatch(maxCluster.iEta-1, maxCluster.iPhi-1, 4, 4, V.z);
          hA[54]->Fill(maxCluster.ET / mCluster4x4.ET);
          if (maxCluster.ET / mCluster4x4.ET < wMK->mMinEClusterEnergyIsoRatio) continue;
          hA[55]->Fill(maxCluster.ET);

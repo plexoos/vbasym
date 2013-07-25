@@ -8,6 +8,7 @@ ClassImp(ZBosEvent)
 using namespace std;
 
 
+
 const float ZBosEvent::sMinElectronPtLight = 15;
 const float ZBosEvent::sMinElectronPtHard  = 25;
 const float ZBosEvent::sMinNeutrinoPt      = 18;
