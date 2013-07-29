@@ -23,8 +23,8 @@ int main(int argc, char *argv[])
 
    setbuf(stdout, NULL);
 
-   Int_t  nMaxUserEvents = -1;
-   //Int_t  nMaxUserEvents = 10000;
+   //Int_t  nMaxUserEvents = -1;
+   Int_t  nMaxUserEvents = 1000;
 
    Bool_t isMc           = kFALSE;
    //Bool_t isMc           = kTRUE;
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
    vecBosRootFile.PostFill();
 
    string outDir = "../vbasym_results/" + filelist;
-   vecBosRootFile.SaveAs((string) "^.*$", outDir);
+   //vecBosRootFile.SaveAs((string) "^.*$", outDir);
    //vecBosRootFile.SaveAs((string) ".*TrackEOverP.*", outDir);
    vecBosRootFile.Print();
    vecBosRootFile.Close();

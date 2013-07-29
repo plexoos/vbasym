@@ -120,6 +120,8 @@ public:
    void           AddStJets(StJets *stJets, StJets *stJetsNoEndcap);
    TClonesArray  *GetStJets();
    TClonesArray  *GetStJetsNoEndcap();
+   UInt_t         GetRunId() const { return runNo; }
+   UInt_t         GetEventId() const { return id; }
    UInt_t         GetNumStJets();
    UInt_t         GetNumStJetsNoEndcap();
    UInt_t         GetNumJets()                const { return mJets.size(); }
@@ -158,11 +160,11 @@ public:
    virtual void   Print(const Option_t* opt="") const;
    void           GetGmt_day_hour(int &yyyymmdd, int &hhmmss) const;
 
-   VecBosCluster    FindMaxBTow2x2(int iEta, int iPhi, float zVert);
-   VecBosCluster    FindMaxETow2x1(int iEta, int iPhi, float zVert);
-   VecBosCluster    FindMaxETow2x2(int iEta, int iPhi, float zVert);
-   VecBosCluster    SumBTowPatch  (int iEta, int iPhi, int Leta, int  Lphi, float zVert);
-   VecBosCluster    SumETowPatch  (int iEta, int iPhi, int Leta, int  Lphi, float zVert);
+   VecBosCluster  FindMaxBTow2x2(int iEta, int iPhi, float zVert);
+   VecBosCluster  FindMaxETow2x1(int iEta, int iPhi, float zVert);
+   VecBosCluster  FindMaxETow2x2(int iEta, int iPhi, float zVert);
+   VecBosCluster  SumBTowPatch  (int iEta, int iPhi, int Leta, int  Lphi, float zVert);
+   VecBosCluster  SumETowPatch  (int iEta, int iPhi, int Leta, int  Lphi, float zVert);
    TVector3       CalcP3InConeBTow(VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
    TVector3       CalcP3InConeETow(VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);
    TVector3       CalcP3InConeTpc (VecBosTrack *vbTrack, UShort_t cone1d2d = 2, Float_t scale = 1);

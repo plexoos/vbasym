@@ -426,7 +426,7 @@ void VecBosEvent::CalcRecoilFromTracks()
       bool partOfElecCandidate = false;
 
       //Check if the tower belongs to the electron 2x2 candidate
-      TVector3 distToCluster = (-10, -10, -10);  // nonsense value
+      TVector3 distToCluster(-10, -10, -10);  // nonsense value
       distToCluster = trackCandidate.mCluster2x2.position - towCoord;
       //printf("Distance of tower to electron cluster: %f\n", distToCluster.Mag());
       if (distToCluster.Mag() <= 2 * VecBosTrack::sMaxTrackClusterDist) partOfElecCandidate = true;
@@ -623,7 +623,7 @@ VecBosCluster VecBosEvent::SumETowPatch(int iEta, int iPhi, int Leta, int  Lphi,
          float ET    = ene * e2et;
          float logET = log10(ET + 0.5);
          cluster.nTower++;
-         cluster.energy += ene;
+         cluster.mEnergy += ene;
          cluster.ET     += ET;
          cluster.adcSum += adc;
          if (logET > 0) {
@@ -676,7 +676,7 @@ VecBosCluster VecBosEvent::SumBTowPatch(int etaBin, int phiBin, int etaWidth, in
          float logET  = log10(ET + 0.5);
 
          cluster.nTower++;
-         cluster.energy += energy;
+         cluster.mEnergy += energy;
          cluster.ET     += ET;
          cluster.adcSum += adc;
 

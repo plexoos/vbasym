@@ -50,7 +50,7 @@ Int_t StZBosMaker::Make()
 
 void StZBosMaker::printJan(VecBosTrack *T)
 {
-   WevePointTower poiTw = T->mMatchedTower;
+   CalTower poiTw = T->mMatchedTower;
    VecBosCluster cluster  = T->mCluster2x2;
 
    int ibp    = kBTow;
@@ -131,8 +131,8 @@ void StZBosMaker::FindZBosBarrel()
             if (fracET2 < par_nearTotEtFracZ) continue;
             hA[0]->Fill("con2", 1.);
 
-            float e1 = T1.mCluster2x2.energy;
-            float e2 = T2.mCluster2x2.energy;
+            float e1 = T1.mCluster2x2.mEnergy;
+            float e2 = T2.mCluster2x2.mEnergy;
             TVector3 p1 = T1.mP3AtDca; p1.SetMag(e1); //cluster.position;
             TVector3 p2 = T2.mP3AtDca; p2.SetMag(e2); //cluster.position;
 
@@ -160,8 +160,8 @@ void StZBosMaker::FindZBosBarrel()
             hA[15]->Fill(mass);
             hA[33]->Fill(T1.mCluster2x2.ET, T1.mStMuTrack->charge() / T1.mStMuTrack->pt());
             hA[33]->Fill(T2.mCluster2x2.ET, T2.mStMuTrack->charge() / T2.mStMuTrack->pt());
-            hA[34]->Fill(T1.mMatchedTower.iEta , T1.mCluster2x2.energy);
-            hA[34]->Fill(T2.mMatchedTower.iEta , T2.mCluster2x2.energy);
+            hA[34]->Fill(T1.mMatchedTower.iEta , T1.mCluster2x2.mEnergy);
+            hA[34]->Fill(T2.mMatchedTower.iEta , T2.mCluster2x2.mEnergy);
             hA[35]->Fill(p1.Eta(), p2.Eta());
             hA[36]->Fill(psum.Eta());
             hA[37]->Fill(psum.Pt());
@@ -277,8 +277,8 @@ void StZBosMaker::FindZBosEndcap()
             if (fracET2 < par_nearTotEtFracZ) continue;
             hA[70]->Fill("conE", 1.);
 
-            float e1 = TB.mCluster2x2.energy;
-            float e2 = TE.mCluster2x2.energy;
+            float e1 = TB.mCluster2x2.mEnergy;
+            float e2 = TE.mCluster2x2.mEnergy;
             TVector3 p1 = TB.mP3AtDca; p1.SetMag(e1); //cluster.position;
             TVector3 p2 = TE.mP3AtDca; p2.SetMag(e2); //cluster.position;
 
@@ -351,8 +351,8 @@ void StZBosMaker::FindZBosEndcap()
          hA[50]->Fill("conE", 1.);
 
          //add plots of good candidates
-         float e1 = TB.mCluster2x2.energy;
-         float e2 = maxCluster.energy;
+         float e1 = TB.mCluster2x2.mEnergy;
+         float e2 = maxCluster.mEnergy;
          TVector3 p1 = TB.mP3AtDca; p1.SetMag(e1);
          TVector3 p2 = maxCluster.position; p2.SetMag(e2);
          float del_phi = p1.DeltaPhi(p2);

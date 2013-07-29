@@ -11,6 +11,7 @@
 #include "StarClassLibrary/StPhysicalHelix.hh"
 
 #include "Globals.h"
+#include "CalTower.h"
 #include "VecBosCluster.h"
 #include "VecBosJet.h"
 
@@ -39,16 +40,16 @@ public:
    VecBosEvent            *mEvent;             //!
    UInt_t                  mVbType;
    Bool_t                  isMatch2Cl;         // result of cuts
-   WevePointTower          mMatchedTower;
+   CalTower                mMatchedTower;
    const StMuTrack        *glMuTrack;          //!
    StMuTrack              *mStMuTrack;         //
    StPhysicalHelixD        mHelix;             //!
    const VecBosVertex     *mVertex;            //! pointer to mother vertex
    Short_t                 mVertexId;          // mId of the mother vertex
    VecBosJet              *mJet;               //! pointer to mother/closest jet if exists
-   VecBosCluster             mCluster1x1;        //!
-   VecBosCluster             mCluster2x2;
-   VecBosCluster             mCluster4x4;
+   VecBosCluster           mCluster1x1;        //! XXX remove !
+   VecBosCluster           mCluster2x2;
+   VecBosCluster           mCluster4x4;
    TVector3                mP3AtDca;           // primary momentum vector
    TVector3                mP3AtBTow;          // momentum vector
    TVector3                mCoorAtBTow;        //
@@ -113,9 +114,9 @@ public:
    void        Process();
    short       GetChargeSign()         const { return mStMuTrack->charge(); }
    TVector3    GetP3AtDca()            const { return mP3AtDca; }
-   TVector3    GetP3EScaled()          const { return mP3AtDca * ((Double_t) mCluster2x2.energy / mP3AtDca.Mag()); }
+   TVector3    GetP3EScaled()          const { return mP3AtDca * ((Double_t) mCluster2x2.mEnergy / mP3AtDca.Mag()); }
    float       GetFitHitFrac()         const { return float(mStMuTrack->nHitsFit()) / mStMuTrack->nHitsPoss(); }
-   float       GetClusterEnergyFrac()  const { return (mCluster2x2.energy + mP3AtDca.Mag()) / mP3InNearConeNoETow.Mag(); }
+   float       GetClusterEnergyFrac()  const { return (mCluster2x2.mEnergy + mP3AtDca.Mag()) / mP3InNearConeNoETow.Mag(); }
    float       GetClusterETFrac()      const { return (mCluster2x2.ET     + mP3AtDca.Pt())  / mP3InNearConeNoETow.Perp(); }
    TVector3    GetDistanceToCluster()  const { return mDistToCluster; }
    TVector3    CalcDistanceToCluster() const { return mCoorAtBTow - mCluster2x2.position; }

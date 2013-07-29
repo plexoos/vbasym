@@ -287,7 +287,7 @@ Int_t StVecBosMaker::InitRun(int runNo)
    {
       char txt[1000], txt0[100];
       sprintf(txt0, "bxIdeal%d", nRun);
-      sprintf(txt,  "intended fill pattern  R%d-%d vs. bXing; ", runNo, nRun);
+      sprintf(txt,  "intended fill pattern  R%d-%d vs. bXing; ", mRunNo, nRun);
       //string str_txt = txt;
       //str_txt += mStSpinDbMaker->getV124comment();
       //Info("InitRun(...)", "v124comment: %s", mStSpinDbMaker->getV124comment());
@@ -613,18 +613,18 @@ void StVecBosMaker::ReadMuDstJets()
 
    mVecBosEvent->AddStJets(stJets, stJetsNoEndcap);
 
-   //if (mStJetReader->getStJets(branchName)->eventId() != mVecBosEvent->id)
-   if (stJets->eventId() != mVecBosEvent->id || stJets->runId() != mVecBosEvent->runNo)
+   //if (mStJetReader->getStJets(branchName)->eventId() != mVecBosEvent->GetEventId())
+   if (stJets->eventId() != mVecBosEvent->GetEventId() || stJets->runId() != mVecBosEvent->GetRunId())
    {
-      Error("ReadMuDstJets", "Jet and W run ids do not match: %12d, %12d",   stJets->runId(),   mVecBosEvent->runNo);
-      Error("ReadMuDstJets", "Jet and W event ids do not match: %12d, %12d", stJets->eventId(), mVecBosEvent->id);
+      Error("ReadMuDstJets", "Jet and W run ids do not match: %12d, %12d",   stJets->runId(),   mVecBosEvent->GetRunId());
+      Error("ReadMuDstJets", "Jet and W event ids do not match: %12d, %12d", stJets->eventId(), mVecBosEvent->GetEventId());
       Fatal("ReadMuDstJets", "Cannot proceed");
    }
 
-   if (stJetsNoEndcap->eventId() != mVecBosEvent->id || stJetsNoEndcap->runId() != mVecBosEvent->runNo)
+   if (stJetsNoEndcap->eventId() != mVecBosEvent->GetEventId() || stJetsNoEndcap->runId() != mVecBosEvent->GetRunId())
    {
-      Error("ReadMuDstJets", "Jet and W run ids do not match: %12d, %12d (no_endcap branch)",   stJetsNoEndcap->runId(),   mVecBosEvent->runNo);
-      Error("ReadMuDstJets", "Jet and W event ids do not match: %12d, %12d (no_endcap branch)", stJetsNoEndcap->eventId(), mVecBosEvent->id);
+      Error("ReadMuDstJets", "Jet and W run ids do not match: %12d, %12d (no_endcap branch)",   stJetsNoEndcap->runId(),   mVecBosEvent->GetRunId());
+      Error("ReadMuDstJets", "Jet and W event ids do not match: %12d, %12d (no_endcap branch)", stJetsNoEndcap->eventId(), mVecBosEvent->GetEventId());
       Fatal("ReadMuDstJets", "Cannot proceed");
    }
 
@@ -651,15 +651,15 @@ TClonesArray* StVecBosMaker::GetJetsTreeAnalysis(TString branchName)
 
    StJets *jetTmp = GetStJetsFromTree(branchName);
 
-   while (jetTmp->eventId() != mVecBosEvent->id || jetTmp->runId() != mVecBosEvent->runNo) {
+   while (jetTmp->eventId() != mVecBosEvent->GetEventId() || jetTmp->runId() != mVecBosEvent->GetRunId()) {
       mJetTreeChain->GetEntry(indexJet++);
       jetTmp = GetStJetsFromTree(branchName);
    }
 
    //cout<<"found matching jet event"<<endl;
 
-   assert(jetTmp->eventId() == mVecBosEvent->id);
-   assert(jetTmp->runId() == mVecBosEvent->runNo);
+   assert(jetTmp->eventId() == mVecBosEvent->GetEventId());
+   assert(jetTmp->runId() == mVecBosEvent->GetRunId());
    //mVecBosEvent->mNJets = jetTmp->nJets();
    return jetTmp->jets();
 }
@@ -1765,7 +1765,7 @@ void StVecBosMaker::FindWBoson()
          if (track.sPtBalance > par_ptBalance ) {
             hA[136]->Fill(track.mCluster2x2.ET);//signal
             hA[241]->Fill(track.mStMuTrack->eta(), track.mCluster2x2.ET);
-            hA[62]->Fill(track.mMatchedTower.iEta , track.mCluster2x2.energy);
+            hA[62]->Fill(track.mMatchedTower.iEta , track.mCluster2x2.mEnergy);
             if (track.mStMuTrack->charge() < 0) {
                hA[184 + 1]->Fill(track.mCluster2x2.ET);
             }
@@ -1782,7 +1782,7 @@ void StVecBosMaker::FindWBoson()
                hA[184 + 6]->Fill(track.mCluster2x2.ET);
             }
             hA[202]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mStMuTrack->pt());
-            hA[204]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mCluster2x2.energy / track.mStMuTrack->p().mag());
+            hA[204]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mCluster2x2.mEnergy / track.mStMuTrack->p().mag());
          }
 
          if (track.sPtBalance > par_ptBalance) {
@@ -1812,7 +1812,7 @@ void StVecBosMaker::FindWBoson()
          // plots to investigate east/west yield diff
          hA[200]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mCluster2x2.ET);
          hA[201]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mStMuTrack->pt());
-         hA[203]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mCluster2x2.energy / track.mStMuTrack->p().mag());
+         hA[203]->Fill(track.mCluster2x2.position.PseudoRapidity(), track.mCluster2x2.mEnergy / track.mStMuTrack->p().mag());
          hA[205]->Fill(track.mStMuTrack->lastPoint().pseudoRapidity(), track.mStMuTrack->lastPoint().phi());
 
          // Q/pT plot
@@ -1900,7 +1900,7 @@ void StVecBosMaker::FindZBoson()
          if (jetVec3.DeltaR(track.mP3AtDca) < mVecBosEvent->sMinTrackIsoDeltaR) continue; // skip jets in candidate phi isolation cone
 
          // form invariant mass
-         float    e1 = track.mCluster2x2.energy;
+         float    e1 = track.mCluster2x2.mEnergy;
          TVector3 p1 = track.mP3AtDca;
          p1.SetMag(e1);
          TLorentzVector ele1(p1, e1); //lepton candidate 4-momentum
@@ -2081,7 +2081,7 @@ void StVecBosMaker::FindWBosonEndcap()
          //plots for backg sub yield
          if (track.sPtBalance > parE_ptBalance) {
             hE[136]->Fill(track.mCluster2x2.ET);//signal
-            hE[62]->Fill(track.mMatchedTower.iEta , track.mCluster2x2.energy);
+            hE[62]->Fill(track.mMatchedTower.iEta , track.mCluster2x2.mEnergy);
             if (track.mStMuTrack->charge() < 0) {
                hE[184 + 1]->Fill(track.mCluster2x2.ET);
             }
@@ -2177,8 +2177,8 @@ void StVecBosMaker::AnalyzeESMD()
 
          // Initialize shower shape histograms
          TH1F *esmdShowerHist[2];
-         esmdShowerHist[0] = new TH1F(Form("esmdU%d", mVecBosEvent->id), "esmdU", 41, -10.25, 10.25);
-         esmdShowerHist[1] = new TH1F(Form("esmdV%d", mVecBosEvent->id), "esmdV", 41, -10.25, 10.25);
+         esmdShowerHist[0] = new TH1F(Form("esmdU%d", mVecBosEvent->GetEventId()), "esmdU", 41, -10.25, 10.25);
+         esmdShowerHist[1] = new TH1F(Form("esmdV%d", mVecBosEvent->GetEventId()), "esmdV", 41, -10.25, 10.25);
 
          // Loop over planes
          for (int iuv = 0; iuv < 2; iuv++)

@@ -133,7 +133,7 @@ void St2011pubMcMaker::doWanalysis()
          //reconstruct W pL from reconstructed quantities
          float trueWpL = mWP.z();
          float eleTheta = T.mP3AtDca.Theta();
-         float ratioE = T.mCluster2x2.energy / 40.0;
+         float ratioE = T.mCluster2x2.mEnergy / 40.0;
          float pLRecoPlus = 80.0 * (ratioE) * ((cos(eleTheta)) + sqrt(cos(eleTheta) * cos(eleTheta) + sin(eleTheta) * sin(eleTheta) * (1 - ratioE * ratioE))) / (ratioE * ratioE * sin(eleTheta) * sin(eleTheta)); //+ sqrt solution
          float pLRecoMinus = 80.0 * (ratioE) * ((cos(eleTheta)) - sqrt(cos(eleTheta) * cos(eleTheta) + sin(eleTheta) * sin(eleTheta) * (1 - ratioE * ratioE))) / (ratioE * ratioE * sin(eleTheta) * sin(eleTheta)); //- sqrt solution
          hA[29]->Fill(pLRecoPlus);
@@ -162,16 +162,16 @@ void St2011pubMcMaker::doWanalysis()
          if (T.mCluster2x2.ET < 30) continue; //only W's we find in data
          //Correlate W pL with electron E in 3 electron eta ranges
          if (eleEta < -0.8) {
-            hA[39]->Fill(mWP.z(), T.mCluster2x2.energy);
-            hA[42]->Fill(T.mCluster2x2.energy);
+            hA[39]->Fill(mWP.z(), T.mCluster2x2.mEnergy);
+            hA[42]->Fill(T.mCluster2x2.mEnergy);
          }
          if (eleEta > 0.8) {
-            hA[40]->Fill(mWP.z(), T.mCluster2x2.energy);
-            hA[43]->Fill(T.mCluster2x2.energy);
+            hA[40]->Fill(mWP.z(), T.mCluster2x2.mEnergy);
+            hA[43]->Fill(T.mCluster2x2.mEnergy);
          }
          if (eleEta > -0.1 && eleEta < 0.1) {
-            hA[41]->Fill(mWP.z(), T.mCluster2x2.energy);
-            hA[44]->Fill(T.mCluster2x2.energy);
+            hA[41]->Fill(mWP.z(), T.mCluster2x2.mEnergy);
+            hA[44]->Fill(T.mCluster2x2.mEnergy);
          }
 
       }
