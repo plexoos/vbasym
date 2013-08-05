@@ -44,9 +44,6 @@ void EventDisplayHContainer::BookHists()
    TH1*   hist;
 
    fDir->cd();
-
-   o["hBTowEnergy"] = hist = new TH2F("hBTowEnergy", "; #phi, Tower Id; #eta, Tower Id; Energy", 40, 0.5, 40.5, 120, 0.5, 120.5);
-   hist->SetOption("COLZ");
 }
 
 

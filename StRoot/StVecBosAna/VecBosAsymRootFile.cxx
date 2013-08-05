@@ -7,6 +7,8 @@
 #include "TROOT.h"
 #include "TStyle.h"
 
+#include "St_db_Maker/St_db_Maker.h"
+#include "StEmcUtil/database/StBemcTables.h"
 #include "StEmcUtil/geometry/StEmcGeom.h"
 
 #include "AsymHContainer.h"
@@ -35,6 +37,7 @@ VecBosAsymRootFile::VecBosAsymRootFile(const char *fname, Option_t *option, Bool
    VecBosRootFile(fname, option, isMc, ftitle, compress)
 {
    gBTowGeom = StEmcGeom::instance("bemc");
+   gBTowGeom->printGeom();
    BookHists();
 }
 
@@ -95,7 +98,7 @@ void VecBosAsymRootFile::Fill(ProtoEvent &ev)
 {
    WBosEvent& w_event = (WBosEvent&) ev;
 
-   //Fill(ev, kCUT_EVENT_NOCUT);
+   Fill(ev, kCUT_EVENT_NOCUT);
 
    if ( w_event.PassedCutWBos(WBosEvent::sMinElectronPtHard) )
    {

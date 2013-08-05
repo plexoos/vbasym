@@ -27,7 +27,7 @@ DoubleSpinStateSet  gDoubleSpinStateSet(aDoubleSpinStates, aDoubleSpinStates+4);
 
 
 /**
- * Converts eta-phi real pair into (XXX:ds: preshower???) eta-phi bins.
+ * Converts eta-phi real pair to (XXX:ds: preshower???) eta-phi bins.
  * Input eta range is from -0.99 to 0.99 only.
  * Returns true on success, false otherwise.
  */

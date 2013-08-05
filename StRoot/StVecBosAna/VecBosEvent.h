@@ -66,7 +66,7 @@ public:
    UShort_t                mNumCandidateTracks;
    StJets                 *mStJets;            //!
    StJets                 *mStJetsNoEndcap;    //! jets noEEMC
-   WeveBEMC                bemc;               //!
+   WeveBEMC                bemc;               //
    WeveETOW                etow;               //!
    WeveEPRS                eprs;               //!
    WeveESMD                esmd;               //!

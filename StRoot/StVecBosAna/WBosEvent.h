@@ -24,6 +24,7 @@ public:
    virtual void Process();
    virtual void ProcessPersistent();
    virtual void Clear(const Option_t* opt="");
+   virtual void Print(const Option_t* opt="") const;
    bool         PassedCutWBos(float minElePt=sMinElectronPtLight) const;
    bool         PassedCutWBosPlus(float minElePt=sMinElectronPtLight) const;
    bool         PassedCutWBosMinus(float minElePt=sMinElectronPtLight) const;

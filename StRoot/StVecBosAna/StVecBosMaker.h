@@ -160,15 +160,15 @@ private:
    int par_DsmThres, parE_DsmThres;
    int par_maxDisplEve;
 
-   StBemcTables *mBarrelTables;                          //used to access EMC status and ped info
-   TVector3 positionBtow[mxBtow]; // vs. tower ID
+   StBemcTables *mBarrelTables;              // used to access EMC status and ped info
+   TVector3 positionBtow[mxBtow];            // vs. tower ID
    TVector3 positionBsmd[mxBSmd][mxBStrips]; // vs. strip ID       
    TVector3 positionEtow[mxEtowSec*mxEtowSub][mxEtowEta];  
 
-   StEEmcDb       *mDbE;       // access to EEMC database
-   StSpinDbMaker  *mStSpinDbMaker;     // access spin information
-   EEmcGeomSimple *mGeomEmc;   // access to EEMC geometry
-   EEmcSmdGeom    *mGeomSmd;   // access to ESMD geometry
+   StEEmcDb       *mDbE;            // access to EEMC database
+   StSpinDbMaker  *mStSpinDbMaker;  // access spin information
+   EEmcGeomSimple *mGeomEmc;        // access to EEMC geometry
+   EEmcSmdGeom    *mGeomSmd;        // access to ESMD geometry
 
    int   ReadMuDstBTOW();
    int   ReadMuDstETOW();

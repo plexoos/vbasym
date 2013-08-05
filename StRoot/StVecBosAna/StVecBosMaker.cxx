@@ -433,6 +433,7 @@ Int_t StVecBosMaker::Make()
    }
 
    // Write event to tree
+   mVecBosEvent->Print();
    mVecBosTree->Fill();
 
    //XXX:ds: if (mVecBosEvent->GetNumVertices())
@@ -493,8 +494,10 @@ Int_t StVecBosMaker::Make()
 
    //mVecBosRootFile->Fill(*mVecBosEvent, kCUT_CUT);
 
-   if (mNumAcceptedEvents < 2 || mNumAcceptedEvents % 1000 == 1 )
+   if (mNumAcceptedEvents == 1 || mNumAcceptedEvents % 1000 == 1 ) {
+      Info("Make", "mNumAcceptedEvents: %d", mNumAcceptedEvents);
       mVecBosEvent->Print();
+   }
 
    return kStOK;
 }
@@ -681,7 +684,7 @@ int StVecBosMaker::ReadMuDstBTOW()
       return -4;
    }
 
-   int ibp = kBTow; // my index for tower & preshower set to BTOW
+   // kBTow: index for tower & preshower set to BTOW
    int n5  = 0, n0 = 0, n1 = 0, n2 = 0, n3 = 0, n4 = 0;
    int maxID = 0;
    double maxADC = 0, adcSum = 0;
@@ -698,11 +701,11 @@ int StVecBosMaker::ReadMuDstBTOW()
       mBarrelTables->getStatus(BTOW, softID, statOfl);
       mBarrelTables->getStatus(BTOW, softID, statGain, "calib");
 
-      if (statPed  != 1) { mVecBosEvent->bemc.statTile[ibp][softID - 1] = 1; n1++; continue; }
-      if (statOfl  != 1) { mVecBosEvent->bemc.statTile[ibp][softID - 1] = 2; n2++; continue; }
-      if (statGain != 1) { mVecBosEvent->bemc.statTile[ibp][softID - 1] = 4; n3++; continue; }
+      if (statPed  != 1) { mVecBosEvent->bemc.statTile[kBTow][softID - 1] = 1; n1++; continue; }
+      if (statOfl  != 1) { mVecBosEvent->bemc.statTile[kBTow][softID - 1] = 2; n2++; continue; }
+      if (statGain != 1) { mVecBosEvent->bemc.statTile[kBTow][softID - 1] = 4; n3++; continue; }
 
-      mVecBosEvent->bemc.statTile[ibp][softID - 1] = 0 ;
+      mVecBosEvent->bemc.statTile[kBTow][softID - 1] = 0 ;
 
       float ped, sigPed, gain;
       int capID = 0; // just one value for btow
@@ -726,8 +729,8 @@ int StVecBosMaker::ReadMuDstBTOW()
       if (adc < par_AdcThres)         continue;
 
       n5++;
-      mVecBosEvent->bemc.adcTile[ibp][softID - 1] = adc;
-      mVecBosEvent->bemc.eneTile[ibp][softID - 1] = adc * gain;
+      mVecBosEvent->bemc.adcTile[kBTow][softID - 1] = adc;
+      mVecBosEvent->bemc.eneTile[kBTow][softID - 1] = adc * gain;
 
       if (maxADC < adc) { maxID = softID; maxADC = adc;}
 
@@ -735,13 +738,17 @@ int StVecBosMaker::ReadMuDstBTOW()
    }
 
    //printf("NNN %d %d %d %d %d %d id=%d\n",n0,n1,n2,n3,n4,n5,maxID);
-   if (n0 == mxBtow) return -1 ; // BTOW was not present in this events
+   if (n0 == mxBtow) {
+      Warning("ReadMuDstBTOW", "Missing BEMC info");
+      return -1 ; // BTOW was not present in this events
+   }
 
-   mVecBosEvent->bemc.tileIn[ibp] = 1; //tag usable data
+   mVecBosEvent->bemc.tileIn[kBTow] = 1; //tag usable data
 
    if (mNumInputEvents % 5000 == 1) {
-      LOG_INFO << Form("unpackMuBTOW() dataIn=%d, nBbad: ped=%d stat=%d gain=%d ; nAdc: %d>0, %d>thres\n    maxADC=%.0f softID=%d adcSum=%.0f",
-                       mVecBosEvent->bemc.tileIn[ibp], n1, n2, n3, n4, n5,
+      LOG_INFO << Form("unpackMuBTOW() dataIn=%d, nBbad: ped=%d stat=%d gain=%d ; nAdc: %d>0, %d>thres\n" \
+                       "maxADC=%.0f softID=%d adcSum=%.0f",
+                       mVecBosEvent->bemc.tileIn[kBTow], n1, n2, n3, n4, n5,
                        maxADC, maxID, adcSum
                       ) << endm;
    }
@@ -754,7 +761,10 @@ int StVecBosMaker::ReadMuDstBTOW()
    if (maxID <= 2400) hA[195]->Fill(maxADC);
    else               hA[196]->Fill(maxADC);
 
-   if (maxADC < par_maxADC) return -2 ; // not enough energy
+   if (maxADC < par_maxADC) {
+      Warning("ReadMuDstBTOW", "Energy deposit is too small in BEMC");
+      return -2 ; // not enough energy
+   }
 
    return 0;
 }
@@ -2186,8 +2196,8 @@ void StVecBosMaker::AnalyzeESMD()
             Float_t dca; //primary extrapolation to smd plane
             const StructEEmcStrip *stripPtr = mGeomSmd->getDca2Strip(iuv, T.mMatchedTower.R, &dca); // find pointed strip
 
-            if (!stripPtr) {cout << "No Strip found" << endl; continue;}
-            if (fabs(dca) > 0.5) {cout << "DCA to big" << endl; continue;}  // in cm
+            if (!stripPtr) { cout << "No Strip found" << endl; continue;}
+            if (fabs(dca) > 0.5) { cout << "DCA to big" << endl; continue;}  // in cm
 
             Float_t dcaGlob; //global extrapolation to smd plane
             const StructEEmcStrip *stripPtrGlob = mGeomSmd->getDca2Strip(iuv, T.mMatchedTower.Rglob, &dcaGlob); // find pointed strip

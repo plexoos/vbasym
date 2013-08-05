@@ -73,7 +73,7 @@ int analyzeMuDst(
 
 int main(int argc, char *argv[])
 {
-   //setbuf(stdout, NULL);
+   setbuf(stdout, NULL);
 
    AnaInfo anaInfo;
    anaInfo.ProcessOptions(argc, argv);
@@ -228,8 +228,8 @@ int analyzeMuDst(AnaInfo &anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
       mcEventMaker->doPrintEventInfo  = false;
       mcEventMaker->doPrintMemoryInfo = false;
 
-      //don't need geant for trigger simu
-      //BEMC simulator:
+      // don't need geant for trigger simu
+      // BEMC simulator:
       StEmcSimulatorMaker *emcSim = new StEmcSimulatorMaker(); // use this instead to "redo" converstion from geant->adc
       emcSim->setCalibSpread(kBarrelEmcTowerId, 0.15);         // spread gains by 15%
       emcSim->setCheckStatus(kBarrelEmcTowerId, false);
@@ -246,9 +246,9 @@ int analyzeMuDst(AnaInfo &anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
       slowSim->setAddPed(true);
       slowSim->setSmearPed(true);
 
-      //Get TriggerMaker
+      // Get TriggerMaker
       StTriggerSimuMaker *simuTrig = new StTriggerSimuMaker("StarTrigSimu");
-      assert(simuTrig);
+      //assert(simuTrig);
       simuTrig->setHList(HList);
       //simuTrig->setMC(isMC); // must be before individual detectors, to be passed
       simuTrig->setMC(2); // must be before individual detectors, to be passed

@@ -11,16 +11,16 @@ class WeveBEMC
 {
 public:
    // raw BTOW/BPRS hits
-   int   tileIn[mxBTile];  // 0 if no data
-   float adcTile[mxBTile][mxBtow];
+   int   tileIn[mxBTile];           //! 0 if no data
+   float adcTile[mxBTile][mxBtow];  //!
    float eneTile[mxBTile][mxBtow];
-   int   statTile[mxBTile][mxBtow];
-   float maxAdc;
-   int   maxHtDsm;
+   int   statTile[mxBTile][mxBtow]; //!
+   float maxAdc;                    //!
+   int   maxHtDsm;                  //!
 
    //raw BSMD hits, both planes
-   float adcBsmd[mxBSmd][mxBStrips];
-   int   statBsmd[mxBSmd][mxBStrips];
+   float adcBsmd[mxBSmd][mxBStrips];  //!
+   int   statBsmd[mxBSmd][mxBStrips]; //!
 
    void clear();
    void print(int flag = 0);

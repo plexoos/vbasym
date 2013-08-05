@@ -357,11 +357,11 @@ void VecBosEvent::ProcessJets()
 
 void VecBosEvent::ProcessMC()
 {
-   StMcEvent *mcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
-   assert(mcEvent);
+   StMcEvent *stMcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
+   assert(stMcEvent);
 
    mWEvent = new WEvent();
-   mWEvent->CalcRecoil(*mcEvent);
+   mWEvent->CalcRecoil(*stMcEvent);
 }
 
 

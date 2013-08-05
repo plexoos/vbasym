@@ -59,16 +59,18 @@ void WBosEvent::ProcessPersistent()
    VecBosEvent::ProcessPersistent();
 
    // Proceed only if this is a W event, i.e. it conforms to W event signature
-   if ( !PassedCutWBos() ) return;
+   //if ( !PassedCutWBos() ) return;
+   //if ( !HasCandidateEle() ) return;
+   if ( !HasCandidateEle() ) return;
 
-   mElectronP3 = (*mTracksCandidate.begin())->GetP3EScaled();
+   mElectronP3 = GetElectronTrack().GetP3EScaled();
    mNeutrinoP3 = CalcMissingEnergyP3(); // here we use only x and y components, and reconstruct z
 
    ReconstructNeutrinoZ();
 }
 
 
-void WBosEvent::Clear(const Option_t*)
+void WBosEvent::Clear(const Option_t* opt)
 {
    VecBosEvent::Clear();
    mElectronP3.SetXYZ(0, 0, 0);
@@ -76,9 +78,20 @@ void WBosEvent::Clear(const Option_t*)
 }
 
 
+void WBosEvent::Print(const Option_t* opt) const
+{
+   Info("Print", ":");
+   //VecBosEvent::Print(opt);
+   mElectronP3.Print();
+   mNeutrinoP3.Print();
+}
+
+
 bool WBosEvent::PassedCutWBos(float minElePt) const
 {
-   if ( HasCandidateEle() && mPtBalanceCosPhiFromTracks >= sMinNeutrinoPt &&
+   if ( HasCandidateEle() &&
+        //mPtBalanceCosPhiFromTracks >= sMinNeutrinoPt &&
+        mNeutrinoP3.Pt() >= sMinNeutrinoPt &&
         mElectronP3.Pt() >= minElePt)
    {
       return true;
@@ -119,9 +132,6 @@ void WBosEvent::ReconstructNeutrinoZ()
    double a = mElectronP3.Pt() * mElectronP3.Pt();
    double b = -2 * A * mElectronP3.Pz();
    double c = mNeutrinoP3.Pt() * mNeutrinoP3.Pt() * mElectronP3.Mag() * mElectronP3.Mag() - A*A;
-
-    //mElectronP3.Print();
-    //mNeutrinoP3.Print();
 
    double d = b*b - 4*a*c;
    if (d < 0 ) {
