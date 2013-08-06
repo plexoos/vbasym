@@ -102,30 +102,30 @@ public:
    VecBosTrack();
    ~VecBosTrack();
 
-   bool        IsGood()       const { return (mVbType & kGOOD)        == kGOOD        ? true : false; }
-   bool        IsBTrack()     const { return (mVbType & kBARREL)      == kBARREL      ? true : false; }
-   bool        IsETrack()     const { return (mVbType & kENDCAP)      == kENDCAP      ? true : false; }
-   bool        HasCluster()   const { return (mVbType & kHAS_CLUSTER) == kHAS_CLUSTER ? true : false; }
-   bool        IsIsolated()   const { return (mVbType & kISOLATED)    == kISOLATED    ? true : false; }
-   bool        IsInJet()      const { return (mVbType & kIN_JET)      == kIN_JET      ? true : false; }
-   bool        IsUnBalanced() const { return (mVbType & kUNBALANCED)  == kUNBALANCED  ? true : false; }
-   bool        HasCharge()    const { return (mVbType & kHAS_CHARGE)  == kHAS_CHARGE  ? true : false; }
-   bool        IsCandidate()  const;
-   void        Process();
-   short       GetChargeSign()         const { return mStMuTrack->charge(); }
-   TVector3    GetP3AtDca()            const { return mP3AtDca; }
-   TVector3    GetP3EScaled()          const { return mP3AtDca * ((Double_t) mCluster2x2.mEnergy / mP3AtDca.Mag()); }
-   float       GetFitHitFrac()         const { return float(mStMuTrack->nHitsFit()) / mStMuTrack->nHitsPoss(); }
-   float       GetClusterEnergyFrac()  const { return (mCluster2x2.mEnergy + mP3AtDca.Mag()) / mP3InNearConeNoETow.Mag(); }
-   float       GetClusterETFrac()      const { return (mCluster2x2.ET     + mP3AtDca.Pt())  / mP3InNearConeNoETow.Perp(); }
-   TVector3    GetDistanceToCluster()  const { return mDistToCluster; }
-   TVector3    CalcDistanceToCluster() const { return mCoorAtBTow - mCluster2x2.position; }
-   TVector3    GetCoordAtBTow()        const { return mCoorAtBTow; }
-   Short_t     GetVertexId()           const { return mVertexId; }
-   void        SetVertexId(Short_t vId) { mVertexId = vId; }
-   VecBosJet*  FindClosestJet(VecBosJetPtrSet &jets);
+   bool         IsGood()       const { return (mVbType & kGOOD)        == kGOOD        ? true : false; }
+   bool         IsBTrack()     const { return (mVbType & kBARREL)      == kBARREL      ? true : false; }
+   bool         IsETrack()     const { return (mVbType & kENDCAP)      == kENDCAP      ? true : false; }
+   bool         HasCluster()   const { return (mVbType & kHAS_CLUSTER) == kHAS_CLUSTER ? true : false; }
+   bool         IsIsolated()   const { return (mVbType & kISOLATED)    == kISOLATED    ? true : false; }
+   bool         IsInJet()      const { return (mVbType & kIN_JET)      == kIN_JET      ? true : false; }
+   bool         IsUnBalanced() const { return (mVbType & kUNBALANCED)  == kUNBALANCED  ? true : false; }
+   bool         HasCharge()    const { return (mVbType & kHAS_CHARGE)  == kHAS_CHARGE  ? true : false; }
+   bool         IsCandidate()  const;
+   void         Process();
+   short        GetChargeSign()         const { return mStMuTrack->charge(); }
+   TVector3     GetP3AtDca()            const { return mP3AtDca; }
+   TVector3     GetP3EScaled()          const { return mP3AtDca * ((Double_t) mCluster2x2.mEnergy / mP3AtDca.Mag()); }
+   float        GetFitHitFrac()         const { return float(mStMuTrack->nHitsFit()) / mStMuTrack->nHitsPoss(); }
+   float        GetClusterEnergyFrac()  const { return (mCluster2x2.mEnergy + mP3AtDca.Mag()) / mP3InNearConeNoETow.Mag(); }
+   float        GetClusterETFrac()      const { return (mCluster2x2.ET     + mP3AtDca.Pt())  / mP3InNearConeNoETow.Perp(); }
+   TVector3     GetDistanceToCluster()  const { return mDistToCluster; }
+   TVector3     CalcDistanceToCluster() const { return mCoorAtBTow - mCluster2x2.position; }
+   TVector3     GetCoordAtBTow()        const { return mCoorAtBTow; }
+   Short_t      GetVertexId()           const { return mVertexId; }
+   void         SetVertexId(Short_t vId) { mVertexId = vId; }
+   VecBosJet*   FindClosestJet(VecBosJetPtrSet &jets);
    virtual void Clear(const Option_t* opt="");
-   void        print(int opt=0) const;
+   virtual void Print(const Option_t* opt="") const;
 
    void CheckChargeSeparation(); // move to private when VecBosEvent streamer is fixed
 

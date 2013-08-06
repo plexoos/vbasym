@@ -205,13 +205,17 @@ void VecBosTrack::Clear(const Option_t*)
 }
 
 
-void VecBosTrack::print(int opt) const
+void VecBosTrack::Print(const Option_t* opt) const
 {
-   //printf("\n");
-   //Info("print(int opt)", "");
-   //Info("Print()", "this: %x", this);
-   Info("Print", "mP3AtDca:");
+   if (string(opt).size())
+      Info("Print", "opt: %s", opt);
+
+   Double_t mP3AtDca_0to2Pi = mP3AtDca.Phi() < 0 ? 2*M_PI + mP3AtDca.Phi() : mP3AtDca.Phi();
+
+   Info("Print", "mP3AtDca: %.2f, %.2f", mP3AtDca.PseudoRapidity(), mP3AtDca_0to2Pi);
    mP3AtDca.Print();
+   Info("Print", "mCoorAtBTow:");
+   mCoorAtBTow.Print();
    Info("Print", "mVertexId: %2d", mVertexId);
 
    //if (!mStMuTrack) { printf("mStMuTrack is NULL pointer???\n"); return; }
@@ -220,7 +224,7 @@ void VecBosTrack::print(int opt) const
    //       isMatch2Cl, mP3InNearCone.Pt(), awayTotET, mP3AtDca.Pt());
 
    //mMatchedTower.print(opt);
-   //mCluster2x2.print(opt);
+   mCluster2x2.Print(opt);
 
    //printf("\tXYZ(track-mCluster2x2):  |3D dist|=%.1fcm  delZ=%.1fcm\n", CalcDistanceToCluster.Mag(), CalcDistanceToCluster.z());
    //printf("\tCluster4x4 :");
@@ -268,9 +272,6 @@ bool VecBosTrack::ExtendTrack2Barrel()
    float phiAtBTow   = posAtBTow.phi();
 
    mCoorAtBTow.SetXYZ(posAtBTow.x(), posAtBTow.y(), posAtBTow.z());
-
-   //mP3AtDca.Print();
-   //mCoorAtBTow.Print();
 
    int iEta, iPhi;
 
