@@ -77,15 +77,17 @@ void VecBosVertex::clear()
 
 void VecBosVertex::Print(const Option_t* opt) const
 {
-   //printf("\n");
-   //Info("Print(const Option_t* opt)", " Vertex mId=%d Z=%.1f cm", mId, z);
+   if (string(opt).size())
+      Info("Print", "opt: %s", opt);
+
+   Info("Print", "mPosition:");
+   mPosition.Print();
    Info("Print", "mId: %2d, mRankLog: %6.2f, mTracks.size(): %d", mId, mRankLog, mTracks.size());
-   //Info("Print()", "this: %x", this);
 
    VecBosTrackPtrSetConstIter iTrack = mTracks.begin();
    for ( ; iTrack!=mTracks.end(); ++iTrack)
    {
       VecBosTrack &track = **iTrack;
-      track.print();
+      track.Print(opt);
    }
 }
