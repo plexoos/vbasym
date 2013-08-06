@@ -9,7 +9,7 @@ class VecBosTrack;
 
 
 // Info BTOW cluster
-class VecBosCluster
+class VecBosCluster : public TObject
 {
 public:
    float    mEnergy;

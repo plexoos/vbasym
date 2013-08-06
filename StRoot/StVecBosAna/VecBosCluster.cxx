@@ -5,7 +5,7 @@
 #include "VecBosTrack.h"
 
 
-VecBosCluster::VecBosCluster() :
+VecBosCluster::VecBosCluster() : TObject(),
    mEnergy(0), ET(0), adcSum(0), nTower(0),
    iEta(0), iPhi(0), position(), mSize(1),
    mTowerBand1(), mTowerBand2(), mTowerBand3()
@@ -14,7 +14,7 @@ VecBosCluster::VecBosCluster() :
 }
 
 
-VecBosCluster::VecBosCluster(UShort_t size) :
+VecBosCluster::VecBosCluster(UShort_t size) : TObject(),
    mEnergy(0), ET(0), adcSum(0), nTower(0),
    iEta(0), iPhi(0), position(), mSize(size),
    mTowerBand1(), mTowerBand2(), mTowerBand3()
@@ -98,8 +98,14 @@ void VecBosCluster::Clear()
 
 void VecBosCluster::Print(const Option_t* opt) const
 {
-   printf("Cluster ET=%.1f E=%.1f GeV, sumAdc=%.0f nTw=%d iEta=%d, iPhi=%d XYZ(%.0f,%.0f,%.0f)cm\n",
-          ET, mEnergy, adcSum, nTower, iEta, iPhi, position.x(), position.y(), position.z());
+   if (string(opt).size())
+      Info("Print", "opt: %s", opt);
+
+   Double_t position_0to2Pi = position.Phi() < 0 ? 2*M_PI + position.Phi() : position.Phi();
+
+   Info("Print", "E=%.1f GeV, ET=%.1f GeV, sumAdc=%.0f, nTw=%d, iEta=%d, iPhi=%d, XYZ: %.2f, %.2f, %.2f cm, Eta: %.2f, Phi: %.2f\n",
+          ET, mEnergy, adcSum, nTower, iEta, iPhi, position.x(), position.y(), position.z(), position.PseudoRapidity(), position_0to2Pi);
+   //position.Print();
 }
 
 
