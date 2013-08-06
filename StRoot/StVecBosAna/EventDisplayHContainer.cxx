@@ -67,7 +67,7 @@ PlotHelper *EventDisplayHContainer::GetEventDisplayHists(const ProtoEvent &ev)
 
    // Set individual sub dirs
    string dirName(17, ' ');
-   sprintf(&dirName[0], "%08d_%08d", runId, eventId);
+   sprintf(&dirName[0], "r%08d_%08d", runId, eventId);
 
    PlotHelper *ph;
    PlotHelperMapIter isubdir = d.find(dirName);

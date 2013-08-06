@@ -84,17 +84,27 @@ void EventDisplayHists::Fill(ProtoEvent &ev)
       }
    }
 
-   const VecBosVertex *vbVertex = wbEvent.GetElectronTrack().mVertex;
+   const VecBosTrack  &eleTrack = wbEvent.GetElectronTrack();
+   const VecBosVertex *vbVertex = wbEvent.GetVertexById(eleTrack.GetVertexId());
 
-   //Float_t vbVertexZ = vbVertex->mPosition.GetZ();
-   //vbVertexZ = 
-   TVector3 eleP3(wbEvent.GetElectronP3());
-   eleP3 += vbVertex->mPosition;
+   eleTrack.Print("electron");
+   vbVertex->Print();
+
+   //TVector3 eleP3(eleTrack.GetCoordAtBTow() + vbVertex->mPosition);
+   TVector3 eleP3(eleTrack.GetCoordAtBTow() );
 
    //TMarker *marker = new TMarker(wbEvent.GetElectronP3().Eta(), wbEvent.GetElectronP3().Phi(), 29);
-   TMarker *marker = new TMarker(eleP3.Eta(), eleP3.Phi(), 29);
-   marker->SetMarkerSize(2);
+   TMarker *marker = new TMarker(eleP3.Eta(), fmod(2*M_PI + eleP3.Phi(), 2*M_PI), 30);
+   marker->SetMarkerColor(kRed);
+   marker->SetMarkerSize(4);
  
    hBTowEnergy->GetListOfFunctions()->SetOwner(kTRUE);
    hBTowEnergy->GetListOfFunctions()->Add(marker);
+
+   TVector3 cluP3( eleTrack.mCluster2x2.position );
+
+   TMarker *markerCluster = new TMarker(cluP3.Eta(), fmod(2*M_PI + cluP3.Phi(), 2*M_PI), 30);
+   markerCluster->SetMarkerColor(kBlue);
+   markerCluster->SetMarkerSize(4);
+   hBTowEnergy->GetListOfFunctions()->Add(markerCluster);
 }
