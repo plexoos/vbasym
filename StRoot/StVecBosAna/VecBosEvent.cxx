@@ -160,6 +160,20 @@ UInt_t VecBosEvent::GetNumTracksWithBCluster()
 }
 
 
+/** Returns a vertex with id==vertexId that belongs to this event. */
+VecBosVertex* VecBosEvent::GetVertexById(const Short_t vertexId) const
+{
+   VecBosVertexPtrSetIter iVertex = mVertices.begin();
+   for ( ; iVertex != mVertices.end(); ++iVertex)
+   {
+      VecBosVertex *vertex = *iVertex;
+      if (vertex->GetId() == vertexId) return vertex;
+   }
+
+   return 0;
+}
+
+
 TVector3 VecBosEvent::CalcTrackRecoilTpcNeutralsCorrected() const
 {
    TVector3 trackRecoilCorrected(GetTrackRecoilTpcNeutrals());
@@ -938,7 +952,6 @@ void VecBosEvent::Clear(const Option_t*)
 }
 
 
-
 void VecBosEvent::Print(const Option_t* opt) const
 {
    printf("\n");
@@ -952,9 +965,9 @@ void VecBosEvent::Print(const Option_t* opt) const
    GetGmt_day_hour( yyyymmdd,  hhmmss);
    printf("Event time is: day=%08d, hour=%06d (GMT)\n", yyyymmdd, hhmmss);
 
-   Info("Print", "GetNumJets(): %d", GetNumJets());
+   Info("Print", "GetNumJets(): %d",     GetNumJets());
    Info("Print", "GetNumVertices(): %d", GetNumVertices());
-   Info("Print", "GetNumTracks(): %d", GetNumTracks());
+   Info("Print", "GetNumTracks(): %d",   GetNumTracks());
    Info("Print", "GetNumCandidateTracks(): %d", GetNumCandidateTracks());
    Info("Print", "mTracksCandidate.size(): %d", mTracksCandidate.size());
 

@@ -114,12 +114,12 @@ public:
    ~VecBosEvent();
 
    void           InitUsing(StMuDstMaker* stMuDstMaker);
-   VecBosVertex  *AddVertex(StMuPrimaryVertex &stMuVertex);
+   VecBosVertex*  AddVertex(StMuPrimaryVertex &stMuVertex);
    void           AddVertex(VecBosVertex *vbVertex);
    void           AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex = 0);
    void           AddStJets(StJets *stJets, StJets *stJetsNoEndcap);
-   TClonesArray  *GetStJets();
-   TClonesArray  *GetStJetsNoEndcap();
+   TClonesArray*  GetStJets();
+   TClonesArray*  GetStJetsNoEndcap();
    UInt_t         GetRunId() const { return runNo; }
    UInt_t         GetEventId() const { return id; }
    UInt_t         GetNumStJets();
@@ -140,6 +140,7 @@ public:
    TVector3       GetTrackRecoil()            const { return mP3TrackRecoilTow; }
    TVector3       GetTrackRecoilNeutrals()    const { return mP3TrackRecoilNeutrals; }
    TVector3       GetTrackRecoilTpcNeutrals() const { return mP3TrackRecoilTpcNeutrals; }
+   VecBosVertex*  GetVertexById(const Short_t vertexId) const;
    TVector3       CalcTrackRecoilTpcNeutralsCorrected() const;
    void           SetCpuTimeEventAna(Double_t time) { mCpuTimeEventAna = time; }
    void           SetCpuTimeHistFill(Double_t time) { mCpuTimeHistFill = time; }
