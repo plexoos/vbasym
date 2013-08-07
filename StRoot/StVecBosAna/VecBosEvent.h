@@ -109,6 +109,7 @@ public:
    static const float  sMinBTrackPt;          //!
    static const float  sMinTrackHitFrac;      //!
    static const float  sMinClusterEnergyFrac; //!
+   static const float  sMaxJetCone;           //!
 
    VecBosEvent();
    ~VecBosEvent();

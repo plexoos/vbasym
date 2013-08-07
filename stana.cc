@@ -303,7 +303,7 @@ int analyzeMuDst(AnaInfo &anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
       // Setup the cone finder (See StJetFinder/StConeJetFinder.h -> class StConePars)
       StConePars *stConePars = new StConePars();
       stConePars->setGridSpacing(105, -3.0, 3.0, 120, -TMath::Pi(), TMath::Pi());  //include EEMC
-      stConePars->setConeRadius(0.7);    // default=0.7
+      stConePars->setConeRadius(VecBosEvent::sMaxJetCone);    // default=0.7
       stConePars->setSeedEtMin(0.5);
       stConePars->setAssocEtMin(0.1);
       stConePars->setSplitFraction(0.5); // default=0.5. if 0.3 less split?

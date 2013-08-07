@@ -41,6 +41,7 @@ const float VecBosEvent::sMaxTrackJetDeltaZ    = 3;    // distance between jet a
 const float VecBosEvent::sMinBTrackPt          = 10;
 const float VecBosEvent::sMinTrackHitFrac      = 0.51;
 const float VecBosEvent::sMinClusterEnergyFrac = 0.90; // was 0.88
+const float VecBosEvent::sMaxJetCone           = 0.7;  // cone = delta R
 
 
 VecBosEvent::~VecBosEvent()
