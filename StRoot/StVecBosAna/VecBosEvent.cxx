@@ -161,14 +161,43 @@ UInt_t VecBosEvent::GetNumTracksWithBCluster()
 }
 
 
-/** Returns a vertex with id==vertexId that belongs to this event. */
+/**
+ * Returns a pointer to the vertex in this event with id==vertexId. Returns 0 if
+ * no vertex found.
+ */
 VecBosVertex* VecBosEvent::GetVertexById(const Short_t vertexId) const
 {
+   if (vertexId < 0) return 0;
+
    VecBosVertexPtrSetIter iVertex = mVertices.begin();
    for ( ; iVertex != mVertices.end(); ++iVertex)
    {
       VecBosVertex *vertex = *iVertex;
       if (vertex->GetId() == vertexId) return vertex;
+   }
+
+   return 0;
+}
+
+
+/**
+ * @brief Loops over all tracks in this event and selects the one matching the
+ * requested Id/Index. The trackId is the one assigned in the MuDstEvent.
+ *
+ * @param trackId
+ *
+ * @return Pointer to the track
+ */
+VecBosTrack* VecBosEvent::GetTrackById(const Short_t trackId) const
+{
+   if (trackId < 0) return 0;
+
+   VecBosTrackPtrSetIter iTrack = mTracks.begin();
+   for ( ; iTrack != mTracks.end(); ++iTrack)
+	{
+      VecBosTrack *track = *iTrack;
+
+      if (track->mStMuTrack->id() == trackId) return track;
    }
 
    return 0;

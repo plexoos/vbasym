@@ -142,6 +142,7 @@ public:
    TVector3       GetTrackRecoilNeutrals()    const { return mP3TrackRecoilNeutrals; }
    TVector3       GetTrackRecoilTpcNeutrals() const { return mP3TrackRecoilTpcNeutrals; }
    VecBosVertex*  GetVertexById(const Short_t vertexId) const;
+   VecBosTrack*   GetTrackById(const Short_t trackId) const;
    TVector3       CalcTrackRecoilTpcNeutralsCorrected() const;
    void           SetCpuTimeEventAna(Double_t time) { mCpuTimeEventAna = time; }
    void           SetCpuTimeHistFill(Double_t time) { mCpuTimeHistFill = time; }
