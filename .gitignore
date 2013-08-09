@@ -2,6 +2,9 @@
 *.so
 *~
 src/wana_dict.*
+src/stana
+src/vbana
+src/lumi_calc
 utils
 .consign
 .sl53_gcc432
