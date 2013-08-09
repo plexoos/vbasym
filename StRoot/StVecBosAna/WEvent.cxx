@@ -41,8 +41,8 @@ void WEvent::CalcRecoil(PyEvent &pyEvent)
    mP4RecoilInAccept.SetPxPyPzE(0, 0, 0, 0);
    mP4RecoilOutAccept.SetPxPyPzE(0, 0, 0, 0);
 
-   vector<track>::const_iterator iParticle    = pyEvent.tracks.begin();
-   vector<track>::const_iterator lastParticle = pyEvent.tracks.end();
+   vector<Track>::const_iterator iParticle    = pyEvent.tracks.begin();
+   vector<Track>::const_iterator lastParticle = pyEvent.tracks.end();
 
    for ( ; iParticle!=lastParticle; ++iParticle)
    {

@@ -7,7 +7,7 @@
 #include "StMcEvent/StMcEvent.hh"
 #include "StMcEvent/StMcTrack.hh"
 
-#include "PyEvent.h"
+#include "src/PyEvent.h"
 
 class WEvent : public TObject
 {
