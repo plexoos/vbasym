@@ -14,7 +14,8 @@
 
 #include <TObject.h>
 
-#include "track.h"
+#include "Track.h"
+
 
 class WEvent;
 
@@ -24,7 +25,7 @@ class PyEvent : public TObject
 
 public:
 
-	std::vector<track> tracks;
+	std::vector<Track> tracks;
 	int    I;
 	int    nParticles;      //particle number in the final state
 	int    ievent;

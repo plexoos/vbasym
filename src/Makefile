@@ -1,5 +1,5 @@
 #
-# Makefile for WANA
+# Makefile for vbasym
 #
 
 WANA_DIR      = .
@@ -22,27 +22,26 @@ ROOTGLIBS    := $(shell root-config --glibs)
 # Linux with egcs, gcc 2.9x, gcc 3.x (>= RedHat 5.2)
 CXX           = g++
 
-STAR_INC_DIRS = -IStRoot -I.sl53_gcc432/include -I/afs/rhic.bnl.gov/star/packages/SL12c/StRoot/ \
+STAR_INC_DIRS = -I../ -I../StRoot -I../.sl53_gcc432/include -I/afs/rhic.bnl.gov/star/packages/SL12c/StRoot/ \
                 -I/afs/rhic.bnl.gov/star/packages/SL12c/.sl53_gcc432/include/ \
                 -I/afs/rhic.bnl.gov/star/packages/SL12c/StRoot/StJetMaker/tracks/ \
-                -I.sl53_gcc432/obj/StRoot
+                -I../.sl53_gcc432/obj/StRoot
 
-STAR_LIB_DIRS = -L.sl53_gcc432/lib -L/afs/rhic.bnl.gov/star/packages/SL12c/.sl53_gcc432/lib \
+STAR_LIB_DIRS = -L../.sl53_gcc432/lib -L/afs/rhic.bnl.gov/star/packages/SL12c/.sl53_gcc432/lib \
                 -L/afs/rhic.bnl.gov/star/packages/SL12c/.sl53_gcc432/LIB
 
 MYSQLLIBDIR = -L/usr/lib/mysql
-MYSQLLIB = -lmysqlclient
+MYSQLLIB    = -lmysqlclient
 UTILSLIBDIR = -L/star/u/smirnovd/rootmacros/utils
-UTILSLIB = -lutils
+UTILSINCDIR = -I/star/u/smirnovd/rootmacros/
+UTILSLIB    = -lutils
 
 # if you plan to do a whole lot of debugging, remove '-O' switch(es)
-#CXXFLAGS      = -ggdb -Wall -fPIC -I.
 #CXXFLAGS      = -O2
 CXXFLAGS      = -ggdb -g -fno-inline -Wall -fPIC $(ROOTCFLAGS)
-#CXXFLAGS     += -I. -I$(INC_DIR) -I$(UTILS_INC_DIR) $(STAR_INC_DIRS)
-CXXFLAGS     += -I. -I$(INC_DIR) $(STAR_INC_DIRS) -D__ROOT__ -DNEW_DAQ_READER
+CXXFLAGS     += -I. -I$(INC_DIR) $(UTILSINCDIR) $(STAR_INC_DIRS) -D__ROOT__ -DNEW_DAQ_READER
 
-CFLAGS        = -g -O -I$(INC_DIR)
+CFLAGS        = -g -O -I. -I$(INC_DIR)
 LD            = g++
 #LDFLAGS       = -g
 LDFLAGS       =
@@ -117,9 +116,7 @@ WANA_DICT_HDR = $(WANA_DICT_SRC:.cxx=.h)
 WANA_DICT_OBJ = $(WANA_DICT_SRC:.cxx=.o)
 WANA_DICT     = $(WANA_DICT_SRC) $(WANA_DICT_HDR) $(WANA_DICT_OBJ)
 
-#BIN     = stana vbana
 BIN     = stana vbana lumi_calc
-#BIN     = wana stana
 BIN_SRC = $(BIN:=.cc)
 BIN_OBJ = $(BIN:=.o)
 
@@ -139,6 +136,10 @@ wana: $(WANA_LIB) wana.o
 	$(LD) $(LDFLAGS) $(WANA_LIB) wana.o -o $@
 	@echo "$@ done"
 
+stana: stana.o
+	$(LD) $(LDFLAGS) $(STAR_LIB_DIRS) $(STAR_LIBS) $(MYSQLLIBDIR) $(MYSQLLIB) $(UTILSLIBDIR) $(UTILSLIB) $(LIBS) stana.o -o $@
+	@echo "$@ done"
+
 vbana: vbana.o
 	$(LD) $(LDFLAGS) $(STAR_LIB_DIRS) $(STAR_LIBS) $(UTILSLIBDIR) $(UTILSLIB) $(LIBS) vbana.o -o $@
 	@echo "$@ done"
@@ -147,18 +148,14 @@ lumi_calc: lumi_calc.o
 	$(LD) $(LDFLAGS) $(STAR_LIB_DIRS) $(STAR_LIBS) $(UTILSLIBDIR) $(UTILSLIB) $(LIBS) lumi_calc.o -o $@
 	@echo "$@ done"
 
-stana: stana.o
-	$(LD) $(LDFLAGS) $(STAR_LIB_DIRS) $(STAR_LIBS) $(MYSQLLIBDIR) $(MYSQLLIB) $(UTILSLIBDIR) $(UTILSLIB) $(LIBS) stana.o -o $@
-	@echo "$@ done"
-
 $(WANA_LIB): $(OBJS) $(WANA_DICT_OBJ)
 	$(LD) $(SOFLAGS) $(OBJS) $(WANA_DICT_OBJ) $(LIBS) -o $(WANA_LIB)
 	@echo "$@ done"
 
 $(WANA_DICT_SRC): $(HDRS) $(INC_DIR)/MyLinkDef.h
 	@echo "Generating dictionary $(WANA_DICT_SRC)..."
-	@echo rootcint -f $(WANA_DICT_SRC) -I$(INC_DIR) -c $^
-	@rootcint -f -c $(WANA_DICT_SRC) -I$(INC_DIR) $^
+	@echo rootcint -f $(WANA_DICT_SRC) -c -I$(INC_DIR) $^
+	@rootcint -f $(WANA_DICT_SRC) -c -I$(INC_DIR) $^
 
 $(WANA_DICT_OBJ) : $(WANA_DICT_SRC)
 	$(CXX) $(CXXFLAGS) -c $< -o $@

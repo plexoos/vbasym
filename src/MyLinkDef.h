@@ -4,7 +4,7 @@
 #pragma link off all functions;
 
 #ifdef __CINT__
-#pragma link C++ class track+;
+#pragma link C++ class Track+;
 #pragma link C++ class PyEvent+;
 #pragma link C++ class WEvent+;
 #endif

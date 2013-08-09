@@ -13,10 +13,10 @@ Bool_t PyEvent::AcceptWEvent(WEvent& wEvent)
    Bool_t accept1 = kFALSE;
    Bool_t accept2 = kFALSE;
 
-   vector<track>::const_iterator iParticle;
-   vector<track>::const_iterator iParticle2;
-   vector<track>::const_iterator firstParticle = tracks.begin();
-   vector<track>::const_iterator lastParticle = tracks.end();
+   vector<Track>::const_iterator iParticle;
+   vector<Track>::const_iterator iParticle2;
+   vector<Track>::const_iterator firstParticle = tracks.begin();
+   vector<Track>::const_iterator lastParticle = tracks.end();
 
    for (iParticle=firstParticle; iParticle!=lastParticle; ++iParticle)
    {

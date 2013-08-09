@@ -3,7 +3,7 @@
 
 #include <TObject.h>
 
-class track : public TObject
+class Track : public TObject
 {
 
 public:
@@ -35,11 +35,11 @@ public:
 	double rapidity;
 	double eta;
 
-   track( const std::string& line1 = "" );
+   Track( const std::string& line1 = "" );
 
    void print();
 
-	ClassDef(track, 1 )//define a dictionary for the root
+	ClassDef(Track, 1 )//define a dictionary for the root
 };
 
 #endif

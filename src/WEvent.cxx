@@ -34,9 +34,9 @@ void WEvent::CalcRecoil(PyEvent &pyEvent)
    recoil.SetPxPyPzE(0, 0, 0, 0);
    recoilInAccept.SetPxPyPzE(0, 0, 0, 0);
 
-   vector<track>::const_iterator iParticle;
-   vector<track>::const_iterator firstParticle = pyEvent.tracks.begin();
-   vector<track>::const_iterator lastParticle  = pyEvent.tracks.end();
+   vector<Track>::const_iterator iParticle;
+   vector<Track>::const_iterator firstParticle = pyEvent.tracks.begin();
+   vector<Track>::const_iterator lastParticle  = pyEvent.tracks.end();
 
    for (iParticle=firstParticle; iParticle!=lastParticle; ++iParticle)
    {
@@ -65,9 +65,9 @@ void WEvent::CalcEventEnergyRatio(PyEvent &pyEvent)
    TLorentzVector recoilPInAccept;
    TLorentzVector recoilPOutAccept;
 
-   vector<track>::const_iterator iParticle;
-   vector<track>::const_iterator firstParticle = pyEvent.tracks.begin();
-   vector<track>::const_iterator lastParticle  = pyEvent.tracks.end();
+   vector<Track>::const_iterator iParticle;
+   vector<Track>::const_iterator firstParticle = pyEvent.tracks.begin();
+   vector<Track>::const_iterator lastParticle  = pyEvent.tracks.end();
 
    for (iParticle=firstParticle; iParticle!=lastParticle; ++iParticle)
    {

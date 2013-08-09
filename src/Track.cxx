@@ -1,15 +1,15 @@
 
-#include "track.h"
+#include "Track.h"
 
 #include <iostream>
 #include <sstream>
 
 using namespace std;
 
-ClassImp(track)
+ClassImp(Track)
 
 
-track::track( const std::string& line1) {
+Track::Track( const std::string& line1) {
 	//create a stringstream to input certain data line by line
 	std::stringstream ss1;
 	ss1 << line1;
@@ -17,6 +17,6 @@ track::track( const std::string& line1) {
 	>> px >> py >> pz >> E >> m >> x >> y >> z;
 }
 
-void track::print() {
+void Track::print() {
 	cout << index << " " << m << std::endl;
 }
