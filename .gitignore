@@ -1,0 +1,7 @@
+*.o
+*.so
+*~
+src/wana_dict.*
+utils
+.consign
+.sl53_gcc432
