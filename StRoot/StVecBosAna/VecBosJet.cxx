@@ -33,6 +33,13 @@ VecBosJet::~VecBosJet()
 }
 
 
+Double_t VecBosJet::CalcDetEta() const
+{
+   const VecBosVertex *vbVertex = mEvent->GetVertexById(mVertexId);
+   return StJet::detEta(vbVertex->mPosition.Z());
+}
+
+
 /** */
 void VecBosJet::Process()
 {
@@ -56,6 +63,14 @@ void VecBosJet::Process()
    if (closestVertex && mMinZDistToVertex < VecBosEvent::sMaxVertexJetDeltaZ) {
       SetVertexId(closestVertex->GetId());
    }
+}
+
+
+/** */
+TVector3 VecBosJet::FindIntersectionInnerBTow() const
+{
+   Warning("FindIntersectionInnerBTow", "Not implemented");
+   //VecBosVertex *vbVertex = mEvent->GetVertexById(mVertexId);
 }
 
 

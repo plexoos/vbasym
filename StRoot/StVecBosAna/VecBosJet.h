@@ -13,24 +13,30 @@
 class VecBosEvent;
 
 
-// Info about vertex
+/** Describes jet objects in events. */
 class VecBosJet : public StJet
 {
 public:
-
-   VecBosEvent  *mEvent;             //!
-   Short_t       mVertexId;          // mId of the mother vertex
-   Float_t       mMinZDistToVertex;  // distance to closest vertex along z
 
    VecBosJet();
    VecBosJet(StJet &stJet);
    ~VecBosJet();
   
-   Short_t  GetVertexId() const { return mVertexId; }
-   void     SetVertexId(Short_t vId) { mVertexId = vId; }
-   void     Process();
-   void     clear();
+   VecBosEvent const * GetEvent() const { return mEvent; }
+   void SetEvent(VecBosEvent* const event ) { mEvent = event; }
+   Short_t       GetVertexId() const { return mVertexId; }
+   void          SetVertexId(Short_t vId) { mVertexId = vId; }
+   Double_t      CalcDetEta() const;
+   void          Process();
+   TVector3      FindIntersectionInnerBTow() const;
+   void          clear();
    virtual void Print(const Option_t* opt="") const;
+
+protected:
+
+   VecBosEvent  *mEvent;             //!
+   Short_t       mVertexId;          // mId of the mother vertex
+   Float_t       mMinZDistToVertex;  // distance to closest vertex along z
 
    ClassDef(VecBosJet, 1);
 };
