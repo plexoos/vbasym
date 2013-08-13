@@ -2,6 +2,7 @@
  *
  * Apr 12, 2012 - Dmitri Smirnov
  *    - Created class
+ *
  * Apr 12, 2012 - Salvatore Fazio
  *    - Modified to use Monte Carlo files
  */
@@ -40,15 +41,11 @@ public:
                 OPTION_SET_CALIB_DL    = 0x20002000,
                 OPTION_DET_DISABLE     = 0x20000001,
                 OPTION_SUFFIX          = 0x20000002,
-                OPTION_JETS_PT_MIN     = 0x20000003};
+                OPTION_JETS_PT_MIN     = 0x20000003,
+                OPTION_RHIC_RUN_ID     = 0x20000004};
 
    // Various histogramming and running modes
    enum Mode   {MODE_GRAPH             = 0x02000000, MODE_NO_GRAPH     = 0x82000000};
-
-protected:
-
-   std::string fListName;
-   std::string fOutputName;
 
 public:
 
@@ -56,7 +53,8 @@ public:
    std::string      fSuffix;            // Additional unique identifier for analysis job
    ULong_t          fModes;
    Bool_t           fDoReconstructJets;
-   Float_t          fJetPtMin;
+   float            fJetPtMin;
+   unsigned short   fRhicRunId;           // RHIC run id, e.g. 9, 11, 12, 13, ...
    Bool_t           fIsMc;
    Bool_t           fSaveHists;
    time_t           fAnaDateTime;       // Date/time when data analysis started
@@ -98,7 +96,10 @@ public:
    Bool_t       HasGraphBit() const;
 
 protected:
-   void Init();
+
+   std::string fListName;
+   std::string fOutputName;
+
    void MakeOutDir();
 
    ClassDef(AnaInfo, 1)

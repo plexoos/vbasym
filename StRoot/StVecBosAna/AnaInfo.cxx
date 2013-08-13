@@ -15,13 +15,12 @@ using namespace std;
 
 /** */
 AnaInfo::AnaInfo() : TObject(),
-   fListName(""),
-   fOutputName(""),
    fAsymVersion(""),
    fSuffix(""),
    fModes(0),
    fDoReconstructJets(kFALSE),
    fJetPtMin(3.5),
+   fRhicRunId(11),
    fIsMc(kFALSE),
    fSaveHists(kFALSE),
    fAnaDateTime(0),
@@ -32,9 +31,10 @@ AnaInfo::AnaInfo() : TObject(),
    fFileMeasInfo(0), fFileStdLog(0),
    fFileStdLogName("stdoe"), fFlagCopyResults(kFALSE), fFlagUseDb(kFALSE),
    fFlagUpdateDb(kFALSE), fFlagCreateThumbs(kFALSE),
-   fUserGroup()
+   fUserGroup(),
+   fListName(""),
+   fOutputName("")
 {
-   Init();
 }
 
 
@@ -49,33 +49,8 @@ AnaInfo::~AnaInfo()
 
 
 /** */
-void AnaInfo::Init()
-{ //{{{
-   const char* tmpEnv;
-
-   tmpEnv = getenv("CNIPOL_DIR");
-
-   if (tmpEnv) fAsymEnv["CNIPOL_DIR"] = tmpEnv;
-   else        fAsymEnv["CNIPOL_DIR"] = ".";
-
-   tmpEnv = getenv("CNIPOL_DATA_DIR");
-
-   if (tmpEnv) fAsymEnv["CNIPOL_DATA_DIR"] = tmpEnv;
-   else        fAsymEnv["CNIPOL_DATA_DIR"] = ".";
-
-   tmpEnv = getenv("CNIPOL_RESULTS_DIR");
-
-   if (tmpEnv) fAsymEnv["CNIPOL_RESULTS_DIR"] = tmpEnv;
-   else        fAsymEnv["CNIPOL_RESULTS_DIR"] = ".";
-
-
-   //fUserGroup = *gSystem->GetUserInfo();
-} //}}}
-
-
-/** */
 void AnaInfo::MakeOutDir()
-{ //{{{
+{
    if (GetOutDir().size() > 200) {
       Error("MakeOutDir", "Output directory name is too long");
    }
@@ -86,7 +61,7 @@ void AnaInfo::MakeOutDir()
    //   Info("MakeOutDir", "Created directory %s", GetOutDir().c_str());
    //   gSystem->Chmod(GetOutDir().c_str(), 0775);
    //}
-} //}}}
+}
 
 
 string AnaInfo::GetSuffix()           const { return !fSuffix.empty() ? "_" + fSuffix : "" ; }
@@ -119,21 +94,23 @@ void AnaInfo::ProcessOptions(int argc, char **argv)
    stringstream sstr;
 
    static struct option long_options[] = {
-      {"log",                 optional_argument,   0,   'l'},
-      {"sfx",                 required_argument,   0,   AnaInfo::OPTION_SUFFIX},
-      {"list",                required_argument,   0,   'f'},
-      {"jets",                no_argument,         0,   'j'},
-      {"jet-pt-min",          required_argument,   0,   AnaInfo::OPTION_JETS_PT_MIN},
-      {"jpm",                 required_argument,   0,   AnaInfo::OPTION_JETS_PT_MIN},
-      {"mc",                  no_argument,         0,   'm'},
-      {"plots",               no_argument,         0,   'p'},
-      {"hists",               no_argument,         0,   'p'},
-      {0, 0, 0, 0}
+      {"log",                 optional_argument,   NULL,   'l'},
+      {"sfx",                 required_argument,   NULL,   AnaInfo::OPTION_SUFFIX},
+      {"list",                required_argument,   NULL,   'f'},
+      {"jets",                no_argument,         NULL,   'j'},
+      {"jet-pt-min",          required_argument,   NULL,   AnaInfo::OPTION_JETS_PT_MIN},
+      {"jpm",                 required_argument,   NULL,   AnaInfo::OPTION_JETS_PT_MIN},
+      {"rhic-run-id",         required_argument,   NULL,   AnaInfo::OPTION_RHIC_RUN_ID},
+      {"run",                 required_argument,   NULL,   AnaInfo::OPTION_RHIC_RUN_ID},
+      {"mc",                  no_argument,         NULL,   'm'},
+      {"plots",               no_argument,         NULL,   'p'},
+      {"hists",               no_argument,         NULL,   'p'},
+      {NULL, 0, NULL, 0}
    };
 
    int c;
 
-   while ((c = getopt_long(argc, argv, "?hl::r:f:n:jmp", long_options, &option_index)) != -1)
+   while ((c = getopt_long(argc, argv, "?hl::f:n:jmp", long_options, &option_index)) != -1)
    {
       switch (c) {
 
@@ -146,13 +123,14 @@ void AnaInfo::ProcessOptions(int argc, char **argv)
          fFileStdLogName = (optarg != 0 ? optarg : "");
          break;
 
-      case 'r':
       case 'f':
          SetListName(optarg);
+         Info("ProcessOptions", "Found fListName: %s", optarg);
          break;
 
       case 'n':
          fMaxEventsUser = atoi(optarg);
+         Info("ProcessOptions", "Found fMaxEventsUser: %d", fMaxEventsUser);
          break;
 
       case 'j':
@@ -160,9 +138,17 @@ void AnaInfo::ProcessOptions(int argc, char **argv)
          break;
 
       case AnaInfo::OPTION_JETS_PT_MIN:
-         sstr.str("");
-         sstr << optarg;
+         sstr.clear();
+         sstr.str(string(optarg));
          sstr >> fJetPtMin;
+         Info("ProcessOptions", "Found fJetPtMin: %f", fJetPtMin);
+         break;
+
+      case AnaInfo::OPTION_RHIC_RUN_ID:
+         sstr.clear();
+         sstr.str(string(optarg));
+         sstr >> fRhicRunId;
+         Info("ProcessOptions", "Found fRhicRunId: %d", fRhicRunId);
          break;
 
       case 'm':
@@ -189,6 +175,12 @@ void AnaInfo::VerifyOptions()
    // The file list must be specified
    if (fListName.empty()) {
       Error("VerifyOptions", "File with input list files must be specified");
+      PrintUsage();
+      exit(0);
+   }
+
+   if (fRhicRunId < 9 || fRhicRunId > 13) {
+      Error("VerifyOptions", "Don't know anything about RHIC run %d. Try 9 <= value <= 13  ", fRhicRunId);
       PrintUsage();
       exit(0);
    }
