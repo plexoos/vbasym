@@ -7,12 +7,15 @@
 
 RUNLIST=$1
 CODE_DIR=~/vbasym/
-#STAR_VER=SL11d
-STAR_VER=SL12c
+STAR_VER=SL11d   # Run 11 P11id
+#STAR_VER=SL12c
+#STAR_VER=SL13b  # Run 12 P13ib
+#STAR_VER=DEV    # Run 13
 #STANA_OPTIONS=$2
 #STANA_OPTIONS="--jpm_0.5_-n1000_--jets"
-#STANA_OPTIONS="--jpm_3.5_--jets"
-STANA_OPTIONS="--jpm_0.5"
+#STANA_OPTIONS="--jpm_0.5_--run_11_--jets"
+STANA_OPTIONS="--jpm_0.5_--run_11"
+#STANA_OPTIONS="--jpm_0.5"
 OUT_DIR=~/stana_out/${RUNLIST}_${STANA_OPTIONS}
 
 echo
