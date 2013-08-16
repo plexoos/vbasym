@@ -1,6 +1,9 @@
 *.o
 *.so
 *~
+*.dataset
+*.session.xml
+.*.swp
 src/wana_dict.*
 src/stana
 src/vbana
