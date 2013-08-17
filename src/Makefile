@@ -22,24 +22,24 @@ ROOTGLIBS    := $(shell root-config --glibs)
 # Linux with egcs, gcc 2.9x, gcc 3.x (>= RedHat 5.2)
 CXX           = g++
 
-STAR_INC_DIRS = -I../ -I../StRoot -I../.sl53_gcc432/include -I/afs/rhic.bnl.gov/star/packages/SL12c/StRoot/ \
-                -I/afs/rhic.bnl.gov/star/packages/SL12c/.sl53_gcc432/include/ \
-                -I/afs/rhic.bnl.gov/star/packages/SL12c/StRoot/StJetMaker/tracks/ \
+STAR_INC_DIRS = -I../ -I../StRoot -I../.sl53_gcc432/include -I/afs/rhic.bnl.gov/star/packages/$(STAR_VERSION)/StRoot/ \
+                -I/afs/rhic.bnl.gov/star/packages/$(STAR_VERSION)/.sl53_gcc432/include/ \
+                -I/afs/rhic.bnl.gov/star/packages/$(STAR_VERSION)/StRoot/StJetMaker/tracks/ \
                 -I../.sl53_gcc432/obj/StRoot
 
-STAR_LIB_DIRS = -L../.sl53_gcc432/lib -L/afs/rhic.bnl.gov/star/packages/SL12c/.sl53_gcc432/lib \
-                -L/afs/rhic.bnl.gov/star/packages/SL12c/.sl53_gcc432/LIB
+STAR_LIB_DIRS = -L../.sl53_gcc432/lib -L/afs/rhic.bnl.gov/star/packages/$(STAR_VERSION)/.sl53_gcc432/lib \
+                -L/afs/rhic.bnl.gov/star/packages/$(STAR_VERSION)/.sl53_gcc432/LIB
 
-MYSQLLIBDIR = -L/usr/lib/mysql
-MYSQLLIB    = -lmysqlclient
-UTILSLIBDIR = -L/star/u/smirnovd/rootmacros/utils
-UTILSINCDIR = -I/star/u/smirnovd/rootmacros/
-UTILSLIB    = -lutils
+MYSQL_LIB_DIR = -L/usr/lib/mysql
+MYSQL_LIB     = -lmysqlclient
+UTILS_LIB_DIR = -L/star/u/smirnovd/rootmacros/utils
+UTILS_INC_DIR = -I/star/u/smirnovd/rootmacros/
+UTILS_LIB     = -lutils
 
 # if you plan to do a whole lot of debugging, remove '-O' switch(es)
 #CXXFLAGS      = -O2
 CXXFLAGS      = -ggdb -g -fno-inline -Wall -fPIC $(ROOTCFLAGS)
-CXXFLAGS     += -I. -I$(INC_DIR) $(UTILSINCDIR) $(STAR_INC_DIRS) -D__ROOT__ -DNEW_DAQ_READER
+CXXFLAGS     += -I. -I$(INC_DIR) $(UTILS_INC_DIR) $(STAR_INC_DIRS) -D__ROOT__ -DNEW_DAQ_READER
 
 CFLAGS        = -g -O -I. -I$(INC_DIR)
 LD            = g++
@@ -53,7 +53,7 @@ LIBS          = $(ROOTLIBS) -lTable -lMinuit -lTreePlayer -lGeom -lrt
 
 LDFLAGS      += $(shell root-config --ldflags)
 LDFLAGS      += -L$(OPTSTAR)/lib
-#LDFLAGS      += -Wl,-rpath,.sl53_gcc432/lib:/afs/rhic.bnl.gov/star/packages/SL12c/.sl53_gcc432/lib:/afs/rhic.bnl.gov/star/ROOT/5.22.00/.sl53_gcc432/rootdeb/lib,--warn-unresolved-symbols
+#LDFLAGS      += -Wl,-rpath,.sl53_gcc432/lib:/afs/rhic.bnl.gov/star/packages/$(STAR_VERSION)/.sl53_gcc432/lib:/afs/rhic.bnl.gov/star/ROOT/5.22.00/.sl53_gcc432/rootdeb/lib,--warn-unresolved-symbols
 LDFLAGS      += -Wl,-Bdynamic -Wl,--warn-unresolved-symbols -Wl,-rpath,/star/u/smirnovd/rootmacros/utils
 
 #------------------------------------------------------------------------------
@@ -137,15 +137,15 @@ wana: $(WANA_LIB) wana.o
 	@echo "$@ done"
 
 stana: stana.o
-	$(LD) $(LDFLAGS) $(STAR_LIB_DIRS) $(STAR_LIBS) $(MYSQLLIBDIR) $(MYSQLLIB) $(UTILSLIBDIR) $(UTILSLIB) $(LIBS) stana.o -o $@
+	$(LD) $(LDFLAGS) $(STAR_LIB_DIRS) $(STAR_LIBS) $(MYSQL_LIB_DIR) $(MYSQL_LIB) $(UTILS_LIB_DIR) $(UTILS_LIB) $(LIBS) stana.o -o $@
 	@echo "$@ done"
 
 vbana: vbana.o
-	$(LD) $(LDFLAGS) $(STAR_LIB_DIRS) $(STAR_LIBS) $(UTILSLIBDIR) $(UTILSLIB) $(LIBS) vbana.o -o $@
+	$(LD) $(LDFLAGS) $(STAR_LIB_DIRS) $(STAR_LIBS) $(UTILS_LIB_DIR) $(UTILS_LIB) $(LIBS) vbana.o -o $@
 	@echo "$@ done"
 
 lumi_calc: lumi_calc.o
-	$(LD) $(LDFLAGS) $(STAR_LIB_DIRS) $(STAR_LIBS) $(UTILSLIBDIR) $(UTILSLIB) $(LIBS) lumi_calc.o -o $@
+	$(LD) $(LDFLAGS) $(STAR_LIB_DIRS) $(STAR_LIBS) $(UTILS_LIB_DIR) $(UTILS_LIB) $(LIBS) lumi_calc.o -o $@
 	@echo "$@ done"
 
 $(WANA_LIB): $(OBJS) $(WANA_DICT_OBJ)
