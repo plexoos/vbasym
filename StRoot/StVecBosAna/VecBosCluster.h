@@ -1,9 +1,9 @@
 #ifndef VecBosCluster_h
 #define VecBosCluster_h
 
-
 #include "TLorentzVector.h"
 #include "TVector3.h"
+
 
 class VecBosTrack;
 
@@ -12,6 +12,7 @@ class VecBosTrack;
 class VecBosCluster : public TObject
 {
 public:
+
    float    mEnergy;
    float    ET;
    float    adcSum;
@@ -24,7 +25,7 @@ public:
    ~VecBosCluster();
 
    void BuildAroundTower(VecBosTrack &track);
-   void Clear();
+   virtual void Clear(const Option_t* opt="");
    virtual void Print(const Option_t* opt="") const;
 
 protected:

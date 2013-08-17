@@ -87,7 +87,7 @@ void VecBosCluster::BuildAroundTower(VecBosTrack &track)
 }
 
 
-void VecBosCluster::Clear()
+void VecBosCluster::Clear(const Option_t* opt)
 {
    position = TVector3(0, 0, 0);
    ET = mEnergy = adcSum = 0;
