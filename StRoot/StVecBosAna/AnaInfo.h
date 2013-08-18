@@ -19,7 +19,7 @@
 #include "TObject.h"
 #include "TSystem.h"
 
-#include "Types.h"
+#include "Globals.h"
 
 
 /** */
