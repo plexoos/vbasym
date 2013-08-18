@@ -13,14 +13,14 @@
 #include "Globals.h"
 #include "CalTower.h"
 #include "VecBosCluster.h"
-#include "VecBosJet.h"
 
 
 class VecBosEvent;
 class VecBosVertex;
+class VecBosJet;
 
 
-// Track info
+/** Describes the track objects in event */
 class VecBosTrack : public TObject
 {
 public:
@@ -123,7 +123,7 @@ public:
    TVector3     GetCoordAtBTow()        const { return mCoorAtBTow; }
    Short_t      GetVertexId()           const { return mVertexId; }
    void         SetVertexId(Short_t vId) { mVertexId = vId; }
-   VecBosJet*   FindClosestJet(VecBosJetPtrSet &jets);
+   VecBosJet*   FindClosestJet();
    virtual void Clear(const Option_t* opt="");
    virtual void Print(const Option_t* opt="") const;
 
@@ -140,14 +140,6 @@ private:
 };
 
 
-typedef std::vector<VecBosTrack>          VecBosTrackVec;
-typedef VecBosTrackVec::iterator          VecBosTrackVecIter;
-typedef VecBosTrackVec::const_iterator    VecBosTrackVecConstIter;
-
-typedef std::vector<VecBosTrack*>         VecBosTrackPtrVec;
-typedef VecBosTrackPtrVec::iterator       VecBosTrackPtrVecIter;
-typedef VecBosTrackPtrVec::const_iterator VecBosTrackPtrVecConstIter;
-
 inline bool operator==(const VecBosTrack& lhs, const VecBosTrack& rhs) { return (TVector3) lhs.mP3AtDca == (TVector3) rhs.mP3AtDca; }
 inline bool operator!=(const VecBosTrack& lhs, const VecBosTrack& rhs) { return !operator==(lhs,rhs); }
 inline bool operator< (const VecBosTrack& lhs, const VecBosTrack& rhs) { return lhs.mP3AtDca.Mag() < rhs.mP3AtDca.Mag(); }
@@ -155,19 +147,22 @@ inline bool operator> (const VecBosTrack& lhs, const VecBosTrack& rhs) { return 
 inline bool operator<=(const VecBosTrack& lhs, const VecBosTrack& rhs) { return !operator> (lhs,rhs); }
 inline bool operator>=(const VecBosTrack& lhs, const VecBosTrack& rhs) { return !operator< (lhs,rhs); }
 
+
 struct CompareVecBosTrack
 {
    bool operator()(const VecBosTrack& lhs, const VecBosTrack& rhs) const { return lhs > rhs; }
 };
+
 
 struct CompareVecBosTrackPtr
 {
    bool operator()(const VecBosTrack* lhs, const VecBosTrack* rhs) const { return (*lhs) > (*rhs); }
 };
 
+
 /**
  * Sorting based on the total cluster energy. Therefore valid only for tracks
- * with cluster, i.e. candidates.
+ * with cluster, i.e. electron candidates.
  */
 struct CompareVecBosCandTrackPtr
 {
@@ -176,6 +171,15 @@ struct CompareVecBosCandTrackPtr
       return lhs->GetP3EScaled().Mag() > rhs->GetP3EScaled().Mag();
    }
 };
+
+
+typedef std::vector<VecBosTrack>                          VecBosTrackVec;
+typedef VecBosTrackVec::iterator                          VecBosTrackVecIter;
+typedef VecBosTrackVec::const_iterator                    VecBosTrackVecConstIter;
+
+typedef std::vector<VecBosTrack*>                         VecBosTrackPtrVec;
+typedef VecBosTrackPtrVec::iterator                       VecBosTrackPtrVecIter;
+typedef VecBosTrackPtrVec::const_iterator                 VecBosTrackPtrVecConstIter;
 
 typedef std::set<VecBosTrack, CompareVecBosTrack>         VecBosTrackSet;
 typedef VecBosTrackSet::iterator                          VecBosTrackSetIter;

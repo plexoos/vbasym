@@ -3,7 +3,7 @@
 
 #include "VecBosEvent.h"
 #include "VecBosVertex.h"
-#include "Globals.h"
+#include "VecBosJet.h"
 
 
 ClassImp(VecBosTrack)
@@ -109,13 +109,13 @@ void VecBosTrack::Process()
 }
 
 
-VecBosJet* VecBosTrack::FindClosestJet(VecBosJetPtrSet &jets)
+VecBosJet* VecBosTrack::FindClosestJet()
 {
    VecBosJet *closestJet = 0;
 
    // Find the min distance between the track and the closest jet
-   VecBosJetPtrSetConstIter iJet = jets.begin();
-   for ( ; iJet != jets.end(); ++iJet)
+   VecBosJetPtrSetConstIter iJet = mEvent->mJets.begin();
+   for ( ; iJet != mEvent->mJets.end(); ++iJet)
    {
       VecBosJet *vbJet = *iJet;
 
@@ -238,28 +238,27 @@ void VecBosTrack::Print(const Option_t* opt) const
 
 bool VecBosTrack::ExtendTrack2Barrel()
 {
-   // Initial rejection: XXX The Pt cut may need to be reconsidered
-   if ( mStMuTrack->pt() < 1.0 || mStMuTrack->flag() != 301 )
+   // Initial rejection: XXX The Pt cut may need to be reconsidered: was 1.0 -> 0.2
+   if ( mStMuTrack->pt() < 0.200 || mStMuTrack->flag() != 301 )
       return false;
 
-   //printf("******* extendTracks() nVert=%d\n", mVecBosEvent->mVertices.size());
-   //if (!mVecBosEvent->l2bitET) return; //fire barrel trigger
-
-   // Apply eta cuts at track level (tree analysis)
-   //if (mP3AtDca.Eta() < mMinBTrackEta || mP3AtDca.Eta() > mMaxBTrackEta) continue;
-
-   // extrapolate track to the barrel @ R=entrance
+   // Extrapolate track to the barrel @ R=entrance
    mHelix               = mStMuTrack->outerHelix();
    float  nomBTowRadius = gBTowGeom->Radius();
    pairD  segmentLength = mHelix.pathLength(nomBTowRadius); // XXX:ds: Length along the helix from the origin to the intersection point
    //printf(" R=%.1f path 1=%f, 2=%f, period=%f, R=%f\n", Rctb, segmentLength.first, segmentLength.second, mHelix.period(), 1./mHelix.curvature());
+   
+   if (fabs(segmentLength.first) > 1e7 || fabs(segmentLength.second) > 1e7) {
+      Warning("ExtendTrack2Barrel", "Track cannot be propagated to barrel");
+      return false;
+   }
 
    // assert(segmentLength.first  < 0); // propagate backwards
    // assert(segmentLength.second > 0); // propagate forwards
    if (segmentLength.first >= 0 || segmentLength.second <= 0)
    {
-      Info("ExtendTrack2Barrel", "MatchTrk , unexpected solution for track crossing CTB\n" \
-                                 "segmentLength.first=%f, segmentLength.second=%f, swap them", segmentLength.first, segmentLength.second);
+      Warning("ExtendTrack2Barrel", "Unexpected solution for track crossing CTB. Swap segments segmentLength.first=%f, segmentLength.second=%f",
+            segmentLength.first, segmentLength.second);
       float xx  = segmentLength.first;
       segmentLength.first  = segmentLength.second;
       segmentLength.second = xx;
@@ -267,7 +266,6 @@ bool VecBosTrack::ExtendTrack2Barrel()
 
    // Extrapolate track to cylinder
    StThreeVectorD posAtBTow = mHelix.at(segmentLength.second);
-   //printf(" punch2 x,y,z=%.1f, %.1f, %.1f, Rxy=%.1f\n",posCTB.x(),posCTB.y(),posCTB.z(),xmagn);
    float etaAtBTow   = posAtBTow.pseudoRapidity();
    float phiAtBTow   = posAtBTow.phi();
 
