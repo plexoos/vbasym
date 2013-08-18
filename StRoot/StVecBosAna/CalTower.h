@@ -18,7 +18,7 @@ public:
 
    UShort_t GetEtaBin() { return iEta; }
    UShort_t GetPhiBin() { return iPhi; }
-   void Clear();
+   virtual void Clear(const Option_t* opt="");
    virtual void Print(const Option_t* opt="") const;
 
    ClassDef(CalTower, 1);

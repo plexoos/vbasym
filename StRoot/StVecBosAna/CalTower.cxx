@@ -2,7 +2,7 @@
 #include "CalTower.h"
 
 
-void CalTower::Clear()
+void CalTower::Clear(const Option_t* opt)
 {
    id    = 0;
    R     = TVector3(0, 0, 0);
