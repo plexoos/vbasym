@@ -1,12 +1,7 @@
 #ifndef StVecBosMaker_h
 #define StVecBosMaker_h
 
-/**
- *
- * \class  StVecBosMaker
- * \brief  muDst based extraction of W-signal from pp data
- *
- */
+#include <stdint.h>
 
 #include "StMaker.h"
 
@@ -37,6 +32,12 @@ class  StJet;
 class  TClonesArray;
 
 
+/**
+ * \class  StVecBosMaker
+ *
+ * The main analysis maker to process the StMuDstMaker data. The Make() method fills the tree in the output file.
+ *
+ */
 class StVecBosMaker : public StMaker
 {
    friend class WeventDisplay;
