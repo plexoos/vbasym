@@ -175,6 +175,9 @@ protected:
    TChain *mTreeChain;
    TChain *mJetTreeChain;
 
+   void  InitHistos();
+   void  InitEndcapHistos();
+   void  InitGeom();
    int   ReadMuDstBTOW();
    int   ReadMuDstETOW();
    int   ReadMuDstBarrelTrig();
@@ -189,7 +192,6 @@ protected:
    void  FillNormHists();
    void  AnalyzeESMD();
    void  AnalyzeEPRS();
-
    bool  passes_L0();
    bool  passes_L2();
    void  FindWBoson();
@@ -198,24 +200,11 @@ protected:
    void  FindNearJet();
    void  CalcPtBalance();
    void  esmdAnalysis();
-
    StJets*       GetStJets(const char* bname) const;  // to make it backward compatible with SL09g
    StJets*       GetStJetsFromTree(TString branchName);
    StJet*        GetJet(int i) { return (StJet*) mVecBosEvent->mStJets->jets()->At(i); }
    TClonesArray* GetJets(TString branchName);
    TClonesArray* GetJetsTreeAnalysis(TString branchName);
-
-   //float       SumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, int pointTowId); //uses track vector saved in tree
-
-   void initHistos();
-   void initEHistos();
-   void InitGeom();
-
-   // Displayed on session exit, leave it as-is please ...
-   virtual const char *GetCVS() const {
-      static const char cvs[] = "";
-      return cvs;
-   }
 
    ClassDef(StVecBosMaker, 0)
 };
