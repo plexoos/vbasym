@@ -6,7 +6,7 @@
 #include "TH2F.h"
 #include "TLine.h"
 
-#include "Types.h"
+#include "Globals.h"
 #include "VecBosVertex.h"
 
 

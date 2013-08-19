@@ -7,8 +7,10 @@
 
 #include "TF1.h"
 #include "TF2.h"
+#include "TEllipse.h"
 #include "TMarker.h"
 
+#include "VecBosJet.h"
 #include "WBosEvent.h"
 
 
@@ -65,10 +67,11 @@ void EventDisplayHists::BookHists(const VecBosEvent &ev)
 /** */
 void EventDisplayHists::Fill(ProtoEvent &ev)
 {
+   Info("Fill", "xxx");
    WBosEvent& wbEvent = (WBosEvent&) ev;
 
    TH2*  hBTowEnergy = ((TH2*) o["hBTowEnergy"]);
-   Int_t softId, m, e, s;
+   Int_t softId;
 
    for (int iEtaBin=1; iEtaBin<=hBTowEnergy->GetNbinsX(); iEtaBin++)
    {
@@ -78,26 +81,19 @@ void EventDisplayHists::Fill(ProtoEvent &ev)
          Double_t phi_c = hBTowEnergy->GetYaxis()->GetBinCenter(iPhiBin);
 
          gBTowGeom->getId((Float_t) phi_c, (Float_t) eta_c, softId);
-         //gBTowGeom->getBin((Float_t) phi_c, (Float_t) eta_c, m, e, s);
-         //printf("phi_c: %f, eta_c: %f, softId: %d, m: %d, e: %d, s: %d\n", phi_c, eta_c, softId, m, e, s);
          hBTowEnergy->SetBinContent(iEtaBin, iPhiBin, wbEvent.bemc.eneTile[kBTow][softId - 1]);
       }
    }
 
    const VecBosTrack  &eleTrack = wbEvent.GetElectronTrack();
-   const VecBosVertex *vbVertex = wbEvent.GetVertexById(eleTrack.GetVertexId());
+   const VecBosVertex *vbVertex = wbEvent.FindVertexById(eleTrack.GetVertexId());
 
-   eleTrack.Print("electron");
-   vbVertex->Print();
+   TVector3 trkP3(eleTrack.GetCoordAtBTow() );
 
-   //TVector3 eleP3(eleTrack.GetCoordAtBTow() + vbVertex->mPosition);
-   TVector3 eleP3(eleTrack.GetCoordAtBTow() );
-
-   //TMarker *marker = new TMarker(wbEvent.GetElectronP3().Eta(), wbEvent.GetElectronP3().Phi(), 29);
-   TMarker *marker = new TMarker(eleP3.Eta(), fmod(2*M_PI + eleP3.Phi(), 2*M_PI), 30);
+   TMarker *marker = new TMarker(trkP3.Eta(), fmod(2*M_PI + trkP3.Phi(), 2*M_PI), 30);
    marker->SetMarkerColor(kRed);
-   marker->SetMarkerSize(4);
- 
+   marker->SetMarkerSize(3);
+
    hBTowEnergy->GetListOfFunctions()->SetOwner(kTRUE);
    hBTowEnergy->GetListOfFunctions()->Add(marker);
 
@@ -105,6 +101,45 @@ void EventDisplayHists::Fill(ProtoEvent &ev)
 
    TMarker *markerCluster = new TMarker(cluP3.Eta(), fmod(2*M_PI + cluP3.Phi(), 2*M_PI), 30);
    markerCluster->SetMarkerColor(kBlue);
-   markerCluster->SetMarkerSize(4);
+   markerCluster->SetMarkerSize(3);
    hBTowEnergy->GetListOfFunctions()->Add(markerCluster);
+
+   // Draw jets as ellipses
+   VecBosJetPtrSetConstIter iJet = wbEvent.mJets.begin();
+   for (short iColor=1 ; iJet != wbEvent.mJets.end(); ++iJet, iColor+=1)
+   {
+      VecBosJet &vbJet = **iJet;
+
+      vbJet.SetEvent(&wbEvent); // XXX a temporary hack. VecBosJet::mEvent should be set when read from a file
+      //vbJet.FindTracksInCone();
+      //vbJet.Print();
+
+      TEllipse *jetEllipse = new TEllipse(vbJet.CalcDetEta(), fmod(2*M_PI + vbJet.Phi(), 2*M_PI), VecBosEvent::sMaxJetCone/sqrt(2));
+      jetEllipse->SetFillStyle(0);
+      jetEllipse->SetLineColor(iColor);
+      jetEllipse->SetLineWidth(2);
+      hBTowEnergy->GetListOfFunctions()->Add(jetEllipse);
+
+      VecBosTrackPtrSet& jetTracks = vbJet.GetTracks();
+
+      VecBosTrackPtrSetIter iTrack = jetTracks.begin();
+      for ( ; iTrack != jetTracks.end(); ++iTrack)
+      {
+         TVector3 jetTrkP3((*iTrack)->GetCoordAtBTow() );
+         //Info("Fill", "iTrack: %x", *iTrack);
+         //(*iTrack)->Print();
+         //Info("Fill", "jetTrkP3:");
+         //jetTrkP3.Print();
+
+         marker = new TMarker(jetTrkP3.Eta(), fmod(2*M_PI + jetTrkP3.Phi(), 2*M_PI), kFullStar);
+         marker->SetMarkerColor(iColor);
+         marker->SetMarkerSize(2);
+         hBTowEnergy->GetListOfFunctions()->Add(marker);
+
+         TLine *lineTrack2Jet = new TLine(jetEllipse->GetX1(), jetEllipse->GetY1(), marker->GetX(), marker->GetY());
+         lineTrack2Jet->SetLineWidth(2);
+         lineTrack2Jet->SetLineColor(iColor);
+         hBTowEnergy->GetListOfFunctions()->Add(lineTrack2Jet);
+      }
+   }
 }
