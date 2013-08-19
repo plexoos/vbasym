@@ -6,7 +6,9 @@
 #include "TVector3.h"
 
 
-// tower pointed by the track
+/**
+ * Matches calorimeter tower index to a track pointing to the tower.
+ */
 class CalTower : public TObject
 {
 public:
