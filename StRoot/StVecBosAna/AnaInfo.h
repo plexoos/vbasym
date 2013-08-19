@@ -1,11 +1,3 @@
-/**
- *
- * Apr 12, 2012 - Dmitri Smirnov
- *    - Created class
- *
- * Apr 12, 2012 - Salvatore Fazio
- *    - Modified to use Monte Carlo files
- */
 
 #ifndef AnaInfo_h
 #define AnaInfo_h
@@ -22,7 +14,9 @@
 #include "Globals.h"
 
 
-/** */
+/**
+ * Processes and controls user options provided in the command line.
+ */ 
 class AnaInfo : public TObject
 {
 public:
@@ -54,7 +48,7 @@ public:
    ULong_t          fModes;
    Bool_t           fDoReconstructJets;
    float            fJetPtMin;
-   unsigned short   fRhicRunId;           // RHIC run id, e.g. 9, 11, 12, 13, ...
+   unsigned short   fRhicRunId;         // RHIC run id, e.g. 9, 11, 12, 13, ...
    Bool_t           fIsMc;
    Bool_t           fSaveHists;
    time_t           fAnaDateTime;       // Date/time when data analysis started
