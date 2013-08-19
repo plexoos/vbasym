@@ -29,7 +29,6 @@ public:
    ~EventDisplayHContainer();
 
    void Fill(ProtoEvent &ev);
-   void FillTracks(ProtoEvent &ev);
    //void FillDerived();
    //void FillDerived(PlotHelper &oc);
    //void PostFill();
