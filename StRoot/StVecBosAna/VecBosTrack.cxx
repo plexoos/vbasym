@@ -141,7 +141,7 @@ VecBosJet* VecBosTrack::FindClosestJet()
       mJet = closestJet;
       return closestJet;
    }
-   
+
    return 0;
 }
 
@@ -247,7 +247,7 @@ bool VecBosTrack::ExtendTrack2Barrel()
    float  nomBTowRadius = gBTowGeom->Radius();
    pairD  segmentLength = mHelix.pathLength(nomBTowRadius); // XXX:ds: Length along the helix from the origin to the intersection point
    //printf(" R=%.1f path 1=%f, 2=%f, period=%f, R=%f\n", Rctb, segmentLength.first, segmentLength.second, mHelix.period(), 1./mHelix.curvature());
-   
+
    if (fabs(segmentLength.first) > 1e7 || fabs(segmentLength.second) > 1e7) {
       Warning("ExtendTrack2Barrel", "Track cannot be propagated to barrel");
       return false;
@@ -308,7 +308,7 @@ bool VecBosTrack::ExtendTrack2Endcap()
    //{
    //   VecBosVertex &vertex = **iVertex;
 
-   //   for (uint it = 0; it < vertex.eleTrack.size(); it++) 
+   //   for (uint it = 0; it < vertex.eleTrack.size(); it++)
    //   {
    //      VecBosTrack &T = vertex.eleTrack[it];
 
@@ -470,7 +470,7 @@ void VecBosTrack::CalcEnergyInCones()
    // else {
       //mEvent->mTracksCandidate.push_back(this);
    //}
-   
+
    // sum TPC-near component
    //if (mStMuDstMaker)
    //else
