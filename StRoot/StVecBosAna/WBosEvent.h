@@ -4,8 +4,6 @@
 #include "TVector3.h"
 
 #include "VecBosEvent.h"
-#include "VecBosTrack.h"
-
 
 
 class WBosEvent : public VecBosEvent

@@ -83,16 +83,16 @@ public:
    TVector3                mDistToCluster;     // Distance to cluster
 
    // esmd shower info
-   int                     hitSector;                       //! 
-   int                     esmdGlobStrip[mxEsmdPlane];      //! 
-   float                   esmdShower[mxEsmdPlane][41];     //! 
-   float                   esmdDca[mxEsmdPlane];            //! 
-   float                   esmdDcaGlob[mxEsmdPlane];        //! 
-   float                   esmdE[mxEsmdPlane];              //! 
-   int                     esmdNhit[mxEsmdPlane];           //! 
-   float                   esmdShowerCentroid[mxEsmdPlane]; //! 
-   float                   esmdShowerWidth[mxEsmdPlane];    //! 
-   TVector3                esmdXPcentroid;                  //! 
+   int                     hitSector;                       //!
+   int                     esmdGlobStrip[mxEsmdPlane];      //!
+   float                   esmdShower[mxEsmdPlane][41];     //!
+   float                   esmdDca[mxEsmdPlane];            //!
+   float                   esmdDcaGlob[mxEsmdPlane];        //!
+   float                   esmdE[mxEsmdPlane];              //!
+   int                     esmdNhit[mxEsmdPlane];           //!
+   float                   esmdShowerCentroid[mxEsmdPlane]; //!
+   float                   esmdShowerWidth[mxEsmdPlane];    //!
+   TVector3                esmdXPcentroid;                  //!
 
    static const float      sMaxTrackClusterDist;            //! cm, dist between projected track and center of cluster
    static const float      sMinPt;                          //!
