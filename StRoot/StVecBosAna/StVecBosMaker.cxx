@@ -45,15 +45,14 @@
 ClassImp(StVecBosMaker)
 
 
-/** */
-StVecBosMaker::StVecBosMaker(const char *name, VecBosRootFile *vbFile): StMaker(name),
+StVecBosMaker::StVecBosMaker(const char *name, uint8_t rhicRunId, VecBosRootFile *vbFile): StMaker(name),
    mStopWatch(), mStMuDstMaker(0), mStJetReader(0), mVecBosRootFile(vbFile),
    mJetTreeBranchName(), mJetTreeBranchNameNoEndcap(),
    mJets(0), mVecBosEvent(0), mVecBosTree(0),
    mNumInputEvents(0), mNumTrigEvents(0), mNumAcceptedEvents(0),
-   mRunNo(0), nRun(0), mIsMc(0),
+   mRhicRunId(rhicRunId), mRunNo(0), nRun(0), mIsMc(0),
    Tfirst(numeric_limits<int>::max()), Tlast(numeric_limits<int>::min()),
-   par_l2bwTrgID(0), parE_l2ewTrgID(0),
+   mL2BarrelTriggerId(0), mL2BarrelTriggerId2(0), mL2EndcapTriggerId(0),
    mParETOWScale(1.0), mParBTOWScale(1.0)   // for old the Endcap geometr you need ~1.3
 {
    mStMuDstMaker = (StMuDstMaker*) GetMaker("MuDst");
@@ -136,6 +135,17 @@ StVecBosMaker::StVecBosMaker(const char *name, VecBosRootFile *vbFile): StMaker(
    par_maxDisplEve              = 1;    // # of displayed selected events
 
    use_gains_file               = 0;
+
+   // Year dependent initialization
+   if (mRhicRunId == 11) {
+      mL2BarrelTriggerId  = 320801;
+      mL2EndcapTriggerId  = 320851;
+   }
+   else if (mRhicRunId == 12) {
+      mL2BarrelTriggerId  = 380209;
+      mL2BarrelTriggerId2 = 380219;
+      mL2EndcapTriggerId  = 380305;
+   }
 }
 
 
@@ -930,7 +940,12 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
 
 
    // Check trigger ID exists = fired
-   if ( !triggerIdCollection->nominal().isTrigger(par_l2bwTrgID) ) return -2;
+   if ( (mL2BarrelTriggerId  != 0 && !triggerIdCollection->nominal().isTrigger(mL2BarrelTriggerId)) &&
+        (mL2BarrelTriggerId2 != 0 && !triggerIdCollection->nominal().isTrigger(mL2BarrelTriggerId2)) )
+   {
+      Warning("ReadMuDstBarrelTrig", "Trigger %d (and %d) not found", mL2BarrelTriggerId, mL2BarrelTriggerId2);
+      return -2;
+   }
 
    hA[0]->Fill("L2bwId", 1.);
 
@@ -1028,7 +1043,10 @@ int StVecBosMaker::ReadMuDstEndcapTrig()
    }
 
    // Check trigger ID
-   if (!triggerIdCollection->nominal().isTrigger(parE_l2ewTrgID)) return -2;
+   if (!triggerIdCollection->nominal().isTrigger(mL2EndcapTriggerId)) {
+      //Warning("ReadMuDstEndcapTrig", "Trigger %d not found", mL2EndcapTriggerId);
+      return -2;
+   }
 
    hE[0]->Fill("L2ewId", 1.);
 
@@ -2048,7 +2066,7 @@ void StVecBosMaker::FindWBosonEndcap()
    {
       VecBosVertex &vertex = **iVertex;
 
-      for (uint it = 0; it < vertex.eleTrack.size(); it++) 
+      for (uint it = 0; it < vertex.eleTrack.size(); it++)
       {
          VecBosTrack &track = vertex.eleTrack[it];
          if (track.mMatchedTower.id >= 0) continue; //skip barrel towers

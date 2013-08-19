@@ -49,7 +49,7 @@ class StVecBosMaker : public StMaker
 
 public:
 
-   StVecBosMaker(const char *name = "StVecBosMaker", VecBosRootFile *vbFile = 0);
+   StVecBosMaker(const char *name="StVecBosMaker", uint8_t rhicRunId=11, VecBosRootFile *vbFile=0);
    virtual ~StVecBosMaker() {};
 
    virtual Int_t Init();
@@ -63,7 +63,6 @@ public:
    float        GetMinBClusterEnergyIsoRatio()  { return mMinBClusterEnergyIsoRatio; }
    float        GetNearTotEtFrac()              { return par_nearTotEtFrac; }
    float        GetPtBalance()                  { return par_ptBalance; }
-   void         setTrigID(int l2bw, int l2ew)   { par_l2bwTrgID = l2bw; parE_l2ewTrgID = l2ew; }
    void         setHList(TObjArray *x)          { HList    = x; }
    void         setHListTpc(TObjArray *x)       { HListTpc = x; }
    void         setMC(int x)                    { mIsMc = x; }
@@ -99,7 +98,7 @@ public:
    void SetTreeName(TString x) { mTreeName = x; }
    void setNameReweight(char* x) {nameReweight=x;}
 
-private:
+protected:
   
    TStopwatch      mStopWatch;
    StMuDstMaker   *mStMuDstMaker;
@@ -118,58 +117,63 @@ private:
    int             mNumInputEvents;
    int             mNumTrigEvents;
    int             mNumAcceptedEvents;      // event counters
+	uint8_t         mRhicRunId;
    int             mRunNo;
    int             nRun;
    int             mIsMc;                   // 0 for real data
    int             Tfirst;
    int             Tlast;
+   int             par_l0emulAdcThresh;
+   float           par_l2emulSeedThresh, par_l2emulClusterThresh;
+   uint32_t        mL2BarrelTriggerId;
+   uint32_t        mL2BarrelTriggerId2;  // two id's used in run 12
+   uint32_t        mL2EndcapTriggerId;
+   float           mCutVertexZ;
+   int             mMinNumPileupVertices;
+   int             par_nFitPts, parE_nFitPts;
+   float           par_nHitFrac, par_trackRin,  par_trackRout;
+   float           parE_nHitFrac, parE_trackRin,  parE_trackRout, mMinETrackPt;
+   int             par_kSigPed, par_AdcThres;
+   float           par_maxADC, mMinBClusterEnergy, parE_clustET;
+   float           mMinBClusterEnergyIsoRatio, par_nearTotEtFrac;
+   float           mMinEClusterEnergyIsoRatio, parE_nearTotEtFrac;
+   float           parE_delR3D, par_highET, parE_highET,  par_ptBalance, parE_ptBalance;
+   float           mMinBTrackEta, mMaxBTrackEta, mMinETrackEta, mMaxETrackEta; //bracket acceptance
+   float           parE_trackEtaMin;
+   int             parE_nSmdStrip;
+   float           mParETOWScale;
+   float           mParBTOWScale;
+   char           *gains_file;
+   int             use_gains_file;
+   float           gains_BTOW[4801];
+   TH1F           *hReweight;
+   char           *nameReweight;
+   int             par_DsmThres, parE_DsmThres; // not used in the algo
+   int             par_maxDisplEve;
 
-   // internal params
-   int   par_l0emulAdcThresh;
-   float par_l2emulSeedThresh, par_l2emulClusterThresh;
-
-   int   par_l2bwTrgID;
-   int   parE_l2ewTrgID;
-   float mCutVertexZ;
-   int   mMinNumPileupVertices;
-
-   int   par_nFitPts, parE_nFitPts;
-   float par_nHitFrac, par_trackRin,  par_trackRout;
-   float parE_nHitFrac, parE_trackRin,  parE_trackRout, mMinETrackPt;
-
-   int   par_kSigPed, par_AdcThres;
-   float par_maxADC, mMinBClusterEnergy, parE_clustET;
-   float mMinBClusterEnergyIsoRatio, par_nearTotEtFrac;
-   float mMinEClusterEnergyIsoRatio, parE_nearTotEtFrac;
-   float parE_delR3D, par_highET, parE_highET,  par_ptBalance, parE_ptBalance;
-   float mMinBTrackEta, mMaxBTrackEta, mMinETrackEta, mMaxETrackEta; //bracket acceptance
-   float parE_trackEtaMin;
-   int   parE_nSmdStrip;
-
-   float mParETOWScale;
-   float mParBTOWScale;
-
-   char *gains_file;
-   int   use_gains_file;
-   float gains_BTOW[4801];
-
-   TString coreTitle;
-   TH1F* hReweight;
-   char* nameReweight;
-
-   // not used in the algo
-   int par_DsmThres, parE_DsmThres;
-   int par_maxDisplEve;
-
-   StBemcTables *mBarrelTables;              // used to access EMC status and ped info
-   TVector3 positionBtow[mxBtow];            // vs. tower ID
-   TVector3 positionBsmd[mxBSmd][mxBStrips]; // vs. strip ID       
-   TVector3 positionEtow[mxEtowSec*mxEtowSub][mxEtowEta];  
+   StBemcTables   *mBarrelTables;              // used to access EMC status and ped info
+   TVector3        positionBtow[mxBtow];            // vs. tower ID
+   TVector3        positionBsmd[mxBSmd][mxBStrips]; // vs. strip ID       
+   TVector3        positionEtow[mxEtowSec*mxEtowSub][mxEtowEta];  
 
    StEEmcDb       *mDbE;            // access to EEMC database
    StSpinDbMaker  *mStSpinDbMaker;  // access spin information
    EEmcGeomSimple *mGeomEmc;        // access to EEMC geometry
    EEmcSmdGeom    *mGeomSmd;        // access to ESMD geometry
+
+   // histograms
+   enum {mxHA = 300};
+   enum {mxHE = 300};
+   TObjArray *HList;
+   TObjArray *HListTpc;
+   TH1       *hA[mxHA];
+   TH1       *hE[mxHE];
+   TH1       *hbxIdeal;
+
+   Int_t   index;
+   Int_t   indexJet;
+   TChain *mTreeChain;
+   TChain *mJetTreeChain;
 
    int   ReadMuDstBTOW();
    int   ReadMuDstETOW();
@@ -203,25 +207,9 @@ private:
 
    //float       SumTpcConeFromTree(int vertID, TVector3 refAxis, int flag, int pointTowId); //uses track vector saved in tree
 
-   // histograms
-   enum {mxHA = 300};
-   enum {mxHE = 300};
-   TObjArray *HList;
-   TObjArray *HListTpc;
-   TH1       *hA[mxHA];
-   TH1       *hE[mxHE];
-   TH1       *hbxIdeal;
-
    void initHistos();
    void initEHistos();
    void InitGeom();
-
-protected:
-
-   Int_t   index;
-   Int_t   indexJet;
-   TChain *mTreeChain;
-   TChain *mJetTreeChain;
 
    // Displayed on session exit, leave it as-is please ...
    virtual const char *GetCVS() const {
