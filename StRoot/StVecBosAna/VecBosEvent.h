@@ -21,10 +21,10 @@
 
 #include "Globals.h"
 #include "VecBosEventInfo.h"
-#include "VecBosVertex.h"
-#include "VecBosTrack.h"
-#include "VecBosJet.h"
 #include "WEvent.h"
+#include "VecBosJet.h"
+#include "VecBosTrack.h"
+#include "VecBosVertex.h"
 
 #include "utils/ProtoEvent.h"
 
@@ -50,7 +50,7 @@ public:
    int                     bxStar7;           //!
    int                     bxStar48;          //!
    int                     mSpinPattern4Bits; // using spinDb or -1 if failed
-	int                     mSpinDirection;    // use spinDbEnum to interpret the value
+   int                     mSpinDirection;    // use spinDbEnum to interpret the value
    bool                    zTag;
    Double_t                mCpuTimeEventAna;
    Double_t                mCpuTimeHistFill;
@@ -75,7 +75,7 @@ public:
    VecBosJetPtrSet         mJetsWithIsoTrack;  //!
    VecBosVertexPtrSet      mVertices;          //
    VecBosTrackPtrSet       mTracks;            // track owner
-   VecBosCandTrackPtrSet   mTracksCandidate;   // candidate tracks sorted by cluster energy
+   VecBosCandTrackPtrSet   mTracksCandidate;   // pointers to candidate tracks sorted by cluster energy
    WEvent                 *mWEvent;
    TLorentzVector          mP4JetTotal;
    TLorentzVector          mP4JetFirst;
@@ -91,12 +91,12 @@ public:
    TVector3                mP3BalanceFromTracks2;
    TVector3                mP3BalanceFromJets;
    Double_t                mPtBalanceFromTracks;
-   Double_t                mBalanceDeltaPhiFromTracks; 
-   Double_t                mBalanceDeltaPhiFromTracks2;  
-   Double_t                mBalanceDeltaPhiFromJets; 
-   Double_t                mPtBalanceCosPhiFromTracks;  
-   Double_t                mPtBalanceCosPhiFromTracks2;  
-   Double_t                mPtBalanceCosPhiFromJets; 
+   Double_t                mBalanceDeltaPhiFromTracks;
+   Double_t                mBalanceDeltaPhiFromTracks2;
+   Double_t                mBalanceDeltaPhiFromJets;
+   Double_t                mPtBalanceCosPhiFromTracks;
+   Double_t                mPtBalanceCosPhiFromTracks2;
+   Double_t                mPtBalanceCosPhiFromJets;
    Double_t                mPtTrackRecoilWithNeutralsCorrected;
    Double_t                mHadRecoilFromTracksEta;
    Double_t                mHadRecoilFromTracksPt;
@@ -121,8 +121,8 @@ public:
    void           AddStJets(StJets *stJets, StJets *stJetsNoEndcap);
    TClonesArray*  GetStJets();
    TClonesArray*  GetStJetsNoEndcap();
-   UInt_t         GetRunId() const { return runNo; }
-   UInt_t         GetEventId() const { return id; }
+   UInt_t         GetRunId()                  const { return runNo; }
+   UInt_t         GetEventId()                const { return id; }
    UInt_t         GetNumStJets();
    UInt_t         GetNumStJetsNoEndcap();
    UInt_t         GetNumJets()                const { return mJets.size(); }
@@ -141,8 +141,8 @@ public:
    TVector3       GetTrackRecoil()            const { return mP3TrackRecoilTow; }
    TVector3       GetTrackRecoilNeutrals()    const { return mP3TrackRecoilNeutrals; }
    TVector3       GetTrackRecoilTpcNeutrals() const { return mP3TrackRecoilTpcNeutrals; }
-   VecBosVertex*  GetVertexById(const Short_t vertexId) const;
-   VecBosTrack*   GetTrackById(const Short_t trackId) const;
+   VecBosVertex*  FindVertexById(const Short_t vertexId) const;
+   VecBosTrack*   FindTrackById(const Short_t trackId) const;
    TVector3       CalcTrackRecoilTpcNeutralsCorrected() const;
    void           SetCpuTimeEventAna(Double_t time) { mCpuTimeEventAna = time; }
    void           SetCpuTimeHistFill(Double_t time) { mCpuTimeHistFill = time; }

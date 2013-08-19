@@ -23,13 +23,15 @@ int main(int argc, char *argv[])
 
    setbuf(stdout, NULL);
 
-   //Int_t  nMaxUserEvents = -1; // < 0 means all events
-   Int_t  nMaxUserEvents = 1000;
+   Int_t  nMaxUserEvents = -1; // < 0 means all events
+   //Int_t  nMaxUserEvents = 1000;
 
    Bool_t isMc           = kFALSE;
    //Bool_t isMc           = kTRUE;
 
-   string filelist       = "run11_pp_transverse";
+   //string filelist       = "run11_pp_transverse";
+   string filelist       = "run11_pp_longitudinal";
+   //string filelist       = "run12_pp";
    //string filelist       = "MC_list_QCD_2012";
    //string filelist       = "MC_list_Wm_2012";
    //string filelist       = "MC_list_Wp_2012";
@@ -37,7 +39,7 @@ int main(int argc, char *argv[])
    //string filelist       = "MC_list_WpToTauTau_2012";
    //string filelist       = "MC_list_Ztoee_2012";
 
-   string stana_options  = "--jpm_0.5";
+   string stana_options  = "--jpm_0.5_--run_11";
    stana_options = (isMc ? "-m_" : "") + stana_options;
 
    string histFileName = "~/stana_out/" + filelist + "_" + stana_options + "/hist/vbana.root";

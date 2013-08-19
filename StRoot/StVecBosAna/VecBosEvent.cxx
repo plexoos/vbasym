@@ -1,5 +1,7 @@
 #include <math.h>
 
+#include "TRefArray.h"
+
 #include "VecBosEvent.h"
 
 #include "utils/utils.h"
@@ -30,13 +32,12 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mBalanceDeltaPhiFromTracks(0),
    mLumiEff(0)
 {
-   //clear();
 }
 
 
 const float VecBosEvent::sMinTrackIsoDeltaR    = 0.7;  // was 0.7
 const float VecBosEvent::sMinTrackIsoDeltaPhi  = 0.7;
-const float VecBosEvent::sMaxVertexJetDeltaZ   = 1;    // distance between jet and track z coord, cm
+const float VecBosEvent::sMaxVertexJetDeltaZ   = 1;    // distance between jet and vertex z coord, cm
 const float VecBosEvent::sMaxTrackJetDeltaZ    = 3;    // distance between jet and track z coord, cm
 const float VecBosEvent::sMinBTrackPt          = 10;
 const float VecBosEvent::sMinTrackHitFrac      = 0.51;
@@ -99,6 +100,8 @@ void VecBosEvent::AddVertex(VecBosVertex *vbVertex)
 
 void VecBosEvent::AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex)
 {
+   //Info("AddTrack", "xxx");
+   //stMuTrack->Print();
    //if (vbVertex) Info("AddTrack", "vbVertex != 0");
    //else          Info("AddTrack", "vbVertex == 0");
 
@@ -122,16 +125,23 @@ void VecBosEvent::AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex)
 
 void VecBosEvent::AddStJets(StJets *stJets, StJets *stJetsNoEndcap)
 {
+   //Info("MyTest", "\n\n\n\nxxx");
+
    mStJets         = stJets;
-   mStJetsNoEndcap = stJetsNoEndcap;
+   //mStJetsNoEndcap = stJetsNoEndcap; // not used a the moment
+
+   //Info("MyTest", "eventId, eventNumber, runId, runNumber: %d, %d, %d, %d",
+   //      stJets->eventId(), stJets->eventNumber(), stJets->runId(), stJets->runNumber() );
 
    TClonesArray *jets = mStJets->jets();
    TIter         jetsIter(jets);
-   jetsIter.Reset();
+   //jetsIter.Reset();
 
-   while ( StJet *stJet = (StJet *) jetsIter() ) {
-      VecBosJet *vbJet = new VecBosJet(*stJet);
-      vbJet->mEvent = this;
+   // See StJetMaker/mudst/StjTPCMuDst.cxx for connection between StMuTrack and StjTrack
+   // TrackToJetIndex is created in StJetMaker/emulator/StjeDefaultJetTreeWriter.cxx
+   while ( StJet *stJet = (StJet*) jetsIter() )
+   {
+      VecBosJet *vbJet = new VecBosJet(*stJet, this);
       mJets.insert(vbJet);
    }
 }
@@ -165,7 +175,7 @@ UInt_t VecBosEvent::GetNumTracksWithBCluster()
  * Returns a pointer to the vertex in this event with id==vertexId. Returns 0 if
  * no vertex found.
  */
-VecBosVertex* VecBosEvent::GetVertexById(const Short_t vertexId) const
+VecBosVertex* VecBosEvent::FindVertexById(const Short_t vertexId) const
 {
    if (vertexId < 0) return 0;
 
@@ -188,13 +198,13 @@ VecBosVertex* VecBosEvent::GetVertexById(const Short_t vertexId) const
  *
  * @return Pointer to the track
  */
-VecBosTrack* VecBosEvent::GetTrackById(const Short_t trackId) const
+VecBosTrack* VecBosEvent::FindTrackById(const Short_t trackId) const
 {
    if (trackId < 0) return 0;
 
    VecBosTrackPtrSetIter iTrack = mTracks.begin();
    for ( ; iTrack != mTracks.end(); ++iTrack)
-	{
+   {
       VecBosTrack *track = *iTrack;
 
       if (track->mStMuTrack->id() == trackId) return track;
@@ -280,7 +290,8 @@ void VecBosEvent::Process()
    // Process tracks
    //Info("Process", "Process tracks");
    VecBosTrackPtrSetIter iTrack = mTracks.begin();
-   for ( ; iTrack != mTracks.end(); ++iTrack) {
+   for ( ; iTrack != mTracks.end(); ++iTrack)
+   {
       VecBosTrack &track = **iTrack;
       track.Process();
 
@@ -291,7 +302,7 @@ void VecBosEvent::Process()
          //Info("Process()", "Iso track found");
          mNumIsolatedTracks++;
 
-         if ( track.IsUnBalanced() ) track.FindClosestJet(mJets);
+         if ( track.IsUnBalanced() ) track.FindClosestJet();
       }
 
       if ( track.IsCandidate() ) {
@@ -914,7 +925,7 @@ float VecBosEvent::SumTpcCone(int vertID, TVector3 refAxis, int flag, int pointT
 */
 
 
-void VecBosEvent::Clear(const Option_t*)
+void VecBosEvent::Clear(const Option_t* opt)
 {
    mStMuDst            = 0;
    id                  = 0;
@@ -958,7 +969,7 @@ void VecBosEvent::Clear(const Option_t*)
    while (!mVertices.empty()) delete *mVertices.begin(), mVertices.erase(mVertices.begin());
    mVertices.clear(); // unnecessary?
 
-   while (!mTracks.empty()) (*mTracks.begin())->mStMuTrack = 0, delete * mTracks.begin(), mTracks.erase(mTracks.begin());
+   while (!mTracks.empty()) (*mTracks.begin())->mStMuTrack = 0, delete *mTracks.begin(), mTracks.erase(mTracks.begin());
    mTracks.clear();
    mTracksCandidate.clear();
 
@@ -993,20 +1004,20 @@ void VecBosEvent::Print(const Option_t* opt) const
 
    int  yyyymmdd,  hhmmss;
    GetGmt_day_hour( yyyymmdd,  hhmmss);
-   printf("Event time is: day=%08d, hour=%06d (GMT)\n", yyyymmdd, hhmmss);
+   Info("Print", "Event time is: day=%08d, hour=%06d (GMT)", yyyymmdd, hhmmss);
 
-   Info("Print", "GetNumJets(): %d",     GetNumJets());
+   Info("Print", "GetNumJets():     %d", GetNumJets());
    Info("Print", "GetNumVertices(): %d", GetNumVertices());
-   Info("Print", "GetNumTracks(): %d",   GetNumTracks());
+   Info("Print", "GetNumTracks():   %d", GetNumTracks());
    Info("Print", "GetNumCandidateTracks(): %d", GetNumCandidateTracks());
    Info("Print", "mTracksCandidate.size(): %d", mTracksCandidate.size());
+   Info("Print", "mTracks.size():   %d",                 mTracks.size());
 
-   //Info("Print()", "mTracks: ");
-   //VecBosTrackPtrSetIter iTrack = mTracks.begin();
-   //for ( ; iTrack != mTracks.end(); ++iTrack)
-   //{
-   //   Info("Print()", "iTrack: %x", *iTrack);
-   //}
+   VecBosTrackPtrSetIter iTrack = mTracks.begin();
+   for ( ; iTrack != mTracks.end(); ++iTrack)
+   {
+      Info("Print", "iTrack: %x", *iTrack);
+   }
 
    //Info("Print()", "mTracksCandidate:");
    //iTrack = mTracksCandidate.begin();

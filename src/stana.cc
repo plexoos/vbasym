@@ -61,8 +61,8 @@ using namespace std;
 
 int analyzeMuDst(
    AnaInfo &anaInfo,
-   int      idL2BWtrg           = 0,       // offline Ids  needed for real data
-   int      idL2EWtrg           = 0,       // run 9 L2EW
+   uint     idL2BWtrg           = 0,       // offline Ids  needed for real data
+   uint     idL2EWtrg           = 0,       // run 9 L2EW
    // make those below  empty for scheduler
    string   muDir               = "",
    bool     spinSort            = true,
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
 }
 
 
-int analyzeMuDst(AnaInfo &anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
+int analyzeMuDst(AnaInfo &anaInfo, uint idL2BWtrg, uint idL2EWtrg, string muDir,
                  bool spinSort, bool findZ, bool geant)
 {
    UInt_t  maxEventsUser       = anaInfo.fMaxEventsUser;
@@ -196,7 +196,7 @@ int analyzeMuDst(AnaInfo &anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
    printf("Total number of events in muDst chain: %d\n", numTotalEvents);
 
    // For EEMC need full db access:
-   St_db_Maker *stDbMaker = new St_db_Maker("StarDb", "MySQL:StarDb", "MySQL:StarDb", "$STAR/StarDb");
+   St_db_Maker *stDbMaker = new St_db_Maker("StarDb", "MySQL:StarDb");
 
    if (isMC) {
       //stDbMaker->SetMaxEntryTime(20101215, 0); // keep the same DB snapshot as used in BFC for embedding
@@ -207,8 +207,8 @@ int analyzeMuDst(AnaInfo &anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
       // run 11 data ???
       stDbMaker->SetFlavor("Wbose2", "bsmdeCalib"); // Willie's abs gains E-plane, run 9
       stDbMaker->SetFlavor("Wbose2", "bsmdpCalib"); // P-plane
-      stDbMaker->SetFlavor("sim",    "bemcCalib");  // use ideal gains for real data
-      stDbMaker->SetFlavor("sim",    "eemcPMTcal"); // use ideal gains for 2011 real data as well
+      //stDbMaker->SetFlavor("sim",    "bemcCalib");  // use ideal gains for real data
+      //stDbMaker->SetFlavor("sim",    "eemcPMTcal"); // use ideal gains for 2011 real data as well
    }
 
    // Load EEMC database
@@ -303,7 +303,7 @@ int analyzeMuDst(AnaInfo &anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
       // Setup the cone finder (See StJetFinder/StConeJetFinder.h -> class StConePars)
       StConePars *stConePars = new StConePars();
       stConePars->setGridSpacing(105, -3.0, 3.0, 120, -TMath::Pi(), TMath::Pi());  //include EEMC
-      stConePars->setConeRadius(VecBosEvent::sMaxJetCone);    // default=0.7
+      stConePars->setConeRadius(VecBosEvent::sMaxJetCone);
       stConePars->setSeedEtMin(0.5);
       stConePars->setAssocEtMin(0.1);
       stConePars->setSplitFraction(0.5); // default=0.5. if 0.3 less split?
@@ -313,8 +313,8 @@ int analyzeMuDst(AnaInfo &anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
       stConePars->setDoSplitMerge(true);
       stConePars->setDebug(false);
 
-      stJetMaker->addAnalyzer(stppAnaPars, stConePars, stBET4pMakerFrac100, "ConeJets12_100"); //100% subtraction
-      stJetMaker->addAnalyzer(stppAnaPars, stConePars, stBET4pMakerFrac100_noEEMC, "ConeJets12_100_noEEMC"); //100% subtraction (no Endcap)
+      stJetMaker->addAnalyzer(stppAnaPars, stConePars, stBET4pMakerFrac100, "ConeJets12_100"); // 100% subtraction
+      //stJetMaker->addAnalyzer(stppAnaPars, stConePars, stBET4pMakerFrac100_noEEMC, "ConeJets12_100_noEEMC"); // 100% subtraction (no Endcap)
 
       Info("analyzeMuDst(...)", "stChain->ls");
       stChain->ls(3);
@@ -368,7 +368,7 @@ int analyzeMuDst(AnaInfo &anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
    }
 
    StSpinDbMaker *stSpinDbMaker = new StSpinDbMaker("stSpinDbMaker");
-   StVecBosMaker *stVecBosMaker = new StVecBosMaker("StVecBosMaker", &vecBosRootFile);
+   StVecBosMaker *stVecBosMaker = new StVecBosMaker("StVecBosMaker", anaInfo.fRhicRunId, &vecBosRootFile);
 
    if (spinSort) {
       //stSpinDbMaker = new StSpinDbMaker("stSpinDbMaker");
@@ -401,9 +401,6 @@ int analyzeMuDst(AnaInfo &anaInfo, int idL2BWtrg, int idL2EWtrg, string muDir,
       stVecBosMaker->setMC(isMC); // pass "version" of MC to maker
       //stVecBosMaker->setJetNeutScaleMC(1.0);
       //stVecBosMaker->setJetChrgScaleMC(1.0);
-   }
-   else { // real data
-      stVecBosMaker->setTrigID(idL2BWtrg, idL2EWtrg);
    }
 
    TString treeFileName = outputFile + "_tree.root";
