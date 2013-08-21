@@ -98,7 +98,11 @@ void AsymCalculator::CalcAsimAsym(TH2I &hUp, TH2I &hDown, TH2D &hAsym)
 }
 
 
-/** */
+/**
+ * Fits the provided asymmetry histogram with a sine function. The horizontal axis of the histogram
+ * is expected to cover the range of -pi to +pi. The fit function is then saved in the histogram for
+ * later access.
+ */
 void AsymCalculator::FitAsimAsym(TH1D &hAsym)
 {
    // A way to check the histogram is empty
@@ -136,8 +140,9 @@ void AsymCalculator::FitAsimAsym(TH2D &hAsym, TH1D &hAsymAmplitude)
 
 
 /**
- * Takes two one-dimensional histograms with asymmetries for the two beams and properly combines them. All three
- * histograms must have the same structure, i.e. the number of bins and the axis ranges are assumed to be the same.
+ * Takes two one-dimensional histograms with asymmetries for the two beams and properly combines
+ * them. All three histograms must have the same structure, i.e. the number of bins and the axis
+ * ranges are assumed to be the same.
  */
 void AsymCalculator::CombineAsimAsym(const TH1D &hAsymBlu, const TH1D &hAsymYel, TH1D &hAsymComb, bool flipZ)
 {
