@@ -144,6 +144,18 @@ void AsymHContainer::BookHists()
       hist->SetOption("E1 GRIDX GRIDY");
    }
 
+   shName = "hWBosonAsymAmpVsPt_";
+   o[shName] = hist = new TH1D(shName.c_str(), "; W Boson P_{T}; Asym Amp.;", 10, 0, 10);
+   hist->SetOption("E1 GRIDX GRIDY");
+
+   shName = "hWBosonAsymAmpVsEta_";
+   o[shName] = hist = new TH1D(shName.c_str(), "; W Boson #eta; Asym Amp.;", 6, -6, 6);
+   hist->SetOption("E1 GRIDX GRIDY");
+
+   shName = "hWBosonAsymAmpVsEta_YEL_rev";
+   o[shName] = hist = new TH1D(shName.c_str(), "; W Boson #eta; Asym Amp.;", 6, -6, 6);
+   hist->SetOption("E1 GRIDX GRIDY");
+
    fDir->cd();
 }
 
@@ -294,4 +306,16 @@ void AsymHContainer::PostFill()
       AsymCalculator::CalcAsimAsym(*hWBosonPhiVsEta_up, *hWBosonPhiVsEta_dn, *hWBosonAsymVsPhiVsEta_);
       AsymCalculator::FitAsimAsym(*hWBosonAsymVsPhiVsEta_, *hWBosonAsymAmpVsEta_);
    }
+
+   TH1D* hWBosonAsymAmpVsPt_BLU = (TH1D*) o["hWBosonAsymAmpVsPt_BLU"];
+   TH1D* hWBosonAsymAmpVsPt_YEL = (TH1D*) o["hWBosonAsymAmpVsPt_YEL"];
+   TH1D* hWBosonAsymAmpVsPt_    = (TH1D*) o["hWBosonAsymAmpVsPt_"];
+   AsymCalculator::CombineAsimAsym(*hWBosonAsymAmpVsPt_BLU, *hWBosonAsymAmpVsPt_YEL, *hWBosonAsymAmpVsPt_);
+
+   TH1D* hWBosonAsymAmpVsEta_BLU     = (TH1D*) o["hWBosonAsymAmpVsEta_BLU"];
+   TH1D* hWBosonAsymAmpVsEta_YEL     = (TH1D*) o["hWBosonAsymAmpVsEta_YEL"];
+   TH1D* hWBosonAsymAmpVsEta_YEL_rev = (TH1D*) o["hWBosonAsymAmpVsEta_YEL_rev"];
+   TH1D* hWBosonAsymAmpVsEta_        = (TH1D*) o["hWBosonAsymAmpVsEta_"];
+   utils::CopyReversedBinContentError(hWBosonAsymAmpVsEta_YEL, hWBosonAsymAmpVsEta_YEL_rev);
+   AsymCalculator::CombineAsimAsym(*hWBosonAsymAmpVsEta_BLU, *hWBosonAsymAmpVsEta_YEL_rev, *hWBosonAsymAmpVsEta_);
 }

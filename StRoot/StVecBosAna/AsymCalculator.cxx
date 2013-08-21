@@ -291,12 +291,14 @@ void AsymCalculator::CalcAsimAsym(TH1I &hUp, TH1I &hDown, TH1D &hAsym)
          // Calculate Asym and dAsym
          ValErrPair chAsym = CalcAsym(nCountsUp, nCountsDown, totalCountsUp, totalCountsDown);
 
+         // Assign large error, i.e. 100% when there is no Up or Down counts
+         if (nCountsUp <= 0 || nCountsDown <= 0)
+            chAsym.second = 1;
+
          hAsym.SetBinContent(iAsimBin, chAsym.first);
          hAsym.SetBinError(iAsimBin,   chAsym.second);
       }
    }
-
-   //return hAsym;
 }
 
 
@@ -357,6 +359,21 @@ void AsymCalculator::FitAsimAsym(TH2D &hAsym, TH1D &hAsymAmplitude)
    }
 }
 
+
+/**
+ * Takes two one-dimensional histograms with asymmetries for the two beams and properly combines them. All three
+ * histograms must have the same structure, i.e. the number of bins and the axis ranges are assumed to be the same.
+ */
+void AsymCalculator::CombineAsimAsym(TH1D &hAsymBlu, TH1D &hAsymYel, TH1D &hAsymComb)
+{
+   // Flip the sign of the yellow beam asymmetry. Include underflow and overflow bins but don't change the bin errors
+   for (int iBin=0; iBin<=hAsymYel.GetNbinsX()+1; iBin++)
+   {
+      hAsymYel.SetBinContent( iBin, -1*hAsymYel.GetBinContent(iBin) );
+   }
+
+   utils::AverageIgnoreEmptyBins(&hAsymBlu, &hAsymYel, &hAsymComb);
+}
 
 
 // Description : calculate Asymmetry
