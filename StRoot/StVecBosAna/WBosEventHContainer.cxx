@@ -52,7 +52,7 @@ void WBosEventHContainer::BookHists()
    o["hNeutrinoEta"] = hist = new TH1I("hNeutrinoEta", "; Neutrino #eta; Events", 20, -2, 2);
    o["hWBosonPt"]    = hist = new TH1I("hWBosonPt", "   ; W Boson P_{T}; Events", 20, 0, 20);
    o["hWBosonPhi"]   = hist = new TH1I("hWBosonPhi", "  ; W Boson #phi; Events", 16, -M_PI, M_PI);
-   o["hWBosonEta"]   = hist = new TH1I("hWBosonEta", "  ; W Boson #eta; Events", 20, -2, 2);
+   o["hWBosonEta"]   = hist = new TH1I("hWBosonEta", "  ; W Boson #eta; Events", 20, -4, 4);
 
    o["hJetRecoilPt"]               = hist = new TH1F("hJetRecoilPt", "Recoil from Jets; Jet-based Recoil P_{T}; Events", 40, 0, 40);
    o["hTrackRecoilPt"]             = hist = new TH1F("hTrackRecoilPt", "Recoil from Tracks: TPC+TOW; Track-based Recoil P_{T}; Events;", 40, 0, 40);

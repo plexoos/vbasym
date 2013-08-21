@@ -118,6 +118,7 @@ void AsymHContainer::BookHists()
       shName = "hLeptonAsymAmpVsEta_" + sBeam;
       o[shName] = hist = new TH1D(shName.c_str(), "; Lepton #eta; Asym Amp.;", 3, -1.5, 1.5);
       hist->SetOption("E1 GRIDX GRIDY");
+      hist->GetYaxis()->SetRangeUser(-0.75, 0.75);
 
       shName = "hLeptonAsymVsPhiVsPt_" + sBeam;
       o[shName] = hist = new TH2D(shName.c_str(), "; Lepton P_{T}; Lepton #phi;", 10, 0, 50, 8, -M_PI, M_PI);
@@ -126,6 +127,7 @@ void AsymHContainer::BookHists()
       shName = "hLeptonAsymAmpVsPt_" + sBeam;
       o[shName] = hist = new TH1D(shName.c_str(), "; Lepton P_{T}; Asym Amp.;", 10, 0, 50);
       hist->SetOption("E1 GRIDX GRIDY");
+      hist->GetYaxis()->SetRangeUser(-1.1, 1.1);
 
       shName = "hWBosonAsymVsPhiVsEta_" + sBeam;
       o[shName] = hist = new TH2D(shName.c_str(), "; W Boson #eta; W Boson #phi;", 6, -6, 6, 8, -M_PI, M_PI);
@@ -134,6 +136,7 @@ void AsymHContainer::BookHists()
       shName = "hWBosonAsymAmpVsEta_" + sBeam;
       o[shName] = hist = new TH1D(shName.c_str(), "; W Boson #eta; Asym Amp.;", 6, -6, 6);
       hist->SetOption("E1 GRIDX GRIDY");
+      hist->GetYaxis()->SetRangeUser(-0.75, 0.75);
 
       shName = "hWBosonAsymVsPhiVsPt_" + sBeam;
       o[shName] = hist = new TH2D(shName.c_str(), "; W Boson P_{T}; W Boson #phi;", 10, 0, 10, 8, -M_PI, M_PI);
@@ -142,15 +145,23 @@ void AsymHContainer::BookHists()
       shName = "hWBosonAsymAmpVsPt_" + sBeam;
       o[shName] = hist = new TH1D(shName.c_str(), "; W Boson P_{T}; Asym Amp.;", 10, 0, 10);
       hist->SetOption("E1 GRIDX GRIDY");
+      hist->GetYaxis()->SetRangeUser(-1.1, 1.1);
    }
 
-   shName = "hWBosonAsymAmpVsPt_";
-   o[shName] = hist = new TH1D(shName.c_str(), "; W Boson P_{T}; Asym Amp.;", 10, 0, 10);
+   shName = "hLeptonAsymAmpVsEta_";
+   o[shName] = hist = new TH1D(shName.c_str(), "; Lepton #eta; Asym Amp.;", 3, -1.5, 1.5);
    hist->SetOption("E1 GRIDX GRIDY");
+   hist->GetYaxis()->SetRangeUser(-0.75, 0.75);
+
+   shName = "hLeptonAsymAmpVsPt_";
+   o[shName] = hist = new TH1D(shName.c_str(), "; Lepton P_{T}; Asym Amp.;", 10, 0, 50);
+   hist->SetOption("E1 GRIDX GRIDY");
+   hist->GetYaxis()->SetRangeUser(-1.1, 1.1);
 
    shName = "hWBosonAsymAmpVsEta_";
    o[shName] = hist = new TH1D(shName.c_str(), "; W Boson #eta; Asym Amp.;", 6, -6, 6);
    hist->SetOption("E1 GRIDX GRIDY");
+   hist->GetYaxis()->SetRangeUser(-0.75, 0.75);
 
    //shName = "hWBosonAsymAmpVsEta_YEL_rev"; // should be removed after confirming it does the right thing
    //o[shName] = hist = new TH1D(shName.c_str(), "; W Boson #eta; Asym Amp.;", 6, -6, 6);
@@ -160,6 +171,7 @@ void AsymHContainer::BookHists()
    shName = "hWBosonAsymAmpVsPt_";
    o[shName] = hist = new TH1D(shName.c_str(), "; W Boson P_{T}; Asym Amp.;", 10, 0, 10);
    hist->SetOption("E1 GRIDX GRIDY");
+   hist->GetYaxis()->SetRangeUser(-1.1, 1.1);
 
    fDir->cd();
 }
