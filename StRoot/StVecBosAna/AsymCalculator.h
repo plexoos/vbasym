@@ -1,12 +1,3 @@
-
-/**
- * Header file for AsymCalc
- * Author   : Itaru Nakagawa
- *          : Dmitri Smirnov
- *
- * Creation : 02/25/2006         
- */
-
 #ifndef AsymCalculator_h
 #define AsymCalculator_h
 
@@ -17,7 +8,6 @@
 #include "TH2.h"
 
 #include "utils/ValErrPair.h"
-
 
 
 class AsymCalculator

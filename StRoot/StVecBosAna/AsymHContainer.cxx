@@ -266,7 +266,6 @@ void AsymHContainer::PostFill()
    AsymCalculator::CalcAsimAsym(*hLeptonPhi_YU, *hLeptonPhi_YD, *hLeptonAsymVsPhi_YEL);
    AsymCalculator::FitAsimAsym(*hLeptonAsymVsPhi_YEL);
 
-
    BeamIdSetIter iBeam = gBeams.begin();
    for ( ; iBeam!=gBeams.end(); ++iBeam) 
    {
