@@ -332,7 +332,13 @@ void AsymCalculator::CalcAsimAsym(TH2I &hUp, TH2I &hDown, TH2D &hAsym)
 /** */
 void AsymCalculator::FitAsimAsym(TH1D &hAsym)
 {
+   // A way to check the histogram is empty
+   double integral = hAsym.Integral();
+
+   if (integral == 0) return;
+
    TF1 fitFunc("fitFunc", "[0] + [1]*sin(x + [2])", -M_PI, M_PI);
+   fitFunc.SetParNames("Offset", "Amplitude", "Phase");
    hAsym.Fit(&fitFunc);
 }
 
