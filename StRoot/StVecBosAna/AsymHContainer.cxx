@@ -152,8 +152,13 @@ void AsymHContainer::BookHists()
    o[shName] = hist = new TH1D(shName.c_str(), "; W Boson #eta; Asym Amp.;", 6, -6, 6);
    hist->SetOption("E1 GRIDX GRIDY");
 
-   shName = "hWBosonAsymAmpVsEta_YEL_rev";
-   o[shName] = hist = new TH1D(shName.c_str(), "; W Boson #eta; Asym Amp.;", 6, -6, 6);
+   //shName = "hWBosonAsymAmpVsEta_YEL_rev"; // should be removed after confirming it does the right thing
+   //o[shName] = hist = new TH1D(shName.c_str(), "; W Boson #eta; Asym Amp.;", 6, -6, 6);
+   //hist->SetOption("E1 GRIDX GRIDY");
+   //hist->GetYaxis()->SetRangeUser(-0.75, 0.75);
+
+   shName = "hWBosonAsymAmpVsPt_";
+   o[shName] = hist = new TH1D(shName.c_str(), "; W Boson P_{T}; Asym Amp.;", 10, 0, 10);
    hist->SetOption("E1 GRIDX GRIDY");
 
    fDir->cd();
@@ -313,8 +318,12 @@ void AsymHContainer::PostFill()
 
    TH1D* hWBosonAsymAmpVsEta_BLU     = (TH1D*) o["hWBosonAsymAmpVsEta_BLU"];
    TH1D* hWBosonAsymAmpVsEta_YEL     = (TH1D*) o["hWBosonAsymAmpVsEta_YEL"];
-   TH1D* hWBosonAsymAmpVsEta_YEL_rev = (TH1D*) o["hWBosonAsymAmpVsEta_YEL_rev"];
    TH1D* hWBosonAsymAmpVsEta_        = (TH1D*) o["hWBosonAsymAmpVsEta_"];
+   AsymCalculator::CombineAsimAsym(*hWBosonAsymAmpVsEta_BLU, *hWBosonAsymAmpVsEta_YEL, *hWBosonAsymAmpVsEta_, true);
+
+   // This is mainly to cross check that the asymmetry sign flip works
+   TH1D* hWBosonAsymAmpVsEta_YEL_rev = new TH1D(*hWBosonAsymAmpVsEta_YEL);
+   o["hWBosonAsymAmpVsEta_YEL_rev"] = hWBosonAsymAmpVsEta_YEL_rev;
+   hWBosonAsymAmpVsEta_YEL_rev->SetName("hWBosonAsymAmpVsEta_YEL_rev");
    utils::CopyReversedBinContentError(hWBosonAsymAmpVsEta_YEL, hWBosonAsymAmpVsEta_YEL_rev);
-   AsymCalculator::CombineAsimAsym(*hWBosonAsymAmpVsEta_BLU, *hWBosonAsymAmpVsEta_YEL_rev, *hWBosonAsymAmpVsEta_);
 }

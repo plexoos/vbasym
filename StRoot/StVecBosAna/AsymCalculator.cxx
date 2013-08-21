@@ -139,15 +139,21 @@ void AsymCalculator::FitAsimAsym(TH2D &hAsym, TH1D &hAsymAmplitude)
  * Takes two one-dimensional histograms with asymmetries for the two beams and properly combines them. All three
  * histograms must have the same structure, i.e. the number of bins and the axis ranges are assumed to be the same.
  */
-void AsymCalculator::CombineAsimAsym(TH1D &hAsymBlu, TH1D &hAsymYel, TH1D &hAsymComb)
+void AsymCalculator::CombineAsimAsym(const TH1D &hAsymBlu, const TH1D &hAsymYel, TH1D &hAsymComb, bool flipZ)
 {
-   // Flip the sign of the yellow beam asymmetry. Include underflow and overflow bins but don't change the bin errors
-   for (int iBin=0; iBin<=hAsymYel.GetNbinsX()+1; iBin++)
+   TH1D hAsymYelModified(hAsymYel);
+
+   if (flipZ)
+      utils::CopyReversedBinContentError(&hAsymYel, &hAsymYelModified);
+
+   // Flip the sign of the yellow beam asymmetry. Include underflow and overflow bins but don't
+   // change the bin errors
+   for (int iBin=0; iBin<=hAsymYelModified.GetNbinsX()+1; iBin++)
    {
-      hAsymYel.SetBinContent( iBin, -1*hAsymYel.GetBinContent(iBin) );
+      hAsymYelModified.SetBinContent( iBin, -1*hAsymYelModified.GetBinContent(iBin) );
    }
 
-   utils::AverageIgnoreEmptyBins(&hAsymBlu, &hAsymYel, &hAsymComb);
+   utils::AverageIgnoreEmptyBins(&hAsymBlu, &hAsymYelModified, &hAsymComb);
 }
 
 
