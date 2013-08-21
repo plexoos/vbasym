@@ -153,6 +153,7 @@ int analyzeMuDst(AnaInfo &anaInfo, uint idL2BWtrg, uint idL2EWtrg, string muDir,
       while (next && (o = (*next)()) ) {
          TString geantFileName = TString(((TObjString *) o)->GetName());
          geantFileName.ReplaceAll("eve_mu", "eve_geant");
+         geantFileName.ReplaceAll("muDst", "geant"); // for the 2011 embedding
          geantFileName.ReplaceAll("MuDst", "geant");
 
          Info("analyzeMuDst(...)", "Added geantFileName: %s", geantFileName.Data());
