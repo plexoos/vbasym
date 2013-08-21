@@ -151,11 +151,11 @@ void AsymCalculator::CombineAsimAsym(TH1D &hAsymBlu, TH1D &hAsymYel, TH1D &hAsym
 }
 
 
-// Description : calculate Asymmetry
-// Input       : int a, int b, int totalA, int btot
-// Return      : float Asym, float dAsym
-//
-// Asym = (A - R * B) / (A + R * B), where R = totalA/totalB
+/**
+ * Calculates the asymmetry for two values A and B using the simple formula 
+ * asym = (A - R * B) / (A * + R * B), where R = totalA/totalB. The correction R can be applied to
+ * correct for an a-priori known differences in A and B.
+ */
 ValErrPair AsymCalculator::CalcAsym(Double_t A, Double_t B, Double_t totalA, Double_t totalB)
 {
    Double_t R = 0;
@@ -178,7 +178,9 @@ ValErrPair AsymCalculator::CalcAsym(Double_t A, Double_t B, Double_t totalA, Dou
 }
 
 
-/** */
+/** 
+ * Calculates the asymmetry using the so called square root formula.
+ */
 ValErrPair AsymCalculator::CalcAsymSqrtFormula(Double_t A, Double_t B, Double_t C, Double_t D)
 {
    Double_t asym, asymErr;
