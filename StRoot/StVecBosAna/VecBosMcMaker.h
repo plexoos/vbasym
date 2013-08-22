@@ -1,9 +1,8 @@
-#ifndef St2011pubMcMaker_h
-#define St2011pubMcMaker_h
+#ifndef VecBosMcMaker_h
+#define VecBosMcMaker_h
 
 #include "TH2.h"
 #include "TVector3.h"
-
 
 #include "StMaker.h"
 
@@ -11,14 +10,14 @@
 class StVecBosMaker;
 
 /**
- *
+ * (Deprecated) A maker that fills histograms from MC containers.
  */
-class St2011pubMcMaker : public StMaker
+class VecBosMcMaker : public StMaker
 {
 public:
 
-   St2011pubMcMaker(const char *name = "2011pubMc");
-   virtual       ~St2011pubMcMaker();
+   VecBosMcMaker(const char *name = "2011pubMc");
+   virtual       ~VecBosMcMaker();
    virtual Int_t  Init();
    virtual Int_t  Make();
    void setHList(TObjArray *x) {HList = x;}
@@ -46,8 +45,7 @@ private:
    TVector3 mElectronP;
    TVector3 mVertex;
 
-
-   ClassDef(St2011pubMcMaker, 0)
+   ClassDef(VecBosMcMaker, 0)
 };
 
 #endif

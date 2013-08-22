@@ -1,5 +1,5 @@
 #include "StVecBosMaker.h"
-#include "St2011pubMcMaker.h"
+#include "VecBosMcMaker.h"
 #include "StEmcUtil/geometry/StEmcGeom.h"
 
 //need these to get MC record
@@ -12,22 +12,21 @@
 #include "Globals.h"
 
 
-ClassImp(St2011pubMcMaker)
+ClassImp(VecBosMcMaker)
 
 
-St2011pubMcMaker::St2011pubMcMaker(const char *name): StMaker(name)
+VecBosMcMaker::VecBosMcMaker(const char *name): StMaker(name)
 {
    wMK = 0; HList = 0;
-
 }
 
 
-St2011pubMcMaker::~St2011pubMcMaker()
+VecBosMcMaker::~VecBosMcMaker()
 {
 }
 
 
-Int_t St2011pubMcMaker::Init()
+Int_t VecBosMcMaker::Init()
 {
    assert(wMK);
    assert(HList);
@@ -36,7 +35,7 @@ Int_t St2011pubMcMaker::Init()
 }
 
 
-Int_t St2011pubMcMaker::Make()
+Int_t VecBosMcMaker::Make()
 {
    //printf("-----------in %s\n", GetName());
    //only get geant particle info for W MC
@@ -50,14 +49,14 @@ Int_t St2011pubMcMaker::Make()
 }
 
 
-void St2011pubMcMaker::doWanalysis()
+void VecBosMcMaker::doWanalysis()
 {
    //has access to whole W-algo-maker data via pointer 'wMK'
 
    // run through W cuts to fill other histos............
-   VecBosVertexPtrSetIter iVertex = wMK->mVecBosEvent->mVertices.begin();
+   VecBosVertexPtrSetIter iVertex = wMK->GetVecBosEvent()->mVertices.begin();
 
-   for ( ; iVertex != wMK->mVecBosEvent->mVertices.end(); ++iVertex)
+   for ( ; iVertex != wMK->GetVecBosEvent()->mVertices.end(); ++iVertex)
    {
       VecBosVertex &V = **iVertex;
 
@@ -67,7 +66,7 @@ void St2011pubMcMaker::doWanalysis()
          assert(T.mCluster2x2.nTower > 0); // internal logical error
          assert(T.mP3InNearCone.Pt() > 0); // internal logical error
 
-         if (T.mCluster2x2.ET / T.mP3InNearCone.Pt() < wMK->par_nearTotEtFrac) continue; // too large nearET
+         if (T.mCluster2x2.ET / T.mP3InNearCone.Pt() < wMK->GetNearTotEtFrac()) continue; // too large nearET
          if (T.awayTotET > 30.) continue; // too large awayET , Jan
          //Full W cuts applied at this point
 
@@ -179,7 +178,7 @@ void St2011pubMcMaker::doWanalysis()
 }
 
 
-void St2011pubMcMaker::doWefficiency()
+void VecBosMcMaker::doWefficiency()
 {
    //only count leptons in our eta range
    if (fabs(mElectronP.Eta()) > 1.) return;
@@ -199,7 +198,7 @@ void St2011pubMcMaker::doWefficiency()
    hA[66]->Fill(detEle.Eta(), mElectronP.Perp());
 
    //trigger efficiency
-   if (!wMK->mVecBosEvent->l2bitET) return;
+   if (!wMK->GetVecBosEvent()->l2bitET) return;
    //good trig
    hA[51]->Fill(mElectronP.Perp());
    hA[55]->Fill(mElectronP.Eta());
@@ -210,7 +209,7 @@ void St2011pubMcMaker::doWefficiency()
    hA[67]->Fill(detEle.Eta(), mElectronP.Perp());
 
    //vertex efficiency
-   if (wMK->mVecBosEvent->mVertices.size() <= 0) return;
+   if (wMK->GetVecBosEvent()->mVertices.size() <= 0) return;
    //vertex rank>0 and |z|<100
    hA[52]->Fill(mElectronP.Perp());
    hA[56]->Fill(mElectronP.Eta());
@@ -219,13 +218,13 @@ void St2011pubMcMaker::doWefficiency()
 
    hA[70]->Fill(mElectronP.Perp());//forJoe
 
-   //float diff=wMK->mVecBosEvent->mVertices[0].z - mVertex.Z();
+   //float diff=wMK->GetVecBosEvent()->mVertices[0].z - mVertex.Z();
    //cout<<"diff="<<diff<<endl;
 
    //reco efficiency
-   VecBosVertexPtrSetIter iVertex = wMK->mVecBosEvent->mVertices.begin();
+   VecBosVertexPtrSetIter iVertex = wMK->GetVecBosEvent()->mVertices.begin();
 
-   for ( ; iVertex != wMK->mVecBosEvent->mVertices.end(); ++iVertex)
+   for ( ; iVertex != wMK->GetVecBosEvent()->mVertices.end(); ++iVertex)
    {
       VecBosVertex &V = **iVertex;
 
@@ -235,9 +234,9 @@ void St2011pubMcMaker::doWefficiency()
          assert(T.mCluster2x2.nTower > 0); // internal logical error
          assert(T.mP3InNearCone.Pt() > 0); // internal logical error
 
-         if (T.mCluster2x2.ET / T.mP3InNearCone.Pt() < wMK->par_nearTotEtFrac)
+         if (T.mCluster2x2.ET / T.mP3InNearCone.Pt() < wMK->GetNearTotEtFrac())
             continue; // too large nearET
-         if (T.ptBalance.Perp() < wMK->par_ptBalance || T.awayTotET > 30.) //Jan
+         if (T.ptBalance.Perp() < wMK->GetPtBalance() || T.awayTotET > 30.) //Jan
             continue;
 
          //pass all W cuts
@@ -252,7 +251,7 @@ void St2011pubMcMaker::doWefficiency()
 }
 
 
-bool St2011pubMcMaker::doMCanalysis()
+bool VecBosMcMaker::doMCanalysis()
 {
    StMcEvent *mMcEvent = 0;
    mMcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
@@ -330,7 +329,7 @@ bool St2011pubMcMaker::doMCanalysis()
 }
 
 
-void St2011pubMcMaker::initHistos()
+void VecBosMcMaker::initHistos()
 {
   //const float PI=TMath::Pi();
   TString core="MC"; // prefix added to every histo name, to allow for multipl maker saving histos in the same root file
