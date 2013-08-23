@@ -323,6 +323,18 @@ void AsymHContainer::PostFill()
       AsymCalculator::FitAsimAsym(*hWBosonAsymVsPhiVsEta_, *hWBosonAsymAmpVsEta_);
    }
 
+   // The lepton asymmetry first
+   TH1D* hLeptonAsymAmpVsPt_BLU = (TH1D*) o["hLeptonAsymAmpVsPt_BLU"];
+   TH1D* hLeptonAsymAmpVsPt_YEL = (TH1D*) o["hLeptonAsymAmpVsPt_YEL"];
+   TH1D* hLeptonAsymAmpVsPt_    = (TH1D*) o["hLeptonAsymAmpVsPt_"];
+   AsymCalculator::CombineAsimAsym(*hLeptonAsymAmpVsPt_BLU, *hLeptonAsymAmpVsPt_YEL, *hLeptonAsymAmpVsPt_);
+
+   TH1D* hLeptonAsymAmpVsEta_BLU = (TH1D*) o["hLeptonAsymAmpVsEta_BLU"];
+   TH1D* hLeptonAsymAmpVsEta_YEL = (TH1D*) o["hLeptonAsymAmpVsEta_YEL"];
+   TH1D* hLeptonAsymAmpVsEta_    = (TH1D*) o["hLeptonAsymAmpVsEta_"];
+   AsymCalculator::CombineAsimAsym(*hLeptonAsymAmpVsEta_BLU, *hLeptonAsymAmpVsEta_YEL, *hLeptonAsymAmpVsEta_, true);
+
+   // The boson asymmetry is next
    TH1D* hWBosonAsymAmpVsPt_BLU = (TH1D*) o["hWBosonAsymAmpVsPt_BLU"];
    TH1D* hWBosonAsymAmpVsPt_YEL = (TH1D*) o["hWBosonAsymAmpVsPt_YEL"];
    TH1D* hWBosonAsymAmpVsPt_    = (TH1D*) o["hWBosonAsymAmpVsPt_"];
