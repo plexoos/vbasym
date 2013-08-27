@@ -93,19 +93,35 @@ TH1F *hperugia0_WPt     = new TH1F("hperugia0_WPt","Perugia0 510GeV; P^{W}_{T} (
  TGraph *g2 = new TGraph("./curves/Altarelli.530GeV.txt","%lg %lg");
  TGraph *g3 = new TGraph("./curves/UA1.530GeV.txt","%lg %lg");
 
+ TFile fpyTunes("./curves/histos_pyTunes.root");
+ TH1F *htuneA_kt1ckin1_WPt   = (TH1F*)fpyTunes.Get("W_kt1ckin1_Pt");
+ TH1F *htuneA_kt1ckin5_WPt   = (TH1F*)fpyTunes.Get("W_kt1ckin5_Pt");
+ TH1F *htuneA_kt1ckin10_WPt  = (TH1F*)fpyTunes.Get("W_kt1ckin10_Pt");
+ TH1F *hperugia0_ckin1_WPt  = (TH1F*)fpyTunes.Get("W_P0_Pt");
+ TH1F *hperugia0_ckin5_WPt  = (TH1F*)fpyTunes.Get("W_P0b_Pt");
 
 
-   Double_t int_htuneA_WPt    =  htuneA_WPt     -> Integral();
-   Double_t int_hperugia0_WPt =  hperugia0_WPt  -> Integral();
-   Double_t int_g1            =  integrateGraph(g1); // the method Integral() not yet implemented on TGraph in ROOT4STAR  
-   Double_t int_g2            =  integrateGraph(g2);
-   Double_t int_g3            =  integrateGraph(g3);
+   Double_t int_htuneA_WPt            =  htuneA_WPt     -> Integral();
+   Double_t int_hperugia0_WPt         =  hperugia0_WPt  -> Integral();
+   Double_t int_hperugia0_ckin1_WPt   =  hperugia0_ckin1_WPt  -> Integral();
+   Double_t int_hperugia0_ckin5_WPt   =  hperugia0_ckin5_WPt  -> Integral();
+   Double_t int_g1                    =  integrateGraph(g1); // the method Integral() not yet implemented on TGraph in ROOT4STAR  
+   Double_t int_g2                    =  integrateGraph(g2);
+   Double_t int_g3                    =  integrateGraph(g3);
    //Double_t int_g1 = g1-> Integral(5, 6);
+   Double_t int_tuneA_kt1ckin1_WPt    =  htuneA_kt1ckin1_WPt  -> Integral(); 
+   Double_t int_tuneA_kt1ckin5_WPt    =  htuneA_kt1ckin5_WPt  -> Integral();  
+   Double_t int_tuneA_kt1ckin10_WPt   =  htuneA_kt1ckin10_WPt -> Integral(); 
 
-   float scaleTA_hperugia0 = int_htuneA_WPt / int_hperugia0_WPt;
-   float scaleTA_g1        = int_htuneA_WPt / int_g1;
-   float scaleTA_g2        = int_htuneA_WPt / int_g2;
-   float scaleTA_g3        = int_htuneA_WPt / int_g3;
+   float scaleTA_hperugia0        = int_htuneA_WPt / int_hperugia0_WPt;
+   float scaleTA_hperugia0ckin1   = int_htuneA_WPt / int_hperugia0_ckin1_WPt;
+   float scaleTA_hperugia0ckin5   = int_htuneA_WPt / int_hperugia0_ckin5_WPt;
+   float scaleTA_TAkt1ckin1       = int_htuneA_WPt / int_tuneA_kt1ckin1_WPt;
+   float scaleTA_TAkt1ckin5       = int_htuneA_WPt / int_tuneA_kt1ckin5_WPt;
+   float scaleTA_TAkt1ckin10      = int_htuneA_WPt / int_tuneA_kt1ckin10_WPt;
+   float scaleTA_g1               = int_htuneA_WPt / int_g1;
+   float scaleTA_g2               = int_htuneA_WPt / int_g2;
+   float scaleTA_g3               = int_htuneA_WPt / int_g3;
 
    
    cout << "Integral of TUNE A = " <<  int_htuneA_WPt << endl;
@@ -118,11 +134,17 @@ TH1F *hperugia0_WPt     = new TH1F("hperugia0_WPt","Perugia0 510GeV; P^{W}_{T} (
    
 
    TH1F   *hperugia0_WPt_1 = (TH1F *)hperugia0_WPt->Clone("hperugia0_WPt_1");
+   TH1F   *htuneA_kt1ckin1_WPt_1 = (TH1F *)htuneA_kt1ckin1_WPt->Clone("htuneA_kt1ckin1_WPt_1");
    TGraph *g1_1 = (TGraph *)g1->Clone("g1_1");
    TGraph *g2_1 = (TGraph *)g2->Clone("g2_1");
    TGraph *g3_1 = (TGraph *)g3->Clone("g3_1");
 
    hperugia0_WPt ->Scale(scaleTA_hperugia0);
+   hperugia0_ckin1_WPt ->Scale(scaleTA_hperugia0ckin1);
+   hperugia0_ckin5_WPt ->Scale(scaleTA_hperugia0ckin5);
+   htuneA_kt1ckin1_WPt  ->Scale(scaleTA_TAkt1ckin1);
+   htuneA_kt1ckin5_WPt  ->Scale(scaleTA_TAkt1ckin5);
+   htuneA_kt1ckin10_WPt ->Scale(scaleTA_TAkt1ckin10);
    scaleGraph(g1, 0.50*scaleTA_g1);
    //scaleGraph(g1, 15);
    scaleGraph(g2, 0.05*scaleTA_g2);
@@ -173,14 +195,21 @@ TH1F *hperugia0_WPt     = new TH1F("hperugia0_WPt","Perugia0 510GeV; P^{W}_{T} (
    c2->cd();
    TLegend *leg1 = new TLegend(0.4, 0.5, 0.75, 0.9);
    leg1 -> AddEntry(htuneA_WPt,"PY. TUNE A kt=1 ckin(3)=0.5", "l");
+   leg1 -> AddEntry(htuneA_kt1ckin1_WPt,"PY. TUNE A kt=1 ckin(3)=1.0", "l");
+   leg1 -> AddEntry(htuneA_kt1ckin5_WPt,"PY. TUNE A kt=1 ckin(3)=5.0", "l");
+   leg1 -> AddEntry(htuneA_kt1ckin10_WPt,"PY. TUNE A kt=1 ckin(3)=10.0", "l");
+   leg1 -> AddEntry(hperugia0_ckin1_WPt,"PY. Perugia0 kt=2 ckin(3)=1", "l");
+   leg1 -> AddEntry(hperugia0_ckin5_WPt,"PY. Perugia0 kt=2 ckin(3)=5", "l");
    leg1 -> AddEntry(hperugia0_WPt,"PY. Perugia0 kt=2 ckin(3)=10", "l");
    leg1 -> AddEntry(g1,"RhicBOS 500 GeV","l");
    leg1 -> AddEntry(g2,"Altarelli et al. 530 GeV","l");
    leg1 -> AddEntry(g3,"UA1 530 GeV","p");
 
    htuneA_WPt    -> SetStats(0);
+   htuneA_WPt    -> SetTitle("PYTHIA tuning");
    htuneA_WPt    -> GetYaxis()-> SetTitleOffset(1.8);
-   htuneA_WPt    -> Draw(); 
+   htuneA_WPt    -> Draw();  
+   hperugia0_WPt -> SetStats(0);
    hperugia0_WPt -> SetLineColor(kGreen); 
    hperugia0_WPt -> Draw("same");
    g1            -> SetLineColor(kBlue); 
@@ -189,6 +218,26 @@ TH1F *hperugia0_WPt     = new TH1F("hperugia0_WPt","Perugia0 510GeV; P^{W}_{T} (
    g2            -> Draw("same");
    g3            -> SetMarkerColor(kBlue); 
    g3            -> Draw("same*");
+   htuneA_kt1ckin1_WPt  -> SetStats(0);
+   htuneA_kt1ckin1_WPt  -> SetLineColor(1); 
+   htuneA_kt1ckin1_WPt  -> SetLineStyle(2);
+   htuneA_kt1ckin1_WPt  -> Draw("same");
+   htuneA_kt1ckin5_WPt  -> SetStats(0);
+   htuneA_kt1ckin5_WPt  -> SetLineColor(1); 
+   htuneA_kt1ckin5_WPt  -> SetLineStyle(3);
+   htuneA_kt1ckin5_WPt  -> Draw("same");
+   htuneA_kt1ckin10_WPt -> SetStats(0);
+   htuneA_kt1ckin10_WPt -> SetLineColor(1); 
+   htuneA_kt1ckin10_WPt -> SetLineStyle(5);
+   htuneA_kt1ckin10_WPt -> Draw("same");
+   hperugia0_ckin1_WPt  -> SetStats(0);
+   hperugia0_ckin1_WPt  -> SetLineColor(kGreen); 
+   hperugia0_ckin1_WPt  -> SetLineStyle(2);
+   hperugia0_ckin1_WPt  -> Draw("same");
+   hperugia0_ckin5_WPt  -> SetStats(0);
+   hperugia0_ckin5_WPt  -> SetLineColor(kGreen); 
+   hperugia0_ckin5_WPt  -> SetLineStyle(3);
+   hperugia0_ckin5_WPt  -> Draw("same");
    leg1          -> Draw();
 
    c2->Print(outPath + "/plot_WPT_2.png");  
