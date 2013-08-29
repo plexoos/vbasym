@@ -61,7 +61,6 @@ void WBosEventHContainer::BookHists()
    o["hTrackRecoilWithNeutralsPtCorrected"]        = hist = new TH1F("hTrackRecoilWithNeutralsPtCorrected", "Recoil from Tracks: TPC+emCal (CORRECTED) ; Track-based Recoil P_{T}; Events", 40, 0, 40);
    o["hTrackRecoilWithNeutralsPt_zoomin"]          = hist = new TH1F("hTrackRecoilWithNeutralsPt_zoomin", "Recoil from Tracks: TPC+emCal (also trackless clusters) ; Track-based Recoil P_{T}; Events", 20, 0, 10);
    o["hTrackRecoilWithNeutralsPtCorrected_zoomin"] = hist = new TH1F("hTrackRecoilWithNeutralsPtCorrected_zoomin", "Recoil from Tracks: TPC+emCal (CORRECTED) ; Track-based Recoil P_{T}; Events", 20, 0, 10);
-   o["hTrackRecoillUntrackedClustersPt"]    = hist = new TH1F("hTrackRecoillUntrackedClustersPt", "Recoil from tracks; P_{T};", 40, 0, 40);
    o["hPtBalanceFromTracksNeutrals"]        = hist = new TH1F("hPtBalanceFromTracksNeutrals", "P_{T}-balance from tracks; P_{T};", 40, 0, 60);
    o["hPtBalanceCosPhiFromTracksNeutrals"]  = hist = new TH1F("hPtBalanceCosPhiFromTracksNeutrals", "P_{T}-balance cos(#phi); P_{T};", 40, -100, 100);
    o["hPhiBalanceCosPhiFromTracksNeutrals"] = hist = new TH1F("hPhiBalanceCosPhiFromTracksNeutrals", "P_{T}-balance; #phi;", 40, -TMath::Pi(),TMath::Pi());
@@ -107,7 +106,6 @@ void WBosEventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hTrackRecoilWithNeutralsPtCorrected"])->Fill(event.mPtTrackRecoilWithNeutralsCorrected);
    ((TH1*) o["hTrackRecoilWithNeutralsPt_zoomin"])->Fill(event.GetTrackRecoilTpcNeutrals().Pt());
    ((TH1*) o["hTrackRecoilWithNeutralsPtCorrected_zoomin"])->Fill(event.mPtTrackRecoilWithNeutralsCorrected);
-   //((TH1*) o["hTrackRecoilUntrackedClustersPt"])->Fill(event.GetTrackRecoilNeutrals().Pt());
 
    ((TH1*) o["hPtBalanceFromTracksNeutrals"])->Fill(event.mP3BalanceFromTracks.Pt());
    ((TH1*) o["hPtBalanceCosPhiFromTracksNeutrals"])->Fill(event.mPtBalanceCosPhiFromTracks);
