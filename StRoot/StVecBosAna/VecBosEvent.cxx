@@ -13,6 +13,9 @@ using namespace std;
 
 VecBosEvent::VecBosEvent() : ProtoEvent(),
    mStMuDst(0),
+   fIsMc(false),
+   id(-1),
+   runNo(-1),
    mSpinPattern4Bits(-1),
    mSpinDirection(-1),
    mCpuTimeEventAna(0), mCpuTimeHistFill(0),
@@ -342,6 +345,8 @@ void VecBosEvent::Process()
 
 void VecBosEvent::ProcessPersistent()
 {
+   if (mWEvent) fIsMc = true;
+
    VecBosTrackPtrSetIter iTrack = mTracks.begin();
    for ( ; iTrack != mTracks.end(); ++iTrack) {
       VecBosTrack *track = *iTrack;
@@ -412,6 +417,7 @@ void VecBosEvent::ProcessJets()
 
 void VecBosEvent::ProcessMC()
 {
+   fIsMc = true;
    StMcEvent *stMcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
    assert(stMcEvent);
 
