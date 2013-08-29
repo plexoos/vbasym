@@ -19,13 +19,15 @@ using namespace std;
 
 
 /** Default constructor. */
-EventDisplayHContainer::EventDisplayHContainer() : PlotHelper()
+EventDisplayHContainer::EventDisplayHContainer() : PlotHelper(),
+   fEventCounter(0)
 {
    BookHists();
 }
 
 
-EventDisplayHContainer::EventDisplayHContainer(TDirectory *dir) : PlotHelper(dir)
+EventDisplayHContainer::EventDisplayHContainer(TDirectory *dir) : PlotHelper(dir),
+   fEventCounter(0)
 {
    BookHists();
 }
@@ -50,6 +52,13 @@ void EventDisplayHContainer::BookHists()
 /** */
 void EventDisplayHContainer::Fill(ProtoEvent &ev)
 {
+   VecBosEvent& vbEvent = (VecBosEvent&) ev;
+
+   fEventCounter++;
+
+   // In case of MC events create displays for only every 10th event
+   if (vbEvent.IsMc() && (fEventCounter-1)%10) return;
+
    PlotHelper *ph_sub = GetEventDisplayHists(ev);
 
    if (ph_sub)
