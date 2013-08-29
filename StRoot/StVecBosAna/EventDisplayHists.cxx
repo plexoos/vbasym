@@ -90,19 +90,19 @@ void EventDisplayHists::Fill(ProtoEvent &ev)
 
    TVector3 trkP3(eleTrack.GetCoordAtBTow() );
 
-   TMarker *marker = new TMarker(trkP3.Eta(), fmod(2*M_PI + trkP3.Phi(), 2*M_PI), 30);
-   marker->SetMarkerColor(kRed);
-   marker->SetMarkerSize(3);
+   TMarker *markerEleTrack = new TMarker(trkP3.Eta(), fmod(2*M_PI + trkP3.Phi(), 2*M_PI), 30);
+   markerEleTrack->SetMarkerColor(kRed);
+   markerEleTrack->SetMarkerSize(3);
 
    hBTowEnergy->GetListOfFunctions()->SetOwner(kTRUE);
-   hBTowEnergy->GetListOfFunctions()->Add(marker);
+   hBTowEnergy->GetListOfFunctions()->Add(markerEleTrack);
 
    TVector3 cluP3( eleTrack.mCluster2x2.position );
 
-   TMarker *markerCluster = new TMarker(cluP3.Eta(), fmod(2*M_PI + cluP3.Phi(), 2*M_PI), 30);
-   markerCluster->SetMarkerColor(kBlue);
-   markerCluster->SetMarkerSize(3);
-   hBTowEnergy->GetListOfFunctions()->Add(markerCluster);
+   TMarker *markerEleCluster = new TMarker(cluP3.Eta(), fmod(2*M_PI + cluP3.Phi(), 2*M_PI), 30);
+   markerEleCluster->SetMarkerColor(kBlue);
+   markerEleCluster->SetMarkerSize(3);
+   hBTowEnergy->GetListOfFunctions()->Add(markerEleCluster);
 
    // Draw jets as ellipses
    VecBosJetPtrSetConstIter iJet = wbEvent.mJets.begin();
@@ -131,12 +131,12 @@ void EventDisplayHists::Fill(ProtoEvent &ev)
          //Info("Fill", "jetTrkP3:");
          //jetTrkP3.Print();
 
-         marker = new TMarker(jetTrkP3.Eta(), fmod(2*M_PI + jetTrkP3.Phi(), 2*M_PI), kFullStar);
-         marker->SetMarkerColor(iColor);
-         marker->SetMarkerSize(2);
-         hBTowEnergy->GetListOfFunctions()->Add(marker);
+         TMarker *markerTrack = new TMarker(jetTrkP3.Eta(), fmod(2*M_PI + jetTrkP3.Phi(), 2*M_PI), kFullStar);
+         markerTrack->SetMarkerColor(iColor);
+         markerTrack->SetMarkerSize(2);
+         hBTowEnergy->GetListOfFunctions()->Add(markerTrack);
 
-         TLine *lineTrack2Jet = new TLine(jetEllipse->GetX1(), jetEllipse->GetY1(), marker->GetX(), marker->GetY());
+         TLine *lineTrack2Jet = new TLine(jetEllipse->GetX1(), jetEllipse->GetY1(), markerTrack->GetX(), markerTrack->GetY());
          lineTrack2Jet->SetLineWidth(2);
          lineTrack2Jet->SetLineColor(iColor);
          hBTowEnergy->GetListOfFunctions()->Add(lineTrack2Jet);
