@@ -75,7 +75,7 @@ PlotHelper *EventDisplayHContainer::GetEventDisplayHists(const ProtoEvent &ev)
    int eventId = vbEvent.GetEventId();
 
    // Set individual sub dirs
-   string dirName(17, ' ');
+   string dirName(18, ' ');
    sprintf(&dirName[0], "r%08d_%08d", runId, eventId);
 
    PlotHelper *ph;
