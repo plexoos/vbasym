@@ -153,7 +153,6 @@ public:
    bool           HasIsolatedTrack()          const { return mNumIsolatedTracks  > 0 ? true : false; }
    bool           HasCandidateEle()           const { return mTracksCandidate.size() > 0 ? true : false; }
    bool           HasJetRecoil()              const { return mP4JetRecoil.Mag()  > 0 ? true : false; }
-   bool           PassedCutExceptPtBal() const;
    bool           PassedCutFinal() const;
 
    virtual void   Process();

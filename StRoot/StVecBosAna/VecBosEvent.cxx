@@ -240,17 +240,6 @@ TVector3 VecBosEvent::CalcTrackRecoilTpcNeutralsCorrected() const
 }
 
 
-bool VecBosEvent::PassedCutExceptPtBal() const
-{
-   if ( mTracksCandidate.size() > 0 &&
-        (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= VecBosTrack::sMinCandidateTrackClusterE) {
-      return true;
-   }
-
-   return false;
-}
-
-
 bool VecBosEvent::PassedCutFinal() const
 {
    //if (mTracksCandidate.size() > 0 && GetMissingEnergy().Pt() > 18
