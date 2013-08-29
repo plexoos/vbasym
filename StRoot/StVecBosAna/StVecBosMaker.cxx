@@ -472,13 +472,6 @@ Int_t StVecBosMaker::Make()
    //   hA[118]->Fill(jet_pt);
    //}
 
-   // Add tracks to the event and atch tracks to energy clusters in the barrel
-   // and endcap
-   //bool hasMatchedTrack2BCluster = MatchTrack2BtowCluster();
-   //bool hasMatchedTrack2ECluster = MatchTrack2EtowCluster();
-
-   //if (!hasMatchedTrack2BCluster && !hasMatchedTrack2ECluster) return kStOK; //no matched BTOW or ETOW clusters
-
    mNumAcceptedEvents++;
 
    // Add info to the event
@@ -2240,7 +2233,7 @@ void StVecBosMaker::AnalyzeEPRS()
 
 
 /**
- * (deprecated) Creates root histograms for the barrel calorimeter.
+ * (Deprecated) Creates root histograms for the barrel calorimeter.
  */
 void StVecBosMaker::InitHistos()
 {

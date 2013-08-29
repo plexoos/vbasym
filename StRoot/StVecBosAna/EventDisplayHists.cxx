@@ -67,7 +67,6 @@ void EventDisplayHists::BookHists(const VecBosEvent &ev)
 /** */
 void EventDisplayHists::Fill(ProtoEvent &ev)
 {
-   Info("Fill", "xxx");
    WBosEvent& wbEvent = (WBosEvent&) ev;
 
    TH2*  hBTowEnergy = ((TH2*) o["hBTowEnergy"]);

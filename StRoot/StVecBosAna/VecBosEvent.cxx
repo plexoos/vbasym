@@ -280,7 +280,6 @@ void VecBosEvent::Process()
    }
 
    // Process tracks
-   //Info("Process", "Process tracks");
    VecBosTrackPtrSetIter iTrack = mTracks.begin();
    for ( ; iTrack != mTracks.end(); ++iTrack)
    {
@@ -546,7 +545,8 @@ bool VecBosEvent::IsRecoilJet(VecBosJet *vbJet) const
 bool VecBosEvent::IsRecoilJetWithZVertexCut(VecBosJet *vbJet) const
 {
    VecBosTrackPtrSetConstIter iTrack = mTracksCandidate.begin();
-   for ( ; iTrack != mTracksCandidate.end(); ++iTrack) {
+   for ( ; iTrack != mTracksCandidate.end(); ++iTrack)
+   {
       Double_t deltaZ = fabs(vbJet->zVertex - (*iTrack)->mVertex->mPosition.Z());
 
       if (deltaZ > sMaxTrackJetDeltaZ) continue;
@@ -970,7 +970,6 @@ void VecBosEvent::Clear(const Option_t* opt)
 
    if (mWEvent) delete mWEvent;
    mWEvent = 0;
-   //mWEvent = new WEvent();
 
    mP4JetTotal.SetXYZT(0, 0, 0, 0);
    mP4JetFirst.SetXYZT(0, 0, 0, 0);
@@ -991,7 +990,7 @@ void VecBosEvent::Clear(const Option_t* opt)
 void VecBosEvent::Print(const Option_t* opt) const
 {
    printf("\n");
-   Info("Print(int opt, int isMC)", "");
+   Info("Print(const Option_t* opt)", "");
 
    printf("runNo: %d, ID: %d,  L2Wbits: ET=%d rnd=%d;  muDst: bx7=%d bx48=%d\n" \
           "star: Bx7m=%d, Bx48=%d, mSpinPattern4Bits=%d \n",
@@ -1006,7 +1005,7 @@ void VecBosEvent::Print(const Option_t* opt) const
    Info("Print", "GetNumTracks():   %d", GetNumTracks());
    Info("Print", "GetNumCandidateTracks(): %d", GetNumCandidateTracks());
    Info("Print", "mTracksCandidate.size(): %d", mTracksCandidate.size());
-   Info("Print", "mTracks.size():   %d",                 mTracks.size());
+   Info("Print", "mTracks.size():   %d",        mTracks.size());
 
    VecBosTrackPtrSetIter iTrack = mTracks.begin();
    for ( ; iTrack != mTracks.end(); ++iTrack)

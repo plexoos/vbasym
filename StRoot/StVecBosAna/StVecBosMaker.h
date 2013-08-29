@@ -148,10 +148,10 @@ protected:
    float           gains_BTOW[4801];
    TH1F           *hReweight;
    char           *nameReweight;
-   int             par_DsmThres, parE_DsmThres; // not used in the algo
+   int             par_DsmThres, parE_DsmThres;     // not used in the algo
    int             par_maxDisplEve;
 
-   StBemcTables   *mBarrelTables;              // used to access EMC status and ped info
+   StBemcTables   *mBarrelTables;                   // used to access EMC status and ped info
    TVector3        positionBtow[mxBtow];            // vs. tower ID
    TVector3        positionBsmd[mxBSmd][mxBStrips]; // vs. strip ID       
    TVector3        positionEtow[mxEtowSec*mxEtowSub][mxEtowEta];  

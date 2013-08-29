@@ -1,8 +1,3 @@
-/*****************************************************************************
- *                                                                           *
- *                                                                           *
- *****************************************************************************/
-
 #include <math.h>
 
 #include "AsymHContainer.h"
@@ -162,11 +157,6 @@ void AsymHContainer::BookHists()
    o[shName] = hist = new TH1D(shName.c_str(), "; W Boson #eta; Asym Amp.;", 6, -6, 6);
    hist->SetOption("E1 GRIDX GRIDY");
    hist->GetYaxis()->SetRangeUser(-0.75, 0.75);
-
-   //shName = "hWBosonAsymAmpVsEta_YEL_rev"; // should be removed after confirming it does the right thing
-   //o[shName] = hist = new TH1D(shName.c_str(), "; W Boson #eta; Asym Amp.;", 6, -6, 6);
-   //hist->SetOption("E1 GRIDX GRIDY");
-   //hist->GetYaxis()->SetRangeUser(-0.75, 0.75);
 
    shName = "hWBosonAsymAmpVsPt_";
    o[shName] = hist = new TH1D(shName.c_str(), "; W Boson P_{T}; Asym Amp.;", 10, 0, 10);

@@ -18,10 +18,6 @@
  */
 class EventDisplayHContainer : public PlotHelper
 {
-private:
-
-   //TH1* fhPseudoMass_ch[N_SILICON_CHANNELS];
-
 public:
 
    EventDisplayHContainer();
@@ -29,10 +25,6 @@ public:
    ~EventDisplayHContainer();
 
    void Fill(ProtoEvent &ev);
-   //void FillDerived();
-   //void FillDerived(PlotHelper &oc);
-   //void PostFill();
-   //void PostFill(PlotHelper &oc);
 
 private:
 
