@@ -354,8 +354,8 @@ void WeventDisplay::exportEvent(const char *detType, VecBosVertex &myV,
    if (maxEve <= 0) return;
    clear();
 
-   int eveId = wMK->mVecBosEvent->id;
-   int runNo = wMK->mVecBosEvent->runNo;
+   int eveId = wMK->mVecBosEvent->GetEventId();
+   int runNo = wMK->mVecBosEvent->GetRunId();
 
    const char *afile = ""; //wMK->mStMuDstMaker->GetFile();
    int len    = strlen(afile);

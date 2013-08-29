@@ -14,8 +14,8 @@ using namespace std;
 VecBosEvent::VecBosEvent() : ProtoEvent(),
    mStMuDst(0),
    fIsMc(false),
-   id(-1),
-   runNo(-1),
+   fEventId(-1),
+   fRunId(-1),
    mSpinPattern4Bits(-1),
    mSpinDirection(-1),
    mCpuTimeEventAna(0), mCpuTimeHistFill(0),
@@ -71,11 +71,10 @@ VecBosEvent::~VecBosEvent()
 
 void VecBosEvent::InitUsing(StMuDstMaker* stMuDstMaker)
 {
-   id      = stMuDstMaker->muDst()->event()->eventId();
-   runNo   = stMuDstMaker->muDst()->event()->runId();
-   time    = stMuDstMaker->muDst()->event()->eventInfo().time();
-   zdcRate = stMuDstMaker->muDst()->event()->runInfo().zdcCoincidenceRate();
-
+   fEventId = stMuDstMaker->muDst()->event()->eventId();
+   fRunId   = stMuDstMaker->muDst()->event()->runId();
+   time     = stMuDstMaker->muDst()->event()->eventInfo().time();
+   zdcRate  = stMuDstMaker->muDst()->event()->runInfo().zdcCoincidenceRate();
    mStMuDst = stMuDstMaker->muDst();
 
    mMuDstNumVertices = mStMuDst->primaryVertices()->GetEntriesFast();
@@ -923,8 +922,8 @@ float VecBosEvent::SumTpcCone(int vertID, TVector3 refAxis, int flag, int pointT
 void VecBosEvent::Clear(const Option_t* opt)
 {
    mStMuDst            = 0;
-   id                  = 0;
-   runNo               = 0;
+   fEventId            = 0;
+   fRunId              = 0;
    time                = 0;
    zdcRate             = 0;
    l2bitET             = 0;
@@ -992,9 +991,9 @@ void VecBosEvent::Print(const Option_t* opt) const
    printf("\n");
    Info("Print(const Option_t* opt)", "");
 
-   printf("runNo: %d, ID: %d,  L2Wbits: ET=%d rnd=%d;  muDst: bx7=%d bx48=%d\n" \
+   printf("fRunId: %d, fEventId: %d,  L2Wbits: ET=%d rnd=%d;  muDst: bx7=%d bx48=%d\n" \
           "star: Bx7m=%d, Bx48=%d, mSpinPattern4Bits=%d \n",
-          runNo, id, l2bitET, l2bitRnd, bx7, bx48, bxStar7, bxStar48, mSpinPattern4Bits);
+          fRunId, fEventId, l2bitET, l2bitRnd, bx7, bx48, bxStar7, bxStar48, mSpinPattern4Bits);
 
    int  yyyymmdd,  hhmmss;
    GetGmt_day_hour( yyyymmdd,  hhmmss);

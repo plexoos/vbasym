@@ -41,9 +41,9 @@ public:
    int                     l2EbitRnd;
    int                     trigAwaySum[16];   // for lumi
    int                     trigTotalSum;      // for lumi
-   bool                    fIsMc;             //! XXX rename a bunch of variables and 
-   int                     id;                // event id
-   int                     runNo;
+   bool                    fIsMc;             //< flag to process this event as MC or Data
+   int                     fEventId;          // event id
+   int                     fRunId;
    int                     time;
    float                   zdcRate;
    int                     bx7;               //!
@@ -123,8 +123,8 @@ public:
    TClonesArray*  GetStJets();
    TClonesArray*  GetStJetsNoEndcap();
    bool           IsMc()                      const { return fIsMc; }
-   UInt_t         GetEventId()                const { return id; }
-   UInt_t         GetRunId()                  const { return runNo; }
+   UInt_t         GetEventId()                const { return fEventId; }
+   UInt_t         GetRunId()                  const { return fRunId; }
    UInt_t         GetNumStJets();
    UInt_t         GetNumStJetsNoEndcap();
    UInt_t         GetNumJets()                const { return mJets.size(); }
