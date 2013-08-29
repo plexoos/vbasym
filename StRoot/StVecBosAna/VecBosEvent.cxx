@@ -332,8 +332,6 @@ void VecBosEvent::Process()
 
 void VecBosEvent::ProcessPersistent()
 {
-   if (mWEvent) fIsMc = true;
-
    VecBosTrackPtrSetIter iTrack = mTracks.begin();
    for ( ; iTrack != mTracks.end(); ++iTrack) {
       VecBosTrack *track = *iTrack;
