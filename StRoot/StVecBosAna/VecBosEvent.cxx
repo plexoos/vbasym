@@ -20,7 +20,8 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mSpinDirection(-1),
    mCpuTimeEventAna(0), mCpuTimeHistFill(0),
    mMuDstNumGTracks(0), mMuDstNumVertices(0), mMuDstNumPTracks(0), mMuDstNumOTracks(0),
-   mNumGoodVertices(0), mNumGoodTracks(0), mNumBTracks(0), mNumETracks(0), mNumIsolatedTracks(0), mNumCandidateTracks(0),
+   mNumGoodVertices(0),
+   mNumGoodTracks(0), mNumBTracks(0), mNumETracks(0), mNumWithClusterTracks(0), mNumIsolatedTracks(0), mNumCandidateTracks(0),
    mStJets(0), mJets(), mJetsRecoil(), mJetsWithIsoTrack(),
    mVertices(),
    mTracks(),
@@ -285,9 +286,10 @@ void VecBosEvent::Process()
       VecBosTrack &track = **iTrack;
       track.Process();
 
-      if (track.IsGood())   mNumGoodTracks++;
-      if (track.IsBTrack()) mNumBTracks++;
-      if (track.IsETrack()) mNumETracks++;
+      if (track.IsGood())     mNumGoodTracks++;
+      if (track.IsBTrack())   mNumBTracks++;
+      if (track.IsETrack())   mNumETracks++;
+      if (track.HasCluster()) mNumWithClusterTracks++;
       if (track.IsIsolated()) {
          //Info("Process()", "Iso track found");
          mNumIsolatedTracks++;
@@ -941,6 +943,7 @@ void VecBosEvent::Clear(const Option_t* opt)
    mNumGoodTracks      = 0;
    mNumBTracks         = 0;
    mNumETracks         = 0;
+   mNumWithClusterTracks = 0;
    mNumIsolatedTracks  = 0;
    mNumCandidateTracks = 0;
    mStJets             = 0;

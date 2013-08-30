@@ -63,6 +63,7 @@ public:
    UShort_t                mNumGoodTracks;
    UShort_t                mNumBTracks;
    UShort_t                mNumETracks;
+   UShort_t                mNumWithClusterTracks;
    UShort_t                mNumIsolatedTracks;
    UShort_t                mNumCandidateTracks;
    StJets                 *mStJets;            //!
@@ -136,6 +137,7 @@ public:
    UShort_t       GetNumGoodTracks()          const { return mNumGoodTracks; }
    UShort_t       GetNumBTracks()             const { return mNumBTracks; }
    UShort_t       GetNumETracks()             const { return mNumETracks; }
+   UShort_t       GetNumWithClusterTracks()   const { return mNumWithClusterTracks; }
    UShort_t       GetNumIsolatedTracks()      const { return mNumIsolatedTracks; }
    UShort_t       GetNumCandidateTracks()     const { return mNumCandidateTracks; }
    UInt_t         GetNumTracksWithBCluster();
