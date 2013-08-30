@@ -28,9 +28,9 @@ public:
    bool         PassedCutWBosMinus(float minElePt=sMinElectronPtLight) const;
    bool         PassedCutQcdBkg(float minElePt=sMinElectronPtLight) const;
 
-   static const float sMinElectronPtLight; //
-   static const float sMinElectronPtHard;  //
-   static const float sMinNeutrinoPt;      //
+   static const float sMinElectronPtLight; //!
+   static const float sMinElectronPtHard;  //!
+   static const float sMinNeutrinoPt;      //!
 
 protected:
 
