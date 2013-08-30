@@ -21,7 +21,7 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mCpuTimeEventAna(0), mCpuTimeHistFill(0),
    mMuDstNumGTracks(0), mMuDstNumVertices(0), mMuDstNumPTracks(0), mMuDstNumOTracks(0),
    mNumGoodVertices(0),
-   mNumGoodTracks(0), mNumBTracks(0), mNumETracks(0), mNumWithClusterTracks(0), mNumIsolatedTracks(0), mNumCandidateTracks(0),
+   mNumGoodTracks(0), mNumBTracks(0), mNumETracks(0), mNumWithClusterTracks(0), mNumIsolatedTracks(0),
    mStJets(0), mJets(), mJetsRecoil(), mJetsWithIsoTrack(),
    mVertices(),
    mTracks(),
@@ -291,14 +291,12 @@ void VecBosEvent::Process()
       if (track.IsETrack())   mNumETracks++;
       if (track.HasCluster()) mNumWithClusterTracks++;
       if (track.IsIsolated()) {
-         //Info("Process()", "Iso track found");
          mNumIsolatedTracks++;
 
          if ( track.IsUnBalanced() ) track.FindClosestJet();
       }
 
       if ( track.IsCandidate() ) {
-         mNumCandidateTracks++;
          mTracksCandidate.insert(*iTrack);
 
          if ( track.IsInJet() ) {
@@ -945,7 +943,6 @@ void VecBosEvent::Clear(const Option_t* opt)
    mNumETracks         = 0;
    mNumWithClusterTracks = 0;
    mNumIsolatedTracks  = 0;
-   mNumCandidateTracks = 0;
    mStJets             = 0;
    bxStar7             = -1;
    bxStar48            = -1;

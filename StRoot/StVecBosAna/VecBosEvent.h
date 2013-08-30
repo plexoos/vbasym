@@ -65,7 +65,6 @@ public:
    UShort_t                mNumETracks;
    UShort_t                mNumWithClusterTracks;
    UShort_t                mNumIsolatedTracks;
-   UShort_t                mNumCandidateTracks;
    StJets                 *mStJets;            //!
    StJets                 *mStJetsNoEndcap;    //! jets noEEMC
    WeveBEMC                bemc;               //
@@ -139,7 +138,7 @@ public:
    UShort_t       GetNumETracks()             const { return mNumETracks; }
    UShort_t       GetNumWithClusterTracks()   const { return mNumWithClusterTracks; }
    UShort_t       GetNumIsolatedTracks()      const { return mNumIsolatedTracks; }
-   UShort_t       GetNumCandidateTracks()     const { return mNumCandidateTracks; }
+   UShort_t       GetNumCandidateTracks()     const { return mTracksCandidate.size(); }
    UInt_t         GetNumTracksWithBCluster();
    TLorentzVector GetJetRecoil()              const { return mP4JetRecoil; }
    TVector3       GetTrackRecoil()            const { return mP3TrackRecoilTow; }
