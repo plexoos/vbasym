@@ -165,7 +165,7 @@ UInt_t VecBosEvent::GetNumTracksWithBCluster()
       VecBosTrackVecIter  iTrack = vertex.eleTrack.begin();
 
       for ( ; iTrack != vertex.eleTrack.end(); ++iTrack) {
-         if (iTrack->isMatch2Cl) nTracks++;
+         if (iTrack->HasCluster()) nTracks++;
       }
    }
 

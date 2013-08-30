@@ -235,7 +235,7 @@ void StVecBosSpinMaker::bXingSort()
             if ( T.mCluster2x2.ET < 20. ) { hA[7]->Fill(spin4);  hA[0]->Fill("BG2", 1.);}
          }
 
-         if (T.isMatch2Cl == false) continue;
+         if (T.HasCluster() == false) continue;
          assert(T.mCluster2x2.nTower > 0); // internal logical error
          assert(T.mP3InNearCone.Pt() > 0); // internal logical error
 

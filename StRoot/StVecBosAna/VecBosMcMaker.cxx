@@ -62,7 +62,7 @@ void VecBosMcMaker::doWanalysis()
 
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          VecBosTrack &T = V.eleTrack[it];
-         if (T.isMatch2Cl == false) continue;
+         if (!T.HasCluster()) continue;
          assert(T.mCluster2x2.nTower > 0); // internal logical error
          assert(T.mP3InNearCone.Pt() > 0); // internal logical error
 
@@ -230,7 +230,7 @@ void VecBosMcMaker::doWefficiency()
 
       for (uint it = 0; it < V.eleTrack.size(); it++) {
          VecBosTrack &T = V.eleTrack[it];
-         if (T.isMatch2Cl == false) continue;
+         if (!T.HasCluster()) continue;
          assert(T.mCluster2x2.nTower > 0); // internal logical error
          assert(T.mP3InNearCone.Pt() > 0); // internal logical error
 

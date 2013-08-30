@@ -1711,7 +1711,7 @@ void StVecBosMaker::FindWBoson()
          VecBosTrack &track = vertex.eleTrack[it];
 
          if (track.mMatchedTower.id <= 0) continue; //skip endcap towers
-         if (track.isMatch2Cl == false) continue;
+         if (track.HasCluster() == false) continue;
 
          assert(track.mCluster2x2.nTower > 0); // internal logical error
          assert(track.mP3InNearCone.Pt() > 0);      // internal logical error
@@ -1872,7 +1872,7 @@ void StVecBosMaker::FindZBoson()
    for ( ; iTrack!=mVecBosEvent->mTracks.end(); ++iTrack)
    {
       VecBosTrack &track = **iTrack;
-      if ( !track.isMatch2Cl ) continue;
+      if ( !track.HasCluster() ) continue;
 
       assert(track.mCluster2x2.nTower > 0); // internal logical error
       assert(track.mP3InNearCone.Pt() > 0); // internal logical error
@@ -1943,7 +1943,7 @@ void StVecBosMaker::CalcPtBalance()
       {
          VecBosTrack &track = vertex.eleTrack[iTrack];
 
-         if (track.isMatch2Cl == false) continue;
+         if (track.HasCluster() == false) continue;
 
          // Loop over branch with EEMC
          //mJets = GetJets(mJetTreeBranchName);
@@ -2014,7 +2014,7 @@ void StVecBosMaker::FindWBosonEndcap()
       {
          VecBosTrack &track = vertex.eleTrack[it];
          if (track.mMatchedTower.id >= 0) continue; //skip barrel towers
-         if (track.isMatch2Cl == false) continue;
+         if (track.HasCluster() == false) continue;
          assert(track.mCluster2x2.nTower > 0); // internal logical error
          // XXX:ds: assert(track.mP3InNearCone.Pt() > 0); // internal logical error
          if (track.mP3InNearCone.Pt() < 0) continue; // internal logical error
@@ -2139,7 +2139,7 @@ void StVecBosMaker::AnalyzeESMD()
       {
          VecBosTrack &T = vertex.eleTrack[it];
          if (T.mMatchedTower.id >= 0) continue; //skip barrel towers
-         if (T.isMatch2Cl == false) continue;
+         if (T.HasCluster() == false) continue;
 
          assert(T.mCluster2x2.nTower > 0); // internal logical error
 
@@ -2223,7 +2223,7 @@ void StVecBosMaker::AnalyzeEPRS()
       {
          VecBosTrack &T = vertex.eleTrack[it];
          if (T.mMatchedTower.id >= 0) continue; // skip barrel towers
-         if (T.isMatch2Cl == false) continue;
+         if (T.HasCluster() == false) continue;
          assert(T.mCluster2x2.nTower > 0); // internal logical error
 
          //do some clustering of EPRS deposits and plot histos

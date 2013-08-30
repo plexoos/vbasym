@@ -20,7 +20,6 @@ const float VecBosTrack::sMinCandidateTrackClusterE = 25; // GeV
 VecBosTrack::VecBosTrack() : TObject(),
    mEvent(0),
    mVbType(kUNKNOWN),
-   isMatch2Cl(false),
    mMatchedTower(),
    glMuTrack(0),
    mStMuTrack(0),
@@ -150,7 +149,6 @@ void VecBosTrack::Clear(const Option_t*)
 {
    mEvent                 = 0;
    mVbType                = kUNKNOWN;
-   isMatch2Cl             = false;
    mMatchedTower.Clear();
    glMuTrack              = 0;
    mStMuTrack             = 0;
@@ -220,8 +218,8 @@ void VecBosTrack::Print(const Option_t* opt) const
 
    //if (!mStMuTrack) { printf("mStMuTrack is NULL pointer???\n"); return; }
 
-   //printf("\tTrack: isMatch2Cl: %d, mP3InNearCone: %.2f, awayTotET: %.2f mP3AtDca.Pt(): %.2f\n",
-   //       isMatch2Cl, mP3InNearCone.Pt(), awayTotET, mP3AtDca.Pt());
+   //printf("\tTrack: HasCluster(): %d, mP3InNearCone: %.2f, awayTotET: %.2f mP3AtDca.Pt(): %.2f\n",
+   //       HasCluster(), mP3InNearCone.Pt(), awayTotET, mP3AtDca.Pt());
 
    //mMatchedTower.print(opt);
    mCluster2x2.Print(opt);
@@ -422,7 +420,6 @@ bool VecBosTrack::MatchTrack2BarrelCluster()
 
    if (mDistToCluster.Mag() <= sMaxTrackClusterDist)
    {
-      isMatch2Cl  = true; // cluster is matched to TPC track
       mVbType    |= kHAS_CLUSTER;
       return true;
    }

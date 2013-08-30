@@ -90,7 +90,7 @@ void StZBosMaker::FindZBosBarrel()
       {
          VecBosTrack &T1 = V.eleTrack[it];
          if (T1.mMatchedTower.id <= 0) continue; //skip endcap towers
-         if (T1.isMatch2Cl == false) continue;
+         if (T1.HasCluster() == false) continue;
 
          assert(T1.mCluster2x2.nTower > 0); // internal logical error
          assert(T1.mP3InNearCone.Pt() > 0); // internal logical error
@@ -113,7 +113,7 @@ void StZBosMaker::FindZBosBarrel()
          {
             VecBosTrack &T2 = V.eleTrack[it2];
             if (T2.mMatchedTower.id <= 0) continue; //skip endcap towers
-            if (T2.isMatch2Cl == false) continue;
+            if (T2.HasCluster() == false) continue;
 
             assert(T2.mCluster2x2.nTower > 0); // internal logical error
             assert(T2.mP3InNearCone.Pt() > 0); // internal logical error
@@ -239,7 +239,7 @@ void StZBosMaker::FindZBosEndcap()
       {
          VecBosTrack &TB = V.eleTrack[it];
          if (TB.mMatchedTower.id <= 0) continue; //skip endcap towers
-         if (TB.isMatch2Cl == false) continue;
+         if (TB.HasCluster() == false) continue;
          assert(TB.mCluster2x2.nTower > 0); // internal logical error
          assert(TB.mP3InNearCone.Pt() > 0); // internal logical error
 
@@ -261,7 +261,7 @@ void StZBosMaker::FindZBosEndcap()
          {
             VecBosTrack &TE = V.eleTrack[it];
             if (TE.mMatchedTower.id >= 0) continue; //skip barrel towers
-            if (TE.isMatch2Cl == false) continue;
+            if (TE.HasCluster() == false) continue;
             assert(TE.mCluster2x2.nTower > 0); // internal logical error
             assert(TE.mP3InNearCone.Pt() > 0); // internal logical error
 

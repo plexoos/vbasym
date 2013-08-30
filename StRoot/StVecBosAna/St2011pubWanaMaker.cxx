@@ -68,7 +68,7 @@ void St2011pubWanaMaker::evalWeleTrackSign()
       {
          VecBosTrack &track = V.eleTrack[it];
 
-         if ( !track.isMatch2Cl ) continue;
+         if ( !track.HasCluster() ) continue;
 
          assert(track.mCluster2x2.nTower > 0); // internal logical error
          assert(track.mP3InNearCone.Pt() > 0); // internal logical error
@@ -216,7 +216,7 @@ void St2011pubWanaMaker::varyCuts4backgStudy()
       for (uint it = 0; it < V.eleTrack.size(); it++)
       {
          VecBosTrack &track = V.eleTrack[it];
-         if (track.isMatch2Cl == false) continue;
+         if ( !track.HasCluster() ) continue;
 
          assert(track.mCluster2x2.nTower > 0); // internal logical error
          assert(track.mP3InNearCone.Pt() > 0); // internal logical error

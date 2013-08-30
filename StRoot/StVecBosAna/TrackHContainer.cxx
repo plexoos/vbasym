@@ -169,8 +169,6 @@ void TrackHContainer::Fill(VecBosTrack &track)
    ((TH2*) o["hQxEtoPt_Vs_Et_PrimaryTrack"])->Fill(track.mCluster2x2.ET, (track.mStMuTrack->charge()*track.mCluster2x2.ET)/track.mP3AtDca.Pt());
 
    ((TH1*) o["hMinDeltaRToJet"])->Fill(track.mMinDeltaRToJet);
-
-   //printf("hasMatchedCluster: %d\n", track.isMatch2Cl);
 }
 
 

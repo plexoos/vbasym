@@ -39,7 +39,6 @@ public:
 
    VecBosEvent            *mEvent;             //!
    UInt_t                  mVbType;
-   Bool_t                  isMatch2Cl;         // result of cuts
    CalTower                mMatchedTower;
    const StMuTrack        *glMuTrack;          //!
    StMuTrack              *mStMuTrack;         //
