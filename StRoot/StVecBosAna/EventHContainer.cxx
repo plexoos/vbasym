@@ -61,6 +61,8 @@ void EventHContainer::BookHists()
    h->SetOption("hist GRIDX");
    o["hNumETracks"]            = h = new TH1I("hNumETracks", "; Num. of Endcap Tracks; Events", 10, 0, 10);
    h->SetOption("hist GRIDX");
+   o["hNumWithClusterTracks"]  = h = new TH1I("hNumWithClusterTracks", "; Num. of Tracks w/ Cluster; Events", 10, 0, 10);
+   h->SetOption("hist GRIDX");
    o["hNumIsolatedTracks"]     = h = new TH1I("hNumIsolatedTracks", "; Num. of Isolated Tracks; Events", 10, 0, 10);
    h->SetOption("hist GRIDX");
    o["hNumCandidateTracks"]    = h = new TH1I("hNumCandidateTracks", "; Num. of Candidate Tracks; Events", 10, 0, 10);
@@ -97,6 +99,7 @@ void EventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hNumGoodTracks"])        ->Fill(event.GetNumGoodTracks());
    ((TH1*) o["hNumBTracks"])           ->Fill(event.GetNumBTracks());
    ((TH1*) o["hNumETracks"])           ->Fill(event.GetNumETracks());
+   ((TH1*) o["hNumWithClusterTracks"]) ->Fill(event.GetNumWithClusterTracks());
    ((TH1*) o["hNumIsolatedTracks"])    ->Fill(event.GetNumIsolatedTracks());
    ((TH1*) o["hNumCandidateTracks"])   ->Fill(event.GetNumCandidateTracks());
    ((TH1*) o["hNumTracksWithBCluster"])->Fill(event.GetNumTracksWithBCluster());
