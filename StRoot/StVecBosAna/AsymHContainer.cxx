@@ -50,6 +50,10 @@ void AsymHContainer::BookHists()
       o[shName] = hist = new TH2I(shName.c_str(), "; Lepton #eta; Lepton #phi;", 3, -1.5, 1.5, 8, -M_PI, M_PI);
       hist->SetOption("colz");
 
+      shName = "hLeptonPhiVsEta_b2_" + sDblSpinState;
+      o[shName] = hist = new TH2I(shName.c_str(), "; Lepton #eta; Lepton #phi;", 2, -1.2, 1.2, 8, -M_PI, M_PI);
+      hist->SetOption("colz");
+
       shName = "hLeptonPhiVsPt_" + sDblSpinState;
       o[shName] = hist = new TH2I(shName.c_str(), "; Lepton P_{T}; Lepton #phi;", 10, 0, 50, 8, -M_PI, M_PI);
       hist->SetOption("colz");
@@ -70,6 +74,10 @@ void AsymHContainer::BookHists()
 
       shName = "hLeptonPhiVsEta_" + sSnglSpinState;
       o[shName] = hist = new TH2I(shName.c_str(), "; Lepton #eta; Lepton #phi;", 3, -1.5, 1.5, 8, -M_PI, M_PI);
+      hist->SetOption("colz");
+
+      shName = "hLeptonPhiVsEta_b2_" + sSnglSpinState;
+      o[shName] = hist = new TH2I(shName.c_str(), "; Lepton #eta; Lepton #phi;", 2, -1.2, 1.2, 8, -M_PI, M_PI);
       hist->SetOption("colz");
 
       shName = "hLeptonPhi_EtaProj_" + sSnglSpinState;
@@ -110,10 +118,21 @@ void AsymHContainer::BookHists()
       o[shName] = hist = new TH2D(shName.c_str(), "; Lepton #eta; Lepton #phi;", 3, -1.5, 1.5, 8, -M_PI, M_PI);
       hist->SetOption("colz");
 
+      // The same as above but with different binning
+      shName = "hLeptonAsymVsPhiVsEta_b2_" + sBeam;
+      o[shName] = hist = new TH2D(shName.c_str(), "; Lepton #eta; Lepton #phi;", 2, -1.2, 1.2, 8, -M_PI, M_PI);
+      hist->SetOption("colz");
+
       shName = "hLeptonAsymAmpVsEta_" + sBeam;
       o[shName] = hist = new TH1D(shName.c_str(), "; Lepton #eta; Asym Amp.;", 3, -1.5, 1.5);
       hist->SetOption("E1 GRIDX GRIDY");
-      hist->GetYaxis()->SetRangeUser(-0.75, 0.75);
+      hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
+
+      // The same as above but with different binning
+      shName = "hLeptonAsymAmpVsEta_b2_" + sBeam;
+      o[shName] = hist = new TH1D(shName.c_str(), "; Lepton #eta; Asym Amp.;", 2, -1.2, 1.2);
+      hist->SetOption("E1 GRIDX GRIDY");
+      hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
 
       shName = "hLeptonAsymVsPhiVsPt_" + sBeam;
       o[shName] = hist = new TH2D(shName.c_str(), "; Lepton P_{T}; Lepton #phi;", 10, 0, 50, 8, -M_PI, M_PI);
@@ -122,7 +141,7 @@ void AsymHContainer::BookHists()
       shName = "hLeptonAsymAmpVsPt_" + sBeam;
       o[shName] = hist = new TH1D(shName.c_str(), "; Lepton P_{T}; Asym Amp.;", 10, 0, 50);
       hist->SetOption("E1 GRIDX GRIDY");
-      hist->GetYaxis()->SetRangeUser(-1.1, 1.1);
+      hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
 
       shName = "hWBosonAsymVsPhiVsEta_" + sBeam;
       o[shName] = hist = new TH2D(shName.c_str(), "; W Boson #eta; W Boson #phi;", 6, -6, 6, 8, -M_PI, M_PI);
@@ -131,7 +150,7 @@ void AsymHContainer::BookHists()
       shName = "hWBosonAsymAmpVsEta_" + sBeam;
       o[shName] = hist = new TH1D(shName.c_str(), "; W Boson #eta; Asym Amp.;", 6, -6, 6);
       hist->SetOption("E1 GRIDX GRIDY");
-      hist->GetYaxis()->SetRangeUser(-0.75, 0.75);
+      hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
 
       shName = "hWBosonAsymVsPhiVsPt_" + sBeam;
       o[shName] = hist = new TH2D(shName.c_str(), "; W Boson P_{T}; W Boson #phi;", 10, 0, 10, 8, -M_PI, M_PI);
@@ -140,28 +159,34 @@ void AsymHContainer::BookHists()
       shName = "hWBosonAsymAmpVsPt_" + sBeam;
       o[shName] = hist = new TH1D(shName.c_str(), "; W Boson P_{T}; Asym Amp.;", 10, 0, 10);
       hist->SetOption("E1 GRIDX GRIDY");
-      hist->GetYaxis()->SetRangeUser(-1.1, 1.1);
+      hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
    }
 
    shName = "hLeptonAsymAmpVsEta_";
    o[shName] = hist = new TH1D(shName.c_str(), "; Lepton #eta; Asym Amp.;", 3, -1.5, 1.5);
    hist->SetOption("E1 GRIDX GRIDY");
-   hist->GetYaxis()->SetRangeUser(-0.75, 0.75);
+   hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
+
+   // The same as above but with different binning
+   shName = "hLeptonAsymAmpVsEta_b2_";
+   o[shName] = hist = new TH1D(shName.c_str(), "; Lepton #eta; Asym Amp.;", 2, -1.2, 1.2);
+   hist->SetOption("E1 GRIDX GRIDY");
+   hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
 
    shName = "hLeptonAsymAmpVsPt_";
    o[shName] = hist = new TH1D(shName.c_str(), "; Lepton P_{T}; Asym Amp.;", 10, 0, 50);
    hist->SetOption("E1 GRIDX GRIDY");
-   hist->GetYaxis()->SetRangeUser(-1.1, 1.1);
+   hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
 
    shName = "hWBosonAsymAmpVsEta_";
    o[shName] = hist = new TH1D(shName.c_str(), "; W Boson #eta; Asym Amp.;", 6, -6, 6);
    hist->SetOption("E1 GRIDX GRIDY");
-   hist->GetYaxis()->SetRangeUser(-0.75, 0.75);
+   hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
 
    shName = "hWBosonAsymAmpVsPt_";
    o[shName] = hist = new TH1D(shName.c_str(), "; W Boson P_{T}; Asym Amp.;", 10, 0, 10);
    hist->SetOption("E1 GRIDX GRIDY");
-   hist->GetYaxis()->SetRangeUser(-1.1, 1.1);
+   hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
 
    fDir->cd();
 }
@@ -182,8 +207,12 @@ void AsymHContainer::Fill(ProtoEvent &ev)
    if (event.mTracksCandidate.size() > 0)
    {
       TVector3 eleCandidate = event.GetElectronP3();
+      string shName;
 
-      string shName = "hLeptonPhiVsEta_" + sDblSpinState;
+      shName = "hLeptonPhiVsEta_" + sDblSpinState;
+      ((TH2*) o[shName])->Fill(eleCandidate.Eta(), eleCandidate.Phi());
+
+      shName = "hLeptonPhiVsEta_b2_" + sDblSpinState;
       ((TH2*) o[shName])->Fill(eleCandidate.Eta(), eleCandidate.Phi());
 
       shName = "hLeptonPhiVsPt_" + sDblSpinState;
@@ -214,6 +243,7 @@ void AsymHContainer::FillDerived()
       string sSnglSpinState = AsString(sss);
 
       TH2* hLeptonPhiVsEta_sngl    = (TH2*) o["hLeptonPhiVsEta_"    + sSnglSpinState];
+      TH2* hLeptonPhiVsEta_b2_sngl = (TH2*) o["hLeptonPhiVsEta_b2_" + sSnglSpinState];
       TH1* hLeptonPhi_EtaProj_sngl = (TH1*) o["hLeptonPhi_EtaProj_" + sSnglSpinState];
       TH2* hLeptonPhiVsPt_sngl     = (TH2*) o["hLeptonPhiVsPt_"     + sSnglSpinState];
       TH1* hLeptonPhi_PtProj_sngl  = (TH1*) o["hLeptonPhi_PtProj_"  + sSnglSpinState];
@@ -228,13 +258,15 @@ void AsymHContainer::FillDerived()
          EDoubleSpinState dss = *iDSS;
          string sDblSpinState = AsString(dss);
 
-         TH2* hLeptonPhiVsEta_dbl = (TH2*) o["hLeptonPhiVsEta_" + sDblSpinState];
-         TH2* hLeptonPhiVsPt_dbl  = (TH2*) o["hLeptonPhiVsPt_"  + sDblSpinState];
-         TH2* hWBosonPhiVsEta_dbl = (TH2*) o["hWBosonPhiVsEta_" + sDblSpinState];
-         TH2* hWBosonPhiVsPt_dbl  = (TH2*) o["hWBosonPhiVsPt_"  + sDblSpinState];
+         TH2* hLeptonPhiVsEta_dbl    = (TH2*) o["hLeptonPhiVsEta_"    + sDblSpinState];
+         TH2* hLeptonPhiVsEta_b2_dbl = (TH2*) o["hLeptonPhiVsEta_b2_" + sDblSpinState];
+         TH2* hLeptonPhiVsPt_dbl     = (TH2*) o["hLeptonPhiVsPt_"     + sDblSpinState];
+         TH2* hWBosonPhiVsEta_dbl    = (TH2*) o["hWBosonPhiVsEta_"    + sDblSpinState];
+         TH2* hWBosonPhiVsPt_dbl     = (TH2*) o["hWBosonPhiVsPt_"     + sDblSpinState];
 
          if (dss & sss) {
             hLeptonPhiVsEta_sngl->Add(hLeptonPhiVsEta_dbl);
+            hLeptonPhiVsEta_b2_sngl->Add(hLeptonPhiVsEta_b2_dbl);
             hLeptonPhiVsPt_sngl->Add(hLeptonPhiVsPt_dbl);
             hWBosonPhiVsEta_sngl->Add(hWBosonPhiVsEta_dbl);
             hWBosonPhiVsPt_sngl->Add(hWBosonPhiVsPt_dbl);
@@ -280,6 +312,7 @@ void AsymHContainer::PostFill()
       string sSpinUp = AsString(*iBeam, kSPIN_UP);
       string sSpinDn = AsString(*iBeam, kSPIN_DOWN);
 
+      // Lepton asymmetry vs. lepton eta for iBeam
       TH2I* hLeptonPhiVsEta_up     = (TH2I*) o["hLeptonPhiVsEta_" + sSpinUp];
       TH2I* hLeptonPhiVsEta_dn     = (TH2I*) o["hLeptonPhiVsEta_" + sSpinDn];
       TH2D* hLeptonAsymVsPhiVsEta_ = (TH2D*) o["hLeptonAsymVsPhiVsEta_" + sBeam];
@@ -288,6 +321,16 @@ void AsymHContainer::PostFill()
       AsymCalculator::CalcAsimAsym(*hLeptonPhiVsEta_up, *hLeptonPhiVsEta_dn, *hLeptonAsymVsPhiVsEta_);
       AsymCalculator::FitAsimAsym(*hLeptonAsymVsPhiVsEta_, *hLeptonAsymAmpVsEta_);
 
+      // The same as above but with different binning
+      TH2I* hLeptonPhiVsEta_b2_up     = (TH2I*) o["hLeptonPhiVsEta_b2_" + sSpinUp];
+      TH2I* hLeptonPhiVsEta_b2_dn     = (TH2I*) o["hLeptonPhiVsEta_b2_" + sSpinDn];
+      TH2D* hLeptonAsymVsPhiVsEta_b2_ = (TH2D*) o["hLeptonAsymVsPhiVsEta_b2_" + sBeam];
+      TH1D* hLeptonAsymAmpVsEta_b2_   = (TH1D*) o["hLeptonAsymAmpVsEta_b2_"   + sBeam];
+
+      AsymCalculator::CalcAsimAsym(*hLeptonPhiVsEta_b2_up, *hLeptonPhiVsEta_b2_dn, *hLeptonAsymVsPhiVsEta_b2_);
+      AsymCalculator::FitAsimAsym(*hLeptonAsymVsPhiVsEta_b2_, *hLeptonAsymAmpVsEta_b2_);
+
+      // Lepton asymmetry vs. lepton Pt eta for iBeam
       TH2I* hLeptonPhiVsPt_up     = (TH2I*) o["hLeptonPhiVsPt_" + sSpinUp];
       TH2I* hLeptonPhiVsPt_dn     = (TH2I*) o["hLeptonPhiVsPt_" + sSpinDn];
       TH2D* hLeptonAsymVsPhiVsPt_ = (TH2D*) o["hLeptonAsymVsPhiVsPt_" + sBeam];
