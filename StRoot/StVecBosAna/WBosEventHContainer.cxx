@@ -9,6 +9,7 @@
 
 #include "TF2.h"
 
+#include "TrackHContainer.h"
 #include "WBosEvent.h"
 
 
@@ -81,6 +82,8 @@ void WBosEventHContainer::BookHists()
    o["hBalanceDeltaPhiFromJets"]  = hist = new TH1F("hBalanceDeltaPhiFromJets", "Jets; #Delta #phi;", 40, -TMath::Pi(), TMath::Pi());
    o["hPtBalanceJetsVsElecEt"]    = hist = new TH2F("hPtBalanceJetsVsElecEt","Jets; E_{T}^{electron}; P_{T}-balance cos(#phi)",40,0.,60.,40,-40,60);
    hist->SetOption("colz LOGZ");
+
+   d["track_candidate"] = new TrackHContainer(new TDirectoryFile("track_candidate", "track_candidate", "", fDir));
 }
 
 
@@ -124,6 +127,8 @@ void WBosEventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hPhiBalanceCosPhiFromJets"])->Fill(event.mP3BalanceFromJets.Phi());
    ((TH1*) o["hBalanceDeltaPhiFromJets"])->Fill(event.mBalanceDeltaPhiFromJets);
    ((TH2*) o["hPtBalanceJetsVsElecEt"])->Fill(event.GetElectronP3().Pt(), event.mPtBalanceCosPhiFromJets);
+
+   ((TrackHContainer*) d["track_candidate"])->Fill(event.GetElectronTrack());
 }
 
 
