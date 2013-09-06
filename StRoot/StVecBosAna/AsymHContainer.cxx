@@ -134,6 +134,11 @@ void AsymHContainer::BookHists()
       hist->SetOption("E1 GRIDX GRIDY");
       hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
 
+      // Container of graphs corresponding to individual slices/bins
+      shName = "hLeptonAsymVsPhi_EtaBins_" + sBeam;
+      o[shName] = hist = new TH2C(shName.c_str(), "; Lepton #phi; Asym.;", 1, -M_PI, M_PI, 20, -0.5, 0.5);
+      hist->SetOption("DUMMY GRIDX GRIDY");
+
       shName = "hLeptonAsymVsPhiVsPt_" + sBeam;
       o[shName] = hist = new TH2D(shName.c_str(), "; Lepton P_{T}; Lepton #phi;", 10, 0, 50, 8, -M_PI, M_PI);
       hist->SetOption("colz");
@@ -318,8 +323,13 @@ void AsymHContainer::PostFill()
       TH2D* hLeptonAsymVsPhiVsEta_ = (TH2D*) o["hLeptonAsymVsPhiVsEta_" + sBeam];
       TH1D* hLeptonAsymAmpVsEta_   = (TH1D*) o["hLeptonAsymAmpVsEta_" + sBeam];
 
+      TMultiGraph* grAsymVsPhi = new TMultiGraph();
+
       AsymCalculator::CalcAsimAsym(*hLeptonPhiVsEta_up, *hLeptonPhiVsEta_dn, *hLeptonAsymVsPhiVsEta_);
-      AsymCalculator::FitAsimAsym(*hLeptonAsymVsPhiVsEta_, *hLeptonAsymAmpVsEta_);
+      AsymCalculator::FitAsimAsym(*hLeptonAsymVsPhiVsEta_, *hLeptonAsymAmpVsEta_, grAsymVsPhi);
+
+      TH1*  hLeptonAsymVsPhi_EtaBins_ = (TH1*) o["hLeptonAsymVsPhi_EtaBins_" + sBeam];
+      hLeptonAsymVsPhi_EtaBins_->GetListOfFunctions()->Add(grAsymVsPhi, "p");
 
       // The same as above but with different binning
       TH2I* hLeptonPhiVsEta_b2_up     = (TH2I*) o["hLeptonPhiVsEta_b2_" + sSpinUp];
@@ -366,6 +376,12 @@ void AsymHContainer::PostFill()
    TH1D* hLeptonAsymAmpVsEta_YEL = (TH1D*) o["hLeptonAsymAmpVsEta_YEL"];
    TH1D* hLeptonAsymAmpVsEta_    = (TH1D*) o["hLeptonAsymAmpVsEta_"];
    AsymCalculator::CombineAsimAsym(*hLeptonAsymAmpVsEta_BLU, *hLeptonAsymAmpVsEta_YEL, *hLeptonAsymAmpVsEta_, true);
+
+   // The same as above but with different binning
+   TH1D* hLeptonAsymAmpVsEta_b2_BLU = (TH1D*) o["hLeptonAsymAmpVsEta_b2_BLU"];
+   TH1D* hLeptonAsymAmpVsEta_b2_YEL = (TH1D*) o["hLeptonAsymAmpVsEta_b2_YEL"];
+   TH1D* hLeptonAsymAmpVsEta_b2_    = (TH1D*) o["hLeptonAsymAmpVsEta_b2_"];
+   AsymCalculator::CombineAsimAsym(*hLeptonAsymAmpVsEta_b2_BLU, *hLeptonAsymAmpVsEta_b2_YEL, *hLeptonAsymAmpVsEta_b2_, true);
 
    // The boson asymmetry is next
    TH1D* hWBosonAsymAmpVsPt_BLU = (TH1D*) o["hWBosonAsymAmpVsPt_BLU"];
