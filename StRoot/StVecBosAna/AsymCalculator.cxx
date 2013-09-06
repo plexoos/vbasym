@@ -116,16 +116,45 @@ void AsymCalculator::FitAsimAsym(TH1D &hAsym)
 }
 
 
-/** */
-void AsymCalculator::FitAsimAsym(TH2D &hAsym, TH1D &hAsymAmplitude)
+/**
+ * Fits the provided asymmetry graph with a sine function. The horizontal axis of the histogram is expected to cover the
+ * range of -pi to +pi. The fit function is saved in the graph for later access.
+ */
+void AsymCalculator::FitAsimAsym(TGraph &grAsym)
 {
-   for (int iBinX=1; iBinX<=hAsym.GetNbinsX(); iBinX++)
+   TF1 fitFunc("fitFunc", "[0] + [1]*sin(x + [2])", -M_PI, M_PI);
+   fitFunc.SetParNames("Offset", "Amplitude", "Phase");
+   fitFunc.SetLineColor(grAsym.GetMarkerColor());
+   grAsym.Fit(&fitFunc);
+}
+
+
+/** */
+void AsymCalculator::FitAsimAsym(TH2D &hAsym, TH1D &hAsymAmplitude, TMultiGraph* grAsymVsPhi)
+{
+   int iColor = 2;
+
+   for (int iBinX=1; iBinX<=hAsym.GetNbinsX(); iBinX++, iColor++)
    {
       TH1D *hAsymSlice = (TH1D*) hAsym.ProjectionY("hAsymSlice", iBinX, iBinX);
 
-      FitAsimAsym(*hAsymSlice);
+      if (hAsymSlice->Integral() == 0) continue;
 
-      TF1* fitFunc = (TF1*) hAsymSlice->GetListOfFunctions()->FindObject("fitFunc");
+      TGraphErrors* grAsymSlice = new TGraphErrors(hAsymSlice);
+      string grName("gbXX");
+      sprintf(&grName[0], "gb%02d", iBinX);
+      grAsymSlice->SetName(grName.c_str());
+      grAsymSlice->SetMarkerStyle(kFullCircle);
+      grAsymSlice->SetMarkerSize(2);
+      grAsymSlice->SetMarkerColor(iColor);
+
+      FitAsimAsym(*grAsymSlice);
+
+      if (grAsymVsPhi) {
+         grAsymVsPhi->Add(grAsymSlice, "p");
+      }
+
+      TF1* fitFunc = (TF1*) grAsymSlice->GetListOfFunctions()->FindObject("fitFunc");
 
       if (fitFunc)
       {
