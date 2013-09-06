@@ -420,7 +420,7 @@ bool VecBosTrack::MatchTrack2BarrelCluster()
 
    if (mDistToCluster.Mag() <= sMaxTrackClusterDist)
    {
-      mVbType    |= kHAS_CLUSTER;
+      mVbType |= kHAS_CLUSTER;
       return true;
    }
 
@@ -455,7 +455,7 @@ void VecBosTrack::CalcEnergyInCones()
    mP3InOppsCone       = mP3InOppsConeTow  + mP3InOppsConeTpc; // XXX:ds: double counting? yes, see correction below
    mP3InOppsConeNoETow = mP3InOppsCone     - mP3InOppsConeETow;
 
-   if (GetClusterEnergyFrac() >= mEvent->sMinClusterEnergyFrac)
+   if (GetClusterEnergyFrac() >= VecBosEvent::sMinClusterEnergyFrac)
    {
       mVbType |= kISOLATED;
 

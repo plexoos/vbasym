@@ -168,7 +168,7 @@ void WeventDisplay::draw(const char *tit, int eveID, int daqSeq, int runNo,
       printf("WeventDisplay::Event TPC  %s\n", txt);
       pvt->AddText(txt);
 
-      sprintf(txt, "BTOW ET/GeV: 2x2=%.1f   near= %.1f   away= %.1f", myTr.mCluster2x2.ET, myTr.mP3InNearConeBTow, myTr.awayBtowET);
+      sprintf(txt, "BTOW ET/GeV: 2x2=%.1f   near= %.1f   away= %.1f", myTr.mCluster2x2.ET, myTr.mP3InNearConeBTow.Pt(), myTr.awayBtowET);
       printf("WeventDisplay:: BTOW  %s\n", txt);
       pvt->AddText(txt);
 

@@ -50,11 +50,9 @@ VecBosAsymRootFile::~VecBosAsymRootFile()
 
 void VecBosAsymRootFile::BookHists()
 {
-   // delete histograms created in parent class
+   // Delete histograms created in parent class
    if (fHists) { delete fHists; fHists = 0; }
    fHistCuts.clear();
-   //this->Delete("*;*");
-   //this->GetListOfKeys()->Delete();
 
    PlotHelper *ph;
 

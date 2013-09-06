@@ -33,10 +33,7 @@ class  TClonesArray;
 
 
 /**
- * \class  StVecBosMaker
- *
  * The main analysis maker to process the StMuDstMaker data. The Make() method fills the tree in the output file.
- *
  */
 class StVecBosMaker : public StMaker
 {
@@ -126,7 +123,7 @@ protected:
    int             par_l0emulAdcThresh;
    float           par_l2emulSeedThresh, par_l2emulClusterThresh;
    uint32_t        mL2BarrelTriggerId;
-   uint32_t        mL2BarrelTriggerId2;  // two id's used in run 12
+   uint32_t        mL2BarrelTriggerId2;  // two trigger ids used in run 12
    uint32_t        mL2EndcapTriggerId;
    float           mCutVertexZ;
    int             mMinNumPileupVertices;

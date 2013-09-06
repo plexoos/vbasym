@@ -1,12 +1,6 @@
-/*****************************************************************************
- *                                                                           *
- *                                                                           *
- *****************************************************************************/
-
 #include "TrackHContainer.h"
 
 #include "TF1.h"
-
 #include "TF2.h"
 
 #include "VecBosEvent.h"
@@ -134,17 +128,12 @@ void TrackHContainer::Fill(ProtoEvent &ev)
 /** */
 void TrackHContainer::Fill(VecBosTrack &track)
 {
-   ((TH1*) o["hTrackFlag"])->Fill(track.mStMuTrack->flag());
+   ((TH1*) o["hTrackFlag"])  ->Fill(track.mStMuTrack->flag());
    ((TH1*) o["hTrackVbType"])->Fill(track.mVbType);
-   ((TH1*) o["hTrackEta"])->Fill(track.mP3AtDca.Eta());
-   ((TH1*) o["hTrackPhi"])->Fill(track.mP3AtDca.Phi());
+   ((TH1*) o["hTrackEta"])   ->Fill(track.mP3AtDca.Eta());
+   ((TH1*) o["hTrackPhi"])   ->Fill(track.mP3AtDca.Phi());
 
    if (track.IsBTrack()) {
-      //printf("", mP3AtBTow);
-      //Info("Fill", "XXX");
-      //printf("mVbType: %x\n", track.mVbType);
-      //track.mP3AtDca.Print();
-      //track.mP3AtBTow.Print();
       ((TH1*) o["hTrackEtaAtBTow"])->Fill(track.mCoorAtBTow.Eta());
       ((TH1*) o["hTrackPhiAtBTow"])->Fill(track.mCoorAtBTow.Phi());
    }
@@ -164,7 +153,6 @@ void TrackHContainer::Fill(VecBosTrack &track)
    ((TH1*) o["hTrackDistanceToCluster"])->Fill(track.CalcDistanceToCluster().Mag());
    ((TH1*) o["hChargePrimaryTrack"])->Fill(track.mStMuTrack->charge());
    ((TH1*) o["hQoPt_PrimaryTrack"])->Fill(track.mStMuTrack->charge()/track.GetP3EScaled().Pt());
-   //((TH2*) o["hQoPt_Vs_Et_PrimaryTrack"])->Fill(track.mCluster2x2.ET, (track.mStMuTrack->charge()/track.GetP3EScaled().Pt()));
    ((TH2*) o["hQoPt_Vs_Et_PrimaryTrack"])->Fill(track.mCluster2x2.ET, (track.mStMuTrack->charge()/track.mP3AtDca.Pt()));
    ((TH2*) o["hQxEtoPt_Vs_Et_PrimaryTrack"])->Fill(track.mCluster2x2.ET, (track.mStMuTrack->charge()*track.mCluster2x2.ET)/track.mP3AtDca.Pt());
 

@@ -1,12 +1,6 @@
-/*****************************************************************************
- *                                                                           *
- *                                                                           *
- *****************************************************************************/
-
 #include "WBosEventHContainer.h"
 
 #include "TF1.h"
-
 #include "TF2.h"
 
 #include "TrackHContainer.h"
@@ -75,12 +69,11 @@ void WBosEventHContainer::BookHists()
    o["hBalanceDeltaPhiFromTracks"]  = hist = new TH1F("hBalanceDeltaPhiFromTracks", "; #Delta #phi;", 40, -TMath::Pi(), TMath::Pi());
    o["hPtBalanceTracksVsElecEt"]    = hist = new TH2F("hPtBalanceTracksVsElecEt","; E_{T}^{electron}; P_{T}-balance cos(#phi)",40,0.,60.,40,-40,60);
    hist->SetOption("colz LOGZ");
-
-   o["hPtBalanceFromJets"]        = hist = new TH1F("hPtBalanceFromJets", "Jets; P_{T}-balance from tracks; P_{T};", 40, 0, 60);
-   o["hPtBalanceCosPhiFromJets"]  = hist = new TH1F("hPtBalanceCosPhiFromJets", "Jets; P_{T}-balance cos(#phi); P_{T};", 40, -100, 100);
-   o["hPhiBalanceCosPhiFromJets"] = hist = new TH1F("hPhiBalanceCosPhiFromJets", "Jets; P_{T}-balance; #phi;", 40, -TMath::Pi(),TMath::Pi());
-   o["hBalanceDeltaPhiFromJets"]  = hist = new TH1F("hBalanceDeltaPhiFromJets", "Jets; #Delta #phi;", 40, -TMath::Pi(), TMath::Pi());
-   o["hPtBalanceJetsVsElecEt"]    = hist = new TH2F("hPtBalanceJetsVsElecEt","Jets; E_{T}^{electron}; P_{T}-balance cos(#phi)",40,0.,60.,40,-40,60);
+   o["hPtBalanceFromJets"]          = hist = new TH1F("hPtBalanceFromJets", "Jets; P_{T}-balance from tracks; P_{T};", 40, 0, 60);
+   o["hPtBalanceCosPhiFromJets"]    = hist = new TH1F("hPtBalanceCosPhiFromJets", "Jets; P_{T}-balance cos(#phi); P_{T};", 40, -100, 100);
+   o["hPhiBalanceCosPhiFromJets"]   = hist = new TH1F("hPhiBalanceCosPhiFromJets", "Jets; P_{T}-balance; #phi;", 40, -TMath::Pi(),TMath::Pi());
+   o["hBalanceDeltaPhiFromJets"]    = hist = new TH1F("hBalanceDeltaPhiFromJets", "Jets; #Delta #phi;", 40, -TMath::Pi(), TMath::Pi());
+   o["hPtBalanceJetsVsElecEt"]      = hist = new TH2F("hPtBalanceJetsVsElecEt","Jets; E_{T}^{electron}; P_{T}-balance cos(#phi)",40,0.,60.,40,-40,60);
    hist->SetOption("colz LOGZ");
 
    d["track_candidate"] = new TrackHContainer(new TDirectoryFile("track_candidate", "track_candidate", "", fDir));
