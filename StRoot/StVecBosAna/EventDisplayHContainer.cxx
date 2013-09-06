@@ -56,8 +56,8 @@ void EventDisplayHContainer::Fill(ProtoEvent &ev)
 
    fEventCounter++;
 
-   // In case of MC events create displays for only every 10th event
-   if (vbEvent.IsMc() && (fEventCounter-1)%10) return;
+   // In case of MC events create displays for only every 100th event
+   if (vbEvent.IsMc() && (fEventCounter-1)%100) return;
 
    PlotHelper *ph_sub = GetEventDisplayHists(ev);
 
