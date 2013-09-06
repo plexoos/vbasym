@@ -222,15 +222,13 @@ TVector3 VecBosEvent::CalcTrackRecoilTpcNeutralsCorrected() const
    TVector3 trackRecoilCorrected(GetTrackRecoilTpcNeutrals());
    Double_t corrFact = 1.;
 
-   //mP3TrackRecoilTpcNeutrals.Pt() * (0.196 + 0.4606*mP3TrackRecoilTpcNeutrals.Pt() - 0.02518*(pow(mP3TrackRecoilTpcNeutrals.Pt(), 2)));
-
    if (trackRecoilCorrected.Pt() < 5) {
-      corrFact = 5.471 - 2.9700 * trackRecoilCorrected.Pt() +
-                         0.7340 * pow(trackRecoilCorrected.Pt(), 2) -
-                         0.0631 * pow(trackRecoilCorrected.Pt(), 3);
+      corrFact = 5.4376 - 2.7803 * trackRecoilCorrected.Pt()
+                        + 0.6474 * pow(trackRecoilCorrected.Pt(), 2)
+                        - 0.0529 * pow(trackRecoilCorrected.Pt(), 3);
    }
    else {
-      corrFact = 1.15;
+      corrFact = 1.1202;
    }
 
    trackRecoilCorrected.SetX(corrFact * trackRecoilCorrected.X());
