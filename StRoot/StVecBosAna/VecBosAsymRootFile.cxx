@@ -61,6 +61,9 @@ void VecBosAsymRootFile::BookHists()
    fHists->d["event"] = ph = new EventHContainer(new TDirectoryFile("event", "event", "", this));
    fHistCuts[kCUT_EVENT_NOCUT].insert(ph);
 
+   fHists->d["event.cut_w"] = ph = new EventHContainer(new TDirectoryFile("event.cut_w", "event.cut_w", "", this));
+   fHistCuts[kCUT_EVENT_W].insert(ph);
+
    fHists->d["event_w"] = ph = new WBosEventHContainer(new TDirectoryFile("event_w", "event_w", "", this));
    fHistCuts[kCUT_EVENT_W].insert(ph);
 
