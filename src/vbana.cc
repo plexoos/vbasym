@@ -23,33 +23,36 @@ int main(int argc, char *argv[])
 
    setbuf(stdout, NULL);
 
-   Int_t  nMaxUserEvents = -1; // < 0 means all events
-   //Int_t  nMaxUserEvents = 1000;
+   //Int_t  nMaxUserEvents = -1; // < 0 means all events
+   Int_t  nMaxUserEvents = 1000;
 
-   Bool_t isMc           = kFALSE;
-   //Bool_t isMc           = kTRUE;
+   //Bool_t isMc           = kFALSE;
+   Bool_t isMc           = kTRUE;
 
    //string filelist       = "run11_pp_transverse";
-   string filelist       = "run11_pp_longitudinal";
+   //string filelist       = "run11_pp_longitudinal";
    //string filelist       = "run12_pp";
    //string filelist       = "MC_list_QCD_2012";
    //string filelist       = "MC_list_Wm_2012";
    //string filelist       = "MC_list_Wp_2012";
+   string filelist       = "runlists/run11_mc_Wp2enu.lis";
    //string filelist       = "MC_list_WmToTauTau_2012";
    //string filelist       = "MC_list_WpToTauTau_2012";
    //string filelist       = "MC_list_Ztoee_2012";
 
-   string stana_options  = "--jpm_0.5_--run_11";
+   //string stana_options  = "--jpm_0.5_--run_11";
+   string stana_options  = "--jpm_0.5";
    stana_options = (isMc ? "-m_" : "") + stana_options;
 
-   string histFileName = "~/stana_out/" + filelist + "_" + stana_options + "/hist/vbana.root";
+   //string histFileName = "~/stana_out/" + filelist + "_" + stana_options + "/hist/vbana.root";
+   string histFileName = "/star/data05/scratch/fazio/stana_out/" + filelist + "_" + stana_options + "/hist/vbana.root";
 
    Info("main", "nMaxUserEvents: %d", nMaxUserEvents);
    Info("main", "histFileName:   %s", histFileName.c_str());
    Info("main", "isMc:           %d", isMc);
 
-   //VecBosRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc);
-   VecBosAsymRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc); // to create the symmetry histograms 
+   VecBosRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc);
+   //VecBosAsymRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc); // to create the symmetry histograms 
    WBosEvent *wBosEvent = new WBosEvent();
 
    TObject *o;
@@ -60,7 +63,8 @@ int main(int argc, char *argv[])
    while (next && (o = (*next)()) )
    {
       string fName    = string(((TObjString*) o)->GetName());
-      string fileName = "~/stana_out/" + filelist + "_" + stana_options + "/tree/";
+      //string fileName = "~/stana_out/" + filelist + "_" + stana_options + "/tree/";
+      string fileName = "/star/data05/scratch/fazio/stana_out/" + filelist + "_" + stana_options + "/tree/";
       fileName += (isMc ? "" : "R") + fName + "_tree.root";
 
       TFile *f = new TFile(fileName.c_str(), "READ");
