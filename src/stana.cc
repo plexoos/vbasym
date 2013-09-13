@@ -45,7 +45,7 @@ root4star -b -q 'analyzeMuDst.C(2e3,"st_W_12037041_raw_1400001.MuDst.root",0,1,5
 #include "StJetFinder/StConePars.h"
 #include "StJetMaker/StJetReader.h"
 
-#include "StVecBosAna/St2011pubMcMaker.h"
+//#include "StVecBosAna/St2011pubMcMaker.h"
 #include "StVecBosAna/StVecBosMaker.h"
 #include "StVecBosAna/StZBosMaker.h"
 #include "StVecBosAna/St2011pubWanaMaker.h"
