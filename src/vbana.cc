@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
    //string filelist       = "MC_list_QCD_2012";
    //string filelist       = "MC_list_Wm_2012";
    //string filelist       = "MC_list_Wp_2012";
-   string filelist       = "runlists/run11_mc_Wp2enu.lis";
+   string filelist       = "run11_mc_Wp2enu.lis";
    //string filelist       = "MC_list_WmToTauTau_2012";
    //string filelist       = "MC_list_WpToTauTau_2012";
    //string filelist       = "MC_list_Ztoee_2012";
@@ -45,14 +45,14 @@ int main(int argc, char *argv[])
    stana_options = (isMc ? "-m_" : "") + stana_options;
 
    //string histFileName = "~/stana_out/" + filelist + "_" + stana_options + "/hist/vbana.root";
-   string histFileName = "/star/data05/scratch/fazio/stana_out/" + filelist + "_" + stana_options + "/hist/vbana.root";
+   string histFileName = "/star/data05/scratch/fazio/stana_out/runlists/" + filelist + "_" + stana_options + "/hist/vbana.root";
 
    Info("main", "nMaxUserEvents: %d", nMaxUserEvents);
    Info("main", "histFileName:   %s", histFileName.c_str());
    Info("main", "isMc:           %d", isMc);
 
-   VecBosRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc);
-   //VecBosAsymRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc); // to create the symmetry histograms 
+   //VecBosRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc);
+   VecBosAsymRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc); // to create the Asymmetry histograms 
    WBosEvent *wBosEvent = new WBosEvent();
 
    TObject *o;
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
    {
       string fName    = string(((TObjString*) o)->GetName());
       //string fileName = "~/stana_out/" + filelist + "_" + stana_options + "/tree/";
-      string fileName = "/star/data05/scratch/fazio/stana_out/" + filelist + "_" + stana_options + "/tree/";
+      string fileName = "/star/data05/scratch/fazio/stana_out/runlists/" + filelist + "_" + stana_options + "/tree/";
       fileName += (isMc ? "" : "R") + fName + "_tree.root";
 
       TFile *f = new TFile(fileName.c_str(), "READ");
