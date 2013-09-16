@@ -233,7 +233,7 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hLeptonPz"])->Fill(event.mWEvent->mP4Lepton.Pz());
    ((TH1*) o["hLeptonPt"])->Fill(event.mWEvent->mP4Lepton.Pt());
 
-   ((TH1*) o["hTrackPtVsLeptonPt"])   ->Fill(event.mWEvent->mP4Lepton.Pt(),   (*event.mTracksCandidate.begin())->mP3AtDca.Pt());
+   //   ((TH1*) o["hTrackPtVsLeptonPt"])   ->Fill(event.mWEvent->mP4Lepton.Pt(),   (*event.mTracksCandidate.begin())->mP3AtDca.Pt());
 
    ((TH1*) o["hRecoVsGenLeptonPhi"])  ->Fill(event.mWEvent->mP4Lepton.Phi(),   event.GetElectronP3().Phi());
    ((TH1*) o["hRecoVsGenLeptonPt"])   ->Fill(event.mWEvent->mP4Lepton.Pt(),    event.GetElectronP3().Pt());
