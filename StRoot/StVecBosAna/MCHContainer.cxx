@@ -85,8 +85,6 @@ void MCHContainer::BookHists()
    o["hLeptonPt"]                 = hist = new TH1I("hLeptonPt", "; P^{#nu}_{T} [GeV/c]; Events", 80, 0., 80.);
    hist->SetOption("hist GRIDX");
 
-   o["hTrackPtVsLeptonPt"]    = hist = new TH2I("hTrackPtVsLeptonPt", "; Lepton P_{T}; Track P_{T}", 50, 0, 50, 50, 0, 50);
-
    o["hRecoVsGenLeptonPhi"]   = hist = new TH2I("hRecoVsGenLeptonPhi", "; Gen. Lepton #phi; Reco. Lepton #phi", 50, -M_PI, M_PI, 50, -M_PI, M_PI);
    hist->SetOption("colz LOGZ");
    o["hRecoVsGenLeptonPt"]    = hist = new TH2I("hRecoVsGenLeptonPt",  "; Gen. Lepton P_{T}; Reco. Lepton P_{T}", 50, 10, 60, 50, 10, 60);
@@ -232,8 +230,6 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hLeptonPy"])->Fill(event.mWEvent->mP4Lepton.Py());
    ((TH1*) o["hLeptonPz"])->Fill(event.mWEvent->mP4Lepton.Pz());
    ((TH1*) o["hLeptonPt"])->Fill(event.mWEvent->mP4Lepton.Pt());
-
-   ((TH1*) o["hTrackPtVsLeptonPt"])   ->Fill(event.mWEvent->mP4Lepton.Pt(),   (*event.mTracksCandidate.begin())->mP3AtDca.Pt());
 
    ((TH1*) o["hRecoVsGenLeptonPhi"])  ->Fill(event.mWEvent->mP4Lepton.Phi(),   event.GetElectronP3().Phi());
    ((TH1*) o["hRecoVsGenLeptonPt"])   ->Fill(event.mWEvent->mP4Lepton.Pt(),    event.GetElectronP3().Pt());
