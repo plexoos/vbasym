@@ -7,9 +7,10 @@ void analysis2011()
    // Load the libraries:
    //gROOT->Macro("/star/u/fazio/offline/users/fazio/vbasym/macros/loadLibs.C");
 
-   TString inPath  = "/star/u/fazio/offline/users/fazio/vbasym/";
+   TString inPath  = "/star/institutions/bnl_me/fazio/vbana_out/";
+   //TString inPath  = "/star/u/fazio/offline/users/fazio/vbasym/";
    //TString inPath  = "~/vbasym_results/root_hists/";
-   TString outPath = "../vbasym_results/plots/";
+   TString outPath = "~/vbasym_results/plots/";
 
    //Styles:
    gStyle->SetPadBottomMargin(0.15);
@@ -23,6 +24,14 @@ void analysis2011()
    gStyle->SetOptFit(1);
 
 
+   float lumiDataTot       = 24.42; // pb-1
+   float lumiDataEff       = 23.99; // pb-1
+   float lumiMC_Z          = 1845; // pb-1
+   float lumiMC_WpToTauTau = 1908; // pb-1
+   float lumiMC_WmToTauTau = 1904; // pb-1
+
+   /*
+   // OLD version as of July (MC files from JB)
    //float lumiDataTot       = 24.28; // pb-1
    float lumiDataTot       = 24.42; // pb-1
    //float lumiDataEff       = 23.86; // pb-1
@@ -30,6 +39,7 @@ void analysis2011()
    float lumiMC_Z          = 955.15; // pb-1
    float lumiMC_WpToTauTau = 2136.49; // pb-1
    float lumiMC_WmToTauTau = 1995.34; // pb-1
+   */
 
    float scaleZ    = lumiDataEff / lumiMC_Z;
    float scaleWptt = lumiDataEff / lumiMC_WpToTauTau;
@@ -44,6 +54,14 @@ void analysis2011()
    cout << "*****************************************" << endl;
 
    // open histogram files
+   TFile *fileData   = TFile::Open(inPath + "run11_pp_transverse_--jpm_0.5_--run_11_vbana.root");
+   TFile *fileMCWp   = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_--jpm_0.5_vbana.root");
+   TFile *fileMCWm   = TFile::Open(inPath + "run11_mc_Wm2enu.lis_-m_--jpm_0.5_vbana.root");
+   TFile *fileMCQCD  = TFile::Open(inPath + "run12_QCD.lis_-m_--jpm_0.5_vbana.root");
+   TFile *fileMCZ    = TFile::Open(inPath + "run11_mc_Z02ee.lis_-m_--jpm_0.5_vbana.root");
+   TFile *fileMCWptt = TFile::Open(inPath + "run11_mc_Wp2taunu.lis_-m_--jpm_0.5_vbana.root");
+   TFile *fileMCWmtt = TFile::Open(inPath + "run11_mc_Wm2taunu.lis_-m_--jpm_0.5_vbana.root");
+   /*
    TFile *fileData   = TFile::Open(inPath + "vbana_cut05_data_final.root");
    TFile *fileMCWp   = TFile::Open(inPath + "vbana_cut05_mc_wp.root");
    TFile *fileMCWm   = TFile::Open(inPath + "vbana_cut05_mc_wm.root");
@@ -51,7 +69,7 @@ void analysis2011()
    TFile *fileMCZ    = TFile::Open(inPath + "vbana_cut05_mc_z_to_ee.root");
    TFile *fileMCWptt = TFile::Open(inPath + "vbana_cut05_mc_wp_to_tt.root");
    TFile *fileMCWmtt = TFile::Open(inPath + "vbana_cut05_mc_wm_to_tt.root");
-
+   */
 
    // W total (W+ + W-)
    TH1 *hd_PtLepTPC     = (TH1*) fileData->Get("track_cand_pass_final_QEToPT/hTrackPt");
@@ -134,6 +152,7 @@ void analysis2011()
 
 
    TH1 *hWp_PtRecoil_vs_PtWGen    = (TH1 *)fileMCWp->Get("event_mc_pass_final_QEToPT/hTrackRecoilTpcNeutralsPtVsWBosonPt");
+   TH1 *hWp_PtRecoilCorr_vs_PtWGen    = (TH1 *)fileMCWp->Get("event_mc_pass_final_QEToPT/hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt");
 
    TH1 *hWp_PhiRecoil_vs_PhiWGen  = (TH1 *)fileMCWp->Get("event_mc_pass_final_QEToPT/hTrackRecoilPhiVsWBosonPhi");
 
@@ -1460,11 +1479,11 @@ void analysis2011()
    c10bi->Print(outPath + "/plot_10bi.png");
 
 
-   TCanvas *c10c = new TCanvas("c10c", "", 800, 400);
+   TCanvas *c10c = new TCanvas("c10c", "", 1000, 400);
 
    c10c-> SetTitle("Reco vs Gen");
 
-   c10c->Divide(2, 1);
+   c10c->Divide(3, 1);
 
    c10c_1->cd();
    c10c_1->SetLogz(1);
@@ -1474,6 +1493,12 @@ void analysis2011()
 
    c10c_2->cd();
    c10c_2->SetLogz(1);
+   hWp_PtRecoilCorr_vs_PtWGen->GetYaxis()->SetTitleOffset(1.1);
+   hWp_PtRecoilCorr_vs_PtWGen-> SetStats(0);
+   hWp_PtRecoilCorr_vs_PtWGen->Draw();
+
+   c10c_3->cd();
+   c10c_3->SetLogz(1);
    hWp_PhiRecoil_vs_PhiWGen-> SetStats(0);
    hWp_PhiRecoil_vs_PhiWGen->Draw();
 
@@ -1655,6 +1680,7 @@ void analysis2011()
 
    c10ei->SaveAs(outPath + "/plot_10ei.png");
 
+   /*
 
    TCanvas *c11 = new TCanvas("c11", "", 800, 400);
 
@@ -1678,5 +1704,7 @@ void analysis2011()
 
    //c11->Print(outPath + "/plot_11.eps");
    c11->Print(outPath + "/plot_11.png");
+
+   */
 
 }

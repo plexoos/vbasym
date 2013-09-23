@@ -116,7 +116,7 @@ WANA_DICT_HDR = $(WANA_DICT_SRC:.cxx=.h)
 WANA_DICT_OBJ = $(WANA_DICT_SRC:.cxx=.o)
 WANA_DICT     = $(WANA_DICT_SRC) $(WANA_DICT_HDR) $(WANA_DICT_OBJ)
 
-BIN     = stana vbana lumi_calc
+BIN     = stana vbana lumi_calc events_calc
 BIN_SRC = $(BIN:=.cc)
 BIN_OBJ = $(BIN:=.o)
 
@@ -146,6 +146,10 @@ vbana: vbana.o
 
 lumi_calc: lumi_calc.o
 	$(LD) $(LDFLAGS) $(STAR_LIB_DIRS) $(STAR_LIBS) $(UTILS_LIB_DIR) $(UTILS_LIB) $(LIBS) lumi_calc.o -o $@
+	@echo "$@ done"
+
+events_calc: events_calc.o
+	$(LD) $(LDFLAGS) $(STAR_LIB_DIRS) $(STAR_LIBS) $(UTILSLIBDIR) $(UTILSLIB) $(LIBS) events_calc.o -o $@
 	@echo "$@ done"
 
 $(WANA_LIB): $(OBJS) $(WANA_DICT_OBJ)
