@@ -14,7 +14,7 @@ const float ZBosEvent::sMinElectronPtHard  = 25;
 const float ZBosEvent::sMinNeutrinoPt      = 18;
 
 
-ZBosEvent::ZBosEvent() : VecBosEvent()
+ZBosEvent::ZBosEvent() : VecBosEvent(), mElectronP3(), mPositronP3()
 {
 }
 
@@ -29,17 +29,22 @@ VecBosTrack& ZBosEvent::GetElectronCandidate() const
    return *(*mTracksCandidate.begin());
 }
 
-
-TVector3 ZBosEvent::GetElectronCandidateP3() const
-{
-   return (*mTracksCandidate.begin())->GetP3EScaled();
-}
+TVector3 ZBosEvent::GetElectronP3() const { return mElectronP3; }
+TVector3 ZBosEvent::GetPositronP3() const { return mPositronP3; }
 
 
-TVector3 ZBosEvent::GetVecBosonP3() const
-{
-   return -1*(GetElectronCandidateP3()); // XXX wrong, needs to be fixed
-}
+//TVector3 ZBosEvent::GetElectronCandidateP3() const
+//{
+//   return (*mTracksCandidate.begin())->GetP3EScaled();
+//}
+
+
+//TVector3 ZBosEvent::GetVecBosonP3() const
+//{
+//   return -1*(GetElectronCandidateP3()); // XXX wrong, needs to be fixed
+//}
+
+TVector3 ZBosEvent::GetVecBosonP3() const { return GetElectronP3() + GetPositronP3(); }
 
 
 void ZBosEvent::Clear(const Option_t*)

@@ -17,7 +17,9 @@ public:
    ~ZBosEvent();
 
    VecBosTrack& GetElectronCandidate() const;
-   TVector3     GetElectronCandidateP3() const;
+   //TVector3     GetElectronCandidateP3() const;
+   TVector3     GetElectronP3() const;
+   TVector3     GetPositronP3() const;
    TVector3     GetVecBosonP3() const;
    virtual void Clear(const Option_t* opt="");
    bool         PassedCutWBos(float minElePt=sMinElectronPtLight) const;
@@ -29,6 +31,11 @@ public:
    static const float sMinElectronPtHard;
    static const float sMinNeutrinoPt;
 
+protected:
+
+   float     mZBosMass;   
+   TVector3  mElectronP3; 
+   TVector3  mPositronP3; 
 
    ClassDef(ZBosEvent, 1);
 };
