@@ -5,6 +5,7 @@
 #include "TF1.h"
 #include "TF2.h"
 #include "TMath.h"
+#include "TMarker.h"
 
 #include "utils/utils.h"
 
@@ -134,7 +135,7 @@ void AsymCalculator::FitAsimAsym(TH2D &hAsym, TH1D &hAsymAmplitude, TMultiGraph*
 {
    int iColor = 2;
 
-   for (int iBinX=1; iBinX<=hAsym.GetNbinsX(); iBinX++, iColor++)
+   for (int iBinX=1; iBinX<=hAsym.GetNbinsX(); iBinX++)
    {
       TH1D *hAsymSlice = (TH1D*) hAsym.ProjectionY("hAsymSlice", iBinX, iBinX);
 
@@ -163,7 +164,15 @@ void AsymCalculator::FitAsimAsym(TH2D &hAsym, TH1D &hAsymAmplitude, TMultiGraph*
 
          hAsymAmplitude.SetBinContent(iBinX, val);
          hAsymAmplitude.SetBinError(iBinX, err);
+
+         // Put a marker on the axis to distinguish fits in the multigraph
+         TMarker* binMarker = new TMarker(hAsymAmplitude.GetBinCenter(iBinX), 0, kFullCircle);
+         binMarker->SetMarkerSize(2);
+         binMarker->SetMarkerColor(iColor);
+         hAsymAmplitude.GetListOfFunctions()->Add(binMarker);
       }
+
+      iColor++;
    }
 }
 
