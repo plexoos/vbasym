@@ -32,9 +32,9 @@ STAR_LIB_DIRS = -L../.sl53_gcc432/lib -L/afs/rhic.bnl.gov/star/packages/$(STAR_V
 
 MYSQL_LIB_DIR = -L/usr/lib/mysql
 MYSQL_LIB     = -lmysqlclient
-UTILS_LIB_DIR = -L/star/u/smirnovd/rootmacros/utils
-UTILS_INC_DIR = -I/star/u/smirnovd/rootmacros/
-UTILS_LIB     = -lutils
+UTILS_LIB_DIR = -L/star/u/smirnovd/root-helper/build/utils
+UTILS_INC_DIR = -I/star/u/smirnovd/root-helper/
+UTILS_LIB     = -lroot-helper-utils
 
 # if you plan to do a whole lot of debugging, remove '-O' switch(es)
 #CXXFLAGS      = -O2
@@ -54,7 +54,7 @@ LIBS          = $(ROOTLIBS) -lTable -lMinuit -lTreePlayer -lGeom -lrt
 LDFLAGS      += $(shell root-config --ldflags)
 LDFLAGS      += -L$(OPTSTAR)/lib
 #LDFLAGS      += -Wl,-rpath,.sl53_gcc432/lib:/afs/rhic.bnl.gov/star/packages/$(STAR_VERSION)/.sl53_gcc432/lib:/afs/rhic.bnl.gov/star/ROOT/5.22.00/.sl53_gcc432/rootdeb/lib,--warn-unresolved-symbols
-LDFLAGS      += -Wl,-Bdynamic -Wl,--warn-unresolved-symbols -Wl,-rpath,/star/u/smirnovd/rootmacros/utils
+LDFLAGS      += -Wl,-Bdynamic -Wl,--warn-unresolved-symbols -Wl,-rpath,/star/u/smirnovd/root-helper/utils
 
 #------------------------------------------------------------------------------
 
