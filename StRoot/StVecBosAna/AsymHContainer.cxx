@@ -112,6 +112,7 @@ void AsymHContainer::BookHists()
    {
       string sBeam = AsString(*iBeam);
 
+      // Lepton asymmetry plots
       shName = "hLeptonAsymVsPhi_" + sBeam;
       o[shName] = hist = new TH1D(shName.c_str(), "; Lepton #phi; Asym;", 8, -M_PI, M_PI);
       hist->SetOption("E1 GRIDX GRIDY");
@@ -125,33 +126,44 @@ void AsymHContainer::BookHists()
       o[shName] = hist = new TH2D(shName.c_str(), "; Lepton #eta; Lepton #phi;", 2, -1.2, 1.2, 8, -M_PI, M_PI);
       hist->SetOption("colz");
 
+      // Lepton asymmetry amplitude vs eta
       shName = "hLeptonAsymAmpVsEta_" + sBeam;
       o[shName] = hist = new TH1D(shName.c_str(), "; Lepton #eta; Asym Amp.;", 3, -1.5, 1.5);
       hist->SetOption("E1 GRIDX GRIDY");
       hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
 
-      // The same as above but with different binning
+      // The same as the previous one but with different binning
       shName = "hLeptonAsymAmpVsEta_b2_" + sBeam;
       o[shName] = hist = new TH1D(shName.c_str(), "; Lepton #eta; Asym Amp.;", 2, -1.2, 1.2);
       hist->SetOption("E1 GRIDX GRIDY");
       hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
 
       // Multigraph container with graphs for individual slices/bins
-      shName = "mgLeptonAsymVsPhi_EtaBins_" + sBeam;
+      shName = "mgrLeptonAsymVsPhi_EtaBins_" + sBeam;
       o[shName] = mg = new rh::MultiGraph(shName, shName);
       hist = new TH1F(shName.c_str(), "; Lepton #phi; Asym.;", 1, -M_PI, M_PI);
       hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
       mg->SetHistogram((TH1F*) hist);
 
+      // Lepton asymmetry vs p_T
       shName = "hLeptonAsymVsPhiVsPt_" + sBeam;
       o[shName] = hist = new TH2D(shName.c_str(), "; Lepton P_{T}; Lepton #phi;", 10, 0, 50, 8, -M_PI, M_PI);
       hist->SetOption("colz");
 
+      // Lepton asymmetry amplitude vs p_T
       shName = "hLeptonAsymAmpVsPt_" + sBeam;
       o[shName] = hist = new TH1D(shName.c_str(), "; Lepton P_{T}; Asym Amp.;", 10, 0, 50);
       hist->SetOption("E1 GRIDX GRIDY");
       hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
 
+      // Multigraph container with graphs for individual slices/bins
+      shName = "mgrLeptonAsymVsPhi_PtBins_" + sBeam;
+      o[shName] = mg = new rh::MultiGraph(shName, shName);
+      hist = new TH1F(shName.c_str(), "; Lepton #phi; Asym.;", 1, -M_PI, M_PI);
+      hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
+      mg->SetHistogram((TH1F*) hist);
+
+      // W asymmetry plots
       shName = "hWBosonAsymVsPhiVsEta_" + sBeam;
       o[shName] = hist = new TH2D(shName.c_str(), "; W Boson #eta; W Boson #phi;", 6, -6, 6, 8, -M_PI, M_PI);
       hist->SetOption("colz");
@@ -162,7 +174,7 @@ void AsymHContainer::BookHists()
       hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
 
       // Multigraph container with graphs for individual slices/bins
-      shName = "mgWBosonAsymVsPhi_EtaBins_" + sBeam;
+      shName = "mgrWBosonAsymVsPhi_EtaBins_" + sBeam;
       o[shName] = mg = new rh::MultiGraph(shName, shName);
       hist = new TH1F(shName.c_str(), "; W Boson #phi; Asym.;", 1, -M_PI, M_PI);
       hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
@@ -176,6 +188,13 @@ void AsymHContainer::BookHists()
       o[shName] = hist = new TH1D(shName.c_str(), "; W Boson P_{T}; Asym Amp.;", 10, 0, 10);
       hist->SetOption("E1 GRIDX GRIDY");
       hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
+
+      // Multigraph container with graphs for individual slices/bins
+      shName = "mgrWBosonAsymVsPhi_PtBins_" + sBeam;
+      o[shName] = mg = new rh::MultiGraph(shName, shName);
+      hist = new TH1F(shName.c_str(), "; W Boson #phi; Asym.;", 1, -M_PI, M_PI);
+      hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
+      mg->SetHistogram((TH1F*) hist);
    }
 
    shName = "hLeptonAsymAmpVsEta_";
@@ -333,11 +352,10 @@ void AsymHContainer::PostFill()
       TH2I* hLeptonPhiVsEta_dn     = (TH2I*) o["hLeptonPhiVsEta_" + sSpinDn];
       TH2D* hLeptonAsymVsPhiVsEta_ = (TH2D*) o["hLeptonAsymVsPhiVsEta_" + sBeam];
       TH1D* hLeptonAsymAmpVsEta_   = (TH1D*) o["hLeptonAsymAmpVsEta_" + sBeam];
-
-      rh::MultiGraph* mgLeptonAsymVsPhi_EtaBins_ = (rh::MultiGraph*) o["mgLeptonAsymVsPhi_EtaBins_" + sBeam];
+      rh::MultiGraph* mgrLeptonAsymVsPhi_EtaBins_ = (rh::MultiGraph*) o["mgrLeptonAsymVsPhi_EtaBins_" + sBeam];
 
       AsymCalculator::CalcAsimAsym(*hLeptonPhiVsEta_up, *hLeptonPhiVsEta_dn, *hLeptonAsymVsPhiVsEta_);
-      AsymCalculator::FitAsimAsym(*hLeptonAsymVsPhiVsEta_, *hLeptonAsymAmpVsEta_, mgLeptonAsymVsPhi_EtaBins_);
+      AsymCalculator::FitAsimAsym(*hLeptonAsymVsPhiVsEta_, *hLeptonAsymAmpVsEta_, mgrLeptonAsymVsPhi_EtaBins_);
 
       // The same as above but with different binning
       TH2I* hLeptonPhiVsEta_b2_up     = (TH2I*) o["hLeptonPhiVsEta_b2_" + sSpinUp];
@@ -348,32 +366,35 @@ void AsymHContainer::PostFill()
       AsymCalculator::CalcAsimAsym(*hLeptonPhiVsEta_b2_up, *hLeptonPhiVsEta_b2_dn, *hLeptonAsymVsPhiVsEta_b2_);
       AsymCalculator::FitAsimAsym(*hLeptonAsymVsPhiVsEta_b2_, *hLeptonAsymAmpVsEta_b2_);
 
-      // Lepton asymmetry vs. lepton Pt eta for iBeam
+      // Lepton asymmetry vs. lepton p_T for iBeam
       TH2I* hLeptonPhiVsPt_up     = (TH2I*) o["hLeptonPhiVsPt_" + sSpinUp];
       TH2I* hLeptonPhiVsPt_dn     = (TH2I*) o["hLeptonPhiVsPt_" + sSpinDn];
       TH2D* hLeptonAsymVsPhiVsPt_ = (TH2D*) o["hLeptonAsymVsPhiVsPt_" + sBeam];
       TH1D* hLeptonAsymAmpVsPt_   = (TH1D*) o["hLeptonAsymAmpVsPt_" + sBeam];
+      rh::MultiGraph* mgrLeptonAsymVsPhi_PtBins_ = (rh::MultiGraph*) o["mgrLeptonAsymVsPhi_PtBins_" + sBeam];
 
       AsymCalculator::CalcAsimAsym(*hLeptonPhiVsPt_up, *hLeptonPhiVsPt_dn, *hLeptonAsymVsPhiVsPt_);
-      AsymCalculator::FitAsimAsym(*hLeptonAsymVsPhiVsPt_, *hLeptonAsymAmpVsPt_);
+      AsymCalculator::FitAsimAsym(*hLeptonAsymVsPhiVsPt_, *hLeptonAsymAmpVsPt_, mgrLeptonAsymVsPhi_PtBins_);
 
-      TH2I* hWBosonPhiVsPt_up     = (TH2I*) o["hWBosonPhiVsPt_" + sSpinUp];
-      TH2I* hWBosonPhiVsPt_dn     = (TH2I*) o["hWBosonPhiVsPt_" + sSpinDn];
-      TH2D* hWBosonAsymVsPhiVsPt_ = (TH2D*) o["hWBosonAsymVsPhiVsPt_" + sBeam];
-      TH1D* hWBosonAsymAmpVsPt_   = (TH1D*) o["hWBosonAsymAmpVsPt_" + sBeam];
-
-      AsymCalculator::CalcAsimAsym(*hWBosonPhiVsPt_up, *hWBosonPhiVsPt_dn, *hWBosonAsymVsPhiVsPt_);
-      AsymCalculator::FitAsimAsym(*hWBosonAsymVsPhiVsPt_, *hWBosonAsymAmpVsPt_);
-
+      // W asymmetry vs. boson eta for iBeam
       TH2I* hWBosonPhiVsEta_up     = (TH2I*) o["hWBosonPhiVsEta_" + sSpinUp];
       TH2I* hWBosonPhiVsEta_dn     = (TH2I*) o["hWBosonPhiVsEta_" + sSpinDn];
       TH2D* hWBosonAsymVsPhiVsEta_ = (TH2D*) o["hWBosonAsymVsPhiVsEta_" + sBeam];
       TH1D* hWBosonAsymAmpVsEta_   = (TH1D*) o["hWBosonAsymAmpVsEta_" + sBeam];
-
-      rh::MultiGraph* mgWBosonAsymVsPhi_EtaBins_ = (rh::MultiGraph*) o["mgWBosonAsymVsPhi_EtaBins_" + sBeam];
+      rh::MultiGraph* mgrWBosonAsymVsPhi_EtaBins_ = (rh::MultiGraph*) o["mgrWBosonAsymVsPhi_EtaBins_" + sBeam];
 
       AsymCalculator::CalcAsimAsym(*hWBosonPhiVsEta_up, *hWBosonPhiVsEta_dn, *hWBosonAsymVsPhiVsEta_);
-      AsymCalculator::FitAsimAsym(*hWBosonAsymVsPhiVsEta_, *hWBosonAsymAmpVsEta_, mgWBosonAsymVsPhi_EtaBins_);
+      AsymCalculator::FitAsimAsym(*hWBosonAsymVsPhiVsEta_, *hWBosonAsymAmpVsEta_, mgrWBosonAsymVsPhi_EtaBins_);
+
+      // W asymmetry vs. boson p_T for iBeam
+      TH2I* hWBosonPhiVsPt_up     = (TH2I*) o["hWBosonPhiVsPt_" + sSpinUp];
+      TH2I* hWBosonPhiVsPt_dn     = (TH2I*) o["hWBosonPhiVsPt_" + sSpinDn];
+      TH2D* hWBosonAsymVsPhiVsPt_ = (TH2D*) o["hWBosonAsymVsPhiVsPt_" + sBeam];
+      TH1D* hWBosonAsymAmpVsPt_   = (TH1D*) o["hWBosonAsymAmpVsPt_" + sBeam];
+      rh::MultiGraph* mgrWBosonAsymVsPhi_PtBins_ = (rh::MultiGraph*) o["mgrWBosonAsymVsPhi_PtBins_" + sBeam];
+
+      AsymCalculator::CalcAsimAsym(*hWBosonPhiVsPt_up, *hWBosonPhiVsPt_dn, *hWBosonAsymVsPhiVsPt_);
+      AsymCalculator::FitAsimAsym(*hWBosonAsymVsPhiVsPt_, *hWBosonAsymAmpVsPt_, mgrWBosonAsymVsPhi_PtBins_);
    }
 
    // The lepton asymmetry first
