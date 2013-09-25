@@ -27,14 +27,12 @@ public:
 
    EventHContainer();
    EventHContainer(TDirectory *dir);
-   ~EventHContainer();
 
    void Fill(ProtoEvent &ev);
 
 private:
 
    void BookHists();
-
 
    ClassDef(EventHContainer, 1)
 };

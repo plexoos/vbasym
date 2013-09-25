@@ -27,7 +27,6 @@ public:
 
    WBosEventHContainer();
    WBosEventHContainer(TDirectory *dir);
-   ~WBosEventHContainer();
 
    using PlotHelper::FillDerived;
    using PlotHelper::PostFill;

@@ -25,12 +25,6 @@ WBosEventHContainer::WBosEventHContainer(TDirectory *dir) : PlotHelper(dir)
 }
 
 
-/** Default destructor. */
-WBosEventHContainer::~WBosEventHContainer()
-{
-}
-
-
 /** */
 void WBosEventHContainer::BookHists()
 {

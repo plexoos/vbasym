@@ -25,12 +25,6 @@ EventHContainer::EventHContainer(TDirectory *dir) : PlotHelper(dir)
 }
 
 
-/** Default destructor. */
-EventHContainer::~EventHContainer()
-{
-}
-
-
 /** */
 void EventHContainer::BookHists()
 {

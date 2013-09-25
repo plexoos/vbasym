@@ -12,7 +12,6 @@ class WBosEvent : public VecBosEvent
 public:
 
    WBosEvent();
-   ~WBosEvent();
 
    VecBosTrack& GetElectronTrack() const;
    TVector3     GetElectronP3() const;

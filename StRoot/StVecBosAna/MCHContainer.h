@@ -29,7 +29,6 @@ public:
 
    MCHContainer();
    MCHContainer(TDirectory *dir);
-   ~MCHContainer();
 
    using PlotHelper::FillDerived;
    using PlotHelper::PostFill;

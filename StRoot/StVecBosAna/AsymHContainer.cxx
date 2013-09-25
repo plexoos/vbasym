@@ -30,12 +30,6 @@ AsymHContainer::AsymHContainer(TDirectory *dir) : PlotHelper(dir)
 }
 
 
-/** Default destructor. */
-AsymHContainer::~AsymHContainer()
-{
-}
-
-
 /** */
 void AsymHContainer::BookHists()
 {

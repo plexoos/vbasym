@@ -18,11 +18,6 @@ WBosEvent::WBosEvent() : VecBosEvent(), mWBosMass(80.4), mElectronP3(), mNeutrin
 }
 
 
-WBosEvent::~WBosEvent()
-{
-}
-
-
 VecBosTrack& WBosEvent::GetElectronTrack() const
 {
    return *(*mTracksCandidate.begin());

@@ -39,12 +39,6 @@ MCHContainer::MCHContainer(TDirectory *dir) : PlotHelper(dir)
 }
 
 
-/** Default destructor. */
-MCHContainer::~MCHContainer()
-{
-}
-
-
 /** */
 void MCHContainer::BookHists()
 {

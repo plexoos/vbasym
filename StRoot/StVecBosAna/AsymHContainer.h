@@ -22,7 +22,6 @@ public:
 
    AsymHContainer();
    AsymHContainer(TDirectory *dir);
-   ~AsymHContainer();
 
    using PlotHelper::FillDerived;
    using PlotHelper::PostFill;
