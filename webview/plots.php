@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>RHIC Polarimetry Results: Summary Plots</title>
+  <title>Vector Boson Asymmetry Measurement. Plots</title>
   <meta HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
   <link REL="STYLESHEET" TYPE="text/css" HREF="main.css">
   <link REL="STYLESHEET" TYPE="text/css" HREF="wiki.css">
@@ -20,24 +20,16 @@ include("head.html");
 include_once("config.php");
 include_once("PlotHelper.php");
 
-//include_once("../rundb/DbFillPolar.php");
-//$dbFillPolar = new DbFillPolar();
-//$nFills = $dbFillPolar->CountEntries();
 $ana = isset($_GET['ana']) ? $_GET['ana'] : "run11_pp_transverse";
 
 $dir = "results/$ana/";
 $gP = new PlotHelper($dir);
 
-//$flattopEnergy = sprintf("%03d", 24);
-//$flattopEnergy = sprintf("%03d", 100);
-//$ai['fBeamEnergies'] = $_GET['es'];
-$flattopEnergy = sprintf("%03d", 255);
-
 ?>
 
 <!-- Main text starts here-->
 
-<h1>Summary Plots</h1>
+<h1>Plots</h1>
 
 <div class="count" id="generated-toc"></div>
 
@@ -102,7 +94,6 @@ $flattopEnergy = sprintf("%03d", 255);
 
 </div>
 <!-- }}} -->
-
 
 
 
