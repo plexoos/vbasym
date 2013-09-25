@@ -23,9 +23,9 @@ include_once("PlotHelper.php");
 //include_once("../rundb/DbFillPolar.php");
 //$dbFillPolar = new DbFillPolar();
 //$nFills = $dbFillPolar->CountEntries();
+$ana = isset($_GET['ana']) ? $_GET['ana'] : "run11_pp_transverse";
 
-$dir = "results/run11_pp_transverse/";
-//$dir = "results/run11_mc_Wp2enu_embed/";
+$dir = "results/$ana/";
 $gP = new PlotHelper($dir);
 
 //$flattopEnergy = sprintf("%03d", 24);
