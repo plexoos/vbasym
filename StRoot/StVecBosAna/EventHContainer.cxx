@@ -64,6 +64,12 @@ void EventHContainer::BookHists()
    o["hNumTracksWithBCluster"] = h = new TH1I("hNumTracksWithBCluster", "; Num. of Tracks with Barrel Cluster; Events", 5, 0, 5);
    h->SetOption("hist GRIDX");
 
+   o["hCandidateTrackPt"]          = h = new TH1F("hCandidateTrackPt", "; Track P_T; Events", 80, 0, 80);
+   h->SetOption("hist GRIDX GRIDY XY");
+
+   o["hCandidateTrackEScaledPt"]   = h = new TH1F("hCandidateTrackEScaledPt", "; P_T; Events", 81, 0, 81);
+   h->SetOption("hist GRIDX GRIDY XY");
+
    o["hJetRecoilPt"]               = h = new TH1F("hJetRecoilPt", "Recoil from Jets; Jet-based Recoil P_{T}; Events", 40, 0, 40);
    o["hJetRecoilPt_zoomin"]        = h = new TH1F("hJetRecoilPt_zoomin", "Recoil from Jets; Jet-based Recoil P_{T}; Events", 20, 0, 10);
    o["hTrackRecoilPt"]             = h = new TH1F("hTrackRecoilPt", "Recoil from Tracks: TPC+TOW; Track-based Recoil P_{T}; Events;", 40, 0, 40);
@@ -82,27 +88,29 @@ void EventHContainer::Fill(ProtoEvent &ev)
 {
    WBosEvent& event = (WBosEvent&) ev;
 
-   ((TH1*) o["hRunId"])                ->Fill(event.GetRunId());
-   ((TH1*) o["hZdcRate"])              ->Fill(event.zdcRate);
-   ((TH1*) o["hNumJets"])              ->Fill(event.GetNumJets());
-   ((TH1*) o["hNumJetsRecoil"])        ->Fill(event.GetNumJetsRecoil());
-   ((TH1*) o["hNumJetsWithIsoTrack"])  ->Fill(event.GetNumJetsWithIsoTrack());
-   ((TH1*) o["hNumVertices"])          ->Fill(event.GetNumVertices());
-   ((TH1*) o["hNumGoodVertices"])      ->Fill(event.GetNumGoodVertices());
-   ((TH1*) o["hNumTracks"])            ->Fill(event.GetNumTracks());
-   ((TH1*) o["hNumGoodTracks"])        ->Fill(event.GetNumGoodTracks());
-   ((TH1*) o["hNumBTracks"])           ->Fill(event.GetNumBTracks());
-   ((TH1*) o["hNumETracks"])           ->Fill(event.GetNumETracks());
-   ((TH1*) o["hNumWithClusterTracks"]) ->Fill(event.GetNumWithClusterTracks());
-   ((TH1*) o["hNumIsolatedTracks"])    ->Fill(event.GetNumIsolatedTracks());
-   ((TH1*) o["hNumCandidateTracks"])   ->Fill(event.GetNumCandidateTracks());
-   ((TH1*) o["hNumTracksWithBCluster"])->Fill(event.GetNumTracksWithBCluster());
+   ((TH1*) o["hRunId"])                     ->Fill(event.GetRunId());
+   ((TH1*) o["hZdcRate"])                   ->Fill(event.zdcRate);
+   ((TH1*) o["hNumJets"])                   ->Fill(event.GetNumJets());
+   ((TH1*) o["hNumJetsRecoil"])             ->Fill(event.GetNumJetsRecoil());
+   ((TH1*) o["hNumJetsWithIsoTrack"])       ->Fill(event.GetNumJetsWithIsoTrack());
+   ((TH1*) o["hNumVertices"])               ->Fill(event.GetNumVertices());
+   ((TH1*) o["hNumGoodVertices"])           ->Fill(event.GetNumGoodVertices());
+   ((TH1*) o["hNumTracks"])                 ->Fill(event.GetNumTracks());
+   ((TH1*) o["hNumGoodTracks"])             ->Fill(event.GetNumGoodTracks());
+   ((TH1*) o["hNumBTracks"])                ->Fill(event.GetNumBTracks());
+   ((TH1*) o["hNumETracks"])                ->Fill(event.GetNumETracks());
+   ((TH1*) o["hNumWithClusterTracks"])      ->Fill(event.GetNumWithClusterTracks());
+   ((TH1*) o["hNumIsolatedTracks"])         ->Fill(event.GetNumIsolatedTracks());
+   ((TH1*) o["hNumCandidateTracks"])        ->Fill(event.GetNumCandidateTracks());
+   ((TH1*) o["hNumTracksWithBCluster"])     ->Fill(event.GetNumTracksWithBCluster());
 
-   ((TH1*) o["hJetRecoilPt"])          ->Fill(event.GetJetRecoil().Pt());
-   ((TH1*) o["hJetRecoilPt_zoomin"])   ->Fill(event.GetJetRecoil().Pt());
-   ((TH1*) o["hTrackRecoilPt"])        ->Fill(event.GetTrackRecoil().Pt());
-   ((TH1*) o["hTrackRecoilTpcPt"])     ->Fill(event.mP3TrackRecoilTpc.Pt());
-   ((TH1*) o["hTrackRecoilWithNeutralsPt"])->Fill(event.GetTrackRecoilTpcNeutrals().Pt());
+   //((TH1*) o["hCandidateTrackPt"])          ->Fill(event.GetElectronTrack().mP3AtDca.Pt());
+   ((TH1*) o["hCandidateTrackEScaledPt"])   ->Fill(event.GetElectronP3().Pt());
+   ((TH1*) o["hJetRecoilPt"])               ->Fill(event.GetJetRecoil().Pt());
+   ((TH1*) o["hJetRecoilPt_zoomin"])        ->Fill(event.GetJetRecoil().Pt());
+   ((TH1*) o["hTrackRecoilPt"])             ->Fill(event.GetTrackRecoil().Pt());
+   ((TH1*) o["hTrackRecoilTpcPt"])          ->Fill(event.mP3TrackRecoilTpc.Pt());
+   ((TH1*) o["hTrackRecoilWithNeutralsPt"]) ->Fill(event.GetTrackRecoilTpcNeutrals().Pt());
    ((TH1*) o["hTrackRecoilWithNeutralsPtCorrected"])->Fill(event.mPtTrackRecoilWithNeutralsCorrected);
    ((TH1*) o["hTrackRecoilWithNeutralsPt_zoomin"])->Fill(event.GetTrackRecoilTpcNeutrals().Pt());
    ((TH1*) o["hTrackRecoilWithNeutralsPtCorrected_zoomin"])->Fill(event.mPtTrackRecoilWithNeutralsCorrected);
