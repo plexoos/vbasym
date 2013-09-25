@@ -60,25 +60,38 @@ $flattopEnergy = sprintf("%03d", 255);
 
 <p>
 <table class="simple00 cntr">
+
+<? foreach ($RHIC_BEAMS as $indx => $beam): ?>
 <tr>
-   <? foreach ($RHIC_BEAMS as $indx => $beam): ?>
+   <td><?=$gP->img("asym_w_plus/hLeptonAsymAmpVsEta_$beam", false, 600)?>
+   <div class='thumbcaption_cm'><span class=bluPol><?=$beam?></span>: lepton</div>
+   <td><?=$gP->img("asym_w_plus/mgrLeptonAsymVsPhi_EtaBins_$beam", false, 600)?>
+   <div class='thumbcaption_cm'><span class=bluPol><?=$beam?></span>: lepton, eta bins</div>
+<? endforeach; ?>
+
+<? foreach ($RHIC_BEAMS as $indx => $beam): ?>
+<tr>
+   <td><?=$gP->img("asym_w_plus/hLeptonAsymAmpVsPt_$beam", false, 600)?>
+   <div class='thumbcaption_cm'><span class=bluPol><?=$beam?></span>: lepton</div>
+   <td><?=$gP->img("asym_w_plus/mgrLeptonAsymVsPhi_PtBins_$beam", false, 600)?>
+   <div class='thumbcaption_cm'><span class=bluPol><?=$beam?></span>: lepton, p_T bins</div>
+<? endforeach; ?>
+
+<? foreach ($RHIC_BEAMS as $indx => $beam): ?>
+<tr>
    <td><?=$gP->img("asym_w_plus/hWBosonAsymAmpVsEta_$beam", false, 600)?>
-   <div class='thumbcaption_cm'><span class=bluPol><?=$beam?></span></div>
-   <? endforeach; ?>
+   <div class='thumbcaption_cm'><span class=bluPol><?=$beam?></span>: W boson</div>
+   <td><?=$gP->img("asym_w_plus/mgrWBosonAsymVsPhi_EtaBins_$beam", false, 600)?>
+   <div class='thumbcaption_cm'><span class=bluPol><?=$beam?></span>: W boson, eta bins</div>
+<? endforeach; ?>
 
+<? foreach ($RHIC_BEAMS as $indx => $beam): ?>
 <tr>
-<td colspan=2>
-<div class='thumbcaption'>Asymmetry</div>
-
-<tr>
-   <? foreach ($RHIC_BEAMS as $indx => $beam): ?>
    <td><?=$gP->img("asym_w_plus/hWBosonAsymAmpVsPt_$beam", false, 600)?>
-   <div class='thumbcaption_cm'><span class=bluPol><?=$beam?></span></div>
-   <? endforeach; ?>
-
-<tr>
-<td colspan=2>
-<div class='thumbcaption'>Asymmetry</div>
+   <div class='thumbcaption_cm'><span class=bluPol><?=$beam?></span>: W boson</div>
+   <td><?=$gP->img("asym_w_plus/mgrWBosonAsymVsPhi_PtBins_$beam", false, 600)?>
+   <div class='thumbcaption_cm'><span class=bluPol><?=$beam?></span>: W boson, p_T bins</div>
+<? endforeach; ?>
 
 </table>
 
