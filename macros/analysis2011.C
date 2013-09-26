@@ -107,7 +107,7 @@ void analysis2011()
    //TH1 *hd_PtLepQCD     = (TH1*) fileData->Get("track_cand_pass_qcd_QEToPT/hEcalScaledPt");
    TH1 *hd_PtLepQCD     = (TH1*) fileData->Get("event_pass_qcd_QEToPT/hCandidateTrackEScaledPt");
    //TH1 *hd_PtLepQCDPt15 = (TH1*) fileData->Get("track_cand_pass_qcd_QEToPT_Pt>15/hEcalScaledPt");
-   TH1 *hd_PtLepQCDPt15 = (TH1*) fileData->Get("event_pass_qcd_QEToPT_pt>15/hEcalScaledPt");
+   TH1 *hd_PtLepQCDPt15 = (TH1*) fileData->Get("event_pass_qcd_QEToPT_pt>15/hCandidateTrackEScaledPt");
 
    hd_PtLep->Rebin(3);  // 3 GeV per bin (originally 1 GeV)
    hZ_PtLep->Rebin(3);
@@ -307,9 +307,9 @@ void analysis2011()
    TH1 *hQ_Wm_PtLepPt15    = (TH1*) fileMCQCD->Get("W-_event_pass_final_QEToPT_pt>15/hCandidateTrackEScaledPt");
 
    //TH1 *hd_Wm_PtLepQCD     = (TH1 *)fileData->Get("W-_track_cand_pass_qcd_QEToPT/hEcalScaledPt");
-   TH1 *hd_Wm_PtLepQCD     = (TH1*) fileData->Get("W-_event_pass_final_QEToPT/hCandidateTrackEScaledPt");
+   TH1 *hd_Wm_PtLepQCD     = (TH1*) fileData->Get("W-_event_pass_qcd_QEToPT/hCandidateTrackEScaledPt");
    //TH1 *hd_Wm_PtLepQCDPt15 = (TH1 *)fileData->Get("W-_track_cand_pass_qcd_QEToPT_Pt>15/hEcalScaledPt");
-   TH1 *hd_Wm_PtLepQCDPt15 = (TH1*) fileData->Get("W-_event_pass_final_QEToPT_pt>15/hCandidateTrackEScaledPt");
+   TH1 *hd_Wm_PtLepQCDPt15 = (TH1*) fileData->Get("W-_event_pass_qcd_QEToPT_pt>15/hCandidateTrackEScaledPt");
 
    hd_Wm_PtLep->Rebin(3);
    hZ_Wm_PtLep->Rebin(3);
