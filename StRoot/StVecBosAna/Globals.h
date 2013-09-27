@@ -8,6 +8,7 @@
 #include "StEmcUtil/geometry/StEmcGeom.h"
 #include "StSpinPool/StJets/StJet.h"
 
+enum BosonType {kWBoson, kZBoson};
 
 // bsmd indexes needed for calibration
 enum {mxBStrips = 18000, mxBSmd  = 2, kBSE  = 0, kBSP  = 1};
