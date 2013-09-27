@@ -82,7 +82,6 @@ int analyzeMuDst(AnaInfo &anaInfo, bool spinSort, bool findZ)
    Float_t jetPtMin            = anaInfo.fJetPtMin;
    //string eemcSetupPath = "/afs/rhic.bnl.gov/star/users/kocolosk/public/StarTrigSimuSetup/";
 
-   if (isMC && useJetFinder == 2) geant = true;
 
    if (isMC) spinSort = false;
 
@@ -117,7 +116,7 @@ int analyzeMuDst(AnaInfo &anaInfo, bool spinSort, bool findZ)
 
    printf("RUN NUMBER is: %s\n", runNo.Data());
    printf("Output file: %s\n", outputFile.Data());
-   printf("TRIG ID: L2BW=%d, L2EW=%d, isMC=%d, useJetFinder=%d\n", idL2BWtrg, idL2EWtrg, isMC, useJetFinder );
+   printf("isMC=%d, useJetFinder=%d\n", isMC, useJetFinder );
 
    // Logger business
    gMessMgr->SwitchOff("D");
