@@ -8,6 +8,7 @@
 #include "TChain.h"
 #include "TRandom3.h"
 
+#include "AnaInfo.h"
 #include "WBosEvent.h"
 #include "VecBosVertex.h"
 #include "WtpcFilter.h"
@@ -46,8 +47,7 @@ class StVecBosMaker : public StMaker
 
 public:
 
-   StVecBosMaker(const char *name="StVecBosMaker", uint8_t rhicRunId=11, VecBosRootFile *vbFile=0);
-   virtual ~StVecBosMaker() {};
+   StVecBosMaker(AnaInfo& anaInfo, const char *name="StVecBosMaker", VecBosRootFile *vbFile=0);
 
    virtual Int_t Init();
    virtual Int_t Make();
@@ -98,13 +98,14 @@ public:
 protected:
   
    TStopwatch      mStopWatch;
+   AnaInfo        *mAnaInfo;
    StMuDstMaker   *mStMuDstMaker;
    StJetReader    *mStJetReader;
    VecBosRootFile *mVecBosRootFile;
    TString         mJetTreeBranchName;
    TString         mJetTreeBranchNameNoEndcap;
    TClonesArray   *mJets;
-   WBosEvent      *mVecBosEvent;
+   VecBosEvent    *mVecBosEvent;
    TTree          *mVecBosTree;
    TString         mTreeName;
    TFile          *mTreeFile;
@@ -114,7 +115,6 @@ protected:
    int             mNumInputEvents;
    int             mNumTrigEvents;
    int             mNumAcceptedEvents;      // event counters
-	uint8_t         mRhicRunId;
    int             mRunNo;
    int             nRun;
    int             mIsMc;                   // 0 for real data

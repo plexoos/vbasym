@@ -39,18 +39,19 @@
 
 #include "Globals.h"
 #include "WBosEvent.h"
+#include "ZBosEvent.h"
 #include "WeventDisplay.h"
 #include "StVecBosMaker.h"
 
 ClassImp(StVecBosMaker)
 
 
-StVecBosMaker::StVecBosMaker(const char *name, uint8_t rhicRunId, VecBosRootFile *vbFile): StMaker(name),
-   mStopWatch(), mStMuDstMaker(0), mStJetReader(0), mVecBosRootFile(vbFile),
+StVecBosMaker::StVecBosMaker(AnaInfo& anaInfo, const char *name, VecBosRootFile *vbFile): StMaker(name),
+   mStopWatch(), mAnaInfo(&anaInfo), mStMuDstMaker(0), mStJetReader(0), mVecBosRootFile(vbFile),
    mJetTreeBranchName(), mJetTreeBranchNameNoEndcap(),
    mJets(0), mVecBosEvent(0), mVecBosTree(0),
    mNumInputEvents(0), mNumTrigEvents(0), mNumAcceptedEvents(0),
-   mRhicRunId(rhicRunId), mRunNo(0), nRun(0), mIsMc(0),
+   mRunNo(0), nRun(0), mIsMc(0),
    Tfirst(numeric_limits<int>::max()), Tlast(numeric_limits<int>::min()),
    mL2BarrelTriggerId(0), mL2BarrelTriggerId2(0), mL2EndcapTriggerId(0),
    mParETOWScale(1.0), mParBTOWScale(1.0)   // for old the Endcap geometr you need ~1.3
@@ -135,11 +136,11 @@ StVecBosMaker::StVecBosMaker(const char *name, uint8_t rhicRunId, VecBosRootFile
    use_gains_file               = 0;
 
    // Year dependent initialization
-   if (mRhicRunId == 11) {
+   if (mAnaInfo->fRhicRunId == 11) {
       mL2BarrelTriggerId  = 320801;
       mL2EndcapTriggerId  = 320851;
    }
-   else if (mRhicRunId == 12) {
+   else if (mAnaInfo->fRhicRunId == 12) {
       mL2BarrelTriggerId  = 380209;
       mL2BarrelTriggerId2 = 380219;
       mL2EndcapTriggerId  = 380305;
@@ -182,8 +183,16 @@ Int_t StVecBosMaker::Init()
       mTreeFile->cd();
 
       mVecBosTree = new TTree("t", "mVecBosTree");
-      mVecBosEvent = new WBosEvent();
-      mVecBosTree->Branch("e", "WBosEvent", &mVecBosEvent, 128000, 0); // splitlevel=0. very important for custom streamers
+
+      if (mAnaInfo->fBosonType == kWBoson) {
+         mVecBosEvent = new WBosEvent();
+         mVecBosTree->Branch("e", "WBosEvent", &mVecBosEvent, 128000, 0); // splitlevel=0. very important for custom streamers
+      } else if (mAnaInfo->fBosonType == kZBoson) {
+         mVecBosEvent = new ZBosEvent();
+         mVecBosTree->Branch("e", "ZBosEvent", &mVecBosEvent, 128000, 0); // splitlevel=0. very important for custom streamers
+      } else
+         Warning("Init", "Unknown type of boson");
+
    }
 
    assert(HList);
