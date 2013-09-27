@@ -8,13 +8,12 @@ ClassImp(ZBosEvent)
 using namespace std;
 
 
-
 const float ZBosEvent::sMinElectronPtLight = 15;
 const float ZBosEvent::sMinElectronPtHard  = 25;
 const float ZBosEvent::sMinNeutrinoPt      = 18;
 
 
-ZBosEvent::ZBosEvent() : VecBosEvent(), mElectronP3(), mPositronP3()
+ZBosEvent::ZBosEvent() : VecBosEvent(), mZBosMass(91.1876), mElectronP3(), mPositronP3()
 {
 }
 
@@ -45,6 +44,15 @@ TVector3 ZBosEvent::GetPositronP3() const { return mPositronP3; }
 //}
 
 TVector3 ZBosEvent::GetVecBosonP3() const { return GetElectronP3() + GetPositronP3(); }
+
+
+/**
+ * The primary method to identify and reconstruct the event with a Z boson.
+ */
+void ZBosEvent::Process()
+{
+   VecBosEvent::Process();
+}
 
 
 void ZBosEvent::Clear(const Option_t*)
@@ -86,4 +94,15 @@ bool ZBosEvent::PassedCutQcdBkg(float minElePt) const
    }
 
    return false;
+}
+
+
+void ZBosEvent::Streamer(TBuffer &R__b)
+{
+   if (R__b.IsReading()) {
+      R__b.ReadClassBuffer(ZBosEvent::Class(), this);
+   }
+   else {
+      R__b.WriteClassBuffer(ZBosEvent::Class(), this);
+   }
 }

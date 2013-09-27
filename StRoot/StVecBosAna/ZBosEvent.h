@@ -21,15 +21,16 @@ public:
    TVector3     GetElectronP3() const;
    TVector3     GetPositronP3() const;
    TVector3     GetVecBosonP3() const;
+   virtual void Process();
    virtual void Clear(const Option_t* opt="");
    bool         PassedCutWBos(float minElePt=sMinElectronPtLight) const;
    bool         PassedCutWBosPlus(float minElePt=sMinElectronPtLight) const;
    bool         PassedCutWBosMinus(float minElePt=sMinElectronPtLight) const;
    bool         PassedCutQcdBkg(float minElePt=sMinElectronPtLight) const;
 
-   static const float sMinElectronPtLight;
-   static const float sMinElectronPtHard;
-   static const float sMinNeutrinoPt;
+   static const float sMinElectronPtLight; //!
+   static const float sMinElectronPtHard;  //!
+   static const float sMinNeutrinoPt;      //!
 
 protected:
 
