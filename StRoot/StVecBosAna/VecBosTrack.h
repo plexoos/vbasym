@@ -110,6 +110,7 @@ public:
    bool         IsUnBalanced() const { return (mVbType & kUNBALANCED)  == kUNBALANCED  ? true : false; }
    bool         HasCharge()    const { return (mVbType & kHAS_CHARGE)  == kHAS_CHARGE  ? true : false; }
    bool         IsCandidate()  const;
+   bool         IsZelectronCandidate()  const;
    void         Process();
    short        GetChargeSign()         const { return mStMuTrack->charge(); }
    TVector3     GetP3AtDca()            const { return mP3AtDca; }

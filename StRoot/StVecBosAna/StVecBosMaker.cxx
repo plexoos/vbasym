@@ -49,7 +49,7 @@ ClassImp(StVecBosMaker)
 StVecBosMaker::StVecBosMaker(AnaInfo& anaInfo, const char *name, VecBosRootFile *vbFile): StMaker(name),
    mStopWatch(), mAnaInfo(&anaInfo), mStMuDstMaker(0), mStJetReader(0), mVecBosRootFile(vbFile),
    mJetTreeBranchName(), mJetTreeBranchNameNoEndcap(),
-   mJets(0), mVecBosEvent(0), mVecBosTree(0),
+   mJets(0), mVecBosEvent(0), mVecBosTree(0), 
    mNumInputEvents(0), mNumTrigEvents(0), mNumAcceptedEvents(0),
    mRunNo(0), nRun(0), mIsMc(0),
    Tfirst(numeric_limits<int>::max()), Tlast(numeric_limits<int>::min()),
@@ -80,6 +80,7 @@ StVecBosMaker::StVecBosMaker(AnaInfo& anaInfo, const char *name, VecBosRootFile 
    setHList(0);
    setHListTpc(0);
    setMC(0);
+   setFindZ(0);
 
    // MC trigger simulator
    par_l0emulAdcThresh          = 30;
@@ -181,7 +182,6 @@ Int_t StVecBosMaker::Init()
    if (mStMuDstMaker) {
       mTreeFile = new TFile(mTreeName, "recreate");
       mTreeFile->cd();
-
       mVecBosTree = new TTree("t", "mVecBosTree");
 
       if (mAnaInfo->fBosonType == kWBoson) {
@@ -192,8 +192,8 @@ Int_t StVecBosMaker::Init()
          mVecBosTree->Branch("e", "ZBosEvent", &mVecBosEvent, 128000, 0); // splitlevel=0. very important for custom streamers
       } else
          Warning("Init", "Unknown type of boson");
-
    }
+
 
    assert(HList);
    mVecBosRootFile->cd();

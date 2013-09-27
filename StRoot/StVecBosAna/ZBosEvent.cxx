@@ -13,7 +13,7 @@ const float ZBosEvent::sMinElectronPtHard  = 25;
 const float ZBosEvent::sMinNeutrinoPt      = 18;
 
 
-ZBosEvent::ZBosEvent() : VecBosEvent(), mZBosMass(91.1876), mElectronP3(), mPositronP3()
+ZBosEvent::ZBosEvent() : VecBosEvent(), mZBosMass(91.1876), mCand1P3(), mCand2P3()
 {
 }
 
@@ -28,22 +28,11 @@ VecBosTrack& ZBosEvent::GetElectronCandidate() const
    return *(*mTracksCandidate.begin());
 }
 
-TVector3 ZBosEvent::GetElectronP3() const { return mElectronP3; }
-TVector3 ZBosEvent::GetPositronP3() const { return mPositronP3; }
+TVector3 ZBosEvent::GetCandidate1_P3() const { return mCand1P3; }
+TVector3 ZBosEvent::GetCandidate2_P3() const { return mCand2P3; }
 
 
-//TVector3 ZBosEvent::GetElectronCandidateP3() const
-//{
-//   return (*mTracksCandidate.begin())->GetP3EScaled();
-//}
-
-
-//TVector3 ZBosEvent::GetVecBosonP3() const
-//{
-//   return -1*(GetElectronCandidateP3()); // XXX wrong, needs to be fixed
-//}
-
-TVector3 ZBosEvent::GetVecBosonP3() const { return GetElectronP3() + GetPositronP3(); }
+TVector3 ZBosEvent::GetVecBosonP3() const { return GetCandidate1_P3() + GetCandidate2_P3(); }
 
 
 /**
@@ -51,7 +40,35 @@ TVector3 ZBosEvent::GetVecBosonP3() const { return GetElectronP3() + GetPositron
  */
 void ZBosEvent::Process()
 {
-   VecBosEvent::Process();
+   VecBosEvent::ProcessZ0();
+
+   //here I have to loop over candidates. 
+
+   // Make sure an isolated track exists
+   if (mTracksCandidate.size() < 1) return;
+
+   VecBosTrack &trackCand1  = **mTracksCandidate.begin();
+   VecBosTrack trackCand2;
+
+   VecBosTrackPtrSetIter iTrackCand = mTracksCandidate.begin();
+   for (; iTrackCand != mTracksCandidate.end(); ++iTrackCand) {
+      VecBosTrack &cand = **iTrackCand;
+
+      if (cand == trackCand1) continue;
+
+      if (cand.mStMuTrack->charge() != trackCand1.mStMuTrack->charge()) {
+	// If the sign of the second track is different from the sign 
+	// of the first track pick it as Z candidate otherwise gor further 
+	trackCand2 = cand;
+        break;
+      }  else {
+        //Info("Print", "this is no Z event ");
+	break;
+      }
+   }
+
+   mCand1P3 = trackCand1.GetP3EScaled();
+
 }
 
 

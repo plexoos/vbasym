@@ -18,8 +18,8 @@ public:
 
    VecBosTrack& GetElectronCandidate() const;
    //TVector3     GetElectronCandidateP3() const;
-   TVector3     GetElectronP3() const;
-   TVector3     GetPositronP3() const;
+   TVector3     GetCandidate1_P3() const;
+   TVector3     GetCandidate2_P3() const;
    TVector3     GetVecBosonP3() const;
    virtual void Process();
    virtual void Clear(const Option_t* opt="");
@@ -35,8 +35,8 @@ public:
 protected:
 
    float     mZBosMass;   
-   TVector3  mElectronP3; 
-   TVector3  mPositronP3; 
+   TVector3  mCand1P3; 
+   TVector3  mCand2P3; 
 
    ClassDef(ZBosEvent, 1);
 };

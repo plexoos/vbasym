@@ -10,6 +10,7 @@
 
 #include "AnaInfo.h"
 #include "WBosEvent.h"
+#include "ZBosEvent.h"
 #include "VecBosVertex.h"
 #include "WtpcFilter.h"
 #include "VecBosRootFile.h"
@@ -63,6 +64,7 @@ public:
    void         setHList(TObjArray *x)          { HList    = x; }
    void         setHListTpc(TObjArray *x)       { HListTpc = x; }
    void         setMC(int x)                    { mIsMc = x; }
+   void         setFindZ(int x)                 { mFindZ = x; }
    void         setMaxDisplayEve(int n)         { par_maxDisplEve = n; }
    void         AttachSpinDb(StSpinDbMaker *mk) { mStSpinDbMaker = mk; }
 
@@ -118,6 +120,7 @@ protected:
    int             mRunNo;
    int             nRun;
    int             mIsMc;                   // 0 for real data
+   int             mFindZ;                  // 0 for W boson
    int             Tfirst;
    int             Tlast;
    int             par_l0emulAdcThresh;
