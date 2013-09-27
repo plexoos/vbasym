@@ -42,32 +42,29 @@ public:
 
 public:
 
-   std::string      fAsymVersion;
    std::string      fSuffix;            // Additional unique identifier for analysis job
-   ULong_t          fModes;
-   Bool_t           fDoReconstructJets;
+   uint64_t         fModes;
+   bool             fDoReconstructJets;
    float            fJetPtMin;
    unsigned short   fRhicRunId;         // RHIC run id, e.g. 9, 11, 12, 13, ...
-   Bool_t           fIsMc;
-   Bool_t           fSaveHists;
+   bool             fIsMc;
+   BosonType        fBosonType;
    time_t           fAnaDateTime;       // Date/time when data analysis started
-   Double_t         fAnaTimeReal;       // Time in seconds to process input raw file
-   Double_t         fAnaTimeCpu;        // Time in seconds to process input raw file
+   double           fAnaTimeReal;       // Time in seconds to process input raw file
+   double           fAnaTimeCpu;        // Time in seconds to process input raw file
    Str2StrMap       fAsymEnv;
-   UInt_t           fMaxEventsUser;
+   uint32_t         fMaxEventsUser;
    FILE            *fFileMeasInfo;      //!
    FILE            *fFileStdLog;        //!
    std::string      fFileStdLogName;
-   Bool_t           fFlagCopyResults;
-   Bool_t           fFlagUseDb;
-   Bool_t           fFlagUpdateDb;
-   Bool_t           fFlagCreateThumbs;
+   bool             fFlagCopyResults;
+   bool             fFlagUpdateDb;
    UserGroup_t      fUserGroup;
 
 public:
 
    AnaInfo();
-   ~AnaInfo();
+   virtual ~AnaInfo();
 
    std::string  GetSuffix() const;
    std::string  GetResultsDir() const;
@@ -84,9 +81,8 @@ public:
    void         Print(const Option_t* opt="") const;
    void         PrintAsPhp(FILE *f=stdout) const;
    virtual void PrintUsage();
-	virtual void CopyResults();
 
-   Bool_t       HasGraphBit() const;
+   bool         HasGraphBit() const;
 
 protected:
 

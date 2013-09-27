@@ -12,22 +12,21 @@ using namespace std;
 
 /** */
 AnaInfo::AnaInfo() : TObject(),
-   fAsymVersion(""),
    fSuffix(""),
    fModes(0),
    fDoReconstructJets(kFALSE),
    fJetPtMin(3.5),
    fRhicRunId(11),
    fIsMc(kFALSE),
-   fSaveHists(kFALSE),
+   fBosonType(kWBoson),
    fAnaDateTime(0),
    fAnaTimeReal(0),
    fAnaTimeCpu (0),
    fAsymEnv(),
    fMaxEventsUser(0),
    fFileMeasInfo(0), fFileStdLog(0),
-   fFileStdLogName("stdoe"), fFlagCopyResults(kFALSE), fFlagUseDb(kFALSE),
-   fFlagUpdateDb(kFALSE), fFlagCreateThumbs(kFALSE),
+   fFileStdLogName("stdoe"), fFlagCopyResults(kFALSE),
+   fFlagUpdateDb(kFALSE),
    fUserGroup(),
    fListName(""),
    fOutputName("")
@@ -40,8 +39,6 @@ AnaInfo::~AnaInfo()
 {
    if (fFileMeasInfo) fclose(fFileMeasInfo);
    if (fFileStdLog)   fclose(fFileStdLog);
-
-   //delete fUserGroup; fUserGroup = 0;
 }
 
 
@@ -100,14 +97,14 @@ void AnaInfo::ProcessOptions(int argc, char **argv)
       {"rhic-run-id",         required_argument,   NULL,   AnaInfo::OPTION_RHIC_RUN_ID},
       {"run",                 required_argument,   NULL,   AnaInfo::OPTION_RHIC_RUN_ID},
       {"mc",                  no_argument,         NULL,   'm'},
-      {"plots",               no_argument,         NULL,   'p'},
-      {"hists",               no_argument,         NULL,   'p'},
+      {"wboson",              no_argument,         NULL,   'w'},
+      {"zboson",              no_argument,         NULL,   'z'},
       {NULL, 0, NULL, 0}
    };
 
    int c;
 
-   while ((c = getopt_long(argc, argv, "?hl::f:n:jmp", long_options, &option_index)) != -1)
+   while ((c = getopt_long(argc, argv, "?hl::f:n:jmwz", long_options, &option_index)) != -1)
    {
       switch (c) {
 
@@ -152,8 +149,12 @@ void AnaInfo::ProcessOptions(int argc, char **argv)
          fIsMc = kTRUE;
          break;
 
-      case 'p':
-         fSaveHists = kTRUE;
+      case 'w':
+         fBosonType = kWBoson;
+         break;
+
+      case 'z':
+         fBosonType = kZBoson;
          break;
 
       default:
@@ -213,7 +214,6 @@ void AnaInfo::Print(const Option_t* opt) const
 void AnaInfo::PrintAsPhp(FILE *f) const
 {
    fprintf(f, "$rc['fOutputName']                  = \"%s\";\n", fOutputName.c_str());
-   fprintf(f, "$rc['fAsymVersion']                 = \"%s\";\n", fAsymVersion.c_str());
    fprintf(f, "$rc['fSuffix']                      = \"%s\";\n", fSuffix.c_str());
    fprintf(f, "$rc['fModes']                       = %#010x;\n",  fModes);
    fprintf(f, "$rc['fAnaDateTime']                 = %u;\n",     (UInt_t) fAnaDateTime);
@@ -235,36 +235,12 @@ void AnaInfo::PrintAsPhp(FILE *f) const
 
    fprintf(f, "$rc['fFileStdLogName']              = \"%s\";\n", fFileStdLogName.c_str());
    fprintf(f, "$rc['fFlagCopyResults']             = %d;\n", fFlagCopyResults);
-   fprintf(f, "$rc['fFlagUseDb']                   = %d;\n", fFlagUseDb);
    fprintf(f, "$rc['fFlagUpdateDb']                = %d;\n", fFlagUpdateDb);
-   fprintf(f, "$rc['fFlagCreateThumbs']            = %d;\n", fFlagCreateThumbs);
 
    fprintf(f, "$rc['fUserGroup_fUser']             = \"%s\";\n", fUserGroup.fUser.Data());
    fprintf(f, "$rc['fUserGroup_fRealName']         = \"%s\";\n", fUserGroup.fRealName.Data());
 
-   // Various printouts. Should be combined with Print()?
-   //cout << "Max events to process:         " << fMaxEventsUser << endl;
    fprintf(f, "\n");
-}
-
-
-/** */
-void AnaInfo::CopyResults()
-{
-   if (!fFlagCopyResults) return;
-
-   string cmd = "rsync -rlpgoDv " + GetOutDir() + " pc2pc-phy:/usr/local/polarim/root/";
-   Info("CopyResults", "Copying results...\n%s", cmd.c_str());
-   //string cmd = "ls -l";
-
-   //system(cmd.c_str());
-   char result[1000];
-   FILE *fp = popen( cmd.c_str(), "r");
-
-   while (fgets(result, sizeof(result), fp) != NULL ) { printf("%s", result); }
-   //printf("%s", result);
-
-   pclose(fp);
 }
 
 
@@ -277,6 +253,5 @@ void AnaInfo::PrintUsage()
    cout << " -l, --log=[filename]                 : Optional log file to redirect stdout and stderr" << endl;
    cout << " -r, -f, --list                       : Input list file" << endl;
    cout << " -m, --mc                             : Process input as monte-carlo" << endl;
-   cout << " -p, --plots, --hists                 : Save histograms in a separate file" << endl;
    cout << endl;
 }
