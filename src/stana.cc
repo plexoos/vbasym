@@ -67,6 +67,7 @@ int analyzeMuDst(
    string   muDir               = "",
    bool     spinSort            = true,
    bool     findZ               = false,
+   //bool     findZ               = true,
    bool     geant               = false
 );
 
@@ -370,6 +371,9 @@ int analyzeMuDst(AnaInfo &anaInfo, uint idL2BWtrg, uint idL2EWtrg, string muDir,
 
    StSpinDbMaker *stSpinDbMaker = new StSpinDbMaker("stSpinDbMaker");
    StVecBosMaker *stVecBosMaker = new StVecBosMaker("StVecBosMaker", anaInfo.fRhicRunId, &vecBosRootFile);
+   if (isMC) { 
+      stVecBosMaker->setFindZ(findZ); // fill the tree for the Z boson (W otherwise)
+   }
 
    if (spinSort) {
       //stSpinDbMaker = new StSpinDbMaker("stSpinDbMaker");
