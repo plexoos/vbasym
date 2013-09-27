@@ -59,16 +59,7 @@ root4star -b -q 'analyzeMuDst.C(2e3,"st_W_12037041_raw_1400001.MuDst.root",0,1,5
 using namespace std;
 
 
-int analyzeMuDst(
-   AnaInfo &anaInfo,
-   uint     idL2BWtrg           = 0,       // offline Ids  needed for real data
-   uint     idL2EWtrg           = 0,       // run 9 L2EW
-   // make those below  empty for scheduler
-   string   muDir               = "",
-   bool     spinSort            = true,
-   bool     findZ               = false,
-   bool     geant               = false
-);
+int analyzeMuDst(AnaInfo &anaInfo, bool spinSort=true, bool findZ=false);
 
 
 int main(int argc, char *argv[])
@@ -79,12 +70,11 @@ int main(int argc, char *argv[])
    anaInfo.ProcessOptions(argc, argv);
    anaInfo.VerifyOptions();
 
-   return analyzeMuDst(anaInfo, 320801, 320851);
+   return analyzeMuDst(anaInfo);
 }
 
 
-int analyzeMuDst(AnaInfo &anaInfo, uint idL2BWtrg, uint idL2EWtrg, string muDir,
-                 bool spinSort, bool findZ, bool geant)
+int analyzeMuDst(AnaInfo &anaInfo, bool spinSort, bool findZ)
 {
    UInt_t  maxEventsUser       = anaInfo.fMaxEventsUser;
    string  inMuDstFileListName = anaInfo.GetListName();
@@ -369,7 +359,7 @@ int analyzeMuDst(AnaInfo &anaInfo, uint idL2BWtrg, uint idL2EWtrg, string muDir,
    }
 
    StSpinDbMaker *stSpinDbMaker = new StSpinDbMaker("stSpinDbMaker");
-   StVecBosMaker *stVecBosMaker = new StVecBosMaker("StVecBosMaker", anaInfo.fRhicRunId, &vecBosRootFile);
+   StVecBosMaker *stVecBosMaker = new StVecBosMaker(anaInfo, "StVecBosMaker", &vecBosRootFile);
 
    if (spinSort) {
       //stSpinDbMaker = new StSpinDbMaker("stSpinDbMaker");
