@@ -1,9 +1,3 @@
-/*****************************************************************************
- *                                                                           *
- *                                                                           *
- *****************************************************************************/
-
-
 #ifndef WBosEventHContainer_h
 #define WBosEventHContainer_h
 
@@ -18,11 +12,6 @@
  */
 class WBosEventHContainer : public PlotHelper
 {
-private:
-
-   //TH1* fhPseudoMass_ch[N_SILICON_CHANNELS];
-
-
 public:
 
    WBosEventHContainer();

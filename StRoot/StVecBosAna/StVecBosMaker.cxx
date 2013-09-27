@@ -155,11 +155,6 @@ Int_t StVecBosMaker::Init()
       mDbE = (StEEmcDb*) GetDataSet("StEEmcDb");
       assert(mDbE);
    }
-   else { // not used
-      //setup for reading in tree
-      //mVecBosEvent = new VecBosEvent();
-      //mTreeChain->SetBranchAddress("mVecBosEvent", &mVecBosEvent);
-   }
 
    gBTowGeom       = StEmcGeom::instance("bemc");
    mBSmdGeom[kBSE] = StEmcGeom::instance("bsmde");
@@ -211,39 +206,6 @@ Int_t StVecBosMaker::InitRun(int runNo)
       mBarrelTables->loadTables(this);
       mRunNo = runNo;
    }
-   //else {
-   //   mRunNo = mVecBosEvent->runNo;
-   //}
-
-   // barrel algo params
-   //LOG_INFO << Form("::InitRun(%d) %s done\n" \
-   //   "Barrel W-algo params: trigID L2BW=%d mIsMc=%d\n" \
-   //   "TPC: nPileupVert>%d, vertex |Z|<%.1fcm, primEleTrack: nFit>%d, hitFrac>%.2f Rin<%.1fcm, Rout>%.1fcm, PT>%.1fGeV/c\n" \
-   //   "BTOW ADC: kSigPed=%d AdcThr>%d maxAdc>%.0f clustET>%.1f GeV  ET2x2/ET4x4>%0.2f  ET2x2/mP3InNearCone.Pt()>%0.2f\n" \
-   //   "dist(track-clust)<%.1fcm, nearDelR<%.1f\n" \
-   //   "W selection highET>%.1f awayDelPhi<%.1frad  ptBalance>%.1fGeV  %.1f<leptonEta<%.1f ",
-   //   mRunNo, coreTitle.Data(), mL2BarrelTriggerId, mIsMc,
-   //   mMinNumPileupVertices, mCutVertexZ,
-   //   par_nFitPts, par_trackRin,  par_trackRout, mVecBosEvent->sMinBTrackPt,
-   //   par_kSigPed, par_AdcThres, par_maxADC, mMinBClusterEnergy, mMinBClusterEnergyIsoRatio, par_nearTotEtFrac,
-   //   mVecBosEvent->mMaxTrackClusterDist, mVecBosEvent->sMinTrackIsoDeltaR,
-   //   par_highET, mVecBosEvent->sMinTrackIsoDeltaPhi, par_ptBalance, mMinBTrackEta, mMaxBTrackEta
-   //) << endm;
-
-   // endcap algo params
-   //cout << Form("\n" \
-   //   "Endcap W-algo params: trigID: L2EW=%d mIsMc=%d\n" \
-   //   "TPC: nPileupVert>%d, vertex |Z|<%.1fcm, primEleTrack: nFit>%d, hitFrac>%.2f Rin<%.1fcm, Rout>%.1fcm, PT>%.1fGeV/c\n" \
-   //   "ETOW ADC: kSigPed=%d AdcThr>%d maxAdc>%.0f clustET>%.1f GeV  ET2x1/ET4x4>%0.2f  ET2x1/mP3InNearCone.Pt()>%0.2f\n" \
-   //   "dist(track-clust)<%.1fcm, nearDelR<%.1f\n" \
-   //   "W selection highET>%.1f awayDelPhi<%.1frad  ptBalance>%.1fGeV ",
-   //   mL2EndcapTriggerId, mIsMc,
-   //   mMinNumPileupVertices, mCutVertexZ,
-   //   parE_nFitPts, parE_nHitFrac, parE_trackRin, parE_trackRout, mMinETrackPt,
-   //   par_kSigPed, par_AdcThres, par_maxADC, parE_clustET, mMinEClusterEnergyIsoRatio, parE_nearTotEtFrac,
-   //   parE_delR3D, mVecBosEvent->sMinTrackIsoDeltaR,
-   //   par_highET, mVecBosEvent->sMinTrackIsoDeltaPhi, parE_ptBalance
-   //) << endl;
 
    cout << Form("\n EtowScaleFact=%.2f  BtowScaleFacor=%.2f" , mParETOWScale, mParBTOWScale) << endl;
 
@@ -915,7 +877,6 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
 
    // all 3 DB records exist
    // you do not want mix Long & Trans by accident
-   //if (mStSpinDbMaker && mStSpinDbMaker->isValid() && mStSpinDbMaker->isPolDirLong())
    if ( mStSpinDbMaker && mStSpinDbMaker->isValid() )
    {
       mVecBosEvent->bxStar48          = mStSpinDbMaker->BXstarUsingBX48(mVecBosEvent->bx48);

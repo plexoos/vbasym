@@ -1,7 +1,3 @@
-#
-# Makefile for vbasym
-#
-
 WANA_DIR      = .
 LIB_DIR       = $(WANA_DIR)
 SRC_DIR       = $(WANA_DIR)
@@ -46,8 +42,6 @@ LD            = g++
 #LDFLAGS       = -g
 LDFLAGS       =
 SOFLAGS       = -shared $(ROOTCFLAGS)
-
-#LIB_PATHS     = -L$(UTILS_LIB_DIR)
 
 LIBS          = $(ROOTLIBS) -lTable -lMinuit -lTreePlayer -lGeom -lrt
 
