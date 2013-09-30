@@ -1,3 +1,49 @@
+double integrateGraph(TGraph* graph, int first=0, int last=-1) {
+
+if (first < 0) first = 0;
+   Int_t fNpoints = graph->GetN();
+   if (last < 0) last = fNpoints - 1;
+   if (last >= graph->GetN()) last = fNpoints - 1;
+   if (first >= last) return 0;
+   Int_t np = last - first + 1;
+   Double_t sum = 0.0;
+   double* fY = graph->GetY();
+   double* fX = graph->GetX();
+   //for(Int_t i=first;i<=last;i++) {
+   //   Int_t j = first + (i-first+1)%np;
+   //   sum += TMath::Abs(fX[i]*fY[j]);
+   //   sum -= TMath::Abs(fY[i]*fX[j]);
+   //}
+   for (Int_t i = first; i <= last; i++) {
+      Int_t j = first + (i - first + 1) % np;
+      sum += (fY[i] + fY[j]) * (fX[j] - fX[i]);
+   }
+   return 0.5 * TMath::Abs(sum);
+
+}
+
+
+double scaleGraph(TGraph* graph, float scale=1, int first=0, int last=-1) {
+
+if (first < 0) first = 0;
+   Int_t fNpoints = graph->GetN();
+   if (last < 0) last = fNpoints - 1;
+   if (last >= graph->GetN()) last = fNpoints - 1;
+   if (first >= last) return 0;
+   double* fX = graph->GetX();
+   double* fY = graph->GetY();
+   //vector<double> fYsc(fNpoints, 0.); // creates a vector with fNpoints and initializes it to 0
+   //cout << fX << " " << fY << " " << fYsc << endl;
+   //cout << fX << " " << fY << endl;
+
+   for (Int_t i = first; i <= last; i++) {
+      fY[i] *= scale;
+      graph->SetPoint(i,fX[i],fY[i]);
+   }
+
+}
+
+
 void analysis2011()
 {
    std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to fixed
@@ -1609,7 +1655,13 @@ void analysis2011()
 
 
 
-   TCanvas *c10di = new TCanvas("c10di", "", 800, 400);
+   TCanvas *c10di   = new TCanvas("c10di", "", 800, 400);
+
+   TGraph *g1       = new TGraph("./curves/0304002.Wptcurve.txt","%lg %lg");   
+   Double_t int_g1  =  integrateGraph(g1); // the method Integral() not yet implemented on TGraph in ROOT4STAR  
+   Double_t int_hd_Wp_PtWRecoCorrected_zoomin    =  hd_Wp_PtWRecoCorrected_zoomin  -> Integral(); 
+   float scale_g1   = int_hd_Wp_PtWRecoCorrected_zoomin / int_g1;
+   scaleGraph(g1, 0.5*scale_g1);
 
    c10di-> SetTitle("Reco vs Gen zoom");
 
@@ -1632,12 +1684,20 @@ void analysis2011()
    hWp_Jets_PtWGenOverReco_zoomin_pfx->Draw("same");
 
    c10di_2->cd();
-   hd_Wp_PtWRecoCorrected_zoomin->SetFillStyle(3448);
-   hd_Wp_PtWRecoCorrected_zoomin->SetFillColor(kGreen);
-   hd_Wp_PtWRecoCorrected_zoomin->Draw();
-   hd_Wp_PtWReco_zoomin->SetTitle("Data");
-   hd_Wp_PtWReco_zoomin->Draw("same");
-   hd_Wp_PtWRecoCorrected_zoomin->Draw("same");
+   hd_Wp_PtWRecoCorrected_zoomin ->SetFillStyle(3448);
+   hd_Wp_PtWRecoCorrected_zoomin ->SetFillColor(kGreen);
+   hd_Wp_PtWRecoCorrected_zoomin ->Draw();
+   hd_Wp_PtWReco_zoomin          ->SetTitle("Data");
+   hd_Wp_PtWReco_zoomin          ->Draw("same");
+   hd_Wp_PtWRecoCorrected_zoomin ->Draw("same");
+   g1                            -> SetLineColor(kBlue); 
+   g1                            -> SetLineWidth(3); 
+   g1                            -> Draw("same");
+   TLegend *leg1 = new TLegend(0.45, 0.6, 0.75, 0.9);
+   leg1 -> AddEntry(hd_Wp_PtWReco_zoomin,"Before P_{T} correction", "F");
+   leg1 -> AddEntry(hd_Wp_PtWRecoCorrected_zoomin,"After P_{T} correction", "F" );
+   leg1 -> AddEntry(g1,"RhicBOS 500 GeV", "l");
+   leg1 -> Draw();
 
    //c10di_3->cd();
    //hd_Wp_PtWRelativeCorr_zoomin->Draw();
