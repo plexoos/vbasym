@@ -107,6 +107,7 @@ public:
    static const float  sMaxVertexJetDeltaZ;   //! distance between jet and vertex z coord, cm
    static const float  sMaxTrackJetDeltaZ;    //! distance between jet and track z coord, cm
    static const float  sMinBTrackPt;          //!
+   static const float  sMinRecoilTrackPt;     //! minimum Pt of a single track (cluster) in the recoil - S.Fazio 30Sep2013
    static const float  sMinTrackHitFrac;      //!
    static const float  sMinClusterEnergyFrac; //!
    static const float  sMaxJetCone;           //!

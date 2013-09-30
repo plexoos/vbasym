@@ -43,7 +43,8 @@ const float VecBosEvent::sMinTrackIsoDeltaR    = 0.7;  // was 0.7
 const float VecBosEvent::sMinTrackIsoDeltaPhi  = 0.7;
 const float VecBosEvent::sMaxVertexJetDeltaZ   = 1;    // distance between jet and vertex z coord, cm
 const float VecBosEvent::sMaxTrackJetDeltaZ    = 3;    // distance between jet and track z coord, cm
-const float VecBosEvent::sMinBTrackPt          = 10;
+//const float VecBosEvent::sMinBTrackPt          = 10;
+const float VecBosEvent::sMinRecoilTrackPt     = 3;    // minimum Pt of a single track (cluster) in the recoil - S. Fazio 30 Sep 2013
 const float VecBosEvent::sMinTrackHitFrac      = 0.51;
 const float VecBosEvent::sMinClusterEnergyFrac = 0.90; // was 0.88
 const float VecBosEvent::sMaxJetCone           = 0.7;  // cone = delta R
@@ -482,6 +483,8 @@ void VecBosEvent::CalcRecoilFromTracks()
          continue;
       }
 
+      if ( track.mP3AtDca.Pt() < sMinRecoilTrackPt ) continue;
+
       mP3TrackRecoilTpc += track.mP3AtDca;
 
       if ( track.HasCluster() ) {
@@ -536,7 +539,7 @@ void VecBosEvent::CalcRecoilFromTracks()
          }
       }
 
-      if (!hasMatch && !partOfElecCandidate) {
+      if (!hasMatch && !partOfElecCandidate &&  towerP.Pt() > sMinRecoilTrackPt ) {
          mP3TrackRecoilNeutrals += towerP;
       }
    }
