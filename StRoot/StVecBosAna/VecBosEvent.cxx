@@ -29,7 +29,6 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mWEvent(0),
    mP4JetTotal(), mP4JetFirst(), mP4JetRecoil(), mP3TrackRecoilTpc(), mP3TrackRecoilTow(),
    mP3TrackRecoilNeutrals(), mP3TrackRecoilTpcNeutrals(),
-   mP3RecoilFromTracks(),
    mPtTrackRecoilWithNeutralsCorrected(0),
    mMinVertexDeltaZ(-1),
    mP3BalanceFromTracks(),
@@ -1000,7 +999,6 @@ void VecBosEvent::Clear(const Option_t* opt)
    mP3TrackRecoilTow.SetXYZ(0, 0, 0);
    mP3TrackRecoilNeutrals.SetXYZ(0, 0, 0);
    mP3TrackRecoilTpcNeutrals.SetXYZ(0, 0, 0);
-   mP3RecoilFromTracks.SetXYZ(0, 0, 0);
    mP3BalanceFromTracks.SetXYZ(0, 0, 0);
    mPtTrackRecoilWithNeutralsCorrected =  0;
    mMinVertexDeltaZ                    = -1;

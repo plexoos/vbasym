@@ -85,7 +85,6 @@ public:
    TVector3                mP3TrackRecoilTow;
    TVector3                mP3TrackRecoilNeutrals;
    TVector3                mP3TrackRecoilTpcNeutrals;
-   TVector3                mP3RecoilFromTracks;
    Float_t                 mMinVertexDeltaZ;            // min distance along z between vertices
    TVector3                mP3BalanceFromTracks;
    TVector3                mP3BalanceFromTracks2;

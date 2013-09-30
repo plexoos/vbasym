@@ -142,14 +142,6 @@ void MCHContainer::BookHists()
    o["hRecOutAccPt"]              = hist = new TH1I("hRecOutAccPt", "; P^{Recoil}_{t} [GeV/c]; Events", 50, 0., 50.);
    hist->SetOption("hist GRIDX");
 
-   // recoil from tracks geant variables
-   o["hHadRecoilFromTracksPx"]   = hist = new TH1I("hHadRecoilFromTracksPx", "; P_{x}^{Recoil} (geant); Events", 100, -50., 50.);
-   o["hHadRecoilFromTracksPy"]   = hist = new TH1I("hHadRecoilFromTracksPy", "; P_{y}^{Recoil} (geant); Events", 100, -50., 50.);
-   o["hHadRecoilFromTracksPz"]   = hist = new TH1I("hHadRecoilFromTracksPz", "; P_{z}^{Recoil} (geant); Events", 100, -50., 50.);
-   o["hHadRecoilFromTracksEta"]  = hist = new TH1I("hHadRecoilFromTracksEta", "; #eta^{Recoil} (geant); Events", 100, -8., 8.);
-   o["hHadRecoilFromTracksPt"]   = hist = new TH1I("hHadRecoilFromTracksPt", "; P_{T}^{Recoil} (geant); Events", 100, 0., 50.);
-   o["hRecoilCorrelPythia"]      = hist = new TH2I("hRecoilCorrelPythia", "; P_{T}^{Recoil} (geant:pythia); P_{T}^{Recoil}", 100, 0., 50., 100, 0., 50.);
-
    o["hJetRecoilPtVsWBosonPt"]      = hist = new TH2I("hJetRecoilPtVsWBosonPt", "; W Boson P_{T}; Jet-based Recoil P_{T}", 50, 0., 50., 50, 0., 50.);
    hist->SetOption("colz LOGZ");
 
@@ -255,19 +247,6 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hRecOutAccMomentumY"])->Fill(event.mWEvent->mP4RecoilOutAccept.Py());
    ((TH1*) o["hRecOutAccMomentumZ"])->Fill(event.mWEvent->mP4RecoilOutAccept.Pz());
    ((TH1*) o["hRecOutAccPt"])       ->Fill(event.mWEvent->mP4RecoilOutAccept.Pt());
-
-   // recoil from tracks geant variables
-   ((TH1*) o["hHadRecoilFromTracksPx"])->Fill(event.mP3RecoilFromTracks.Px());
-   ((TH1*) o["hHadRecoilFromTracksPy"])->Fill(event.mP3RecoilFromTracks.Py());
-   ((TH1*) o["hHadRecoilFromTracksPz"])->Fill(event.mP3RecoilFromTracks.Pz());
-
-   if (event.mP3RecoilFromTracks.Mag() > 0)
-      ((TH1*) o["hHadRecoilFromTracksEta"])->Fill(event.mP3RecoilFromTracks.Eta());
-   else
-      ((TH1*) o["hHadRecoilFromTracksEta"])->Fill(1e5);
-
-   ((TH1*) o["hHadRecoilFromTracksPt"])->Fill(event.mP3RecoilFromTracks.Pt());
-   ((TH1*) o["hRecoilCorrelPythia"])->Fill(event.mP3RecoilFromTracks.Pt(), event.mWEvent->mP4Recoil.Pt());
 
    ((TH2*) o["hJetRecoilPtVsWBosonPt"])                      ->Fill(event.mWEvent->mP4WBoson.Pt(),  event.GetJetRecoil().Pt());
    ((TH2*) o["hJetRecoilPhiVsWBosonPhi"])                    ->Fill(event.mWEvent->mP4WBoson.Phi(), event.GetJetRecoil().Phi());
