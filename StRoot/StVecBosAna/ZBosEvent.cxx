@@ -11,7 +11,7 @@ using namespace std;
 const float ZBosEvent::sMinElectronPtLight = 15;
 const float ZBosEvent::sMinElectronPtHard  = 25;
 const float ZBosEvent::sMinNeutrinoPt      = 18;
-
+const float ZBosEvent::sMinZEleCandPt      = 15; // S.Fazio 30Sep2013
 
 ZBosEvent::ZBosEvent() : VecBosEvent(), mZBosMass(91.1876), mCand1P3(), mCand2P3()
 {
@@ -42,14 +42,19 @@ void ZBosEvent::Process()
 {
    VecBosEvent::ProcessZ0();
 
-   //here I have to loop over candidates. 
-
    // Make sure an isolated track exists
    if (mTracksCandidate.size() < 1) return;
 
    VecBosTrack &trackCand1  = **mTracksCandidate.begin();
+
+   mCand1P3 = trackCand1.GetP3EScaled();
+   mP4Cand1.SetPxPyPzE(mCand1P3.Px(), mCand1P3.Py(), mCand1P3.Pz(), trackCand1.mCluster2x2.mEnergy);
+   mP4Cand2.SetPxPyPzE(0, 0, 0, 0);
+
+   //mP4Cand1.SetE(trackCand1.mCluster2x2.mEnergy)
    VecBosTrack trackCand2;
 
+   // Loop over candidates. 
    VecBosTrackPtrSetIter iTrackCand = mTracksCandidate.begin();
    for (; iTrackCand != mTracksCandidate.end(); ++iTrackCand) {
       VecBosTrack &cand = **iTrackCand;
@@ -58,17 +63,20 @@ void ZBosEvent::Process()
 
       if (cand.mStMuTrack->charge() != trackCand1.mStMuTrack->charge()) {
 	// If the sign of the second track is different from the sign 
-	// of the first track pick it as Z candidate otherwise gor further 
+	// of the first track pick it as Z second electron candidate. 
 	trackCand2 = cand;
+        mCand2P3 = trackCand2.GetP3EScaled();
+        mP4Cand2.SetPxPyPzE(mCand2P3.Px(), mCand2P3.Py(), mCand2P3.Pz(), trackCand1.mCluster2x2.mEnergy);
+        //mP4Cand2.SetE(trackCand1.mCluster2x2.mEnergy)
         break;
       }  else {
         //Info("Print", "this is no Z event ");
+        mCand2P3 = -99;
 	break;
       }
    }
 
-   mCand1P3 = trackCand1.GetP3EScaled();
-
+   CalcZBosP4();
 }
 
 
@@ -78,10 +86,11 @@ void ZBosEvent::Clear(const Option_t*)
 }
 
 
-bool ZBosEvent::PassedCutWBos(float minElePt) const
+bool ZBosEvent::PassedCutZBos(float minElePt) const
 {
-   if ( HasCandidateEle() && mPtBalanceCosPhiFromTracks >= sMinNeutrinoPt &&
-        (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= minElePt)
+   if ( HasCandidateEle() && 
+        mCand1P3.Pt() >= sMinZEleCandPt && 
+        mCand2P3.Pt() >= sMinZEleCandPt )
    {
       return true;
    }
@@ -89,30 +98,10 @@ bool ZBosEvent::PassedCutWBos(float minElePt) const
    return false;
 }
 
-
-bool ZBosEvent::PassedCutWBosPlus(float minElePt) const
+void ZBosEvent::CalcZBosP4()
 {
-   return PassedCutWBos(minElePt) && GetElectronCandidate().GetChargeSign() > 0;
+   mP4ZBoson = mP4Cand1 + mP4Cand2;
 }
-
-
-bool ZBosEvent::PassedCutWBosMinus(float minElePt) const
-{
-   return PassedCutWBos(minElePt) && GetElectronCandidate().GetChargeSign() < 0;
-}
-
-
-bool ZBosEvent::PassedCutQcdBkg(float minElePt) const
-{
-   if ( HasCandidateEle() && mPtBalanceCosPhiFromTracks < sMinNeutrinoPt &&
-        (*mTracksCandidate.begin())->GetP3EScaled().Pt() >= minElePt)
-   {
-      return true;
-   }
-
-   return false;
-}
-
 
 void ZBosEvent::Streamer(TBuffer &R__b)
 {
