@@ -81,6 +81,7 @@ StVecBosMaker::StVecBosMaker(AnaInfo& anaInfo, const char *name, VecBosRootFile 
    setHListTpc(0);
    setMC(0);
    setFindZ(0);
+   setTracksPtMin(0);
 
    // MC trigger simulator
    par_l0emulAdcThresh          = 30;
