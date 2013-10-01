@@ -8,9 +8,9 @@ ClassImp(ZBosEvent)
 using namespace std;
 
 
-const float ZBosEvent::sMinElectronPtLight = 15;
-const float ZBosEvent::sMinElectronPtHard  = 25;
-const float ZBosEvent::sMinNeutrinoPt      = 18;
+//const float ZBosEvent::sMinElectronPtLight = 15;
+//const float ZBosEvent::sMinElectronPtHard  = 25;
+//const float ZBosEvent::sMinNeutrinoPt      = 18;
 const float ZBosEvent::sMinZEleCandPt      = 15; // S.Fazio 30Sep2013
 
 ZBosEvent::ZBosEvent() : VecBosEvent(), mZBosMass(91.1876), mCand1P3(), mCand2P3()
@@ -69,11 +69,12 @@ void ZBosEvent::Process()
         mP4Cand2.SetPxPyPzE(mCand2P3.Px(), mCand2P3.Py(), mCand2P3.Pz(), trackCand1.mCluster2x2.mEnergy);
         //mP4Cand2.SetE(trackCand1.mCluster2x2.mEnergy)
         break;
-      }  else {
+      }  
+      //else {
         //Info("Print", "this is no Z event ");
-        mCand2P3 = -99;
-	break;
-      }
+      //  mCand2P3 = -99;
+      //	break;
+      //}
    }
 
    CalcZBosP4();
@@ -83,14 +84,28 @@ void ZBosEvent::Process()
 void ZBosEvent::Clear(const Option_t*)
 {
    VecBosEvent::Clear();
+   mCand1P3.SetXYZ(0, 0, 0);
+   mCand2P3.SetXYZ(0, 0, 0);
+   mP4Cand1.SetPxPyPzE(0, 0, 0, 0);
+   mP4Cand2.SetPxPyPzE(0, 0, 0, 0);
+
+}
+
+
+void ZBosEvent::Print(const Option_t* opt) const
+{
+   Info("Print", ":");
+   //VecBosEvent::Print(opt);
+   mCand1P3.Print();
+   mCand2P3.Print();
 }
 
 
 bool ZBosEvent::PassedCutZBos(float minElePt) const
 {
    if ( HasCandidateEle() && 
-        mCand1P3.Pt() >= sMinZEleCandPt && 
-        mCand2P3.Pt() >= sMinZEleCandPt )
+        mCand1P3.Pt() >= minElePt && 
+        mCand2P3.Pt() >= minElePt )
    {
       return true;
    }
@@ -105,10 +120,10 @@ void ZBosEvent::CalcZBosP4()
 
 void ZBosEvent::Streamer(TBuffer &R__b)
 {
-   if (R__b.IsReading()) {
-      R__b.ReadClassBuffer(ZBosEvent::Class(), this);
-   }
-   else {
-      R__b.WriteClassBuffer(ZBosEvent::Class(), this);
-   }
+  //   if (R__b.IsReading()) {
+  //      R__b.ReadClassBuffer(ZBosEvent::Class(), this);
+  //   }
+  //   else {
+  //      R__b.WriteClassBuffer(ZBosEvent::Class(), this);
+  //   }
 }

@@ -24,11 +24,12 @@ public:
    TVector3     GetVecBosonP3() const;
    virtual void Process();
    virtual void Clear(const Option_t* opt="");
-   bool         PassedCutZBos(float minElePt=sMinElectronPtLight) const;
+   virtual void Print(const Option_t* opt="") const;
+   bool         PassedCutZBos(float minElePt=sMinZEleCandPt) const;
 
-   static const float sMinElectronPtLight; //!
-   static const float sMinElectronPtHard;  //!
-   static const float sMinNeutrinoPt;      //!
+   //static const float sMinElectronPtLight; //!
+   //static const float sMinElectronPtHard;  //!
+   //static const float sMinNeutrinoPt;      //!
    static const float sMinZEleCandPt;      //! S.Fazio 30Sep2013
 
 protected:

@@ -65,6 +65,7 @@ public:
    void         setHListTpc(TObjArray *x)       { HListTpc = x; }
    void         setMC(int x)                    { mIsMc = x; }
    void         setFindZ(int x)                 { mFindZ = x; }
+   void         setTracksPtMin(int x)           { mTracksPtMin = x; }
    void         setMaxDisplayEve(int n)         { par_maxDisplEve = n; }
    void         AttachSpinDb(StSpinDbMaker *mk) { mStSpinDbMaker = mk; }
 
@@ -119,6 +120,7 @@ protected:
    int             mNumAcceptedEvents;      // event counters
    int             mRunNo;
    int             nRun;
+   int             mTracksPtMin;
    int             mIsMc;                   // 0 for real data
    int             mFindZ;                  // 0 for W boson
    int             Tfirst;
