@@ -33,6 +33,7 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mMinVertexDeltaZ(-1),
    mP3BalanceFromTracks(),
    mBalanceDeltaPhiFromTracks(0),
+   mNumRecoilTracksTpc(0),
    mLumiEff(0)
 {
 }
@@ -43,7 +44,8 @@ const float VecBosEvent::sMinTrackIsoDeltaPhi  = 0.7;
 const float VecBosEvent::sMaxVertexJetDeltaZ   = 1;    // distance between jet and vertex z coord, cm
 const float VecBosEvent::sMaxTrackJetDeltaZ    = 3;    // distance between jet and track z coord, cm
 const float VecBosEvent::sMinBTrackPt          = 10;
-const float VecBosEvent::sMinRecoilTrackPt     = 3;    // minimum Pt of a single track (cluster) in the recoil - S. Fazio 30 Sep 2013
+const float VecBosEvent::sMinRecoilTrackPt     = 0;    // minimum Pt of a single track (cluster) in the recoil - S. Fazio 30 Sep 2013
+//const float VecBosEvent::sMinRecoilTrackPt     = mTracksPtMin; 
 const float VecBosEvent::sMinTrackHitFrac      = 0.51;
 const float VecBosEvent::sMinClusterEnergyFrac = 0.90; // was 0.88
 const float VecBosEvent::sMaxJetCone           = 0.7;  // cone = delta R
@@ -484,7 +486,8 @@ void VecBosEvent::CalcRecoilFromTracks()
 
       if ( track.mP3AtDca.Pt() < sMinRecoilTrackPt ) continue;
 
-      mP3TrackRecoilTpc += track.mP3AtDca;
+      mP3TrackRecoilTpc   += track.mP3AtDca;
+      mNumRecoilTracksTpc += 1;
 
       if ( track.HasCluster() ) {
          mP3TrackRecoilTow += track.GetP3EScaled();
@@ -1002,6 +1005,7 @@ void VecBosEvent::Clear(const Option_t* opt)
    mP3BalanceFromTracks.SetXYZ(0, 0, 0);
    mPtTrackRecoilWithNeutralsCorrected =  0;
    mMinVertexDeltaZ                    = -1;
+   mNumRecoilTracksTpc                 =  0;   
    mLumiEff                            = -0;
 }
 

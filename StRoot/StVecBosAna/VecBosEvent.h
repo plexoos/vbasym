@@ -52,6 +52,7 @@ public:
    int                     bxStar48;          //!
    int                     mSpinPattern4Bits; // using spinDb or -1 if failed
    int                     mSpinDirection;    // use spinDbEnum to interpret the value
+   int                     mNumRecoilTracksTpc;
    bool                    zTag;
    Double_t                mCpuTimeEventAna;
    Double_t                mCpuTimeHistFill;

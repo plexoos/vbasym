@@ -39,8 +39,13 @@ void EventHContainer::BookHists()
    h->SetOption("hist GRIDX");
    o["hNumJets"]               = h = new TH1I("hNumJets", "; Num. of Jets; Events", 15, 0, 15);
    h->SetOption("hist GRIDX");
+
+   o["hNumTracksRecoil"]       = h = new TH1I("hNumTracksRecoil", "; Num. of Tracks in Recoil; Events", 50, 0, 50); 
+   h->SetOption("hist GRIDX");
+
    o["hNumJetsRecoil"]         = h = new TH1I("hNumJetsRecoil", "; Num. of Jets in Recoil; Events", 15, 0, 15);
    h->SetOption("hist GRIDX");
+
    o["hNumJetsWithIsoTrack"]   = h = new TH1I("hNumJetsWithIsoTrack", "; Num. of Jets w/ Iso Track; Events", 15, 0, 15);
    h->SetOption("hist GRIDX");
    o["hNumVertices"]           = h = new TH1I("hNumVertices", "; Num. of Vertices; Events", 10, 0, 10);
@@ -91,6 +96,7 @@ void EventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hRunId"])                     ->Fill(event.GetRunId());
    ((TH1*) o["hZdcRate"])                   ->Fill(event.zdcRate);
    ((TH1*) o["hNumJets"])                   ->Fill(event.GetNumJets());
+   ((TH1*) o["hNumTracksRecoil"])           ->Fill(event.mNumRecoilTracksTpc);
    ((TH1*) o["hNumJetsRecoil"])             ->Fill(event.GetNumJetsRecoil());
    ((TH1*) o["hNumJetsWithIsoTrack"])       ->Fill(event.GetNumJetsWithIsoTrack());
    ((TH1*) o["hNumVertices"])               ->Fill(event.GetNumVertices());
