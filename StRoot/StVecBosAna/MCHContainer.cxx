@@ -299,4 +299,20 @@ void MCHContainer::PostFill()
       hRecoilCorrection->Fit("pol3", "+", "", 0, 5);
       hRecoilCorrection->Fit("pol0", "+", "", 5, 10);
    }
+
+   // Fit the means
+   TH2I* hRecoilVsWBosonPt = (TH2I*) o["hTrackRecoilTpcNeutralsPtVsWBosonPt"];
+   TProfile* hRecoilVsWBosonPt_pfx = hRecoilVsWBosonPt->ProfileX();
+   TF1 fitFunc("fitFunc", "[0] + [1]*x", hRecoilVsWBosonPt_pfx->GetXaxis()->GetXmin(), hRecoilVsWBosonPt_pfx->GetXaxis()->GetXmax());
+   fitFunc.SetParNames("Offset", "Slope");
+   hRecoilVsWBosonPt_pfx->Fit(&fitFunc);
+   hRecoilVsWBosonPt->GetListOfFunctions()->Add(hRecoilVsWBosonPt_pfx->Clone(), "same");
+
+   // Fit the means of the corrected recoil p_T
+   hRecoilVsWBosonPt = (TH2I*) o["hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt"];
+   hRecoilVsWBosonPt_pfx = hRecoilVsWBosonPt->ProfileX();
+   TF1 fitFuncCorrected("fitFuncCorrected", "[0] + [1]*x", hRecoilVsWBosonPt_pfx->GetXaxis()->GetXmin(), hRecoilVsWBosonPt_pfx->GetXaxis()->GetXmax());
+   fitFuncCorrected.SetParNames("Offset", "Slope");
+   hRecoilVsWBosonPt_pfx->Fit(&fitFuncCorrected);
+   hRecoilVsWBosonPt->GetListOfFunctions()->Add(hRecoilVsWBosonPt_pfx->Clone(), "same");
 }
