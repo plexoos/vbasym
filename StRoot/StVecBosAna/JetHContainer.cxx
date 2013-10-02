@@ -62,9 +62,14 @@ void JetHContainer::Fill(ProtoEvent &ev)
 {
    VecBosEvent& event = (VecBosEvent&) ev;
 
-   VecBosJetPtrSetIter iJet = event.mJets.begin();
+   Fill(event.mJets);
+}
 
-   for ( ; iJet!=event.mJets.end(); ++iJet)
+
+void JetHContainer::Fill(VecBosJetPtrSet &vbJets)
+{
+   VecBosJetPtrSetIter iJet = vbJets.begin();
+   for ( ; iJet!=vbJets.end(); ++iJet)
    {
       Fill(**iJet);
    }
@@ -72,24 +77,10 @@ void JetHContainer::Fill(ProtoEvent &ev)
 
 
 /** */
-void JetHContainer::Fill(StJet &stJet)
+void JetHContainer::Fill(VecBosJet &vbJet)
 {
-   ((TH1*) o["hJetEta"])->Fill(stJet.Eta());
-   ((TH1*) o["hJetPhi"])->Fill(stJet.Phi());
-   ((TH1*) o["hJetPt"])->Fill(stJet.Pt());
-   ((TH1*) o["hJetNumTracks"])->Fill(stJet.nTracks);
-}
-
-
-/** */
-void JetHContainer::FillDerived()
-{
-   Info("FillDerived()", "Called");
-}
-
-
-/** */
-void JetHContainer::PostFill()
-{
-   Info("PostFill", "Called");
+   ((TH1*) o["hJetEta"])->Fill(vbJet.Eta());
+   ((TH1*) o["hJetPhi"])->Fill(vbJet.Phi());
+   ((TH1*) o["hJetPt"])->Fill(vbJet.Pt());
+   ((TH1*) o["hJetNumTracks"])->Fill(vbJet.GetTracks().size());
 }

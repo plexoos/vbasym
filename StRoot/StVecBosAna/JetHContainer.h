@@ -9,7 +9,7 @@
 
 #include "TDirectoryFile.h"
 
-#include "StSpinPool/StJets/StJet.h"
+#include "VecBosJet.h"
 
 #include "utils/PlotHelper.h"
 #include "utils/ProtoEvent.h"
@@ -20,23 +20,14 @@
  */
 class JetHContainer : public PlotHelper
 {
-private:
-
-   //TH1* fhPseudoMass_ch[N_SILICON_CHANNELS];
-
 public:
 
    JetHContainer();
    JetHContainer(TDirectory *dir);
-   ~JetHContainer();
-
-   using PlotHelper::FillDerived;
-   using PlotHelper::PostFill;
 
    void Fill(ProtoEvent &ev);
-   void Fill(StJet &track);
-   void FillDerived();
-   void PostFill();
+   void Fill(VecBosJet &vbJet);
+   void Fill(VecBosJetPtrSet &vbJets);
 
 private:
 
