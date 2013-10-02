@@ -7,6 +7,7 @@
 
 #include "TF1.h"
 #include "TProfile.h"
+#include "TText.h"
 
 #include "WBosEvent.h"
 #include "StVecBosMaker.h"
@@ -20,6 +21,8 @@
 #include "StMcEvent/StMcTrack.hh"
 
 #include "Globals.h"
+
+#include "utils/H2I.h"
 
 ClassImp(MCHContainer)
 
@@ -315,4 +318,26 @@ void MCHContainer::PostFill()
    fitFuncCorrected.SetParNames("Offset", "Slope");
    hRecoilVsWBosonPt_pfx->Fit(&fitFuncCorrected);
    hRecoilVsWBosonPt->GetListOfFunctions()->Add(hRecoilVsWBosonPt_pfx->Clone(), "same");
+
+   // Calculate the fraction of missreconstructed events
+   rh::H2I* hRecoVsGenWBosonPz = (rh::H2I*) o["hRecoVsGenWBosonPz"];
+
+   TF1 funcLow ("funcLow", "-30 + x", hRecoVsGenWBosonPz->GetXaxis()->GetXmin(), hRecoVsGenWBosonPz->GetXaxis()->GetXmax());
+   TF1 funcHigh("funcHigh", "30 + x", hRecoVsGenWBosonPz->GetXaxis()->GetXmin(), hRecoVsGenWBosonPz->GetXaxis()->GetXmax());
+
+   double integralAboveLow  = hRecoVsGenWBosonPz->CalcIntegralAbove(funcLow);
+   double integralAboveHigh = hRecoVsGenWBosonPz->CalcIntegralAbove(funcHigh);
+   double integral = hRecoVsGenWBosonPz->Integral();
+
+   printf("integralAboveLow: %f, integralAboveHigh: %f\n", integralAboveLow, integralAboveHigh);
+   //printf("integralAboveLow: %f, integralAboveHigh: \n", integralAboveLow);
+
+   char textFrac[10];
+   sprintf(textFrac, "f = %5.3f", (integralAboveLow-integralAboveHigh)/integral);
+
+   hRecoVsGenWBosonPz->GetListOfFunctions()->Add(funcLow.Clone());
+   hRecoVsGenWBosonPz->GetListOfFunctions()->Add(funcHigh.Clone());
+   TText *text = new TText(0.5, 0.92, textFrac);
+   text->SetNDC(true);
+   hRecoVsGenWBosonPz->GetListOfFunctions()->Add(text);
 }
