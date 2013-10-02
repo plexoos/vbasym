@@ -66,27 +66,27 @@ public:
    UShort_t                mNumETracks;
    UShort_t                mNumWithClusterTracks;
    UShort_t                mNumIsolatedTracks;
-   StJets                 *mStJets;            //!
-   StJets                 *mStJetsNoEndcap;    //! jets noEEMC
-   WeveBEMC                bemc;               //
-   WeveETOW                etow;               //!
-   WeveEPRS                eprs;               //!
-   WeveESMD                esmd;               //!
-   VecBosJetPtrSet         mJets;              // jet owner
-   VecBosJetPtrSet         mJetsRecoil;        //!
-   VecBosJetPtrSet         mJetsWithIsoTrack;  //!
-   VecBosVertexPtrSet      mVertices;          //
-   VecBosTrackPtrSet       mTracks;            // track owner
-   VecBosCandTrackPtrSet   mTracksCandidate;   // pointers to candidate tracks sorted by cluster energy
+   StJets                 *mStJets;                     //!
+   StJets                 *mStJetsNoEndcap;             //! jets noEEMC
+   WeveBEMC                bemc;                        ///
+   WeveETOW                etow;                        //!
+   WeveEPRS                eprs;                        //!
+   WeveESMD                esmd;                        //!
+   VecBosJetPtrSet         mJets;                       /// jet owner
+   VecBosJetPtrSet         mJetsRecoil;                 //!
+   VecBosJetPtrSet         mJetsWithIsoTrack;           //!
+   VecBosVertexPtrSet      mVertices;                   ///
+   VecBosTrackPtrSet       mTracks;                     /// track owner
+   VecBosCandTrackPtrSet   mTracksCandidate;            /// pointers to candidate tracks sorted by cluster energy
    WEvent                 *mWEvent;
    TLorentzVector          mP4JetTotal;
    TLorentzVector          mP4JetFirst;
    TLorentzVector          mP4JetRecoil;
-   TVector3                mP3TrackRecoilTpc;
-   TVector3                mP3TrackRecoilTow;
-   TVector3                mP3TrackRecoilNeutrals;
-   TVector3                mP3TrackRecoilTpcNeutrals;
-   Float_t                 mMinVertexDeltaZ;            // min distance along z between vertices
+   TVector3                mP3TrackRecoilTpc;           /// Vector sum of primary tracks, i.e. tracks coming from the primary vertex, except the lepton candidate track
+   TVector3                mP3TrackRecoilTow;           /// Vector sum of towers associated with primary tracks
+   TVector3                mP3TrackRecoilNeutrals;      /// Vector sum of all towers without matching track
+   TVector3                mP3TrackRecoilTpcNeutrals;   /// Vector sum of primary tracks and all towers
+   Float_t                 mMinVertexDeltaZ;            /// Minimum distance along z between vertices
    TVector3                mP3BalanceFromTracks;
    TVector3                mP3BalanceFromTracks2;
    TVector3                mP3BalanceFromJets;
