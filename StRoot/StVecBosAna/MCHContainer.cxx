@@ -288,10 +288,15 @@ void MCHContainer::FillDerived()
 void MCHContainer::PostFill()
 {
    Info("PostFill", "Called");
+
+   // Fit the correction curve
    TH2* hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin = (TH2*) o["hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin"];
 
-   o["hRecoilCorrection"] = (TProfile*) hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin->ProfileX("hRecoilCorrection", 0, 20);
+   o["hRecoilCorrection"] = (TProfile*) hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin->ProfileX("hRecoilCorrection", 0, 10);
    TProfile* hRecoilCorrection = (TProfile*) o["hRecoilCorrection"];
-   hRecoilCorrection->Fit("pol3", "+", "", 0, 5);
-   hRecoilCorrection->Fit("pol0", "+", "", 5, 10);
+
+   if (hRecoilCorrection->Integral() ) {
+      hRecoilCorrection->Fit("pol3", "+", "", 0, 5);
+      hRecoilCorrection->Fit("pol0", "+", "", 5, 10);
+   }
 }
