@@ -44,7 +44,7 @@ const float VecBosEvent::sMaxVertexJetDeltaZ   = 1;    // distance between jet a
 const float VecBosEvent::sMaxTrackJetDeltaZ    = 3;    // distance between jet and track z coord, cm
 const float VecBosEvent::sMinBTrackPt          = 10;
 const float VecBosEvent::sMinRecoilTrackPt     = 0;    // minimum Pt of a single track (cluster) in the recoil - S. Fazio 30 Sep 2013
-//const float VecBosEvent::sMinRecoilTrackPt     = mTracksPtMin; 
+//const float VecBosEvent::sMinRecoilTrackPt     = mTracksPtMin;
 const float VecBosEvent::sMinTrackHitFrac      = 0.51;
 const float VecBosEvent::sMinClusterEnergyFrac = 0.90; // was 0.88
 const float VecBosEvent::sMaxJetCone           = 0.7;  // cone = delta R
@@ -52,8 +52,6 @@ const float VecBosEvent::sMaxJetCone           = 0.7;  // cone = delta R
 
 VecBosEvent::~VecBosEvent()
 {
-   //Info("~VecBosEvent()", "this: %x", this);
-
    while (!mJets.empty()) delete *mJets.begin(), mJets.erase(mJets.begin());
    //mJets.clear(); // unnecessary?
    mJetsRecoil.clear();
@@ -259,7 +257,8 @@ void VecBosEvent::Process()
    UShort_t vertexId = 0;
 
    VecBosVertexPtrSetIter iVertex = mVertices.begin();
-   for ( ; iVertex != mVertices.end(); ++iVertex, vertexId++) {
+   for ( ; iVertex != mVertices.end(); ++iVertex, vertexId++)
+   {
       VecBosVertex &vertex = **iVertex;
       vertex.Process();
       vertex.mId = vertexId;
@@ -371,6 +370,7 @@ void VecBosEvent::ProcessPersistent()
    }
 }
 
+
 void VecBosEvent::ProcessZ0()
 {
    UShort_t vertexId = 0;
@@ -465,6 +465,10 @@ void VecBosEvent::ProcessMC()
 }
 
 
+/**
+ * Calculates the vector sum of all tracks in the event. The track is included if it comes from the
+ * same vertex as the lepton candidate and is not the lepton candidate.
+ */
 void VecBosEvent::CalcRecoilFromTracks()
 {
    // Make sure an isolated track exists
@@ -472,19 +476,14 @@ void VecBosEvent::CalcRecoilFromTracks()
 
    VecBosTrack &trackCandidate = **mTracksCandidate.begin();
 
+   // Calculate the vector sum of all tracks in the event
    VecBosTrackPtrSetIter iTrack = mTracks.begin();
-   for (; iTrack != mTracks.end(); ++iTrack) {
+   for (; iTrack != mTracks.end(); ++iTrack)
+   {
       VecBosTrack &track = **iTrack;
 
-      if ( track.mVertex != trackCandidate.mVertex ) {
-         //Info("CalcRecoilFromTracks", "track.mVertex != trackCandidate.mVertex");
-         continue;
-      }
-
-      if ( track == trackCandidate ) {
-         //Info("CalcRecoilFromTracks", "track, %x == trackCandidate, %x", track, trackCandidate);
-         continue;
-      }
+      if ( track.mVertex != trackCandidate.mVertex ) continue;
+      if ( track == trackCandidate ) continue;
 
       if ( track.mP3AtDca.Pt() < sMinRecoilTrackPt ) continue;
 
@@ -500,26 +499,27 @@ void VecBosEvent::CalcRecoilFromTracks()
    }
 
    // Process un-tracked BTOW hits
-   for (int iBTow = 0; iBTow < mxBtow; iBTow++) {
-      float eneTo = bemc.eneTile[kBTow][iBTow];
+   for (int iBTow = 0; iBTow < mxBtow; iBTow++)
+   {
+      double towerEnergy = bemc.eneTile[kBTow][iBTow];
 
-      if (eneTo <= 0.200) continue; // skip towers with energy below noise
-
+      if (towerEnergy <= 0.200) continue; // skip towers with energy below noise
 
       // Correct BCal tower position to the vertex position
-      TVector3 towerP = gBCalTowerCoords[iBTow] -  trackCandidate.mVertex->mPosition;
-      towerP.SetMag(eneTo); // it is 3D momentum in the event ref frame
+      TVector3 towerP3 = gBCalTowerCoords[iBTow] -  trackCandidate.mVertex->mPosition;
+      towerP3.SetMag(towerEnergy); // it is a 3-momentum in the event ref frame
       TVector3 towCoord = gBCalTowerCoords[iBTow];
 
       bool hasMatch            = false;
       bool partOfElecCandidate = false;
 
-      //Check if the tower belongs to the electron 2x2 candidate
-      TVector3 distToCluster(-10, -10, -10);  // nonsense value
-      distToCluster = trackCandidate.mCluster2x2.position - towCoord;
-      if (distToCluster.Mag() <= 2 * VecBosTrack::sMaxTrackClusterDist) partOfElecCandidate = true;
+      // Check if the tower belongs to the electron 2x2 candidate
+      TVector3 distToCluster = trackCandidate.mCluster2x2.position - towCoord;
 
-      //loop over tracks to and exclude towers with a matching track
+      if (distToCluster.Mag() <= 2 * VecBosTrack::sMaxTrackClusterDist)
+         partOfElecCandidate = true;
+
+      // Loop over tracks too and exclude towers with a matching track
       VecBosTrackPtrSetIter iTr = mTracks.begin();
       for ( ; iTr != mTracks.end(); ++iTr)
       {
@@ -528,14 +528,14 @@ void VecBosEvent::CalcRecoilFromTracks()
          TVector3     trCoorAtBTow = tr.GetCoordAtBTow();
          //printf("Track coordinate at  BTower: %f\n", trCoorAtBTow.Mag() );
 
-         if (trCoorAtBTow.Mag() == 0.000000) continue; // track does not extend to barrel
+         if (trCoorAtBTow.Mag() == 0.0) continue; // track does not extend to barrel
 
-         //if (trP3.DeltaR(towerP)    < 0.1) hasMatch = true;// Checks for a track matching the tower
-         //if (hasMatch == true)   continue;
+         //if (trP3.DeltaR(towerP3) < 0.1) hasMatch = true; // Checks for a track matching the tower
+         //if (hasMatch == true) continue;
          //if ( mTracks->ExtendTrack2Barrel() == false) continue;
 
-         TVector3 distToTower(-10, -10, -10);  // nonsense value
-         distToTower = trCoorAtBTow - towCoord;
+         // Spacial separation (track - cluster)
+         TVector3 distToTower = trCoorAtBTow - towCoord;
 
          if (distToTower.Mag() <= VecBosTrack::sMaxTrackClusterDist) {
             hasMatch = true; // the TPC track maches to the tower
@@ -543,8 +543,8 @@ void VecBosEvent::CalcRecoilFromTracks()
          }
       }
 
-      if (!hasMatch && !partOfElecCandidate &&  towerP.Pt() > sMinRecoilTrackPt ) {
-         mP3TrackRecoilNeutrals += towerP;
+      if (!hasMatch && !partOfElecCandidate && towerP3.Pt() > sMinRecoilTrackPt ) {
+         mP3TrackRecoilNeutrals += towerP3;
       }
    }
 
@@ -552,7 +552,7 @@ void VecBosEvent::CalcRecoilFromTracks()
 }
 
 
-/** If there is no track candidate than there is no recoil. */
+/** If there is no track candidate then there is no recoil. */
 bool VecBosEvent::IsRecoilJet(VecBosJet *vbJet) const
 {
    VecBosTrackPtrSetConstIter iTrack = mTracksCandidate.begin();
@@ -1074,14 +1074,10 @@ void VecBosEvent::GetGmt_day_hour(int &yyyymmdd, int &hhmmss) const
 void VecBosEvent::Streamer(TBuffer &R__b)
 {
    if (R__b.IsReading()) {
-      //Info("Streamer", "Reading...");
       R__b.ReadClassBuffer(VecBosEvent::Class(), this);
-
-      //Info("Streamer", "this: %x, mTracks.size(): %d, &mWEvent: %x, &mStJets: %x", this, mTracks.size(), mWEvent, mStJets);
       ProcessPersistent();
    }
    else {
-      //Info("Streamer", "Writing... ");
       R__b.WriteClassBuffer(VecBosEvent::Class(), this);
    }
 }

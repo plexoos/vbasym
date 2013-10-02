@@ -113,7 +113,7 @@ public:
    static const float  sMaxJetCone;           //!
 
    VecBosEvent();
-   ~VecBosEvent();
+   virtual ~VecBosEvent();
 
    void           InitUsing(StMuDstMaker* stMuDstMaker);
    VecBosVertex*  AddVertex(StMuPrimaryVertex &stMuVertex);
