@@ -28,8 +28,7 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mTracksCandidate(),
    mWEvent(0),
    mP4JetTotal(), mP4JetFirst(), mP4JetRecoil(), mP3TrackRecoilTpc(), mP3TrackRecoilTow(),
-   mP3TrackRecoilNeutrals(), mP3TrackRecoilTpcNeutrals(),
-   mPtTrackRecoilWithNeutralsCorrected(0),
+   mP3TrackRecoilNeutrals(), mP3TrackRecoilTpcNeutrals(), mP3TrackRecoilTpcNeutralsCorrected(),
    mMinVertexDeltaZ(-1),
    mP3BalanceFromTracks(),
    mBalanceDeltaPhiFromTracks(0),
@@ -219,24 +218,27 @@ VecBosTrack* VecBosEvent::FindTrackById(const Short_t trackId) const
 }
 
 
-TVector3 VecBosEvent::CalcTrackRecoilTpcNeutralsCorrected() const
+/**
+ * Corrects the default track recoil using the MC correction.
+ */
+TVector3 VecBosEvent::CalcTrackRecoilTpcNeutralsCorrected()
 {
-   TVector3 trackRecoilCorrected(GetTrackRecoilTpcNeutrals());
+   mP3TrackRecoilTpcNeutralsCorrected = mP3TrackRecoilTpcNeutrals;
    Double_t corrFact = 1.;
 
-   if (trackRecoilCorrected.Pt() < 5) {
-      corrFact = 5.4376 - 2.7803 * trackRecoilCorrected.Pt()
-                        + 0.6474 * pow(trackRecoilCorrected.Pt(), 2)
-                        - 0.0529 * pow(trackRecoilCorrected.Pt(), 3);
+   if (mP3TrackRecoilTpcNeutralsCorrected.Pt() < 5) {
+      corrFact = 5.4376 - 2.7803 * mP3TrackRecoilTpcNeutralsCorrected.Pt()
+                        + 0.6474 * pow(mP3TrackRecoilTpcNeutralsCorrected.Pt(), 2)
+                        - 0.0529 * pow(mP3TrackRecoilTpcNeutralsCorrected.Pt(), 3);
    }
    else {
       corrFact = 1.1202;
    }
 
-   trackRecoilCorrected.SetX(corrFact * trackRecoilCorrected.X());
-   trackRecoilCorrected.SetY(corrFact * trackRecoilCorrected.Y());
+   mP3TrackRecoilTpcNeutralsCorrected.SetX(corrFact * mP3TrackRecoilTpcNeutralsCorrected.X());
+   mP3TrackRecoilTpcNeutralsCorrected.SetY(corrFact * mP3TrackRecoilTpcNeutralsCorrected.Y());
 
-   return trackRecoilCorrected;
+   return mP3TrackRecoilTpcNeutralsCorrected;
 }
 
 
@@ -313,7 +315,7 @@ void VecBosEvent::Process()
    // Calculate the Pt balance as the vector sum: pt elec + pt recoil
    if  (mTracksCandidate.size() == 1) {
 
-      mPtTrackRecoilWithNeutralsCorrected = CalcTrackRecoilTpcNeutralsCorrected().Pt();
+      CalcTrackRecoilTpcNeutralsCorrected();
 
       mP3BalanceFromJets          = mP4JetRecoil.Vect() + (*mTracksCandidate.begin())->GetP3EScaled();
       mBalanceDeltaPhiFromJets    = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3BalanceFromJets);
@@ -1003,9 +1005,8 @@ void VecBosEvent::Clear(const Option_t* opt)
    mP3TrackRecoilNeutrals.SetXYZ(0, 0, 0);
    mP3TrackRecoilTpcNeutrals.SetXYZ(0, 0, 0);
    mP3BalanceFromTracks.SetXYZ(0, 0, 0);
-   mPtTrackRecoilWithNeutralsCorrected =  0;
    mMinVertexDeltaZ                    = -1;
-   mNumRecoilTracksTpc                 =  0;   
+   mNumRecoilTracksTpc                 =  0;
    mLumiEff                            = -0;
 }
 

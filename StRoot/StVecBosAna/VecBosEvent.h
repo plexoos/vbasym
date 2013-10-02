@@ -86,6 +86,7 @@ public:
    TVector3                mP3TrackRecoilTow;           /// Vector sum of towers associated with primary tracks
    TVector3                mP3TrackRecoilNeutrals;      /// Vector sum of all towers without matching track
    TVector3                mP3TrackRecoilTpcNeutrals;   /// Vector sum of primary tracks and all towers
+   TVector3                mP3TrackRecoilTpcNeutralsCorrected;   /// Corrected vector sum of primary tracks and all towers
    Float_t                 mMinVertexDeltaZ;            /// Minimum distance along z between vertices
    TVector3                mP3BalanceFromTracks;
    TVector3                mP3BalanceFromTracks2;
@@ -97,7 +98,6 @@ public:
    Double_t                mPtBalanceCosPhiFromTracks;
    Double_t                mPtBalanceCosPhiFromTracks2;
    Double_t                mPtBalanceCosPhiFromJets;
-   Double_t                mPtTrackRecoilWithNeutralsCorrected;
    Double_t                mHadRecoilFromTracksEta;
    Double_t                mHadRecoilFromTracksPt;
    float                   mLumiEff;
@@ -144,9 +144,10 @@ public:
    TVector3       GetTrackRecoil()            const { return mP3TrackRecoilTow; }
    TVector3       GetTrackRecoilNeutrals()    const { return mP3TrackRecoilNeutrals; }
    TVector3       GetTrackRecoilTpcNeutrals() const { return mP3TrackRecoilTpcNeutrals; }
+   TVector3       GetTrackRecoilTpcNeutralsCorrected() const { return mP3TrackRecoilTpcNeutralsCorrected; }
    VecBosVertex*  FindVertexById(const Short_t vertexId) const;
    VecBosTrack*   FindTrackById(const Short_t trackId) const;
-   TVector3       CalcTrackRecoilTpcNeutralsCorrected() const;
+   TVector3       CalcTrackRecoilTpcNeutralsCorrected();
    void           SetCpuTimeEventAna(Double_t time) { mCpuTimeEventAna = time; }
    void           SetCpuTimeHistFill(Double_t time) { mCpuTimeHistFill = time; }
    bool           HasGoodVertex()             const { return mNumGoodVertices    > 0 ? true : false; } // Checks if at least one good vertex exist in the event
