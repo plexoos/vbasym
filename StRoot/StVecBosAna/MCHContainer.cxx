@@ -7,6 +7,7 @@
 
 #include "TF1.h"
 #include "TProfile.h"
+#include "TText.h"
 
 #include "WBosEvent.h"
 #include "StVecBosMaker.h"
@@ -20,6 +21,8 @@
 #include "StMcEvent/StMcTrack.hh"
 
 #include "Globals.h"
+
+#include "utils/H2I.h"
 
 ClassImp(MCHContainer)
 
@@ -288,10 +291,53 @@ void MCHContainer::FillDerived()
 void MCHContainer::PostFill()
 {
    Info("PostFill", "Called");
+
+   // Fit the correction curve
    TH2* hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin = (TH2*) o["hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin"];
 
-   o["hRecoilCorrection"] = (TProfile*) hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin->ProfileX("hRecoilCorrection", 0, 20);
+   o["hRecoilCorrection"] = (TProfile*) hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin->ProfileX("hRecoilCorrection", 0, 10);
    TProfile* hRecoilCorrection = (TProfile*) o["hRecoilCorrection"];
-   hRecoilCorrection->Fit("pol3", "+", "", 0, 5);
-   hRecoilCorrection->Fit("pol0", "+", "", 5, 10);
+
+   if (hRecoilCorrection->Integral() ) {
+      hRecoilCorrection->Fit("pol3", "+", "", 0, 5);
+      hRecoilCorrection->Fit("pol0", "+", "", 5, 10);
+   }
+
+   // Fit the means
+   TH2I* hRecoilVsWBosonPt = (TH2I*) o["hTrackRecoilTpcNeutralsPtVsWBosonPt"];
+   TProfile* hRecoilVsWBosonPt_pfx = hRecoilVsWBosonPt->ProfileX();
+   TF1 fitFunc("fitFunc", "[0] + [1]*x", hRecoilVsWBosonPt_pfx->GetXaxis()->GetXmin(), hRecoilVsWBosonPt_pfx->GetXaxis()->GetXmax());
+   fitFunc.SetParNames("Offset", "Slope");
+   hRecoilVsWBosonPt_pfx->Fit(&fitFunc);
+   hRecoilVsWBosonPt->GetListOfFunctions()->Add(hRecoilVsWBosonPt_pfx->Clone(), "same");
+
+   // Fit the means of the corrected recoil p_T
+   hRecoilVsWBosonPt = (TH2I*) o["hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt"];
+   hRecoilVsWBosonPt_pfx = hRecoilVsWBosonPt->ProfileX();
+   TF1 fitFuncCorrected("fitFuncCorrected", "[0] + [1]*x", hRecoilVsWBosonPt_pfx->GetXaxis()->GetXmin(), hRecoilVsWBosonPt_pfx->GetXaxis()->GetXmax());
+   fitFuncCorrected.SetParNames("Offset", "Slope");
+   hRecoilVsWBosonPt_pfx->Fit(&fitFuncCorrected);
+   hRecoilVsWBosonPt->GetListOfFunctions()->Add(hRecoilVsWBosonPt_pfx->Clone(), "same");
+
+   // Calculate the fraction of missreconstructed events
+   rh::H2I* hRecoVsGenWBosonPz = (rh::H2I*) o["hRecoVsGenWBosonPz"];
+
+   TF1 funcLow ("funcLow", "-30 + x", hRecoVsGenWBosonPz->GetXaxis()->GetXmin(), hRecoVsGenWBosonPz->GetXaxis()->GetXmax());
+   TF1 funcHigh("funcHigh", "30 + x", hRecoVsGenWBosonPz->GetXaxis()->GetXmin(), hRecoVsGenWBosonPz->GetXaxis()->GetXmax());
+
+   double integralAboveLow  = hRecoVsGenWBosonPz->CalcIntegralAbove(funcLow);
+   double integralAboveHigh = hRecoVsGenWBosonPz->CalcIntegralAbove(funcHigh);
+   double integral = hRecoVsGenWBosonPz->Integral();
+
+   printf("integralAboveLow: %f, integralAboveHigh: %f\n", integralAboveLow, integralAboveHigh);
+   //printf("integralAboveLow: %f, integralAboveHigh: \n", integralAboveLow);
+
+   char textFrac[10];
+   sprintf(textFrac, "f = %5.3f", (integralAboveLow-integralAboveHigh)/integral);
+
+   hRecoVsGenWBosonPz->GetListOfFunctions()->Add(funcLow.Clone());
+   hRecoVsGenWBosonPz->GetListOfFunctions()->Add(funcHigh.Clone());
+   TText *text = new TText(0.5, 0.92, textFrac);
+   text->SetNDC(true);
+   hRecoVsGenWBosonPz->GetListOfFunctions()->Add(text);
 }
