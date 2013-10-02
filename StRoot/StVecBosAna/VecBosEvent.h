@@ -98,8 +98,6 @@ public:
    Double_t                mPtBalanceCosPhiFromTracks;
    Double_t                mPtBalanceCosPhiFromTracks2;
    Double_t                mPtBalanceCosPhiFromJets;
-   Double_t                mHadRecoilFromTracksEta;
-   Double_t                mHadRecoilFromTracksPt;
    float                   mLumiEff;
 
    static const float  sMinTrackIsoDeltaR;    //! (rad) near-cone size
