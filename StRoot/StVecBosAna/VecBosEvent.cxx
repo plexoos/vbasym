@@ -410,7 +410,7 @@ void VecBosEvent::ProcessZ0()
       if (track.IsIsolated()) {
          mNumIsolatedTracks++;
 
-         if ( track.IsUnBalanced() ) track.FindClosestJet();
+	 // if ( track.IsUnBalanced() ) track.FindClosestJet();
       }
 
       if ( track.IsZelectronCandidate() ) {

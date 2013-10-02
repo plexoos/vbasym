@@ -43,16 +43,13 @@ void ZBosEvent::Process()
    VecBosEvent::ProcessZ0();
 
    // Make sure an isolated track exists
-   if (mTracksCandidate.size() < 1) return;
+   if (mTracksCandidate.size() <= 1) return;
 
    VecBosTrack &trackCand1  = **mTracksCandidate.begin();
 
    mCand1P3 = trackCand1.GetP3EScaled();
    mP4Cand1.SetPxPyPzE(mCand1P3.Px(), mCand1P3.Py(), mCand1P3.Pz(), trackCand1.mCluster2x2.mEnergy);
    mP4Cand2.SetPxPyPzE(0, 0, 0, 0);
-
-   //mP4Cand1.SetE(trackCand1.mCluster2x2.mEnergy)
-   VecBosTrack trackCand2;
 
    // Loop over candidates. 
    VecBosTrackPtrSetIter iTrackCand = mTracksCandidate.begin();
@@ -64,24 +61,23 @@ void ZBosEvent::Process()
       if (cand.mStMuTrack->charge() != trackCand1.mStMuTrack->charge()) {
 	// If the sign of the second track is different from the sign 
 	// of the first track pick it as Z second electron candidate. 
-	trackCand2 = cand;
-        mCand2P3 = trackCand2.GetP3EScaled();
-        mP4Cand2.SetPxPyPzE(mCand2P3.Px(), mCand2P3.Py(), mCand2P3.Pz(), trackCand1.mCluster2x2.mEnergy);
-        //mP4Cand2.SetE(trackCand1.mCluster2x2.mEnergy)
+        mCand2P3 = cand.GetP3EScaled();
+        mP4Cand2.SetPxPyPzE(mCand2P3.Px(), mCand2P3.Py(), mCand2P3.Pz(), cand.mCluster2x2.mEnergy);
         break;
       }  
-      //else {
-        //Info("Print", "this is no Z event ");
-      //  mCand2P3 = -99;
-      //	break;
-      //}
+      else {
+        Info("Print", "this is not a Z0 event ");
+      	break;
+      }
    }
 
    CalcZBosP4();
 }
 
 
-void ZBosEvent::Clear(const Option_t*)
+
+
+void ZBosEvent::Clear(const Option_t* opt)
 {
    VecBosEvent::Clear();
    mCand1P3.SetXYZ(0, 0, 0);
@@ -120,10 +116,14 @@ void ZBosEvent::CalcZBosP4()
 
 void ZBosEvent::Streamer(TBuffer &R__b)
 {
-  //   if (R__b.IsReading()) {
-  //      R__b.ReadClassBuffer(ZBosEvent::Class(), this);
-  //   }
-  //   else {
-  //      R__b.WriteClassBuffer(ZBosEvent::Class(), this);
-  //   }
+  
+   if (R__b.IsReading()) {
+      Info("Streamer", "Reading...");
+      R__b.ReadClassBuffer(ZBosEvent::Class(), this);
+   }
+   else {
+      Info("Streamer", "Writing... ");
+      R__b.WriteClassBuffer(ZBosEvent::Class(), this);
+   }
+  
 }
