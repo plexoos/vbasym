@@ -110,13 +110,13 @@ void MCHContainer::BookHists()
    hist->SetOption("colz LOGZ");
 
    // recoil
-   o["hRecoilE"]                  = hist = new TH1I("hRecoilE", "; Recoil energy [GeV]; Events", 100, 0., 200.);
+   o["hGenRecoilE"]               = hist = new TH1I("hGenRecoilE", "; Recoil energy [GeV]; Events", 100, 0., 200.);
    hist->SetOption("hist GRIDX");
-   o["hRecoilPx"]                 = hist = new TH1I("hRecoilPx", "; P^{Recoil}_{x} [GeV/c]; Events", 100, -160., 160.);
+   o["hGenRecoilPx"]              = hist = new TH1I("hGenRecoilPx", "; P^{Recoil}_{x} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
-   o["hRecoilPy"]                 = hist = new TH1I("hRecoilPy", "; P^{Recoil}_{y} [GeV/c]; Events", 100, -160., 160.);
+   o["hGenRecoilPy"]              = hist = new TH1I("hGenRecoilPy", "; P^{Recoil}_{y} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
-   o["hRecoilPz"]                 = hist = new TH1I("hRecoilPz", "; P^{Recoil}_{z} [GeV/c]; Events", 100, -160., 160.);
+   o["hGenRecoilPz"]              = hist = new TH1I("hGenRecoilPz", "; P^{Recoil}_{z} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
    o["hRecoilPt"]                 = hist = new TH1I("hRecoilPt", "; P^{Recoil}_{t} [GeV/c]; Events", 100, -160., 160.);
    hist->SetOption("hist GRIDX");
@@ -235,12 +235,12 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hRecoVsGenWBosonPz"])   ->Fill(event.mWEvent->mP4WBoson.Pz(),    event.GetVecBosonP3().Pz());
    ((TH1*) o["hRecoVsGenWBosonEta"])  ->Fill(event.mWEvent->mP4WBoson.Eta(),   event.GetVecBosonP3().Eta());
 
-   // recoil variables
-   ((TH1*) o["hRecoilE"])->Fill(event.mWEvent->mP4Recoil.E());
-   ((TH1*) o["hRecoilPx"])->Fill(event.mWEvent->mP4Recoil.Px());
-   ((TH1*) o["hRecoilPy"])->Fill(event.mWEvent->mP4Recoil.Py());
-   ((TH1*) o["hRecoilPz"])->Fill(event.mWEvent->mP4Recoil.Pz());
-   ((TH1*) o["hRecInAccEnergy"])->Fill(event.mWEvent->mP4RecoilInAccept.E());
+   ((TH1*) o["hGenRecoilE"]) ->Fill(event.mWEvent->mP4Recoil.E());
+   ((TH1*) o["hGenRecoilPx"])->Fill(event.mWEvent->mP4Recoil.Px());
+   ((TH1*) o["hGenRecoilPy"])->Fill(event.mWEvent->mP4Recoil.Py());
+   ((TH1*) o["hGenRecoilPz"])->Fill(event.mWEvent->mP4Recoil.Pz());
+
+   ((TH1*) o["hRecInAccEnergy"])    ->Fill(event.mWEvent->mP4RecoilInAccept.E());
    ((TH1*) o["hRecInAccMomentumX"]) ->Fill(event.mWEvent->mP4RecoilInAccept.Px());
    ((TH1*) o["hRecInAccMomentumY"]) ->Fill(event.mWEvent->mP4RecoilInAccept.Py());
    ((TH1*) o["hRecInAccMomentumZ"]) ->Fill(event.mWEvent->mP4RecoilInAccept.Pz());
