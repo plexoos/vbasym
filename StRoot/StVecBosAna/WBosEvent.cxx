@@ -34,14 +34,18 @@ TVector3 WBosEvent::CalcMissingEnergyP3() const
    return -1*(mP3TrackRecoilTpcNeutralsCorrected + mElectronP3);
 
    // Other definitions
-   //return mP3TrackRecoilTow + GetElectronP3();
-   //return mP4JetRecoil + GetElectronP3();
+   //return -1*(mP3TrackRecoilTpcNeutrals + mElectronP3);
+   //return -1*(mP3TrackRecoilTow + mElectronP3);
+   //return -1*(mP4JetRecoil + mElectronP3);
 }
 
 
 TVector3 WBosEvent::GetVecBosonP3() const { return GetElectronP3() + GetNeutrinoP3(); }
 
 
+/**
+ * The primary method to identify and reconstruct the event with a W boson.
+ */
 void WBosEvent::Process()
 {
    VecBosEvent::Process();
@@ -122,7 +126,6 @@ bool WBosEvent::PassedCutQcdBkg(float minElePt) const
 
 void WBosEvent::ReconstructNeutrinoZ()
 {
-   //Info("ReconstructNeutrinoZ", " ");
    double A = mWBosMass*mWBosMass/2 + mElectronP3.Px() * mNeutrinoP3.Px() + mElectronP3.Py() * mNeutrinoP3.Py();
    double a = mElectronP3.Pt() * mElectronP3.Pt();
    double b = -2 * A * mElectronP3.Pz();
@@ -142,17 +145,10 @@ void WBosEvent::ReconstructNeutrinoZ()
 
 void WBosEvent::Streamer(TBuffer &R__b)
 {
-   //VecBosEvent::Streamer(R__b);
-
    if (R__b.IsReading()) {
-      //Info("Streamer", "Reading...");
       R__b.ReadClassBuffer(WBosEvent::Class(), this);
-
-      //ProcessPersistent();
-      //Info("Streamer", "this: %x, mTracks.size(): %d, &mWEvent: %x, &mStJets: %x", this, mTracks.size(), mWEvent, mStJets);
    }
    else {
-      //Info("Streamer", "Writing... ");
       R__b.WriteClassBuffer(WBosEvent::Class(), this);
    }
 }

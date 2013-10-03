@@ -32,8 +32,6 @@ VecBosVertex::VecBosVertex(StMuPrimaryVertex &stMuVertex) : TObject(),
 
 VecBosVertex::~VecBosVertex()
 {
-   //Info("~VecBosVertex()", "this: %x, mtracks.size: %d", this, mTracks.size());
-   //while(!mTracks.empty()) delete *mTracks.begin(), mTracks.erase(mTracks.begin());
    mTracks.clear();
    eleTrack.clear();
 }

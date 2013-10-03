@@ -1004,7 +1004,7 @@ int StVecBosMaker::ReadMuDstEndcapTrig()
 
    // Check trigger ID
    if (!triggerIdCollection->nominal().isTrigger(mL2EndcapTriggerId)) {
-      //Warning("ReadMuDstEndcapTrig", "Trigger %d not found", mL2EndcapTriggerId);
+      Warning("ReadMuDstEndcapTrig", "Trigger %d not found", mL2EndcapTriggerId);
       return -2;
    }
 

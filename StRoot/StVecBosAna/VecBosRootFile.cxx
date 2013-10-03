@@ -269,12 +269,12 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
             if ( track.mStMuTrack->charge() > 0.){
                Fill(ev, kCUT_POSITIVE_EVENT_PASS_FINAL_QET_PT15);
                ((TrackHContainer *) fHists->d["W+_track_cand_pass_final_QEToPT_Pt>15"])->Fill(track);
-	    }
+            }
 
-	    if ( track.mStMuTrack->charge() < 0.){
+            if ( track.mStMuTrack->charge() < 0.){
                Fill(ev, kCUT_NEGATIVE_EVENT_PASS_FINAL_QET_PT15);
                ((TrackHContainer *) fHists->d["W-_track_cand_pass_final_QEToPT_Pt>15"])->Fill(track);
-	    }
+            }
          }
       }
 
@@ -291,12 +291,12 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
             if ( track.mStMuTrack->charge() > 0.){
                Fill(ev, kCUT_POSITIVE_EVENT_PASS_QCD_QET_PT15);
                ((TrackHContainer *) fHists->d["W+_track_cand_pass_qcd_QEToPT_Pt>15"])->Fill(track);
-	    }
+            }
 
             if ( track.mStMuTrack->charge() < 0.){
                Fill(ev, kCUT_NEGATIVE_EVENT_PASS_QCD_QET_PT15);
                ((TrackHContainer *) fHists->d["W-_track_cand_pass_qcd_QEToPT_Pt>15"])->Fill(track);
-	    }
+            }
          }
       }
 
@@ -313,12 +313,12 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
             if ( track.mStMuTrack->charge() > 0.){
                Fill(ev, kCUT_POSITIVE_EVENT_PASS_QCD_QET);
                ((TrackHContainer *) fHists->d["W+_track_cand_pass_qcd_QEToPT"])->Fill(track);
-	    }
+            }
 
             if ( track.mStMuTrack->charge() < 0.){
                Fill(ev, kCUT_NEGATIVE_EVENT_PASS_QCD_QET);
                ((TrackHContainer *) fHists->d["W-_track_cand_pass_qcd_QEToPT"])->Fill(track);
-	    }
+            }
          }
       } // end QCD events
 
@@ -384,7 +384,6 @@ void VecBosRootFile::PostFill()
 
    fHists->PostFill();
 }
-
 
 
 /** */

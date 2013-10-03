@@ -102,11 +102,6 @@ void VecBosEvent::AddVertex(VecBosVertex *vbVertex)
 
 void VecBosEvent::AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex)
 {
-   //Info("AddTrack", "xxx");
-   //stMuTrack->Print();
-   //if (vbVertex) Info("AddTrack", "vbVertex != 0");
-   //else          Info("AddTrack", "vbVertex == 0");
-
    VecBosTrack *vbTrack = new VecBosTrack();
 
    vbTrack->mEvent     = this;
@@ -127,18 +122,11 @@ void VecBosEvent::AddTrack(StMuTrack *stMuTrack, VecBosVertex *vbVertex)
 
 void VecBosEvent::AddStJets(StJets *stJets, StJets *stJetsNoEndcap)
 {
-   //Info("MyTest", "\n\n\n\nxxx");
-
    mStJets         = stJets;
-   //mStJetsNoEndcap = stJetsNoEndcap; // not used a the moment
-
-   //Info("MyTest", "eventId, eventNumber, runId, runNumber: %d, %d, %d, %d",
-   //      stJets->eventId(), stJets->eventNumber(), stJets->runId(), stJets->runNumber() );
    mStJetsNoEndcap = stJetsNoEndcap; // not used a the moment
 
    TClonesArray *jets = mStJets->jets();
    TIter         jetsIter(jets);
-   //jetsIter.Reset();
 
    // See StJetMaker/mudst/StjTPCMuDst.cxx for connection between StMuTrack and StjTrack
    // TrackToJetIndex is created in StJetMaker/emulator/StjeDefaultJetTreeWriter.cxx
@@ -418,7 +406,6 @@ void VecBosEvent::ProcessZ0()
 
       if ( track.IsZelectronCandidate() ) {
          mTracksCandidate.insert(*iTrack);
-
       }
    }
 
@@ -428,30 +415,23 @@ void VecBosEvent::ProcessZ0()
 /** Process jets */
 void VecBosEvent::ProcessJets()
 {
-   //Info("Process", "Process jets");
-
    mP4JetRecoil.SetXYZT(0, 0, 0, 0);
 
    VecBosJetPtrSetConstIter iJet = mJets.begin();
    mP4JetFirst = *iJet ? **iJet : TLorentzVector();
 
-   for ( ; iJet != mJets.end(); ++iJet) {
+   for ( ; iJet != mJets.end(); ++iJet)
+   {
       VecBosJet *vbJet = *iJet;
       vbJet->Process();
-      //printf("\nstJet: ");
-      //utils::PrintTLorentzVector(*vbJet);
 
       mP4JetTotal += *vbJet;
 
       if ( IsRecoilJet(vbJet) ) {
          mP4JetRecoil += *vbJet;
          mJetsRecoil.insert(vbJet);
-      }// else
-      //  Info("Process()", "Don't add this jet to recoil");
+      }
    }
-
-   //printf("\nmP4JetRecoil: ");
-   //utils::PrintTLorentzVector(mP4JetRecoil);
 }
 
 
@@ -557,7 +537,8 @@ void VecBosEvent::CalcRecoilFromTracks()
 bool VecBosEvent::IsRecoilJet(VecBosJet *vbJet) const
 {
    VecBosTrackPtrSetConstIter iTrack = mTracksCandidate.begin();
-   for ( ; iTrack != mTracksCandidate.end(); ++iTrack) {
+   for ( ; iTrack != mTracksCandidate.end(); ++iTrack)
+   {
       VecBosTrack &track = **iTrack;
       Double_t deltaR = vbJet->Vect().DeltaR( track.mP3AtDca );
 

@@ -1,8 +1,3 @@
-/*****************************************************************************
- *                                                                           *
- *                                                                           *
- *****************************************************************************/
-
 #include "MCHContainer.h"
 
 #include "TF1.h"
@@ -10,16 +5,6 @@
 #include "TText.h"
 
 #include "WBosEvent.h"
-#include "StVecBosMaker.h"
-#include "StEmcUtil/geometry/StEmcGeom.h"
-
-//need these to get MC record
-#include "tables/St_g2t_tpc_hit_Table.h"
-#include "StMcEventMaker/StMcEventMaker.h"
-#include "StMcEvent/StMcEvent.hh"
-#include "StMcEvent/StMcVertex.hh"
-#include "StMcEvent/StMcTrack.hh"
-
 #include "Globals.h"
 
 #include "utils/H2I.h"
@@ -328,9 +313,6 @@ void MCHContainer::PostFill()
    double integralAboveLow  = hRecoVsGenWBosonPz->CalcIntegralAbove(funcLow);
    double integralAboveHigh = hRecoVsGenWBosonPz->CalcIntegralAbove(funcHigh);
    double integral = hRecoVsGenWBosonPz->Integral();
-
-   printf("integralAboveLow: %f, integralAboveHigh: %f\n", integralAboveLow, integralAboveHigh);
-   //printf("integralAboveLow: %f, integralAboveHigh: \n", integralAboveLow);
 
    char textFrac[10];
    sprintf(textFrac, "f = %5.3f", (integralAboveLow-integralAboveHigh)/integral);
