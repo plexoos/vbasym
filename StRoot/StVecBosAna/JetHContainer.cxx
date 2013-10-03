@@ -29,12 +29,6 @@ JetHContainer::JetHContainer(TDirectory *dir) : PlotHelper(dir)
 }
 
 
-/** Default destructor. */
-JetHContainer::~JetHContainer()
-{
-}
-
-
 /** */
 void JetHContainer::BookHists()
 {

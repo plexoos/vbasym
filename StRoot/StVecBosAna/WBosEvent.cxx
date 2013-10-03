@@ -31,7 +31,7 @@ TVector3 WBosEvent::GetNeutrinoP3() const { return mNeutrinoP3; }
 TVector3 WBosEvent::CalcMissingEnergyP3() const
 {
    //return -1*(GetTrackRecoilTpcNeutrals() + GetElectronP3());
-   return -1*(CalcTrackRecoilTpcNeutralsCorrected() + GetElectronP3());
+   return -1*(mP3TrackRecoilTpcNeutralsCorrected + mElectronP3);
 
    // Other definitions
    //return mP3TrackRecoilTow + GetElectronP3();

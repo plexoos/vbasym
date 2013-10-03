@@ -259,7 +259,7 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH2*) o["hTrackRecoilPhiVsWBosonPhi"])                  ->Fill(event.mWEvent->mP4WBoson.Phi(), event.GetTrackRecoil().Phi());
    ((TH2*) o["hTrackRecoilTpcPtVsWBosonPt"])                 ->Fill(event.mWEvent->mP4WBoson.Pt(),  event.mP3TrackRecoilTpc.Pt());
    ((TH2*) o["hTrackRecoilTpcNeutralsPtVsWBosonPt"])         ->Fill(event.mWEvent->mP4WBoson.Pt(),  event.GetTrackRecoilTpcNeutrals().Pt());
-   ((TH2*) o["hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt"])->Fill(event.mWEvent->mP4WBoson.Pt(), event.mPtTrackRecoilWithNeutralsCorrected);
+   ((TH2*) o["hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt"])->Fill(event.mWEvent->mP4WBoson.Pt(),  event.GetTrackRecoilTpcNeutralsCorrected().Pt());
    ((TH2*) o["hTrackRecoilTpcNeutralsPt_GenOverReco"])       ->Fill(event.GetTrackRecoilTpcNeutrals().Pt(), event.mWEvent->mP4WBoson.Pt()/event.GetTrackRecoilTpcNeutrals().Pt());
    ((TH2*) o["hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin"])->Fill(event.GetTrackRecoilTpcNeutrals().Pt(), event.mWEvent->mP4WBoson.Pt()/event.GetTrackRecoilTpcNeutrals().Pt());
 
