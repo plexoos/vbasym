@@ -22,7 +22,7 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mMuDstNumGTracks(0), mMuDstNumVertices(0), mMuDstNumPTracks(0), mMuDstNumOTracks(0),
    mNumGoodVertices(0),
    mNumGoodTracks(0), mNumBTracks(0), mNumETracks(0), mNumWithClusterTracks(0), mNumIsolatedTracks(0),
-   mStJets(0), mJets(), mJetsRecoil(), mJetsWithIsoTrack(),
+   mStJets(0), mStJetsNoEndcap(0), mJets(), mJetsRecoil(), mJetsWithIsoTrack(),
    mVertices(),
    mTracks(),
    mTracksCandidate(),
@@ -134,6 +134,7 @@ void VecBosEvent::AddStJets(StJets *stJets, StJets *stJetsNoEndcap)
 
    //Info("MyTest", "eventId, eventNumber, runId, runNumber: %d, %d, %d, %d",
    //      stJets->eventId(), stJets->eventNumber(), stJets->runId(), stJets->runNumber() );
+   mStJetsNoEndcap = stJetsNoEndcap; // not used a the moment
 
    TClonesArray *jets = mStJets->jets();
    TIter         jetsIter(jets);
@@ -973,6 +974,7 @@ void VecBosEvent::Clear(const Option_t* opt)
    mNumWithClusterTracks = 0;
    mNumIsolatedTracks  = 0;
    mStJets             = 0;
+   mStJetsNoEndcap     = 0;
    bxStar7             = -1;
    bxStar48            = -1;
    mSpinPattern4Bits   = -1;

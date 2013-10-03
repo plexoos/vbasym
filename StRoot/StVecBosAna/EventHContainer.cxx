@@ -4,6 +4,7 @@
 #include "TF2.h"
 
 #include "WBosEvent.h"
+#include "JetHContainer.h"
 #include "TrackHContainer.h"
 
 
@@ -85,6 +86,7 @@ void EventHContainer::BookHists()
    o["hTrackRecoilWithNeutralsPtCorrected_zoomin"] = h = new TH1F("hTrackRecoilWithNeutralsPtCorrected_zoomin", "Recoil from Tracks: TPC+emCal (CORRECTED) ; Track-based Recoil P_{T}; Events", 20, 0, 10);
 
    d["tracks"] = new TrackHContainer(new TDirectoryFile("tracks", "tracks", "", fDir));
+   d["jets"]   = new JetHContainer(new TDirectoryFile("jets", "jets", "", fDir));
 }
 
 
@@ -122,4 +124,5 @@ void EventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hTrackRecoilWithNeutralsPtCorrected_zoomin"])->Fill(event.GetTrackRecoilTpcNeutralsCorrected().Pt());
 
    d["tracks"]->Fill(ev);
+   d["jets"]->Fill(ev);
 }

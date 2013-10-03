@@ -73,8 +73,8 @@ public:
    WeveEPRS                eprs;                        //!
    WeveESMD                esmd;                        //!
    VecBosJetPtrSet         mJets;                       /// jet owner
-   VecBosJetPtrSet         mJetsRecoil;                 //!
-   VecBosJetPtrSet         mJetsWithIsoTrack;           //!
+   VecBosJetPtrSet         mJetsRecoil;                 //
+   VecBosJetPtrSet         mJetsWithIsoTrack;           //
    VecBosVertexPtrSet      mVertices;                   ///
    VecBosTrackPtrSet       mTracks;                     /// track owner
    VecBosCandTrackPtrSet   mTracksCandidate;            /// pointers to candidate tracks sorted by cluster energy

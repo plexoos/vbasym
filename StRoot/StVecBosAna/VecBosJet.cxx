@@ -126,7 +126,8 @@ void VecBosJet::FindTracksInCone()
 
 void VecBosJet::Print(const Option_t* opt) const
 {
-   Info("Print(const Option_t* opt)", "Jet mVertexId=%d, zVertex=%.1f cm, nTracks=%d\n", mVertexId, zVertex, nTracks);
+   Info("Print", "mVertexId: %d, zVertex: %.1f cm, nTracks: %d", mVertexId, zVertex, nTracks);
+   Info("Print", "Eta: %f", Eta());
    Info("Print", "mVbTracks.size(): %d", mVbTracks.size());
 
    VecBosTrackPtrSetIter iTrack = mVbTracks.begin();

@@ -4,6 +4,7 @@
 #include "TF2.h"
 
 #include "TrackHContainer.h"
+#include "JetHContainer.h"
 #include "WBosEvent.h"
 
 
@@ -71,6 +72,7 @@ void WBosEventHContainer::BookHists()
    hist->SetOption("colz LOGZ");
 
    d["track_candidate"] = new TrackHContainer(new TDirectoryFile("track_candidate", "track_candidate", "", fDir));
+   d["jets_recoil"] = new JetHContainer(new TDirectoryFile("jets_recoil", "jets_recoil", "", fDir));
 }
 
 
@@ -116,6 +118,7 @@ void WBosEventHContainer::Fill(ProtoEvent &ev)
    ((TH2*) o["hPtBalanceJetsVsElecEt"])->Fill(event.GetElectronP3().Pt(), event.mPtBalanceCosPhiFromJets);
 
    ((TrackHContainer*) d["track_candidate"])->Fill(event.GetElectronTrack());
+   ((JetHContainer*) d["jets_recoil"])->Fill(event.mJetsRecoil);
 }
 
 
