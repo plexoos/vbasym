@@ -85,6 +85,12 @@ void EventHContainer::BookHists()
    o["hTrackRecoilWithNeutralsPt_zoomin"]          = h = new TH1F("hTrackRecoilWithNeutralsPt_zoomin", "Recoil from Tracks: TPC+emCal (also trackless clusters) ; Track-based Recoil P_{T}; Events", 20, 0, 10);
    o["hTrackRecoilWithNeutralsPtCorrected_zoomin"] = h = new TH1F("hTrackRecoilWithNeutralsPtCorrected_zoomin", "Recoil from Tracks: TPC+emCal (CORRECTED) ; Track-based Recoil P_{T}; Events", 20, 0, 10);
 
+   o["hNumTracksRecoilVsTrackRecoilWithNeutralsPt"]           = h = new TH2F("hNumTracksRecoilVsTrackRecoilWithNeutralsPt", "; Num. of Tracks in Recoil; Track-based Recoil P_{T}", 50, 0, 50, 10, 0, 10); 
+   h->SetOption("hist GRIDX");
+
+   o["hNumTracksRecoilVsCandidateTrackEScaledPt"]           = h = new TH2F("hNumTracksRecoilVsCandidateTrackEScaledPt", "; Num. of Tracks in Recoil; Electron P_{T}", 50, 0, 50, 50, 0, 50); 
+   h->SetOption("hist GRIDX");
+
    d["tracks"] = new TrackHContainer(new TDirectoryFile("tracks", "tracks", "", fDir));
    d["jets"]   = new JetHContainer(new TDirectoryFile("jets", "jets", "", fDir));
 }
@@ -122,6 +128,9 @@ void EventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hTrackRecoilWithNeutralsPtCorrected"])->Fill(event.GetTrackRecoilTpcNeutralsCorrected().Pt());
    ((TH1*) o["hTrackRecoilWithNeutralsPt_zoomin"])->Fill(event.GetTrackRecoilTpcNeutrals().Pt());
    ((TH1*) o["hTrackRecoilWithNeutralsPtCorrected_zoomin"])->Fill(event.GetTrackRecoilTpcNeutralsCorrected().Pt());
+   ((TH2*) o["hNumTracksRecoilVsTrackRecoilWithNeutralsPt"]) ->Fill(event.mNumRecoilTracksTpc, event.GetTrackRecoilTpcNeutrals().Pt());
+   ((TH2*) o["hNumTracksRecoilVsCandidateTrackEScaledPt"])   ->Fill(event.mNumRecoilTracksTpc, event.GetElectronP3().Pt());
+
 
    d["tracks"]->Fill(ev);
    d["jets"]->Fill(ev);
