@@ -33,8 +33,8 @@ VecBosAsymRootFile::VecBosAsymRootFile() : VecBosRootFile()
 }
 
 
-VecBosAsymRootFile::VecBosAsymRootFile(const char *fname, Option_t *option, Bool_t isMc, const char *ftitle, Int_t compress) :
-   VecBosRootFile(fname, option, isMc, ftitle, compress)
+VecBosAsymRootFile::VecBosAsymRootFile(const char *fname, Option_t *option, Bool_t isMc, Bool_t isZ, const char *ftitle, Int_t compress) :
+  VecBosRootFile(fname, option, isMc, isZ, ftitle, compress)
 {
    gBTowGeom = StEmcGeom::instance("bemc");
    gBTowGeom->printGeom();

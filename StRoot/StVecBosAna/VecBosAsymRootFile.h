@@ -17,7 +17,7 @@ class VecBosAsymRootFile : public VecBosRootFile
 public:
 
    VecBosAsymRootFile();
-   VecBosAsymRootFile(const char* fname, Option_t* option = "", Bool_t isMc=kFALSE, const char* ftitle = "", Int_t compress = 1);
+   VecBosAsymRootFile(const char* fname, Option_t* option = "", Bool_t isMc=kFALSE, Bool_t isZ=kFALSE, const char* ftitle = "", Int_t compress = 1);
    ~VecBosAsymRootFile();
 
    void Fill(ProtoEvent &ev);
