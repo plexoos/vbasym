@@ -21,7 +21,7 @@
 
 #include "Globals.h"
 #include "VecBosEventInfo.h"
-#include "WEvent.h"
+#include "VecBosMcEvent.h"
 #include "VecBosJet.h"
 #include "VecBosTrack.h"
 #include "VecBosVertex.h"
@@ -78,7 +78,7 @@ public:
    VecBosVertexPtrSet      mVertices;                   ///
    VecBosTrackPtrSet       mTracks;                     /// track owner
    VecBosCandTrackPtrSet   mTracksCandidate;            /// pointers to candidate tracks sorted by cluster energy
-   WEvent                 *mWEvent;
+   VecBosMcEvent          *mMcEvent;
    TLorentzVector          mP4JetTotal;
    TLorentzVector          mP4JetFirst;
    TLorentzVector          mP4JetRecoil;
@@ -158,7 +158,7 @@ public:
    virtual void   Process();
    virtual void   ProcessPersistent();
    virtual void   ProcessZ0();
-   void           ProcessMC();
+   virtual void   ProcessMC();
    bool           IsRecoilJet(VecBosJet *vbJet) const;
    bool           IsRecoilJetWithZVertexCut(VecBosJet *vbJet) const;
    virtual void   Clear(const Option_t* opt="");

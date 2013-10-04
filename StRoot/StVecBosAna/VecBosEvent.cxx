@@ -26,7 +26,7 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mVertices(),
    mTracks(),
    mTracksCandidate(),
-   mWEvent(0),
+   mMcEvent(0),
    mP4JetTotal(), mP4JetFirst(), mP4JetRecoil(), mP3TrackRecoilTpc(), mP3TrackRecoilTow(),
    mP3TrackRecoilNeutrals(), mP3TrackRecoilTpcNeutrals(), mP3TrackRecoilTpcNeutralsCorrected(),
    mMinVertexDeltaZ(-1),
@@ -64,8 +64,8 @@ VecBosEvent::~VecBosEvent()
    while (!mVertices.empty()) delete *mVertices.begin(), mVertices.erase(mVertices.begin());
    //mVertices.clear(); // unnecessary?
 
-   if (mWEvent) delete mWEvent;
-   mWEvent = 0;
+   if (mMcEvent) delete mMcEvent;
+   mMcEvent = 0;
 }
 
 
@@ -437,12 +437,6 @@ void VecBosEvent::ProcessJets()
 
 void VecBosEvent::ProcessMC()
 {
-   fIsMc = true;
-   StMcEvent *stMcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
-   assert(stMcEvent);
-
-   mWEvent = new WEvent();
-   mWEvent->CalcRecoil(*stMcEvent);
 }
 
 
@@ -977,8 +971,8 @@ void VecBosEvent::Clear(const Option_t* opt)
    mTracks.clear();
    mTracksCandidate.clear();
 
-   if (mWEvent) delete mWEvent;
-   mWEvent = 0;
+   if (mMcEvent) delete mMcEvent;
+   mMcEvent = 0;
 
    mP4JetTotal.SetXYZT(0, 0, 0, 0);
    mP4JetFirst.SetXYZT(0, 0, 0, 0);
@@ -1058,7 +1052,7 @@ void VecBosEvent::Streamer(TBuffer &R__b)
 {
    if (R__b.IsReading()) {
       R__b.ReadClassBuffer(VecBosEvent::Class(), this);
-      ProcessPersistent();
+      //ProcessPersistent();
    }
    else {
       R__b.WriteClassBuffer(VecBosEvent::Class(), this);
