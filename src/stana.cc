@@ -80,6 +80,7 @@ int analyzeMuDst(AnaInfo &anaInfo, bool spinSort, bool findZ)
    bool    isMC                = anaInfo.fIsMc;                      // 0: run9-data; 200: new MC w/ EEss in BFC
    int     useJetFinder        = anaInfo.fDoReconstructJets ? 1 : 2; // 0: no jets = badWalgo; 1: generate jet trees; 2 read jet trees
    Float_t jetPtMin            = anaInfo.fJetPtMin;
+   Float_t tracksPtMin         = anaInfo.fTracksPtMin;
    //string eemcSetupPath = "/afs/rhic.bnl.gov/star/users/kocolosk/public/StarTrigSimuSetup/";
 
 
@@ -358,6 +359,9 @@ int analyzeMuDst(AnaInfo &anaInfo, bool spinSort, bool findZ)
 
    StSpinDbMaker *stSpinDbMaker = new StSpinDbMaker("stSpinDbMaker");
    StVecBosMaker *stVecBosMaker = new StVecBosMaker(anaInfo, "StVecBosMaker", &vecBosRootFile);
+
+      // Set the Pt mim for recoil tracks and clusters
+      stVecBosMaker->setTracksPtMin(tracksPtMin);
 
    if (spinSort) {
       //stSpinDbMaker = new StSpinDbMaker("stSpinDbMaker");
