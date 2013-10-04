@@ -15,6 +15,7 @@ AnaInfo::AnaInfo() : TObject(),
    fSuffix(""),
    fModes(0),
    fDoReconstructJets(kFALSE),
+   fTracksPtMin(0.),
    fJetPtMin(3.5),
    fRhicRunId(11),
    fIsMc(kFALSE),
@@ -94,6 +95,7 @@ void AnaInfo::ProcessOptions(int argc, char **argv)
       {"jets",                no_argument,         NULL,   'j'},
       {"jet-pt-min",          required_argument,   NULL,   AnaInfo::OPTION_JETS_PT_MIN},
       {"jpm",                 required_argument,   NULL,   AnaInfo::OPTION_JETS_PT_MIN},
+      {"tpm",                 required_argument,   NULL,   AnaInfo::OPTION_TRACKS_PT_MIN},
       {"rhic-run-id",         required_argument,   NULL,   AnaInfo::OPTION_RHIC_RUN_ID},
       {"run",                 required_argument,   NULL,   AnaInfo::OPTION_RHIC_RUN_ID},
       {"mc",                  no_argument,         NULL,   'm'},
@@ -129,6 +131,13 @@ void AnaInfo::ProcessOptions(int argc, char **argv)
 
       case 'j':
          fDoReconstructJets = kTRUE;
+         break;
+
+      case AnaInfo::OPTION_TRACKS_PT_MIN:
+         sstr.clear();
+         sstr.str(string(optarg));
+         sstr >> fTracksPtMin;
+         Info("ProcessOptions", "Found fTracksPtMin: %f", fTracksPtMin);
          break;
 
       case AnaInfo::OPTION_JETS_PT_MIN:

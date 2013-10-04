@@ -35,7 +35,8 @@ public:
                 OPTION_DET_DISABLE     = 0x20000001,
                 OPTION_SUFFIX          = 0x20000002,
                 OPTION_JETS_PT_MIN     = 0x20000003,
-                OPTION_RHIC_RUN_ID     = 0x20000004};
+                OPTION_RHIC_RUN_ID     = 0x20000004,
+                OPTION_TRACKS_PT_MIN   = 0x20000005};
 
    // Various histogramming and running modes
    enum Mode   {MODE_GRAPH             = 0x02000000, MODE_NO_GRAPH     = 0x82000000};
@@ -45,6 +46,7 @@ public:
    std::string      fSuffix;            // Additional unique identifier for analysis job
    uint64_t         fModes;
    bool             fDoReconstructJets;
+   float            fTracksPtMin;
    float            fJetPtMin;
    unsigned short   fRhicRunId;         // RHIC run id, e.g. 9, 11, 12, 13, ...
    bool             fIsMc;
