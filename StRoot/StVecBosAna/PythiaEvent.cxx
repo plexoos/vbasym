@@ -1,22 +1,22 @@
 
-#include "PyEvent.h"
-#include "WEvent.h"
+#include "PythiaEvent.h"
+#include "WBosMcEvent.h"
 
-ClassImp(PyEvent)
+ClassImp(PythiaEvent)
 
 
 using namespace std;
 
 
-Bool_t PyEvent::AcceptWEvent(WEvent& wEvent)
+Bool_t PythiaEvent::AcceptWEvent(WBosMcEvent& wEvent)
 {
    Bool_t accept1 = kFALSE;
    Bool_t accept2 = kFALSE;
 
-   vector<Track>::const_iterator iParticle;
-   vector<Track>::const_iterator iParticle2;
-   vector<Track>::const_iterator firstParticle = tracks.begin();
-   vector<Track>::const_iterator lastParticle = tracks.end();
+   vector<PythiaParticle>::const_iterator iParticle;
+   vector<PythiaParticle>::const_iterator iParticle2;
+   vector<PythiaParticle>::const_iterator firstParticle = tracks.begin();
+   vector<PythiaParticle>::const_iterator lastParticle = tracks.end();
 
    for (iParticle=firstParticle; iParticle!=lastParticle; ++iParticle)
    {
@@ -53,19 +53,19 @@ Bool_t PyEvent::AcceptWEvent(WEvent& wEvent)
          wEvent.fLeptonSign = (iParticle2->id > 0) - (iParticle2->id < 0);
 
          if (ltype == 1) {
-            wEvent.l.SetPxPyPzE(iParticle2->px, iParticle2->py, iParticle2->pz, iParticle2->E);
+            wEvent.mP4Lepton.SetPxPyPzE(iParticle2->px, iParticle2->py, iParticle2->pz, iParticle2->E);
             wEvent.fLeptonIndex = iParticle2->index;
             accept1 = kTRUE;
          }
 
          if (ltype == 2) {
-            wEvent.nu.SetPxPyPzE(iParticle2->px, iParticle2->py, iParticle2->pz, iParticle2->E);
+            wEvent.mP4Neutrino.SetPxPyPzE(iParticle2->px, iParticle2->py, iParticle2->pz, iParticle2->E);
             wEvent.fNeutrinoIndex = iParticle2->index;
             accept2 = kTRUE;
          }
 
          if (accept1 && accept2) {
-            wEvent.W.SetPxPyPzE(iParticle->px, iParticle->py, iParticle->pz, iParticle->E);
+            wEvent.mP4WBoson.SetPxPyPzE(iParticle->px, iParticle->py, iParticle->pz, iParticle->E);
             break;
          }
       }

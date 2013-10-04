@@ -1,7 +1,5 @@
-#ifndef PyEvent_h
-#define PyEvent_h
-
-//This macro provides the event and track class for the tree files
+#ifndef PythiaEvent_h
+#define PythiaEvent_h
 
 #include <fstream>
 #include <iostream>
@@ -14,18 +12,18 @@
 
 #include <TObject.h>
 
-#include "Track.h"
+#include "PythiaParticle.h"
 
 
-class WEvent;
+class WBosMcEvent;
 
 
-class PyEvent : public TObject
+class PythiaEvent : public TObject
 {
 
 public:
 
-	std::vector<Track> tracks;
+	std::vector<PythiaParticle> tracks;
 	int    I;
 	int    nParticles;      //particle number in the final state
 	int    ievent;
@@ -41,9 +39,9 @@ public:
 	double Q2_hat;
 	int    nrTracks;
 
-   Bool_t AcceptWEvent(WEvent& wEvent);
+   Bool_t AcceptWEvent(WBosMcEvent& wEvent);
 
-	ClassDef( PyEvent, 1 )
+	ClassDef(PythiaEvent, 1)
 };
 
 #endif
