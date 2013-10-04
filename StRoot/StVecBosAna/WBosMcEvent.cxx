@@ -1,5 +1,4 @@
-
-#include "WEvent.h"
+#include "WBosMcEvent.h"
 
 #include "utils/utils.h"
 
@@ -7,14 +6,14 @@
 #include "StarClassLibrary/StParticleDefinition.hh"
 
 
-ClassImp(WEvent)
+ClassImp(WBosMcEvent)
 
 
 using namespace std;
 
 
 /** */
-WEvent::WEvent() : TObject(), mP4WBoson(), mP4Lepton(), mP4Neutrino(),
+WBosMcEvent::WBosMcEvent() : VecBosMcEvent(), mP4WBoson(), mP4Lepton(), mP4Neutrino(),
    mP4Total(), mP4Recoil(), mP4RecoilInAccept(), mP4RecoilOutAccept(),
    fLeptonGen(0), fLeptonIndex(0), fNeutrinoIndex(0), fEnergyRatio(0),
    fPzRatio(0), fPtRatio(0), fPtCorr(0), fPtCorrAngle(0), fPzRatioInOut(0),
@@ -24,14 +23,14 @@ WEvent::WEvent() : TObject(), mP4WBoson(), mP4Lepton(), mP4Neutrino(),
 
 
 /** */
-TLorentzVector WEvent::CalcRecoP4WBoson()
+TLorentzVector WBosMcEvent::CalcRecoP4WBoson()
 {
    return mP4Lepton + mP4Neutrino;
 }
 
 
 /** */
-void WEvent::CalcRecoil(PyEvent &pyEvent)
+void WBosMcEvent::CalcRecoil(PyEvent &pyEvent)
 {
    Double_t eneTotal = 0, eneAccept = 0;
    TLorentzVector recoilPOutAccept;
@@ -85,7 +84,7 @@ void WEvent::CalcRecoil(PyEvent &pyEvent)
 
 
 /** */
-void WEvent::CalcRecoil(StMcEvent &stMcEvent)
+void WBosMcEvent::CalcRecoil(StMcEvent &stMcEvent)
 {
    Double_t eneTotal  = 0;
    Double_t eneAccept = 0;

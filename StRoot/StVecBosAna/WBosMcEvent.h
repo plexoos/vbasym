@@ -1,5 +1,5 @@
-#ifndef EventW_h
-#define EventW_h
+#ifndef WBosMcEvent_h
+#define WBosMcEvent_h
 
 #include "TLorentzVector.h"
 #include "TObject.h"
@@ -7,9 +7,11 @@
 #include "StMcEvent/StMcEvent.hh"
 #include "StMcEvent/StMcTrack.hh"
 
+#include "VecBosMcEvent.h"
 #include "src/PyEvent.h"
 
-class WEvent : public TObject
+
+class WBosMcEvent : public VecBosMcEvent
 {
 public:
 
@@ -34,14 +36,14 @@ public:
    Double_t       fPzRatioInOut;
    Double_t       fPtRatioInOut;
 
-   WEvent();
+   WBosMcEvent();
 
    TLorentzVector CalcRecoP4WBoson();
    TLorentzVector GetRecoilInOutAccept() { return mP4RecoilInAccept + mP4RecoilOutAccept; }
    void           CalcRecoil(PyEvent &pyEvent);
    void           CalcRecoil(StMcEvent &stMcEvent);
 
-	ClassDef( WEvent, 1 )
+	ClassDef( WBosMcEvent, 1 )
 };
 
 #endif
