@@ -8,7 +8,7 @@
 #include "StMcEvent/StMcTrack.hh"
 
 #include "VecBosMcEvent.h"
-#include "src/PyEvent.h"
+#include "PythiaEvent.h"
 
 
 class WBosMcEvent : public VecBosMcEvent
@@ -40,7 +40,7 @@ public:
 
    TLorentzVector CalcRecoP4WBoson();
    TLorentzVector GetRecoilInOutAccept() { return mP4RecoilInAccept + mP4RecoilOutAccept; }
-   void           CalcRecoil(PyEvent &pyEvent);
+   void           CalcRecoil(PythiaEvent &pyEvent);
    void           CalcRecoil(StMcEvent &stMcEvent);
 
 	ClassDef( WBosMcEvent, 1 )

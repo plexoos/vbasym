@@ -5,6 +5,7 @@
 #include "StMcEvent/StMcVertex.hh"
 #include "StarClassLibrary/StParticleDefinition.hh"
 
+#include "PythiaParticle.h"
 
 ClassImp(WBosMcEvent)
 
@@ -30,7 +31,7 @@ TLorentzVector WBosMcEvent::CalcRecoP4WBoson()
 
 
 /** */
-void WBosMcEvent::CalcRecoil(PyEvent &pyEvent)
+void WBosMcEvent::CalcRecoil(PythiaEvent &pyEvent)
 {
    Double_t eneTotal = 0, eneAccept = 0;
    TLorentzVector recoilPOutAccept;
@@ -40,8 +41,8 @@ void WBosMcEvent::CalcRecoil(PyEvent &pyEvent)
    mP4RecoilInAccept.SetPxPyPzE(0, 0, 0, 0);
    mP4RecoilOutAccept.SetPxPyPzE(0, 0, 0, 0);
 
-   vector<Track>::const_iterator iParticle    = pyEvent.tracks.begin();
-   vector<Track>::const_iterator lastParticle = pyEvent.tracks.end();
+   vector<PythiaParticle>::const_iterator iParticle    = pyEvent.tracks.begin();
+   vector<PythiaParticle>::const_iterator lastParticle = pyEvent.tracks.end();
 
    for ( ; iParticle!=lastParticle; ++iParticle)
    {
