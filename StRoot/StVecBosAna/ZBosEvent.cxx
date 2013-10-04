@@ -1,5 +1,6 @@
 
 #include "ZBosEvent.h"
+#include "ZBosMcEvent.h"
 
 #include "utils/utils.h"
 
@@ -75,6 +76,10 @@ void ZBosEvent::Process()
 }
 
 
+void ZBosEvent::ProcessMC()
+{
+   mMcEvent = new ZBosMcEvent();
+}
 
 
 void ZBosEvent::Clear(const Option_t* opt)

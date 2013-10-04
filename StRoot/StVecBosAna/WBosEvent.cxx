@@ -1,5 +1,6 @@
 
 #include "WBosEvent.h"
+#include "WBosMcEvent.h"
 
 #include "utils/utils.h"
 
@@ -66,6 +67,17 @@ void WBosEvent::ProcessPersistent()
    mNeutrinoP3 = CalcMissingEnergyP3(); // here we use only x and y components, and reconstruct z
 
    ReconstructNeutrinoZ();
+}
+
+
+void WBosEvent::ProcessMC()
+{
+   fIsMc = true;
+   StMcEvent *stMcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
+   assert(stMcEvent);
+
+   mMcEvent = new WBosMcEvent();
+   ((WBosMcEvent*) mMcEvent)->CalcRecoil(*stMcEvent);
 }
 
 

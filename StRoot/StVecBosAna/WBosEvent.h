@@ -20,6 +20,7 @@ public:
    TVector3     GetVecBosonP3() const;
    virtual void Process();
    virtual void ProcessPersistent();
+   virtual void ProcessMC();
    virtual void Clear(const Option_t* opt="");
    virtual void Print(const Option_t* opt="") const;
    bool         PassedCutWBos(float minElePt=sMinElectronPtLight) const;

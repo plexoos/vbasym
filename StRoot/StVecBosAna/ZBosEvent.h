@@ -23,6 +23,7 @@ public:
    TVector3     GetCandidate2_P3() const;
    TVector3     GetVecBosonP3() const;
    virtual void Process();
+   virtual void ProcessMC();
    virtual void Clear(const Option_t* opt="");
    virtual void Print(const Option_t* opt="") const;
    bool         PassedCutZBos(float minElePt=sMinZEleCandPt) const;
