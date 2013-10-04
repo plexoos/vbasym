@@ -26,6 +26,7 @@ enum ECut {kCUT_UNKNOWN,  kCUT_EVENT_NOCUT,
            kCUT_POSITIVE_EVENT_PASS_FINAL_QET_PT15,
            kCUT_NEGATIVE_EVENT_PASS_FINAL_QET_PT15,
            kCUT_EVENT_PASS_FINAL_QET_PT15,
+           kCUT_EVENT_PASS_Z0_FINAL,
            kCUT_EVENT_PASS_QCD_QET,
            kCUT_EVENT_PASS_QCD_QET_PT15,
            kCUT_POSITIVE_EVENT_PASS_QCD_QET,
@@ -51,11 +52,12 @@ protected:
    time_t             fMinTime;
    time_t             fMaxTime;
    Bool_t             fIsMc;
+   Bool_t             fIsZ;
 
 public:
 
    VecBosRootFile();
-   VecBosRootFile(const char* fname, Option_t* option = "", Bool_t isMc=kFALSE, const char* ftitle = "", Int_t compress = 1);
+   VecBosRootFile(const char* fname, Option_t* option = "", Bool_t isMc=kFALSE, Bool_t isZ=kFALSE, const char* ftitle = "", Int_t compress = 1);
    ~VecBosRootFile();
 
    using TObject::SaveAs;
@@ -63,6 +65,7 @@ public:
    PlotHelper* GetHists();
    void SetHists(PlotHelper &hists);
    void SetIsMc(Bool_t isMc) { fIsMc = isMc; }
+   void SetIsZ(Bool_t isZ) { fIsZ = isZ; }
    virtual void Fill(ProtoEvent &ev);
    virtual void Fill(ProtoEvent &ev, ECut cut);
    virtual void FillDerived();

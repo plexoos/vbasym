@@ -8,12 +8,14 @@
 #include "TStyle.h"
 
 #include "EventHContainer.h"
+#include "Z0EventHContainer.h"
 #include "JetHContainer.h"
 #include "TrackHContainer.h"
 #include "VertexHContainer.h"
 #include "KinemaHContainer.h"
 #include "MCHContainer.h"
 #include "WBosEvent.h"
+#include "ZBosEvent.h"
 #include "VecBosTrack.h"
 #include "VecBosVertex.h"
 
@@ -28,7 +30,7 @@ VecBosRootFile::VecBosRootFile() : TFile(),
    fHists(0), fHistCuts(),
    fMinFill(UINT_MAX), fMaxFill(0),
    fMinTime(UINT_MAX), fMaxTime(0),
-   fIsMc(kFALSE)
+   fIsMc(kFALSE), fIsZ(kFALSE)
 {
    //gROOT->SetMacroPath("./:~/rootmacros/:");
    //gROOT->Macro("styles/style_vbana.C");
@@ -37,12 +39,12 @@ VecBosRootFile::VecBosRootFile() : TFile(),
 }
 
 
-VecBosRootFile::VecBosRootFile(const char *fname, Option_t *option, Bool_t isMc, const char *ftitle, Int_t compress) :
+VecBosRootFile::VecBosRootFile(const char *fname, Option_t *option, Bool_t isMc, Bool_t isZ, const char *ftitle, Int_t compress) :
    TFile(fname, option, ftitle, compress),
    fHists(0), fHistCuts(),
    fMinFill(UINT_MAX), fMaxFill(0),
    fMinTime(UINT_MAX), fMaxTime(0),
-   fIsMc(isMc)
+   fIsMc(isMc),fIsZ(isZ)
 {
    printf("Created ROOT file: %s\n", GetName());
 
@@ -64,6 +66,8 @@ void VecBosRootFile::BookHists()
    PlotHelper *ph;
 
    fHists = new PlotHelper(this);
+
+  if (!fIsZ) {
 
    fHists->d["event"] = ph = new EventHContainer(new TDirectoryFile("event", "event", "", this));
    fHistCuts[kCUT_EVENT_NOCUT].insert(ph);
@@ -193,6 +197,16 @@ void VecBosRootFile::BookHists()
    fHists->d["event_mc_pass_final_QEToPT"] = ph = new MCHContainer(new TDirectoryFile("event_mc_pass_final_QEToPT", "event_mc_pass_final_QEToPT", "", this));
    fHistCuts[kCUT_EVENT_PASS_FINAL_QET].insert(ph);
 
+  } else {
+
+   fHists->d["event"] = ph = new Z0EventHContainer(new TDirectoryFile("event", "event", "", this));
+   fHistCuts[kCUT_EVENT_NOCUT].insert(ph);
+
+   fHists->d["event_pass_final"]     = ph = new Z0EventHContainer(new TDirectoryFile("event_pass_final", "Z0_event_pass_final", "", this));
+   fHistCuts[kCUT_EVENT_PASS_Z0_FINAL].insert(ph);
+
+  }
+
    this->cd();
 }
 
@@ -204,31 +218,35 @@ void VecBosRootFile::SetHists(PlotHelper &hists) { fHists = &hists; }
 /** */
 void VecBosRootFile::Fill(ProtoEvent &ev)
 {
-   WBosEvent& event = (WBosEvent&) ev;
+  if (!fIsZ) {
+
+    WBosEvent& event = (WBosEvent&) ev;
 
    Fill(ev, kCUT_EVENT_NOCUT);
 
-   if ( event.HasJetRecoil() ) {
-      Fill(ev, kCUT_EVENT_HAS_JETRECOIL);
-      //((EventHContainer*) fHists->d["event_has_jetrecoil"])->Fill(ev);
+     if ( event.HasJetRecoil() ) {
+        Fill(ev, kCUT_EVENT_HAS_JETRECOIL);
+        //((EventHContainer*) fHists->d["event_has_jetrecoil"])->Fill(ev);
 
-      if ( event.PassedCutFinal() )
-         ((EventHContainer *) fHists->d["event_has_jetrecoil_pass_final"])->Fill(ev);
-         //((JetHContainer*) fHists->d["event_jets_has_jetrecoil_pass_final"])->Fill(ev);
-   }
+        if ( event.PassedCutFinal() )
+           ((EventHContainer *) fHists->d["event_has_jetrecoil_pass_final"])->Fill(ev);
+           //((JetHContainer*) fHists->d["event_jets_has_jetrecoil_pass_final"])->Fill(ev);
+     }
 
-   if ( event.mP3TrackRecoilTpcNeutrals.Mag() > 0)
-      Fill(ev, kCUT_EVENT_HAS_TRACKRECOIL);
+     if ( event.mP3TrackRecoilTpcNeutrals.Mag() > 0)
+        Fill(ev, kCUT_EVENT_HAS_TRACKRECOIL);
 
-   if ( event.HasCandidateEle() )
-      Fill(ev, kCUT_EVENT_HAS_CANDIDATE_TRACK);
+     if ( event.HasCandidateEle() )
+        Fill(ev, kCUT_EVENT_HAS_CANDIDATE_TRACK);
 
-   if ( event.HasCandidateEle() && event.GetElectronP3().Pt() > 15)
-      Fill(ev, kCUT_EVENT_HAS_CANDIDATE_TRACK_PT15);
+     if ( event.HasCandidateEle() && event.GetElectronP3().Pt() > 15)
+        Fill(ev, kCUT_EVENT_HAS_CANDIDATE_TRACK_PT15);
 
-   if ( event.PassedCutFinal() ) {
-      Fill(ev, kCUT_EVENT_PASS_FINAL);
-   }
+     if ( event.PassedCutFinal() ) {
+        Fill(ev, kCUT_EVENT_PASS_FINAL);
+
+     }
+
 
 
    // Fill vertex histos
@@ -243,6 +261,7 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
 
       ((VertexHContainer *) fHists->d["vertex_good"])->Fill(vertex);
    }
+
 
    // Fill track histos
    VecBosTrackPtrSetConstIter iTrack = event.mTracks.begin();
@@ -353,6 +372,19 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
          }
       }
    }
+
+  } else {
+
+   ZBosEvent& event = (ZBosEvent&) ev;
+
+   Fill(ev, kCUT_EVENT_NOCUT);
+     
+     if ( event.PassedCutZBos() ) {
+        Fill(ev, kCUT_EVENT_PASS_Z0_FINAL);
+     }
+
+  }
+
 }
 
 

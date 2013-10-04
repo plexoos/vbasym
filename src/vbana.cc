@@ -7,6 +7,7 @@
 #include "TStreamerInfo.h"
 
 #include "StRoot/StVecBosAna/WBosEvent.h"
+#include "StRoot/StVecBosAna/ZBosEvent.h"
 #include "StRoot/StVecBosAna/VecBosRootFile.h"
 #include "StRoot/StVecBosAna/VecBosAsymRootFile.h"
 
@@ -23,37 +24,51 @@ int main(int argc, char *argv[])
 
    setbuf(stdout, NULL);
 
-   //Int_t  nMaxUserEvents = -1; // < 0 means all events
-   Int_t  nMaxUserEvents = 1000;
+   Int_t  nMaxUserEvents = -1; // < 0 means all events
+   //Int_t  nMaxUserEvents = 1000;
 
-   //Bool_t isMc           = kFALSE;
-   Bool_t isMc           = kTRUE;
+   Bool_t isMc           = kFALSE;
+   //Bool_t isMc           = kTRUE;
+   //Bool_t isZ           = kFALSE;
+   Bool_t isZ           = kTRUE;
 
-   //string filelist       = "run11_pp_transverse";
+   string filelist       = "run11_pp_transverse";
    //string filelist       = "run11_pp_longitudinal";
    //string filelist       = "run12_pp";
-   //string filelist       = "MC_list_QCD_2012";
-   //string filelist       = "MC_list_Wm_2012";
-   //string filelist       = "MC_list_Wp_2012";
-   string filelist       = "run11_mc_Wp2enu.lis";
-   //string filelist       = "MC_list_WmToTauTau_2012";
-   //string filelist       = "MC_list_WpToTauTau_2012";
-   //string filelist       = "MC_list_Ztoee_2012";
+   //string filelist       = "run11_mc_Wp2enu.lis";
+   //string filelist       = "run11_mc_Wm2enu.lis";
+   //string filelist       = "run11_mc_Wp2taunu.lis";
+   //string filelist       = "run11_mc_Wm2taunu.lis";
+   //string filelist       = "run11_mc_Z02ee.lis";
+   //string filelist       = "run12_QCD.lis";
 
-   //string stana_options  = "--jpm_0.5_--run_11";
    string stana_options  = "--jpm_0.5";
+   stana_options = (isZ  ? "-z_" : "-w_") + stana_options;
    stana_options = (isMc ? "-m_" : "") + stana_options;
+   stana_options = stana_options + (!isMc ? "_--run_11" : "");
 
-   //string histFileName = "~/stana_out/" + filelist + "_" + stana_options + "/hist/vbana.root";
-   string histFileName = "/star/data05/scratch/fazio/stana_out/runlists/" + filelist + "_" + stana_options + "/hist/vbana.root";
+   // this is the name of the output file
+   string histFileName = "~/stana_out/" + filelist + "_" + stana_options + "/hist/vbana.root";
 
    Info("main", "nMaxUserEvents: %d", nMaxUserEvents);
    Info("main", "histFileName:   %s", histFileName.c_str());
    Info("main", "isMc:           %d", isMc);
+   Info("main", "isZ:            %d", isZ);
 
-   //VecBosRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc);
-   VecBosAsymRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc); // to create the Asymmetry histograms 
-   WBosEvent *wBosEvent = new WBosEvent();
+   VecBosRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc, isZ);
+   //VecBosAsymRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc);   // to create the Asymmetry histograms 
+
+   /*
+   VecBosEvent *vecBosEvent(NULL);
+   if(isZ) {
+     vecBosEvent = new WBosEvent();
+   } else if(isZ) {
+     vecBosEvent = new ZBosEvent();
+   }
+   vecBosEvent->Dump();
+   */
+   //WBosEvent *vecBosEvent = new WBosEvent();
+   ZBosEvent *vecBosEvent = new ZBosEvent();
 
    TObject *o;
    TIter   *next = new TIter(utils::getFileList("./runlists/"+filelist));
@@ -63,8 +78,7 @@ int main(int argc, char *argv[])
    while (next && (o = (*next)()) )
    {
       string fName    = string(((TObjString*) o)->GetName());
-      //string fileName = "~/stana_out/" + filelist + "_" + stana_options + "/tree/";
-      string fileName = "/star/data05/scratch/fazio/stana_out/runlists/" + filelist + "_" + stana_options + "/tree/";
+      string fileName = "~/stana_out/" + filelist + "_" + stana_options + "/tree/";
       fileName += (isMc ? "" : "R") + fName + "_tree.root";
 
       TFile *f = new TFile(fileName.c_str(), "READ");
@@ -90,7 +104,7 @@ int main(int argc, char *argv[])
          nTreeEvents = nExtraEvents > 0 ? nTreeEvents - nExtraEvents : nTreeEvents;
       }
 
-      vbTree->SetBranchAddress("e", &wBosEvent);
+      vbTree->SetBranchAddress("e", &vecBosEvent);
 
       for (UInt_t iEvent=1; iEvent<=(UInt_t) nTreeEvents; iEvent++, nProcEvents++)
       {
@@ -98,8 +112,8 @@ int main(int argc, char *argv[])
             Info("main", "Analyzing event %d", iEvent);
 
          vbTree->GetEntry(iEvent-1);
-         //wBosEvent->Print();
-         vecBosRootFile.Fill(*wBosEvent);
+         //vecBosEvent->Print();
+         vecBosRootFile.Fill(*vecBosEvent);
       }
 
       f->Close();
@@ -111,7 +125,7 @@ int main(int argc, char *argv[])
       if (nMaxUserEvents > 0 && nProcEvents >= nMaxUserEvents) break;
    }
 
-   delete wBosEvent;
+   delete vecBosEvent;
 
    vecBosRootFile.FillDerived();
    vecBosRootFile.PostFill();
