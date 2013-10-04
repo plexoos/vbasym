@@ -146,14 +146,9 @@ events_calc: events_calc.o
 	$(LD) $(LDFLAGS) $(STAR_LIB_DIRS) $(STAR_LIBS) $(UTILSLIBDIR) $(UTILSLIB) $(LIBS) events_calc.o -o $@
 	@echo "$@ done"
 
-$(WANA_LIB): $(OBJS) $(WANA_DICT_OBJ)
-	$(LD) $(SOFLAGS) $(OBJS) $(WANA_DICT_OBJ) $(LIBS) -o $(WANA_LIB)
+$(WANA_LIB): $(OBJS)
+	$(LD) $(SOFLAGS) $(OBJS) $(LIBS) -o $(WANA_LIB)
 	@echo "$@ done"
-
-$(WANA_DICT_SRC): $(HDRS) $(INC_DIR)/MyLinkDef.h
-	@echo "Generating dictionary $(WANA_DICT_SRC)..."
-	@echo rootcint -f $(WANA_DICT_SRC) -c -I$(INC_DIR) $^
-	@rootcint -f $(WANA_DICT_SRC) -c -I$(INC_DIR) $^
 
 $(WANA_DICT_OBJ) : $(WANA_DICT_SRC)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
