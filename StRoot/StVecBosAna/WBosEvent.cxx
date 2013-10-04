@@ -14,7 +14,7 @@ const float WBosEvent::sMinElectronPtHard  = 25;
 const float WBosEvent::sMinNeutrinoPt      = 18;
 
 
-WBosEvent::WBosEvent() : VecBosEvent(), mWBosMass(80.4), mElectronP3(), mNeutrinoP3()
+WBosEvent::WBosEvent() : VecBosEvent(), mWBosMass(80.385), mElectronP3(), mNeutrinoP3()
 {
 }
 
@@ -41,7 +41,7 @@ TVector3 WBosEvent::CalcMissingEnergyP3() const
 }
 
 
-TVector3 WBosEvent::GetVecBosonP3() const { return GetElectronP3() + GetNeutrinoP3(); }
+TVector3 WBosEvent::GetVecBosonP3() const { return mElectronP3 + mNeutrinoP3; }
 
 
 /**
@@ -146,6 +146,7 @@ void WBosEvent::ReconstructNeutrinoZ()
    double d = b*b - 4*a*c;
    if (d < 0 ) {
       Warning("ReconstructNeutrinoZ", "Problem reconstructing neutrino, d=%f will be set to 0", d);
+      Info("ReconstructNeutrinoZ", "mElectronP3.Pt: %f, mElectronP3.Pz: %f, mNeutrinoP3.Pt: %f, A: %f", mElectronP3.Pt(), mElectronP3.Pz(), mNeutrinoP3.Pt(), A);
       d = 0;
    }
    double p_nu_z1  = (-b + sqrt(d) ) / 2 / a;
