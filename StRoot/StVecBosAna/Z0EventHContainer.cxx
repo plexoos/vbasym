@@ -72,7 +72,9 @@ void Z0EventHContainer::BookHists()
    o["hCandidate2Pt"]   = h = new TH1F("hCandidate2Pt", "; P_T; Events", 81, 0, 81);
    h->SetOption("hist GRIDX GRIDY XY");
 
-   o["hZ0_MassInv"]   = h = new TH1F("hZ0_MassInv", "; M (GeV/c^{2}); Events", 60, 65, 100);
+   o["hZ0_MassInv"]   = h = new TH1F("hZ0_MassInv", "; M_{Z^{0}} (GeV/c^{2}); Events", 60, 65, 110);
+   h->SetOption("hist GRIDX GRIDY XY");
+   o["hZ0_Pt"]   = h = new TH1F("hZ0_Pt", "; Z0-P_{T} (GeV/c); Events", 10, 0, 20);
    h->SetOption("hist GRIDX GRIDY XY");
 
    d["tracks"] = new TrackHContainer(new TDirectoryFile("tracks", "tracks", "", fDir));
@@ -102,7 +104,8 @@ void Z0EventHContainer::Fill(ProtoEvent &ev)
 
    ((TH1*) o["hCandidate1Pt"])   ->Fill(event.GetCandidate1_P3().Pt());
    ((TH1*) o["hCandidate2Pt"])   ->Fill(event.GetCandidate2_P3().Pt());
-   ((TH1*) o["hZ0_MassInv"])   ->Fill(event.mP4ZBoson.M());
+   ((TH1*) o["hZ0_MassInv"])     ->Fill(event.mP4ZBoson.M());
+   ((TH1*) o["hZ0_Pt"])          ->Fill(event.mP4ZBoson.Pt());
 
    d["tracks"]->Fill(ev);
 }
