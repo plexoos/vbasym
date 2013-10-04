@@ -1,15 +1,16 @@
 
-#include "Track.h"
+#include "PythiaParticle.h"
 
 #include <iostream>
 #include <sstream>
 
 using namespace std;
 
-ClassImp(Track)
+ClassImp(PythiaParticle)
 
 
-Track::Track( const std::string& line1) {
+PythiaParticle::PythiaParticle( const std::string& line1)
+{
 	//create a stringstream to input certain data line by line
 	std::stringstream ss1;
 	ss1 << line1;
@@ -17,6 +18,8 @@ Track::Track( const std::string& line1) {
 	>> px >> py >> pz >> E >> m >> x >> y >> z;
 }
 
-void Track::print() {
+
+void PythiaParticle::print()
+{
 	cout << index << " " << m << std::endl;
 }
