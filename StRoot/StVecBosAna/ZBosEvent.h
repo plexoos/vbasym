@@ -27,11 +27,14 @@ public:
    virtual void Clear(const Option_t* opt="");
    virtual void Print(const Option_t* opt="") const;
    bool         PassedCutZBos(float minElePt=sMinZEleCandPt) const;
+   bool         PassedCutZMass(float minElePt=sMinZEleCandPt) const;
 
    //static const float sMinElectronPtLight; //!
    //static const float sMinElectronPtHard;  //!
    //static const float sMinNeutrinoPt;      //!
    static const float sMinZEleCandPt;      //! S.Fazio 30Sep2013
+   static const float sMinZMass;           //! 
+   static const float sMaxZMass;           //! 
 
 protected:
 

@@ -202,6 +202,9 @@ void VecBosRootFile::BookHists()
    fHists->d["event"] = ph = new Z0EventHContainer(new TDirectoryFile("event", "event", "", this));
    fHistCuts[kCUT_EVENT_NOCUT].insert(ph);
 
+   fHists->d["event_pass_elePt"]     = ph = new Z0EventHContainer(new TDirectoryFile("event_pass_elePt", "Z0_event_pass_elePt", "", this));
+   fHistCuts[kCUT_EVENT_PASS_Z0_ELECTRONPT].insert(ph);
+
    fHists->d["event_pass_final"]     = ph = new Z0EventHContainer(new TDirectoryFile("event_pass_final", "Z0_event_pass_final", "", this));
    fHistCuts[kCUT_EVENT_PASS_Z0_FINAL].insert(ph);
 
@@ -380,6 +383,10 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
    Fill(ev, kCUT_EVENT_NOCUT);
      
      if ( event.PassedCutZBos() ) {
+        Fill(ev, kCUT_EVENT_PASS_Z0_ELECTRONPT);
+     }
+     
+     if ( event.PassedCutZMass() ) {
         Fill(ev, kCUT_EVENT_PASS_Z0_FINAL);
      }
 

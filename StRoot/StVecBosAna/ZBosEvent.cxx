@@ -9,10 +9,9 @@ ClassImp(ZBosEvent)
 using namespace std;
 
 
-//const float ZBosEvent::sMinElectronPtLight = 15;
-//const float ZBosEvent::sMinElectronPtHard  = 25;
-//const float ZBosEvent::sMinNeutrinoPt      = 18;
-const float ZBosEvent::sMinZEleCandPt      = 15; // S.Fazio 30Sep2013
+const float ZBosEvent::sMinZEleCandPt      = 15;  // S.Fazio 30Sep2013
+const float ZBosEvent::sMinZMass           = 73;  // Zmass -20% 
+const float ZBosEvent::sMaxZMass           = 114; // Zmass +20% 
 
 ZBosEvent::ZBosEvent() : VecBosEvent(), mZBosMass(91.1876), mCand1P3(), mCand2P3()
 {
@@ -113,6 +112,22 @@ bool ZBosEvent::PassedCutZBos(float minElePt) const
 
    return false;
 }
+
+
+bool ZBosEvent::PassedCutZMass(float minElePt) const
+{
+   if ( PassedCutZBos(minElePt)      && 
+        mP4ZBoson.M() > sMinZMass    && 
+        mP4ZBoson.M() < sMaxZMass )
+   {
+      return true;
+   }
+
+   return false;
+
+}
+
+
 
 void ZBosEvent::CalcZBosP4()
 {
