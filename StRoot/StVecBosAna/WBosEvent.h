@@ -17,6 +17,7 @@ public:
    TVector3     GetElectronP3() const;
    TVector3     GetNeutrinoP3() const;
    TVector3     CalcMissingEnergyP3() const;
+   TVector3     CalcSignedPtBalance() const;
    TVector3     GetVecBosonP3() const;
    virtual void Process();
    virtual void ProcessPersistent();

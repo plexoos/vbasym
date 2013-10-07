@@ -31,13 +31,19 @@ TVector3 WBosEvent::GetNeutrinoP3() const { return mNeutrinoP3; }
 
 TVector3 WBosEvent::CalcMissingEnergyP3() const
 {
-   //return -1*(GetTrackRecoilTpcNeutrals() + GetElectronP3());
-   return -1*(mP3TrackRecoilTpcNeutralsCorrected + mElectronP3);
+   return -1*(GetTrackRecoilTpcNeutrals() + GetElectronP3());
+   //return -1*(mP3TrackRecoilTpcNeutralsCorrected + mElectronP3);
+
 
    // Other definitions
    //return -1*(mP3TrackRecoilTpcNeutrals + mElectronP3);
    //return -1*(mP3TrackRecoilTow + mElectronP3);
    //return -1*(mP4JetRecoil + mElectronP3);
+}
+
+TVector3 WBosEvent::CalcSignedPtBalance() const
+{
+   return mPtBalanceCosPhiFromTracks;
 }
 
 
@@ -101,8 +107,8 @@ void WBosEvent::Print(const Option_t* opt) const
 bool WBosEvent::PassedCutWBos(float minElePt) const
 {
    if ( HasCandidateEle() &&
-        //mPtBalanceCosPhiFromTracks >= sMinNeutrinoPt &&
-        mNeutrinoP3.Pt() >= sMinNeutrinoPt &&
+        mPtBalanceCosPhiFromTracks >= sMinNeutrinoPt &&
+        //mNeutrinoP3.Pt() >= sMinNeutrinoPt &&
         mElectronP3.Pt() >= minElePt)
    {
       return true;
