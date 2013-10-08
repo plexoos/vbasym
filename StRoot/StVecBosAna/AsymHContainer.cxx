@@ -24,7 +24,7 @@ AsymHContainer::AsymHContainer() : PlotHelper()
 }
 
 
-AsymHContainer::AsymHContainer(TDirectory *dir) : PlotHelper(dir)
+AsymHContainer::AsymHContainer(TDirectory *dir, EAsymType asymType) : PlotHelper(dir), mAsymType(asymType)
 {
    BookHists();
 }
@@ -319,6 +319,8 @@ void AsymHContainer::FillDerived()
 void AsymHContainer::PostFill()
 {
    Info("PostFill", "Called");
+
+   AsymCalculator::sAsymType = mAsymType;
 
    TH1I* hLeptonPhi_BU        = (TH1I*) o["hLeptonPhi_EtaProj_u0"];
    TH1I* hLeptonPhi_BD        = (TH1I*) o["hLeptonPhi_EtaProj_d0"];
