@@ -15,11 +15,65 @@ ClassImp(AsymCalculator)
 using namespace std;
 
 
+EAsymType AsymCalculator::sAsymType = kAsymPlain;
+
+
+void AsymCalculator::CalcAsimAsym(TH1I &hUp, TH1I &hDown, TH1D &hAsym)
+{
+   switch (sAsymType) {
+   case kAsymPlain:
+      CalcAsimAsymPlain(hUp, hDown, hAsym);
+      break;
+   case kAsymSqrtPhys:
+   case kAsymSqrtGeom:
+   case kAsymSqrtLumi:
+      CalcAsimAsymSqrtFormula(hUp, hDown, hAsym);
+      break;
+   default:
+      Error("CalcAsimAsym(TH1I ...)", "Unknown asymmetry type. No asymmetry will be calculated");
+      break;
+   }
+}
+
+
+/**
+ * Calculates the asymmetry in bins of some observable O. The user provides 2D
+ * histograms with yields binned in phi vs. O.
+ */
+void AsymCalculator::CalcAsimAsym(TH2I &hUp, TH2I &hDown, TH2D &hAsym)
+{
+   for (int iBinX=1; iBinX<=hUp.GetNbinsX(); iBinX++)
+   {
+      TH1I *hUpSlice = (TH1I*) hUp.ProjectionY("hUpSlice", iBinX, iBinX);
+      TH1I *hDwSlice = (TH1I*) hDown.ProjectionY("hDwSlice", iBinX, iBinX);
+
+      TH1D hAsymSlice("hAsymSlice", "hAsymSlice", hUpSlice->GetNbinsX(), hUpSlice->GetXaxis()->GetXmin(), hUpSlice->GetXaxis()->GetXmax());
+
+      // Check if there are events in the histograms
+      if (!hUpSlice->Integral() && !hDwSlice->Integral()) {
+         Warning("CalcAsimAsym(TH2I ...)", "Both up and down spin state histograms are empty. No asymmetry will be calculated.");
+         continue;
+      }
+
+      CalcAsimAsym(*hUpSlice, *hDwSlice, hAsymSlice);
+
+      for (int iBinY=1; iBinY<=hUp.GetNbinsY(); iBinY++)
+      {
+         Double_t asymVal = hAsymSlice.GetBinContent(iBinY);
+         Double_t asymErr = hAsymSlice.GetBinError(iBinY);
+
+         hAsym.SetBinContent(iBinX, iBinY, asymVal);
+         hAsym.SetBinError(iBinX, iBinY, asymErr);
+      }
+   }
+}
+
+
 /**
  * Takes two histograms binned in asimuthal angle phi for spin up and down.
  * Returns a hist hChAsym filled with asym values for each valid bin/channel.
  */
-void AsymCalculator::CalcAsimAsym(TH1I &hUp, TH1I &hDown, TH1D &hAsym)
+void AsymCalculator::CalcAsimAsymPlain(TH1I &hUp, TH1I &hDown, TH1D &hAsym)
 {
    //if (!hAsym) {
    //   hAsym= new TH1D("hAsym", "hAsym", hUp.GetNbinsX(), hUp.GetXaxis()->GetXmin(), hUp.GetXaxis()->GetXmax());
@@ -72,29 +126,50 @@ void AsymCalculator::CalcAsimAsym(TH1I &hUp, TH1I &hDown, TH1D &hAsym)
 }
 
 
-/** */
-void AsymCalculator::CalcAsimAsym(TH2I &hUp, TH2I &hDown, TH2D &hAsym)
+/**
+ * Takes two histograms binned in asimuthal angle phi with spin up and spin
+ * down yields. Returns a hist hChAsym filled with asym values for each valid
+ * bin/channel.
+ */
+void AsymCalculator::CalcAsimAsymSqrtFormula(TH1I &hUp, TH1I &hDown, TH1D &hAsym)
 {
-   for (int iBinX=1; iBinX<=hAsym.GetNbinsX(); iBinX++)
+   // Check if there are events in the histograms
+   if (!hUp.Integral() && !hDown.Integral()) {
+      Warning("CalcAsimAsymSqrtFormula(TH1I ...)", "Both up and down state histograms are empty. No asymmetry will be calculated");
+      return;
+   }
+
+   uint32_t nTotBins = hUp.GetNbinsX();
+   uint32_t nHalfBins = nTotBins/2;
+
+   for (uint32_t iAsimBin=1; iAsimBin<=nHalfBins; iAsimBin++)
    {
-      TH1I *hUpSlice = (TH1I*) hUp.ProjectionY("hUpSlice", iBinX, iBinX);
-      TH1I *hDwSlice = (TH1I*) hDown.ProjectionY("hDwSlice", iBinX, iBinX);
+      uint32_t nCountsUL = hUp.GetBinContent(iAsimBin);
+      uint32_t nCountsUR = hUp.GetBinContent(iAsimBin + nHalfBins);
+      uint32_t nCountsDL = hDown.GetBinContent(iAsimBin);
+      uint32_t nCountsDR = hDown.GetBinContent(iAsimBin + nHalfBins);
 
-      TH1D hAsymSlice("hAsymSlice", "hAsymSlice", hUpSlice->GetNbinsX(), hUpSlice->GetXaxis()->GetXmin(), hUpSlice->GetXaxis()->GetXmax());
+      ValErrPair asymValErr(0, -1);
 
-      // Check if there are events in the histograms
-      if (!hUpSlice->Integral() && !hDwSlice->Integral()) continue;
-
-      CalcAsimAsym(*hUpSlice, *hDwSlice, hAsymSlice);
-
-      for (int iBinY=1; iBinY<=hAsym.GetNbinsY(); iBinY++)
-      {
-         Double_t asymVal = hAsymSlice.GetBinContent(iBinY);
-         Double_t asymErr = hAsymSlice.GetBinError(iBinY);
-
-         hAsym.SetBinContent(iBinX, iBinY, asymVal);
-         hAsym.SetBinError(iBinX, iBinY, asymErr);
+      switch (sAsymType) {
+      case kAsymSqrtPhys:
+         asymValErr = CalcAsymSqrtFormula(nCountsUR, nCountsDL, nCountsUL, nCountsDR);
+         break;
+      case kAsymSqrtGeom:
+         asymValErr = CalcAsymSqrtFormula(nCountsUR, nCountsDR, nCountsUL, nCountsDL);
+         break;
+      case kAsymSqrtLumi:
+         asymValErr = CalcAsymSqrtFormula(nCountsUR, nCountsUL, nCountsDL, nCountsDR);
+         break;
+      default:
+         Error("CalcAsimAsymSqrtFormula(TH1I ...)", "Unknown asymmetry type. No asymmetry will be calculated");
+         return;
       }
+
+      if ( asymValErr.second < 0 ) continue;
+
+      hAsym.SetBinContent(iAsimBin, asymValErr.first);
+      hAsym.SetBinError(iAsimBin,   asymValErr.second);
    }
 }
 
