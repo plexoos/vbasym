@@ -9,7 +9,8 @@ ClassImp(ZBosEvent)
 using namespace std;
 
 
-const float ZBosEvent::sMinZEleCandPt      = 15;  // S.Fazio 30Sep2013
+const float ZBosEvent::sMinZEleCandPtLight     = 15; 
+const float ZBosEvent::sMinZEleCandPtHard      = 25;  
 const float ZBosEvent::sMinZMass           = 73;  // Zmass -20% 
 const float ZBosEvent::sMaxZMass           = 114; // Zmass +20% 
 
@@ -23,10 +24,10 @@ ZBosEvent::~ZBosEvent()
 }
 
 
-VecBosTrack& ZBosEvent::GetElectronCandidate() const
-{
-   return *(*mTracksCandidate.begin());
-}
+//VecBosTrack& ZBosEvent::GetElectronCandidate() const
+//{
+//   return *(*mTracksCandidate.begin());
+//}
 
 TVector3 ZBosEvent::GetCandidate1_P3() const { return mCand1P3; }
 TVector3 ZBosEvent::GetCandidate2_P3() const { return mCand2P3; }
@@ -42,7 +43,7 @@ void ZBosEvent::Process()
 {
    VecBosEvent::ProcessZ0();
 
-   // Make sure an isolated track exists
+   // Make sure two track candidate exists
    if (mTracksCandidate.size() <= 1) return;
 
    VecBosTrack &trackCand1  = **mTracksCandidate.begin();

@@ -322,11 +322,11 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
 
    Fill(ev, kCUT_EVENT_NOCUT);
      
-     if ( event.PassedCutZBos() ) {
+     if ( event.PassedCutZBos(ZBosEvent::sMinZEleCandPtHard) ) {
         Fill(ev, kCUT_EVENT_PASS_Z0_ELECTRONPT);
      }
      
-     if ( event.PassedCutZMass() ) {
+     if ( event.PassedCutZMass(ZBosEvent::sMinZEleCandPtHard) ) {
         Fill(ev, kCUT_EVENT_PASS_Z0_FINAL);
      }
 
