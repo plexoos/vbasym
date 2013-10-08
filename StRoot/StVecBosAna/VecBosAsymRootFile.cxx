@@ -79,6 +79,15 @@ void VecBosAsymRootFile::BookHists()
    fHists->d["asym_w_plus"] = ph = new AsymHContainer(new TDirectoryFile("asym_w_plus", "asym_w_plus", "", this));
    fHistCuts[kCUT_EVENT_W_PLUS].insert(ph);
 
+   fHists->d["asym_w_plus_phys"] = ph = new AsymHContainer(new TDirectoryFile("asym_w_plus_phys", "asym_w_plus_phys", "", this), kAsymSqrtPhys);
+   fHistCuts[kCUT_EVENT_W_PLUS].insert(ph);
+
+   fHists->d["asym_w_plus_geom"] = ph = new AsymHContainer(new TDirectoryFile("asym_w_plus_geom", "asym_w_plus_geom", "", this), kAsymSqrtGeom);
+   fHistCuts[kCUT_EVENT_W_PLUS].insert(ph);
+
+   fHists->d["asym_w_plus_lumi"] = ph = new AsymHContainer(new TDirectoryFile("asym_w_plus_lumi", "asym_w_plus_lumi", "", this), kAsymSqrtLumi);
+   fHistCuts[kCUT_EVENT_W_PLUS].insert(ph);
+
    fHists->d["event_w_minus"] = ph = new WBosEventHContainer(new TDirectoryFile("event_w_minus", "event_w_minus", "", this));
    fHistCuts[kCUT_EVENT_W_MINUS].insert(ph);
 
