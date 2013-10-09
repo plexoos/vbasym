@@ -152,7 +152,7 @@ void WBosMcEvent::CalcRecoil(StMcEvent &stMcEvent)
       eneTotal += particleP4.E();
 
       //if (particleP4.Eta() > -2.4 && particleP4.Eta() < 2.4)
-      if (particleP4.Eta() > -1.1 && particleP4.Eta() < 2.0)
+      if ( fabs(particleP4.Eta()) < 1.1 )
       {
          eneAccept          += particleP4.E();
          mP4RecoilInAccept  += particleP4;
@@ -172,12 +172,12 @@ void WBosMcEvent::CalcRecoil(StMcEvent &stMcEvent)
    mP4Recoil -= mP4Lepton;
    mP4Recoil -= mP4Neutrino;
 
-   if (mP4Lepton.Eta() > -1.1 && mP4Lepton.Eta() < 2.0)
+   if (fabs(mP4Lepton.Eta()) < 1.1)
       mP4RecoilInAccept -= mP4Lepton;
    else                                                
       mP4RecoilOutAccept -= mP4Lepton;
 
-   if (mP4Neutrino.Eta() > -1.1 && mP4Neutrino.Eta() < 2.0)
+   if (fabs(mP4Neutrino.Eta()) < 1.1)
       mP4RecoilInAccept  -= mP4Neutrino;
    else 
       mP4RecoilOutAccept -= mP4Neutrino;
