@@ -93,6 +93,10 @@ void MCHContainer::BookHists()
    o["hRecOutAccMomentumZ"] = new rh::H1I("hRecOutAccMomentumZ", "; P^{Recoil}_{z} [GeV/c]; Events", 100, -160., 160., "hist GRIDX");
    o["hRecOutAccPt"]        = new rh::H1I("hRecOutAccPt", "; P^{Recoil}_{t} [GeV/c]; Events", 50, 0., 50., "hist GRIDX");
 
+   o["hGenRecoilVsWBosonPt"]       = new rh::H2I("hGenRecoilVsWBosonPt", "; Gen. W Recoil p_{T}; Gen. W Boson p_{T};", 50, 0, 25, 50, 0, 25, "colz LOGZ");
+   o["hGenRecoilInAccVsWBosonPt"]  = new rh::H2I("hGenRecoilInAccVsWBosonPt",  "; Gen. W Recoil p_{T} In Accept.; Gen. W Boson p_{T};", 50, 0, 25, 50, 0, 25, "colz LOGZ");
+   o["hGenRecoilOutAccVsWBosonPt"] = new rh::H2I("hGenRecoilOutAccVsWBosonPt", "; Gen. W Recoil p_{T} Out of Accept.; Gen. W Boson p_{T};", 50, 0, 25, 50, 0, 25, "colz LOGZ");
+
    o["hJetRecoilPtVsWBosonPt"]   = new rh::H2I("hJetRecoilPtVsWBosonPt", "; W Boson P_{T}; Jet-based Recoil P_{T}", 50, 0., 50., 50, 0., 50., "colz LOGZ");
    o["hJetRecoilPt_GenOverReco"] = new rh::H2F("hJetRecoilPt_GenOverReco", ";Jet-based Recoil P_{T}; Correction factor",40, 0, 40, 50, 0, 20, "colz LOGZ");
    o["hJetRecoilPt_GenOverReco_zoomin"] = new rh::H2F("hJetRecoilPt_GenOverReco_zoomin", ";Jet-based Recoil P_{T}; Correction factor",20, 0, 10, 50, 0, 20, "colz LOGZ");
@@ -172,10 +176,15 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hRecOutAccMomentumZ"])->Fill(mcEvent->mP4RecoilOutAccept.Pz());
    ((TH1*) o["hRecOutAccPt"])       ->Fill(mcEvent->mP4RecoilOutAccept.Pt());
 
-   ((TH2*) o["hJetRecoilPtVsWBosonPt"])                      ->Fill(mcEvent->mP4WBoson.Pt(),  event.GetJetRecoil().Pt());
-   ((TH2*) o["hJetRecoilPhiVsWBosonPhi"])                    ->Fill(mcEvent->mP4WBoson.Phi(), event.GetJetRecoil().Phi());
-   ((TH2*) o["hJetRecoilPt_GenOverReco"])                    ->Fill(event.GetJetRecoil().Pt(), mcEvent->mP4WBoson.Pt()/event.GetJetRecoil().Pt());
-   ((TH2*) o["hJetRecoilPt_GenOverReco_zoomin"])             ->Fill(event.GetJetRecoil().Pt(), mcEvent->mP4WBoson.Pt()/event.GetJetRecoil().Pt());
+   ((TH1*) o["hGenRecoilVsWBosonPt"])->Fill(mcEvent->mP4WBoson.Pt(), mcEvent->mP4Recoil.Pt());
+   ((TH1*) o["hGenRecoilInAccVsWBosonPt"])->Fill(mcEvent->mP4WBoson.Pt(), mcEvent->mP4RecoilInAccept.Pt());
+   ((TH1*) o["hGenRecoilOutAccVsWBosonPt"])->Fill(mcEvent->mP4WBoson.Pt(), mcEvent->mP4RecoilOutAccept.Pt());
+
+   ((TH2*) o["hJetRecoilPtVsWBosonPt"])         ->Fill(mcEvent->mP4WBoson.Pt(),  event.GetJetRecoil().Pt());
+   ((TH2*) o["hJetRecoilPhiVsWBosonPhi"])       ->Fill(mcEvent->mP4WBoson.Phi(), event.GetJetRecoil().Phi());
+   ((TH2*) o["hJetRecoilPt_GenOverReco"])       ->Fill(event.GetJetRecoil().Pt(), mcEvent->mP4WBoson.Pt()/event.GetJetRecoil().Pt());
+   ((TH2*) o["hJetRecoilPt_GenOverReco_zoomin"])->Fill(event.GetJetRecoil().Pt(), mcEvent->mP4WBoson.Pt()/event.GetJetRecoil().Pt());
+
    ((TH2*) o["hTrackRecoilPtVsWBosonPt"])                    ->Fill(mcEvent->mP4WBoson.Pt(),  event.GetTrackRecoil().Pt());
    ((TH2*) o["hTrackRecoilPhiVsWBosonPhi"])                  ->Fill(mcEvent->mP4WBoson.Phi(), event.GetTrackRecoil().Phi());
    ((TH2*) o["hTrackRecoilTpcPtVsWBosonPt"])                 ->Fill(mcEvent->mP4WBoson.Pt(),  event.mP3TrackRecoilTpc.Pt());
