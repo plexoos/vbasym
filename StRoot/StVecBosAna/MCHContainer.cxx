@@ -211,13 +211,6 @@ void MCHContainer::Fill(ProtoEvent &ev)
 
 
 /** */
-void MCHContainer::FillDerived()
-{
-   Info("FillDerived()", "Called");
-}
-
-
-/** */
 void MCHContainer::PostFill()
 {
    Info("PostFill", "Called");

@@ -30,13 +30,9 @@ public:
    MCHContainer();
    MCHContainer(TDirectory *dir);
 
-   using PlotHelper::FillDerived;
-   using PlotHelper::PostFill;
-
-   //   void Fill(ProtoEvent &ev);
    void Fill(ProtoEvent &ev);
-   void FillDerived();
    void PostFill();
+   void PostFill(PlotHelper &oc) {}
 
 private:
 
