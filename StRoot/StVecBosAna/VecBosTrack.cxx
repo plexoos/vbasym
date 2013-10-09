@@ -75,7 +75,8 @@ bool VecBosTrack::IsCandidate() const
 
 bool VecBosTrack::IsZelectronCandidate() const
 {
-   return (HasCluster() && IsIsolated() && HasCharge());
+  //   return (HasCluster() && IsIsolated() && HasCharge());
+   return (HasCluster() && HasCharge());
 }
 
 
