@@ -155,9 +155,6 @@ protected:
    int             par_maxDisplEve;
 
    StBemcTables   *mBarrelTables;                   // used to access EMC status and ped info
-   TVector3        positionBtow[mxBtow];            // vs. tower ID
-   TVector3        positionBsmd[mxBSmd][mxBStrips]; // vs. strip ID       
-   TVector3        positionEtow[mxEtowSec*mxEtowSub][mxEtowEta];  
 
    StEEmcDb       *mDbE;            // access to EEMC database
    StSpinDbMaker  *mStSpinDbMaker;  // access spin information
@@ -178,8 +175,6 @@ protected:
    TChain *mTreeChain;
    TChain *mJetTreeChain;
 
-   void  InitHistos();
-   void  InitEndcapHistos();
    void  InitGeom();
    int   ReadMuDstBTOW();
    int   ReadMuDstETOW();
