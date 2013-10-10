@@ -150,6 +150,9 @@ StVecBosMaker::StVecBosMaker(AnaInfo& anaInfo, const char *name, VecBosRootFile 
 }
 
 
+/**
+ * This maker hook is called once before the processing
+ */
 Int_t StVecBosMaker::Init()
 {
    if (mStMuDstMaker) {
@@ -325,7 +328,10 @@ void StVecBosMaker::Clear(const Option_t *)
 }
 
 
-/** Called every event. */
+/**
+ * This hook is called every event. The events are analyzed, preselected, and saved in the
+ * #mVecBosTree tree.
+ */
 Int_t StVecBosMaker::Make()
 {
    mStopWatch.Start(); // restart mStopWatch
@@ -474,6 +480,9 @@ Int_t StVecBosMaker::Make()
 }
 
 
+/**
+ * Initialized global variables with detector coordinates.
+ */
 void StVecBosMaker::InitGeom()
 {
    // BTOW
@@ -806,13 +815,19 @@ int StVecBosMaker::ReadMuDstETOW()
 }
 
 
-// Returns non-zero on abort
+/**
+ * Extracts the fired trigger ids for the BEMC and checks against the high p_T trigger defined by
+ * the user. Also deals with the bunch crossing type, i.e. spin states and longitudinal vs
+ * transverse polarization.
+ *
+ * @return zero on success
+ */
 int StVecBosMaker::ReadMuDstBarrelTrig()
 {
    if (mIsMc) {
-      // When the trigger emulator is ready, this should hook into that
-      // instead of the two functions used below.  For now, check that it passes both
-      // L0 and L2, and set the l2bitET flag to true if so.
+      // When the trigger emulator is ready, this should hook into that instead of the two functions
+      // used below. For now, check that it passes both L0 and L2, and set the l2bitET flag to true
+      // if so.
 
       //if (!passes_L0()) return -1;
       if (!passes_L2()) return -2;
@@ -879,13 +894,12 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
       hA[1]->Fill(txt, 1.);
    }
 
-   //get bX info
+   // Get bunch crossing info
    StL0Trigger *trig = &stMuEvent->l0Trigger();
 
    mVecBosEvent->bx48 = trig->bunchCrossingId();
    mVecBosEvent->bx7  = trig->bunchCrossingId7bit(mRunNo);
 
-   // all 3 DB records exist
    // you do not want mix Long & Trans by accident
    if ( mStSpinDbMaker && mStSpinDbMaker->isValid() )
    {
@@ -1618,11 +1632,9 @@ void StVecBosMaker::FillTowHit(bool hasVertices)
 
 
 /**
-    In 2011, L2W fed off the BHT3 L0 trigger, which required a single
-    high tower to have an ADC of greater than 30.  This is the default
-    threshold, but can be set from the macro if a different value is
-    needed.
-*/
+ * In 2011, L2W fed off the BHT3 L0 trigger, which required a single high tower to have an ADC of greater than 30.  This
+ * is the default threshold, but can be set from the macro if a different value is needed.
+ */
 bool StVecBosMaker::passes_L0()
 {
    StMuEvent *stMuEvent = mStMuDstMaker->muDst()->event();
@@ -1635,11 +1647,10 @@ bool StVecBosMaker::passes_L0()
 
 
 /**
-    In 2011, the L2W trigger required a 2x2 patch of barrel towers
-    where one tower has more than 5.0GeV and the sum of all four is
-    E_T>12.0GeV.  These thresholds are the defaults, but can be set
-    from the macro if a different value is needed.
-*/
+ * In 2011, the L2W trigger required a 2x2 patch of barrel towers where one tower has more than 5.0GeV and the sum of
+ * all four is E_T>12.0GeV.  These thresholds are the defaults, but can be set from the macro if a different value is
+ * needed.
+ */
 bool StVecBosMaker::passes_L2()
 {
    for (int i = 0; i < mxBtow; i++)

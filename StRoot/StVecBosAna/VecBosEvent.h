@@ -31,6 +31,10 @@
 class StJet;
 
 
+/**
+ * This class describes the general data structure of events saved in the output ROOT tree. The functionality should be
+ * common for both W and Z boson events.
+ */
 class VecBosEvent : public ProtoEvent
 {
 public:
@@ -41,7 +45,7 @@ public:
    int                     l2EbitRnd;
    int                     trigAwaySum[16];   // for lumi
    int                     trigTotalSum;      // for lumi
-   bool                    fIsMc;             //< flag to process this event as MC or Data
+   bool                    fIsMc;             ///< Flag to process this event as MC or Data
    int                     fEventId;          // event id
    int                     fRunId;
    int                     time;
@@ -72,22 +76,22 @@ public:
    WeveETOW                etow;                        //!
    WeveEPRS                eprs;                        //!
    WeveESMD                esmd;                        //!
-   VecBosJetPtrSet         mJets;                       /// jet owner
+   VecBosJetPtrSet         mJets;                       ///< This container owns all jets in the event
    VecBosJetPtrSet         mJetsRecoil;                 //
    VecBosJetPtrSet         mJetsWithIsoTrack;           //
    VecBosVertexPtrSet      mVertices;                   ///
-   VecBosTrackPtrSet       mTracks;                     /// track owner
-   VecBosCandTrackPtrSet   mTracksCandidate;            /// pointers to candidate tracks sorted by cluster energy
-   VecBosMcEvent          *mMcEvent;
+   VecBosTrackPtrSet       mTracks;                     ///< This container owns all tracks in the event
+   VecBosCandTrackPtrSet   mTracksCandidate;            ///< Container with pointers to candidate tracks sorted by cluster energy
+   VecBosMcEvent          *mMcEvent;                    ///< Pointer to pure MC event
    TLorentzVector          mP4JetTotal;
    TLorentzVector          mP4JetFirst;
    TLorentzVector          mP4JetRecoil;
-   TVector3                mP3TrackRecoilTpc;           /// Vector sum of primary tracks, i.e. tracks coming from the primary vertex, except the lepton candidate track
-   TVector3                mP3TrackRecoilTow;           /// Vector sum of towers associated with primary tracks
-   TVector3                mP3TrackRecoilNeutrals;      /// Vector sum of all towers without matching track
-   TVector3                mP3TrackRecoilTpcNeutrals;   /// Vector sum of primary tracks and all towers
-   TVector3                mP3TrackRecoilTpcNeutralsCorrected;   /// Corrected vector sum of primary tracks and all towers
-   Float_t                 mMinVertexDeltaZ;            /// Minimum distance along z between vertices
+   TVector3                mP3TrackRecoilTpc;           ///< Vector sum of primary tracks, i.e. tracks coming from the primary vertex, except the lepton candidate track
+   TVector3                mP3TrackRecoilTow;           ///< Vector sum of towers associated with primary tracks
+   TVector3                mP3TrackRecoilNeutrals;      ///< Vector sum of all towers without matching track
+   TVector3                mP3TrackRecoilTpcNeutrals;   ///< Vector sum of primary tracks and all towers
+   TVector3                mP3TrackRecoilTpcNeutralsCorrected;   ///< Corrected vector sum of primary tracks and all towers
+   Float_t                 mMinVertexDeltaZ;            ///< Minimum distance along z between vertices
    TVector3                mP3BalanceFromTracks;
    TVector3                mP3BalanceFromTracks2;
    TVector3                mP3BalanceFromJets;
@@ -100,12 +104,12 @@ public:
    Double_t                mPtBalanceCosPhiFromJets;
    float                   mLumiEff;
 
-   static const float  sMinTrackIsoDeltaR;    //! (rad) near-cone size
-   static const float  sMinTrackIsoDeltaPhi;  //! (rad) away-'cone' size, approx. 40 deg.
-   static const float  sMaxVertexJetDeltaZ;   //! distance between jet and vertex z coord, cm
-   static const float  sMaxTrackJetDeltaZ;    //! distance between jet and track z coord, cm
+   static const float  sMinTrackIsoDeltaR;    //!< (rad) near-cone size
+   static const float  sMinTrackIsoDeltaPhi;  //!< (rad) away-'cone' size, approx. 40 deg.
+   static const float  sMaxVertexJetDeltaZ;   //!< distance between jet and vertex z coord, cm
+   static const float  sMaxTrackJetDeltaZ;    //!< distance between jet and track z coord, cm
    static const float  sMinBTrackPt;          //!
-   static const float  sMinRecoilTrackPt;     //! minimum Pt of a single track (cluster) in the recoil - S.Fazio 30Sep2013
+   static const float  sMinRecoilTrackPt;     //!< Minimum p_T of a single track (cluster) in the recoil
    static const float  sMinTrackHitFrac;      //!
    static const float  sMinClusterEnergyFrac; //!
    static const float  sMaxJetCone;           //!

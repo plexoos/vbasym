@@ -118,6 +118,9 @@ void MCHContainer::BookHists()
 }
 
 
+/**
+ * Fill histograms using information about the Monte-Carlo event.
+ */
 void MCHContainer::Fill(ProtoEvent &ev)
 {
    WBosEvent& event = (WBosEvent&) ev;

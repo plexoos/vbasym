@@ -35,7 +35,8 @@ class  TClonesArray;
 
 
 /**
- * The main analysis maker to process the StMuDstMaker data. The Make() method fills the tree in the output file.
+ * The main analysis maker to process the StMuDstMaker data. The Make() method is used to fill the
+ * tree in the output file after applying certain selection requirements.
  */
 class StVecBosMaker : public StMaker
 {

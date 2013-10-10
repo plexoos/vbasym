@@ -1,9 +1,3 @@
-/*****************************************************************************
- *                                                                           *
- *                                                                           *
- *****************************************************************************/
-
-
 #ifndef EventDisplayHContainer_h
 #define EventDisplayHContainer_h
 
@@ -14,7 +8,7 @@
 
 
 /**
- *
+ * A container with histograms to display basic event kinematics of W boson and its decay products.
  */
 class EventDisplayHContainer : public PlotHelper
 {

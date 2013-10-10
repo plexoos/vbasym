@@ -1,9 +1,3 @@
-/*****************************************************************************
- *                                                                           *
- *                                                                           *
- *****************************************************************************/
-
-
 #ifndef AsymHContainer_h
 #define AsymHContainer_h
 
@@ -16,7 +10,7 @@
 
 
 /**
- *
+ * A container to hold histograms with calculated asymmetries of W boson and its decay products.
  */
 class AsymHContainer : public PlotHelper
 {
@@ -34,7 +28,7 @@ public:
 
 protected:
 
-   EAsymType mAsymType; /// Type of the asymmetry calculated in this containter
+   EAsymType mAsymType; ///< Type of the asymmetry calculated in this containter
 
 private:
 
