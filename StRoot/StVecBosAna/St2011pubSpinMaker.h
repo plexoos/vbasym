@@ -1,5 +1,5 @@
-#ifndef STAR_St2011pubSpinMaker
-#define STAR_St2011pubSpinMaker
+#ifndef St2011pubSpinMaker_h
+#define St2011pubSpinMaker_h
 
 #include "TString.h"
 
@@ -9,6 +9,9 @@
 class StVecBosMaker;
 
 
+/**
+ * Deprecated.
+ */
 class St2011pubSpinMaker : public StMaker
 {
 private:

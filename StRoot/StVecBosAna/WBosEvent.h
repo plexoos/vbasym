@@ -6,6 +6,11 @@
 #include "VecBosEvent.h"
 
 
+/**
+ * This class extends the data structure and functionality of #VecBosEvent which is saved in the
+ * output ROOT tree. The events described by this class are assumed to pass the W boson
+ * requirements.
+ */
 class WBosEvent : public VecBosEvent
 {
 

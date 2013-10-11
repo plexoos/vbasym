@@ -1275,23 +1275,32 @@ void StVecBosMaker::ReadMuDstVerticesTracks()
 }
 
 
-/* from Pibero:
-   It looks like your global track is null. See this post:
-
-   http://www.star.bnl.gov/HyperNews-star/get/mudst/53.html
-
-   My reading of this hypernews says its just the way ITTF/MuDst
-   works. You can get a good primary track, but its global track
-   fails the chi2 fit. So the primary track is kept in the MuDst
-   but the global track is dropped. I would suggest you skip those
-   rare primary tracks that have no global tracks, that way you
-   still use most of the tracks in the MuDst. You don't need to
-   skip the entire event, just that track. I guess the down side
-   is you couldn't make a global DCA cut on those rare tracks, right?
-   I guess you could also request S&C to change ITTF/MuDst not to drop
-   the global track for every good primary track regardless of chi2.
-*/
-/* $STAR/StRoot/StEvent/StTrack.h
+/**
+ * Extracts tracks from the mudst container.
+ *
+ * Previous requirements on tracks:
+ * if (flag > 0) &&
+ * (primary track has a global track) &&
+ * (flag == 301 || 311) &&
+ * track P_T >= 1
+ *
+ * Tracks which do not pass cuts on individual sectors, that is min number of
+ * hits, fract of hits, min and max radius in transverse plane
+ * from Pibero:
+ * It looks like your global track is null. See this post:
+ *
+ * http://www.star.bnl.gov/HyperNews-star/get/mudst/53.html
+ *
+ * My reading of this hypernews says its just the way ITTF/MuDst
+ * works. You can get a good primary track, but its global track
+ * fails the chi2 fit. So the primary track is kept in the MuDst
+ * but the global track is dropped. I would suggest you skip those
+ * rare primary tracks that have no global tracks, that way you
+ * still use most of the tracks in the MuDst. You don't need to
+ * skip the entire event, just that track. I guess the down side
+ * is you couldn't make a global DCA cut on those rare tracks, right?
+ * I guess you could also request S&C to change ITTF/MuDst not to drop
+ * the global track for every good primary track regardless of chi2.
  *  mFlag=zxyy, where  z = 1 for pile up track in TPC (otherwise 0)
  *                     x indicates the detectors included in the fit and
  *                    yy indicates the status of the fit.
@@ -1318,18 +1327,6 @@ void StVecBosMaker::ReadMuDstVerticesTracks()
  *      = -x10 -> Bad fit, not enough points to start
  *
  *      = +x11 -> Short track pointing to EEMC
- *
- * Saves all tracks
- *
- * Before: if
- * (flag > 0) &&
- * (primary track has a global track) &&
- * (flag == 301 || 311) &&
- * track P_T >= 1
- *
- * Tracks which do not pass cuts on individual sectors, that is min number of
- * hits, fract of hits, min and max radius in transverse plane
- *
  */
 void StVecBosMaker::ReadMuDstTracks(VecBosVertex* vbVertex)
 {

@@ -8,7 +8,11 @@
 #include "VecBosTrack.h"
 
 
-
+/**
+ * This class extends the data structure and functionality of #VecBosEvent which is saved in the
+ * output ROOT tree. The events described by this class are assumed to pass the Z boson
+ * requirements.
+ */
 class ZBosEvent : public VecBosEvent
 {
 

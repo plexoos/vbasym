@@ -1,15 +1,14 @@
-#ifndef STAR_St2011pubWanaMaker
-#define STAR_St2011pubWanaMaker
+#ifndef St2011pubWanaMaker_h
+#define St2011pubWanaMaker_h
 
-/*!
- * \class  St2011pubWanaMaker
- * \brief  gathers all results from  W-analysis
- */
 
 class StVecBosMaker;
 class StEmcDecoder;
 
 
+/**
+ * Deprecated. Gathers all results from  W-analysis
+ */
 class St2011pubWanaMaker : public StMaker
 {
 private:
