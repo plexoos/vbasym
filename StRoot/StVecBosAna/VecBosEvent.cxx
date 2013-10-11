@@ -229,6 +229,51 @@ TVector3 VecBosEvent::CalcTrackRecoilTpcNeutralsCorrected()
 }
 
 
+// Correct using randomized correction distibutions
+TVector3 VecBosEvent::CalcRecoilCorrected()
+{   
+   mP3TrackRecoilTpcNeutralsCorrected = mP3TrackRecoilTpcNeutrals;
+   TVector3 recoP3 = mP3TrackRecoilTpcNeutrals;
+   Double_t mRndCorrection = 1.;
+
+   if (mP3TrackRecoilTpcNeutralsCorrected.Pt() < 40) {
+
+    TString inPath  = "/star/institutions/bnl_me/fazio/vbana_out/";
+    TFile *fileMCWplus   = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_vbana.root");
+
+    TH2 *hCorrFacVsRecoilPt     = (TH2*) fileMCWplus->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPt_GenOverReco");
+    Int_t nbins = hCorrFacVsRecoilPt->GetNbinsX();
+
+    TH1D* hCorrFacVsRecoilPt_py[nbins-1]; // histogram arrays start from value 0
+ 
+    for (Int_t i = 1; i <= nbins; i++) {
+      if (recoP3.Pt() >= i-1 && recoP3.Pt() < i) {
+	TString name("hCorrFacVsRecoilPt_py");
+	name += i;
+	hCorrFacVsRecoilPt_py[i-1] = hCorrFacVsRecoilPt->ProjectionY(name, i, i);
+        TH1D* hRndCorrection       = (TH1D*) hCorrFacVsRecoilPt_py[i-1]->Clone("hRndCorrection");
+	hRndCorrection->Reset();
+        hRndCorrection->FillRandom(hCorrFacVsRecoilPt_py[i-1],1);
+
+        mRndCorrection  = hRndCorrection -> GetMean();
+      }
+    }
+
+   }
+   else {
+
+        mRndCorrection  = 1.1202; // To be checked...
+
+   }
+
+   mP3TrackRecoilTpcNeutralsCorrected.SetX(mRndCorrection * mP3TrackRecoilTpcNeutralsCorrected.X());
+   mP3TrackRecoilTpcNeutralsCorrected.SetY(mRndCorrection * mP3TrackRecoilTpcNeutralsCorrected.Y());
+
+   return mP3TrackRecoilTpcNeutralsCorrected;
+}
+
+
+/*
 bool VecBosEvent::PassedCutFinal() const
 {
    //if (mTracksCandidate.size() > 0 && GetMissingEnergy().Pt() > 18
@@ -239,7 +284,7 @@ bool VecBosEvent::PassedCutFinal() const
 
    return false;
 }
-
+*/
 
 void VecBosEvent::Process()
 {

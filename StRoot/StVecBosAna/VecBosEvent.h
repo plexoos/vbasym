@@ -3,6 +3,7 @@
 
 #include "TBuffer.h"
 #include "TH1.h"
+//#include "TH2.h"
 #include "TLorentzVector.h"
 #include "TVector3.h"
 
@@ -147,9 +148,11 @@ public:
    TVector3       GetTrackRecoilNeutrals()    const { return mP3TrackRecoilNeutrals; }
    TVector3       GetTrackRecoilTpcNeutrals() const { return mP3TrackRecoilTpcNeutrals; }
    TVector3       GetTrackRecoilTpcNeutralsCorrected() const { return mP3TrackRecoilTpcNeutralsCorrected; }
+   TVector3       GetRecoilCorrected() const { return mP3TrackRecoilTpcNeutralsCorrected; }
    VecBosVertex*  FindVertexById(const Short_t vertexId) const;
    VecBosTrack*   FindTrackById(const Short_t trackId) const;
    TVector3       CalcTrackRecoilTpcNeutralsCorrected();
+   TVector3       CalcRecoilCorrected();
    void           SetCpuTimeEventAna(Double_t time) { mCpuTimeEventAna = time; }
    void           SetCpuTimeHistFill(Double_t time) { mCpuTimeHistFill = time; }
    bool           HasGoodVertex()             const { return mNumGoodVertices    > 0 ? true : false; } // Checks if at least one good vertex exist in the event
@@ -157,7 +160,6 @@ public:
    bool           HasIsolatedTrack()          const { return mNumIsolatedTracks  > 0 ? true : false; }
    bool           HasCandidateEle()           const { return mTracksCandidate.size() > 0 ? true : false; }
    bool           HasJetRecoil()              const { return mP4JetRecoil.Mag()  > 0 ? true : false; }
-   bool           PassedCutFinal() const;
 
    virtual void   Process();
    virtual void   ProcessPersistent();
