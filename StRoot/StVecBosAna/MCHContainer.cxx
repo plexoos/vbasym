@@ -96,6 +96,8 @@ void MCHContainer::BookHists()
    o["hGenRecoilVsWBosonPt"]       = new rh::H2I("hGenRecoilVsWBosonPt", "; Gen. W Recoil p_{T}; Gen. W Boson p_{T};", 50, 0, 25, 50, 0, 25, "colz LOGZ");
    o["hGenRecoilInAccVsWBosonPt"]  = new rh::H2I("hGenRecoilInAccVsWBosonPt",  "; Gen. W Recoil p_{T} In Accept.; Gen. W Boson p_{T};", 50, 0, 25, 50, 0, 25, "colz LOGZ");
    o["hGenRecoilOutAccVsWBosonPt"] = new rh::H2I("hGenRecoilOutAccVsWBosonPt", "; Gen. W Recoil p_{T} Out of Accept.; Gen. W Boson p_{T};", 50, 0, 25, 50, 0, 25, "colz LOGZ");
+   o["hGenRecoilOutVsInAccPt"]     = new rh::H2I("hGenRecoilOutVsInAccPt", "; Gen. W Recoil p_{T} In Accept.; Gen. W Recoil p_{T} Out of Accept.;", 50, 0, 25, 50, 0, 25, "colz LOGZ");
+   o["hGenRecoilInOutDeltaPhi"]    = new rh::H1I("hGenRecoilInOutDeltaPhi", "; Gen. W Recoil #Delta#phi(In, Out) ; Events;", 30, -M_PI, M_PI, "hist GRIDX GRIDY");
 
    o["hJetRecoilPtVsWBosonPt"]   = new rh::H2I("hJetRecoilPtVsWBosonPt", "; W Boson P_{T}; Jet-based Recoil P_{T}", 50, 0., 50., 50, 0., 50., "colz LOGZ");
    o["hJetRecoilPt_GenOverReco"] = new rh::H2F("hJetRecoilPt_GenOverReco", ";Jet-based Recoil P_{T}; Correction factor",40, 0, 40, 50, 0, 20, "colz LOGZ");
@@ -182,6 +184,8 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hGenRecoilVsWBosonPt"])->Fill(mcEvent->mP4WBoson.Pt(), mcEvent->mP4Recoil.Pt());
    ((TH1*) o["hGenRecoilInAccVsWBosonPt"])->Fill(mcEvent->mP4WBoson.Pt(), mcEvent->mP4RecoilInAccept.Pt());
    ((TH1*) o["hGenRecoilOutAccVsWBosonPt"])->Fill(mcEvent->mP4WBoson.Pt(), mcEvent->mP4RecoilOutAccept.Pt());
+   ((TH1*) o["hGenRecoilOutVsInAccPt"])->Fill(mcEvent->mP4RecoilInAccept.Pt(), mcEvent->mP4RecoilOutAccept.Pt());
+   ((TH1*) o["hGenRecoilInOutDeltaPhi"])->Fill(mcEvent->mP4RecoilInAccept.DeltaPhi( mcEvent->mP4RecoilOutAccept ));
 
    ((TH2*) o["hJetRecoilPtVsWBosonPt"])         ->Fill(mcEvent->mP4WBoson.Pt(),  event.GetJetRecoil().Pt());
    ((TH2*) o["hJetRecoilPhiVsWBosonPhi"])       ->Fill(mcEvent->mP4WBoson.Phi(), event.GetJetRecoil().Phi());
