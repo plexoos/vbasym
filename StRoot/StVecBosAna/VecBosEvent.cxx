@@ -235,35 +235,22 @@ TVector3 VecBosEvent::CalcTrackRecoilTpcNeutralsCorrected()
 TVector3 VecBosEvent::CalcRecoilCorrected()
 {
    mP3TrackRecoilTpcNeutralsCorrected = mP3TrackRecoilTpcNeutrals;
-   TVector3 recoP3 = mP3TrackRecoilTpcNeutrals;
-   Double_t rndCorrection = 1.;
 
-   if (mP3TrackRecoilTpcNeutralsCorrected.Pt() < 40)
-   {
-      TString inPath  = "/star/institutions/bnl_me/fazio/vbana_out/";
-      TFile *fileMCWplus = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_vbana.root");
+   TString inPath  = "/star/institutions/bnl_me/fazio/vbana_out/";
+   TFile *fileMCWplus = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_vbana.root");
 
-      TH2 *hCorrFacVsRecoilPt = (TH2*) fileMCWplus->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPt_GenOverReco");
-      Int_t nbins = hCorrFacVsRecoilPt->GetNbinsX();
+   TH2 *hCorrFacVsRecoilPt = (TH2*) fileMCWplus->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPt_GenOverReco");
+   Int_t nbins = hCorrFacVsRecoilPt->GetNbinsX();
 
-      TH1D* hCorrFacVsRecoilPt_py[nbins-1]; // histogram arrays start from value 0
+   // Find the bin corresponding to the un-corrected recoil p_T
+   int ptBinIndex = hCorrFacVsRecoilPt->GetXaxis()->FindBin(mP3TrackRecoilTpcNeutrals.Pt());
 
-      for (Int_t i = 1; i <= nbins; i++) {
-         if (recoP3.Pt() >= i-1 && recoP3.Pt() < i) {
-            TString name("hCorrFacVsRecoilPt_py");
-            name += i;
-            hCorrFacVsRecoilPt_py[i-1] = hCorrFacVsRecoilPt->ProjectionY(name, i, i);
-            TH1D* hRndCorrection       = (TH1D*) hCorrFacVsRecoilPt_py[i-1]->Clone("hRndCorrection");
-            hRndCorrection->Reset();
-            hRndCorrection->FillRandom(hCorrFacVsRecoilPt_py[i-1],1);
+   // Get the distribution of correction factors for that bin
+   TH1D* ptBinYSlice = hCorrFacVsRecoilPt->ProjectionY("ptBinYSlice", ptBinIndex, ptBinIndex);
 
-            rndCorrection = hRndCorrection->GetMean();
-         }
-      }
-   }
-   else {
-      rndCorrection = 1.1202; // To be checked...
-   }
+   // Throw a random number based on that distribution
+   double rndCorrection = ptBinYSlice->GetRandom();
+   delete ptBinYSlice;
 
    mP3TrackRecoilTpcNeutralsCorrected.SetX(rndCorrection * mP3TrackRecoilTpcNeutralsCorrected.X());
    mP3TrackRecoilTpcNeutralsCorrected.SetY(rndCorrection * mP3TrackRecoilTpcNeutralsCorrected.Y());
