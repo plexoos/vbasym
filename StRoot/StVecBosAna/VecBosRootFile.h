@@ -80,9 +80,6 @@ public:
 private:
 
    void BookHists();
-
-
-   ClassDef(VecBosRootFile, 1)
 };
 
 #endif

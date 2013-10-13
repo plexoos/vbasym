@@ -22,8 +22,6 @@
 
 #include "utils/utils.h"
 
-ClassImp(VecBosAsymRootFile)
-
 using namespace std;
 
 

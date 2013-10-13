@@ -34,7 +34,6 @@ public:
 
    static EAsymType sAsymType; /// Type of the asymmetry to be calculated
 
-   ClassDef(AsymCalculator, 1)
 };
 
 #endif

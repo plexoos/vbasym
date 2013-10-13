@@ -9,9 +9,6 @@
 
 #include "utils/utils.h"
 
-
-ClassImp(AsymCalculator)
-
 using namespace std;
 
 

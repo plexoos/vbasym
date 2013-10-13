@@ -26,9 +26,6 @@ public:
 private:
 
    void BookHists();
-
-
-   ClassDef(VecBosAsymRootFile, 1)
 };
 
 #endif
