@@ -10,6 +10,7 @@
 
 #include "utils/ValErrPair.h"
 
+#include "VbAnaOptions.h"
 #include "Globals.h"
 
 
@@ -32,8 +33,8 @@ public:
    static ValErrPair CalcAsym(Double_t A, Double_t B, Double_t totalA=1, Double_t totalB=1);
    static ValErrPair CalcAsymSqrtFormula(Double_t A, Double_t B, Double_t C, Double_t D);
 
-   static EAsymType sAsymType; /// Type of the asymmetry to be calculated
-
+   static VbAnaOptions *sVbAnaOptions; ///< Pointer to class object with user options
+   static EAsymType  sAsymType; ///< Type of the asymmetry to be calculated
 };
 
 #endif

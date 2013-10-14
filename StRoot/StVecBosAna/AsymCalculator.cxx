@@ -12,6 +12,7 @@
 using namespace std;
 
 
+VbAnaOptions *AsymCalculator::sVbAnaOptions = 0;
 EAsymType AsymCalculator::sAsymType = kAsymPlain;
 
 
@@ -195,10 +196,21 @@ void AsymCalculator::FitAsimAsym(TH1D &hAsym)
  */
 void AsymCalculator::FitAsimAsym(TGraph &grAsym)
 {
-   TF1 fitFunc("fitFunc", "[0] + [1]*sin(x + [2])", -M_PI, M_PI);
+   double fitRangeMax = sAsymType == kAsymPlain ? M_PI : 0;
+
+   TF1 fitFunc("fitFunc", "[0] + [1]*sin(x + [2])", -M_PI, fitRangeMax);
    fitFunc.SetParNames("Offset", "Amplitude", "Phase");
    fitFunc.SetLineColor(grAsym.GetMarkerColor());
-   grAsym.Fit(&fitFunc);
+
+   if (sVbAnaOptions) {
+      if (sVbAnaOptions->mFitSinePhase != DBL_MAX)
+         fitFunc.FixParameter(2, sVbAnaOptions->mFitSinePhase);
+
+      if (sVbAnaOptions->mFitSineOffset != DBL_MAX)
+         fitFunc.FixParameter(0, sVbAnaOptions->mFitSineOffset);
+   }
+
+   grAsym.Fit(&fitFunc, "R");
 }
 
 
