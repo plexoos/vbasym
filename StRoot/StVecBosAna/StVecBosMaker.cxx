@@ -49,7 +49,7 @@ ClassImp(StVecBosMaker)
 StVecBosMaker::StVecBosMaker(AnaInfo& anaInfo, const char *name, VecBosRootFile *vbFile): StMaker(name),
    mStopWatch(), mAnaInfo(&anaInfo), mStMuDstMaker(0), mStJetReader(0), mVecBosRootFile(vbFile),
    mJetTreeBranchName(), mJetTreeBranchNameNoEndcap(),
-   mJets(0), mVecBosEvent(0), mVecBosTree(0), 
+   mJets(0), mVecBosEvent(0), mVecBosTree(0),
    mNumInputEvents(0), mNumTrigEvents(0), mNumAcceptedEvents(0),
    mRunNo(0), nRun(0), mIsMc(0),
    Tfirst(numeric_limits<int>::max()), Tlast(numeric_limits<int>::min()),
@@ -81,7 +81,6 @@ StVecBosMaker::StVecBosMaker(AnaInfo& anaInfo, const char *name, VecBosRootFile 
    setHListTpc(0);
    setMC(0);
    setFindZ(0);
-   setTracksPtMin(0);
 
    // MC trigger simulator
    par_l0emulAdcThresh          = 30;
@@ -319,8 +318,6 @@ Int_t StVecBosMaker::FinishRun(int runNo)
 void StVecBosMaker::Clear(const Option_t *)
 {
    mVecBosEvent->Clear();
-   //delete mVecBosEvent;
-   //mVecBosEvent = 0;
 }
 
 
@@ -333,8 +330,6 @@ Int_t StVecBosMaker::Make()
    mStopWatch.Start(); // restart mStopWatch
 
    mNumInputEvents++;
-   //cout << endl;
-   //Info("Make()", "Called for event %d", mNumInputEvents);
 
    // standard MuDst analysis
    // We need both makers for proper analysis
@@ -453,14 +448,6 @@ Int_t StVecBosMaker::Make()
    //   AnalyzeESMD();
    //   //AnalyzeEPRS(); // not implemented
    //}
-
-   // Fill final histograms
-   //if (hasMatchedTrack2BCluster) {
-   //   FindWBoson();
-   //   FindZBoson();
-   //}
-
-   //if (hasMatchedTrack2ECluster) FindWBosonEndcap();
 
    //mVecBosRootFile->Fill(*mVecBosEvent, kCUT_CUT);
 
@@ -809,8 +796,9 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
       PatchToEtaPhi(m, &tempEta, &tempPhi);
 
       for (int away_width = 0; away_width < 16; away_width++) {
-         if ((highestPhi + 30 - tempPhi) % 30 > (15 - away_width) && (highestPhi + 30 - tempPhi) % 30 < (15 + away_width)) {
-            //printf("==> adding %d to awaySum",myT);
+         if ((highestPhi + 30 - tempPhi) % 30 > (15 - away_width) &&
+             (highestPhi + 30 - tempPhi) % 30 < (15 + away_width))
+         {
             awaySum[away_width] += myT;
          }
       }
@@ -831,7 +819,6 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
    for (unsigned int i = 0; i < idL.size(); i++) {
       char txt[100];
       sprintf(txt, "%d", idL[i]);
-      //printf("%d, ",idL[i]);
       hA[1]->Fill(txt, 1.);
    }
 
@@ -852,7 +839,6 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
    } else {
       Info("ReadMuDstBarrelTrig()", "No valid mStSpinDbMaker");
    }
-
 
    // Check trigger ID exists = fired
    if ( (mL2BarrelTriggerId  != 0 && !triggerIdCollection->nominal().isTrigger(mL2BarrelTriggerId)) &&
@@ -905,11 +891,8 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
       int val = stMuEvent->emcTriggerDetector().highTower(m);
 
       if (mxVal < val) mxVal = val;
-
       if (mVecBosEvent->l2bitET) hA[6]->Fill(val);
-
       if (val < par_DsmThres) continue;
-
       if (mVecBosEvent->l2bitET) hA[8]->Fill(m);
 
       //printf("Fired L0 HT m=%d val=%d\n",m,val);
@@ -1330,11 +1313,6 @@ void StVecBosMaker::ReadMuDstVerticesTracks()
  */
 void StVecBosMaker::ReadMuDstTracks(VecBosVertex* vbVertex)
 {
-   // printf("\n nInp=%d eveID=%d nPVer=%d nAnyV=
-   //        %d\n",mNumInputEvents,mStMuDstMaker->muDst()->event()->eventId(),mVecBosEvent->mVertices.size(),mStMuDstMaker->muDst()->numberOfPrimaryVertices());
-   //float rank = vertex->ranking();
-   // XXX:ds: assert(rank > 0 || (rank < 0 && vertex->nEEMCMatch()));
-
    // Get tracks from the current vertex set in ReadMuDstVerticesTracks
    Int_t nPrimaryTracks = mStMuDstMaker->muDst()->GetNPrimaryTrack();
 

@@ -1,4 +1,3 @@
-
 #include "VecBosRootFile.h"
 
 #include <climits>

@@ -1,10 +1,5 @@
-#ifndef STAR_StZBosMaker
-#define STAR_StZBosMaker
-
-/*!
- * \brief  uses tree from W-algo to find Zs
- *
- */
+#ifndef StZBosMaker_h
+#define StZBosMaker_h
 
 #include "StMaker.h"
 #include "StVecBosMaker.h"
@@ -15,9 +10,11 @@ class WeventDisplay;
 class VecBosTrack;
 
 
+/**
+ * Deprecated.
+ */
 class StZBosMaker : public StMaker
 {
-
 private:
 
    float par_nearTotEtFracZ;
@@ -45,11 +42,6 @@ public:
    virtual Int_t  Make();
    virtual Int_t InitRun(int runnumber);   // Overload empty StMaker::InitRun
    virtual Int_t FinishRun(int runnumber); // Overload empty StMaker::FinishRun
-   virtual const char *GetCVS() const
-   {
-      static const char cvs[] = "";
-      return cvs;
-   }
 
    void setHList(TObjArray *x)              { HList = x; }
    void AttachWalgoMaker(StVecBosMaker *mk) { wMK = mk; }

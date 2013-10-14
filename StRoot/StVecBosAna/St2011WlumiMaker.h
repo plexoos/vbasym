@@ -25,9 +25,10 @@ private:
 
    StVecBosMaker *wMK;      ///< W-algo maker with all data
    StMuDstMaker *muMK;
-   // histograms
+
    TObjArray *HList;
-   enum {mxHA = 120}; TH1 *hA[mxHA];
+   enum {mxHA = 120};
+   TH1 *hA[mxHA];
 
    void initHistos();
    void sortTrigger();
@@ -35,6 +36,7 @@ private:
    void getAbortGapCounts(int angle, int *n1, int *n2);
 
 public:
+
    St2011WlumiMaker(const char *name = "2011Wlumi");
    virtual       ~St2011WlumiMaker() {};
    virtual Int_t  Init();

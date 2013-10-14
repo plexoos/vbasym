@@ -1,4 +1,3 @@
-
 #include "WBosEvent.h"
 #include "WBosMcEvent.h"
 
@@ -32,15 +31,14 @@ TVector3 WBosEvent::GetNeutrinoP3() const { return mNeutrinoP3; }
 
 TVector3 WBosEvent::CalcMissingEnergyP3() const
 {
-   return -1*(GetTrackRecoilTpcNeutrals() + GetElectronP3());
+   return -1*(mP3TrackRecoilTpcNeutrals + mElectronP3);
    //return -1*(mP3TrackRecoilTpcNeutralsCorrected + mElectronP3);
 
-
    // Other definitions
-   //return -1*(mP3TrackRecoilTpcNeutrals + mElectronP3);
    //return -1*(mP3TrackRecoilTow + mElectronP3);
    //return -1*(mP4JetRecoil + mElectronP3);
 }
+
 
 TVector3 WBosEvent::CalcSignedPtBalance() const
 {
@@ -67,7 +65,6 @@ void WBosEvent::ProcessPersistent()
 
    // Proceed only if this is a W event, i.e. it conforms to W event signature
    //if ( !PassedCutWBos() ) return;
-   //if ( !HasCandidateEle() ) return;
    if ( !HasCandidateEle() ) return;
 
    mElectronP3 = GetElectronTrack().GetP3EScaled();

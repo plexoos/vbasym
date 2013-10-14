@@ -210,7 +210,7 @@ VecBosTrack* VecBosEvent::FindTrackById(const Short_t trackId) const
 
 
 /**
- * Corrects the default track recoil using the MC correction.
+ * Corrects the p_T of the default track recoil using the MC correction.
  */
 TVector3 VecBosEvent::CalcTrackRecoilTpcNeutralsCorrected()
 {
@@ -255,8 +255,6 @@ TVector3 VecBosEvent::CalcRecoilCorrected()
 
    mP3TrackRecoilTpcNeutralsCorrected.SetX(rndCorrection * mP3TrackRecoilTpcNeutralsCorrected.X());
    mP3TrackRecoilTpcNeutralsCorrected.SetY(rndCorrection * mP3TrackRecoilTpcNeutralsCorrected.Y());
-
-   cout << "random Correction = " <<  rndCorrection << endl; 
 
    return mP3TrackRecoilTpcNeutralsCorrected;
 }
@@ -423,7 +421,7 @@ void VecBosEvent::ProcessZ0()
       if (track.IsIsolated()) {
          mNumIsolatedTracks++;
 
-	 // if ( track.IsUnBalanced() ) track.FindClosestJet();
+         // if ( track.IsUnBalanced() ) track.FindClosestJet();
       }
 
       if ( track.IsZelectronCandidate() ) {
@@ -1004,9 +1002,9 @@ void VecBosEvent::Clear(const Option_t* opt)
    mP3TrackRecoilNeutrals.SetXYZ(0, 0, 0);
    mP3TrackRecoilTpcNeutrals.SetXYZ(0, 0, 0);
    mP3BalanceFromTracks.SetXYZ(0, 0, 0);
-   mMinVertexDeltaZ                    = -1;
-   mNumRecoilTracksTpc                 =  0;
-   mLumiEff                            = -0;
+   mMinVertexDeltaZ    = -1;
+   mNumRecoilTracksTpc =  0;
+   mLumiEff            = -0;
 }
 
 

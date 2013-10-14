@@ -21,7 +21,6 @@ public:
    ZBosEvent();
    ~ZBosEvent();
 
-   //VecBosTrack& GetElectronCandidate() const;
    TLorentzVector mP4ZBoson;
    TVector3     GetCandidate1_P3() const;
    TVector3     GetCandidate2_P3() const;
