@@ -1,4 +1,3 @@
-
 #include "VecBosAsymRootFile.h"
 
 #include <climits>
@@ -71,25 +70,25 @@ void VecBosAsymRootFile::BookHists()
    fHists->d["asym_w"] = ph = new AsymHContainer(new TDirectoryFile("asym_w", "asym_w", "", this));
    fHistCuts[kCUT_EVENT_W].insert(ph);
 
-   fHists->d["event_w_plus"] = ph = new WBosEventHContainer(new TDirectoryFile("event_w_plus", "event_w_plus", "", this));
+   fHists->d["event_wp"] = ph = new WBosEventHContainer(new TDirectoryFile("event_wp", "event_wp", "", this));
    fHistCuts[kCUT_EVENT_W_PLUS].insert(ph);
 
-   fHists->d["asym_w_plus"] = ph = new AsymHContainer(new TDirectoryFile("asym_w_plus", "asym_w_plus", "", this));
+   fHists->d["asym_wp"] = ph = new AsymHContainer(new TDirectoryFile("asym_wp", "asym_wp", "", this));
    fHistCuts[kCUT_EVENT_W_PLUS].insert(ph);
 
-   fHists->d["asym_w_plus_phys"] = ph = new AsymHContainer(new TDirectoryFile("asym_w_plus_phys", "asym_w_plus_phys", "", this), kAsymSqrtPhys);
+   fHists->d["asym_wp_phys"] = ph = new AsymHContainer(new TDirectoryFile("asym_wp_phys", "asym_wp_phys", "", this), kAsymSqrtPhys);
    fHistCuts[kCUT_EVENT_W_PLUS].insert(ph);
 
-   fHists->d["asym_w_plus_geom"] = ph = new AsymHContainer(new TDirectoryFile("asym_w_plus_geom", "asym_w_plus_geom", "", this), kAsymSqrtGeom);
+   fHists->d["asym_wp_geom"] = ph = new AsymHContainer(new TDirectoryFile("asym_wp_geom", "asym_wp_geom", "", this), kAsymSqrtGeom);
    fHistCuts[kCUT_EVENT_W_PLUS].insert(ph);
 
-   fHists->d["asym_w_plus_lumi"] = ph = new AsymHContainer(new TDirectoryFile("asym_w_plus_lumi", "asym_w_plus_lumi", "", this), kAsymSqrtLumi);
+   fHists->d["asym_wp_lumi"] = ph = new AsymHContainer(new TDirectoryFile("asym_wp_lumi", "asym_wp_lumi", "", this), kAsymSqrtLumi);
    fHistCuts[kCUT_EVENT_W_PLUS].insert(ph);
 
-   fHists->d["event_w_minus"] = ph = new WBosEventHContainer(new TDirectoryFile("event_w_minus", "event_w_minus", "", this));
+   fHists->d["event_wm"] = ph = new WBosEventHContainer(new TDirectoryFile("event_wm", "event_wm", "", this));
    fHistCuts[kCUT_EVENT_W_MINUS].insert(ph);
 
-   fHists->d["asym_w_minus"] = ph = new AsymHContainer(new TDirectoryFile("asym_w_minus", "asym_w_minus", "", this));
+   fHists->d["asym_wm"] = ph = new AsymHContainer(new TDirectoryFile("asym_wm", "asym_wm", "", this));
    fHistCuts[kCUT_EVENT_W_MINUS].insert(ph);
 
    if (!fIsMc) return;
