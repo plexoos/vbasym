@@ -14,7 +14,8 @@ const float WBosEvent::sMinElectronPtHard  = 25;
 const float WBosEvent::sMinNeutrinoPt      = 18;
 
 
-WBosEvent::WBosEvent() : VecBosEvent(), mWBosMass(80.385), mElectronP3(), mNeutrinoP3()
+WBosEvent::WBosEvent() : VecBosEvent(), mWBosMass(80.385), mElectronP3(), mNeutrinoP3(),
+   mNeutrinoP3Other()
 {
 }
 
@@ -70,7 +71,8 @@ void WBosEvent::ProcessPersistent()
    if ( !HasCandidateEle() ) return;
 
    mElectronP3 = GetElectronTrack().GetP3EScaled();
-   mNeutrinoP3 = CalcMissingEnergyP3(); // here we use only x and y components, and reconstruct z
+   mNeutrinoP3 = CalcMissingEnergyP3(); // here we use only x and y components, and reconstruct the z one later
+   mNeutrinoP3Other = mNeutrinoP3;
 
    ReconstructNeutrinoZ();
 }
@@ -158,7 +160,13 @@ void WBosEvent::ReconstructNeutrinoZ()
    double p_nu_z1  = (-b + sqrt(d) ) / 2 / a;
    double p_nu_z2  = (-b - sqrt(d) ) / 2 / a;
 
-   mNeutrinoP3.SetZ(fabs(p_nu_z1) < fabs(p_nu_z2) ? p_nu_z1 : p_nu_z2);
+   if (fabs(p_nu_z1) < fabs(p_nu_z2)) {
+      mNeutrinoP3.SetZ(p_nu_z1);
+      mNeutrinoP3Other.SetZ(p_nu_z2);
+   } else {
+      mNeutrinoP3.SetZ(p_nu_z2);
+      mNeutrinoP3Other.SetZ(p_nu_z1);
+   }
 }
 
 
