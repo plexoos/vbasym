@@ -38,6 +38,10 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
 }
 
 
+
+TString inPath  = "/star/institutions/bnl_me/fazio/vbana_out/";
+TFile *fileMCWplus = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_vbana.root");
+
 const float VecBosEvent::sMinTrackIsoDeltaR    = 0.7;  // was 0.7
 const float VecBosEvent::sMinTrackIsoDeltaPhi  = 0.7;
 const float VecBosEvent::sMaxVertexJetDeltaZ   = 1;    // distance between jet and vertex z coord, cm
@@ -236,9 +240,6 @@ TVector3 VecBosEvent::CalcRecoilCorrected()
 {
    mP3TrackRecoilTpcNeutralsCorrected = mP3TrackRecoilTpcNeutrals;
 
-   TString inPath  = "/star/institutions/bnl_me/fazio/vbana_out/";
-   TFile *fileMCWplus = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_vbana.root");
-
    TH2 *hCorrFacVsRecoilPt = (TH2*) fileMCWplus->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPt_GenOverReco");
    Int_t nbins = hCorrFacVsRecoilPt->GetNbinsX();
 
@@ -254,6 +255,8 @@ TVector3 VecBosEvent::CalcRecoilCorrected()
 
    mP3TrackRecoilTpcNeutralsCorrected.SetX(rndCorrection * mP3TrackRecoilTpcNeutralsCorrected.X());
    mP3TrackRecoilTpcNeutralsCorrected.SetY(rndCorrection * mP3TrackRecoilTpcNeutralsCorrected.Y());
+
+   cout << "random Correction = " <<  rndCorrection << endl; 
 
    return mP3TrackRecoilTpcNeutralsCorrected;
 }
@@ -321,7 +324,8 @@ void VecBosEvent::Process()
    // Calculate the Pt balance as the vector sum: pt elec + pt recoil
    if  (mTracksCandidate.size() == 1) {
 
-      CalcTrackRecoilTpcNeutralsCorrected();
+      //CalcTrackRecoilTpcNeutralsCorrected();
+      CalcRecoilCorrected();
 
       mP3BalanceFromJets          = mP4JetRecoil.Vect() + (*mTracksCandidate.begin())->GetP3EScaled();
       mBalanceDeltaPhiFromJets    = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3BalanceFromJets);
