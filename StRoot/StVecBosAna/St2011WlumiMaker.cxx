@@ -111,7 +111,7 @@ Int_t St2011WlumiMaker::FinishRun(int runnumber)
 
 Int_t St2011WlumiMaker::Make()
 {
-   //  printf("in %s\n", GetName());
+   //printf("in %s\n", GetName());
    //hA[0]->Fill("",1.);
 
    //if we haven't done it yet, calculate the working fraction of the bemc

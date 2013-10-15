@@ -4,11 +4,11 @@
 <head>
   <title>Vector Boson Asymmetry Measurement. Plots</title>
   <meta HTTP-EQUIV="PRAGMA" CONTENT="NO-CACHE">
-  <link REL="STYLESHEET" TYPE="text/css" HREF="main.css">
-  <link REL="STYLESHEET" TYPE="text/css" HREF="wiki.css">
-  <link REL="STYLESHEET" TYPE="text/css" HREF="wiki_monobook_main.css">
-  <script language="javascript" src="main.js"></script>
-  <script language="javascript" src="toc.js"></script>
+  <link REL="STYLESHEET" TYPE="text/css" HREF="css/main.css">
+  <link REL="STYLESHEET" TYPE="text/css" HREF="css/wiki.css">
+  <link REL="STYLESHEET" TYPE="text/css" HREF="css/wiki_monobook_main.css">
+  <script language="javascript" src="js/main.js"></script>
+  <script language="javascript" src="js/toc.js"></script>
 </head>
 
 <body bgcolor="#ffffff">
@@ -21,6 +21,8 @@ include_once("config.php");
 include_once("PlotHelper.php");
 
 $ana = isset($_GET['ana']) ? $_GET['ana'] : "run11_pp_transverse";
+$asym_type = isset($_GET['at']) ? $_GET['at'] : "";
+$asym_type = !empty($asym_type) ? "_$asym_type" : "";
 
 $dir = "results/$ana/";
 $gP = new PlotHelper($dir);
@@ -61,19 +63,23 @@ $gP = new PlotHelper($dir);
 <?
    $row1 = "<tr>\n";
    $row2 = "<tr>\n";
-   
+
    foreach ($RHIC_BEAM_SUFFIXES as $beam_index => $beam_sfx):
-      $row1 .= "<td>".$gP->img("asym_w_$vecbos_type_sfx/hWBosonAsymAmpVsEta_$beam_sfx", false, 600)."\n";
+
+      $row1 .= "<td>".$gP->img("asym_$vecbos_type_sfx$asym_type/hWBosonAsymAmpVsEta_$beam_sfx", false, 600)."\n";
       $row1 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span></div>\n";
-   
-   	if ($beam_index == 0) {
-   		$row2 .= "<td>";
-   		continue;
-   	}
-      $row2 .= "<td>".$gP->img("asym_w_$vecbos_type_sfx/mgrWBosonAsymVsPhi_EtaBins_$beam_sfx", false, 600)."\n";
+
+      if ($beam_index == 0) {
+         $row2 .= "<td>";
+         $row4 .= "<td>";
+         continue;
+      }
+
+      $row2 .= "<td>".$gP->img("asym_$vecbos_type_sfx$asym_type/mgrWBosonAsymVsPhi_EtaBins_$beam_sfx", false, 600)."\n";
       $row2 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span>, eta bins</div>\n";
+
    endforeach;
-   
+
    print $row1;
    print $row2;
 ?>
@@ -106,19 +112,22 @@ $gP = new PlotHelper($dir);
 <?
    $row1 = "<tr>\n";
    $row2 = "<tr>\n";
-   
+
    foreach ($RHIC_BEAM_SUFFIXES as $beam_index => $beam_sfx):
-      $row1 .= "<td>".$gP->img("asym_w_$vecbos_type_sfx/hWBosonAsymAmpVsPt_$beam_sfx", false, 600)."\n";
+
+      $row1 .= "<td>".$gP->img("asym_$vecbos_type_sfx$asym_type/hWBosonAsymAmpVsPt_$beam_sfx", false, 600)."\n";
       $row1 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span></div>\n";
-   
-   	if ($beam_index == 0) {
-   		$row2 .= "<td>";
-   		continue;
-   	}
-      $row2 .= "<td>".$gP->img("asym_w_$vecbos_type_sfx/mgrWBosonAsymVsPhi_PtBins_$beam_sfx", false, 600)."\n";
+
+      if ($beam_index == 0) {
+         $row2 .= "<td>";
+         continue;
+      }
+
+      $row2 .= "<td>".$gP->img("asym_$vecbos_type_sfx$asym_type/mgrWBosonAsymVsPhi_PtBins_$beam_sfx", false, 600)."\n";
       $row2 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span>, p_T bins</div>\n";
+
    endforeach;
-   
+
    print $row1;
    print $row2;
 ?>
@@ -151,19 +160,22 @@ $gP = new PlotHelper($dir);
 <?
    $row1 = "<tr>\n";
    $row2 = "<tr>\n";
-   
+
    foreach ($RHIC_BEAM_SUFFIXES as $beam_index => $beam_sfx):
-      $row1 .= "<td>".$gP->img("asym_w_$vecbos_type_sfx/hLeptonAsymAmpVsEta_$beam_sfx", false, 600)."\n";
+
+      $row1 .= "<td>".$gP->img("asym_$vecbos_type_sfx$asym_type/hLeptonAsymAmpVsEta_$beam_sfx", false, 600)."\n";
       $row1 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span></div>\n";
-   
-   	if ($beam_index == 0) {
-   		$row2 .= "<td>";
-   		continue;
-   	}
-      $row2 .= "<td>".$gP->img("asym_w_$vecbos_type_sfx/mgrLeptonAsymVsPhi_EtaBins_$beam_sfx", false, 600)."\n";
+
+      if ($beam_index == 0) {
+         $row2 .= "<td>";
+         continue;
+      }
+
+      $row2 .= "<td>".$gP->img("asym_$vecbos_type_sfx$asym_type/mgrLeptonAsymVsPhi_EtaBins_$beam_sfx", false, 600)."\n";
       $row2 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span>, eta bins</div>\n";
+
    endforeach;
-   
+
    print $row1;
    print $row2;
 ?>
@@ -196,19 +208,22 @@ $gP = new PlotHelper($dir);
 <?
    $row1 = "<tr>\n";
    $row2 = "<tr>\n";
-   
+
    foreach ($RHIC_BEAM_SUFFIXES as $beam_index => $beam_sfx):
-      $row1 .= "<td>".$gP->img("asym_w_$vecbos_type_sfx/hLeptonAsymAmpVsPt_$beam_sfx", false, 600)."\n";
+
+      $row1 .= "<td>".$gP->img("asym_$vecbos_type_sfx$asym_type/hLeptonAsymAmpVsPt_$beam_sfx", false, 600)."\n";
       $row1 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span></div>\n";
-   
-   	if ($beam_index == 0) {
-   		$row2 .= "<td>";
-   		continue;
-   	}
-      $row2 .= "<td>".$gP->img("asym_w_$vecbos_type_sfx/mgrLeptonAsymVsPhi_PtBins_$beam_sfx", false, 600)."\n";
+
+      if ($beam_index == 0) {
+         $row2 .= "<td>";
+         continue;
+      }
+
+      $row2 .= "<td>".$gP->img("asym_$vecbos_type_sfx$asym_type/mgrLeptonAsymVsPhi_PtBins_$beam_sfx", false, 600)."\n";
       $row2 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span>, p_T bins</div>\n";
+
    endforeach;
-   
+
    print $row1;
    print $row2;
 ?>

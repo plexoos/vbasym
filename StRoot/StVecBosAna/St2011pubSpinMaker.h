@@ -47,12 +47,6 @@ public:
    void attachWalgoMaker(StVecBosMaker *mk) { wMK = mk;}
    virtual Int_t FinishRun(int runumber);
 
-   // Displayed on session exit, leave it as-is please ...
-   virtual const char *GetCVS() const {
-      static const char cvs[] = "Tag $Name:  $ $Id: St2011pubSpinMaker.h,v 1.2 2012/10/26 00:07:44 smirnovd Exp $ built "__DATE__" "__TIME__ ;
-      return cvs;
-   }
-
    ClassDef(St2011pubSpinMaker, 0)
 };
 

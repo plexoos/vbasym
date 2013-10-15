@@ -73,16 +73,12 @@ void AsymCalculator::CalcAsimAsym(TH2I &hUp, TH2I &hDown, TH2D &hAsym)
  */
 void AsymCalculator::CalcAsimAsymPlain(TH1I &hUp, TH1I &hDown, TH1D &hAsym)
 {
-   //if (!hAsym) {
-   //   hAsym= new TH1D("hAsym", "hAsym", hUp.GetNbinsX(), hUp.GetXaxis()->GetXmin(), hUp.GetXaxis()->GetXmax());
-   //}
-
    for (int iAsimBin=1; iAsimBin<=hUp.GetNbinsX(); iAsimBin++)
    {
       UInt_t totalCountsUp   = 1;
       UInt_t totalCountsDown = 1;
 
-      Double_t phi1   = hUp.GetBinCenter(iAsimBin);
+      //Double_t phi1   = hUp.GetBinCenter(iAsimBin);
 
       // Loop to get total counts (luminosity)
       //for (int iAsimBin2=1; iAsimBin2<=hUp.GetNbinsX(); iAsimBin2++)
@@ -285,7 +281,7 @@ void AsymCalculator::CombineAsimAsym(const TH1D &hAsymBlu, const TH1D &hAsymYel,
 
 
 /**
- * Calculates the asymmetry for two values A and B using the simple formula 
+ * Calculates the asymmetry for two values A and B using the simple formula
  * asym = (A - R * B) / (A * + R * B), where R = totalA/totalB. The correction R can be applied to
  * correct for an a-priori known differences in A and B.
  */
@@ -311,7 +307,7 @@ ValErrPair AsymCalculator::CalcAsym(Double_t A, Double_t B, Double_t totalA, Dou
 }
 
 
-/** 
+/**
  * Calculates the asymmetry using the so called square root formula.
  */
 ValErrPair AsymCalculator::CalcAsymSqrtFormula(Double_t A, Double_t B, Double_t C, Double_t D)

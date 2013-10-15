@@ -14,6 +14,8 @@ const float ZBosEvent::sMinZEleCandPtHard      = 25;
 const float ZBosEvent::sMinZMass           = 73;  // Zmass -20% 
 const float ZBosEvent::sMaxZMass           = 114; // Zmass +20% 
 
+
+
 ZBosEvent::ZBosEvent() : VecBosEvent(), mZBosMass(91.1876), mCand1P3(), mCand2P3()
 {
 }
@@ -24,15 +26,8 @@ ZBosEvent::~ZBosEvent()
 }
 
 
-//VecBosTrack& ZBosEvent::GetElectronCandidate() const
-//{
-//   return *(*mTracksCandidate.begin());
-//}
-
 TVector3 ZBosEvent::GetCandidate1_P3() const { return mCand1P3; }
 TVector3 ZBosEvent::GetCandidate2_P3() const { return mCand2P3; }
-
-
 TVector3 ZBosEvent::GetVecBosonP3() const { return GetCandidate1_P3() + GetCandidate2_P3(); }
 
 
@@ -129,11 +124,11 @@ bool ZBosEvent::PassedCutZMass(float minElePt) const
 }
 
 
-
 void ZBosEvent::CalcZBosP4()
 {
    mP4ZBoson = mP4Cand1 + mP4Cand2;
 }
+
 
 void ZBosEvent::Streamer(TBuffer &R__b)
 {

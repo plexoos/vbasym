@@ -1,5 +1,7 @@
 *.o
 *.so
+*.root
+*.log
 *~
 *.dataset
 *.session.xml
@@ -11,3 +13,4 @@ src/lumi_calc
 utils
 .consign
 .sl53_gcc432
+nohup*

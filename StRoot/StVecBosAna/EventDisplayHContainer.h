@@ -22,7 +22,7 @@ public:
 
 private:
 
-	uint32_t fEventCounter; //< Counter for requested event displays
+	uint32_t fEventCounter; ///< Counter for requested event displays
 
    void BookHists();
    PlotHelper *GetEventDisplayHists(const ProtoEvent &ev);

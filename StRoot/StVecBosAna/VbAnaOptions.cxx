@@ -19,7 +19,6 @@ VbAnaOptions::VbAnaOptions() : AnaInfo(),
       ("fit-sine-phase",  po::value<double>(&mFitSinePhase)->default_value(M_PI_2)->implicit_value(DBL_MAX), "Value for phase")
       ("fit-sine-offset", po::value<double>(&mFitSineOffset)->default_value(0)->implicit_value(DBL_MAX), "Value for offset")
    ;
-
 }
 
 

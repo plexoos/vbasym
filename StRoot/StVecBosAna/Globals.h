@@ -28,15 +28,13 @@ enum {mxEtowPhiBin = mxEtowSec * mxEtowSub};
 
 enum {mxTpcSec = 24};
 
-
-typedef std::map<std::string, std::string> Str2StrMap;
-
-
 enum ESpinState        {kSPIN_DOWN = -1, kSPIN_NULL = 0, kSPIN_UP = +1};
 enum EBeamId           {kBLUE_BEAM = 1,  kYELLOW_BEAM = 2, kUNKNOWN_BEAM};
 enum EBeamSpinState    {kBLUE_UP = 4, kBLUE_DOWN = 8, kYELLOW_UP = 1, kYELLOW_DOWN = 2};
 enum ESingleSpinState  {kBU_Y0 = 4, kBD_Y0 = 8, kB0_YU = 1, kB0_YD = 2};
 enum EDoubleSpinState  {kBU_YU = 5, kBU_YD = 6, kBD_YU = 9, kBD_YD = 10};
+
+typedef std::map<std::string, std::string> Str2StrMap;
 
 typedef std::set<EBeamId>            BeamIdSet;
 typedef BeamIdSet::iterator          BeamIdSetIter;

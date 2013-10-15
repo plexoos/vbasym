@@ -79,7 +79,6 @@ void WBosMcEvent::CalcRecoil(PythiaEvent &pyEvent)
    //fPtCorr       = (mP4Recoil.Pt() - mP4RecoilInAccept.Pt())/mP4RecoilInAccept.Pt();
    // XXX:ds: z componennt should be removed
    fPtCorrAngle  = mP4RecoilInAccept.Angle(mP4Recoil.Vect());
-
    fPtCorr       = mP4Recoil.Pt()/mP4RecoilInAccept.Pt();
 }
 
@@ -161,10 +160,6 @@ void WBosMcEvent::CalcRecoil(StMcEvent &stMcEvent)
       }
    }
 
-   //cout << "mP4Total:" << endl;
-   //utils::PrintTLorentzVector(mP4Total);
-   //cout << endl;
-
    if (mP4Lepton.Mag() == 0 || mP4Neutrino.Mag() == 0)
       return;
 
@@ -182,17 +177,11 @@ void WBosMcEvent::CalcRecoil(StMcEvent &stMcEvent)
    else 
       mP4RecoilOutAccept -= mP4Neutrino;
 
-   //printf("%f, %f\t", mP4RecoilInAccept.Px(), mP4Recoil.Px());
-   //printf("%f, %f\n", mP4RecoilInAccept.Pz(), mP4Recoil.Pz());
-
    fEnergyRatio  = eneAccept/eneTotal;
    fPzRatio      = mP4RecoilInAccept.Pz()/mP4Recoil.Pz();
    fPtRatio      = mP4RecoilInAccept.Pt()/mP4Recoil.Pt();
    fPzRatioInOut = (mP4RecoilInAccept + mP4RecoilOutAccept).Pz()/mP4Recoil.Pz();
    fPtRatioInOut = (mP4RecoilInAccept + mP4RecoilOutAccept).Pt()/mP4Recoil.Pt();
-
-   //mP4RecoilInAccept.SetPz(0);
-   //mP4Recoil.SetPz(0);
 
    fPtCorr       = (mP4Recoil.Pt() - mP4RecoilInAccept.Pt())/mP4RecoilInAccept.Pt();
    // XXX:ds: z componennt should be removed

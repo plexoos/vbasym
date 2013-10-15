@@ -411,14 +411,14 @@ void AsymHContainer::PostFill()
    AsymCalculator::CombineAsimAsym(*hLeptonAsymAmpVsEta_b2_BLU, *hLeptonAsymAmpVsEta_b2_YEL, *hLeptonAsymAmpVsEta_b2_, true);
 
    // The boson asymmetry is next
-   TH1D* hWBosonAsymAmpVsPt_BLU = (TH1D*) o["hWBosonAsymAmpVsPt_BLU"];
-   TH1D* hWBosonAsymAmpVsPt_YEL = (TH1D*) o["hWBosonAsymAmpVsPt_YEL"];
-   TH1D* hWBosonAsymAmpVsPt_    = (TH1D*) o["hWBosonAsymAmpVsPt_"];
+   TH1D* hWBosonAsymAmpVsPt_BLU  = (TH1D*) o["hWBosonAsymAmpVsPt_BLU"];
+   TH1D* hWBosonAsymAmpVsPt_YEL  = (TH1D*) o["hWBosonAsymAmpVsPt_YEL"];
+   TH1D* hWBosonAsymAmpVsPt_     = (TH1D*) o["hWBosonAsymAmpVsPt_"];
    AsymCalculator::CombineAsimAsym(*hWBosonAsymAmpVsPt_BLU, *hWBosonAsymAmpVsPt_YEL, *hWBosonAsymAmpVsPt_);
 
-   TH1D* hWBosonAsymAmpVsEta_BLU     = (TH1D*) o["hWBosonAsymAmpVsEta_BLU"];
-   TH1D* hWBosonAsymAmpVsEta_YEL     = (TH1D*) o["hWBosonAsymAmpVsEta_YEL"];
-   TH1D* hWBosonAsymAmpVsEta_        = (TH1D*) o["hWBosonAsymAmpVsEta_"];
+   TH1D* hWBosonAsymAmpVsEta_BLU = (TH1D*) o["hWBosonAsymAmpVsEta_BLU"];
+   TH1D* hWBosonAsymAmpVsEta_YEL = (TH1D*) o["hWBosonAsymAmpVsEta_YEL"];
+   TH1D* hWBosonAsymAmpVsEta_    = (TH1D*) o["hWBosonAsymAmpVsEta_"];
    AsymCalculator::CombineAsimAsym(*hWBosonAsymAmpVsEta_BLU, *hWBosonAsymAmpVsEta_YEL, *hWBosonAsymAmpVsEta_, true);
 
    // This is mainly to cross check that the asymmetry sign flip works

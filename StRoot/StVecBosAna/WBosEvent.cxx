@@ -1,4 +1,3 @@
-
 #include "WBosEvent.h"
 #include "WBosMcEvent.h"
 
@@ -14,7 +13,8 @@ const float WBosEvent::sMinElectronPtHard  = 25;
 const float WBosEvent::sMinNeutrinoPt      = 18;
 
 
-WBosEvent::WBosEvent() : VecBosEvent(), mWBosMass(80.385), mElectronP3(), mNeutrinoP3()
+WBosEvent::WBosEvent() : VecBosEvent(), mWBosMass(80.385), mElectronP3(), mNeutrinoP3(),
+   mNeutrinoP3Other()
 {
 }
 
@@ -31,15 +31,14 @@ TVector3 WBosEvent::GetNeutrinoP3() const { return mNeutrinoP3; }
 
 TVector3 WBosEvent::CalcMissingEnergyP3() const
 {
-   return -1*(GetTrackRecoilTpcNeutrals() + GetElectronP3());
+   return -1*(mP3TrackRecoilTpcNeutrals + mElectronP3);
    //return -1*(mP3TrackRecoilTpcNeutralsCorrected + mElectronP3);
 
-
    // Other definitions
-   //return -1*(mP3TrackRecoilTpcNeutrals + mElectronP3);
    //return -1*(mP3TrackRecoilTow + mElectronP3);
    //return -1*(mP4JetRecoil + mElectronP3);
 }
+
 
 TVector3 WBosEvent::CalcSignedPtBalance() const
 {
@@ -66,11 +65,11 @@ void WBosEvent::ProcessPersistent()
 
    // Proceed only if this is a W event, i.e. it conforms to W event signature
    //if ( !PassedCutWBos() ) return;
-   //if ( !HasCandidateEle() ) return;
    if ( !HasCandidateEle() ) return;
 
    mElectronP3 = GetElectronTrack().GetP3EScaled();
-   mNeutrinoP3 = CalcMissingEnergyP3(); // here we use only x and y components, and reconstruct z
+   mNeutrinoP3 = CalcMissingEnergyP3(); // here we use only x and y components, and reconstruct the z one later
+   mNeutrinoP3Other = mNeutrinoP3;
 
    ReconstructNeutrinoZ();
 }
@@ -158,7 +157,13 @@ void WBosEvent::ReconstructNeutrinoZ()
    double p_nu_z1  = (-b + sqrt(d) ) / 2 / a;
    double p_nu_z2  = (-b - sqrt(d) ) / 2 / a;
 
-   mNeutrinoP3.SetZ(fabs(p_nu_z1) < fabs(p_nu_z2) ? p_nu_z1 : p_nu_z2);
+   if (fabs(p_nu_z1) < fabs(p_nu_z2)) {
+      mNeutrinoP3.SetZ(p_nu_z1);
+      mNeutrinoP3Other.SetZ(p_nu_z2);
+   } else {
+      mNeutrinoP3.SetZ(p_nu_z2);
+      mNeutrinoP3Other.SetZ(p_nu_z1);
+   }
 }
 
 

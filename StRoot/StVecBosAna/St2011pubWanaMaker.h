@@ -36,11 +36,6 @@ public:
    virtual Int_t Make();
    virtual Int_t InitRun  (int runumber);
    virtual Int_t FinishRun(int runumber) {return 0;}; // Overload empty StMaker::FinishRun
-   virtual const char *GetCVS() const
-   {
-      static const char cvs[] = "Tag $Name:  $ $Id: St2011pubWanaMaker.h,v 1.4 2013/01/07 23:53:26 smirnovd Exp $ built "__DATE__" "__TIME__ ;
-      return cvs;
-   }
 
    void setHList(TObjArray *x) {HList = x;}
    void AttachWalgoMaker(StVecBosMaker *mk) { wMK = mk;}
