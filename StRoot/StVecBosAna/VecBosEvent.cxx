@@ -256,6 +256,8 @@ TVector3 VecBosEvent::CalcRecoilCorrected()
    mP3TrackRecoilTpcNeutralsCorrected.SetX(rndCorrection * mP3TrackRecoilTpcNeutralsCorrected.X());
    mP3TrackRecoilTpcNeutralsCorrected.SetY(rndCorrection * mP3TrackRecoilTpcNeutralsCorrected.Y());
 
+   cout << "random Correction = " <<  rndCorrection << endl; 
+
    return mP3TrackRecoilTpcNeutralsCorrected;
 }
 
