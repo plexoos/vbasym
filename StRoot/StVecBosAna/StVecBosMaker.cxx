@@ -351,9 +351,6 @@ Int_t StVecBosMaker::Make()
    if (mNumInputEvents % 200 == 0)
       Info("Make()", "nEve: inp=%d, trig=%d, accpt=%d, daqFile: %s\n", mNumInputEvents, mNumTrigEvents, mNumAcceptedEvents, afile);
 
-   //hA[0]->Fill("inp", 1.);
-   //hE[0]->Fill("inp", 1.);
-
    // First access calorimeter data
    int btowStat = ReadMuDstBTOW(); // get energy in BTOW
    int etowStat = ReadMuDstETOW(); // get energy in ETOW
@@ -422,21 +419,12 @@ Int_t StVecBosMaker::Make()
    //XXX:ds:    return kStOK;
    //XXX:ds: }
 
-   //XXX:ds: if (mVecBosEvent->l2bitET  && mVecBosEvent->bemc.tileIn[0] == 1) hA[0]->Fill("B-in", 1.0);
-   //XXX:ds: if (mVecBosEvent->l2EbitET && mVecBosEvent->etow.etowIn == 1)    hE[0]->Fill("E-in", 1.0);
-   //XXX:ds: if (mVecBosEvent->l2bitET  && !btowStat)                         hA[0]->Fill("B200", 1.0);
-   //XXX:ds: if (mVecBosEvent->l2EbitET && !etowStat)                         hE[0]->Fill("E200", 1.0);
-
-   //hA[116]->Fill(mVecBosEvent->mNJets);
-
    //for (uint iJet=0; iJet<mVecBosEvent->GetNumJets(); ++iJet)
    //{
    //   StJet *jet     = GetJet(iJet);
    //   float  jet_pt  = jet->Pt();
    //   float  jet_eta = jet->Eta();
    //   float  jet_phi = jet->Phi();
-   //   hA[117]->Fill(jet_eta, jet_phi);
-   //   hA[118]->Fill(jet_pt);
    //}
 
    mNumAcceptedEvents++;
@@ -662,13 +650,7 @@ int StVecBosMaker::ReadMuDstBTOW()
                       ) << endm;
    }
 
-   hA[31]->Fill(maxADC);
-   hA[32]->Fill(adcSum);
-
    mVecBosEvent->bemc.maxAdc = maxADC;
-
-   if (maxID <= 2400) hA[195]->Fill(maxADC);
-   else               hA[196]->Fill(maxADC);
 
    if (maxADC < par_maxADC) {
       Warning("ReadMuDstBTOW", "Energy deposit is too small in BEMC");
@@ -735,9 +717,6 @@ int StVecBosMaker::ReadMuDstETOW()
    mVecBosEvent->etow.maxSub = maxSub;
    mVecBosEvent->etow.maxEta = maxEta;
 
-   hE[31]->Fill(maxADC);
-   hE[32]->Fill(adcSum);
-
    if (maxADC < par_maxADC) return -2 ; // not enough energy
 
    return 0;
@@ -760,8 +739,6 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
 
       //if (!passes_L0()) return -1;
       if (!passes_L2()) return -2;
-
-      hA[0]->Fill("L2bwET", 1.);
 
       mVecBosEvent->l2bitET = true;
       return 0; // we haven't set everything, but it should be good enough for simu.
@@ -820,7 +797,6 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
    for (unsigned int i = 0; i < idL.size(); i++) {
       char txt[100];
       sprintf(txt, "%d", idL[i]);
-      hA[1]->Fill(txt, 1.);
    }
 
    // Get bunch crossing info
@@ -849,8 +825,6 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
       return -2;
    }
 
-   hA[0]->Fill("L2bwId", 1.);
-
    TArrayI &l2Array = stMuEvent->L2Result();
    LOG_DEBUG << Form("AccessL2Decision() from regular muDst: L2Array-size=%d", l2Array.GetSize()) << endm;
 
@@ -864,26 +838,14 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
 
    if ( (mVecBosEvent->l2bitRnd || mVecBosEvent->l2bitET) == 0) return -3; // L2W-algo did not accept this event
 
-   hA[0]->Fill("L2bwBits", 1.); // confirmation bits were set properly
-
    if (mVecBosEvent->l2bitRnd) {
-      hA[0]->Fill("L2bwRnd", 1.);
 
       for (int m = 0; m < 300; m++) {
          int val = stMuEvent->emcTriggerDetector().highTower(m);
-         hA[7]->Fill(val);
       }
-
-      hA[61]->Fill(mVecBosEvent->bx7);
    }
 
    if (!mVecBosEvent->l2bitET) return -3; // drop L2W-random accepts
-
-   if (mVecBosEvent->l2bitET) hA[0]->Fill("L2bwET", 1.);
-
-   // only monitor below
-   hA[2]->Fill(mVecBosEvent->bx48);
-   hA[3]->Fill(mVecBosEvent->bx7);
 
    // access L0-HT data
    int mxVal = -1;
@@ -892,9 +854,7 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
       int val = stMuEvent->emcTriggerDetector().highTower(m);
 
       if (mxVal < val) mxVal = val;
-      if (mVecBosEvent->l2bitET) hA[6]->Fill(val);
       if (val < par_DsmThres) continue;
-      if (mVecBosEvent->l2bitET) hA[8]->Fill(m);
 
       //printf("Fired L0 HT m=%d val=%d\n",m,val);
    }
@@ -910,7 +870,6 @@ int StVecBosMaker::ReadMuDstEndcapTrig()
    if (mIsMc) {
       if (mVecBosEvent->etow.maxAdc < 10. / 60.*4096)
          return -1; //L2 is HT
-      hE[0]->Fill("L2ewET", 1.);
       mVecBosEvent->l2EbitET = true;
       return 0;
    }
@@ -927,7 +886,6 @@ int StVecBosMaker::ReadMuDstEndcapTrig()
    for (unsigned int i = 0; i < idL.size(); i++) {
       char txt[100];
       sprintf(txt, "%d", idL[i]);
-      hE[1]->Fill(txt, 1.);
    }
 
    // Check trigger ID
@@ -935,8 +893,6 @@ int StVecBosMaker::ReadMuDstEndcapTrig()
       Warning("ReadMuDstEndcapTrig", "Trigger %d not found", mL2EndcapTriggerId);
       return -2;
    }
-
-   hE[0]->Fill("L2ewId", 1.);
 
    // need to get offset for 2011 run for EEMC
    struct  L2weResult2011 {
@@ -965,33 +921,20 @@ int StVecBosMaker::ReadMuDstEndcapTrig()
 
    if ( (mVecBosEvent->l2EbitRnd || mVecBosEvent->l2EbitET) == 0) return -3; // L2W-algo did not accept this event
 
-   hE[0]->Fill("L2ewBits", 1.); // confirmation bits were set properly
-
    if (mVecBosEvent->l2EbitRnd) {
-      hE[0]->Fill("L2ewRnd", 1.);
       for (int m = 0; m < 90; m++) {
          int val = stMuEvent->emcTriggerDetector().highTowerEndcap(m);
-         hE[7]->Fill(val);
       }
-
-      hE[61]->Fill(mVecBosEvent->bx7);
    }
 
    if (!mVecBosEvent->l2EbitET) return -3; // drop L2W-random accepts
-   if ( mVecBosEvent->l2EbitET) hE[0]->Fill("L2ewET", 1.);
-
-   // only monitor below
-   hE[2]->Fill(mVecBosEvent->bx48);
-   hE[3]->Fill(mVecBosEvent->bx7);
 
    // access L0-HT data
    int mxVal = -1;
    for (int m = 0; m < 90; m++)  {
       int val = stMuEvent->emcTriggerDetector().highTowerEndcap(m);
       if (mxVal < val) mxVal = val;
-      if (mVecBosEvent->l2EbitET) hE[6]->Fill(val);
       if (val < parE_DsmThres) continue;
-      if (mVecBosEvent->l2EbitET) hE[8]->Fill(m);
       //printf("Fired L0 EHT m=%d val=%d\n",m,val);
    }
 
@@ -1060,7 +1003,6 @@ void StVecBosMaker::ReadMuDstBSMD()
          assert(stripId >= 1 && stripId <= mxBStrips);
          int id0 = stripId - 1;
          mVecBosEvent->bemc.adcBsmd[iep][id0] = adc;
-         hA[70 + 10 * iep]->Fill(adc);
 
          //if(mNumInputEvents<3 || i <20 )printf("  i=%d, smd%c id=%d, m=%d
          // adc=%.3f pedRes=%.1f, sigP=%.1f stat: O=%d P=%d G=%d
@@ -1173,10 +1115,6 @@ void StVecBosMaker::ReadMuDstVerticesTracks()
    // XXX:ds: not sure I understand this cut
    //if (numOfPrimaryVertices < mMinNumPileupVertices) return;
 
-   // separate histos for barrel and endcap triggers
-   if (mVecBosEvent->l2bitET)  hA[0]->Fill("tpcOn", 1.);
-   if (mVecBosEvent->l2EbitET) hE[0]->Fill("tpcOn", 1.);
-
    int nVerticesPosRank = 0;
 
    for (int iVertex=0; iVertex<numOfPrimaryVertices; iVertex++)
@@ -1194,17 +1132,10 @@ void StVecBosMaker::ReadMuDstVerticesTracks()
       else if (rank > 0) rankLog = log(rank);
       else               rankLog = log(rank + 1e6) - 10;
 
-      if (mVecBosEvent->l2bitET)  { hA[10]->Fill(rankLog); hA[14]->Fill(rank); }
-      if (mVecBosEvent->l2EbitET)   hE[10]->Fill(rankLog);
-
       // Keep some neg. rank vertices for endcap if matched to ETOW
       // XXX:ds: if (rank <= 0 && stMuVertex->nEEMCMatch() <= 0) continue;
 
       const StThreeVectorF &vertexPosition = stMuVertex->position();
-
-      // StThreeVectorF &er = stMuVertex->posError();
-      if (mVecBosEvent->l2bitET && rank > 0) hA[11]->Fill(vertexPosition.z());
-      if (mVecBosEvent->l2EbitET)            hE[11]->Fill(vertexPosition.z());
 
       // XXX:ds: if (fabs(vertexPosition.z()) > mCutVertexZ) continue;
 
@@ -1218,18 +1149,6 @@ void StVecBosMaker::ReadMuDstVerticesTracks()
 
    if (mVecBosEvent->GetNumVertices() <= 0) return;
 
-   //if (mVecBosEvent->l2bitET && nVerticesPosRank > 0) {
-   //   hA[0]->Fill("primVert", 1.);
-   //   hA[4]->Fill(mVecBosEvent->bx48);
-   //   hA[5]->Fill(mVecBosEvent->bx7);
-   //}
-
-   //if (mVecBosEvent->l2EbitET) {
-   //   hE[0]->Fill("primVert", 1.);
-   //   hE[4]->Fill(mVecBosEvent->bx48);
-   //   hE[5]->Fill(mVecBosEvent->bx7);
-   //}
-
    // access L0-HT data
    StMuEvent *stMuEvent = mStMuDstMaker->muDst()->event();
 
@@ -1237,25 +1156,15 @@ void StVecBosMaker::ReadMuDstVerticesTracks()
       int val = stMuEvent->emcTriggerDetector().highTower(m);
 
       if (val < par_DsmThres) continue;
-
-      if (mVecBosEvent->l2bitET && nVerticesPosRank > 0) hA[9]->Fill(m);
    }
 
    for (int m=0; m<90; m++) {
       int val = stMuEvent->emcTriggerDetector().highTowerEndcap(m);
 
       if (val < parE_DsmThres) continue;
-
-      if (mVecBosEvent->l2EbitET) hE[9]->Fill(m);
    }
 
-   if (mVecBosEvent->l2bitET)  hA[12]->Fill(nVerticesPosRank);
-   if (mVecBosEvent->l2EbitET) hE[12]->Fill(mVecBosEvent->GetNumVertices());
-
    if (mVecBosEvent->GetNumVertices() <= 0) return;
-
-   if (mVecBosEvent->l2bitET && nVerticesPosRank > 0) hA[0]->Fill("vertZ", 1.);
-   if (mVecBosEvent->l2EbitET)                        hE[0]->Fill("vertZ", 1.);
 }
 
 
@@ -1337,15 +1246,9 @@ void StVecBosMaker::ReadMuDstTracks(VecBosVertex* vbVertex)
       // TPC+prim vertex tracks and short EEMC tracks
       //XXX:ds:if (primaryTrack->flag() != 301 && primaryTrack->flag() != 311) continue;
 
-      if (mVecBosEvent->l2bitET  && vbVertex->mRank > 0 && primaryTrack->flag() == 301) hA[20]->Fill("flag", 1.);
-      if (mVecBosEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin)             hE[20]->Fill("flag", 1.);
-
       float pt = primaryTrack->pt();
 
       //XXX:ds:if (pt < 1.0) continue;
-
-      if (mVecBosEvent->l2bitET  && vbVertex->mRank > 0 && primaryTrack->flag() == 301) hA[20]->Fill("pt1", 1.);
-      if (mVecBosEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin)             hE[20]->Fill("pt1", 1.);
 
       // Accepted tracks
       float hitFrac     = 1.*primaryTrack->nHitsFit() / primaryTrack->nHitsPoss();
@@ -1358,87 +1261,28 @@ void StVecBosMaker::ReadMuDstTracks(VecBosVertex* vbVertex)
       // barrel algo track monitors
       if (mVecBosEvent->l2bitET && vbVertex->mRank > 0 && primaryTrack->flag() == 301)
       {
-         hA[21]->Fill(primaryTrack->nHitsFit());
-         hA[22]->Fill(hitFrac);
-         hA[23]->Fill(ri.perp());
-         hA[24]->Fill(ro.perp());
-
          //TPC sector dependent filter
          //XXX:ds: int secID = WtpcFilter::getTpcSec(ro.phi(), ro.pseudoRapidity());
          //XXX:ds: if (secID == 20) continue; //poorly calibrated sector for Run 9+11+12?
          //XXX:ds: if (mTpcFilter[secID - 1].accept(primaryTrack) == false) continue;
-
-         hA[25]->Fill(globalTrack->p().perp());
-
-         if (globalTrack->charge() < 0) hA[27]->Fill(globalTrack->p().perp());
-
-         hA[29]->Fill(pt);
-
-         if (primaryTrack->charge() < 0) hA[30]->Fill(pt);
-
-         hA[26]->Fill(ro.pseudoRapidity(), ro.phi());
-
-         if (pt > 5) hA[57]->Fill(ro.pseudoRapidity(), ro.phi()); // estimate TPC inefficiency in data
-
-         hA[35]->Fill(globChi2dof);
-
-         // monitor chi2 for east/west TPC separately
-         if (ri.z() > 0 && ro.z() > 0)  hA[58]->Fill(globChi2dof);
-         if (ri.z() < 0 && ro.z() < 0)  hA[59]->Fill(globChi2dof);
-
-         hA[36]->Fill(globChi2dof, ro.pseudoRapidity());
-         hA[28]->Fill(primaryTrack->p().mag(), dedx);
-
-         if (pt > 10) hA[197]->Fill(ro.pseudoRapidity(), ro.phi());
-
-         hA[198]->Fill(ro.pseudoRapidity(), primaryTrack->pt());
       }
 
       // endcap algo track monitors
       if (mVecBosEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin)
       {
-         hE[20]->Fill("#eta>0.7", 1.);
-         hE[21]->Fill(primaryTrack->nHitsFit());
-         hE[22]->Fill(hitFrac);
-         hE[23]->Fill(ri.perp());
-         hE[24]->Fill(ro.perp());
-
          // TPC sector dependent filter
          //XXX:ds:int secID = WtpcFilter::getTpcSec(ro.phi(), ro.pseudoRapidity());
          //XXX:ds:if ( mTpcFilterE[secID - 1].accept(primaryTrack) == false) continue;
-
-         hE[25]->Fill(globalTrack->p().perp());
-
-         if (globalTrack->charge() < 0) hE[27]->Fill(globalTrack->p().perp());
-
-         hE[29]->Fill(pt);
-
-         if (primaryTrack->charge() < 0) hE[30]->Fill(pt);
-
-         hE[26]->Fill(ro.pseudoRapidity(), ro.phi());
-
-         if (pt > 5) hE[57]->Fill(ro.pseudoRapidity(), ro.phi()); //estimate TPC inefficiency in data
-
-         hE[35]->Fill(globChi2dof);
-         hE[36]->Fill(globChi2dof, ro.pseudoRapidity());
-         hE[28]->Fill(primaryTrack->p().mag(), dedx);
       }
 
       bool barrelTrack = (mVecBosEvent->l2bitET && vbVertex->mRank > 0 && primaryTrack->flag() == 301 && pt > mVecBosEvent->sMinBTrackPt);
 
-      if (barrelTrack) hA[20]->Fill("ptOK", 1.); //good barrel candidate
-
       bool endcapTrack = (mVecBosEvent->l2EbitET && ro.pseudoRapidity() > parE_trackEtaMin && pt > mMinETrackPt);
-
-      if (endcapTrack) hE[20]->Fill("ptOK", 1.); //good endcap candidate
 
       //XXX:ds:if (!barrelTrack && !endcapTrack) continue;
    }
 
    if (mVecBosEvent->GetNumTracks() <= 0) return;
-
-   if (mVecBosEvent->l2bitET)  hA[0]->Fill("Pt10", 1.);
-   if (mVecBosEvent->l2EbitET) hE[0]->Fill("Pt10", 1.);
 }
 
 
@@ -1477,7 +1321,7 @@ void StVecBosMaker::FillTowHit(bool hasVertices)
    float Rcylinder  = gBTowGeom->Radius();
    float Rcylinder2 = Rcylinder*Rcylinder;
 
-   //loop barrel towers and fill histo
+   // Loop barrel towers and fill histo
    for (int i = 0; i < mxBtow; i++)
    {
       float adc     = mVecBosEvent->bemc.adcTile[kBTow][i];
@@ -1486,16 +1330,13 @@ void StVecBosMaker::FillTowHit(bool hasVertices)
       if (adc > 10) fillAdc = true; //~150 MeV threshold for tower firing
 
       if (hasVertices) {
-         if (fillAdc) hA[215 + bxBin]->Fill(gBCalTowerCoords[i].Eta(), gBCalTowerCoords[i].Phi());
 
          float ene  = mVecBosEvent->bemc.eneTile[kBTow][i];
          float delZ = 0; // XXX:ds gBCalTowerCoords[i].z() - mVecBosEvent->mVertices[maxRankId].z;
          float e2et = Rcylinder / sqrt(Rcylinder2 + delZ * delZ);
          float ET   = ene * e2et;
 
-         if (ET > 2.0)  hA[219 + bxBin]->Fill(gBCalTowerCoords[i].Eta(), gBCalTowerCoords[i].Phi());
       }
-      else if (fillAdc) hA[223 + bxBin]->Fill(gBCalTowerCoords[i].Eta(), gBCalTowerCoords[i].Phi());
    }
 
    //some lower threshold plots
@@ -1512,7 +1353,6 @@ void StVecBosMaker::FillTowHit(bool hasVertices)
             if (adc > 10) fillAdc = true; //~150 MeV threshold for tower firing
 
             if (hasVertices) {
-               if (fillAdc) hA[227 + bxBin]->Fill(ieta, iPhi);
 
                float ene  = mVecBosEvent->etow.ene[iPhi][ieta];
                float delZ = 0; // XXX:ds gETowCoords[iPhi][ieta].z() - mVecBosEvent->mVertices[maxRankId].z;
@@ -1520,9 +1360,7 @@ void StVecBosMaker::FillTowHit(bool hasVertices)
                float e2et = Rxy / sqrt(Rxy * Rxy + delZ * delZ);
                float ET   = ene * e2et;
 
-               if (ET > 2.0) hA[231 + bxBin]->Fill(ieta, iPhi);
             }
-            else if (fillAdc) hA[235 + bxBin]->Fill(ieta, iPhi);
          }
       }
    }
