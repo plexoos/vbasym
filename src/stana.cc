@@ -33,7 +33,6 @@ root4star -b -q 'analyzeMuDst.C(2e3,"st_W_12037041_raw_1400001.MuDst.root",0,1,5
 #include "St_db_Maker/St_db_Maker.h"
 #include "StSpinPool/StSpinDbMaker/StSpinDbMaker.h"
 
-
 #include "StTriggerUtilities/StTriggerSimuMaker.h"
 #include "StTriggerUtilities/Eemc/StEemcTriggerSimu.h"
 #include "StTriggerUtilities/Bemc/StBemcTriggerSimu.h"
@@ -59,7 +58,7 @@ root4star -b -q 'analyzeMuDst.C(2e3,"st_W_12037041_raw_1400001.MuDst.root",0,1,5
 using namespace std;
 
 
-int analyzeMuDst(AnaInfo &anaInfo, bool spinSort=true, bool findZ=false);
+int analyzeMuDst(AnaInfo &anaInfo, bool findZ=false);
 
 int main(int argc, char *argv[])
 {
@@ -73,7 +72,7 @@ int main(int argc, char *argv[])
 }
 
 
-int analyzeMuDst(AnaInfo &anaInfo, bool spinSort, bool findZ)
+int analyzeMuDst(AnaInfo &anaInfo, bool findZ)
 {
    UInt_t  maxEventsUser       = anaInfo.fMaxEventsUser;
    string  inMuDstFileListName = anaInfo.GetListName();
@@ -84,7 +83,6 @@ int analyzeMuDst(AnaInfo &anaInfo, bool spinSort, bool findZ)
    //string eemcSetupPath = "/afs/rhic.bnl.gov/star/users/kocolosk/public/StarTrigSimuSetup/";
 
 
-   if (isMC) spinSort = false;
 
    string inputPathFile = inMuDstFileListName;
 
@@ -363,7 +361,7 @@ int analyzeMuDst(AnaInfo &anaInfo, bool spinSort, bool findZ)
       // Set the Pt mim for recoil tracks and clusters
       stVecBosMaker->setTracksPtMin(tracksPtMin);
 
-   if (spinSort) {
+   if (!isMC) {
       //stSpinDbMaker = new StSpinDbMaker("stSpinDbMaker");
       stVecBosMaker->AttachSpinDb(stSpinDbMaker);
 
