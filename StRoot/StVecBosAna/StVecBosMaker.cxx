@@ -49,12 +49,13 @@ ClassImp(StVecBosMaker)
 StVecBosMaker::StVecBosMaker(AnaInfo& anaInfo, const char *name, VecBosRootFile *vbFile): StMaker(name),
    mStopWatch(), mAnaInfo(&anaInfo), mStMuDstMaker(0), mStJetReader(0), mVecBosRootFile(vbFile),
    mJetTreeBranchName(), mJetTreeBranchNameNoEndcap(),
-   mJets(0), mVecBosEvent(0), mVecBosTree(0),
+   mJets(0), mVecBosEvent(0), mVecBosTree(0), mTreeName("StVecBosMaker"),
    mNumInputEvents(0), mNumTrigEvents(0), mNumAcceptedEvents(0),
    mRunNo(0), nRun(0), mIsMc(0),
    Tfirst(numeric_limits<int>::max()), Tlast(numeric_limits<int>::min()),
    mL2BarrelTriggerId(0), mL2BarrelTriggerId2(0), mL2EndcapTriggerId(0),
-   mParETOWScale(1.0), mParBTOWScale(1.0)   // for old the Endcap geometr you need ~1.3
+   mParETOWScale(1.0), mParBTOWScale(1.0),   // for old the Endcap geometr you need ~1.3
+   mStSpinDbMaker(0)
 {
    mStMuDstMaker = (StMuDstMaker*) GetMaker("MuDst");
 
