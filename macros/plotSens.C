@@ -23,21 +23,21 @@ void plotSens()
    
    // W minus
    TImage *img = TImage::Open("curves_img/anapow_w_minus_orig.png");
-   const UInt_t  nBinsW = 3;
-   Float_t arrSensW_x[nBinsW]  = {-0.25, 0.25, 0.75};
-   Float_t arrSensW_y[nBinsW]  = { 0, 0, 0};
-   Float_t arrSensW_xe[nBinsW] = { 0.25, 0.25, 0.25};
-   Float_t arrSensW_ye[nBinsW] = { 6, 6, 9};
+   const UInt_t  nBinsW = 4;
+   Float_t arrSensW_x[nBinsW]  = {-0.75, -0.25, 0.25, 0.75};
+   Float_t arrSensW_y[nBinsW]  = { 0, 0, 0, 0};
+   Float_t arrSensW_xe[nBinsW] = { 0.25, 0.25, 0.25, 0.25};
+   Float_t arrSensW_ye[nBinsW] = { 0.22, 0.10, 0.094, 0.19};
    Float_t arrSensW_ye_neg[nBinsW] = { -6, -6, -9};
    
    // W plus
    //TImage *img = TImage::Open("curves_img/anapow_w_plus_orig.png");
-   //const UInt_t nBinsW = 6;
-   //Float_t arrSensW_x[nBinsW]  = {-1.25, -0.75, -0.25, 0.25, 0.75, 1.25};
-   //Float_t arrSensW_y[nBinsW]  = { 0, 0, 0, 0, 0, 0};
-   //Float_t arrSensW_xe[nBinsW] = { 0.25, 0.25, 0.25, 0.25, 0.25, 0.25};
-   //Float_t arrSensW_ye[nBinsW] = { 7, 4, 3.6, 3.6, 4, 7};
-   //Float_t arrSensW_ye_neg[nBinsW] = { -7, -4, -3.6, -3.6, -4, -7};
+   //const UInt_t nBinsW = 4;
+   //Float_t arrSensW_x[nBinsW]  = {-0.75, -0.25, 0.25, 0.75};
+   //Float_t arrSensW_y[nBinsW]  = { 0, 0, 0, 0};
+   //Float_t arrSensW_xe[nBinsW] = { 0.25, 0.25, 0.25, 0.25};
+   //Float_t arrSensW_ye[nBinsW] = { 0.09, 0.05, 0.05, 0.08};
+   //Float_t arrSensW_ye_neg[nBinsW] = { -7, -4, -3.6, -3.};
    
    // Z
    //TImage *img = TImage::Open("curves_img/anapow_z_orig.png");
@@ -55,7 +55,7 @@ void plotSens()
    
    grSensW_up->Apply(new TF2("scale", "y*0.01"));
    grSensW_lo->Apply(new TF2("invert", "-1*y*0.01"));
-   grSensW->Apply(new TF2("scale", "1.08*y*0.01")); // 8% correction is due to 0 < q_T < 3 GeV cut used for the theoretical predictions
+   grSensW->Apply(new TF2("scale", "1.08*y")); // 8% correction is due to 0 < q_T < 3 GeV cut used for the theoretical predictions
    
    for (UInt_t i=0; i<nBinsW; i++) {
       grSensW_fill->SetPoint(i, arrSensW_x[i], arrSensW_ye[i]);
@@ -104,7 +104,7 @@ void plotSens()
    pad2->cd();
    pad2->SetGridy();
    
-   TH1 *dummy = new TH2F("dummy", "dummy", 1, -2, 2, 1, -0.1, 0.1);
+   TH1 *dummy = new TH2F("dummy", "dummy", 1, -2, 2, 1, -0.25, 0.25);
    //TH1 *dummy = new TH2F("dummy", "dummy", 1, -1.5, 1.5, 1, -15, 15);
    dummy->UseCurrentStyle();
    dummy->SetTitle(" ;y_{W}; #Delta A_{N}; ");
