@@ -148,10 +148,6 @@ void VecBosRootFile::BookHists()
 
    fHists->d["W-_track_cand_pass_wbos"] = ph = new TrackHContainer(new TDirectoryFile("W-_track_cand_pass_wbos", "W-_track_cand_pass_wbos", "", this));
 
-   fHists->d["W+_track_cand_pass_wbos_Pt>15"] = ph = new TrackHContainer(new TDirectoryFile("W+_track_cand_pass_wbos_Pt>15", "W+_track_cand_pass_wbos_Pt>15", "", this));
-
-   fHists->d["W-_track_cand_pass_wbos_Pt>15"] = ph = new TrackHContainer(new TDirectoryFile("W-_track_cand_pass_wbos_Pt>15", "W-_track_cand_pass_wbos_Pt>15", "", this));
-
    fHists->d["track_cand_pass_qcd"] = ph = new TrackHContainer(new TDirectoryFile("track_cand_pass_qcd", "track_cand_pass_qcd", "", this));
 
    fHists->d["track_cand_pass_qcd_Pt>15"] = ph = new TrackHContainer(new TDirectoryFile("track_cand_pass_qcd_Pt>15", "track_cand_pass_qcd_Pt>15", "", this));
