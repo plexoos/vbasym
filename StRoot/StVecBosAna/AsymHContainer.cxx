@@ -7,6 +7,9 @@
 
 #include "utils/utils.h"
 #include "utils/MultiGraph.h"
+#include "utils/H1D.h"
+#include "utils/H2I.h"
+#include "utils/H2D.h"
 
 #include "AsymCalculator.h"
 #include "WBosEvent.h"
@@ -34,7 +37,7 @@ AsymHContainer::AsymHContainer(TDirectory *dir, EAsymType asymType) : PlotHelper
 void AsymHContainer::BookHists()
 {
    string shName;
-   TH1*   hist;
+   TH1*   hist, *h;
    rh::MultiGraph* mg;
 
    DoubleSpinStateSetIter iDSS = gDoubleSpinStateSet.begin();
@@ -57,6 +60,9 @@ void AsymHContainer::BookHists()
       shName = "hWBosonPhiVsEta_" + sDblSpinState;
       o[shName] = hist = new TH2I(shName.c_str(), "; W Boson #eta; W Boson #phi;", 6, -6, 6, 8, -M_PI, M_PI);
       hist->SetOption("colz");
+
+      shName = "hWBosonPhiVsRap_" + sDblSpinState;
+      o[shName] = new rh::H2I(shName.c_str(), "; W Boson Rapidity; W Boson #phi;", 6, -1.5, 1.5, 8, -M_PI, M_PI, "colz");
 
       shName = "hWBosonPhiVsPt_" + sDblSpinState;
       o[shName] = hist = new TH2I(shName.c_str(), "; W Boson P_{T}; W Boson #phi;", 10, 0, 10, 8, -M_PI, M_PI);
@@ -91,6 +97,9 @@ void AsymHContainer::BookHists()
       shName = "hWBosonPhiVsEta_" + sSnglSpinState;
       o[shName] = hist = new TH2I(shName.c_str(), "; W Boson #eta; W Boson #phi;", 6, -6, 6, 8, -M_PI, M_PI);
       hist->SetOption("colz");
+
+      shName = "hWBosonPhiVsRap_" + sSnglSpinState;
+      o[shName] = new rh::H2I(shName.c_str(), "; W Boson Rapidity; W Boson #phi;", 6, -1.5, 1.5, 8, -M_PI, M_PI, "colz");
 
       shName = "hWBosonPhiVsPt_" + sSnglSpinState;
       o[shName] = hist = new TH2I(shName.c_str(), "; W Boson P_{T}; W Boson #phi;", 10, 0, 10, 8, -M_PI, M_PI);
@@ -174,6 +183,21 @@ void AsymHContainer::BookHists()
       hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
       mg->SetHistogram((TH1F*) hist);
 
+      // W asymmetry plots
+      shName = "hWBosonAsymVsPhiVsRap_" + sBeam;
+      o[shName] = new rh::H2D(shName.c_str(), "; W Boson Rapidity; W Boson #phi;", 6, -1.5, 1.5, 8, -M_PI, M_PI, "colz");
+
+      shName = "hWBosonAsymAmpVsRap_" + sBeam;
+      o[shName] = h = new rh::H1D(shName.c_str(), "; W Boson Rapidity; Asym Amp.;", 6, -1.5, 1.5, "E1 GRIDX GRIDY");
+      h->GetYaxis()->SetRangeUser(-0.5, 0.5);
+
+      // Multigraph container with graphs for individual slices/bins
+      shName = "mgrWBosonAsymVsPhi_RapBins_" + sBeam;
+      o[shName] = mg = new rh::MultiGraph(shName, shName);
+      hist = new TH1F(shName.c_str(), "; W Boson #phi; Asym.;", 1, -M_PI, M_PI);
+      hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
+      mg->SetHistogram((TH1F*) hist);
+
       shName = "hWBosonAsymVsPhiVsPt_" + sBeam;
       o[shName] = hist = new TH2D(shName.c_str(), "; W Boson P_{T}; W Boson #phi;", 10, 0, 10, 8, -M_PI, M_PI);
       hist->SetOption("colz");
@@ -212,6 +236,10 @@ void AsymHContainer::BookHists()
    hist->SetOption("E1 GRIDX GRIDY");
    hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
 
+   shName = "hWBosonAsymAmpVsRap_";
+   o[shName] = hist = new rh::H1D(shName.c_str(), "; W Boson Rapidity; Asym Amp.;", 6, -1.5, 1.5, "E1 GRIDX GRIDY");
+   hist->GetYaxis()->SetRangeUser(-0.5, 0.5);
+
    shName = "hWBosonAsymAmpVsPt_";
    o[shName] = hist = new TH1D(shName.c_str(), "; W Boson P_{T}; Asym Amp.;", 10, 0, 10);
    hist->SetOption("E1 GRIDX GRIDY");
@@ -247,13 +275,16 @@ void AsymHContainer::Fill(ProtoEvent &ev)
       shName = "hLeptonPhiVsPt_" + sDblSpinState;
       ((TH2*) o[shName])->Fill(eleCandidate.Pt(), eleCandidate.Phi());
 
-      TVector3 wBoson = event.GetVecBosonP3();
+      TLorentzVector wBoson = event.GetVecBosonP4();
 
       shName = "hWBosonPhiVsPt_" + sDblSpinState;
       ((TH2*) o[shName])->Fill(wBoson.Pt(), wBoson.Phi());
 
       shName = "hWBosonPhiVsEta_" + sDblSpinState;
       ((TH2*) o[shName])->Fill(wBoson.Eta(), wBoson.Phi());
+
+      shName = "hWBosonPhiVsRap_" + sDblSpinState;
+      ((TH2*) o[shName])->Fill(wBoson.Rapidity(), wBoson.Phi());
    }
 }
 
@@ -277,6 +308,7 @@ void AsymHContainer::FillDerived()
       TH2* hLeptonPhiVsPt_sngl     = (TH2*) o["hLeptonPhiVsPt_"     + sSnglSpinState];
       TH1* hLeptonPhi_PtProj_sngl  = (TH1*) o["hLeptonPhi_PtProj_"  + sSnglSpinState];
       TH2* hWBosonPhiVsEta_sngl    = (TH2*) o["hWBosonPhiVsEta_"    + sSnglSpinState];
+      TH2* hWBosonPhiVsRap_sngl    = (TH2*) o["hWBosonPhiVsRap_"    + sSnglSpinState];
       //TH1* hWBosonPhi_EtaProj_sngl = (TH1*) o["hWBosonPhi_EtaProj_" + sSnglSpinState];
       TH2* hWBosonPhiVsPt_sngl     = (TH2*) o["hWBosonPhiVsPt_"     + sSnglSpinState];
       TH1* hWBosonPhi_PtProj_sngl  = (TH1*) o["hWBosonPhi_PtProj_"  + sSnglSpinState];
@@ -291,6 +323,7 @@ void AsymHContainer::FillDerived()
          TH2* hLeptonPhiVsEta_b2_dbl = (TH2*) o["hLeptonPhiVsEta_b2_" + sDblSpinState];
          TH2* hLeptonPhiVsPt_dbl     = (TH2*) o["hLeptonPhiVsPt_"     + sDblSpinState];
          TH2* hWBosonPhiVsEta_dbl    = (TH2*) o["hWBosonPhiVsEta_"    + sDblSpinState];
+         TH2* hWBosonPhiVsRap_dbl    = (TH2*) o["hWBosonPhiVsRap_"    + sDblSpinState];
          TH2* hWBosonPhiVsPt_dbl     = (TH2*) o["hWBosonPhiVsPt_"     + sDblSpinState];
 
          if (dss & sss) {
@@ -298,6 +331,7 @@ void AsymHContainer::FillDerived()
             hLeptonPhiVsEta_b2_sngl->Add(hLeptonPhiVsEta_b2_dbl);
             hLeptonPhiVsPt_sngl->Add(hLeptonPhiVsPt_dbl);
             hWBosonPhiVsEta_sngl->Add(hWBosonPhiVsEta_dbl);
+            hWBosonPhiVsRap_sngl->Add(hWBosonPhiVsRap_dbl);
             hWBosonPhiVsPt_sngl->Add(hWBosonPhiVsPt_dbl);
          }
       }
@@ -382,6 +416,16 @@ void AsymHContainer::PostFill()
       AsymCalculator::CalcAsimAsym(*hWBosonPhiVsEta_up, *hWBosonPhiVsEta_dn, *hWBosonAsymVsPhiVsEta_);
       AsymCalculator::FitAsimAsym(*hWBosonAsymVsPhiVsEta_, *hWBosonAsymAmpVsEta_, mgrWBosonAsymVsPhi_EtaBins_);
 
+      // W asymmetry vs. boson rapidity for iBeam
+      TH2I* hWBosonPhiVsRap_up     = (TH2I*) o["hWBosonPhiVsRap_" + sSpinUp];
+      TH2I* hWBosonPhiVsRap_dn     = (TH2I*) o["hWBosonPhiVsRap_" + sSpinDn];
+      TH2D* hWBosonAsymVsPhiVsRap_ = (TH2D*) o["hWBosonAsymVsPhiVsRap_" + sBeam];
+      TH1D* hWBosonAsymAmpVsRap_   = (TH1D*) o["hWBosonAsymAmpVsRap_" + sBeam];
+      rh::MultiGraph* mgrWBosonAsymVsPhi_RapBins_ = (rh::MultiGraph*) o["mgrWBosonAsymVsPhi_RapBins_" + sBeam];
+
+      AsymCalculator::CalcAsimAsym(*hWBosonPhiVsRap_up, *hWBosonPhiVsRap_dn, *hWBosonAsymVsPhiVsRap_);
+      AsymCalculator::FitAsimAsym(*hWBosonAsymVsPhiVsRap_, *hWBosonAsymAmpVsRap_, mgrWBosonAsymVsPhi_RapBins_);
+
       // W asymmetry vs. boson p_T for iBeam
       TH2I* hWBosonPhiVsPt_up     = (TH2I*) o["hWBosonPhiVsPt_" + sSpinUp];
       TH2I* hWBosonPhiVsPt_dn     = (TH2I*) o["hWBosonPhiVsPt_" + sSpinDn];
@@ -420,6 +464,11 @@ void AsymHContainer::PostFill()
    TH1D* hWBosonAsymAmpVsEta_YEL = (TH1D*) o["hWBosonAsymAmpVsEta_YEL"];
    TH1D* hWBosonAsymAmpVsEta_    = (TH1D*) o["hWBosonAsymAmpVsEta_"];
    AsymCalculator::CombineAsimAsym(*hWBosonAsymAmpVsEta_BLU, *hWBosonAsymAmpVsEta_YEL, *hWBosonAsymAmpVsEta_, true);
+
+   TH1D* hWBosonAsymAmpVsRap_BLU = (TH1D*) o["hWBosonAsymAmpVsRap_BLU"];
+   TH1D* hWBosonAsymAmpVsRap_YEL = (TH1D*) o["hWBosonAsymAmpVsRap_YEL"];
+   TH1D* hWBosonAsymAmpVsRap_    = (TH1D*) o["hWBosonAsymAmpVsRap_"];
+   AsymCalculator::CombineAsimAsym(*hWBosonAsymAmpVsRap_BLU, *hWBosonAsymAmpVsRap_YEL, *hWBosonAsymAmpVsRap_, true);
 
    // This is mainly to cross check that the asymmetry sign flip works
    TH1D* hWBosonAsymAmpVsEta_YEL_rev = new TH1D(*hWBosonAsymAmpVsEta_YEL);
