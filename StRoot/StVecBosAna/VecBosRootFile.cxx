@@ -227,9 +227,17 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
      if ( event.HasCandidateEle() && event.GetElectronP3().Pt() > 15)
         Fill(ev, kCUT_EVENT_HAS_CANDIDATE_TRACK_PT15);
 
+     if ( event.PassedCutWBos(WBosEvent::sMinElectronPtLight) )
+        Fill(ev, kCUT_EVENT_PASS_WBOS_PT15);
+
      if ( event.PassedCutWBos(WBosEvent::sMinElectronPtHard) )
         Fill(ev, kCUT_EVENT_PASS_WBOS);
 
+     if ( event.PassedCutWBosPlus(WBosEvent::sMinElectronPtLight) ) 
+        Fill(ev, kCUT_POSITIVE_EVENT_PASS_WBOS_PT15);
+
+     if ( event.PassedCutWBosMinus(WBosEvent::sMinElectronPtLight) ) 
+        Fill(ev, kCUT_NEGATIVE_EVENT_PASS_WBOS_PT15);
 
 
    // Fill vertex histos
@@ -297,7 +305,7 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
 
       if ( event.PassedCutWBos(WBosEvent::sMinElectronPtHard) ) {
 
-            Fill(ev, kCUT_EVENT_PASS_WBOS);
+	//Fill(ev, kCUT_EVENT_PASS_WBOS);
 
             ((TrackHContainer *) fHists->d["track_cand_pass_wbos"])->Fill(track);
 
