@@ -91,6 +91,15 @@ void VecBosAsymRootFile::BookHists()
    fHists->d["asym_wm"] = ph = new AsymHContainer(new TDirectoryFile("asym_wm", "asym_wm", "", this));
    fHistCuts[kCUT_EVENT_W_MINUS].insert(ph);
 
+   fHists->d["asym_wm_phys"] = ph = new AsymHContainer(new TDirectoryFile("asym_wm_phys", "asym_wm_phys", "", this), kAsymSqrtPhys);
+   fHistCuts[kCUT_EVENT_W_MINUS].insert(ph);
+
+   fHists->d["asym_wm_geom"] = ph = new AsymHContainer(new TDirectoryFile("asym_wm_geom", "asym_wm_geom", "", this), kAsymSqrtGeom);
+   fHistCuts[kCUT_EVENT_W_MINUS].insert(ph);
+
+   fHists->d["asym_wm_lumi"] = ph = new AsymHContainer(new TDirectoryFile("asym_wm_lumi", "asym_wm_lumi", "", this), kAsymSqrtLumi);
+   fHistCuts[kCUT_EVENT_W_MINUS].insert(ph);
+
    if (!fIsMc) return;
 
    fHists->d["event_mc"] = ph = new MCHContainer(new TDirectoryFile("event_mc", "event_mc", "", this));

@@ -1,0 +1,7 @@
+# Password protect pages with plots
+<FilesMatch "plots.php">
+   AuthType Basic
+   AuthName "Enter standard STAR login and password for protected pages"
+   AuthUserFile /etc/httpd/conf/webprotect
+   Require user protected
+</FilesMatch>

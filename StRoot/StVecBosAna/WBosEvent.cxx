@@ -49,6 +49,14 @@ TVector3 WBosEvent::CalcSignedPtBalance() const
 TVector3 WBosEvent::GetVecBosonP3() const { return mElectronP3 + mNeutrinoP3; }
 
 
+TLorentzVector WBosEvent::GetVecBosonP4() const
+{
+   TLorentzVector wBosonP4;
+   wBosonP4.SetVectM(GetVecBosonP3(), mWBosMass);
+   return wBosonP4;
+}
+
+
 /**
  * The primary method to identify and reconstruct the event with a W boson.
  */

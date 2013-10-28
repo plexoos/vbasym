@@ -2,6 +2,7 @@
 #define WBosEvent_h
 
 #include "TVector3.h"
+#include "TLorentzVector.h"
 
 #include "VecBosEvent.h"
 #include "VecBosTrack.h"
@@ -24,6 +25,7 @@ public:
    TVector3     CalcMissingEnergyP3() const;
    TVector3     CalcSignedPtBalance() const;
    TVector3     GetVecBosonP3() const;
+   TLorentzVector GetVecBosonP4() const;
    virtual void Process();
    virtual void ProcessPersistent();
    virtual void ProcessMC();
