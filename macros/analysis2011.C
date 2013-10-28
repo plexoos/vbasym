@@ -108,53 +108,52 @@ void analysis2011()
    TFile *fileMCZ    = TFile::Open(inPath + "run11_mc_Z02ee.lis_-m_-w_--jpm_0.5_vbana.root");
    TFile *fileMCWptt = TFile::Open(inPath + "run11_mc_Wp2taunu.lis_-m_-w_--jpm_0.5_vbana.root");
    TFile *fileMCWmtt = TFile::Open(inPath + "run11_mc_Wm2taunu.lis_-m_-w_--jpm_0.5_vbana.root");
-
    /*
-   TFile *fileData   = TFile::Open(inPath + "run11_pp_transverse_--jpm_0.5_--run_11_vbana.root");
-   TFile *fileMCWp   = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_--jpm_0.5_vbana.root");
-   TFile *fileMCWm   = TFile::Open(inPath + "run11_mc_Wm2enu.lis_-m_--jpm_0.5_vbana.root");
-   TFile *fileMCQCD  = TFile::Open(inPath + "run12_QCD.lis_-m_--jpm_0.5_vbana.root");
-   TFile *fileMCZ    = TFile::Open(inPath + "run11_mc_Z02ee.lis_-m_--jpm_0.5_vbana.root");
-   TFile *fileMCWptt = TFile::Open(inPath + "run11_mc_Wp2taunu.lis_-m_--jpm_0.5_vbana.root");
-   TFile *fileMCWmtt = TFile::Open(inPath + "run11_mc_Wm2taunu.lis_-m_--jpm_0.5_vbana.root");
+   TFile *fileData   = TFile::Open(inPath + "vbana_cut05_data_final.root");
+   TFile *fileMCWp   = TFile::Open(inPath + "vbana_cut05_mc_wp.root");
+   TFile *fileMCWm   = TFile::Open(inPath + "vbana_cut05_mc_wm.root");
+   TFile *fileMCQCD  = TFile::Open(inPath + "vbana_cut05_mc_qcd.root");
+   TFile *fileMCZ    = TFile::Open(inPath + "vbana_cut05_mc_z_to_ee.root");
+   TFile *fileMCWptt = TFile::Open(inPath + "vbana_cut05_mc_wp_to_tt.root");
+   TFile *fileMCWmtt = TFile::Open(inPath + "vbana_cut05_mc_wm_to_tt.root");
    */
 
    // W total (W+ + W-)
    TH1 *hd_PtLepTPC     = (TH1*) fileData->Get("track_cand_pass_wbos/hTrackPt");
-   //TH1 *hd_PtLep        = (TH1*) fileData->Get("track_cand_pass_final_QEToPT/hEcalScaledPt");
+   //TH1 *hd_PtLep        = (TH1*) fileData->Get("track_cand_pass_wbos/hEcalScaledPt");
    TH1 *hd_PtLep        = (TH1*) fileData->Get("event_pass_wbos/hCandidateTrackEScaledPt");
-   //TH1 *hZ_PtLep        = (TH1*) fileMCZ->Get("track_cand_pass_final_QEToPT/hEcalScaledPt");
+   //TH1 *hZ_PtLep        = (TH1*) fileMCZ->Get("track_cand_pass_wbos/hEcalScaledPt");
    TH1 *hZ_PtLep        = (TH1*) fileMCZ->Get("event_pass_wbos/hCandidateTrackEScaledPt");
-   //TH1 *hWp_PtLep       = (TH1*) fileMCWp->Get("track_cand_pass_final_QEToPT/hEcalScaledPt");
+   //TH1 *hWp_PtLep       = (TH1*) fileMCWp->Get("track_cand_pass_wbos/hEcalScaledPt");
    TH1 *hWp_PtLep       = (TH1*) fileMCWp->Get("event_pass_wbos/hCandidateTrackEScaledPt");
-   //TH1 *hWm_PtLep       = (TH1*) fileMCWm->Get("track_cand_pass_final_QEToPT/hEcalScaledPt");
+   //TH1 *hWm_PtLep       = (TH1*) fileMCWm->Get("track_cand_pass_wbos/hEcalScaledPt");
    TH1 *hWm_PtLep       = (TH1*) fileMCWm->Get("event_pass_wbos/hCandidateTrackEScaledPt");
-   //TH1 *hWptt_PtLep     = (TH1*) fileMCWptt->Get("track_cand_pass_final_QEToPT/hEcalScaledPt");
+   //TH1 *hWptt_PtLep     = (TH1*) fileMCWptt->Get("track_cand_pass_wbos/hEcalScaledPt");
    TH1 *hWptt_PtLep     = (TH1*) fileMCWptt->Get("event_pass_wbos/hCandidateTrackEScaledPt");
-   //TH1 *hWmtt_PtLep     = (TH1*) fileMCWmtt->Get("track_cand_pass_final_QEToPT/hEcalScaledPt");
+   //TH1 *hWmtt_PtLep     = (TH1*) fileMCWmtt->Get("track_cand_pass_wbos/hEcalScaledPt");
    TH1 *hWmtt_PtLep     = (TH1*) fileMCWmtt->Get("event_pass_wbos/hCandidateTrackEScaledPt");
-   //TH1 *hQ_PtLep        = (TH1*) fileMCQCD->Get("track_cand_pass_final_QEToPT/hEcalScaledPt");
+   //TH1 *hQ_PtLep        = (TH1*) fileMCQCD->Get("track_cand_pass_wbos/hEcalScaledPt");
    TH1 *hQ_PtLep        = (TH1*) fileMCQCD->Get("event_pass_wbos/hCandidateTrackEScaledPt");
 
    TH1 *hd_PtLepTPCPt15 = (TH1*) fileData->Get("track_cand_pass_wbos_Pt>15/hTrackPt");
-   //TH1 *hd_PtLepPt15        = (TH1*) fileData->Get("track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
+   //TH1 *hd_PtLepPt15        = (TH1*) fileData->Get("track_cand_pass_wbos_Pt>15/hEcalScaledPt");
    TH1 *hd_PtLepPt15    = (TH1*) fileData->Get("event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
-   //TH1 *hZ_PtLepPt15    = (TH1*) fileMCZ->Get("track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
+   //TH1 *hZ_PtLepPt15    = (TH1*) fileMCZ->Get("track_cand_pass_wbos_Pt>15/hEcalScaledPt");
    TH1 *hZ_PtLepPt15    = (TH1*) fileMCZ->Get("event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
-   //TH1 *hWp_PtLepPt15   = (TH1*) fileMCWp->Get("track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
+   //TH1 *hWp_PtLepPt15   = (TH1*) fileMCWp->Get("track_cand_pass_wbos_Pt>15/hEcalScaledPt");
    TH1 *hWp_PtLepPt15    = (TH1*) fileMCWp->Get("event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
-   //TH1 *hWm_PtLepPt15   = (TH1*) fileMCWm->Get("track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
+   //TH1 *hWm_PtLepPt15   = (TH1*) fileMCWm->Get("track_cand_pass_wbos_Pt>15/hEcalScaledPt");
    TH1 *hWm_PtLepPt15    = (TH1*) fileMCWm->Get("event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
-   //TH1 *hWptt_PtLepPt15 = (TH1*) fileMCWptt->Get("track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
+   //TH1 *hWptt_PtLepPt15 = (TH1*) fileMCWptt->Get("track_cand_pass_wbos_Pt>15/hEcalScaledPt");
    TH1 *hWptt_PtLepPt15    = (TH1*) fileMCWptt->Get("event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
-   //TH1 *hWmtt_PtLepPt15 = (TH1*) fileMCWmtt->Get("track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
+   //TH1 *hWmtt_PtLepPt15 = (TH1*) fileMCWmtt->Get("track_cand_pass_wbos_Pt>15/hEcalScaledPt");
    TH1 *hWmtt_PtLepPt15    = (TH1*) fileMCWmtt->Get("event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
-   //TH1 *hQ_PtLepPt15    = (TH1*) fileMCQCD->Get("track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
+   //TH1 *hQ_PtLepPt15    = (TH1*) fileMCQCD->Get("track_cand_pass_wbos_Pt>15/hEcalScaledPt");
    TH1 *hQ_PtLepPt15    = (TH1*) fileMCQCD->Get("event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
 
-   //TH1 *hd_PtLepQCD     = (TH1*) fileData->Get("track_cand_pass_qcd_QEToPT/hEcalScaledPt");
-   TH1 *hd_PtLepQCD     = (TH1*) fileData->Get("event_pass_qcd/hCandidateTrackEScaledPt");
-   //TH1 *hd_PtLepQCDPt15 = (TH1*) fileData->Get("track_cand_pass_qcd_QEToPT_Pt>15/hEcalScaledPt");
+   TH1 *hd_PtLepQCD     = (TH1*) fileData->Get("track_cand_pass_qcd/hEcalScaledPt");
+   //TH1 *hd_PtLepQCD     = (TH1*) fileData->Get("event_pass_qcd/hCandidateTrackEScaledPt");
+   //TH1 *hd_PtLepQCDPt15 = (TH1*) fileData->Get("track_cand_pass_qcd_Pt>15/hEcalScaledPt");
    TH1 *hd_PtLepQCDPt15 = (TH1*) fileData->Get("event_pass_qcd_pt>15/hCandidateTrackEScaledPt");
 
    hd_PtLep->Rebin(3);  // 3 GeV per bin (originally 1 GeV)
@@ -175,7 +174,6 @@ void analysis2011()
    hd_PtLepQCDPt15->Rebin(3);
 
 
-   //TH2 *hd_QxEtoPt_Vs_Et = (TH2 *)fileData->Get("track_cand_pass_final/hQxEtoPt_Vs_Et_PrimaryTrack");
    TH2 *hd_QxEtoPt_Vs_Et = (TH2 *)fileData->Get("track_cand_pass_wbos/hQxEtoPt_Vs_Et_PrimaryTrack");
    cout << hd_QxEtoPt_Vs_Et->ClassName() << endl;
    TH2 *hd_QxEtoPt_Vs_Et_passCut = (TH2 *)fileData->Get("track_cand_pass_wbos/hQxEtoPt_Vs_Et_PrimaryTrack");
@@ -215,6 +213,7 @@ void analysis2011()
    TH2 *hWm_Jets_PtWGenOverReco        = (TH2*) fileMCWm->Get("event_mc_pass_wbos/hJetRecoilPt_GenOverReco");
    TH2 *hWm_Jets_PtWGenOverReco_zoomin = (TH2*) fileMCWm->Get("event_mc_pass_wbos/hJetRecoilPt_GenOverReco_zoomin");
 
+   TH1 *hWp_PhiRecoil_vs_PhiWGen  = (TH1 *)fileMCWp->Get("event_mc_pass_wbos/hTrackRecoilPhiVsWBosonPhi");
 
    TH1 *hWp_PtRecoil_vs_PtWGen    = (TH1 *)fileMCWp->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPtVsWBosonPt");
    TH1 *hWp_PtRecoilCorr_vs_PtWGen    = (TH1 *)fileMCWp->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt");
@@ -222,45 +221,37 @@ void analysis2011()
    TH1 *hWp_PhiRecoil_vs_PhiWGen  = (TH1 *)fileMCWp->Get("event_mc_pass_wbos/hTrackRecoilPhiVsWBosonPhi");
 
 
-   TH1 *hd_NumTracksRecoil = (TH1*) fileData->Get("event_pass_wbos/hNumTracksRecoil");
-   TH1 *hWp_NumTracksRecoil= (TH1*) fileMCWp->Get("event_pass_wbos/hNumTracksRecoil");
-   TH1 *hd_NumTracksRecoilVsTrackRecoilWithNeutralsPt = (TH1*) fileData->Get("event_pass_wbos/hNumTracksRecoilVsTrackRecoilWithNeutralsPt");
-   TH1 *hWp_NumTracksRecoilVsTrackRecoilWithNeutralsPt= (TH1*) fileMCWp->Get("event_pass_wbos/hNumTracksRecoilVsTrackRecoilWithNeutralsPt");
-   TH1 *hd_NumTracksRecoilVsCandidateTrackEScaledPt   = (TH1*) fileData->Get("event_pass_wbos/hNumTracksRecoilVsCandidateTrackEScaledPt");
-   TH1 *hWp_NumTracksRecoilVsCandidateTrackEScaledPt  = (TH1*) fileMCWp->Get("event_pass_wbos/hNumTracksRecoilVsCandidateTrackEScaledPt");
-
-
 // W+
-   //TH1 *hd_Wp_PtLep        = (TH1 *)fileData->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
-   TH1 *hd_Wp_PtLep        = (TH1 *)fileData->Get("W+_track_cand_pass_wbos/hEcalScaledPt");
-   //TH1 *hZ_Wp_PtLep        = (TH1 *)fileMCZ->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
-   TH1 *hZ_Wp_PtLep        = (TH1 *)fileMCZ->Get("W+_track_cand_pass_wbos/hEcalScaledPt");
-   //TH1 *hWp_Wp_PtLep       = (TH1 *)fileMCWp->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
-   TH1 *hWp_Wp_PtLep       = (TH1 *)fileMCWp->Get("W+_track_cand_pass_wbos/hEcalScaledPt");
-   //TH1 *hWm_Wp_PtLep       = (TH1 *)fileMCWm->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
-   TH1 *hWm_Wp_PtLep       = (TH1 *)fileMCWm->Get("W+_track_cand_pass_wbos/hEcalScaledPt");
-   //TH1 *hWptt_Wp_PtLep     = (TH1 *)fileMCWptt->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
-   TH1 *hWptt_Wp_PtLep     = (TH1 *)fileMCWptt->Get("W+_track_cand_pass_wbos/hEcalScaledPt");
-   //TH1 *hQ_Wp_PtLep        = (TH1 *)fileMCQCD->Get("W+_track_cand_pass_final_QEToPT/hEcalScaledPt");
-   TH1 *hQ_Wp_PtLep        = (TH1 *)fileMCQCD->Get("W+_track_cand_pass_wbos/hEcalScaledPt");
+   //TH1 *hd_Wp_PtLep        = (TH1 *)fileData->Get("W+_track_cand_pass_wbos/hEcalScaledPt");
+   TH1 *hd_Wp_PtLep        = (TH1 *)fileData->Get("W+_event_pass_wbos/hCandidateTrackEScaledPt");
+   //TH1 *hZ_Wp_PtLep        = (TH1 *)fileMCZ->Get("W+_track_cand_pass_wbos/hEcalScaledPt");
+   TH1 *hZ_Wp_PtLep        = (TH1 *)fileMCZ->Get("W+_event_pass_wbos/hCandidateTrackEScaledPt");
+   //TH1 *hWp_Wp_PtLep       = (TH1 *)fileMCWp->Get("W+_track_cand_pass_wbos/hEcalScaledPt");
+   TH1 *hWp_Wp_PtLep       = (TH1 *)fileMCWp->Get("W+_event_pass_wbos/hCandidateTrackEScaledPt");
+   //TH1 *hWm_Wp_PtLep       = (TH1 *)fileMCWm->Get("W+_track_cand_pass_wbos/hEcalScaledPt");
+   TH1 *hWm_Wp_PtLep       = (TH1 *)fileMCWm->Get("W+_event_pass_wbos/hCandidateTrackEScaledPt");
+   //TH1 *hWptt_Wp_PtLep     = (TH1 *)fileMCWptt->Get("W+_track_cand_pass_wbos/hEcalScaledPt");
+   TH1 *hWptt_Wp_PtLep     = (TH1 *)fileMCWptt->Get("W+_event_pass_wbos/hCandidateTrackEScaledPt");
+   //TH1 *hQ_Wp_PtLep        = (TH1 *)fileMCQCD->Get("W+_track_cand_pass_wbos/hEcalScaledPt");
+   TH1 *hQ_Wp_PtLep        = (TH1 *)fileMCQCD->Get("W+_event_pass_wbos/hCandidateTrackEScaledPt");
 
-   //TH1 *hd_Wp_PtLepPt15    = (TH1 *)fileData->Get("W+_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
-   TH1 *hd_Wp_PtLepPt15    = (TH1*) fileData->Get("W+_track_cand_pass_wbos_pt>15/hEcalScaledPt");
-   //TH1 *hZ_Wp_PtLepPt15    = (TH1 *)fileMCZ->Get("W+_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
-   TH1 *hZ_Wp_PtLepPt15    = (TH1*) fileMCZ->Get("W+_track_cand_pass_wbos_pt>15/hEcalScaledPt");
-   //TH1 *hWp_Wp_PtLepPt15   = (TH1 *)fileMCWp->Get("W+_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
-   TH1 *hWp_Wp_PtLepPt15   = (TH1*) fileMCWp->Get("W+_track_cand_pass_wbos_pt>15/hEcalScaledPt");
-   //TH1 *hWm_Wp_PtLepPt15   = (TH1 *)fileMCWm->Get("W+_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
-   TH1 *hWm_Wp_PtLepPt15   = (TH1*) fileMCWm->Get("W+_track_cand_pass_wbos_pt>15/hEcalScaledPt");
-   //TH1 *hWptt_Wp_PtLepPt15 = (TH1 *)fileMCWptt->Get("W+_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
-   TH1 *hWptt_Wp_PtLepPt15 = (TH1*) fileMCWptt->Get("W+_track_cand_pass_wbos_pt>15/hEcalScaledPt");
-   //TH1 *hQ_Wp_PtLepPt15    = (TH1 *)fileMCQCD->Get("W+_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
-   TH1 *hQ_Wp_PtLepPt15    = (TH1*) fileMCQCD->Get("W+_track_cand_pass_wbos_pt>15/hEcalScaledPt");
+   //TH1 *hd_Wp_PtLepPt15    = (TH1 *)fileData->Get("W+_track_cand_pass_wbos_Pt>15/hEcalScaledPt");
+   TH1 *hd_Wp_PtLepPt15    = (TH1*) fileData->Get("W+_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   //TH1 *hZ_Wp_PtLepPt15    = (TH1 *)fileMCZ->Get("W+_track_cand_pass_wbos_Pt>15/hEcalScaledPt");
+   TH1 *hZ_Wp_PtLepPt15    = (TH1*) fileMCZ->Get("W+_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   //TH1 *hWp_Wp_PtLepPt15   = (TH1 *)fileMCWp->Get("W+_track_cand_pass_wbos_Pt>15/hEcalScaledPt");
+   TH1 *hWp_Wp_PtLepPt15   = (TH1*) fileMCWp->Get("W+_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   //TH1 *hWm_Wp_PtLepPt15   = (TH1 *)fileMCWm->Get("W+_track_cand_pass_wbos_Pt>15/hEcalScaledPt");
+   TH1 *hWm_Wp_PtLepPt15   = (TH1*) fileMCWm->Get("W+_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   //TH1 *hWptt_Wp_PtLepPt15 = (TH1 *)fileMCWptt->Get("W+_track_cand_pass_wbos_Pt>15/hEcalScaledPt");
+   TH1 *hWptt_Wp_PtLepPt15 = (TH1*) fileMCWptt->Get("W+_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   //TH1 *hQ_Wp_PtLepPt15    = (TH1 *)fileMCQCD->Get("W+_track_cand_pass_wbos_Pt>15/hEcalScaledPt");
+   TH1 *hQ_Wp_PtLepPt15    = (TH1*) fileMCQCD->Get("W+_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
 
-   //TH1 *hd_Wp_PtLepQCD     = (TH1 *)fileData->Get("W+_track_cand_pass_qcd_QEToPT/hEcalScaledPt");
-   TH1 *hd_Wp_PtLepQCD     = (TH1 *)fileData->Get("W+_track_cand_pass_qcd/hEcalScaledPt");
-   //TH1 *hd_Wp_PtLepQCDPt15 = (TH1 *)fileData->Get("W+_track_cand_pass_qcd_QEToPT_Pt>15/hEcalScaledPt");
-   TH1 *hd_Wp_PtLepQCDPt15 = (TH1 *)fileData->Get("W+_track_cand_pass_qcd_pt>15/hEcalScaledPt");
+   //TH1 *hd_Wp_PtLepQCD     = (TH1 *)fileData->Get("W+_track_cand_pass_qcd/hEcalScaledPt");
+   TH1 *hd_Wp_PtLepQCD     = (TH1 *)fileData->Get("W+_event_pass_qcd/hCandidateTrackEScaledPt");
+   //TH1 *hd_Wp_PtLepQCDPt15 = (TH1 *)fileData->Get("W+_track_cand_pass_qcd_Pt>15/hEcalScaledPt");
+   TH1 *hd_Wp_PtLepQCDPt15 = (TH1 *)fileData->Get("W+_event_pass_qcd_pt>15/hCandidateTrackEScaledPt");
 
    hd_Wp_PtLep->Rebin(3);
    hZ_Wp_PtLep->Rebin(3);
@@ -337,36 +328,36 @@ void analysis2011()
 
 
 // W-
-   //TH1 *hd_Wm_PtLep        = (TH1 *)fileData->Get("W-_track_cand_pass_final_QEToPT/hEcalScaledPt");
-   TH1 *hd_Wm_PtLep        = (TH1 *)fileData->Get("W-_event_pass_wbos/hEcalScaledPt");
-   //TH1 *hZ_Wm_PtLep        = (TH1 *)fileMCZ->Get("W-_track_cand_pass_final_QEToPT/hEcalScaledPt");
-   TH1 *hZ_Wm_PtLep        = (TH1 *)fileMCZ->Get("W-_event_pass_wbos/hEcalScaledPt");
-   //TH1 *hWp_Wm_PtLep       = (TH1 *)fileMCWp->Get("W-_track_cand_pass_final_QEToPT/hEcalScaledPt");
-   TH1 *hWp_Wm_PtLep       = (TH1 *)fileMCWp->Get("W-_event_pass_wbos/hEcalScaledPt");
-   //TH1 *hWm_Wm_PtLep       = (TH1 *)fileMCWm->Get("W-_track_cand_pass_final_QEToPT/hEcalScaledPt");
-   TH1 *hWm_Wm_PtLep       = (TH1 *)fileMCWm->Get("W-_event_pass_wbos/hEcalScaledPt");
-   //TH1 *hWmtt_Wm_PtLep     = (TH1 *)fileMCWmtt->Get("W-_track_cand_pass_final_QEToPT/hEcalScaledPt");
-   TH1 *hWmtt_Wm_PtLep     = (TH1 *)fileMCWmtt->Get("W-_event_pass_wbos/hEcalScaledPt");
-   //TH1 *hQ_Wm_PtLep        = (TH1 *)fileMCQCD->Get("W-_track_cand_pass_final_QEToPT/hEcalScaledPt");
-   TH1 *hQ_Wm_PtLep        = (TH1 *)fileMCQCD->Get("W-_event_pass_wbos/hEcalScaledPt");
+   //TH1 *hd_Wm_PtLep        = (TH1 *)fileData->Get("W-_track_cand_pass_wbos/hEcalScaledPt");
+   TH1 *hd_Wm_PtLep        = (TH1 *)fileData->Get("W-_event_pass_wbos/hCandidateTrackEScaledPt");
+   //TH1 *hZ_Wm_PtLep        = (TH1 *)fileMCZ->Get("W-_track_cand_pass_wbos/hEcalScaledPt");
+   TH1 *hZ_Wm_PtLep        = (TH1 *)fileMCZ->Get("W-_event_pass_wbos/hCandidateTrackEScaledPt");
+   //TH1 *hWp_Wm_PtLep       = (TH1 *)fileMCWp->Get("W-_track_cand_pass_wbos/hEcalScaledPt");
+   TH1 *hWp_Wm_PtLep       = (TH1 *)fileMCWp->Get("W-_event_pass_wbos/hCandidateTrackEScaledPt");
+   //TH1 *hWm_Wm_PtLep       = (TH1 *)fileMCWm->Get("W-_track_cand_pass_wbos/hEcalScaledPt");
+   TH1 *hWm_Wm_PtLep       = (TH1 *)fileMCWm->Get("W-_event_pass_wbos/hCandidateTrackEScaledPt");
+   //TH1 *hWmtt_Wm_PtLep     = (TH1 *)fileMCWmtt->Get("W-_track_cand_pass_wbos/hEcalScaledPt");
+   TH1 *hWmtt_Wm_PtLep     = (TH1 *)fileMCWmtt->Get("W-_event_pass_wbos/hCandidateTrackEScaledPt");
+   //TH1 *hQ_Wm_PtLep        = (TH1 *)fileMCQCD->Get("W-_track_cand_pass_wbos/hEcalScaledPt");
+   TH1 *hQ_Wm_PtLep        = (TH1 *)fileMCQCD->Get("W-_event_pass_wbos/hCandidateTrackEScaledPt");
 
-   //TH1 *hd_Wm_PtLepPt15    = (TH1 *)fileData->Get("W-_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
-   TH1 *hd_Wm_PtLepPt15    = (TH1*) fileData->Get("W-_event_pass_wbos_pt>15/hEcalScaledPt");
-   //TH1 *hZ_Wm_PtLepPt15    = (TH1 *)fileMCZ->Get("W-_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
-   TH1 *hZ_Wm_PtLepPt15    = (TH1*) fileMCZ->Get("W-_event_pass_wbos_pt>15/hEcalScaledPt");
-   //TH1 *hWp_Wm_PtLepPt15   = (TH1 *)fileMCWp->Get("W-_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
-   TH1 *hWp_Wm_PtLepPt15   = (TH1*) fileMCWp->Get("W-_event_pass_wbos_pt>15/hEcalScaledPt");
-   //TH1 *hWm_Wm_PtLepPt15   = (TH1 *)fileMCWm->Get("W-_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
-   TH1 *hWm_Wm_PtLepPt15   = (TH1*) fileMCWm->Get("W-_event_pass_wbos_pt>15/hEcalScaledPt");
-   //TH1 *hWmtt_Wm_PtLepPt15 = (TH1 *)fileMCWmtt->Get("W-_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
-   TH1 *hWmtt_Wm_PtLepPt15 = (TH1*) fileMCWmtt->Get("W-_event_pass_wbos_pt>15/hEcalScaledPt");
-   //TH1 *hQ_Wm_PtLepPt15    = (TH1 *)fileMCQCD->Get("W-_track_cand_pass_final_QEToPT_Pt>15/hEcalScaledPt");
-   TH1 *hQ_Wm_PtLepPt15    = (TH1*) fileMCQCD->Get("W-_event_pass_wbos_pt>15/hEcalScaledPt");
+   //TH1 *hd_Wm_PtLepPt15    = (TH1 *)fileData->Get("W-_track_cand_pass_wbos_Pt>15/hEcalScaledPt");
+   TH1 *hd_Wm_PtLepPt15    = (TH1*) fileData->Get("W-_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   //TH1 *hZ_Wm_PtLepPt15    = (TH1 *)fileMCZ->Get("W-_track_cand_pass_wbos_Pt>15/hEcalScaledPt");
+   TH1 *hZ_Wm_PtLepPt15    = (TH1*) fileMCZ->Get("W-_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   //TH1 *hWp_Wm_PtLepPt15   = (TH1 *)fileMCWp->Get("W-_track_cand_pass_wbos_Pt>15/hEcalScaledPt");
+   TH1 *hWp_Wm_PtLepPt15   = (TH1*) fileMCWp->Get("W-_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   //TH1 *hWm_Wm_PtLepPt15   = (TH1 *)fileMCWm->Get("W-_track_cand_pass_wbos_Pt>15/hEcalScaledPt");
+   TH1 *hWm_Wm_PtLepPt15   = (TH1*) fileMCWm->Get("W-_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   //TH1 *hWmtt_Wm_PtLepPt15 = (TH1 *)fileMCWmtt->Get("W-_track_cand_pass_wbos_Pt>15/hEcalScaledPt");
+   TH1 *hWmtt_Wm_PtLepPt15 = (TH1*) fileMCWmtt->Get("W-_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   //TH1 *hQ_Wm_PtLepPt15    = (TH1 *)fileMCQCD->Get("W-_track_cand_pass_wbos_Pt>15/hEcalScaledPt");
+   TH1 *hQ_Wm_PtLepPt15    = (TH1*) fileMCQCD->Get("W-_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
 
-   //TH1 *hd_Wm_PtLepQCD     = (TH1 *)fileData->Get("W-_track_cand_pass_qcd_QEToPT/hEcalScaledPt");
-   TH1 *hd_Wm_PtLepQCD     = (TH1*) fileData->Get("W-_event_pass_qcd_QEToPT/hEcalScaledPt");
-   //TH1 *hd_Wm_PtLepQCDPt15 = (TH1 *)fileData->Get("W-_track_cand_pass_qcd_QEToPT_Pt>15/hEcalScaledPt");
-   TH1 *hd_Wm_PtLepQCDPt15 = (TH1*) fileData->Get("W-_event_pass_qcd_QEToPT_pt>15/hEcalScaledPt");
+   TH1 *hd_Wm_PtLepQCD     = (TH1 *)fileData->Get("W-_track_cand_pass_qcd/hEcalScaledPt");
+   //TH1 *hd_Wm_PtLepQCD     = (TH1*) fileData->Get("W-_event_pass_qcd_QEToPT/hCandidateTrackEScaledPt");
+   //TH1 *hd_Wm_PtLepQCDPt15 = (TH1 *)fileData->Get("W-_track_cand_pass_qcd_Pt>15/hEcalScaledPt");
+   TH1 *hd_Wm_PtLepQCDPt15 = (TH1*) fileData->Get("W-_event_pass_qcd_pt>15/hCandidateTrackEScaledPt");
 
    hd_Wm_PtLep->Rebin(3);
    hZ_Wm_PtLep->Rebin(3);
@@ -444,46 +435,46 @@ void analysis2011()
 
    //-----------------------------------------------------------------------------------------------------------------
 
-   hd_PtLepTPC->GetXaxis()->SetTitle("P_{T}^{lep}(TPC)");
-   hd_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hZ_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hWp_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hWm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hWptt_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hWmtt_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hQ_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hd_Wp_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hZ_Wp_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hWp_Wp_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hWm_Wp_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hWptt_Wp_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hQ_Wp_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hd_Wm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hZ_Wm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hWp_Wm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hWm_Wm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hWmtt_Wm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hQ_Wm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep}");
+   hd_PtLepTPC->GetXaxis()->SetTitle("P_{T}^{lep}(TPC) [GeV/c]");
+   hd_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hZ_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWp_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWptt_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWmtt_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hQ_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hd_Wp_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hZ_Wp_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWp_Wp_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWm_Wp_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWptt_Wp_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hQ_Wp_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hd_Wm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hZ_Wm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWp_Wm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWm_Wm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWmtt_Wm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hQ_Wm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
    hd_PtLepTPCPt15->GetXaxis()->SetTitle("P_{T}^{lep}(TPC)");
-   hd_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hZ_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hWp_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hWm_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hWptt_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hWmtt_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hQ_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hd_Wp_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hZ_Wp_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hWp_Wp_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hWm_Wp_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hWptt_Wp_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hQ_Wp_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hd_Wm_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hZ_Wm_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hWp_Wm_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hWm_Wm_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hWmtt_Wm_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep}");
-   hQ_Wm_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep}");
+   hd_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hZ_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWp_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWm_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWptt_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWmtt_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hQ_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hd_Wp_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hZ_Wp_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWp_Wp_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWm_Wp_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWptt_Wp_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hQ_Wp_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hd_Wm_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hZ_Wm_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWp_Wm_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWm_Wm_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWmtt_Wm_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hQ_Wm_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
 
    hd_PtLepTPC->GetYaxis()->SetTitle("events");
    hd_PtLep->GetYaxis()->SetTitle("events");
@@ -594,11 +585,11 @@ void analysis2011()
    hQ_PtLep->SetNameTitle("hQ_PtLep", "QCD");
    hQ_PtLep->Draw();
 
-   //c1->Print(outPath + "/plot_1.eps");
+   c1->Print(outPath + "/plot_1.eps");
    c1->Print(outPath + "/plot_1.png");
 
 
-   TCanvas *c1b = new TCanvas("c1b", "", 800, 800);
+   TCanvas *c1b = new TCanvas("c1b", "panel PT>15", 800, 800);
    c1b->Divide(3, 3);
 
    c1b_1->cd();
@@ -625,7 +616,7 @@ void analysis2011()
    hQ_PtLepPt15->SetNameTitle("hQ_PtLepPt15", "QCD");
    hQ_PtLepPt15->Draw();
 
-   //c1b->Print(outPath + "/plot_1b.eps");
+   c1b->Print(outPath + "/plot_1b.eps");
    c1b->Print(outPath + "/plot_1b.png");
 
 
@@ -681,7 +672,7 @@ void analysis2011()
    hWmtt_PtLep_2->Draw();
 
 
-   //c2->Print(outPath + "/plot_2.eps");
+   c2->Print(outPath + "/plot_2.eps");
    c2->Print(outPath + "/plot_2.png");
 
 
@@ -736,7 +727,7 @@ void analysis2011()
    hWmtt_PtLepPt15_2->Draw();
 
 
-   //c2b->Print(outPath + "/plot_2b.eps");
+   c2b->Print(outPath + "/plot_2b.eps");
    c2b->Print(outPath + "/plot_2b.png");
 
 
@@ -829,7 +820,7 @@ void analysis2011()
    hd_PtLepPt15_3->Draw();
 
 
-   //c2c->Print(outPath + "/plot_2c.eps");
+   c2c->Print(outPath + "/plot_2c.eps");
    c2c->Print(outPath + "/plot_2c.png");
 
 
@@ -859,7 +850,7 @@ void analysis2011()
    hd_PtLep_3->Draw();
 
 
-   //c2d->Print(outPath + "/plot_2d.eps");
+   c2d->Print(outPath + "/plot_2d.eps");
    c2d->Print(outPath + "/plot_2d.png");
 
 
@@ -889,7 +880,7 @@ void analysis2011()
    hd_PtLep_3->SetMarkerStyle(20);
    hd_PtLep_3->Draw("E0");
 
-   //c3->Print(outPath + "/plot_3.eps");
+   c3->Print(outPath + "/plot_3.eps");
    c3->Print(outPath + "/plot_3.png");
 
 
@@ -920,7 +911,7 @@ void analysis2011()
    hd_PtLepPt15_3->SetMarkerStyle(20);
    hd_PtLepPt15_3->Draw("E0");
 
-   //c3c->Print(outPath + "/plot_3c.eps");
+   c3c->Print(outPath + "/plot_3c.eps");
    c3c->Print(outPath + "/plot_3c.png");
 
 
@@ -938,6 +929,12 @@ void analysis2011()
    TH1F *hd_Wp_PtLep_2 = (TH1F *)hd_Wp_PtLep->Clone("hd_Wp_PtLep_2");
 
    c4->Divide(2, 2);
+
+   TLegend *leg4 = new TLegend(0.5, 0.6, 0.75, 0.9);
+   leg4 -> AddEntry(hd_Wp_PtLep_1,"STAR data", "F");
+   leg4 -> AddEntry(hWptt_Wp_PtLep_2,"PYTHIA W^{+}-> #tau#nu_{#tau} ", "F" );
+   leg4 -> AddEntry(hZ_Wp_PtLep_2,"PYTHIA Z^{0}-> e^{+}e^{-}", "F");
+
    c4_1->cd();
    c4_1->SetLogy(1);
    hZ_Wp_PtLep_2-> SetFillStyle(3448);
@@ -949,6 +946,7 @@ void analysis2011()
    hWptt_Wp_PtLep_2-> SetStats(0);
    hWptt_Wp_PtLep_2->Draw("same");
    hZ_Wp_PtLep_2->Draw("same");
+   leg4 -> Draw();
 
    c4_2->cd();
    c4_2->SetLogy(1);
@@ -964,7 +962,7 @@ void analysis2011()
    hWptt_Wp_PtLep_2->Draw();
 
 
-   //c4->Print(outPath + "/plot_4.eps");
+   c4->Print(outPath + "/plot_4.eps");
    c4->Print(outPath + "/plot_4.png");
 
 
@@ -1006,7 +1004,7 @@ void analysis2011()
    hWptt_Wp_PtLepPt15_2->Draw();
 
 
-   //c4b->Print(outPath + "/plot_4b.eps");
+   c4b->Print(outPath + "/plot_4b.eps");
    c4b->Print(outPath + "/plot_4b.png");
 
 
@@ -1043,17 +1041,23 @@ void analysis2011()
 
    c4c->Divide(2, 1);
 
+   TLegend *leg4c = new TLegend(0.46, 0.70, 0.75, 0.9);
+   leg4c -> AddEntry(hd_Wp_PtLepPt15_2,"STAR data", "F");
+   leg4c -> AddEntry(hd_Wp_PtLepQCDPt15_2,"data driven QCD", "F" );
+
    c4c_1->cd();
    // hd_Wp_PtLepPt15_2-> SetMinimum(30.);
    hd_Wp_PtLepPt15_2->Draw();
    hd_Wp_PtLepQCDPt15_2-> SetFillStyle(3448);
    hd_Wp_PtLepQCDPt15_2-> SetFillColor(kMagenta);
    hd_Wp_PtLepQCDPt15_2->Draw("same");
+   leg4c               -> Draw();
+
    c4c_2->cd();
-   hd_Wp_PtLepPt15_3->Draw();
+   hd_Wp_PtLepPt15_3   ->Draw();
 
 
-   //c4c->Print(outPath + "/plot_4c.eps");
+   c4c->Print(outPath + "/plot_4c.eps");
    c4c->Print(outPath + "/plot_4c.png");
 
 
@@ -1083,7 +1087,7 @@ void analysis2011()
    hd_Wp_PtLep_3->Draw();
 
 
-   //c4d->Print(outPath + "/plot_4d.eps");
+   c4d->Print(outPath + "/plot_4d.eps");
    c4d->Print(outPath + "/plot_4d.png");
 
 
@@ -1092,17 +1096,26 @@ void analysis2011()
    c5-> SetTitle("W+ sample summary");
    c5->Divide(2, 1);
 
+
+   TLegend *leg5 = new TLegend(0.47, 0.6, 0.75, 0.9);
+   leg5 -> AddEntry(hd_Wp_PtLep_1,"STAR data", "F");
+   leg5 -> AddEntry(hWptt_Wp_PtLep_2,"PYTHIA W^{+}-> #tau#nu_{#tau} ", "F" );
+   leg5 -> AddEntry(hZ_Wp_PtLep_2,"PYTHIA Z^{0}-> e^{+}e^{-}", "F");;
+   leg5 -> AddEntry(hd_Wp_PtLepQCD_2,"data driven QCD", "F");
+
    c5_1->cd();
    c5_1->SetLogy(0);
-   hZ_Wp_PtLep_2-> SetFillStyle(3448);
-   hZ_Wp_PtLep_2-> SetFillColor(kGreen);
-   hd_Wp_PtLep_1->Draw();
-   hZ_Wp_PtLep_2-> SetStats(0);
+   hZ_Wp_PtLep_2   -> SetFillStyle(3448);
+   hZ_Wp_PtLep_2   -> SetFillColor(kGreen);
+   hd_Wp_PtLep_1   -> Draw();
+   hZ_Wp_PtLep_2   -> SetStats(0);
    hWptt_Wp_PtLep_2-> SetFillStyle(3446);
    hWptt_Wp_PtLep_2-> SetFillColor(kRed);
    hWptt_Wp_PtLep_2-> SetStats(0);
-   hWptt_Wp_PtLep_2->Draw("same");
-   hZ_Wp_PtLep_2->Draw("same");
+   hWptt_Wp_PtLep_2-> Draw("same");
+   hZ_Wp_PtLep_2   -> Draw("same");
+   hd_Wp_PtLepQCD_2-> Draw("same");
+   leg5            -> Draw();
 
    c5_2->cd();
    c5_2->SetLogy(0);
@@ -1110,7 +1123,7 @@ void analysis2011()
    hd_Wp_PtLep_3->SetMarkerStyle(20);
    hd_Wp_PtLep_3->Draw("E0");
 
-   //c5->Print(outPath + "/plot_5.eps");
+   c5->Print(outPath + "/plot_5.eps");
    c5->Print(outPath + "/plot_5.png");
 
 
@@ -1137,7 +1150,7 @@ void analysis2011()
    hd_Wp_PtLepPt15_3->SetMarkerStyle(20);
    hd_Wp_PtLepPt15_3->Draw("E0");
 
-   //c5b->Print(outPath + "/plot_5b.eps");
+   c5b->Print(outPath + "/plot_5b.eps");
    c5b->Print(outPath + "/plot_5b.png");
 
 
@@ -1154,20 +1167,25 @@ void analysis2011()
    TH1F *hWmtt_Wm_PtLep_2 = (TH1F *)hWmtt_Wm_PtLep->Clone("hWmtt_Wm_PtLep_2");
    TH1F *hd_Wm_PtLep_2 = (TH1F *)hd_Wm_PtLep->Clone("hd_Wm_PtLep_2");
 
+   TLegend *leg6 = new TLegend(0.5, 0.6, 0.75, 0.9);
+   leg6 -> AddEntry(hd_Wm_PtLep_1,"STAR data", "F");
+   leg6 -> AddEntry(hWmtt_Wm_PtLep_2,"PYTHIA W^{-}-> #tau#nu_{#tau} ", "F" );
+   leg6 -> AddEntry(hZ_Wm_PtLep_2,"PYTHIA Z^{0}-> e^{+}e^{-}", "F");
+
    c6-> SetTitle("W- sample");
    c6->Divide(2, 2);
    c6_1->cd();
    c6_1->SetLogy(1);
-   hZ_Wm_PtLep_2-> SetFillStyle(3448);
-   hZ_Wm_PtLep_2-> SetFillColor(kGreen);
-   hd_Wm_PtLep_1->Draw();
-   hZ_Wm_PtLep_2-> SetStats(0);
+   hZ_Wm_PtLep_2   -> SetFillStyle(3448);
+   hZ_Wm_PtLep_2   -> SetFillColor(kGreen);
+   hd_Wm_PtLep_1   -> Draw();
+   hZ_Wm_PtLep_2   -> SetStats(0);
    hWmtt_Wm_PtLep_2-> SetFillStyle(3446);
    hWmtt_Wm_PtLep_2-> SetFillColor(kRed);
    hWmtt_Wm_PtLep_2-> SetStats(0);
-   hWmtt_Wm_PtLep_2->Draw("same");
-   hZ_Wm_PtLep_2->Draw("same");
-
+   hWmtt_Wm_PtLep_2-> Draw("same");
+   hZ_Wm_PtLep_2   -> Draw("same");
+   leg6            -> Draw();
    c6_2->cd();
    c6_2->SetLogy(1);
    hZ_Wm_PtLep_2-> SetStats(1);
@@ -1183,7 +1201,7 @@ void analysis2011()
    hWmtt_Wm_PtLep_2->Draw();
 
 
-   //c6->Print(outPath + "/plot_6.eps");
+   c6->Print(outPath + "/plot_6.eps");
    c6->Print(outPath + "/plot_6.png");
 
    TCanvas *c6b = new TCanvas("c6b", "", 800, 800);
@@ -1226,7 +1244,7 @@ void analysis2011()
    hWmtt_Wm_PtLepPt15_2->Draw();
 
 
-   //c6b->Print(outPath + "/plot_6b.eps");
+   c6b->Print(outPath + "/plot_6b.eps");
    c6b->Print(outPath + "/plot_6b.png");
 
 
@@ -1263,17 +1281,23 @@ void analysis2011()
 
    c6c->Divide(2, 1);
 
+   TLegend *leg6c = new TLegend(0.46, 0.70, 0.75, 0.9);
+   leg6c -> AddEntry(hd_Wm_PtLepPt15_2,"STAR data", "F");
+   leg6c -> AddEntry(hd_Wm_PtLepQCDPt15_2,"data driven QCD", "F" );
+
    c6c_1->cd();
    // hd_Wp_PtLepPt15_2-> SetMinimum(30.);
-   hd_Wm_PtLepPt15_2->Draw();
-   hd_Wm_PtLepQCDPt15_2-> SetFillStyle(3448);
-   hd_Wm_PtLepQCDPt15_2-> SetFillColor(kMagenta);
-   hd_Wm_PtLepQCDPt15_2->Draw("same");
+   hd_Wm_PtLepPt15_2    -> Draw();
+   hd_Wm_PtLepQCDPt15_2 -> SetFillStyle(3448);
+   hd_Wm_PtLepQCDPt15_2 -> SetFillColor(kMagenta);
+   hd_Wm_PtLepQCDPt15_2 -> Draw("same");
+   leg6c                -> Draw();
+
    c6c_2->cd();
    hd_Wm_PtLepPt15_3->Draw();
 
 
-   //c6c->Print(outPath + "/plot_6c.eps");
+   c6c->Print(outPath + "/plot_6c.eps");
    c6c->Print(outPath + "/plot_6c.png");
 
 
@@ -1303,7 +1327,7 @@ void analysis2011()
    hd_Wm_PtLep_3->Draw();
 
 
-   //c6d->Print(outPath + "/plot_6d.eps");
+   c6d->Print(outPath + "/plot_6d.eps");
    c6d->Print(outPath + "/plot_6d.png");
 
 
@@ -1311,6 +1335,12 @@ void analysis2011()
 
    c7-> SetTitle("W- sample summary ");
    c7->Divide(2, 1);
+
+   TLegend *leg7 = new TLegend(0.47, 0.6, 0.75, 0.9);
+   leg7 -> AddEntry(hd_Wm_PtLep_1,"STAR data", "F");
+   leg7 -> AddEntry(hWmtt_Wm_PtLep_2,"PYTHIA W^{-}-> #tau#nu_{#tau} ", "F" );
+   leg7 -> AddEntry(hZ_Wm_PtLep_2,"PYTHIA Z^{0}-> e^{+}e^{-}", "F");;
+   leg7 -> AddEntry(hd_Wm_PtLepQCD_2,"data driven QCD", "F");
 
    c7_1->cd();
    c7_1->SetLogy(0);
@@ -1324,6 +1354,7 @@ void analysis2011()
    hZ_Wm_PtLep_2->Draw("same");
    hWmtt_Wm_PtLep_2->Draw("same");
    hd_Wm_PtLepQCD_2->Draw("same");
+   leg7            ->Draw();
 
    c7_2->cd();
    c7_2->SetLogy(0);
@@ -1331,7 +1362,7 @@ void analysis2011()
    hd_Wm_PtLep_3->SetMarkerStyle(20);
    hd_Wm_PtLep_3->Draw("E0");
 
-   //c7->Print(outPath + "/plot_7.eps");
+   c7->Print(outPath + "/plot_7.eps");
    c7->Print(outPath + "/plot_7.png");
 
 
@@ -1359,7 +1390,7 @@ void analysis2011()
    hd_Wm_PtLepPt15_3->SetMarkerStyle(20);
    hd_Wm_PtLepPt15_3->Draw("E0");
 
-   //c7b->Print(outPath + "/plot_7b.eps");
+   c7b->Print(outPath + "/plot_7b.eps");
    c7b->Print(outPath + "/plot_7b.png");
 
 
@@ -1488,7 +1519,7 @@ void analysis2011()
    c9_2->cd();
    hd_QxEtoPt_Vs_Et_passCut->Draw();
 
-   //c9->Print(outPath + "/plot_9.eps");
+   c9->Print(outPath + "/plot_9.eps");
    c9->Print(outPath + "/plot_9.png");
 
 
@@ -1513,9 +1544,10 @@ void analysis2011()
    hWp_PtWReco->SetFillColor(kYellow);
    hWp_PtWReco->Draw();
 
-   //c10->Print(outPath + "/plot_10.eps");
+   c10->Print(outPath + "/plot_10.eps");
    c10->Print(outPath + "/plot_10.png");
 
+   /*
 
    TCanvas *c10i = new TCanvas("c10i", "", 800, 400);
 
@@ -1534,7 +1566,7 @@ void analysis2011()
    hWp_PtWReco_zoomin->GetYaxis()->SetTitleOffset(1.8);
    hWp_PtWReco_zoomin->Draw();
 
-   //c10i->Print(outPath + "/plot_10i.eps");
+   c10i->Print(outPath + "/plot_10i.eps");
    c10i->Print(outPath + "/plot_10i.png");
 
 
@@ -1555,7 +1587,7 @@ void analysis2011()
    hWm_PtWReco->GetYaxis()->SetTitleOffset(1.8);
    hWm_PtWReco->Draw();
 
-   //c10b->Print(outPath + "/plot_10b.eps");
+   c10b->Print(outPath + "/plot_10b.eps");
    c10b->Print(outPath + "/plot_10b.png");
 
 
@@ -1794,6 +1826,7 @@ void analysis2011()
    //hd_Wm_PtWRelativeCorr_zoomin->Draw();
 
    c10ei->SaveAs(outPath + "/plot_10ei.png");
+   /*
 
    /*
 
@@ -1817,7 +1850,7 @@ void analysis2011()
    hd_PtNeutrinoVsEle-> SetStats(0);
    hd_PtNeutrinoVsEle->Draw();
 
-   //c11->Print(outPath + "/plot_11.eps");
+   c11->Print(outPath + "/plot_11.eps");
    c11->Print(outPath + "/plot_11.png");
 
    */
