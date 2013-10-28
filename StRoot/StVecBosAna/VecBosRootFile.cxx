@@ -90,6 +90,12 @@ void VecBosRootFile::BookHists()
    fHists->d["W-_event_pass_wbos_pt>15"] = ph = new EventHContainer(new TDirectoryFile("W-_event_pass_wbos_pt>15", "W-_event_pass_wbos_pt>15", "", this));
    fHistCuts[kCUT_NEGATIVE_EVENT_PASS_WBOS_PT15].insert(ph);
 
+   fHists->d["W+_event_pass_wbos"] = ph = new EventHContainer(new TDirectoryFile("W+_event_pass_wbos", "W+_event_pass_wbos_pt>15", "", this));
+   fHistCuts[kCUT_POSITIVE_EVENT_PASS_WBOS].insert(ph);
+
+   fHists->d["W-_event_pass_wbos"] = ph = new EventHContainer(new TDirectoryFile("W-_event_pass_wbos", "W-_event_pass_wbos_pt>15", "", this));
+   fHistCuts[kCUT_NEGATIVE_EVENT_PASS_WBOS].insert(ph);
+
    fHists->d["event_pass_wbos"] = ph = new EventHContainer(new TDirectoryFile("event_pass_wbos", "event_pass_wbos", "", this));
    fHistCuts[kCUT_EVENT_PASS_WBOS].insert(ph);
 
@@ -235,6 +241,12 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
      if ( event.PassedCutWBosMinus(WBosEvent::sMinElectronPtLight) ) 
         Fill(ev, kCUT_NEGATIVE_EVENT_PASS_WBOS_PT15);
 
+     if ( event.PassedCutWBosPlus(WBosEvent::sMinElectronPtHard) ) 
+        Fill(ev, kCUT_POSITIVE_EVENT_PASS_WBOS);
+
+     if ( event.PassedCutWBosMinus(WBosEvent::sMinElectronPtHard) ) 
+        Fill(ev, kCUT_NEGATIVE_EVENT_PASS_WBOS);
+
 
    // Fill vertex histos
    VecBosVertexPtrSetIter iVertex = event.mVertices.begin();
@@ -306,12 +318,12 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
             ((TrackHContainer *) fHists->d["track_cand_pass_wbos"])->Fill(track);
 
             if ( event.PassedCutWBosPlus(WBosEvent::sMinElectronPtHard) ) {
-               Fill(ev, kCUT_POSITIVE_EVENT_PASS_WBOS);
+	      //Fill(ev, kCUT_POSITIVE_EVENT_PASS_WBOS);
                ((TrackHContainer *) fHists->d["W+_track_cand_pass_wbos"])->Fill(track);
             }
 
             if ( event.PassedCutWBosMinus(WBosEvent::sMinElectronPtHard) ) {
-               Fill(ev, kCUT_NEGATIVE_EVENT_PASS_WBOS);
+	      //Fill(ev, kCUT_NEGATIVE_EVENT_PASS_WBOS);
                ((TrackHContainer *) fHists->d["W-_track_cand_pass_wbos"])->Fill(track);
             }
       }
