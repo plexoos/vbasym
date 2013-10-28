@@ -16,4 +16,5 @@ utils
 .sl53_gcc432
 nohup*
 runlists/run12_mc*
+runlists/run11_mc*
 runlists/run12_QCD*
