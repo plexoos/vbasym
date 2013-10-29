@@ -49,7 +49,7 @@ class StVecBosMaker : public StMaker
 
 public:
 
-   StVecBosMaker(AnaInfo& anaInfo, const char *name="StVecBosMaker", VecBosRootFile *vbFile=0);
+   StVecBosMaker(AnaOptions& anaInfo, const char *name="StVecBosMaker", VecBosRootFile *vbFile=0);
 
    virtual Int_t Init();
    virtual Int_t Make();
@@ -102,7 +102,7 @@ public:
 protected:
   
    TStopwatch      mStopWatch;
-   AnaInfo        *mAnaInfo;
+   AnaOptions     *mAnaOptions;
    StMuDstMaker   *mStMuDstMaker;
    StJetReader    *mStJetReader;
    VecBosRootFile *mVecBosRootFile;

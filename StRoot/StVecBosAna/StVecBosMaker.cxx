@@ -46,8 +46,8 @@
 ClassImp(StVecBosMaker)
 
 
-StVecBosMaker::StVecBosMaker(AnaInfo& anaInfo, const char *name, VecBosRootFile *vbFile): StMaker(name),
-   mStopWatch(), mAnaInfo(&anaInfo), mStMuDstMaker(0), mStJetReader(0), mVecBosRootFile(vbFile),
+StVecBosMaker::StVecBosMaker(AnaOptions& anaInfo, const char *name, VecBosRootFile *vbFile): StMaker(name),
+   mStopWatch(), mAnaOptions(&anaInfo), mStMuDstMaker(0), mStJetReader(0), mVecBosRootFile(vbFile),
    mJetTreeBranchName(), mJetTreeBranchNameNoEndcap(),
    mJets(0), mVecBosEvent(0), mVecBosTree(0), mTreeName("StVecBosMaker"),
    mNumInputEvents(0), mNumTrigEvents(0), mNumAcceptedEvents(0),
@@ -138,11 +138,11 @@ StVecBosMaker::StVecBosMaker(AnaInfo& anaInfo, const char *name, VecBosRootFile 
    use_gains_file               = 0;
 
    // Year dependent initialization
-   if (mAnaInfo->fRhicRunId == 11) {
+   if (mAnaOptions->fRhicRunId == 11) {
       mL2BarrelTriggerId  = 320801;
       mL2EndcapTriggerId  = 320851;
    }
-   else if (mAnaInfo->fRhicRunId == 12) {
+   else if (mAnaOptions->fRhicRunId == 12) {
       mL2BarrelTriggerId  = 380209;
       mL2BarrelTriggerId2 = 380219;
       mL2EndcapTriggerId  = 380305;
@@ -188,10 +188,10 @@ Int_t StVecBosMaker::Init()
       mTreeFile->cd();
       mVecBosTree = new TTree("t", "mVecBosTree");
 
-      if (mAnaInfo->fBosonType == kWBoson) {
+      if (mAnaOptions->fBosonType == kWBoson) {
          mVecBosEvent = new WBosEvent();
          mVecBosTree->Branch("e", "WBosEvent", &mVecBosEvent, 128000, 0); // splitlevel=0. very important for custom streamers
-      } else if (mAnaInfo->fBosonType == kZBoson) {
+      } else if (mAnaOptions->fBosonType == kZBoson) {
          mVecBosEvent = new ZBosEvent();
          mVecBosTree->Branch("e", "ZBosEvent", &mVecBosEvent, 128000, 0); // splitlevel=0. very important for custom streamers
       } else
