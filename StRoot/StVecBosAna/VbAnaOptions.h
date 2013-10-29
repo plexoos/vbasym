@@ -31,17 +31,18 @@ public:
    VbAnaOptions();
 
    std::string  GetRootFileName() const;
+   double       GetFitSinePhase() const;
+   double       GetFitSineOffset() const;
    virtual void ProcessOptions(int argc, char **argv);
    void         Print(const Option_t* opt="") const;
    void         PrintAsPhp(FILE *f=stdout) const;
 
-   double fFitSinePhase;
-   double fFitSineOffset;
-
 protected:
 
-   po::options_description mOptions;
-   po::variables_map mOptionsValues;
+   po::options_description fOptions;
+   po::variables_map       fOptionsValues;
+   double                  fFitSinePhase;
+   double                  fFitSineOffset;
 };
 
 #endif

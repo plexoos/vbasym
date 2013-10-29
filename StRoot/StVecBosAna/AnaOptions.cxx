@@ -39,7 +39,7 @@ AnaOptions::AnaOptions() : TObject(),
 /** */
 AnaOptions::~AnaOptions()
 {
-   if (fFileStdLog)   fclose(fFileStdLog);
+   if (fFileStdLog) fclose(fFileStdLog);
 }
 
 
@@ -70,19 +70,19 @@ void AnaOptions::MakeOutDir()
 }
 
 
-string AnaOptions::GetSuffix()         const { return !fSuffix.empty() ? "_" + fSuffix : "" ; }
-string AnaOptions::GetImageDir()       const { return GetResultsDir() + "/images" + GetSuffix(); }
-string AnaOptions::GetStdLogFileName() const { return GetResultsDir() + "/" + fFileStdLogName + GetSuffix() + ".log"; }
-string AnaOptions::GetRootFileName()   const { return GetResultsDir() + "/" + fOutFileName + GetSuffix() + ".root"; }
-
-
 string AnaOptions::GetResultsDir() const
 {
-   string stana_options = string(fIsMc ? "-m_" : "") + "--jpm_0.5_--run_11";
+   string stana_options =  string(fIsMc ? "-m_" : "") + "--jpm_0.5_--run_11";
    return fEnvVars.find("VBASYM_RESULTS_DIR")->second + "/" + fListName + "_" + stana_options;
 }
 
 
+string AnaOptions::GetVbAsymDir()      const { return fEnvVars.find("VBASYM_DIR")->second; }
+string AnaOptions::GetSuffix()         const { return !fSuffix.empty() ? "_" + fSuffix : "" ; }
+string AnaOptions::GetImageDir()       const { return GetResultsDir() + "/images" + GetSuffix(); }
+string AnaOptions::GetStdLogFileName() const { return GetResultsDir() + "/" + fFileStdLogName + GetSuffix() + ".log"; }
+string AnaOptions::GetRootFileName()   const { return GetResultsDir() + "/" + fOutFileName + GetSuffix() + ".root"; }
+string AnaOptions::GetListFileName()   const { return GetVbAsymDir() + "/runlists/" + fListName; }
 uint32_t AnaOptions::GetMaxEventsUser() const { return fMaxEventsUser; }
 
 

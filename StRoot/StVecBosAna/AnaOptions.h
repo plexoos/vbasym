@@ -15,7 +15,7 @@
 
 /**
  * Processes and controls user options provided in the command line.
- */ 
+ */
 class AnaOptions : public TObject
 {
 public:
@@ -52,23 +52,25 @@ public:
    AnaOptions();
    virtual ~AnaOptions();
 
-   std::string  GetSuffix() const;
    std::string  GetResultsDir() const;
+   std::string  GetVbAsymDir() const;
+   std::string  GetSuffix() const;
    std::string  GetImageDir() const;
    std::string  GetStdLogFileName() const;
    std::string  GetRootFileName() const;
-	uint32_t     GetMaxEventsUser() const;
+   std::string  GetListFileName() const;
+   void         SetListName(std::string listName) { fListName = listName; }
+   std::string  GetListName() const { return fListName; }
+   uint32_t     GetMaxEventsUser() const;
    virtual void ProcessOptions(int argc, char **argv);
    virtual void VerifyOptions();
-   void         SetListName(std::string listName) { fListName = listName; }
-   std::string  GetListName() { return fListName; }
    void         Print(const Option_t* opt="") const;
    void         PrintAsPhp(FILE *f=stdout) const;
    virtual void PrintUsage();
 
 protected:
 
-	void ReadEnvVars();
+   void ReadEnvVars();
    void MakeOutDir();
 
    std::string fListName;
