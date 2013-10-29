@@ -8,7 +8,7 @@
 using namespace std;
 
 
-/** */
+/** Default constructor. */
 VbAnaOptions::VbAnaOptions() : AnaOptions(),
    fOptions("Allowed options"), fOptionsValues(),
    fFitSinePhase(0), fFitSineOffset(0)
@@ -26,13 +26,15 @@ VbAnaOptions::VbAnaOptions() : AnaOptions(),
 }
 
 
-/** */
 string VbAnaOptions::GetRootFileName() const { return GetResultsDir() + "/hist/" + fOutFileName + GetSuffix() + ".root"; }
 double VbAnaOptions::GetFitSinePhase() const { return fFitSinePhase; }
 double VbAnaOptions::GetFitSineOffset() const { return fFitSineOffset; }
 
 
-/** */
+/**
+ * Takes the standard command line arguments and parses them with the boost program_options utility.
+ * Additional checks are implemented to verify the validity of the supplied arguments.
+ */
 void VbAnaOptions::ProcessOptions(int argc, char **argv)
 {
    po::store(po::parse_command_line(argc, argv, fOptions), fOptionsValues);

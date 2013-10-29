@@ -199,11 +199,11 @@ void AsymCalculator::FitAsimAsym(TGraph &grAsym)
    fitFunc.SetLineColor(grAsym.GetMarkerColor());
 
    if (sVbAnaOptions) {
-      if (sVbAnaOptions->mFitSinePhase != DBL_MAX)
-         fitFunc.FixParameter(2, sVbAnaOptions->mFitSinePhase);
+      if (sVbAnaOptions->GetFitSinePhase() != DBL_MAX)
+         fitFunc.FixParameter(2, sVbAnaOptions->GetFitSinePhase());
 
-      if (sVbAnaOptions->mFitSineOffset != DBL_MAX)
-         fitFunc.FixParameter(0, sVbAnaOptions->mFitSineOffset);
+      if (sVbAnaOptions->GetFitSineOffset() != DBL_MAX)
+         fitFunc.FixParameter(0, sVbAnaOptions->GetFitSineOffset());
    }
 
    grAsym.Fit(&fitFunc, "R");
