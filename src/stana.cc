@@ -15,8 +15,6 @@ root4star -b -q 'analyzeMuDst.C(2e3,"st_W_12037041_raw_1400001.MuDst.root",0,1,5
 #include <iostream>
 #include <fstream>
 
-#include "stana.h"
-
 #include "TObject.h"
 #include "TString.h"
 #include "TStopwatch.h"

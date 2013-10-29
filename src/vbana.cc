@@ -1,5 +1,3 @@
-#include "vbana.h"
-
 #include "TChain.h"
 #include "TObject.h"
 #include "TIterator.h"
