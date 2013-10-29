@@ -23,14 +23,14 @@ AnaOptions::AnaOptions() : TObject(),
    fAnaDateTime(0),
    fAnaTimeReal(0),
    fAnaTimeCpu (0),
-   fAsymEnv(),
+   fEnvVars(),
    fMaxEventsUser(0),
-   fFileMeasInfo(0), fFileStdLog(0),
+   fFileStdLog(0),
    fFileStdLogName("stdoe"), fFlagCopyResults(kFALSE),
    fFlagUpdateDb(kFALSE),
    fUserGroup(),
-   fListName(""),
-   fOutputName("")
+   fListName("undefined"),
+   fOutFileName("vbasym")
 {
    ReadEnvVars();
 }
@@ -231,9 +231,9 @@ void AnaOptions::PrintAsPhp(FILE *f) const
 
    ssEnvs << "array(";
 
-   for (Str2StrMap::const_iterator ienv=fAsymEnv.begin(); ienv!=fAsymEnv.end(); ienv++) {
+   for (Str2StrMap::const_iterator ienv=fEnvVars.begin(); ienv!=fEnvVars.end(); ienv++) {
       ssEnvs << "'" << ienv->first << "'"  << " => " << "\"" << ienv->second << "\"";
-      ssEnvs << (ienv != (--fAsymEnv.end()) ? ", " : "");
+      ssEnvs << (ienv != (--fEnvVars.end()) ? ", " : "");
    }
 
    ssEnvs << ")";

@@ -30,12 +30,13 @@ public:
 
    VbAnaOptions();
 
+   std::string  GetRootFileName() const;
    virtual void ProcessOptions(int argc, char **argv);
    void         Print(const Option_t* opt="") const;
    void         PrintAsPhp(FILE *f=stdout) const;
 
-   double mFitSinePhase;
-   double mFitSineOffset;
+   double fFitSinePhase;
+   double fFitSineOffset;
 
 protected:
 
