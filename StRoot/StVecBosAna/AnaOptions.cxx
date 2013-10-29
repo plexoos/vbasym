@@ -5,13 +5,13 @@
 #include "AnaOptions.h"
 
 
-ClassImp(AnaInfo)
+ClassImp(AnaOptions)
 
 using namespace std;
 
 
 /** */
-AnaInfo::AnaInfo() : TObject(),
+AnaOptions::AnaOptions() : TObject(),
    fSuffix(""),
    fModes(0),
    fDoReconstructJets(kFALSE),
@@ -32,51 +32,73 @@ AnaInfo::AnaInfo() : TObject(),
    fListName(""),
    fOutputName("")
 {
+   ReadEnvVars();
 }
 
 
 /** */
-AnaInfo::~AnaInfo()
+AnaOptions::~AnaOptions()
 {
    if (fFileStdLog)   fclose(fFileStdLog);
 }
 
 
 /** */
-void AnaInfo::MakeOutDir()
+void AnaOptions::ReadEnvVars()
 {
+   fEnvVars["VBASYM_DIR"] = getenv("VBASYM_DIR") ? getenv("VBASYM_DIR") : ".";
+   fEnvVars["VBASYM_RESULTS_DIR"] = getenv("VBASYM_RESULTS_DIR") ? getenv("VBASYM_RESULTS_DIR") : ".";
 
-}
-
-
-
-
-
-
-
-/** */
-string AnaInfo::GetOutDir() const
-{
-   return fAsymEnv.find("CNIPOL_RESULTS_DIR")->second + "/" + fOutputName;
+   fUserGroup = *gSystem->GetUserInfo();
 }
 
 
 /** */
-void AnaInfo::ProcessOptions(int argc, char **argv)
+void AnaOptions::MakeOutDir()
+{
+   if (GetResultsDir().size() > 200) {
+      Error("MakeOutDir", "Output directory name is too long");
+      exit(EXIT_FAILURE);
+   }
+
+   if (gSystem->mkdir(GetResultsDir().c_str()) < 0) {
+      Warning("MakeOutDir", "Directory %s already exists", GetResultsDir().c_str());
+   } else {
+      Info("MakeOutDir", "Created directory %s", GetResultsDir().c_str());
+      gSystem->Chmod(GetResultsDir().c_str(), 0775);
+   }
+}
+
+
+string AnaOptions::GetSuffix()         const { return !fSuffix.empty() ? "_" + fSuffix : "" ; }
+string AnaOptions::GetImageDir()       const { return GetResultsDir() + "/images" + GetSuffix(); }
+string AnaOptions::GetStdLogFileName() const { return GetResultsDir() + "/" + fFileStdLogName + GetSuffix() + ".log"; }
+string AnaOptions::GetRootFileName()   const { return GetResultsDir() + "/" + fOutFileName + GetSuffix() + ".root"; }
+
+
+string AnaOptions::GetResultsDir() const
+{
+   string stana_options = string(fIsMc ? "-m_" : "") + "--jpm_0.5_--run_11";
+   return fEnvVars.find("VBASYM_RESULTS_DIR")->second + "/" + fListName + "_" + stana_options;
+}
+
+
+/** */
+void AnaOptions::ProcessOptions(int argc, char **argv)
 {
    int          option_index = 0;
    stringstream sstr;
 
    static struct option long_options[] = {
       {"log",                 optional_argument,   NULL,   'l'},
-      {"sfx",                 required_argument,   NULL,   AnaInfo::OPTION_SUFFIX},
+      {"sfx",                 required_argument,   NULL,   AnaOptions::OPTION_SUFFIX},
       {"list",                required_argument,   NULL,   'f'},
       {"jets",                no_argument,         NULL,   'j'},
-      {"jet-pt-min",          required_argument,   NULL,   AnaInfo::OPTION_JETS_PT_MIN},
-      {"jpm",                 required_argument,   NULL,   AnaInfo::OPTION_JETS_PT_MIN},
-      {"tpm",                 required_argument,   NULL,   AnaInfo::OPTION_TRACKS_PT_MIN},
-      {"rhic-run-id",         required_argument,   NULL,   AnaInfo::OPTION_RHIC_RUN_ID},
-      {"run",                 required_argument,   NULL,   AnaInfo::OPTION_RHIC_RUN_ID},
+      {"jet-pt-min",          required_argument,   NULL,   AnaOptions::OPTION_JETS_PT_MIN},
+      {"jpm",                 required_argument,   NULL,   AnaOptions::OPTION_JETS_PT_MIN},
+      {"tpm",                 required_argument,   NULL,   AnaOptions::OPTION_TRACKS_PT_MIN},
+      {"rhic-run-id",         required_argument,   NULL,   AnaOptions::OPTION_RHIC_RUN_ID},
+      {"run",                 required_argument,   NULL,   AnaOptions::OPTION_RHIC_RUN_ID},
       {"mc",                  no_argument,         NULL,   'm'},
       {"wboson",              no_argument,         NULL,   'w'},
       {"zboson",              no_argument,         NULL,   'z'},
@@ -112,21 +134,21 @@ void AnaInfo::ProcessOptions(int argc, char **argv)
          fDoReconstructJets = kTRUE;
          break;
 
-      case AnaInfo::OPTION_TRACKS_PT_MIN:
+      case AnaOptions::OPTION_TRACKS_PT_MIN:
          sstr.clear();
          sstr.str(string(optarg));
          sstr >> fTracksPtMin;
          Info("ProcessOptions", "Found fTracksPtMin: %f", fTracksPtMin);
          break;
 
-      case AnaInfo::OPTION_JETS_PT_MIN:
+      case AnaOptions::OPTION_JETS_PT_MIN:
          sstr.clear();
          sstr.str(string(optarg));
          sstr >> fJetPtMin;
          Info("ProcessOptions", "Found fJetPtMin: %f", fJetPtMin);
          break;
 
-      case AnaInfo::OPTION_RHIC_RUN_ID:
+      case AnaOptions::OPTION_RHIC_RUN_ID:
          sstr.clear();
          sstr.str(string(optarg));
          sstr >> fRhicRunId;
@@ -171,6 +193,7 @@ void AnaOptions::VerifyOptions()
       exit(EXIT_FAILURE);
    }
 
+   MakeOutDir();
 
    // Set default standard log output
    //if (!fFileStdLogName.empty()) {
@@ -187,7 +210,7 @@ void AnaOptions::VerifyOptions()
 
 
 /** */
-void AnaInfo::Print(const Option_t* opt) const
+void AnaOptions::Print(const Option_t* opt) const
 {
    Info("Print", "Print members:");
    PrintAsPhp();
@@ -195,7 +218,7 @@ void AnaInfo::Print(const Option_t* opt) const
 
 
 /** */
-void AnaInfo::PrintAsPhp(FILE *f) const
+void AnaOptions::PrintAsPhp(FILE *f) const
 {
    fprintf(f, "$rc['fOutputName']                  = \"%s\";\n", fOutputName.c_str());
    fprintf(f, "$rc['fSuffix']                      = \"%s\";\n", fSuffix.c_str());
@@ -229,7 +252,7 @@ void AnaInfo::PrintAsPhp(FILE *f) const
 
 
 /** */
-void AnaInfo::PrintUsage()
+void AnaOptions::PrintUsage()
 {
    cout << endl;
    cout << "Options:" << endl;

@@ -19,7 +19,7 @@ namespace po = boost::program_options;
 /**
  * Processes and controls user options provided in the command line.
  */ 
-class VbAnaOptions : public AnaInfo
+class VbAnaOptions : public AnaOptions
 {
 public:
 

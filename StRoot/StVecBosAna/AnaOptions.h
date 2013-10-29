@@ -1,5 +1,5 @@
-#ifndef AnaInfo_h
-#define AnaInfo_h
+#ifndef AnaOptions_h
+#define AnaOptions_h
 
 #include <iostream>
 #include <bitset>
@@ -16,7 +16,7 @@
 /**
  * Processes and controls user options provided in the command line.
  */ 
-class AnaInfo : public TObject
+class AnaOptions : public TObject
 {
 public:
 
@@ -51,8 +51,8 @@ public:
 
 public:
 
-   AnaInfo();
-   virtual ~AnaInfo();
+   AnaOptions();
+   virtual ~AnaOptions();
 
    std::string  GetSuffix() const;
    std::string  GetResultsDir() const;
@@ -69,6 +69,7 @@ public:
 
 protected:
 
+	void ReadEnvVars();
    void MakeOutDir();
 
    std::string fListName;

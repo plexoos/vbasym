@@ -9,8 +9,8 @@ using namespace std;
 
 
 /** */
-VbAnaOptions::VbAnaOptions() : AnaInfo(),
-   mFitSinePhase(0), mFitSineOffset(0),
+VbAnaOptions::VbAnaOptions() : AnaOptions(),
+   fFitSinePhase(0), fFitSineOffset(0),
    mOptions("Allowed options"), mOptionsValues()
 {
    // Declare the supported options.
