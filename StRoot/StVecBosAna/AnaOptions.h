@@ -41,7 +41,6 @@ public:
    double           fAnaTimeReal;       //< Time in seconds to process input raw file
    double           fAnaTimeCpu;        //< Time in seconds to process input raw file
    Str2StrMap       fEnvVars;           //< Map with user defined environment variables
-   uint32_t         fMaxEventsUser;
    FILE            *fFileStdLog;        //!
    std::string      fFileStdLogName;
    bool             fFlagCopyResults;
@@ -58,6 +57,7 @@ public:
    std::string  GetImageDir() const;
    std::string  GetStdLogFileName() const;
    std::string  GetRootFileName() const;
+	uint32_t     GetMaxEventsUser() const;
    virtual void ProcessOptions(int argc, char **argv);
    virtual void VerifyOptions();
    void         SetListName(std::string listName) { fListName = listName; }
@@ -73,6 +73,7 @@ protected:
 
    std::string fListName;
    std::string fOutFileName;
+   uint32_t    fMaxEventsUser;
 
    ClassDef(AnaOptions, 1)
 };

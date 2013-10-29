@@ -24,13 +24,13 @@ AnaOptions::AnaOptions() : TObject(),
    fAnaTimeReal(0),
    fAnaTimeCpu (0),
    fEnvVars(),
-   fMaxEventsUser(0),
    fFileStdLog(0),
    fFileStdLogName("stdoe"), fFlagCopyResults(kFALSE),
    fFlagUpdateDb(kFALSE),
    fUserGroup(),
    fListName("undefined"),
-   fOutFileName("vbasym")
+   fOutFileName("vbasym"),
+   fMaxEventsUser(0)
 {
    ReadEnvVars();
 }
@@ -81,6 +81,9 @@ string AnaOptions::GetResultsDir() const
    string stana_options = string(fIsMc ? "-m_" : "") + "--jpm_0.5_--run_11";
    return fEnvVars.find("VBASYM_RESULTS_DIR")->second + "/" + fListName + "_" + stana_options;
 }
+
+
+uint32_t AnaOptions::GetMaxEventsUser() const { return fMaxEventsUser; }
 
 
 /** */
