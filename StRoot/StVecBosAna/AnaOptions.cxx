@@ -38,7 +38,6 @@ AnaInfo::AnaInfo() : TObject(),
 /** */
 AnaInfo::~AnaInfo()
 {
-   if (fFileMeasInfo) fclose(fFileMeasInfo);
    if (fFileStdLog)   fclose(fFileStdLog);
 }
 
@@ -46,33 +45,13 @@ AnaInfo::~AnaInfo()
 /** */
 void AnaInfo::MakeOutDir()
 {
-   if (GetOutDir().size() > 200) {
-      Error("MakeOutDir", "Output directory name is too long");
-   }
 
-   //if (gSystem->mkdir(GetOutDir().c_str()) < 0) {
-   //   Warning("MakeOutDir", "Directory %s already exists", GetOutDir().c_str());
-   //} else {
-   //   Info("MakeOutDir", "Created directory %s", GetOutDir().c_str());
-   //   gSystem->Chmod(GetOutDir().c_str(), 0775);
-   //}
 }
 
 
-string AnaInfo::GetSuffix()           const { return !fSuffix.empty() ? "_" + fSuffix : "" ; }
-string AnaInfo::GetImageDir()         const { return GetOutDir() + "/images" + GetSuffix(); }
-string AnaInfo::GetAnaInfoFileName()  const { return GetOutDir() + "/anainfo" + GetSuffix() + ".php"; }
-string AnaInfo::GetStdLogFileName()   const { return GetOutDir() + "/" + fFileStdLogName + GetSuffix() + ".log"; }
-string AnaInfo::GetRootFileName()     const { return GetOutDir() + "/" + fOutputName + GetSuffix() + ".root"; }
-FILE*  AnaInfo::GetAnaInfoFile()      const { return fFileMeasInfo; }
-
-Bool_t AnaInfo::HasGraphBit()         const { return (fModes & AnaInfo::MODE_GRAPH) == AnaInfo::MODE_GRAPH; }
 
 
-string AnaInfo::GetResultsDir() const
-{
-   return fAsymEnv.find("CNIPOL_RESULTS_DIR")->second;
-}
+
 
 
 /** */
@@ -113,7 +92,7 @@ void AnaInfo::ProcessOptions(int argc, char **argv)
       case '?':
       case 'h':
          PrintUsage();
-         exit(0);
+         exit(EXIT_FAILURE);
 
       case 'l':
          fFileStdLogName = (optarg != 0 ? optarg : "");
@@ -177,25 +156,21 @@ void AnaInfo::ProcessOptions(int argc, char **argv)
 
 
 /** */
-void AnaInfo::VerifyOptions()
+void AnaOptions::VerifyOptions()
 {
    // The file list must be specified
    if (fListName.empty()) {
       Error("VerifyOptions", "File with input list files must be specified");
       PrintUsage();
-      exit(0);
+      exit(EXIT_FAILURE);
    }
 
    if (fRhicRunId < 9 || fRhicRunId > 13) {
       Error("VerifyOptions", "Don't know anything about RHIC run %d. Try 9 <= value <= 13  ", fRhicRunId);
       PrintUsage();
-      exit(0);
+      exit(EXIT_FAILURE);
    }
 
-   //MakeOutDir();
-
-   //fFileMeasInfo = fopen(this->GetAnaInfoFileName().c_str(), "w");
-   //gSystem->Chmod(this->GetAnaInfoFileName().c_str(), 0775);
 
    // Set default standard log output
    //if (!fFileStdLogName.empty()) {

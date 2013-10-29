@@ -20,26 +20,12 @@ class AnaInfo : public TObject
 {
 public:
 
-   // Flag options
-   enum Flag   {FLAG_COPY              = 0x10000400,
-                FLAG_READ_FROM_DB      = 0x10000100,
-                FLAG_UPDATE_DB         = 0x10000200, FLAG_NO_UPDATE_DB = 0x90000200,
-                FLAG_USE_DB            = 0x10000300,
-                FLAG_CREATE_THUMBS     = 0x10000800};
+   enum Flag   {FLAG_CREATE_THUMBS     = 0x10000800};
 
-   // Flag options
-   enum Option {OPTION_POL_ID          = 0x20004000,
-                OPTION_SET_CALIB       = 0x20003000,
-                OPTION_SET_CALIB_ALPHA = 0x20001000,
-                OPTION_SET_CALIB_DL    = 0x20002000,
-                OPTION_DET_DISABLE     = 0x20000001,
-                OPTION_SUFFIX          = 0x20000002,
+   enum Option {OPTION_SUFFIX          = 0x20000002,
                 OPTION_JETS_PT_MIN     = 0x20000003,
                 OPTION_RHIC_RUN_ID     = 0x20000004,
                 OPTION_TRACKS_PT_MIN   = 0x20000005};
-
-   // Various histogramming and running modes
-   enum Mode   {MODE_GRAPH             = 0x02000000, MODE_NO_GRAPH     = 0x82000000};
 
 public:
 
@@ -70,12 +56,9 @@ public:
 
    std::string  GetSuffix() const;
    std::string  GetResultsDir() const;
-   std::string  GetOutDir() const;
    std::string  GetImageDir() const;
-   virtual std::string  GetAnaInfoFileName() const;
    std::string  GetStdLogFileName() const;
    std::string  GetRootFileName() const;
-   FILE*        GetAnaInfoFile() const;
    virtual void ProcessOptions(int argc, char **argv);
    virtual void VerifyOptions();
    void         SetListName(std::string listName) { fListName = listName; }
@@ -84,16 +67,14 @@ public:
    void         PrintAsPhp(FILE *f=stdout) const;
    virtual void PrintUsage();
 
-   bool         HasGraphBit() const;
-
 protected:
-
-   std::string fListName;
-   std::string fOutputName;
 
    void MakeOutDir();
 
-   ClassDef(AnaInfo, 1)
+   std::string fListName;
+   std::string fOutFileName;
+
+   ClassDef(AnaOptions, 1)
 };
 
 #endif
