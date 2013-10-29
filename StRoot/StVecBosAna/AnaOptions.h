@@ -29,20 +29,19 @@ public:
 
 public:
 
-   std::string      fSuffix;            // Additional unique identifier for analysis job
+   std::string      fSuffix;            //< Additional unique identifier for analysis job
    uint64_t         fModes;
    bool             fDoReconstructJets;
    float            fTracksPtMin;
    float            fJetPtMin;
-   unsigned short   fRhicRunId;         // RHIC run id, e.g. 9, 11, 12, 13, ...
+   unsigned short   fRhicRunId;         //< RHIC run id, e.g. 9, 11, 12, 13, ...
    bool             fIsMc;
    BosonType        fBosonType;
-   time_t           fAnaDateTime;       // Date/time when data analysis started
-   double           fAnaTimeReal;       // Time in seconds to process input raw file
-   double           fAnaTimeCpu;        // Time in seconds to process input raw file
-   Str2StrMap       fAsymEnv;
+   time_t           fAnaDateTime;       //< Date/time when data analysis started
+   double           fAnaTimeReal;       //< Time in seconds to process input raw file
+   double           fAnaTimeCpu;        //< Time in seconds to process input raw file
+   Str2StrMap       fEnvVars;           //< Map with user defined environment variables
    uint32_t         fMaxEventsUser;
-   FILE            *fFileMeasInfo;      //!
    FILE            *fFileStdLog;        //!
    std::string      fFileStdLogName;
    bool             fFlagCopyResults;

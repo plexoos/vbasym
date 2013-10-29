@@ -13,7 +13,7 @@ VbAnaOptions::VbAnaOptions() : AnaOptions(),
    fFitSinePhase(0), fFitSineOffset(0),
    mOptions("Allowed options"), mOptionsValues()
 {
-   // Declare the supported options.
+   // Declare the supported options
    mOptions.add_options()
       ("help", "produce help message")
       ("fit-sine-phase",  po::value<double>(&mFitSinePhase)->default_value(M_PI_2)->implicit_value(DBL_MAX), "Value for phase")

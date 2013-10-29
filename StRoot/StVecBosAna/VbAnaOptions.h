@@ -13,11 +13,13 @@
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
 #include <boost/program_options/parsers.hpp>
+
 namespace po = boost::program_options;
 
 
 /**
- * Processes and controls user options provided in the command line.
+ * Processes and verifies input options provided by the user in the command
+ * line.
  */ 
 class VbAnaOptions : public AnaOptions
 {
@@ -39,7 +41,6 @@ protected:
 
    po::options_description mOptions;
    po::variables_map mOptionsValues;
-
 };
 
 #endif
