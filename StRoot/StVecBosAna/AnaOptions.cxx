@@ -220,12 +220,12 @@ void AnaOptions::Print(const Option_t* opt) const
 /** */
 void AnaOptions::PrintAsPhp(FILE *f) const
 {
-   fprintf(f, "$rc['fOutputName']                  = \"%s\";\n", fOutputName.c_str());
-   fprintf(f, "$rc['fSuffix']                      = \"%s\";\n", fSuffix.c_str());
-   fprintf(f, "$rc['fModes']                       = %#010x;\n",  fModes);
-   fprintf(f, "$rc['fAnaDateTime']                 = %u;\n",     (UInt_t) fAnaDateTime);
-   fprintf(f, "$rc['fAnaTimeReal']                 = %f;\n",     fAnaTimeReal);
-   fprintf(f, "$rc['fAnaTimeCpu']                  = %f;\n",     fAnaTimeCpu);
+   fprintf(f, "$rc['fOutFileName'] = \"%s\";\n", fOutFileName.c_str());
+   fprintf(f, "$rc['fSuffix']      = \"%s\";\n", fSuffix.c_str());
+   fprintf(f, "$rc['fModes']       = %#010x;\n", fModes);
+   fprintf(f, "$rc['fAnaDateTime'] = %u;\n",     (UInt_t) fAnaDateTime);
+   fprintf(f, "$rc['fAnaTimeReal'] = %f;\n",     fAnaTimeReal);
+   fprintf(f, "$rc['fAnaTimeCpu']  = %f;\n",     fAnaTimeCpu);
 
    stringstream ssEnvs("");
 
@@ -238,14 +238,14 @@ void AnaOptions::PrintAsPhp(FILE *f) const
 
    ssEnvs << ")";
 
-   fprintf(f, "$rc['fAsymEnv']                     = %s;\n", ssEnvs.str().c_str());
+   fprintf(f, "$rc['fEnvVars']             = %s;\n", ssEnvs.str().c_str());
 
-   fprintf(f, "$rc['fFileStdLogName']              = \"%s\";\n", fFileStdLogName.c_str());
-   fprintf(f, "$rc['fFlagCopyResults']             = %d;\n", fFlagCopyResults);
-   fprintf(f, "$rc['fFlagUpdateDb']                = %d;\n", fFlagUpdateDb);
+   fprintf(f, "$rc['fFileStdLogName']      = \"%s\";\n", fFileStdLogName.c_str());
+   fprintf(f, "$rc['fFlagCopyResults']     = %d;\n", fFlagCopyResults);
+   fprintf(f, "$rc['fFlagUpdateDb']        = %d;\n", fFlagUpdateDb);
 
-   fprintf(f, "$rc['fUserGroup_fUser']             = \"%s\";\n", fUserGroup.fUser.Data());
-   fprintf(f, "$rc['fUserGroup_fRealName']         = \"%s\";\n", fUserGroup.fRealName.Data());
+   fprintf(f, "$rc['fUserGroup_fUser']     = \"%s\";\n", fUserGroup.fUser.Data());
+   fprintf(f, "$rc['fUserGroup_fRealName'] = \"%s\";\n", fUserGroup.fRealName.Data());
 
    fprintf(f, "\n");
 }
