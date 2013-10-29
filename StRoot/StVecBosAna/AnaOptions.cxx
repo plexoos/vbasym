@@ -2,7 +2,7 @@
 #include <getopt.h>
 #include <cstdlib>
 
-#include "AnaInfo.h"
+#include "AnaOptions.h"
 
 
 ClassImp(AnaInfo)

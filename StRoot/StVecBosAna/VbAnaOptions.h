@@ -7,7 +7,7 @@
 #include <sstream>
 #include <sys/stat.h>
 
-#include "AnaInfo.h"
+#include "AnaOptions.h"
 #include "Globals.h"
 
 #include <boost/program_options/options_description.hpp>

@@ -8,7 +8,7 @@
 #include "TChain.h"
 #include "TRandom3.h"
 
-#include "AnaInfo.h"
+#include "AnaOptions.h"
 #include "WBosEvent.h"
 #include "ZBosEvent.h"
 #include "VecBosVertex.h"
