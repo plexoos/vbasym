@@ -325,7 +325,8 @@ void VecBosEvent::Process()
    // Calculate the Pt balance as the vector sum: pt elec + pt recoil
    if  (mTracksCandidate.size() == 1) {
 
-      CalcTrackRecoilTpcNeutralsCorrected();
+     //CalcTrackRecoilTpcNeutralsCorrected();
+     CalcRecoilCorrected();
 
       mP3BalanceFromJets          = mP4JetRecoil.Vect() + (*mTracksCandidate.begin())->GetP3EScaled();
       mBalanceDeltaPhiFromJets    = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3BalanceFromJets);
