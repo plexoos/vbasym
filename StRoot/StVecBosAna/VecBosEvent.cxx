@@ -39,7 +39,6 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
 
 
 
-
    TString inPath  = "/star/institutions/bnl_me/fazio/vbana_out/ptcorr_samples";
    TFile *fileMCWplus = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_vbana.root");
 
@@ -211,7 +210,7 @@ VecBosTrack* VecBosEvent::FindTrackById(const Short_t trackId) const
 
 
 /**
- * Corrects the p_T of the default track recoil using the MC correction.
+ * Corrects the default track recoil using the MC correction.
  */
 TVector3 VecBosEvent::CalcTrackRecoilTpcNeutralsCorrected()
 {
@@ -240,6 +239,7 @@ TVector3 VecBosEvent::CalcTrackRecoilTpcNeutralsCorrected()
 TVector3 VecBosEvent::CalcRecoilCorrected()
 {
    mP3TrackRecoilTpcNeutralsCorrected = mP3TrackRecoilTpcNeutrals;
+
 
    TH2 *hCorrFacVsRecoilPt = (TH2*) fileMCWplus->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPt_GenOverReco");
    Int_t nbins = hCorrFacVsRecoilPt->GetNbinsX();
@@ -325,8 +325,7 @@ void VecBosEvent::Process()
    // Calculate the Pt balance as the vector sum: pt elec + pt recoil
    if  (mTracksCandidate.size() == 1) {
 
-      //CalcTrackRecoilTpcNeutralsCorrected();
-      CalcRecoilCorrected();
+      CalcTrackRecoilTpcNeutralsCorrected();
 
       mP3BalanceFromJets          = mP4JetRecoil.Vect() + (*mTracksCandidate.begin())->GetP3EScaled();
       mBalanceDeltaPhiFromJets    = (*mTracksCandidate.begin())->GetP3EScaled().DeltaPhi(mP3BalanceFromJets);
@@ -424,7 +423,7 @@ void VecBosEvent::ProcessZ0()
       if (track.IsIsolated()) {
          mNumIsolatedTracks++;
 
-         // if ( track.IsUnBalanced() ) track.FindClosestJet();
+	 // if ( track.IsUnBalanced() ) track.FindClosestJet();
       }
 
       if ( track.IsZelectronCandidate() ) {
@@ -1005,9 +1004,9 @@ void VecBosEvent::Clear(const Option_t* opt)
    mP3TrackRecoilNeutrals.SetXYZ(0, 0, 0);
    mP3TrackRecoilTpcNeutrals.SetXYZ(0, 0, 0);
    mP3BalanceFromTracks.SetXYZ(0, 0, 0);
-   mMinVertexDeltaZ    = -1;
-   mNumRecoilTracksTpc =  0;
-   mLumiEff            = -0;
+   mMinVertexDeltaZ                    = -1;
+   mNumRecoilTracksTpc                 =  0;
+   mLumiEff                            = -0;
 }
 
 
