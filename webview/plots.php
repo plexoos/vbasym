@@ -46,6 +46,55 @@ $gP = new PlotHelper($dir);
 <div id="div:wbos_asym" class="section">
 
 
+<h2 id="wbos_asym_vs_rap" class="count">W boson asymmetry vs. rapidity</h2>
+<!-- {{{ -->
+<div id="div:wbos_asym_vs_rap" class="section">
+
+
+<? foreach ($VECBOS_TYPE_SUFFIXES as $vecbos_type_idx => $vecbos_type_sfx): ?>
+
+<h3 id="wbos_asym_vs_rap_<?=$vecbos_type_sfx?>" class="count"><?=$VECBOS_TYPE_HUMAN_DESCR[$vecbos_type_idx]?></h3>
+<!-- {{{ -->
+<div id="div:wbos_asym_vs_rap_<?=$vecbos_type_sfx?>" class="section">
+
+<p>
+<table class="simple00 cntr">
+
+<?
+   $row1 = "<tr>\n";
+   $row2 = "<tr>\n";
+
+   foreach ($RHIC_BEAM_SUFFIXES as $beam_index => $beam_sfx):
+
+      $row1 .= "<td>".$gP->img("asym_$vecbos_type_sfx$asym_type/hWBosonAsymAmpVsRap_$beam_sfx", false, 600)."\n";
+      $row1 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span></div>\n";
+
+      if ($beam_index == 0) {
+         $row2 .= "<td>";
+         $row4 .= "<td>";
+         continue;
+      }
+
+      $row2 .= "<td>".$gP->img("asym_$vecbos_type_sfx$asym_type/mgrWBosonAsymVsPhi_RapBins_$beam_sfx", false, 600)."\n";
+      $row2 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span>, rapidity bins</div>\n";
+
+   endforeach;
+
+   print $row1;
+   print $row2;
+?>
+
+</table>
+
+</div>
+<!-- }}} -->
+
+<? endforeach; ?>
+
+</div>
+<!-- }}} -->
+
+
 <h2 id="wbos_asym_vs_eta" class="count">W boson asymmetry vs. pseudorapidity eta</h2>
 <!-- {{{ -->
 <div id="div:wbos_asym_vs_eta" class="section">
