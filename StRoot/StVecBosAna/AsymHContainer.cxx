@@ -7,6 +7,7 @@
 
 #include "utils/utils.h"
 #include "utils/MultiGraph.h"
+#include "utils/H1I.h"
 #include "utils/H1D.h"
 #include "utils/H2I.h"
 #include "utils/H2D.h"
@@ -46,27 +47,22 @@ void AsymHContainer::BookHists()
       string sDblSpinState = AsString(*iDSS);
 
       shName = "hLeptonPhiVsEta_" + sDblSpinState;
-      o[shName] = hist = new TH2I(shName.c_str(), "; Lepton #eta; Lepton #phi;", 3, -1.5, 1.5, 8, -M_PI, M_PI);
-      hist->SetOption("colz");
+      o[shName] = new rh::H2I(shName.c_str(), "; Lepton #eta; Lepton #phi;", 3, -1.5, 1.5, 8, -M_PI, M_PI, "colz");
 
       shName = "hLeptonPhiVsEta_b2_" + sDblSpinState;
-      o[shName] = hist = new TH2I(shName.c_str(), "; Lepton #eta; Lepton #phi;", 2, -1.2, 1.2, 8, -M_PI, M_PI);
-      hist->SetOption("colz");
+      o[shName] = new rh::H2I(shName.c_str(), "; Lepton #eta; Lepton #phi;", 2, -1.2, 1.2, 8, -M_PI, M_PI, "colz");
 
       shName = "hLeptonPhiVsPt_" + sDblSpinState;
-      o[shName] = hist = new TH2I(shName.c_str(), "; Lepton P_{T}; Lepton #phi;", 10, 0, 50, 8, -M_PI, M_PI);
-      hist->SetOption("colz");
+      o[shName] = new rh::H2I(shName.c_str(), "; Lepton P_{T}; Lepton #phi;", 10, 0, 50, 8, -M_PI, M_PI, "colz");
 
       shName = "hWBosonPhiVsEta_" + sDblSpinState;
-      o[shName] = hist = new TH2I(shName.c_str(), "; W Boson #eta; W Boson #phi;", 6, -6, 6, 8, -M_PI, M_PI);
-      hist->SetOption("colz");
+      o[shName] = new rh::H2I(shName.c_str(), "; W Boson #eta; W Boson #phi;", 6, -6, 6, 8, -M_PI, M_PI, "colz");
 
       shName = "hWBosonPhiVsRap_" + sDblSpinState;
       o[shName] = new rh::H2I(shName.c_str(), "; W Boson Rapidity; W Boson #phi;", 6, -1.5, 1.5, 8, -M_PI, M_PI, "colz");
 
       shName = "hWBosonPhiVsPt_" + sDblSpinState;
-      o[shName] = hist = new TH2I(shName.c_str(), "; W Boson P_{T}; W Boson #phi;", 10, 0, 10, 8, -M_PI, M_PI);
-      hist->SetOption("colz");
+      o[shName] = new rh::H2I(shName.c_str(), "; W Boson P_{T}; W Boson #phi;", 10, 0, 10, 8, -M_PI, M_PI, "colz");
    }
 
    SingleSpinStateSetIter iSSS = gSingleSpinStateSet.begin();
@@ -75,39 +71,31 @@ void AsymHContainer::BookHists()
       string sSnglSpinState = AsString(*iSSS);
 
       shName = "hLeptonPhiVsEta_" + sSnglSpinState;
-      o[shName] = hist = new TH2I(shName.c_str(), "; Lepton #eta; Lepton #phi;", 3, -1.5, 1.5, 8, -M_PI, M_PI);
-      hist->SetOption("colz");
+      o[shName] = new rh::H2I(shName.c_str(), "; Lepton #eta; Lepton #phi;", 3, -1.5, 1.5, 8, -M_PI, M_PI, "colz");
 
       shName = "hLeptonPhiVsEta_b2_" + sSnglSpinState;
-      o[shName] = hist = new TH2I(shName.c_str(), "; Lepton #eta; Lepton #phi;", 2, -1.2, 1.2, 8, -M_PI, M_PI);
-      hist->SetOption("colz");
+      o[shName] = new rh::H2I(shName.c_str(), "; Lepton #eta; Lepton #phi;", 2, -1.2, 1.2, 8, -M_PI, M_PI, "colz");
 
       shName = "hLeptonPhi_EtaProj_" + sSnglSpinState;
-      o[shName] = hist = new TH1I(shName.c_str(), "; Lepton #phi; Events;", 8, -M_PI, M_PI);
-      hist->SetOption("E1 GRIDX GRIDY");
+      o[shName] = new rh::H1I(shName.c_str(), "; Lepton #phi; Events;", 8, -M_PI, M_PI, "E1 GRIDX GRIDY");
 
       shName = "hLeptonPhiVsPt_" + sSnglSpinState;
-      o[shName] = hist = new TH2I(shName.c_str(), "; Lepton P_{T}; Lepton #phi;", 10, 0, 50, 8, -M_PI, M_PI);
-      hist->SetOption("colz");
+      o[shName] = new rh::H2I(shName.c_str(), "; Lepton P_{T}; Lepton #phi;", 10, 0, 50, 8, -M_PI, M_PI, "colz");
 
       shName = "hLeptonPhi_PtProj_" + sSnglSpinState;
-      o[shName] = hist = new TH1I(shName.c_str(), "; Lepton #phi; Events;", 8, -M_PI, M_PI);
-      hist->SetOption("E1 GRIDX GRIDY");
+      o[shName] = new rh::H1I(shName.c_str(), "; Lepton #phi; Events;", 8, -M_PI, M_PI, "E1 GRIDX GRIDY");
 
       shName = "hWBosonPhiVsEta_" + sSnglSpinState;
-      o[shName] = hist = new TH2I(shName.c_str(), "; W Boson #eta; W Boson #phi;", 6, -6, 6, 8, -M_PI, M_PI);
-      hist->SetOption("colz");
+      o[shName] = new rh::H2I(shName.c_str(), "; W Boson #eta; W Boson #phi;", 6, -6, 6, 8, -M_PI, M_PI, "colz");
 
       shName = "hWBosonPhiVsRap_" + sSnglSpinState;
       o[shName] = new rh::H2I(shName.c_str(), "; W Boson Rapidity; W Boson #phi;", 6, -1.5, 1.5, 8, -M_PI, M_PI, "colz");
 
       shName = "hWBosonPhiVsPt_" + sSnglSpinState;
-      o[shName] = hist = new TH2I(shName.c_str(), "; W Boson P_{T}; W Boson #phi;", 10, 0, 10, 8, -M_PI, M_PI);
-      hist->SetOption("colz");
+      o[shName] = new rh::H2I(shName.c_str(), "; W Boson P_{T}; W Boson #phi;", 10, 0, 10, 8, -M_PI, M_PI, "colz");
 
       shName = "hWBosonPhi_PtProj_" + sSnglSpinState;
-      o[shName] = hist = new TH1I(shName.c_str(), "; W Boson #phi; Events;", 8, -M_PI, M_PI);
-      hist->SetOption("E1 GRIDX GRIDY");
+      o[shName] = new rh::H1I(shName.c_str(), "; W Boson #phi; Events;", 8, -M_PI, M_PI, "E1 GRIDX GRIDY");
    }
 
    BeamIdSetIter iBeam = gBeams.begin();
