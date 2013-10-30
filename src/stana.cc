@@ -47,7 +47,7 @@ root4star -b -q 'analyzeMuDst.C(2e3,"st_W_12037041_raw_1400001.MuDst.root",0,1,5
 #include "StVecBosAna/StZBosMaker.h"
 #include "StVecBosAna/St2011pubWanaMaker.h"
 #include "StVecBosAna/StVecBosSpinMaker.h"
-#include "StVecBosAna/AnaInfo.h"
+#include "StVecBosAna/AnaOptions.h"
 #include "StVecBosAna/St2011WlumiMaker.h"
 #include "StVecBosAna/VecBosRootFile.h"
 
@@ -56,31 +56,29 @@ root4star -b -q 'analyzeMuDst.C(2e3,"st_W_12037041_raw_1400001.MuDst.root",0,1,5
 using namespace std;
 
 
-int analyzeMuDst(AnaInfo &anaInfo, bool findZ=false);
+int analyzeMuDst(AnaOptions &anaOptions, bool findZ=false);
+
 
 int main(int argc, char *argv[])
 {
    setbuf(stdout, NULL);
 
-   AnaInfo anaInfo;
-   anaInfo.ProcessOptions(argc, argv);
-   anaInfo.VerifyOptions();
+   AnaOptions anaOptions;
+   anaOptions.ProcessOptions(argc, argv);
+   anaOptions.VerifyOptions();
 
-   return analyzeMuDst(anaInfo);
+   return analyzeMuDst(anaOptions);
 }
 
 
-int analyzeMuDst(AnaInfo &anaInfo, bool findZ)
+int analyzeMuDst(AnaOptions &anaOptions, bool findZ)
 {
-   UInt_t  maxEventsUser       = anaInfo.fMaxEventsUser;
-   string  inMuDstFileListName = anaInfo.GetListName();
-   bool    isMC                = anaInfo.fIsMc;                      // 0: run9-data; 200: new MC w/ EEss in BFC
-   int     useJetFinder        = anaInfo.fDoReconstructJets ? 1 : 2; // 0: no jets = badWalgo; 1: generate jet trees; 2 read jet trees
-   Float_t jetPtMin            = anaInfo.fJetPtMin;
-   Float_t tracksPtMin         = anaInfo.fTracksPtMin;
-   //string eemcSetupPath = "/afs/rhic.bnl.gov/star/users/kocolosk/public/StarTrigSimuSetup/";
-
-
+   UInt_t  maxEventsUser       = anaOptions.GetMaxEventsUser();
+   string  inMuDstFileListName = anaOptions.GetListName();
+   bool    isMC                = anaOptions.fIsMc;                      // 0: run9-data; 200: new MC w/ EEss in BFC
+   int     useJetFinder        = anaOptions.fDoReconstructJets ? 1 : 2; // 0: no jets = badWalgo; 1: generate jet trees; 2 read jet trees
+   Float_t jetPtMin            = anaOptions.fJetPtMin;
+   Float_t tracksPtMin         = anaOptions.fTracksPtMin;
 
    string inputPathFile = inMuDstFileListName;
 
@@ -354,7 +352,7 @@ int analyzeMuDst(AnaInfo &anaInfo, bool findZ)
    }
 
    StSpinDbMaker *stSpinDbMaker = new StSpinDbMaker("stSpinDbMaker");
-   StVecBosMaker *stVecBosMaker = new StVecBosMaker(anaInfo, "StVecBosMaker", &vecBosRootFile);
+   StVecBosMaker *stVecBosMaker = new StVecBosMaker(anaOptions, "StVecBosMaker", &vecBosRootFile);
 
       // Set the Pt mim for recoil tracks and clusters
       stVecBosMaker->setTracksPtMin(tracksPtMin);
