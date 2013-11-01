@@ -29,6 +29,7 @@ ZBosEvent::~ZBosEvent()
 TVector3 ZBosEvent::GetCandidate1_P3() const { return mCand1P3; }
 TVector3 ZBosEvent::GetCandidate2_P3() const { return mCand2P3; }
 TVector3 ZBosEvent::GetVecBosonP3() const { return GetCandidate1_P3() + GetCandidate2_P3(); }
+TLorentzVector ZBosEvent::GetVecBosonP4() const { return mP4ZBoson; }
 
 
 /**

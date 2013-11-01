@@ -22,9 +22,10 @@ public:
    ~ZBosEvent();
 
    TLorentzVector mP4ZBoson;
-   TVector3     GetCandidate1_P3() const;
-   TVector3     GetCandidate2_P3() const;
-   TVector3     GetVecBosonP3() const;
+   TVector3           GetCandidate1_P3() const;
+   TVector3           GetCandidate2_P3() const;
+   TVector3           GetVecBosonP3() const;
+   TLorentzVector     GetVecBosonP4() const;
    virtual void Process();
    virtual void ProcessMC();
    virtual void Clear(const Option_t* opt="");
