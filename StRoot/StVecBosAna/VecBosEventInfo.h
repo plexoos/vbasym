@@ -36,7 +36,7 @@ public:
  * This class has been inherited from the Run 9 analysis of the longitudinal asymmetry and contains
  * mostly transient data.
  */
-class WeveETOW
+class DetEventEtow
 {
 public:
    int   etowIn;
@@ -56,7 +56,7 @@ public:
       maxHtDsm = -1;
    }
 
-   ClassDef(WeveETOW, 2);
+   ClassDef(DetEventEtow, 2);
 };
 
 
@@ -65,7 +65,7 @@ public:
  * signals. This class has been inherited from the Run 9 analysis of the longitudinal asymmetry and
  * contains mostly transient data.
  */
-class WeveEPRS
+class DetEventEprs
 {
 public:
    int   eprsIn;
@@ -79,7 +79,7 @@ public:
       memset(stat, -1, sizeof(stat)); // default all dead
    }
 
-   ClassDef(WeveEPRS, 1);
+   ClassDef(DetEventEprs, 1);
 };
 
 
@@ -88,7 +88,7 @@ public:
  * signals. This class has been inherited from the Run 9 analysis of the longitudinal asymmetry and
  * contains mostly transient data.
  */
-class WeveESMD   // info about ESMD
+class DetEventEsmd
 {
 public:
    int   esmdIn;
@@ -102,7 +102,7 @@ public:
       memset(stat, -1, sizeof(stat)); // default all dead
    }
 
-   ClassDef(WeveESMD, 1);
+   ClassDef(DetEventEsmd, 1);
 };
 
 #endif

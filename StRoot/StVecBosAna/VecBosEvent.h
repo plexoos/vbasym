@@ -72,10 +72,10 @@ public:
    UShort_t                mNumIsolatedTracks;
    StJets                 *mStJets;                     //!
    StJets                 *mStJetsNoEndcap;             //!< jets noEEMC
-   DetEventBemc            bemc;                        ///< persistent as it is used in the eventdisplay
-   WeveETOW                etow;                        //!
-   WeveEPRS                eprs;                        //!
-   WeveESMD                esmd;                        //!
+   DetEventBemc            bemc;                        ///< persistent data structure to hold hits in the barrel calorimeter. Used in eventdisplay
+   DetEventEtow            etow;                        //!< transient data structure to hold hits in the endcap calorimeter
+   DetEventEprs            eprs;                        //!< transient data structure to hold hits in the endcap preshower
+   DetEventEsmd            esmd;                        //!< transient data structure to hold hits in the endcap shower max detector
    VecBosJetPtrSet         mJets;                       ///< This container owns all jets in the event
    VecBosJetPtrSet         mJetsRecoil;                 //
    VecBosJetPtrSet         mJetsWithIsoTrack;           //

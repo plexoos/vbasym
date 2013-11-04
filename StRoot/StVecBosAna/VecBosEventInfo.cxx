@@ -2,10 +2,10 @@
 #include "VecBosEventInfo.h"
 
 
-ClassImp(WeveBEMC)
+ClassImp(DetEventBemc)
 
 
-void WeveBEMC::clear()
+void DetEventBemc::clear()
 {
    memset(adcTile,   0, sizeof(adcTile));
    memset(eneTile,   0, sizeof(eneTile));
@@ -18,7 +18,7 @@ void WeveBEMC::clear()
 }
 
 
-void WeveBEMC::print(int flag)
+void DetEventBemc::print(int flag)
 {
    printf(" BTOW tower ADC>500 list: ");
    for (int i = 0; i < mxBtow; i++) {
