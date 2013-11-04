@@ -8,7 +8,8 @@ class StVecBosMaker;
 
 
 /**
- * Deprecated. Gathers all results from  W-analysis, Jan's analysis
+ * (Deprecated) This class has been inherited from the Run 9 analysis of the longitudinal asymmetry
+ * and it is not used much.
  */
 class St2011WlumiMaker : public StMaker
 {

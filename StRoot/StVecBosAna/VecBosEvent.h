@@ -71,8 +71,8 @@ public:
    UShort_t                mNumWithClusterTracks;
    UShort_t                mNumIsolatedTracks;
    StJets                 *mStJets;                     //!
-   StJets                 *mStJetsNoEndcap;             //! jets noEEMC
-   WeveBEMC                bemc;                        ///
+   StJets                 *mStJetsNoEndcap;             //!< jets noEEMC
+   DetEventBemc            bemc;                        ///< persistent as it is used in the eventdisplay
    WeveETOW                etow;                        //!
    WeveEPRS                eprs;                        //!
    WeveESMD                esmd;                        //!
