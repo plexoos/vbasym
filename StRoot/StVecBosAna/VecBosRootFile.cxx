@@ -3,9 +3,6 @@
 #include <climits>
 #include <sstream>
 
-#include "TROOT.h"
-#include "TStyle.h"
-
 #include "EventHContainer.h"
 #include "Z0EventHContainer.h"
 #include "JetHContainer.h"
@@ -29,9 +26,6 @@ VecBosRootFile::VecBosRootFile() : TFile(),
    fMinTime(UINT_MAX), fMaxTime(0),
    fIsMc(kFALSE), fIsZ(kFALSE)
 {
-   //gROOT->SetMacroPath("./:~/rootmacros/:");
-   //gROOT->Macro("styles/style_vbana.C");
-
    BookHists();
 }
 
@@ -41,20 +35,11 @@ VecBosRootFile::VecBosRootFile(const char *fname, Option_t *option, Bool_t isMc,
    fHists(0), fHistCuts(),
    fMinFill(UINT_MAX), fMaxFill(0),
    fMinTime(UINT_MAX), fMaxTime(0),
-   fIsMc(isMc),fIsZ(isZ)
+   fIsMc(isMc), fIsZ(isZ)
 {
    printf("Created ROOT file: %s\n", GetName());
 
-   //gROOT->SetMacroPath("./:~/rootmacros/:");
-   //gROOT->Macro("styles/style_vbana.C");
-
    BookHists();
-}
-
-
-VecBosRootFile::~VecBosRootFile()
-{
-   //if (fHists) { delete fHists; fHists = 0; }
 }
 
 

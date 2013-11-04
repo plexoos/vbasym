@@ -3,9 +3,6 @@
 #include <climits>
 #include <sstream>
 
-#include "TROOT.h"
-#include "TStyle.h"
-
 #include "St_db_Maker/St_db_Maker.h"
 #include "StEmcUtil/database/StBemcTables.h"
 #include "StEmcUtil/geometry/StEmcGeom.h"

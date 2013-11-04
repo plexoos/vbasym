@@ -293,7 +293,7 @@ Int_t StVecBosMaker::InitRun(int runNo)
 Int_t StVecBosMaker::Finish()
 {
    if (mStMuDstMaker) {
-      cout << endl << "Output tree file " << mTreeName << endl << endl;
+      cout << endl << "Output tree file: " << mTreeName << endl << endl;
       mTreeFile->Write();
       mTreeFile->Close();
 
