@@ -71,10 +71,16 @@ void Z0EventHContainer::BookHists()
    h->SetOption("hist GRIDX GRIDY XY");
    o["hCandidate2Pt"]   = h = new TH1F("hCandidate2Pt", "; P_T; Events", 81, 0, 81);
    h->SetOption("hist GRIDX GRIDY XY");
-
-   o["hZ0_MassInv"]   = h = new TH1F("hZ0_MassInv", "; M_{Z^{0}} (GeV/c^{2}); Events", 60, 65, 110);
+   o["hCandidate1Eta"]   = h = new TH1F("hCandidate1Eta", ";Candidate 1 - #eta; Events", 20, -2, 2);
    h->SetOption("hist GRIDX GRIDY XY");
-   o["hZ0_Pt"]   = h = new TH1F("hZ0_Pt", "; Z0-P_{T} (GeV/c); Events", 10, 0, 20);
+   o["hCandidate2Eta"]   = h = new TH1F("hCandidate2Eta", ";Candidate 2 - #eta; Events", 20, -2, 2);
+   h->SetOption("hist GRIDX GRIDY XY");
+
+   o["hZ0_MassInv"]   = h = new TH1F("hZ0_MassInv", "; M_{Z^{0}} (GeV/c^{2}); Events", 10, 70, 110);
+   h->SetOption("hist GRIDX GRIDY XY");
+   o["hZ0_Pt"]   = h = new TH1F("hZ0_Pt", "; Z0-P_{T} (GeV/c); Events", 10, 0, 25);
+   h->SetOption("hist GRIDX GRIDY XY");
+   o["hZ0_Eta"]   = h = new TH1F("hZ0_Eta", "; Z0- #eta; Events", 20, -4, 4);
    h->SetOption("hist GRIDX GRIDY XY");
 
    d["tracks"] = new TrackHContainer(new TDirectoryFile("tracks", "tracks", "", fDir));
@@ -104,8 +110,14 @@ void Z0EventHContainer::Fill(ProtoEvent &ev)
 
    ((TH1*) o["hCandidate1Pt"])   ->Fill(event.GetCandidate1_P3().Pt());
    ((TH1*) o["hCandidate2Pt"])   ->Fill(event.GetCandidate2_P3().Pt());
-   ((TH1*) o["hZ0_MassInv"])     ->Fill(event.mP4ZBoson.M());
-   ((TH1*) o["hZ0_Pt"])          ->Fill(event.mP4ZBoson.Pt());
+   ((TH1*) o["hZ0_MassInv"])     ->Fill(event.GetVecBosonP4().M());
+   ((TH1*) o["hZ0_Pt"])          ->Fill(event.GetVecBosonP4().Pt());
+
+   if ( event.GetCandidate1_P3().Pt() && event.GetCandidate2_P3().Pt() ) {
+      ((TH1*) o["hCandidate1Eta"])  ->Fill(event.GetCandidate1_P3().Eta());
+      ((TH1*) o["hCandidate2Eta"])  ->Fill(event.GetCandidate2_P3().Eta());
+      ((TH1*) o["hZ0_Eta"])         ->Fill(event.GetVecBosonP4().Eta());
+   }
 
    d["tracks"]->Fill(ev);
 }
