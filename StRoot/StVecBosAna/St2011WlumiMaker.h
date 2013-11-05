@@ -8,10 +8,27 @@ class StVecBosMaker;
 
 
 /**
- * Deprecated. Gathers all results from  W-analysis, Jan's analysis
+ * (Deprecated) This class has been inherited from the Run 9 analysis of the longitudinal asymmetry
+ * and it is not used much.
  */
 class St2011WlumiMaker : public StMaker
 {
+public:
+
+   St2011WlumiMaker(const char *name = "2011Wlumi");
+   virtual Int_t Init();
+   virtual Int_t Make();
+   void setHList(TObjArray *x) {HList = x;}
+
+   void AttachWalgoMaker(StVecBosMaker *mk) { wMK = mk;}
+   void AttachMuMaker(StMuDstMaker *mk) { muMK = mk;}
+
+   virtual Int_t InitRun(int runumber);   //< Overload empty StMaker::InitRun
+   virtual Int_t FinishRun(int runumber); //< Overload empty StMaker::FinishRun
+
+   float effective_lumi;                  ///< pb^-1, effective integrated luminosity, given not all the detector is necessarily working.
+   float total_lumi;                      ///< pb^-1, total integrated luminosity if the whole detector were working.
+
 private:
 
    int nActiveTowers;       ///< number of towers in the run that have good status
@@ -34,23 +51,6 @@ private:
    void sortTrigger();
    void getActiveTowers();
    void getAbortGapCounts(int angle, int *n1, int *n2);
-
-public:
-
-   St2011WlumiMaker(const char *name = "2011Wlumi");
-   virtual       ~St2011WlumiMaker() {};
-   virtual Int_t  Init();
-   virtual Int_t  Make();
-   void setHList(TObjArray *x) {HList = x;}
-
-   void AttachWalgoMaker(StVecBosMaker *mk) { wMK = mk;}
-   void AttachMuMaker(StMuDstMaker *mk) { muMK = mk;}
-
-   virtual Int_t InitRun(int runumber);   // Overload empty StMaker::InitRun
-   virtual Int_t FinishRun(int runumber); // Overload empty StMaker::FinishRun
-
-   float effective_lumi;                  ///< pb^-1, effective integrated luminosity, given not all the detector is necessarily working.
-   float total_lumi;                      ///< pb^-1, total integrated luminosity if the whole detector were working.
 
    ClassDef(St2011WlumiMaker, 0)
 };

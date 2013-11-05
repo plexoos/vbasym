@@ -41,24 +41,17 @@ typedef std::map<ECut, std::set<PlotHelper*> >   Cut2PlotHelperMap;
 typedef Cut2PlotHelperMap::iterator              Cut2PlotHelperMapIter;
 
 
+/**
+ * With this specialization of the ROOT's TFile we control the structure of the output file. In this
+ * class we choose what should be saved (or not) and under what conditions. The decision is made on
+ * event-by-event basis by calling the Fill(ProtoEvent &ev) function.
+ */
 class VecBosRootFile : public TFile
 {
-protected:
-
-   PlotHelper        *fHists;
-   Cut2PlotHelperMap  fHistCuts;
-   Float_t            fMinFill;
-   Float_t            fMaxFill;
-   time_t             fMinTime;
-   time_t             fMaxTime;
-   Bool_t             fIsMc;
-   Bool_t             fIsZ;
-
 public:
 
    VecBosRootFile();
    VecBosRootFile(const char* fname, Option_t* option = "", Bool_t isMc=kFALSE, Bool_t isZ=kFALSE, const char* ftitle = "", Int_t compress = 1);
-   ~VecBosRootFile();
 
    using TObject::SaveAs;
 
@@ -76,6 +69,17 @@ public:
    void Print(const Option_t* opt="") const;
    void PrintAsPhp(FILE *f=stdout) const;
    void Close(Option_t* option = "");
+
+protected:
+
+   PlotHelper        *fHists;
+   Cut2PlotHelperMap  fHistCuts;
+   Float_t            fMinFill;
+   Float_t            fMaxFill;
+   time_t             fMinTime;
+   time_t             fMaxTime;
+   Bool_t             fIsMc;
+   Bool_t             fIsZ;
 
 private:
 

@@ -1,13 +1,13 @@
-#include "TChain.h"
 #include "TObject.h"
 #include "TIterator.h"
 #include "TROOT.h"
-#include "TStreamerInfo.h"
+#include "TTree.h"
 
+#include "StRoot/StVecBosAna/AsymCalculator.h"
 #include "StRoot/StVecBosAna/WBosEvent.h"
-#include "StRoot/StVecBosAna/ZBosEvent.h"
 #include "StRoot/StVecBosAna/VecBosRootFile.h"
 #include "StRoot/StVecBosAna/VecBosAsymRootFile.h"
+#include "StRoot/StVecBosAna/VbAnaOptions.h"
 
 #include "utils/utils.h"
 
@@ -16,73 +16,41 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-   gROOT->Macro("~/rootmacros/styles/style_vbana.C");
+   VbAnaOptions vbAnaOptions;
+   vbAnaOptions.ProcessOptions(argc, argv);
+
+   gROOT->Macro("~/root-helper/styles/style_vbana.C");
 
    TStopwatch stopwatch;
 
    setbuf(stdout, NULL);
 
-   Int_t  nMaxUserEvents = -1; // < 0 means all events
-   //Int_t  nMaxUserEvents = 1000;
-
-   Bool_t isMc           = kFALSE;
-   //Bool_t isMc           = kTRUE;
-   //Bool_t isZ           = kFALSE;
-   Bool_t isZ           = kTRUE;
-
-   string filelist       = "run11_pp_transverse";
-   //string filelist       = "run11_pp_longitudinal";
-   //string filelist       = "run12_pp";
-   //string filelist       = "run11_mc_Wp2enu.lis";
-   //string filelist       = "run11_mc_Wm2enu.lis";
-   //string filelist       = "run11_mc_Wp2taunu.lis";
-   //string filelist       = "run11_mc_Wm2taunu.lis";
-   //string filelist       = "run11_mc_Z02ee.lis";
-   //string filelist       = "run12_QCD.lis";
-
-   string stana_options  = "--jpm_0.5";
-   stana_options = (isZ  ? "-z_" : "-w_") + stana_options;
-   stana_options = (isMc ? "-m_" : "") + stana_options;
-   stana_options = stana_options + (!isMc ? "_--run_11" : "");
-
-   // this is the name of the output file
-   string histFileName = "~/stana_out/" + filelist + "_" + stana_options + "/hist/vbana.root";
+   Int_t  nMaxUserEvents = vbAnaOptions.GetMaxEventsUser();
+   string histFileName   = vbAnaOptions.GetRootFileName();
 
    Info("main", "nMaxUserEvents: %d", nMaxUserEvents);
    Info("main", "histFileName:   %s", histFileName.c_str());
-   Info("main", "isMc:           %d", isMc);
-   Info("main", "isZ:            %d", isZ);
 
-   VecBosRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc, isZ);
-   //VecBosAsymRootFile  vecBosRootFile(histFileName.c_str(), "recreate", isMc);   // to create the Asymmetry histograms 
-
-   /*
-   VecBosEvent *vecBosEvent(NULL);
-   if(isZ) {
-     vecBosEvent = new WBosEvent();
-   } else if(isZ) {
-     vecBosEvent = new ZBosEvent();
-   }
-   vecBosEvent->Dump();
-   */
-   //WBosEvent *vecBosEvent = new WBosEvent();
-   ZBosEvent *vecBosEvent = new ZBosEvent();
+   //VecBosRootFile  vecBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.fIsMc);
+   VecBosAsymRootFile  vecBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.fIsMc); // to create the Asymmetry histograms 
+   AsymCalculator::sVbAnaOptions = &vbAnaOptions;
+   VecBosEvent *vecBosEvent = new WBosEvent();
 
    TObject *o;
-   TIter   *next = new TIter(utils::getFileList("./runlists/"+filelist));
+   TIter   *next = new TIter(utils::getFileList( vbAnaOptions.GetListFileName() ));
    UInt_t   nProcEvents = 0;
 
    // Loop over the runs and record the time of the last flattop measurement in the fill
    while (next && (o = (*next)()) )
    {
       string fName    = string(((TObjString*) o)->GetName());
-      string fileName = "~/stana_out/" + filelist + "_" + stana_options + "/tree/";
-      fileName += (isMc ? "" : "R") + fName + "_tree.root";
+      string fileName = vbAnaOptions.GetResultsDir() + "/tree/";
+      fileName += (vbAnaOptions.fIsMc ? "" : "R") + fName + "_tree.root";
 
       TFile *f = new TFile(fileName.c_str(), "READ");
 
-      if (!f) { Error("main", "file not found. Skipping..."); delete f; continue; }
-      if ( f->IsZombie() ) { Error("main", "file is zombie %s. Skipping...", fileName.c_str()); f->Close(); delete f; continue; }
+      if (!f) { Error("main", "File not found. Skipping..."); delete f; continue; }
+      if ( f->IsZombie() ) { Error("main", "File is zombie %s. Skipping...", fileName.c_str()); f->Close(); delete f; continue; }
 
       cout << endl;
       Info("main", "Found file: %s", fileName.c_str());
@@ -128,11 +96,11 @@ int main(int argc, char *argv[])
    vecBosRootFile.FillDerived();
    vecBosRootFile.PostFill();
 
-   string outDir = "../vbasym_results/" + filelist;
-   //vecBosRootFile.SaveAs((string) "^.*$", outDir);
-   //vecBosRootFile.SaveAs((string) ".*TrackEOverP.*", outDir);
+   //vecBosRootFile.SaveAs((string) "^.*$", vbAnaOptions.GetImageDir());
    vecBosRootFile.Print();
    vecBosRootFile.Close();
 
    stopwatch.Print();
+
+   return EXIT_SUCCESS;
 }

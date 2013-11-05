@@ -10,7 +10,11 @@
 #include "utils/PlotHelper.h"
 
 
-
+/**
+ * With this specialization of the ROOT's TFile we control the structure of the output file. In this
+ * class we choose what should be saved (or not) and under what conditions. The decision is made on
+ * event-by-event basis by calling the Fill(ProtoEvent &ev) function.
+ */
 class VecBosAsymRootFile : public VecBosRootFile
 {
 

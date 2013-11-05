@@ -1,16 +1,18 @@
 #ifndef VecBosEventInfo_h
 #define VecBosEventInfo_h
 
-
 #include "Globals.h"
 
 
-// W-reco event container
-// info about BEMC
-class WeveBEMC
+/**
+ * A simple structure to keep track of the basic information about the barrel EMC detector signals.
+ * This class has been inherited from the Run 9 analysis of the longitudinal asymmetry and contains
+ * mostly transient data.
+ */
+class DetEventBemc
 {
 public:
-   // raw BTOW/BPRS hits
+   // Raw BTOW/BPRS hits
    int   tileIn[mxBTile];           //! 0 if no data
    float adcTile[mxBTile][mxBtow];  //!
    float eneTile[mxBTile][mxBtow];
@@ -18,23 +20,27 @@ public:
    float maxAdc;                    //!
    int   maxHtDsm;                  //!
 
-   //raw BSMD hits, both planes
+   // Raw BSMD hits, both planes
    float adcBsmd[mxBSmd][mxBStrips];  //!
    int   statBsmd[mxBSmd][mxBStrips]; //!
 
    void clear();
    void print(int flag = 0);
 
-   ClassDef(WeveBEMC, 2);
+   ClassDef(DetEventBemc, 2);
 };
 
 
-class WeveETOW   // info about ETOW
+/**
+ * A simple structure to keep track of the basic information about the endcap EMC detector signals.
+ * This class has been inherited from the Run 9 analysis of the longitudinal asymmetry and contains
+ * mostly transient data.
+ */
+class DetEventEtow
 {
 public:
-   //raw ETOW hit
    int   etowIn;
-   float adc[mxEtowSec*mxEtowSub][mxEtowEta]; //[phibin][etabin]
+   float adc[mxEtowSec*mxEtowSub][mxEtowEta];  ///< the indices correspond to [phibin][etabin]
    float ene[mxEtowSec*mxEtowSub][mxEtowEta];
    int   stat[mxEtowSec*mxEtowSub][mxEtowEta];
    float maxAdc;
@@ -50,16 +56,20 @@ public:
       maxHtDsm = -1;
    }
 
-   ClassDef(WeveETOW, 2);
+   ClassDef(DetEventEtow, 2);
 };
 
 
-class WeveEPRS   // info about EPRS
+/**
+ * A simple structure to keep track of the basic information about the endcap preshower detector
+ * signals. This class has been inherited from the Run 9 analysis of the longitudinal asymmetry and
+ * contains mostly transient data.
+ */
+class DetEventEprs
 {
 public:
-   //raw EPRS hit
    int   eprsIn;
-   float adc[mxEtowSec*mxEtowSub][mxEtowEta][mxPrs]; //[phibin][etabin][layer]
+   float adc[mxEtowSec*mxEtowSub][mxEtowEta][mxPrs];  ///< the indices correspond to [phibin][etabin][layer]
    float ene[mxEtowSec*mxEtowSub][mxEtowEta][mxPrs];
    int   stat[mxEtowSec*mxEtowSub][mxEtowEta][mxPrs];
 
@@ -69,16 +79,20 @@ public:
       memset(stat, -1, sizeof(stat)); // default all dead
    }
 
-   ClassDef(WeveEPRS, 1);
+   ClassDef(DetEventEprs, 1);
 };
 
 
-class WeveESMD   // info about ESMD
+/**
+ * A simple structure to keep track of the basic information about the endcap showermax detector
+ * signals. This class has been inherited from the Run 9 analysis of the longitudinal asymmetry and
+ * contains mostly transient data.
+ */
+class DetEventEsmd
 {
 public:
-   //raw ESMD hit
    int   esmdIn;
-   float adc[mxEtowSec][mxEsmdPlane][mxEsmdStrip]; //[phibin][etabin]
+   float adc[mxEtowSec][mxEsmdPlane][mxEsmdStrip];  ///< the indices correspond to [phibin][etabin]
    float ene[mxEtowSec][mxEsmdPlane][mxEsmdStrip];
    int   stat[mxEtowSec][mxEsmdPlane][mxEsmdStrip];
 
@@ -88,7 +102,7 @@ public:
       memset(stat, -1, sizeof(stat)); // default all dead
    }
 
-   ClassDef(WeveESMD, 1);
+   ClassDef(DetEventEsmd, 1);
 };
 
 #endif
