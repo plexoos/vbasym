@@ -3,6 +3,10 @@
 #include <climits>
 #include <sstream>
 
+#include "TROOT.h"
+#include "TStyle.h"
+
+#include "Z0AsymHContainer.h"
 #include "EventHContainer.h"
 #include "Z0EventHContainer.h"
 #include "JetHContainer.h"
@@ -45,6 +49,10 @@ VecBosRootFile::VecBosRootFile(const char *fname, Option_t *option, Bool_t isMc,
 
 void VecBosRootFile::BookHists()
 {
+   // Delete histograms created in parent class
+   if (fHists) { delete fHists; fHists = 0; }
+   fHistCuts.clear();
+
    PlotHelper *ph;
 
    fHists = new PlotHelper(this);
@@ -175,6 +183,18 @@ void VecBosRootFile::BookHists()
    fHistCuts[kCUT_EVENT_PASS_Z0_ELECTRONPT].insert(ph);
 
    fHists->d["Z0_event_pass_final"]     = ph = new Z0EventHContainer(new TDirectoryFile("Z0_event_pass_final", "Z0_event_pass_final", "", this));
+   fHistCuts[kCUT_EVENT_PASS_Z0_FINAL].insert(ph);
+
+   fHists->d["asym_z"] = ph = new Z0AsymHContainer(new TDirectoryFile("asym_z", "asym_z", "", this));
+   fHistCuts[kCUT_EVENT_PASS_Z0_FINAL].insert(ph);
+
+   fHists->d["asym_z_phys"] = ph = new Z0AsymHContainer(new TDirectoryFile("asym_z_phys", "asym_z_phys", "", this), kAsymSqrtPhys);
+   fHistCuts[kCUT_EVENT_PASS_Z0_FINAL].insert(ph);
+
+   fHists->d["asym_z_geom"] = ph = new Z0AsymHContainer(new TDirectoryFile("asym_z_geom", "asym_z_geom", "", this), kAsymSqrtGeom);
+   fHistCuts[kCUT_EVENT_PASS_Z0_FINAL].insert(ph);
+
+   fHists->d["asym_z_lumi"] = ph = new Z0AsymHContainer(new TDirectoryFile("asym_z_lumi", "asym_z_lumi", "", this), kAsymSqrtLumi);
    fHistCuts[kCUT_EVENT_PASS_Z0_FINAL].insert(ph);
 
   }
