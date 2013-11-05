@@ -129,7 +129,7 @@ void St2011WlumiMaker::getActiveTowers()
 {
    //count the number of good towers:
    nActiveTowers = 0;
-   WeveBEMC *barrel = &(wMK->mVecBosEvent->bemc);
+   DetEventBemc *barrel = &(wMK->mVecBosEvent->bemc);
    for (int i = 0; i < 4800; i++)
       if (barrel->statTile[0][i] == 0) //[0]=kBtow
          nActiveTowers++;
