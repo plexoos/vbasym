@@ -36,6 +36,7 @@ public:
    float            fJetPtMin;
    unsigned short   fRhicRunId;         //< RHIC run id, e.g. 9, 11, 12, 13, ...
    bool             fIsMc;
+   bool             fIsZ;
    BosonType        fBosonType;
    time_t           fAnaDateTime;       //< Date/time when data analysis started
    double           fAnaTimeReal;       //< Time in seconds to process input raw file

@@ -19,6 +19,7 @@ AnaOptions::AnaOptions() : TObject(),
    fJetPtMin(3.5),
    fRhicRunId(11),
    fIsMc(kFALSE),
+   fIsZ(kFALSE),
    fBosonType(kWBoson),
    fAnaDateTime(0),
    fAnaTimeReal(0),
@@ -72,7 +73,11 @@ void AnaOptions::MakeOutDir()
 
 string AnaOptions::GetResultsDir() const
 {
-   string stana_options =  string(fIsMc ? "-m_" : "") + "--jpm_0.5_--run_11";
+  //string stana_options =  string(fIsMc ? "-m_" : "") + "--jpm_0.5_--run_11";
+   string stana_options  = "--jpm_0.5";
+   stana_options = (fIsZ  ? "-z_" : "-w_") + stana_options;
+   stana_options = (fIsMc ? "-m_" : "") + stana_options;
+   stana_options = stana_options + (!fIsMc ? "_--run_11" : "");
    return fEnvVars.find("VBASYM_RESULTS_DIR")->second + "/" + fListName + "_" + stana_options;
 }
 
@@ -168,6 +173,7 @@ void AnaOptions::ProcessOptions(int argc, char **argv)
 
       case 'z':
          fBosonType = kZBoson;
+         fIsZ  = kTRUE;
          break;
 
       default:
