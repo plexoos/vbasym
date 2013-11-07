@@ -47,11 +47,11 @@ void Z0AsymHContainer::BookHists()
       string sDblSpinState = AsString(*iDSS);
 
       shName = "hZBosonPhiVsEta_" + sDblSpinState;
-      o[shName] = hist = new TH2I(shName.c_str(), "; Z Boson #eta; Z Boson #phi;", 1, -6, 6, 4, -M_PI, M_PI);
+      o[shName] = hist = new TH2I(shName.c_str(), "; Z Boson #eta; Z Boson #phi;", 1, -6, 6, 3, -M_PI, M_PI);
       hist->SetOption("colz");
 
       shName = "hZBosonPhiVsPt_" + sDblSpinState;
-      o[shName] = hist = new TH2I(shName.c_str(), "; Z Boson P_{T}; Z Boson #phi;", 1, 0, 25, 4, -M_PI, M_PI);
+      o[shName] = hist = new TH2I(shName.c_str(), "; Z Boson P_{T}; Z Boson #phi;", 1, 0, 25, 3, -M_PI, M_PI);
       hist->SetOption("colz");
    }
 
@@ -61,15 +61,15 @@ void Z0AsymHContainer::BookHists()
       string sSnglSpinState = AsString(*iSSS);
 
       shName = "hZBosonPhiVsEta_" + sSnglSpinState;
-      o[shName] = hist = new TH2I(shName.c_str(), "; Z Boson #eta; Z Boson #phi;", 1, -6, 6, 4, -M_PI, M_PI);
+      o[shName] = hist = new TH2I(shName.c_str(), "; Z Boson #eta; Z Boson #phi;", 1, -6, 6, 3, -M_PI, M_PI);
       hist->SetOption("colz");
 
       shName = "hZBosonPhiVsPt_" + sSnglSpinState;
-      o[shName] = hist = new TH2I(shName.c_str(), "; Z Boson P_{T}; Z Boson #phi;", 1, 0, 25, 4, -M_PI, M_PI);
+      o[shName] = hist = new TH2I(shName.c_str(), "; Z Boson P_{T}; Z Boson #phi;", 1, 0, 25, 3, -M_PI, M_PI);
       hist->SetOption("colz");
 
       shName = "hZBosonPhi_PtProj_" + sSnglSpinState;
-      o[shName] = hist = new TH1I(shName.c_str(), "; Z Boson #phi; Events;", 4, -M_PI, M_PI);
+      o[shName] = hist = new TH1I(shName.c_str(), "; Z Boson #phi; Events;", 3, -M_PI, M_PI);
       hist->SetOption("E1 GRIDX GRIDY");
    }
 
@@ -80,7 +80,7 @@ void Z0AsymHContainer::BookHists()
 
       // Z asymmetry plots
       shName = "hZBosonAsymVsPhiVsEta_" + sBeam;
-      o[shName] = hist = new TH2D(shName.c_str(), "; Z Boson #eta; Z Boson #phi;", 1, -6, 6, 4, -M_PI, M_PI);
+      o[shName] = hist = new TH2D(shName.c_str(), "; Z Boson #eta; Z Boson #phi;", 1, -6, 6, 3, -M_PI, M_PI);
       hist->SetOption("colz");
 
       shName = "hZBosonAsymAmpVsEta_" + sBeam;
@@ -96,7 +96,7 @@ void Z0AsymHContainer::BookHists()
       mg->SetHistogram((TH1F*) hist);
 
       shName = "hZBosonAsymVsPhiVsPt_" + sBeam;
-      o[shName] = hist = new TH2D(shName.c_str(), "; Z Boson P_{T}; Z Boson #phi;", 1, 0, 25, 4, -M_PI, M_PI);
+      o[shName] = hist = new TH2D(shName.c_str(), "; Z Boson P_{T}; Z Boson #phi;", 1, 0, 25, 3, -M_PI, M_PI);
       hist->SetOption("colz");
 
       shName = "hZBosonAsymAmpVsPt_" + sBeam;
