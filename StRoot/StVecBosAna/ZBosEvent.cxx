@@ -37,7 +37,53 @@ TLorentzVector ZBosEvent::GetVecBosonP4() const { return mP4ZBoson; }
  */
 void ZBosEvent::Process()
 {
-   VecBosEvent::ProcessZ0();
+   UShort_t vertexId = 0;
+
+   VecBosVertexPtrSetIter iVertex = mVertices.begin();
+   for ( ; iVertex != mVertices.end(); ++iVertex, vertexId++)
+   {
+      VecBosVertex &vertex = **iVertex;
+      vertex.Process();
+      vertex.mId = vertexId;
+
+      if ( !vertex.IsGood()) continue;
+
+      mNumGoodVertices++;
+
+      VecBosVertexPtrSetIter iVertex2 = iVertex; // initialize with the current one
+      ++iVertex2; // advance to the next one
+      for ( ; iVertex2 != mVertices.end(); ++iVertex2) {
+         VecBosVertex &vertex2 = **iVertex2;
+         if ( !vertex2.IsGood()) continue;
+
+         Double_t deltaZ = fabs(vertex.mPosition.Z() - vertex2.mPosition.Z());
+
+         if (deltaZ < mMinVertexDeltaZ || mMinVertexDeltaZ < 0)
+            mMinVertexDeltaZ = deltaZ;
+      }
+   }
+
+   // Process tracks
+   VecBosTrackPtrSetIter iTrack = mTracks.begin();
+   for ( ; iTrack != mTracks.end(); ++iTrack)
+   {
+      VecBosTrack &track = **iTrack;
+      track.Process();
+
+      if (track.IsGood())     mNumGoodTracks++;
+      if (track.IsBTrack())   mNumBTracks++;
+      if (track.IsETrack())   mNumETracks++;
+      if (track.HasCluster()) mNumWithClusterTracks++;
+      if (track.IsIsolated()) {
+         mNumIsolatedTracks++;
+
+         // if ( track.IsUnBalanced() ) track.FindClosestJet();
+      }
+
+      if ( track.IsZelectronCandidate() ) {
+         mTracksCandidate.insert(*iTrack);
+      }
+   }
 
    // Make sure two track candidate exists
    if (mTracksCandidate.size() <= 1) return;
