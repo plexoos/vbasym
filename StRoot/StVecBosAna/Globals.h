@@ -5,11 +5,21 @@
 #include <set>
 #include <string>
 
+#include "TH1.h"
+#include "TH2.h"
+
 #include "StEmcUtil/geometry/StEmcGeom.h"
 #include "StSpinPool/StJets/StJet.h"
 
-enum BosonType {kWBoson, kZBoson};
-enum EAsymType {kAsymPlain, kAsymSqrtPhys, kAsymSqrtGeom, kAsymSqrtLumi};
+#include "utils/MultiGraph.h"
+
+
+enum EBosonType {kWBoson, kZBoson};
+enum EAsymType  {kAsymPlain, kAsymSqrtPhys, kAsymSqrtGeom, kAsymSqrtLumi};
+
+inline ostream& operator<<(ostream &os, const EBosonType &v) { return os << (int) v; }
+inline istream& operator>>(istream &is, const EBosonType &v) { return is >> v; }
+
 
 // bsmd indexes needed for calibration
 enum {mxBStrips = 18000, mxBSmd  = 2, kBSE  = 0, kBSP  = 1};
@@ -35,6 +45,14 @@ enum ESingleSpinState  {kBU_Y0 = 4, kBD_Y0 = 8, kB0_YU = 1, kB0_YD = 2};
 enum EDoubleSpinState  {kBU_YU = 5, kBU_YD = 6, kBD_YU = 9, kBD_YD = 10};
 
 typedef std::map<std::string, std::string> Str2StrMap;
+typedef std::map<ESingleSpinState, TH1I*> Sss2TH1IMap;
+typedef std::map<ESingleSpinState, TH2I*> Sss2TH2IMap;
+typedef std::map<EDoubleSpinState, TH1I*> Dss2TH1IMap;
+typedef std::map<EDoubleSpinState, TH2I*> Dss2TH2IMap;
+typedef std::map<EBeamId, TH1*>  BeamId2TH1Map;
+typedef std::map<EBeamId, TH1D*> BeamId2TH1DMap;
+typedef std::map<EBeamId, TH2D*> BeamId2TH2DMap;
+typedef std::map<EBeamId, rh::MultiGraph*> BeamId2MultGraphMap;
 
 typedef std::set<EBeamId>            BeamIdSet;
 typedef BeamIdSet::iterator          BeamIdSetIter;
@@ -85,5 +103,6 @@ std::string AsString(EBeamId beamId);
 std::string AsString(EBeamId beamId, ESpinState spinState);
 std::string AsString(ESingleSpinState dss);
 std::string AsString(EDoubleSpinState dss);
+ESingleSpinState AsSingleSpinState(EBeamId beamId, ESpinState spinState);
 
 #endif

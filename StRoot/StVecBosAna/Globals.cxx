@@ -135,3 +135,16 @@ string AsString(EDoubleSpinState dss)
       return "UNK";
    }
 }
+
+
+ESingleSpinState AsSingleSpinState(EBeamId beamId, ESpinState spinState)
+{
+   if (beamId == kBLUE_BEAM && spinState == kSPIN_UP)
+      return kBU_Y0;
+   if (beamId == kBLUE_BEAM && spinState == kSPIN_DOWN)
+      return kBD_Y0;
+   if (beamId == kYELLOW_BEAM && spinState == kSPIN_UP)
+      return kB0_YU;
+   if (beamId == kYELLOW_BEAM && spinState == kSPIN_DOWN)
+      return kB0_YD;
+}
