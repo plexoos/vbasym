@@ -9,10 +9,10 @@ ClassImp(ZBosEvent)
 using namespace std;
 
 
-const float ZBosEvent::sMinZEleCandPtLight     = 15; 
-const float ZBosEvent::sMinZEleCandPtHard      = 25;  
-const float ZBosEvent::sMinZMass           = 73;  // Zmass -20% 
-const float ZBosEvent::sMaxZMass           = 114; // Zmass +20% 
+const float ZBosEvent::sMinZEleCandPtLight     = 15;
+const float ZBosEvent::sMinZEleCandPtHard      = 25;
+const float ZBosEvent::sMinZMass           = 73;  // Zmass -20%
+const float ZBosEvent::sMaxZMass           = 114; // Zmass +20%
 
 
 
@@ -94,7 +94,7 @@ void ZBosEvent::Process()
    mP4Cand1.SetPxPyPzE(mCand1P3.Px(), mCand1P3.Py(), mCand1P3.Pz(), trackCand1.mCluster2x2.mEnergy);
    mP4Cand2.SetPxPyPzE(0, 0, 0, 0);
 
-   // Loop over candidates. 
+   // Loop over candidates.
    VecBosTrackPtrSetIter iTrackCand = mTracksCandidate.begin();
    for (; iTrackCand != mTracksCandidate.end(); ++iTrackCand) {
       VecBosTrack &cand = **iTrackCand;
@@ -102,15 +102,15 @@ void ZBosEvent::Process()
       if (cand == trackCand1) continue;
 
       if (cand.mStMuTrack->charge() != trackCand1.mStMuTrack->charge()) {
-	// If the sign of the second track is different from the sign 
-	// of the first track pick it as Z second electron candidate. 
+        // If the sign of the second track is different from the sign
+        // of the first track pick it as Z second electron candidate.
         mCand2P3 = cand.GetP3EScaled();
         mP4Cand2.SetPxPyPzE(mCand2P3.Px(), mCand2P3.Py(), mCand2P3.Pz(), cand.mCluster2x2.mEnergy);
         break;
-      }  
+      }
       else {
         Info("Print", "this is not a Z0 event ");
-      	break;
+        break;
       }
    }
 
@@ -146,8 +146,8 @@ void ZBosEvent::Print(const Option_t* opt) const
 
 bool ZBosEvent::PassedCutZBos(float minElePt) const
 {
-   if ( HasCandidateEle() && 
-        mCand1P3.Pt() >= minElePt && 
+   if ( HasCandidateEle() &&
+        mCand1P3.Pt() >= minElePt &&
         mCand2P3.Pt() >= minElePt )
    {
       return true;
@@ -159,8 +159,8 @@ bool ZBosEvent::PassedCutZBos(float minElePt) const
 
 bool ZBosEvent::PassedCutZMass(float minElePt) const
 {
-   if ( PassedCutZBos(minElePt)      && 
-        mP4ZBoson.M() > sMinZMass    && 
+   if ( PassedCutZBos(minElePt)      &&
+        mP4ZBoson.M() > sMinZMass    &&
         mP4ZBoson.M() < sMaxZMass )
    {
       return true;
@@ -179,7 +179,7 @@ void ZBosEvent::CalcZBosP4()
 
 void ZBosEvent::Streamer(TBuffer &R__b)
 {
-  
+
    if (R__b.IsReading()) {
      //Info("Streamer", "Reading...");
       R__b.ReadClassBuffer(ZBosEvent::Class(), this);
@@ -188,5 +188,5 @@ void ZBosEvent::Streamer(TBuffer &R__b)
      //Info("Streamer", "Writing... ");
       R__b.WriteClassBuffer(ZBosEvent::Class(), this);
    }
-  
+
 }

@@ -5,16 +5,15 @@
 
 #include "TVector3.h"
 
-
 using namespace std;
 
 
-StEmcGeom          *gBTowGeom;
-StEmcGeom          *mBSmdGeom[mxBSmd];
-TVector3            gBCalTowerCoords[mxBtow];               // vs. tower ID
-TVector3            gBSmdStripCoords[mxBSmd][mxBStrips];    // vs. strip ID
-TVector3            gETowCoords[mxEtowSec *mxEtowSub][mxEtowEta];
-int                 gMapBTowEtaPhiBin2Id[mxBTetaBin * mxBTphiBin];  // vs. (iEta, iPhi)
+StEmcGeom *gBTowGeom;
+StEmcGeom *mBSmdGeom[mxBSmd];
+TVector3   gBCalTowerCoords[mxBtow];               // vs. tower ID
+TVector3   gBSmdStripCoords[mxBSmd][mxBStrips];    // vs. strip ID
+TVector3   gETowCoords[mxEtowSec *mxEtowSub][mxEtowEta];
+int        gMapBTowEtaPhiBin2Id[mxBTetaBin * mxBTphiBin];  // vs. (iEta, iPhi)
 
 EBeamId    aBeams[] = {kBLUE_BEAM, kYELLOW_BEAM};
 BeamIdSet  gBeams(aBeams, aBeams+2); 
