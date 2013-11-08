@@ -15,7 +15,7 @@ class AllAsymHContainer : public PlotHelper
 {
 public:
 
-   enum ECut {kCUT_UNKNOWN, kCUT_EVENT_NOCUT, kCUT_EVENT_W, kCUT_EVENT_W_PLUS, kCUT_EVENT_W_MINUS};
+   enum ECut {kCUT_UNKNOWN, kCUT_EVENT_NOCUT, kCUT_EVENT_W, kCUT_EVENT_W_PLUS, kCUT_EVENT_W_MINUS, kCUT_EVENT_Z};
 
    typedef std::map<ECut, std::set<PlotHelper*> >   Cut2PlotHelperMap;
    typedef Cut2PlotHelperMap::iterator              Cut2PlotHelperMapIter;

@@ -80,31 +80,40 @@ void AllAsymHContainer::BookHists()
    d["asym_wlm_lumi"] = ph = new WLepAsymHContainer(new TDirectoryFile("asym_wlm_lumi", "asym_wlm_lumi", "", fDir), kAsymSqrtLumi);
    fHistCuts[kCUT_EVENT_W_MINUS].insert(ph);
 
-	// XXX:ds: Need to add z bos histograms here
+   d["asym_z"]       = ph = new ZBosAsymHContainer(new TDirectoryFile("asym_z",      "asym_z", "", fDir));
+   fHistCuts[kCUT_EVENT_Z].insert(ph);
+   d["asym_z_phys"]  = ph = new ZBosAsymHContainer(new TDirectoryFile("asym_z_phys", "asym_z_phys", "", fDir), kAsymSqrtPhys);
+   fHistCuts[kCUT_EVENT_Z].insert(ph);
+   d["asym_z_geom"]  = ph = new ZBosAsymHContainer(new TDirectoryFile("asym_z_geom", "asym_z_geom", "", fDir), kAsymSqrtGeom);
+   fHistCuts[kCUT_EVENT_Z].insert(ph);
+   d["asym_z_lumi"]  = ph = new ZBosAsymHContainer(new TDirectoryFile("asym_z_lumi", "asym_z_lumi", "", fDir), kAsymSqrtLumi);
+   fHistCuts[kCUT_EVENT_Z].insert(ph);
 }
 
 
 /** */
 void AllAsymHContainer::Fill(ProtoEvent &ev)
 {
-	if (ev.InheritsFrom("WBosEvent")) {
-		Info("Fill", "WBosEvent detected");
+   if (ev.InheritsFrom("WBosEvent"))
+   {
+      Info("Fill", "WBosEvent detected");
 
       WBosEvent& w_event = (WBosEvent&) ev;
 
       Fill(ev, kCUT_EVENT_W);
 
-      if ( w_event.PassedCutWBosPlus(WBosEvent::sMinElectronPtHard) ) 
+      if ( w_event.PassedCutWBosPlus(WBosEvent::sMinElectronPtHard) )
          Fill(ev, kCUT_EVENT_W_PLUS);
 
       if ( w_event.PassedCutWBosMinus(WBosEvent::sMinElectronPtHard) )
          Fill(ev, kCUT_EVENT_W_MINUS);
 
-	}
-	else if (ev.InheritsFrom("ZBosEvent")) {
-		Info("Fill", "ZBosEvent detected");
-      //Fill(ev, kCUT_EVENT_Z)
-	}
+   } else if (ev.InheritsFrom("ZBosEvent"))
+   {
+      Info("Fill", "ZBosEvent detected");
+
+      Fill(ev, kCUT_EVENT_Z)
+   }
 }
 
 
