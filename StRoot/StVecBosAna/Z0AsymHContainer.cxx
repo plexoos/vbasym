@@ -7,13 +7,13 @@
 
 #include "utils/utils.h"
 #include "utils/MultiGraph.h"
+#include "utils/H1I.h"
 #include "utils/H1D.h"
 #include "utils/H2I.h"
 #include "utils/H2D.h"
 
 #include "AsymCalculator.h"
 #include "ZBosEvent.h"
-//#include "WBosEvent.h"
 
 
 ClassImp(Z0AsymHContainer)
@@ -22,13 +22,13 @@ using namespace std;
 
 
 /** Default constructor. */
-Z0AsymHContainer::Z0AsymHContainer() : PlotHelper()
+Z0AsymHContainer::Z0AsymHContainer() : AsymHContainer()
 {
    BookHists();
 }
 
 
-Z0AsymHContainer::Z0AsymHContainer(TDirectory *dir, EAsymType asymType) : PlotHelper(dir), mAsymType(asymType)
+Z0AsymHContainer::Z0AsymHContainer(TDirectory *dir, EAsymType asymType) : AsymHContainer(dir, asymType)
 {
    BookHists();
 }
@@ -37,92 +37,134 @@ Z0AsymHContainer::Z0AsymHContainer(TDirectory *dir, EAsymType asymType) : PlotHe
 /** */
 void Z0AsymHContainer::BookHists()
 {
-   string shName;
-   TH1*   hist, *h;
-   rh::MultiGraph* mg;
+   string  shName;
+   TH1I   *h1i;
+   TH1F   *h1f;
+   TH1D   *h1d;
+   TH2I   *h2i;
+   TH2D   *h2d;
+   rh::MultiGraph *mg;
 
    DoubleSpinStateSetIter iDSS = gDoubleSpinStateSet.begin();
-   for ( ; iDSS!=gDoubleSpinStateSet.end(); ++iDSS) 
+   for ( ; iDSS!=gDoubleSpinStateSet.end(); ++iDSS)
    {
+      EDoubleSpinState dss = *iDSS;
       string sDblSpinState = AsString(*iDSS);
 
       shName = "hZBosonPhiVsEta_" + sDblSpinState;
-      o[shName] = hist = new TH2I(shName.c_str(), "; Z Boson #eta; Z Boson #phi;", 1, -6, 6, 3, -M_PI, M_PI);
-      hist->SetOption("colz");
+      h2i = new rh::H2I(shName.c_str(), "; Z Boson #eta; Z Boson #phi;", 1, -6, 6, 3, -M_PI, M_PI, "colz");
+      o[shName] = fYieldPhiVsEta_Dss[dss] = h2i;
+
+      shName = "hZBosonPhiVsRap_" + sDblSpinState;
+      h2i = new rh::H2I(shName.c_str(), "; Z Boson Rapidity; Z Boson #phi;", 1, -1.5, 1.5, 3, -M_PI, M_PI, "colz");
+      o[shName] = fYieldPhiVsRap_Dss[dss] = h2i;
 
       shName = "hZBosonPhiVsPt_" + sDblSpinState;
-      o[shName] = hist = new TH2I(shName.c_str(), "; Z Boson P_{T}; Z Boson #phi;", 1, 0, 25, 3, -M_PI, M_PI);
-      hist->SetOption("colz");
+      h2i = new rh::H2I(shName.c_str(), "; Z Boson P_{T}; Z Boson #phi;", 1, 0, 25, 3, -M_PI, M_PI, "colz");
+      o[shName] = fYieldPhiVsPt_Dss[dss] = h2i;
    }
 
    SingleSpinStateSetIter iSSS = gSingleSpinStateSet.begin();
    for ( ; iSSS!=gSingleSpinStateSet.end(); ++iSSS) 
    {
-      string sSnglSpinState = AsString(*iSSS);
+      ESingleSpinState sss  = *iSSS;
+      string sSnglSpinState = AsString(sss);
 
       shName = "hZBosonPhiVsEta_" + sSnglSpinState;
-      o[shName] = hist = new TH2I(shName.c_str(), "; Z Boson #eta; Z Boson #phi;", 1, -6, 6, 3, -M_PI, M_PI);
-      hist->SetOption("colz");
+      h2i = new rh::H2I(shName.c_str(), "; Z Boson #eta; Z Boson #phi;", 1, -6, 6, 3, -M_PI, M_PI, "colz");
+      o[shName] = fYieldPhiVsEta_Sss[sss] = h2i;
+
+      shName = "hZBosonPhiVsRap_" + sSnglSpinState;
+      h2i = new rh::H2I(shName.c_str(), "; Z Boson Rapidity; Z Boson #phi;", 1, -1.5, 1.5, 3, -M_PI, M_PI, "colz");
+      o[shName] = fYieldPhiVsRap_Sss[sss] = h2i;
 
       shName = "hZBosonPhiVsPt_" + sSnglSpinState;
-      o[shName] = hist = new TH2I(shName.c_str(), "; Z Boson P_{T}; Z Boson #phi;", 1, 0, 25, 3, -M_PI, M_PI);
-      hist->SetOption("colz");
+      h2i = new rh::H2I(shName.c_str(), "; Z Boson P_{T}; Z Boson #phi;", 1, 0, 25, 3, -M_PI, M_PI, "colz");
+      o[shName] = fYieldPhiVsPt_Sss[sss] = h2i;
 
       shName = "hZBosonPhi_PtProj_" + sSnglSpinState;
-      o[shName] = hist = new TH1I(shName.c_str(), "; Z Boson #phi; Events;", 3, -M_PI, M_PI);
-      hist->SetOption("E1 GRIDX GRIDY");
+      h1i = new rh::H1I(shName.c_str(), "; Z Boson #phi; Events;", 3, -M_PI, M_PI, "E1 GRIDX GRIDY");
+      o[shName] = fYieldPhi_PtProj_Sss[sss] = h1i;
    }
 
    BeamIdSetIter iBeam = gBeams.begin();
-   for ( ; iBeam!=gBeams.end(); ++iBeam) 
+   for ( ; iBeam!=gBeams.end(); ++iBeam)
    {
-      string sBeam = AsString(*iBeam);
+      EBeamId beamId = *iBeam;
+      string sBeam = AsString(beamId);
 
-      // Z asymmetry plots
+      // Asymmetry vs Phi vs eta
       shName = "hZBosonAsymVsPhiVsEta_" + sBeam;
-      o[shName] = hist = new TH2D(shName.c_str(), "; Z Boson #eta; Z Boson #phi;", 1, -6, 6, 3, -M_PI, M_PI);
-      hist->SetOption("colz");
+      h2d = new rh::H2D(shName.c_str(), "; Z Boson #eta; Z Boson #phi;", 1, -6, 6, 3, -M_PI, M_PI, "colz");
+      o[shName] = fAsymVsPhiVsEta_Beam[beamId] = h2d;
 
+      // Asymmetry amplitude vs eta
       shName = "hZBosonAsymAmpVsEta_" + sBeam;
-      o[shName] = hist = new TH1D(shName.c_str(), "; Z Boson #eta; Asym Amp.;", 1, -6, 6);
-      hist->SetOption("E1 GRIDX GRIDY");
-      hist->GetYaxis()->SetRangeUser(-1.5, 1.5);
+      h1d = new rh::H1D(shName.c_str(), "; Z Boson #eta; Asym Amp.;", 1, -6, 6, "E1 GRIDX GRIDY");
+      h1d->GetYaxis()->SetRangeUser(-1.5, 1.5);
+      o[shName] = fAsymAmpVsEta_Beam[beamId] = h1d;
 
       // Multigraph container with graphs for individual slices/bins
       shName = "mgrZBosonAsymVsPhi_EtaBins_" + sBeam;
-      o[shName] = mg = new rh::MultiGraph(shName, shName);
-      hist = new TH1F(shName.c_str(), "; Z Boson #phi; Asym.;", 1, -M_PI, M_PI);
-      hist->GetYaxis()->SetRangeUser(-1.5, 1.5);
-      mg->SetHistogram((TH1F*) hist);
+      mg = new rh::MultiGraph(shName, shName);
+      h1f = new TH1F(shName.c_str(), "; Z Boson #phi; Asym.;", 1, -M_PI, M_PI);
+      h1f->GetYaxis()->SetRangeUser(-1.5, 1.5);
+      mg->SetHistogram(h1f);
+      o[shName] = fAsymVsPhi_EtaBins_Beam[beamId] = mg;
 
+      // Asymmetry vs Phi vs rapidity
+      shName = "hZBosonAsymVsPhiVsRap_" + sBeam;
+      h2d = new rh::H2D(shName.c_str(), "; Z Boson Rapidity; Z Boson #phi;", 1, -1.5, 1.5, 3, -M_PI, M_PI, "colz");
+      o[shName] = fAsymVsPhiVsRap_Beam[beamId] = h2d;
+
+      // Asymmetry amplitude vs rapidity
+      shName = "hZBosonAsymAmpVsRap_" + sBeam;
+      h1d = new rh::H1D(shName.c_str(), "; Z Boson Rapidity; Asym Amp.;", 1, -1.5, 1.5, "E1 GRIDX GRIDY");
+      h1d->GetYaxis()->SetRangeUser(-1.5, 1.5);
+      o[shName] = fAsymAmpVsRap_Beam[beamId] = h1d;
+
+      // Multigraph container with graphs for individual slices/bins
+      shName = "mgrZBosonAsymVsPhi_RapBins_" + sBeam;
+      mg = new rh::MultiGraph(shName, shName);
+      h1f = new TH1F(shName.c_str(), "; Z Boson #phi; Asym.;", 1, -M_PI, M_PI);
+      h1f->GetYaxis()->SetRangeUser(-1.5, 1.5);
+      mg->SetHistogram(h1f);
+      o[shName] = fAsymVsPhi_RapBins_Beam[beamId] = mg;
+
+      // Asymmetry vs phi vs p_T
       shName = "hZBosonAsymVsPhiVsPt_" + sBeam;
-      o[shName] = hist = new TH2D(shName.c_str(), "; Z Boson P_{T}; Z Boson #phi;", 1, 0, 25, 3, -M_PI, M_PI);
-      hist->SetOption("colz");
+      h2d = new rh::H2D(shName.c_str(), "; Z Boson P_{T}; Z Boson #phi;", 1, 0, 25, 3, -M_PI, M_PI, "colz");
+      o[shName] = fAsymVsPhiVsPt_Beam[beamId] = h2d;
 
+      // Asymmetry amplitude vs p_T
       shName = "hZBosonAsymAmpVsPt_" + sBeam;
-      o[shName] = hist = new TH1D(shName.c_str(), "; Z Boson P_{T}; Asym Amp.;", 1, 0, 25);
-      hist->SetOption("E1 GRIDX GRIDY");
-      hist->GetYaxis()->SetRangeUser(-1.5, 1.5);
+      h1d = new rh::H1D(shName.c_str(), "; Z Boson P_{T}; Asym Amp.;", 1, 0, 25, "E1 GRIDX GRIDY");
+      h1d->GetYaxis()->SetRangeUser(-1.5, 1.5);
+      o[shName] = fAsymAmpVsPt_Beam[beamId] = h1d;
 
       // Multigraph container with graphs for individual slices/bins
       shName = "mgrZBosonAsymVsPhi_PtBins_" + sBeam;
-      o[shName] = mg = new rh::MultiGraph(shName, shName);
-      hist = new TH1F(shName.c_str(), "; Z Boson #phi; Asym.;", 1, -M_PI, M_PI);
-      hist->GetYaxis()->SetRangeUser(-1.5, 1.5);
-      mg->SetHistogram((TH1F*) hist);
+      mg = new rh::MultiGraph(shName, shName);
+      h1f = new TH1F(shName.c_str(), "; Z Boson #phi; Asym.;", 1, -M_PI, M_PI);
+      h1f->GetYaxis()->SetRangeUser(-1.5, 1.5);
+      mg->SetHistogram(h1f);
+      o[shName] = fAsymVsPhi_PtBins_Beam[beamId] = mg;
    }
 
    shName = "hZBosonAsymAmpVsEta_";
-   o[shName] = hist = new TH1D(shName.c_str(), "; Z Boson #eta; Asym Amp.;", 1, -6, 6);
-   hist->SetOption("E1 GRIDX GRIDY");
-   hist->GetYaxis()->SetRangeUser(-1.5, 1.5);
+   h1d = new rh::H1D(shName.c_str(), "; Z Boson #eta; Asym Amp.;", 1, -6, 6, "E1 GRIDX GRIDY");
+   h1d->GetYaxis()->SetRangeUser(-1.5, 1.5);
+   o[shName] = fAsymAmpVsEta = h1d;
+
+   shName = "hZBosonAsymAmpVsRap_";
+   h1d = new rh::H1D(shName.c_str(), "; Z Boson Rapidity; Asym Amp.;", 1, -6, 6, "E1 GRIDX GRIDY");
+   h1d->GetYaxis()->SetRangeUser(-1.5, 1.5);
+   o[shName] = fAsymAmpVsRap = h1d;
 
    shName = "hZBosonAsymAmpVsPt_";
-   o[shName] = hist = new TH1D(shName.c_str(), "; Z Boson P_{T}; Asym Amp.;", 1, 0, 25);
-   hist->SetOption("E1 GRIDX GRIDY");
-   hist->GetYaxis()->SetRangeUser(-1.5, 1.5);
-
-   fDir->cd();
+   h1d = new rh::H1D(shName.c_str(), "; Z Boson P_{T}; Asym Amp.;", 1, 0, 25, "E1 GRIDX GRIDY");
+   h1d->GetYaxis()->SetRangeUser(-1.5, 1.5);
+   o[shName] = fAsymAmpVsPt = h1d;
 }
 
 
@@ -138,103 +180,19 @@ void Z0AsymHContainer::Fill(ProtoEvent &ev)
 
    string sDblSpinState = AsString( dblSpinState );
 
-   if (event.mTracksCandidate.size() > 1)
-   {
+   // XXX:ds: Do we really need to check the number of candidate tracks here?
+   //if (event.mTracksCandidate.size() > 1)
+   //{
       TLorentzVector zBoson = event.GetVecBosonP4();
       string shName;
 
-      shName = "hZBosonPhiVsPt_" + sDblSpinState;
-      ((TH2*) o[shName])->Fill(zBoson.Pt(), zBoson.Phi());
-
       shName = "hZBosonPhiVsEta_" + sDblSpinState;
       ((TH2*) o[shName])->Fill(zBoson.Eta(), zBoson.Phi());
-   }
-}
 
+      shName = "hZBosonPhiVsRap_" + sDblSpinState;
+      ((TH2*) o[shName])->Fill(zBoson.Rapidity(), zBoson.Phi());
 
-/** */
-void Z0AsymHContainer::FillDerived()
-{
-   Info("FillDerived()", "Called");
-
-   string shName;
-
-   SingleSpinStateSetIter iSSS = gSingleSpinStateSet.begin();
-   for ( ; iSSS!=gSingleSpinStateSet.end(); ++iSSS) 
-   {
-      ESingleSpinState sss  = *iSSS;
-      string sSnglSpinState = AsString(sss);
-
-      TH2* hZBosonPhiVsEta_sngl    = (TH2*) o["hZBosonPhiVsEta_"    + sSnglSpinState];
-      TH2* hZBosonPhiVsPt_sngl     = (TH2*) o["hZBosonPhiVsPt_"     + sSnglSpinState];
-      TH1* hZBosonPhi_PtProj_sngl  = (TH1*) o["hZBosonPhi_PtProj_"  + sSnglSpinState];
-
-      DoubleSpinStateSetIter iDSS = gDoubleSpinStateSet.begin();
-      for ( ; iDSS!=gDoubleSpinStateSet.end(); ++iDSS) 
-      {
-         EDoubleSpinState dss = *iDSS;
-         string sDblSpinState = AsString(dss);
-
-         TH2* hZBosonPhiVsEta_dbl    = (TH2*) o["hZBosonPhiVsEta_"    + sDblSpinState];
-         TH2* hZBosonPhiVsPt_dbl     = (TH2*) o["hZBosonPhiVsPt_"     + sDblSpinState];
-
-         if (dss & sss) {
-            hZBosonPhiVsEta_sngl->Add(hZBosonPhiVsEta_dbl);
-            hZBosonPhiVsPt_sngl->Add(hZBosonPhiVsPt_dbl);
-         }
-      }
-
-      // Create projections on phi axis
-      TH1D* hProjTmp = hZBosonPhiVsPt_sngl->ProjectionY();
-      utils::CopyBinContentError(hProjTmp, hZBosonPhi_PtProj_sngl);
-   }   
-}
-
-
-/** */
-void Z0AsymHContainer::PostFill()
-{
-   Info("PostFill", "Called");
-
-   AsymCalculator::sAsymType = mAsymType;
-
-   BeamIdSetIter iBeam = gBeams.begin();
-   for ( ; iBeam!=gBeams.end(); ++iBeam) 
-   {
-      string sBeam   = AsString(*iBeam);
-      string sSpinUp = AsString(*iBeam, kSPIN_UP);
-      string sSpinDn = AsString(*iBeam, kSPIN_DOWN);
-
-      // Z asymmetry vs. boson eta for iBeam
-      TH2I* hZBosonPhiVsEta_up     = (TH2I*) o["hZBosonPhiVsEta_" + sSpinUp];
-      TH2I* hZBosonPhiVsEta_dn     = (TH2I*) o["hZBosonPhiVsEta_" + sSpinDn];
-      TH2D* hZBosonAsymVsPhiVsEta_ = (TH2D*) o["hZBosonAsymVsPhiVsEta_" + sBeam];
-      TH1D* hZBosonAsymAmpVsEta_   = (TH1D*) o["hZBosonAsymAmpVsEta_" + sBeam];
-      rh::MultiGraph* mgrZBosonAsymVsPhi_EtaBins_ = (rh::MultiGraph*) o["mgrZBosonAsymVsPhi_EtaBins_" + sBeam];
-
-      AsymCalculator::CalcAsimAsym(*hZBosonPhiVsEta_up, *hZBosonPhiVsEta_dn, *hZBosonAsymVsPhiVsEta_);
-      AsymCalculator::FitAsimAsym(*hZBosonAsymVsPhiVsEta_, *hZBosonAsymAmpVsEta_, mgrZBosonAsymVsPhi_EtaBins_);
-
-      // Z asymmetry vs. boson p_T for iBeam
-      TH2I* hZBosonPhiVsPt_up     = (TH2I*) o["hZBosonPhiVsPt_" + sSpinUp];
-      TH2I* hZBosonPhiVsPt_dn     = (TH2I*) o["hZBosonPhiVsPt_" + sSpinDn];
-      TH2D* hZBosonAsymVsPhiVsPt_ = (TH2D*) o["hZBosonAsymVsPhiVsPt_" + sBeam];
-      TH1D* hZBosonAsymAmpVsPt_   = (TH1D*) o["hZBosonAsymAmpVsPt_" + sBeam];
-      rh::MultiGraph* mgrZBosonAsymVsPhi_PtBins_ = (rh::MultiGraph*) o["mgrZBosonAsymVsPhi_PtBins_" + sBeam];
-
-      AsymCalculator::CalcAsimAsym(*hZBosonPhiVsPt_up, *hZBosonPhiVsPt_dn, *hZBosonAsymVsPhiVsPt_);
-      AsymCalculator::FitAsimAsym(*hZBosonAsymVsPhiVsPt_, *hZBosonAsymAmpVsPt_, mgrZBosonAsymVsPhi_PtBins_);
-   }
-
-   // The Z boson asymmetry 
-   TH1D* hZBosonAsymAmpVsPt_BLU  = (TH1D*) o["hZBosonAsymAmpVsPt_BLU"];
-   TH1D* hZBosonAsymAmpVsPt_YEL  = (TH1D*) o["hZBosonAsymAmpVsPt_YEL"];
-   TH1D* hZBosonAsymAmpVsPt_     = (TH1D*) o["hZBosonAsymAmpVsPt_"];
-   AsymCalculator::CombineAsimAsym(*hZBosonAsymAmpVsPt_BLU, *hZBosonAsymAmpVsPt_YEL, *hZBosonAsymAmpVsPt_);
-
-   TH1D* hZBosonAsymAmpVsEta_BLU = (TH1D*) o["hZBosonAsymAmpVsEta_BLU"];
-   TH1D* hZBosonAsymAmpVsEta_YEL = (TH1D*) o["hZBosonAsymAmpVsEta_YEL"];
-   TH1D* hZBosonAsymAmpVsEta_    = (TH1D*) o["hZBosonAsymAmpVsEta_"];
-   AsymCalculator::CombineAsimAsym(*hZBosonAsymAmpVsEta_BLU, *hZBosonAsymAmpVsEta_YEL, *hZBosonAsymAmpVsEta_, true);
-
+      shName = "hZBosonPhiVsPt_" + sDblSpinState;
+      ((TH2*) o[shName])->Fill(zBoson.Pt(), zBoson.Phi());
+   //}
 }
