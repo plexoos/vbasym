@@ -96,6 +96,8 @@ void VbAnaOptions::ProcessOptions(int argc, char **argv)
    }
 
    AnaOptions::VerifyOptions();
+
+   MakeOutDir();
 }
 
 

@@ -195,8 +195,6 @@ void AnaOptions::VerifyOptions()
       exit(EXIT_FAILURE);
    }
 
-   MakeOutDir();
-
    // Set default standard log output
    //if (!fFileStdLogName.empty()) {
    //   freopen(GetStdLogFileName().c_str(), "w", stdout);
