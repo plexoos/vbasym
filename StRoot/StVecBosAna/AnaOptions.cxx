@@ -72,12 +72,7 @@ void AnaOptions::MakeOutDir()
 
 string AnaOptions::GetResultsDir() const
 {
-  //string stana_options =  string(fIsMc ? "-m_" : "") + "--jpm_0.5_--run_11";
-   string stana_options  = "--jpm_0.5";
-   stana_options = (fIsZ  ? "-z_" : "-w_") + stana_options;
-   stana_options = (fIsMc ? "-m_" : "") + stana_options;
-   stana_options = stana_options + (!fIsMc ? "_--run_11" : "");
-   return fEnvVars.find("VBASYM_RESULTS_DIR")->second + "/" + fListName + "_" + stana_options;
+   return fEnvVars.find("VBASYM_RESULTS_DIR")->second + "/" + fListName;
 }
 
 
