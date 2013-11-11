@@ -205,18 +205,6 @@ void AnaOptions::VerifyOptions()
       PrintUsage();
       exit(EXIT_FAILURE);
    }
-
-   // Set default standard log output
-   //if (!fFileStdLogName.empty()) {
-   //   freopen(GetStdLogFileName().c_str(), "w", stdout);
-   //   fclose(stderr);
-   //   stderr = stdout;
-   //   gSystem->Chmod(GetStdLogFileName().c_str(), 0775);
-   //}
-
-   //freopen(GetStdLogFileName().c_str(), "w", stderr);
-   //setbuf(stdout, NULL);
-   //fFileStdLogBuf.open(GetStdLogFileName().c_str(), ios::out|ios::ate|ios::app);
 }
 
 

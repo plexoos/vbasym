@@ -167,7 +167,6 @@ bool ZBosEvent::PassedCutZMass(float minElePt) const
    }
 
    return false;
-
 }
 
 

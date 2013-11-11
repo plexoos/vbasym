@@ -10,7 +10,7 @@ void DetEventBemc::clear()
    memset(adcTile,   0, sizeof(adcTile));
    memset(eneTile,   0, sizeof(eneTile));
    memset(statTile, -1, sizeof(statTile)); // default all dead
-   memset(tileIn,    0, sizeof(tileIn)); // detector was On/Off
+   memset(tileIn,    0, sizeof(tileIn));   // detector was On/Off
    memset(adcBsmd,   0, sizeof(adcBsmd));
    memset(statBsmd, -1, sizeof(statBsmd)); // default all dead
    maxAdc   = 0;

@@ -74,7 +74,8 @@ void VbAnaOptions::ProcessOptions(int argc, char **argv)
       cout << "monte-carlo: " << fIsMc << endl;
    }
 
-   if (fOptionsValues.count("zboson") && fOptionsValues.count("wboson")) {
+   if (fOptionsValues.count("zboson") && fOptionsValues.count("wboson"))
+   {
       Error("VbAnaOptions", "Only one option can be specified at a time: -w or -z");
       exit(EXIT_FAILURE);
    } else if (fOptionsValues.count("zboson")) {
