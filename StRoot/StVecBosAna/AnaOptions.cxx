@@ -19,7 +19,6 @@ AnaOptions::AnaOptions() : TObject(),
    fJetPtMin(3.5),
    fRhicRunId(11),
    fIsMc(kFALSE),
-   fIsZ(kFALSE),
    fBosonType(kWBoson),
    fAnaDateTime(0),
    fAnaTimeReal(0),
@@ -173,7 +172,6 @@ void AnaOptions::ProcessOptions(int argc, char **argv)
 
       case 'z':
          fBosonType = kZBoson;
-         fIsZ  = kTRUE;
          break;
 
       default:
