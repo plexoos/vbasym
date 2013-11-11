@@ -15,9 +15,12 @@ VbAnaOptions::VbAnaOptions() : AnaOptions(),
 {
    // Declare the supported options
    fOptions.add_options()
-      ("help,h", "Print help message")
+      ("help,h",          "Print help message")
       ("filelist,f",      po::value<string>(&fListName), "Name of the file with input list")
       ("max-events,n",    po::value<uint32_t>(&fMaxEventsUser)->default_value(0), "Maximum number of events to process")
+      ("monte-carlo,m",   po::value<bool>(&fIsMc)->default_value(false), "Process input as Monte-Carlo")
+      ("wboson,w",        "Process input events as W boson events. Mutually exclusive with --zboson")
+      ("zboson,z",        "Process input events as Z boson events. Mutually exclusive with --wboson")
       ("fit-sine-phase",  po::value<double>(&fFitSinePhase)->default_value(M_PI_2)->implicit_value(DBL_MAX), "Value for phase")
       ("fit-sine-offset", po::value<double>(&fFitSineOffset)->default_value(0)->implicit_value(DBL_MAX), "Value for offset")
    ;
@@ -65,6 +68,22 @@ void VbAnaOptions::ProcessOptions(int argc, char **argv)
    {
       cout << "max-events: " << fMaxEventsUser << endl;
    }
+
+   if (fOptionsValues.count("monte-carlo"))
+   {
+      cout << "monte-carlo: " << fIsMc << endl;
+   }
+
+   if (fOptionsValues.count("zboson") && fOptionsValues.count("wboson")) {
+      Error("VbAnaOptions", "Only one option can be specified at a time: -w or -z");
+      exit(EXIT_FAILURE);
+   } else if (fOptionsValues.count("zboson")) {
+      fBosonType = kZBoson;
+   } else if (fOptionsValues.count("wboson")) {
+      fBosonType = kWBoson;
+   }
+
+   cout << "wboson, zboson: " << fBosonType << endl;
 
    if (fOptionsValues.count("fit-sine-phase"))
    {
