@@ -15,6 +15,7 @@
 #include "AsymCalculator.h"
 #include "WBosAsymHContainer.h"
 #include "WLepAsymHContainer.h"
+#include "Z0AsymHContainer.h"
 #include "WBosEvent.h"
 
 
@@ -80,13 +81,13 @@ void AllAsymHContainer::BookHists()
    d["asym_wlm_lumi"] = ph = new WLepAsymHContainer(new TDirectoryFile("asym_wlm_lumi", "asym_wlm_lumi", "", fDir), kAsymSqrtLumi);
    fHistCuts[kCUT_EVENT_W_MINUS].insert(ph);
 
-   d["asym_z"]       = ph = new ZBosAsymHContainer(new TDirectoryFile("asym_z",      "asym_z", "", fDir));
+   d["asym_z"]       = ph = new Z0AsymHContainer(new TDirectoryFile("asym_z",      "asym_z", "", fDir));
    fHistCuts[kCUT_EVENT_Z].insert(ph);
-   d["asym_z_phys"]  = ph = new ZBosAsymHContainer(new TDirectoryFile("asym_z_phys", "asym_z_phys", "", fDir), kAsymSqrtPhys);
+   d["asym_z_phys"]  = ph = new Z0AsymHContainer(new TDirectoryFile("asym_z_phys", "asym_z_phys", "", fDir), kAsymSqrtPhys);
    fHistCuts[kCUT_EVENT_Z].insert(ph);
-   d["asym_z_geom"]  = ph = new ZBosAsymHContainer(new TDirectoryFile("asym_z_geom", "asym_z_geom", "", fDir), kAsymSqrtGeom);
+   d["asym_z_geom"]  = ph = new Z0AsymHContainer(new TDirectoryFile("asym_z_geom", "asym_z_geom", "", fDir), kAsymSqrtGeom);
    fHistCuts[kCUT_EVENT_Z].insert(ph);
-   d["asym_z_lumi"]  = ph = new ZBosAsymHContainer(new TDirectoryFile("asym_z_lumi", "asym_z_lumi", "", fDir), kAsymSqrtLumi);
+   d["asym_z_lumi"]  = ph = new Z0AsymHContainer(new TDirectoryFile("asym_z_lumi", "asym_z_lumi", "", fDir), kAsymSqrtLumi);
    fHistCuts[kCUT_EVENT_Z].insert(ph);
 }
 
@@ -112,7 +113,7 @@ void AllAsymHContainer::Fill(ProtoEvent &ev)
    {
       Info("Fill", "ZBosEvent detected");
 
-      Fill(ev, kCUT_EVENT_Z)
+      Fill(ev, kCUT_EVENT_Z);
    }
 }
 
