@@ -46,8 +46,19 @@ AnaOptions::~AnaOptions()
 /** */
 void AnaOptions::ReadEnvVars()
 {
-   fEnvVars["VBASYM_DIR"] = getenv("VBASYM_DIR") ? getenv("VBASYM_DIR") : ".";
-   fEnvVars["VBASYM_RESULTS_DIR"] = getenv("VBASYM_RESULTS_DIR") ? getenv("VBASYM_RESULTS_DIR") : ".";
+   if (getenv("VBASYM_DIR")) {
+      fEnvVars["VBASYM_DIR"] = getenv("VBASYM_DIR");
+   } else {
+	   Warning("ReadEnvVars", "Environment variable VBASYM_DIR not set. Will assume current dir ./");
+      fEnvVars["VBASYM_DIR"] = ".";
+	}
+
+   if (getenv("VBASYM_RESULTS_DIR")) {
+      fEnvVars["VBASYM_RESULTS_DIR"] = getenv("VBASYM_RESULTS_DIR");
+	} else {
+	   Warning("ReadEnvVars", "Environment variable VBASYM_RESULTS_DIR not set. Will assume current dir ./");
+      fEnvVars["VBASYM_RESULTS_DIR"] = ".";
+	}
 
    fUserGroup = *gSystem->GetUserInfo();
 }
