@@ -69,6 +69,7 @@ void AsymHContainer::FillDerived()
 
          if (dss & sss) {
             fYieldPhiVsEta_Sss[sss]->Add(fYieldPhiVsEta_Dss[dss]);
+            fYieldPhiVsRap_Sss[sss]->Add(fYieldPhiVsRap_Dss[dss]);
             fYieldPhiVsPt_Sss[sss]->Add(fYieldPhiVsPt_Dss[dss]);
          }
       }
@@ -110,8 +111,10 @@ void AsymHContainer::PostFill()
    for ( ; iBeam!=gBeams.end(); ++iBeam)
    {
       EBeamId beamId = *iBeam;
-      ESingleSpinState sssUp = AsSingleSpinState(*iBeam, kSPIN_UP);
-      ESingleSpinState sssDn = AsSingleSpinState(*iBeam, kSPIN_UP);
+      ESingleSpinState sssUp = AsSingleSpinState(beamId, kSPIN_UP);
+      ESingleSpinState sssDn = AsSingleSpinState(beamId, kSPIN_DOWN);
+
+      Info("PostFill", "Considering beam: %s, and sssUp: %s, sssDn: %s", AsString(beamId).c_str(), AsString(sssUp).c_str(), AsString(sssDn).c_str());
 
       // Asymmetry vs. eta for beamId
       AsymCalculator::CalcAsimAsym(*fYieldPhiVsEta_Sss[sssUp], *fYieldPhiVsEta_Sss[sssDn], *fAsymVsPhiVsEta_Beam[beamId]);
