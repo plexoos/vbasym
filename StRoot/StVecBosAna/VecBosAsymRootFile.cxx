@@ -7,6 +7,7 @@
 #include "StEmcUtil/database/StBemcTables.h"
 #include "StEmcUtil/geometry/StEmcGeom.h"
 
+#include "AllAsymHContainer.h"
 #include "AsymHContainer.h"
 #include "EventHContainer.h"
 #include "EventDisplayHContainer.h"
@@ -64,38 +65,14 @@ void VecBosAsymRootFile::BookHists()
    fHists->d["event_display"] = ph = new EventDisplayHContainer(new TDirectoryFile("event_display", "event_display", "", this));
    fHistCuts[kCUT_EVENT_W].insert(ph);
 
-   fHists->d["asym_w"] = ph = new AsymHContainer(new TDirectoryFile("asym_w", "asym_w", "", this));
-   fHistCuts[kCUT_EVENT_W].insert(ph);
-
    fHists->d["event_wp"] = ph = new WBosEventHContainer(new TDirectoryFile("event_wp", "event_wp", "", this));
-   fHistCuts[kCUT_EVENT_W_PLUS].insert(ph);
-
-   fHists->d["asym_wp"] = ph = new AsymHContainer(new TDirectoryFile("asym_wp", "asym_wp", "", this));
-   fHistCuts[kCUT_EVENT_W_PLUS].insert(ph);
-
-   fHists->d["asym_wp_phys"] = ph = new AsymHContainer(new TDirectoryFile("asym_wp_phys", "asym_wp_phys", "", this), kAsymSqrtPhys);
-   fHistCuts[kCUT_EVENT_W_PLUS].insert(ph);
-
-   fHists->d["asym_wp_geom"] = ph = new AsymHContainer(new TDirectoryFile("asym_wp_geom", "asym_wp_geom", "", this), kAsymSqrtGeom);
-   fHistCuts[kCUT_EVENT_W_PLUS].insert(ph);
-
-   fHists->d["asym_wp_lumi"] = ph = new AsymHContainer(new TDirectoryFile("asym_wp_lumi", "asym_wp_lumi", "", this), kAsymSqrtLumi);
    fHistCuts[kCUT_EVENT_W_PLUS].insert(ph);
 
    fHists->d["event_wm"] = ph = new WBosEventHContainer(new TDirectoryFile("event_wm", "event_wm", "", this));
    fHistCuts[kCUT_EVENT_W_MINUS].insert(ph);
 
-   fHists->d["asym_wm"] = ph = new AsymHContainer(new TDirectoryFile("asym_wm", "asym_wm", "", this));
-   fHistCuts[kCUT_EVENT_W_MINUS].insert(ph);
-
-   fHists->d["asym_wm_phys"] = ph = new AsymHContainer(new TDirectoryFile("asym_wm_phys", "asym_wm_phys", "", this), kAsymSqrtPhys);
-   fHistCuts[kCUT_EVENT_W_MINUS].insert(ph);
-
-   fHists->d["asym_wm_geom"] = ph = new AsymHContainer(new TDirectoryFile("asym_wm_geom", "asym_wm_geom", "", this), kAsymSqrtGeom);
-   fHistCuts[kCUT_EVENT_W_MINUS].insert(ph);
-
-   fHists->d["asym_wm_lumi"] = ph = new AsymHContainer(new TDirectoryFile("asym_wm_lumi", "asym_wm_lumi", "", this), kAsymSqrtLumi);
-   fHistCuts[kCUT_EVENT_W_MINUS].insert(ph);
+   fHists->d["asym"] = ph = new AllAsymHContainer(new TDirectoryFile("asym", "asym", "", this));
+   fHistCuts[kCUT_EVENT_W].insert(ph);
 
    if (!fIsMc) return;
 
