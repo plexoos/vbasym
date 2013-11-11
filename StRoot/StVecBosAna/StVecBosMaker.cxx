@@ -284,6 +284,8 @@ Int_t StVecBosMaker::InitRun(int runNo)
          if (mStSpinDbMaker->isBXfilledUsingInternalBX(bx))
             hbxIdeal->Fill(bx);
       }
+   } else {
+      Fatal("InitRun", "StSpinDbMaker is likely not set");
    }
 
    return kStOK;
@@ -806,16 +808,12 @@ int StVecBosMaker::ReadMuDstBarrelTrig()
    mVecBosEvent->bx7  = trig->bunchCrossingId7bit(mRunNo);
 
    // you do not want mix Long & Trans by accident
-   if ( mStSpinDbMaker && mStSpinDbMaker->isValid() )
-   {
-      mVecBosEvent->bxStar48          = mStSpinDbMaker->BXstarUsingBX48(mVecBosEvent->bx48);
-      mVecBosEvent->bxStar7           = mStSpinDbMaker->BXstarUsingBX7(mVecBosEvent->bx7);
-      mVecBosEvent->mSpinPattern4Bits = mStSpinDbMaker->spin4usingBX48(mVecBosEvent->bx48);
-      mVecBosEvent->mSpinDirection    = mStSpinDbMaker->isPolDirLong() ? polDirLong :
-                                       (mStSpinDbMaker->isPolDirTrans() ? polDirTrans : -1);
-   } else {
-      Info("ReadMuDstBarrelTrig()", "No valid mStSpinDbMaker");
-   }
+   // Removed the check mStSpinDbMaker->isValid()
+   mVecBosEvent->bxStar48          = mStSpinDbMaker->BXstarUsingBX48(mVecBosEvent->bx48);
+   mVecBosEvent->bxStar7           = mStSpinDbMaker->BXstarUsingBX7(mVecBosEvent->bx7);
+   mVecBosEvent->mSpinPattern4Bits = mStSpinDbMaker->spin4usingBX48(mVecBosEvent->bx48);
+   mVecBosEvent->mSpinDirection    = mStSpinDbMaker->isPolDirLong() ? polDirLong :
+                                    (mStSpinDbMaker->isPolDirTrans() ? polDirTrans : -1);
 
    // Check trigger ID exists = fired
    if ( (mL2BarrelTriggerId  != 0 && !triggerIdCollection->nominal().isTrigger(mL2BarrelTriggerId)) &&
