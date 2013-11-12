@@ -1,6 +1,8 @@
 #ifndef EventDisplayHContainer_h
 #define EventDisplayHContainer_h
 
+#include <stdint.h>
+
 #include "TDirectoryFile.h"
 
 #include "utils/PlotHelper.h"

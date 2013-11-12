@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 #include <sys/stat.h>
+#include <stdint.h>
 
 #include "TObject.h"
 #include "TSystem.h"
