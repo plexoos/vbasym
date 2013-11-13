@@ -1,8 +1,6 @@
 WANA_DIR      = .
-LIB_DIR       = $(WANA_DIR)
 SRC_DIR       = $(WANA_DIR)
 INC_DIR       = $(WANA_DIR)
-BIN_DIR       = $(WANA_DIR)
 
 ARCH         := $(shell root-config --arch)
 
@@ -18,13 +16,15 @@ ROOTGLIBS    := $(shell root-config --glibs)
 # Linux with egcs, gcc 2.9x, gcc 3.x (>= RedHat 5.2)
 CXX           = g++
 
-STAR_INC_DIRS = -I../ -I../StRoot -I../.sl53_gcc432/include -I/afs/rhic.bnl.gov/star/packages/$(STAR_VERSION)/StRoot/ \
-                -I/afs/rhic.bnl.gov/star/packages/$(STAR_VERSION)/.sl53_gcc432/include/ \
-                -I/afs/rhic.bnl.gov/star/packages/$(STAR_VERSION)/StRoot/StJetMaker/tracks/ \
-                -I../.sl53_gcc432/obj/StRoot
+STAR_INC_DIRS = -I../ -I../StRoot -I$(VBASYM_DIR)/.$(STAR_HOST_SYS)/include \
+                -I/afs/rhic.bnl.gov/star/packages/$(STAR_VERSION)/.$(STAR_HOST_SYS)/include/ \
+                -I/afs/rhic.bnl.gov/star/packages/$(STAR_VERSION)/StRoot/ \
+                -I/afs/rhic.bnl.gov/star/packages/$(STAR_VERSION)/StRoot/StJetMaker/tracks/
 
-STAR_LIB_DIRS = -L../.sl53_gcc432/lib -L/afs/rhic.bnl.gov/star/packages/$(STAR_VERSION)/.sl53_gcc432/lib \
-                -L/afs/rhic.bnl.gov/star/packages/$(STAR_VERSION)/.sl53_gcc432/LIB -L$(OPTSTAR)/lib
+STAR_LIB_DIRS = -L$(VBASYM_DIR)/.$(STAR_HOST_SYS)/lib \
+                -L$(STAR_LIB) \
+                -L/afs/rhic.bnl.gov/star/packages/$(STAR_VERSION)/.$(STAR_HOST_SYS)/LIB \
+                -L$(OPTSTAR)/lib
 
 MYSQL_LIB_DIR = -L/usr/lib/mysql
 MYSQL_LIB     = -lmysqlclient
@@ -54,7 +54,6 @@ LDFLAGS      += -Wl,-Bdynamic -Wl,--warn-unresolved-symbols -Wl,-rpath,/star/u/s
 #------------------------------------------------------------------------------
 
 STAR_LIBS     = -lfastjet \
-                -lCDFConesPlugin \
                 -lSt_base \
                 -lStChain \
                 -lStarRoot \
@@ -131,7 +130,7 @@ lumi_calc: lumi_calc.o
 	@echo "$@ done"
 
 events_calc: events_calc.o
-	$(LD) -o $@ events_calc.o $(LDFLAGS) $(LIB_DIRS) $(LIBS)
+	$(LD) -o $@ events_calc.o $(LDFLAGS)
 	@echo "$@ done"
 
 $(SRC_DIR)/%.o : $(SRC_DIR)/%.cxx $(INC_DIR)/%.h
