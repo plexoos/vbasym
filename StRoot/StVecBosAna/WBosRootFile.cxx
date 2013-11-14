@@ -1,4 +1,4 @@
-#include "VecBosAsymRootFile.h"
+#include "WBosRootFile.h"
 
 #include <climits>
 #include <sstream>
@@ -14,6 +14,7 @@
 #include "WBosEventHContainer.h"
 #include "MCHContainer.h"
 #include "WBosEvent.h"
+#include "ZBosEvent.h"
 #include "VecBosTrack.h"
 #include "VecBosVertex.h"
 
@@ -22,13 +23,13 @@
 using namespace std;
 
 
-VecBosAsymRootFile::VecBosAsymRootFile() : VecBosRootFile()
+WBosRootFile::WBosRootFile() : VecBosRootFile()
 {
    BookHists();
 }
 
 
-VecBosAsymRootFile::VecBosAsymRootFile(const char *fname, Option_t *option, Bool_t isMc, Bool_t isZ, const char *ftitle, Int_t compress) :
+WBosRootFile::WBosRootFile(const char *fname, Option_t *option, Bool_t isMc, Bool_t isZ, const char *ftitle, Int_t compress) :
   VecBosRootFile(fname, option, isMc, isZ, ftitle, compress)
 {
    gBTowGeom = StEmcGeom::instance("bemc");
@@ -37,13 +38,12 @@ VecBosAsymRootFile::VecBosAsymRootFile(const char *fname, Option_t *option, Bool
 }
 
 
-VecBosAsymRootFile::~VecBosAsymRootFile()
+WBosRootFile::~WBosRootFile()
 {
-   //if (fHists) { delete fHists; fHists = 0; }
 }
 
 
-void VecBosAsymRootFile::BookHists()
+void WBosRootFile::BookHists()
 {
    // Delete histograms created in parent class
    if (fHists) { delete fHists; fHists = 0; }
@@ -84,7 +84,7 @@ void VecBosAsymRootFile::BookHists()
 
 
 /** */
-void VecBosAsymRootFile::Fill(ProtoEvent &ev)
+void WBosRootFile::Fill(ProtoEvent &ev)
 {
    WBosEvent& w_event = (WBosEvent&) ev;
 
@@ -104,7 +104,7 @@ void VecBosAsymRootFile::Fill(ProtoEvent &ev)
 
 
 /** */
-void VecBosAsymRootFile::Fill(ProtoEvent &ev, ECut cut)
+void WBosRootFile::Fill(ProtoEvent &ev, ECut cut)
 {
    VecBosRootFile::Fill(ev, cut);
 }
