@@ -42,18 +42,23 @@ void AsymCalculator::CalcAsimAsym(TH2I &hUp, TH2I &hDown, TH2D &hAsym)
 {
    for (int iBinX=1; iBinX<=hUp.GetNbinsX(); iBinX++)
    {
-      TH1I *hUpSlice = (TH1I*) hUp.ProjectionY("hUpSlice", iBinX, iBinX);
-      TH1I *hDwSlice = (TH1I*) hDown.ProjectionY("hDwSlice", iBinX, iBinX);
+      TH1I *hUpSlice = (TH1I*) hUp.ProjectionY( (string(hUp.GetName())+"_projy").c_str(), iBinX, iBinX);
+      TH1I *hDwSlice = (TH1I*) hDown.ProjectionY( (string(hDown.GetName())+"_projy").c_str(), iBinX, iBinX);
 
       TH1D hAsymSlice("hAsymSlice", "hAsymSlice", hUpSlice->GetNbinsX(), hUpSlice->GetXaxis()->GetXmin(), hUpSlice->GetXaxis()->GetXmax());
 
       // Check if there are events in the histograms
       if (!hUpSlice->Integral() && !hDwSlice->Integral()) {
          Warning("CalcAsimAsym(TH2I ...)", "Both up and down spin state histograms are empty. No asymmetry will be calculated.");
+         delete hUpSlice;
+         delete hDwSlice;
          continue;
       }
 
       CalcAsimAsym(*hUpSlice, *hDwSlice, hAsymSlice);
+
+      delete hUpSlice;
+      delete hDwSlice;
 
       for (int iBinY=1; iBinY<=hUp.GetNbinsY(); iBinY++)
       {
