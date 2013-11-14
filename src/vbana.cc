@@ -5,8 +5,10 @@
 
 #include "StRoot/StVecBosAna/AsymCalculator.h"
 #include "StRoot/StVecBosAna/WBosEvent.h"
+#include "StRoot/StVecBosAna/ZBosEvent.h"
 #include "StRoot/StVecBosAna/VecBosRootFile.h"
-#include "StRoot/StVecBosAna/VecBosAsymRootFile.h"
+#include "StRoot/StVecBosAna/WBosRootFile.h"
+#include "StRoot/StVecBosAna/ZBosRootFile.h"
 #include "StRoot/StVecBosAna/VbAnaOptions.h"
 
 #include "utils/utils.h"
@@ -31,10 +33,20 @@ int main(int argc, char *argv[])
    Info("main", "nMaxUserEvents: %d", nMaxUserEvents);
    Info("main", "histFileName:   %s", histFileName.c_str());
 
-   //VecBosRootFile  vecBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.fIsMc);
-   VecBosAsymRootFile  vecBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.fIsMc); // to create the Asymmetry histograms 
    AsymCalculator::sVbAnaOptions = &vbAnaOptions;
-   VecBosEvent *vecBosEvent = new WBosEvent();
+   VecBosRootFile *vecBosRootFile;
+   VecBosEvent    *vecBosEvent;
+
+	if (vbAnaOptions.GetBosonType() == kWBoson)
+	{
+      vecBosRootFile = new WBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc());
+      vecBosEvent    = new WBosEvent();
+
+	} else if (vbAnaOptions.GetBosonType() == kZBoson)
+	{
+      vecBosRootFile = new ZBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc());
+      vecBosEvent    = new ZBosEvent();
+	}
 
    TObject *o;
    TIter   *next = new TIter(utils::getFileList( vbAnaOptions.GetListFileName() ));
@@ -45,7 +57,7 @@ int main(int argc, char *argv[])
    {
       string fName    = string(((TObjString*) o)->GetName());
       string fileName = vbAnaOptions.GetResultsDir() + "/tree/";
-      fileName += (vbAnaOptions.fIsMc ? "" : "R") + fName + "_tree.root";
+      fileName += (vbAnaOptions.IsMc() ? "" : "R") + fName + "_tree.root";
 
       TFile *f = new TFile(fileName.c_str(), "READ");
 
@@ -79,7 +91,7 @@ int main(int argc, char *argv[])
 
          vbTree->GetEntry(iEvent-1);
          //vecBosEvent->Print();
-         vecBosRootFile.Fill(*vecBosEvent);
+         vecBosRootFile->Fill(*vecBosEvent);
       }
 
       f->Close();
@@ -93,12 +105,12 @@ int main(int argc, char *argv[])
 
    delete vecBosEvent;
 
-   vecBosRootFile.FillDerived();
-   vecBosRootFile.PostFill();
+   vecBosRootFile->FillDerived();
+   vecBosRootFile->PostFill();
 
-   //vecBosRootFile.SaveAs((string) "^.*$", vbAnaOptions.GetImageDir());
-   vecBosRootFile.Print();
-   vecBosRootFile.Close();
+   vecBosRootFile->SaveAs((string) "^.*$", vbAnaOptions.GetImageDir());
+   vecBosRootFile->Print();
+   vecBosRootFile->Close();
 
    stopwatch.Print();
 

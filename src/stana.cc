@@ -75,7 +75,7 @@ int analyzeMuDst(AnaOptions &anaOptions, bool findZ)
 {
    UInt_t  maxEventsUser       = anaOptions.GetMaxEventsUser();
    string  inMuDstFileListName = anaOptions.GetListName();
-   bool    isMC                = anaOptions.fIsMc;                      // 0: run9-data; 200: new MC w/ EEss in BFC
+   bool    isMC                = anaOptions.IsMc();
    int     useJetFinder        = anaOptions.fDoReconstructJets ? 1 : 2; // 0: no jets = badWalgo; 1: generate jet trees; 2 read jet trees
    Float_t jetPtMin            = anaOptions.fJetPtMin;
    Float_t tracksPtMin         = anaOptions.fTracksPtMin;
