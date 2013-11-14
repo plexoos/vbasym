@@ -11,26 +11,27 @@ using namespace std;
 
 
 /** */
-AnaOptions::AnaOptions() : TObject(),
-   fSuffix(""),
-   fModes(0),
-   fDoReconstructJets(kFALSE),
-   fTracksPtMin(0.),
-   fJetPtMin(3.5),
-   fRhicRunId(11),
-   fIsMc(kFALSE),
-   fBosonType(kWBoson),
-   fAnaDateTime(0),
-   fAnaTimeReal(0),
-   fAnaTimeCpu (0),
-   fEnvVars(),
-   fFileStdLog(0),
-   fFileStdLogName("stdoe"), fFlagCopyResults(kFALSE),
-   fFlagUpdateDb(kFALSE),
-   fUserGroup(),
-   fListName("undefined"),
-   fOutFileName("vbasym"),
-   fMaxEventsUser(0)
+AnaOptions::AnaOptions() : TObject()
+   , fSuffix("")
+   , fModes(0)
+   , fDoReconstructJets(kFALSE)
+   , fTracksPtMin(0.)
+   , fJetPtMin(0.5)
+   , fRhicRunId(11)
+   , fAnaDateTime(0)
+   , fAnaTimeReal(0)
+   , fAnaTimeCpu (0)
+   , fEnvVars()
+   , fFileStdLog(0)
+   , fFileStdLogName("stdoe")
+   , fFlagCopyResults(kFALSE)
+   , fFlagUpdateDb(kFALSE)
+   , fUserGroup()
+   , fListName("undefined")
+   , fOutFileName("vbasym")
+   , fMaxEventsUser(0)
+   , fIsMc(kFALSE)
+   , fBosonType(kWBoson)
 {
    ReadEnvVars();
 }
@@ -93,6 +94,8 @@ string AnaOptions::GetImageDir()       const { return GetResultsDir() + "/images
 string AnaOptions::GetStdLogFileName() const { return GetResultsDir() + "/" + fFileStdLogName + GetSuffix() + ".log"; }
 string AnaOptions::GetRootFileName()   const { return GetResultsDir() + "/" + fOutFileName + GetSuffix() + ".root"; }
 string AnaOptions::GetListFileName()   const { return GetVbAsymDir() + "/runlists/" + fListName; }
+EBosonType AnaOptions::GetBosonType()   const { return fBosonType; }
+bool AnaOptions::IsMc()   const { return fIsMc; }
 uint32_t AnaOptions::GetMaxEventsUser() const { return fMaxEventsUser; }
 
 

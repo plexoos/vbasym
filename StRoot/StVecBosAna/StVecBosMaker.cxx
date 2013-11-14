@@ -188,10 +188,10 @@ Int_t StVecBosMaker::Init()
       mTreeFile->cd();
       mVecBosTree = new TTree("t", "mVecBosTree");
 
-      if (mAnaOptions->fBosonType == kWBoson) {
+      if (mAnaOptions->GetBosonType() == kWBoson) {
          mVecBosEvent = new WBosEvent();
          mVecBosTree->Branch("e", "WBosEvent", &mVecBosEvent, 128000, 0); // splitlevel=0. very important for custom streamers
-      } else if (mAnaOptions->fBosonType == kZBoson) {
+      } else if (mAnaOptions->GetBosonType() == kZBoson) {
          mVecBosEvent = new ZBosEvent();
          mVecBosTree->Branch("e", "ZBosEvent", &mVecBosEvent, 128000, 0); // splitlevel=0. very important for custom streamers
       } else

@@ -36,8 +36,6 @@ public:
    float            fTracksPtMin;
    float            fJetPtMin;
    unsigned short   fRhicRunId;         //< RHIC run id, e.g. 9, 11, 12, 13, ...
-   bool             fIsMc;
-   EBosonType       fBosonType;
    time_t           fAnaDateTime;       //< Date/time when data analysis started
    double           fAnaTimeReal;       //< Time in seconds to process input raw file
    double           fAnaTimeCpu;        //< Time in seconds to process input raw file
@@ -47,8 +45,6 @@ public:
    bool             fFlagCopyResults;
    bool             fFlagUpdateDb;
    UserGroup_t      fUserGroup;
-
-public:
 
    AnaOptions();
    virtual ~AnaOptions();
@@ -60,6 +56,8 @@ public:
    std::string  GetStdLogFileName() const;
    std::string  GetRootFileName() const;
    std::string  GetListFileName() const;
+   EBosonType   GetBosonType() const;
+   bool         IsMc() const;
    void         SetListName(std::string listName) { fListName = listName; }
    std::string  GetListName() const { return fListName; }
    uint32_t     GetMaxEventsUser() const;
@@ -77,6 +75,8 @@ protected:
    std::string fListName;
    std::string fOutFileName;
    uint32_t    fMaxEventsUser;
+   bool        fIsMc;
+   EBosonType  fBosonType;
 
    ClassDef(AnaOptions, 1)
 };
