@@ -80,6 +80,7 @@ void AsymHContainer::FillDerived()
 
       TH1D* hProjTmp = fYieldPhiVsPt_Sss[sss]->ProjectionY();
       utils::CopyBinContentError(hProjTmp, fYieldPhi_PtProj_Sss[sss]);
+      delete hProjTmp;
    }
 }
 
