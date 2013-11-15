@@ -20,7 +20,7 @@ include("head.html");
 
 <h1>Analysis results</h1>
 
-<h2>W boson</h2>
+<h2>W and Z Boson Asymmetry</h2>
 
 <ul>
 
