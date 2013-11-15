@@ -52,15 +52,15 @@ void Z0AsymHContainer::BookHists()
       string sDblSpinState = AsString(dss);
 
       shName = "hZBosonPhiVsEta_" + sDblSpinState;
-      h2i = new rh::H2I(shName.c_str(), "; Z Boson #eta; Z Boson #phi;", 1, -6, 6, 4, -M_PI, M_PI, "colz");
+      h2i = new rh::H2I(shName.c_str(), "; Z Boson #eta; Z Boson #phi;", 1, -6, 6, 6, -M_PI, M_PI, "colz");
       o[shName] = fYieldPhiVsEta_Dss[dss] = h2i;
 
       shName = "hZBosonPhiVsRap_" + sDblSpinState;
-      h2i = new rh::H2I(shName.c_str(), "; Z Boson Rapidity; Z Boson #phi;", 1, -1.5, 1.5, 4, -M_PI, M_PI, "colz");
+      h2i = new rh::H2I(shName.c_str(), "; Z Boson Rapidity; Z Boson #phi;", 1, -1.5, 1.5, 6, -M_PI, M_PI, "colz");
       o[shName] = fYieldPhiVsRap_Dss[dss] = h2i;
 
       shName = "hZBosonPhiVsPt_" + sDblSpinState;
-      h2i = new rh::H2I(shName.c_str(), "; Z Boson P_{T}; Z Boson #phi;", 1, 0, 25, 4, -M_PI, M_PI, "colz");
+      h2i = new rh::H2I(shName.c_str(), "; Z Boson P_{T}; Z Boson #phi;", 1, 0, 25, 6, -M_PI, M_PI, "colz");
       o[shName] = fYieldPhiVsPt_Dss[dss] = h2i;
    }
 
@@ -71,19 +71,19 @@ void Z0AsymHContainer::BookHists()
       string sSnglSpinState = AsString(sss);
 
       shName = "hZBosonPhiVsEta_" + sSnglSpinState;
-      h2i = new rh::H2I(shName.c_str(), "; Z Boson #eta; Z Boson #phi;", 1, -6, 6, 4, -M_PI, M_PI, "colz");
+      h2i = new rh::H2I(shName.c_str(), "; Z Boson #eta; Z Boson #phi;", 1, -6, 6, 6, -M_PI, M_PI, "colz");
       o[shName] = fYieldPhiVsEta_Sss[sss] = h2i;
 
       shName = "hZBosonPhiVsRap_" + sSnglSpinState;
-      h2i = new rh::H2I(shName.c_str(), "; Z Boson Rapidity; Z Boson #phi;", 1, -1.5, 1.5, 4, -M_PI, M_PI, "colz");
+      h2i = new rh::H2I(shName.c_str(), "; Z Boson Rapidity; Z Boson #phi;", 1, -1.5, 1.5, 6, -M_PI, M_PI, "colz");
       o[shName] = fYieldPhiVsRap_Sss[sss] = h2i;
 
       shName = "hZBosonPhiVsPt_" + sSnglSpinState;
-      h2i = new rh::H2I(shName.c_str(), "; Z Boson P_{T}; Z Boson #phi;", 1, 0, 25, 4, -M_PI, M_PI, "colz");
+      h2i = new rh::H2I(shName.c_str(), "; Z Boson P_{T}; Z Boson #phi;", 1, 0, 25, 6, -M_PI, M_PI, "colz");
       o[shName] = fYieldPhiVsPt_Sss[sss] = h2i;
 
       shName = "hZBosonPhi_PtProj_" + sSnglSpinState;
-      h1i = new rh::H1I(shName.c_str(), "; Z Boson #phi; Events;", 4, -M_PI, M_PI, "E1 GRIDX GRIDY");
+      h1i = new rh::H1I(shName.c_str(), "; Z Boson #phi; Events;", 6, -M_PI, M_PI, "E1 GRIDX GRIDY");
       o[shName] = fYieldPhi_PtProj_Sss[sss] = h1i;
    }
 
@@ -95,75 +95,75 @@ void Z0AsymHContainer::BookHists()
 
       // Asymmetry vs Phi vs eta
       shName = "hZBosonAsymVsPhiVsEta_" + sBeam;
-      h2d = new rh::H2D(shName.c_str(), "; Z Boson #eta; Z Boson #phi;", 1, -6, 6, 4, -M_PI, M_PI, "colz");
+      h2d = new rh::H2D(shName.c_str(), "; Z Boson #eta; Z Boson #phi;", 1, -6, 6, 6, -M_PI, M_PI, "colz");
       o[shName] = fAsymVsPhiVsEta_Beam[beamId] = h2d;
 
       // Asymmetry amplitude vs eta
       shName = "hZBosonAsymAmpVsEta_" + sBeam;
       h1d = new rh::H1D(shName.c_str(), "; Z Boson #eta; Asym Amp.;", 1, -6, 6, "E1 GRIDX GRIDY");
-      h1d->GetYaxis()->SetRangeUser(-1.5, 1.5);
+      h1d->GetYaxis()->SetRangeUser(-1, 1);
       o[shName] = fAsymAmpVsEta_Beam[beamId] = h1d;
 
       // Multigraph container with graphs for individual slices/bins
       shName = "mgrZBosonAsymVsPhi_EtaBins_" + sBeam;
       mg = new rh::MultiGraph(shName, shName);
       h1f = new TH1F(shName.c_str(), "; Z Boson #phi; Asym.;", 1, -M_PI, M_PI);
-      h1f->GetYaxis()->SetRangeUser(-1.5, 1.5);
+      h1f->GetYaxis()->SetRangeUser(-1, 1);
       mg->SetHistogram(h1f);
       o[shName] = fAsymVsPhi_EtaBins_Beam[beamId] = mg;
 
       // Asymmetry vs Phi vs rapidity
       shName = "hZBosonAsymVsPhiVsRap_" + sBeam;
-      h2d = new rh::H2D(shName.c_str(), "; Z Boson Rapidity; Z Boson #phi;", 1, -1.5, 1.5, 4, -M_PI, M_PI, "colz");
+      h2d = new rh::H2D(shName.c_str(), "; Z Boson Rapidity; Z Boson #phi;", 1, -1.5, 1.5, 6, -M_PI, M_PI, "colz");
       o[shName] = fAsymVsPhiVsRap_Beam[beamId] = h2d;
 
       // Asymmetry amplitude vs rapidity
       shName = "hZBosonAsymAmpVsRap_" + sBeam;
       h1d = new rh::H1D(shName.c_str(), "; Z Boson Rapidity; Asym Amp.;", 1, -1.5, 1.5, "E1 GRIDX GRIDY");
-      h1d->GetYaxis()->SetRangeUser(-1.5, 1.5);
+      h1d->GetYaxis()->SetRangeUser(-1, 1);
       o[shName] = fAsymAmpVsRap_Beam[beamId] = h1d;
 
       // Multigraph container with graphs for individual slices/bins
       shName = "mgrZBosonAsymVsPhi_RapBins_" + sBeam;
       mg = new rh::MultiGraph(shName, shName);
       h1f = new TH1F(shName.c_str(), "; Z Boson #phi; Asym.;", 1, -M_PI, M_PI);
-      h1f->GetYaxis()->SetRangeUser(-1.5, 1.5);
+      h1f->GetYaxis()->SetRangeUser(-1, 1);
       mg->SetHistogram(h1f);
       o[shName] = fAsymVsPhi_RapBins_Beam[beamId] = mg;
 
       // Asymmetry vs phi vs p_T
       shName = "hZBosonAsymVsPhiVsPt_" + sBeam;
-      h2d = new rh::H2D(shName.c_str(), "; Z Boson P_{T}; Z Boson #phi;", 1, 0, 25, 4, -M_PI, M_PI, "colz");
+      h2d = new rh::H2D(shName.c_str(), "; Z Boson P_{T}; Z Boson #phi;", 1, 0, 25, 6, -M_PI, M_PI, "colz");
       o[shName] = fAsymVsPhiVsPt_Beam[beamId] = h2d;
 
       // Asymmetry amplitude vs p_T
       shName = "hZBosonAsymAmpVsPt_" + sBeam;
       h1d = new rh::H1D(shName.c_str(), "; Z Boson P_{T}; Asym Amp.;", 1, 0, 25, "E1 GRIDX GRIDY");
-      h1d->GetYaxis()->SetRangeUser(-1.5, 1.5);
+      h1d->GetYaxis()->SetRangeUser(-1, 1);
       o[shName] = fAsymAmpVsPt_Beam[beamId] = h1d;
 
       // Multigraph container with graphs for individual slices/bins
       shName = "mgrZBosonAsymVsPhi_PtBins_" + sBeam;
       mg = new rh::MultiGraph(shName, shName);
       h1f = new TH1F(shName.c_str(), "; Z Boson #phi; Asym.;", 1, -M_PI, M_PI);
-      h1f->GetYaxis()->SetRangeUser(-1.5, 1.5);
+      h1f->GetYaxis()->SetRangeUser(-1, 1);
       mg->SetHistogram(h1f);
       o[shName] = fAsymVsPhi_PtBins_Beam[beamId] = mg;
    }
 
    shName = "hZBosonAsymAmpVsEta_";
    h1d = new rh::H1D(shName.c_str(), "; Z Boson #eta; Asym Amp.;", 1, -6, 6, "E1 GRIDX GRIDY");
-   h1d->GetYaxis()->SetRangeUser(-1.5, 1.5);
+   h1d->GetYaxis()->SetRangeUser(-1, 1);
    o[shName] = fAsymAmpVsEta = h1d;
 
    shName = "hZBosonAsymAmpVsRap_";
    h1d = new rh::H1D(shName.c_str(), "; Z Boson Rapidity; Asym Amp.;", 1, -1.5, 1.5, "E1 GRIDX GRIDY");
-   h1d->GetYaxis()->SetRangeUser(-1.5, 1.5);
+   h1d->GetYaxis()->SetRangeUser(-1, 1);
    o[shName] = fAsymAmpVsRap = h1d;
 
    shName = "hZBosonAsymAmpVsPt_";
    h1d = new rh::H1D(shName.c_str(), "; Z Boson P_{T}; Asym Amp.;", 1, 0, 25, "E1 GRIDX GRIDY");
-   h1d->GetYaxis()->SetRangeUser(-1.5, 1.5);
+   h1d->GetYaxis()->SetRangeUser(-1, 1);
    o[shName] = fAsymAmpVsPt = h1d;
 }
 
