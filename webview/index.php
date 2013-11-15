@@ -20,6 +20,8 @@ include("head.html");
 
 <h1>Analysis results</h1>
 
+<h2>W boson</h2>
+
 <ul>
 
 <li><b>Asymmetry sine fits with phase=pi/2 and offset=0</b>
