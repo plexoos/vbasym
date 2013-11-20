@@ -5,10 +5,12 @@ class PlotHelper {
    var $dir;
    var $ps;
 
+
    function PlotHelper($dir, $ps=null) {
       $this->dir = $dir;
       $this->ps  = $ps;
    }
+
 
    function img($pName, $thumb=false, $w=null, $href=null)
    {
@@ -25,6 +27,17 @@ class PlotHelper {
       }
 
       $html = "<a href=\"$imgHref\"><img $strWidth src=\"$imgSrc\" class='thumbimage'></a>";
+		return $html;
+   }
+
+
+   function htmlLinkHistContents($pName)
+   {
+	   $pi = pathinfo($pName);
+
+	   $href = "{$this->dir}/{$pName}";
+
+      $html = "<a href=\"$href\">{$pi['basename']}</a>";
 		return $html;
    }
 }
