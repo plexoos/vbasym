@@ -9,5 +9,6 @@ $ASYM_TYPE_SUFFIXES = array("", "phys", "geom", "lumi");
 $VECBOS_TYPE_SUFFIXES = array("+1" => "wp", "-1" => "wm");
 $LEPTON_TYPE_SUFFIXES = array("+1" => "wlp", "-1" => "wlm");
 $VECBOS_TYPE_HUMAN_DESCR = array("+1" => "W<sup>+</sup>", "-1" => "W<sup>-</sup>");
+$SPIN_STATES = array("-1" => "d", "1" => "u", "0" => "0");
 
 ?>
