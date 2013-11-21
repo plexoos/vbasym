@@ -28,13 +28,11 @@ STAR_LIB_DIRS = -L$(VBASYM_DIR)/.$(STAR_HOST_SYS)/lib \
 
 MYSQL_LIB_DIR = -L/usr/lib/mysql
 MYSQL_LIB     = -lmysqlclient
-#UTILS_LIB_DIR = -L/star/u/smirnovd/root-helper/build/utils
-UTILS_LIB_DIR = -L/star/u/fazio/root-helper/build/utils
-#UTILS_INC_DIR = -I/star/u/smirnovd/root-helper/
-UTILS_INC_DIR = -I/star/u/fazio/root-helper/
+UTILS_LIB_DIR = /star/u/smirnovd/root-helper/build/utils
+UTILS_INC_DIR = -I/star/u/smirnovd/root-helper/
 UTILS_LIB     = -lroot-helper-utils-shared
 BOOST_INC_DIR = -I/star/u/smirnovd/usr/local/include/
-BOOST_LIB_DIR = -L/star/u/smirnovd/usr/local/lib/
+BOOST_LIB_DIR = /star/u/smirnovd/usr/local/lib/
 BOOST_LIBS    = -lboost_program_options
 
 # if you plan to do a whole lot of debugging, remove '-O' switch(es)
@@ -46,12 +44,12 @@ LD            = g++
 SOFLAGS       = -shared $(ROOTCFLAGS)
 
 LIBS          = $(STAR_LIBS) -lStVecBosAna $(UTILS_LIB) $(ROOTLIBS) $(BOOST_LIBS) -lTable -lMinuit -lTreePlayer -lGeom -lrt
-LIB_DIRS      = $(BOOST_LIB_DIR) $(STAR_LIB_DIRS) $(UTILS_LIB_DIR)
+LIB_DIRS      = -L$(BOOST_LIB_DIR) $(STAR_LIB_DIRS) -L$(UTILS_LIB_DIR)
 
 LDFLAGS       = $(shell root-config --ldflags)
 #LDFLAGS      += -Wl,-rpath,.sl53_gcc432/lib:/afs/rhic.bnl.gov/star/packages/$(STAR_VERSION)/.sl53_gcc432/lib:/afs/rhic.bnl.gov/star/ROOT/5.22.00/.sl53_gcc432/rootdeb/lib,--warn-unresolved-symbols
-LDFLAGS      += -Wl,-Bdynamic -Wl,--warn-unresolved-symbols -Wl,-rpath,/star/u/fazio/root-helper/build/utils \
-                -Wl,-rpath,/star/u/smirnovd/usr/local/lib/
+LDFLAGS      += -Wl,-Bdynamic -Wl,--warn-unresolved-symbols -Wl,-rpath,$(UTILS_LIB_DIR) \
+                -Wl,-rpath,$(BOOST_LIB_DIR)
 
 #------------------------------------------------------------------------------
 
@@ -79,6 +77,10 @@ STAR_LIBS     = -lfastjet \
                 -lStStrangeMuDstMaker \
                 -lStMuDSTMaker \
                 -lStDaqLib \
+                -lStFtpcSlowSimMaker \
+                -lStFtpcTrackMaker \
+                -lStFtpcClusterMaker \
+                -lStFtpcTrackMaker \
                 -lStDAQMaker \
                 -lStDetectorDbMaker \
                 -lStTpcDb \
@@ -106,7 +108,8 @@ STAR_LIBS     = -lfastjet \
                 -lStMcEventMaker \
                 -lStEmcSimulatorMaker \
                 -lStEEmcSimulatorMaker \
-                -lStEpcMaker
+                -lStEpcMaker \
+                -lStSvtClassLibrary
 
 BIN     = stana vbana lumi_calc events_calc
 BIN_SRC = $(BIN:=.cc)
@@ -123,7 +126,7 @@ stana: stana.o
 	@echo "$@ done"
 
 vbana: vbana.o
-	$(LD) -o $@ vbana.o $(LDFLAGS) $(LIB_DIRS) $(LIBS)
+	$(LD) -o $@ vbana.o $(LDFLAGS) $(LIB_DIRS) $(MYSQL_LIB_DIR) $(MYSQL_LIB) $(LIBS)
 	@echo "$@ done"
 
 wana: wana.o
