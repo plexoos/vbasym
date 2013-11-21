@@ -285,7 +285,7 @@ Int_t StVecBosMaker::InitRun(int runNo)
             hbxIdeal->Fill(bx);
       }
    } else {
-      Fatal("InitRun", "StSpinDbMaker is likely not set");
+      if (!mIsMc) Fatal("InitRun", "StSpinDbMaker is likely not set");
    }
 
    return kStOK;
