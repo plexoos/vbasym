@@ -18,10 +18,12 @@ class WBosEvent : public VecBosEvent
 public:
 
    WBosEvent();
+   WBosEvent(bool otherSolution);
 
    VecBosTrack& GetElectronTrack() const;
    TVector3     GetElectronP3() const;
    TVector3     GetNeutrinoP3() const;
+   TVector3     GetNeutrinoP3Other() const;
    TVector3     CalcMissingEnergyP3() const;
    TVector3     CalcSignedPtBalance() const;
    TVector3     GetVecBosonP3() const;
@@ -36,6 +38,7 @@ public:
    bool         PassedCutWBosMinus(float minElePt=sMinElectronPtLight) const;
    bool         PassedCutQcdBkg(float minElePt=sMinElectronPtLight) const;
 
+   static bool sUseOtherSolution;          //!< If true calculates the W kinematics using the second choice solution for the z-component
    static const float sMinElectronPtLight; //!
    static const float sMinElectronPtHard;  //!
    static const float sMinNeutrinoPt;      //!
