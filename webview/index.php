@@ -20,19 +20,7 @@ include("head.html");
 
 <h1>Analysis results</h1>
 
-<h2>W and Z Boson Asymmetry</h2>
-
-<ul>
-
-<li><b>Asymmetry sine fits with phase=pi/2 and offset=0</b>
-
-   <ul>
-   <li><a href="plots.php?ana=run11_pp_transverse&at=">Plain asymmetry</a>
-   <li><b><a href="plots.php?ana=run11_pp_transverse&at=phys">"Square root" formula: physics asymmetry</a></b>
-   <li><a href="plots.php?ana=run11_pp_transverse&at=geom">"Square root" formula: geometry asymmetry</a>
-   <li><a href="plots.php?ana=run11_pp_transverse&at=lumi">"Square root" formula: luminosity asymmetry</a>
-   </ul>
-
+<!--
 <li>Asymmetry sine fits with phase=0 and offset=0
 
    <ul>
@@ -49,6 +37,53 @@ include("head.html");
    <li><a href="plots.php?ana=run11_pp_transverse_3parfit&at=phys">"Square root" formula: physics asymmetry</a>
    <li><a href="plots.php?ana=run11_pp_transverse_3parfit&at=geom">"Square root" formula: geometry asymmetry</a>
    <li><a href="plots.php?ana=run11_pp_transverse_3parfit&at=lumi">"Square root" formula: luminosity asymmetry</a>
+   </ul>
+-->
+
+
+<h2>W<sup>+</sup></h2>
+
+<ul>
+
+<li><b>Asymmetry sine fits with phase=pi/2 and offset=0</b>
+
+   <ul>
+   <li><a href="plots.php?ana=run11_pp_transverse&vbt=wp&at=">Plain asymmetry</a>
+   <li><a href="plots.php?ana=run11_pp_transverse&vbt=wp&at=phys">"Square root" formula: physics asymmetry</a>
+   <li><a href="plots.php?ana=run11_pp_transverse&vbt=wp&at=geom">"Square root" formula: geometry asymmetry</a>
+   <li><a href="plots.php?ana=run11_pp_transverse&vbt=wp&at=lumi">"Square root" formula: luminosity asymmetry</a>
+   </ul>
+
+</ul>
+
+
+<h2>W<sup>-</sup></h2>
+
+<ul>
+
+<li><b>Asymmetry sine fits with phase=pi/2 and offset=0</b>
+
+   <ul>
+   <li><a href="plots.php?ana=run11_pp_transverse&vbt=wm&at=">Plain asymmetry</a>
+   <li><a href="plots.php?ana=run11_pp_transverse&vbt=wm&at=phys">"Square root" formula: physics asymmetry</a>
+   <li><a href="plots.php?ana=run11_pp_transverse&vbt=wm&at=geom">"Square root" formula: geometry asymmetry</a>
+   <li><a href="plots.php?ana=run11_pp_transverse&vbt=wm&at=lumi">"Square root" formula: luminosity asymmetry</a>
+   </ul>
+
+</ul>
+
+
+<h2>Z</h2>
+
+<ul>
+
+<li><b>Asymmetry sine fits with phase=pi/2 and offset=0</b>
+
+   <ul>
+   <li><a href="plots.php?ana=run11_pp_transverse&vbt=z&at=">Plain asymmetry</a>
+   <li><a href="plots.php?ana=run11_pp_transverse&vbt=z&at=phys">"Square root" formula: physics asymmetry</a>
+   <li><a href="plots.php?ana=run11_pp_transverse&vbt=z&at=geom">"Square root" formula: geometry asymmetry</a>
+   <li><a href="plots.php?ana=run11_pp_transverse&vbt=z&at=lumi">"Square root" formula: luminosity asymmetry</a>
    </ul>
 
 </ul>

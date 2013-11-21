@@ -18,17 +18,20 @@
 include("head.html");
 
 include_once("config.php");
+include_once("utils.php");
 include_once("PlotHelper.php");
 
-$ana = isset($_GET['ana']) ? $_GET['ana'] : "run11_pp_transverse_restruct";
+$ana = isset($_GET['ana']) ? $_GET['ana'] : "run11_pp_transverse";
+$vecbos_type = isset($_GET['vbt']) ? $_GET['vbt'] : "wp";
 $asym_type = isset($_GET['at']) ? $_GET['at'] : "";
 $asym_type = !empty($asym_type) ? "_$asym_type" : "";
 
-$dir = "results/$ana/images";
+$ana .= $vecbos_type == "z" ? "_-z" : "";
+
+$dir  = "results/$ana/images";
 $gP = new PlotHelper($dir);
 
-$dir = "results/{$ana}_-z/images";
-$gPZ = new PlotHelper($dir);
+$vecbos_hname = $vecbos_type == "z" ? "ZBoson" : "WBoson";
 
 ?>
 
@@ -44,23 +47,9 @@ $gPZ = new PlotHelper($dir);
 <!-- {{{ -->
 
 
-<h1 id="wbos_asym" class="count">W Boson Asymmetry</h1>
+<h1 id="asym_vs_rap" class="count">Boson asymmetry vs. rapidity</h1>
 <!-- {{{ -->
-<div id="div:wbos_asym" class="section">
-
-
-<h2 id="wbos_asym_vs_rap" class="count">W boson asymmetry vs. rapidity</h2>
-<!-- {{{ -->
-<div id="div:wbos_asym_vs_rap" class="section">
-
-
-<? foreach ($VECBOS_TYPE_SUFFIXES as $vecbos_type_idx => $vecbos_type_sfx): ?>
-
-
-
-<h3 id="wbos_asym_vs_rap_<?=$vecbos_type_sfx?>" class="count"><?=$VECBOS_TYPE_HUMAN_DESCR[$vecbos_type_idx]?></h3>
-<!-- {{{ -->
-<div id="div:wbos_asym_vs_rap_<?=$vecbos_type_sfx?>" class="section">
+<div id="div:asym_vs_rap" class="section">
 
 <p>
 <table class="simple00 cntr">
@@ -71,16 +60,15 @@ $gPZ = new PlotHelper($dir);
 
    foreach ($RHIC_BEAM_SUFFIXES as $beam_index => $beam_sfx):
 
-      $row1 .= "<td>".$gP->img("asym/asym_$vecbos_type_sfx$asym_type/hWBosonAsymAmpVsRap_$beam_sfx", false, 600)."\n";
+      $row1 .= "<td>".$gP->img("asym/asym_$vecbos_type$asym_type/h{$vecbos_hname}AsymAmpVsRap_$beam_sfx", false, 600)."\n";
       $row1 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span></div>\n";
 
       if ($beam_index == 0) {
          $row2 .= "<td>";
-         $row4 .= "<td>";
          continue;
       }
 
-      $row2 .= "<td>".$gP->img("asym/asym_$vecbos_type_sfx$asym_type/mgrWBosonAsymVsPhi_RapBins_$beam_sfx", false, 600)."\n";
+      $row2 .= "<td>".$gP->img("asym/asym_$vecbos_type$asym_type/mgr{$vecbos_hname}AsymVsPhi_RapBins_$beam_sfx", false, 600)."\n";
       $row2 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span>, rapidity bins</div>\n";
 
    endforeach;
@@ -91,25 +79,26 @@ $gPZ = new PlotHelper($dir);
 
 </table>
 
+
+<h2 id="asym_vs_rap_yields" class="count">Yields</h2>
+<!-- {{{ -->
+<div id="div:asym_vs_rap_yields" class="section">
+
+<?
+print htmlSpinStateYieldsTable($gP, $vecbos_type, "h{$vecbos_hname}PhiVsRap", $asym_type);
+?>
+
 </div>
 <!-- }}} -->
 
-<? endforeach; ?>
 
 </div>
 <!-- }}} -->
 
 
-<h2 id="wbos_asym_vs_eta" class="count">W boson asymmetry vs. pseudorapidity eta</h2>
+<h1 id="asym_vs_eta" class="count">Boson asymmetry vs. pseudorapidity eta</h1>
 <!-- {{{ -->
-<div id="div:wbos_asym_vs_eta" class="section">
-
-
-<? foreach ($VECBOS_TYPE_SUFFIXES as $vecbos_type_idx => $vecbos_type_sfx): ?>
-
-<h3 id="wbos_asym_vs_eta_<?=$vecbos_type_sfx?>" class="count"><?=$VECBOS_TYPE_HUMAN_DESCR[$vecbos_type_idx]?></h3>
-<!-- {{{ -->
-<div id="div:wbos_asym_vs_eta_<?=$vecbos_type_sfx?>" class="section">
+<div id="div:asym_vs_eta" class="section">
 
 <p>
 <table class="simple00 cntr">
@@ -120,16 +109,15 @@ $gPZ = new PlotHelper($dir);
 
    foreach ($RHIC_BEAM_SUFFIXES as $beam_index => $beam_sfx):
 
-      $row1 .= "<td>".$gP->img("asym/asym_$vecbos_type_sfx$asym_type/hWBosonAsymAmpVsEta_$beam_sfx", false, 600)."\n";
+      $row1 .= "<td>".$gP->img("asym/asym_$vecbos_type$asym_type/h{$vecbos_hname}AsymAmpVsEta_$beam_sfx", false, 600)."\n";
       $row1 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span></div>\n";
 
       if ($beam_index == 0) {
          $row2 .= "<td>";
-         $row4 .= "<td>";
          continue;
       }
 
-      $row2 .= "<td>".$gP->img("asym/asym_$vecbos_type_sfx$asym_type/mgrWBosonAsymVsPhi_EtaBins_$beam_sfx", false, 600)."\n";
+      $row2 .= "<td>".$gP->img("asym/asym_$vecbos_type$asym_type/mgr{$vecbos_hname}AsymVsPhi_EtaBins_$beam_sfx", false, 600)."\n";
       $row2 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span>, eta bins</div>\n";
 
    endforeach;
@@ -140,25 +128,26 @@ $gPZ = new PlotHelper($dir);
 
 </table>
 
+
+<h2 id="asym_vs_eta_yields" class="count">Yields</h2>
+<!-- {{{ -->
+<div id="div:asym_vs_eta_yields" class="section">
+
+<?
+print htmlSpinStateYieldsTable($gP, $vecbos_type, "h{$vecbos_hname}PhiVsEta", $asym_type);
+?>
+
 </div>
 <!-- }}} -->
 
-<? endforeach; ?>
 
 </div>
 <!-- }}} -->
 
 
-<h2 id="wbos_asym_vs_pt" class="count">W boson asymmetry vs. P_T</h2>
+<h1 id="asym_vs_pt" class="count">Boson asymmetry vs. P_T</h1>
 <!-- {{{ -->
-<div id="div:wbos_asym_vs_pt" class="section">
-
-
-<? foreach ($VECBOS_TYPE_SUFFIXES as $vecbos_type_idx => $vecbos_type_sfx): ?>
-
-<h3 id="wbos_asym_vs_pt_<?=$vecbos_type_sfx?>" class="count"><?=$VECBOS_TYPE_HUMAN_DESCR[$vecbos_type_idx]?></h3>
-<!-- {{{ -->
-<div id="div:wbos_asym_vs_pt_<?=$vecbos_type_sfx?>" class="section">
+<div id="div:asym_vs_pt" class="section">
 
 <p>
 <table class="simple00 cntr">
@@ -169,7 +158,7 @@ $gPZ = new PlotHelper($dir);
 
    foreach ($RHIC_BEAM_SUFFIXES as $beam_index => $beam_sfx):
 
-      $row1 .= "<td>".$gP->img("asym/asym_$vecbos_type_sfx$asym_type/hWBosonAsymAmpVsPt_$beam_sfx", false, 600)."\n";
+      $row1 .= "<td>".$gP->img("asym/asym_$vecbos_type$asym_type/h{$vecbos_hname}AsymAmpVsPt_$beam_sfx", false, 600)."\n";
       $row1 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span></div>\n";
 
       if ($beam_index == 0) {
@@ -177,7 +166,7 @@ $gPZ = new PlotHelper($dir);
          continue;
       }
 
-      $row2 .= "<td>".$gP->img("asym/asym_$vecbos_type_sfx$asym_type/mgrWBosonAsymVsPhi_PtBins_$beam_sfx", false, 600)."\n";
+      $row2 .= "<td>".$gP->img("asym/asym_$vecbos_type$asym_type/mgr{$vecbos_hname}AsymVsPhi_PtBins_$beam_sfx", false, 600)."\n";
       $row2 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span>, p_T bins</div>\n";
 
    endforeach;
@@ -188,25 +177,33 @@ $gPZ = new PlotHelper($dir);
 
 </table>
 
+
+<h2 id="asym_vs_pt_yields" class="count">Yields</h2>
+<!-- {{{ -->
+<div id="div:asym_vs_pt_yields" class="section">
+
+<?
+print htmlSpinStateYieldsTable($gP, $vecbos_type, "h{$vecbos_hname}PhiVsPt", $asym_type);
+?>
+
 </div>
 <!-- }}} -->
 
-<? endforeach; ?>
 
 </div>
 <!-- }}} -->
 
+<?
+// Skip the lepton part for the Z boson
+if ($vecbos_type == "wp" || $vecbos_type == "wm"):
 
-<h2 id="lepton_asym_vs_eta" class="count">Lepton asymmetry vs. pseudorapidity eta</h2>
+$vecbos_index = array_search($vecbos_type, $VECBOS_TYPE_SUFFIXES);
+$lepton_sfx = $LEPTON_TYPE_SUFFIXES[$vecbos_index];
+?>
+
+<h1 id="lepton_asym_vs_eta" class="count">Lepton asymmetry vs. pseudorapidity eta</h1>
 <!-- {{{ -->
 <div id="div:lepton_asym_vs_eta" class="section">
-
-
-<? foreach ($LEPTON_TYPE_SUFFIXES as $vecbos_type_idx => $vecbos_type_sfx): ?>
-
-<h3 id="lepton_asym_vs_eta_<?=$vecbos_type_sfx?>" class="count">Lepton, <?=$VECBOS_TYPE_HUMAN_DESCR[$vecbos_type_idx]?></h3>
-<!-- {{{ -->
-<div id="div:lepton_asym_vs_eta_<?=$vecbos_type_sfx?>" class="section">
 
 <p>
 <table class="simple00 cntr">
@@ -217,7 +214,7 @@ $gPZ = new PlotHelper($dir);
 
    foreach ($RHIC_BEAM_SUFFIXES as $beam_index => $beam_sfx):
 
-      $row1 .= "<td>".$gP->img("asym/asym_$vecbos_type_sfx$asym_type/hLeptonAsymAmpVsEta_$beam_sfx", false, 600)."\n";
+      $row1 .= "<td>".$gP->img("asym/asym_$lepton_sfx$asym_type/hLeptonAsymAmpVsEta_$beam_sfx", false, 600)."\n";
       $row1 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span></div>\n";
 
       if ($beam_index == 0) {
@@ -225,7 +222,7 @@ $gPZ = new PlotHelper($dir);
          continue;
       }
 
-      $row2 .= "<td>".$gP->img("asym/asym_$vecbos_type_sfx$asym_type/mgrLeptonAsymVsPhi_EtaBins_$beam_sfx", false, 600)."\n";
+      $row2 .= "<td>".$gP->img("asym/asym_$lepton_sfx$asym_type/mgrLeptonAsymVsPhi_EtaBins_$beam_sfx", false, 600)."\n";
       $row2 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span>, eta bins</div>\n";
 
    endforeach;
@@ -236,26 +233,27 @@ $gPZ = new PlotHelper($dir);
 
 </table>
 
+
+<h2 id="lepton_asym_vs_eta_yields" class="count">Yields</h2>
+<!-- {{{ -->
+<div id="div:lepton_asym_vs_eta_yields" class="section">
+
+<?
+print htmlSpinStateYieldsTable($gP, $lepton_sfx, "hLeptonPhiVsEta", $asym_type);
+?>
+
 </div>
 <!-- }}} -->
 
-<? endforeach; ?>
 
 </div>
 <!-- }}} -->
 
 
-<h2 id="lepton_asym_vs_pt" class="count">Lepton asymmetry vs. P_T</h2>
+<h1 id="lepton_asym_vs_pt" class="count">Lepton asymmetry vs. P_T</h1>
 <!-- {{{ -->
 <div id="div:lepton_asym_vs_pt" class="section">
 
-
-<? foreach ($LEPTON_TYPE_SUFFIXES as $vecbos_type_idx => $vecbos_type_sfx): ?>
-
-<h3 id="lepton_asym_vs_pt_<?=$vecbos_type_sfx?>" class="count">Lepton, <?=$VECBOS_TYPE_HUMAN_DESCR[$vecbos_type_idx]?></h3>
-<!-- {{{ -->
-<div id="div:lepton_asym_vs_pt_<?=$vecbos_type_sfx?>" class="section">
-
 <p>
 <table class="simple00 cntr">
 
@@ -265,7 +263,7 @@ $gPZ = new PlotHelper($dir);
 
    foreach ($RHIC_BEAM_SUFFIXES as $beam_index => $beam_sfx):
 
-      $row1 .= "<td>".$gP->img("asym/asym_$vecbos_type_sfx$asym_type/hLeptonAsymAmpVsPt_$beam_sfx", false, 600)."\n";
+      $row1 .= "<td>".$gP->img("asym/asym_$lepton_sfx$asym_type/hLeptonAsymAmpVsPt_$beam_sfx", false, 600)."\n";
       $row1 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span></div>\n";
 
       if ($beam_index == 0) {
@@ -273,7 +271,7 @@ $gPZ = new PlotHelper($dir);
          continue;
       }
 
-      $row2 .= "<td>".$gP->img("asym/asym_$vecbos_type_sfx$asym_type/mgrLeptonAsymVsPhi_PtBins_$beam_sfx", false, 600)."\n";
+      $row2 .= "<td>".$gP->img("asym/asym_$lepton_sfx$asym_type/mgrLeptonAsymVsPhi_PtBins_$beam_sfx", false, 600)."\n";
       $row2 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span>, P_T bins</div>\n";
 
    endforeach;
@@ -284,164 +282,25 @@ $gPZ = new PlotHelper($dir);
 
 </table>
 
-</div>
-<!-- }}} -->
 
-<? endforeach; ?>
-
-</div>
-<!-- }}} -->
-
-
-</div>
-<!-- }}} -->
-
-
-<? $vecbos_type_sfx = "z"; ?>
-
-<h1 id="zbos_asym" class="count">Z Boson Asymmetry</h1>
+<h2 id="lepton_asym_vs_pt_yields" class="count">Yields</h2>
 <!-- {{{ -->
-<div id="div:zbos_asym" class="section">
-
-
-<h2 id="zbos_asym_vs_rap" class="count">Z boson asymmetry vs. rapidity</h2>
-<!-- {{{ -->
-<div id="div:zbos_asym_vs_rap" class="section">
-
-<h3 id="zbos_asym_vs_rap_<?=$vecbos_type_sfx?>" class="count">Z</h3>
-<!-- {{{ -->
-<div id="div:zbos_asym_vs_rap_<?=$vecbos_type_sfx?>" class="section">
-
-<p>
-<table class="simple00 cntr">
+<div id="div:lepton_asym_vs_pt_yields" class="section">
 
 <?
-   $row1 = "<tr>\n";
-   $row2 = "<tr>\n";
-
-   foreach ($RHIC_BEAM_SUFFIXES as $beam_index => $beam_sfx):
-
-      $row1 .= "<td>".$gPZ->img("asym/asym_$vecbos_type_sfx$asym_type/hZBosonAsymAmpVsRap_$beam_sfx", false, 600)."\n";
-      $row1 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span></div>\n";
-
-      if ($beam_index == 0) {
-         $row2 .= "<td>";
-         $row4 .= "<td>";
-         continue;
-      }
-
-      $row2 .= "<td>".$gPZ->img("asym/asym_$vecbos_type_sfx$asym_type/mgrZBosonAsymVsPhi_RapBins_$beam_sfx", false, 600)."\n";
-      $row2 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span>, rapidity bins</div>\n";
-
-   endforeach;
-
-   print $row1;
-   print $row2;
+print htmlSpinStateYieldsTable($gP, $lepton_sfx, "hLeptonPhiVsPt", $asym_type);
 ?>
 
-</table>
-
-</div>
-<!-- }}} -->
-
 </div>
 <!-- }}} -->
 
 
-<h2 id="zbos_asym_vs_eta" class="count">Z boson asymmetry vs. pseudorapidity</h2>
-<!-- {{{ -->
-<div id="div:zbos_asym_vs_eta" class="section">
-
-
-<h3 id="zbos_asym_vs_eta_<?=$vecbos_type_sfx?>" class="count">Z</h3>
-<!-- {{{ -->
-<div id="div:zbos_asym_vs_eta_<?=$vecbos_type_sfx?>" class="section">
-
-<p>
-<table class="simple00 cntr">
+</div>
+<!-- }}} -->
 
 <?
-   $row1 = "<tr>\n";
-   $row2 = "<tr>\n";
-
-   foreach ($RHIC_BEAM_SUFFIXES as $beam_index => $beam_sfx):
-
-      $row1 .= "<td>".$gPZ->img("asym/asym_$vecbos_type_sfx$asym_type/hZBosonAsymAmpVsEta_$beam_sfx", false, 600)."\n";
-      $row1 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span></div>\n";
-
-      if ($beam_index == 0) {
-         $row2 .= "<td>";
-         $row4 .= "<td>";
-         continue;
-      }
-
-      $row2 .= "<td>".$gPZ->img("asym/asym_$vecbos_type_sfx$asym_type/mgrZBosonAsymVsPhi_EtaBins_$beam_sfx", false, 600)."\n";
-      $row2 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span>, pseudorapidity bins</div>\n";
-
-   endforeach;
-
-   print $row1;
-   print $row2;
+endif;
 ?>
-
-</table>
-
-</div>
-<!-- }}} -->
-
-
-</div>
-<!-- }}} -->
-
-
-<h2 id="zbos_asym_vs_pt" class="count">Z boson asymmetry vs. P_T</h2>
-<!-- {{{ -->
-<div id="div:zbos_asym_vs_pt" class="section">
-
-
-<h3 id="zbos_asym_vs_pt_<?=$vecbos_type_sfx?>" class="count">Z</h3>
-<!-- {{{ -->
-<div id="div:zbos_asym_vs_pt_<?=$vecbos_type_sfx?>" class="section">
-
-<p>
-<table class="simple00 cntr">
-
-<?
-   $row1 = "<tr>\n";
-   $row2 = "<tr>\n";
-
-   foreach ($RHIC_BEAM_SUFFIXES as $beam_index => $beam_sfx):
-
-      $row1 .= "<td>".$gPZ->img("asym/asym_$vecbos_type_sfx$asym_type/hZBosonAsymAmpVsPt_$beam_sfx", false, 600)."\n";
-      $row1 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span></div>\n";
-
-      if ($beam_index == 0) {
-         $row2 .= "<td>";
-         $row4 .= "<td>";
-         continue;
-      }
-
-      $row2 .= "<td>".$gPZ->img("asym/asym_$vecbos_type_sfx$asym_type/mgrZBosonAsymVsPhi_PtBins_$beam_sfx", false, 600)."\n";
-      $row2 .= "<div class='thumbcaption_cm'><span class=bluPol>{$RHIC_BEAM_HUMAN_DESCR[$beam_index]}</span>, P_T bins</div>\n";
-
-   endforeach;
-
-   print $row1;
-   print $row2;
-?>
-
-</table>
-
-</div>
-<!-- }}} -->
-
-
-</div>
-<!-- }}} -->
-
-
-</div>
-<!-- }}} -->
 
 
 <!-- Main text ends here-->
