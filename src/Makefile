@@ -28,8 +28,10 @@ STAR_LIB_DIRS = -L$(VBASYM_DIR)/.$(STAR_HOST_SYS)/lib \
 
 MYSQL_LIB_DIR = -L/usr/lib/mysql
 MYSQL_LIB     = -lmysqlclient
-UTILS_LIB_DIR = -L/star/u/smirnovd/root-helper/build/utils
-UTILS_INC_DIR = -I/star/u/smirnovd/root-helper/
+#UTILS_LIB_DIR = -L/star/u/smirnovd/root-helper/build/utils
+UTILS_LIB_DIR = -L/star/u/fazio/root-helper/build/utils
+#UTILS_INC_DIR = -I/star/u/smirnovd/root-helper/
+UTILS_INC_DIR = -I/star/u/fazio/root-helper/
 UTILS_LIB     = -lroot-helper-utils-shared
 BOOST_INC_DIR = -I/star/u/smirnovd/usr/local/include/
 BOOST_LIB_DIR = -L/star/u/smirnovd/usr/local/lib/
@@ -48,12 +50,15 @@ LIB_DIRS      = $(BOOST_LIB_DIR) $(STAR_LIB_DIRS) $(UTILS_LIB_DIR)
 
 LDFLAGS       = $(shell root-config --ldflags)
 #LDFLAGS      += -Wl,-rpath,.sl53_gcc432/lib:/afs/rhic.bnl.gov/star/packages/$(STAR_VERSION)/.sl53_gcc432/lib:/afs/rhic.bnl.gov/star/ROOT/5.22.00/.sl53_gcc432/rootdeb/lib,--warn-unresolved-symbols
-LDFLAGS      += -Wl,-Bdynamic -Wl,--warn-unresolved-symbols -Wl,-rpath,/star/u/smirnovd/root-helper/build/utils \
+LDFLAGS      += -Wl,-Bdynamic -Wl,--warn-unresolved-symbols -Wl,-rpath,/star/u/fazio/root-helper/build/utils \
                 -Wl,-rpath,/star/u/smirnovd/usr/local/lib/
 
 #------------------------------------------------------------------------------
 
 STAR_LIBS     = -lfastjet \
+                -lsiscone \
+                -lsiscone_spherical \
+                -lfastjetplugins \
                 -lSt_base \
                 -lStChain \
                 -lStarRoot \
