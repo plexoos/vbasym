@@ -52,15 +52,15 @@ void Z0AsymHContainer::BookHists()
       string sDblSpinState = AsString(dss);
 
       shName = "hZBosonPhiVsEta_" + sDblSpinState;
-      h2i = new rh::H2I(shName.c_str(), "; Z Boson #eta; Z Boson #phi;", 1, -6, 6, 6, -M_PI, M_PI, "colz");
+      h2i = new rh::H2I(shName.c_str(), "; Z Boson #eta; Z Boson #phi;", 1, -6, 6, 6, -M_PI, M_PI, "colz DUMP");
       o[shName] = fYieldPhiVsEta_Dss[dss] = h2i;
 
       shName = "hZBosonPhiVsRap_" + sDblSpinState;
-      h2i = new rh::H2I(shName.c_str(), "; Z Boson Rapidity; Z Boson #phi;", 1, -1.5, 1.5, 6, -M_PI, M_PI, "colz");
+      h2i = new rh::H2I(shName.c_str(), "; Z Boson Rapidity; Z Boson #phi;", 1, -1.5, 1.5, 6, -M_PI, M_PI, "colz DUMP");
       o[shName] = fYieldPhiVsRap_Dss[dss] = h2i;
 
       shName = "hZBosonPhiVsPt_" + sDblSpinState;
-      h2i = new rh::H2I(shName.c_str(), "; Z Boson P_{T}; Z Boson #phi;", 1, 0, 25, 6, -M_PI, M_PI, "colz");
+      h2i = new rh::H2I(shName.c_str(), "; Z Boson P_{T}; Z Boson #phi;", 1, 0, 25, 6, -M_PI, M_PI, "colz DUMP");
       o[shName] = fYieldPhiVsPt_Dss[dss] = h2i;
    }
 
@@ -71,15 +71,15 @@ void Z0AsymHContainer::BookHists()
       string sSnglSpinState = AsString(sss);
 
       shName = "hZBosonPhiVsEta_" + sSnglSpinState;
-      h2i = new rh::H2I(shName.c_str(), "; Z Boson #eta; Z Boson #phi;", 1, -6, 6, 6, -M_PI, M_PI, "colz");
+      h2i = new rh::H2I(shName.c_str(), "; Z Boson #eta; Z Boson #phi;", 1, -6, 6, 6, -M_PI, M_PI, "colz DUMP");
       o[shName] = fYieldPhiVsEta_Sss[sss] = h2i;
 
       shName = "hZBosonPhiVsRap_" + sSnglSpinState;
-      h2i = new rh::H2I(shName.c_str(), "; Z Boson Rapidity; Z Boson #phi;", 1, -1.5, 1.5, 6, -M_PI, M_PI, "colz");
+      h2i = new rh::H2I(shName.c_str(), "; Z Boson Rapidity; Z Boson #phi;", 1, -1.5, 1.5, 6, -M_PI, M_PI, "colz DUMP");
       o[shName] = fYieldPhiVsRap_Sss[sss] = h2i;
 
       shName = "hZBosonPhiVsPt_" + sSnglSpinState;
-      h2i = new rh::H2I(shName.c_str(), "; Z Boson P_{T}; Z Boson #phi;", 1, 0, 25, 6, -M_PI, M_PI, "colz");
+      h2i = new rh::H2I(shName.c_str(), "; Z Boson P_{T}; Z Boson #phi;", 1, 0, 25, 6, -M_PI, M_PI, "colz DUMP");
       o[shName] = fYieldPhiVsPt_Sss[sss] = h2i;
 
       shName = "hZBosonPhi_PtProj_" + sSnglSpinState;

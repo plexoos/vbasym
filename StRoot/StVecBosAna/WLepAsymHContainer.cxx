@@ -52,15 +52,15 @@ void WLepAsymHContainer::BookHists()
       string sDblSpinState = AsString(dss);
 
       shName = "hLeptonPhiVsEta_" + sDblSpinState;
-      h2i = new rh::H2I(shName.c_str(), "; Lepton #eta; Lepton #phi;", 3, -1.5, 1.5, 8, -M_PI, M_PI, "colz");
+      h2i = new rh::H2I(shName.c_str(), "; Lepton #eta; Lepton #phi;", 3, -1.5, 1.5, 8, -M_PI, M_PI, "colz DUMP");
       o[shName] = fYieldPhiVsEta_Dss[dss] = h2i;
 
       shName = "hLeptonPhiVsRap_" + sDblSpinState;
-      h2i = new rh::H2I(shName.c_str(), "; Lepton Rapidity; Lepton Rapidity;", 3, -1.5, 1.5, 8, -M_PI, M_PI, "colz");
+      h2i = new rh::H2I(shName.c_str(), "; Lepton Rapidity; Lepton Rapidity;", 3, -1.5, 1.5, 8, -M_PI, M_PI, "colz DUMP");
       o[shName] = fYieldPhiVsRap_Dss[dss] = h2i;
 
       shName = "hLeptonPhiVsPt_" + sDblSpinState;
-      h2i = new rh::H2I(shName.c_str(), "; Lepton P_{T}; Lepton #phi;", 10, 0, 50, 8, -M_PI, M_PI, "colz");
+      h2i = new rh::H2I(shName.c_str(), "; Lepton P_{T}; Lepton #phi;", 10, 0, 50, 8, -M_PI, M_PI, "colz DUMP");
       o[shName] = fYieldPhiVsPt_Dss[dss] = h2i;
    }
 
@@ -71,15 +71,15 @@ void WLepAsymHContainer::BookHists()
       string sSnglSpinState = AsString(sss);
 
       shName = "hLeptonPhiVsEta_" + sSnglSpinState;
-      h2i = new rh::H2I(shName.c_str(), "; Lepton #eta; Lepton #phi;", 3, -1.5, 1.5, 8, -M_PI, M_PI, "colz");
+      h2i = new rh::H2I(shName.c_str(), "; Lepton #eta; Lepton #phi;", 3, -1.5, 1.5, 8, -M_PI, M_PI, "colz DUMP");
       o[shName] = fYieldPhiVsEta_Sss[sss] = h2i;
 
       shName = "hLeptonPhiVsRap_" + sSnglSpinState;
-      h2i = new rh::H2I(shName.c_str(), "; Lepton Rapidity; Lepton #phi;", 3, -1.5, 1.5, 8, -M_PI, M_PI, "colz");
+      h2i = new rh::H2I(shName.c_str(), "; Lepton Rapidity; Lepton #phi;", 3, -1.5, 1.5, 8, -M_PI, M_PI, "colz DUMP");
       o[shName] = fYieldPhiVsRap_Sss[sss] = h2i;
 
       shName = "hLeptonPhiVsPt_" + sSnglSpinState;
-      h2i = new rh::H2I(shName.c_str(), "; Lepton P_{T}; Lepton #phi;", 10, 0, 50, 8, -M_PI, M_PI, "colz");
+      h2i = new rh::H2I(shName.c_str(), "; Lepton P_{T}; Lepton #phi;", 10, 0, 50, 8, -M_PI, M_PI, "colz DUMP");
       o[shName] = fYieldPhiVsPt_Sss[sss] = h2i;
 
       shName = "hLeptonPhi_PtProj_" + sSnglSpinState;
