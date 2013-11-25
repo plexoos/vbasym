@@ -64,6 +64,19 @@ void VbAnaOptions::ProcessOptions(int argc, char **argv)
       exit(EXIT_FAILURE);
    }
 
+   if (fOptionsValues.count("filelist"))
+   {
+      cout << "listname: " << fListName << endl;
+      ifstream list_name(GetListName().c_str());
+      if (!list_name.good()) {
+         Error("VbAnaOptions", "Filelist \"%s\" does not exist", GetListName().c_str());
+         exit(EXIT_FAILURE);
+      }
+   } else {
+      Error("VbAnaOptions", "Filelist not set");
+      exit(EXIT_FAILURE);
+   }
+
    if (fOptionsValues.count("max-events"))
    {
       cout << "max-events: " << fMaxEventsUser << endl;
