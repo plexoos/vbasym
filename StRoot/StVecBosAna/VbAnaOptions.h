@@ -33,6 +33,7 @@ public:
    std::string  GetRootFileName() const;
    double       GetFitSinePhase() const;
    double       GetFitSineOffset() const;
+   bool         UseOtherSolution() const;
    virtual void ProcessOptions(int argc, char **argv);
    void         Print(const Option_t* opt="") const;
    void         PrintAsPhp(FILE *f=stdout) const;
@@ -43,6 +44,7 @@ protected:
    po::variables_map       fOptionsValues;
    double                  fFitSinePhase;
    double                  fFitSineOffset;
+   bool                    fUseOtherSolution;
 };
 
 #endif

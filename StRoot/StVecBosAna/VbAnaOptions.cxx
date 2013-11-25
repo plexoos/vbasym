@@ -11,7 +11,7 @@ using namespace std;
 /** Default constructor. */
 VbAnaOptions::VbAnaOptions() : AnaOptions(),
    fOptions("Allowed options"), fOptionsValues(),
-   fFitSinePhase(0), fFitSineOffset(0)
+   fFitSinePhase(0), fFitSineOffset(0), fUseOtherSolution(false)
 {
    // Declare the supported options
    fOptions.add_options()
@@ -21,6 +21,8 @@ VbAnaOptions::VbAnaOptions() : AnaOptions(),
       ("monte-carlo,m",   po::value<bool>(&fIsMc)->default_value(false), "Process input as Monte-Carlo")
       ("wboson,w",        "Process input events as W boson events. Mutually exclusive with --zboson")
       ("zboson,z",        "Process input events as Z boson events. Mutually exclusive with --wboson")
+      ("wboson-other,o",  po::value<bool>(&fUseOtherSolution)->implicit_value(true), "Use this flag to select second " \
+                          "solution for longitudinal W momentum component")
       ("fit-sine-phase",  po::value<double>(&fFitSinePhase)->default_value(M_PI_2)->implicit_value(DBL_MAX), "Value for phase")
       ("fit-sine-offset", po::value<double>(&fFitSineOffset)->default_value(0)->implicit_value(DBL_MAX), "Value for offset")
    ;
@@ -32,6 +34,7 @@ VbAnaOptions::VbAnaOptions() : AnaOptions(),
 string VbAnaOptions::GetRootFileName() const { return GetResultsDir() + "/hist/" + fOutFileName + GetSuffix() + ".root"; }
 double VbAnaOptions::GetFitSinePhase() const { return fFitSinePhase; }
 double VbAnaOptions::GetFitSineOffset() const { return fFitSineOffset; }
+bool   VbAnaOptions::UseOtherSolution() const { return fUseOtherSolution; }
 
 
 /**
@@ -85,6 +88,7 @@ void VbAnaOptions::ProcessOptions(int argc, char **argv)
    }
 
    cout << "wboson, zboson: " << fBosonType << endl;
+   cout << "wboson-other: " << fUseOtherSolution << endl;
 
    if (fOptionsValues.count("fit-sine-phase"))
    {
