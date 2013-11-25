@@ -18,8 +18,8 @@ VbAnaOptions::VbAnaOptions() : AnaOptions(),
       ("help,h",          "Print help message")
       ("filelist,f",      po::value<string>(&fListName), "Name of the file with input list")
       ("max-events,n",    po::value<uint32_t>(&fMaxEventsUser)->default_value(0), "Maximum number of events to process")
-      ("monte-carlo,m",   po::value<bool>(&fIsMc)->default_value(false), "Process input as Monte-Carlo")
       ("save-graphs,g",   po::value<bool>(&fSaveGraphs)->implicit_value(true), "Process input as Monte-Carlo")
+      ("monte-carlo,m",   po::value<bool>(&fIsMc)->implicit_value(true), "Process input as Monte-Carlo")
       ("wboson,w",        "Process input events as W boson events. Mutually exclusive with --zboson")
       ("zboson,z",        "Process input events as Z boson events. Mutually exclusive with --wboson")
       ("wboson-other,o",  po::value<bool>(&fUseOtherSolution)->implicit_value(true), "Use this flag to select second " \
@@ -32,8 +32,8 @@ VbAnaOptions::VbAnaOptions() : AnaOptions(),
 }
 
 
-string VbAnaOptions::GetRootFileName() const { return GetResultsDir() + "/hist/" + fOutFileName + GetSuffix() + ".root"; }
-double VbAnaOptions::GetFitSinePhase() const { return fFitSinePhase; }
+string VbAnaOptions::GetRootFileName()  const { return GetResultsDir() + "/hist/" + fOutFileName + GetSuffix() + ".root"; }
+double VbAnaOptions::GetFitSinePhase()  const { return fFitSinePhase; }
 double VbAnaOptions::GetFitSineOffset() const { return fFitSineOffset; }
 bool   VbAnaOptions::UseOtherSolution() const { return fUseOtherSolution; }
 
@@ -73,11 +73,8 @@ void VbAnaOptions::ProcessOptions(int argc, char **argv)
       cout << "max-events: " << fMaxEventsUser << endl;
    }
 
-   if (fOptionsValues.count("monte-carlo"))
-   {
-      cout << "monte-carlo: " << fIsMc << endl;
-   }
    cout << "save-graphs: " << fSaveGraphs << endl;
+   cout << "monte-carlo: " << fIsMc << endl;
 
    if (fOptionsValues.count("zboson") && fOptionsValues.count("wboson"))
    {
@@ -89,7 +86,7 @@ void VbAnaOptions::ProcessOptions(int argc, char **argv)
       fBosonType = kWBoson;
    }
 
-   cout << "wboson, zboson: " << fBosonType << endl;
+   cout << "w/z boson type: " << fBosonType << endl;
    cout << "wboson-other: " << fUseOtherSolution << endl;
 
    if (fOptionsValues.count("fit-sine-phase"))
