@@ -57,6 +57,7 @@ public:
    std::string  GetRootFileName() const;
    std::string  GetListFileName() const;
    EBosonType   GetBosonType() const;
+   bool         SaveGraphs() const;
    bool         IsMc() const;
    void         SetListName(std::string listName) { fListName = listName; }
    std::string  GetListName() const { return fListName; }
@@ -75,6 +76,7 @@ protected:
    std::string fListName;
    std::string fOutFileName;
    uint32_t    fMaxEventsUser;
+   bool        fSaveGraphs;
    bool        fIsMc;
    EBosonType  fBosonType;
 

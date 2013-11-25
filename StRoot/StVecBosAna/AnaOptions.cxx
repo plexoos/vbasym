@@ -30,6 +30,7 @@ AnaOptions::AnaOptions() : TObject()
    , fListName("undefined")
    , fOutFileName("vbasym")
    , fMaxEventsUser(0)
+   , fSaveGraphs(false)
    , fIsMc(kFALSE)
    , fBosonType(kWBoson)
 {
@@ -96,6 +97,7 @@ string AnaOptions::GetRootFileName()   const { return GetResultsDir() + "/" + fO
 string AnaOptions::GetListFileName()   const { return GetVbAsymDir() + "/runlists/" + fListName; }
 EBosonType AnaOptions::GetBosonType()   const { return fBosonType; }
 bool AnaOptions::IsMc()   const { return fIsMc; }
+bool AnaOptions::SaveGraphs()          const { return fSaveGraphs; }
 uint32_t AnaOptions::GetMaxEventsUser() const { return fMaxEventsUser; }
 
 
