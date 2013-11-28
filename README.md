@@ -31,6 +31,11 @@ The following environment variables must be set:
     VBASYM_DIR
     VBASYM_RESULTS_DIR
 
+The following environment variables are assumed to be set in the standard STAR session:
+
+    STAR_VERSION
+    STAR_HOST_SYS
+
 Example scripts setting up these variables can be found in the `scripts/`
 directory:
 
@@ -40,8 +45,8 @@ directory:
 To produce the jet root trees do:
 
     cd runlists/
-    ln -s run12_pp_j3 run12_pp_j3_jets
-    scripts/submit_jobs.sh run12_pp_j3_jets -z -r12 --jets
+    ln -s run12_pp_j3 run12_pp_j3_--jets
+    scripts/submit_jobs.sh run12_pp_j3_--jets -z -r12 --jets
 
 Then to produce the analysis root trees do:
 
