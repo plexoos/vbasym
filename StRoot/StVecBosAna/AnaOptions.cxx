@@ -116,7 +116,6 @@ void AnaOptions::ProcessOptions(int argc, char **argv)
       {"jet-pt-min",          required_argument,   NULL,   AnaOptions::OPTION_JETS_PT_MIN},
       {"jpm",                 required_argument,   NULL,   AnaOptions::OPTION_JETS_PT_MIN},
       {"tpm",                 required_argument,   NULL,   AnaOptions::OPTION_TRACKS_PT_MIN},
-      {"rhic-run-id",         required_argument,   NULL,   AnaOptions::OPTION_RHIC_RUN_ID},
       {"run",                 required_argument,   NULL,   AnaOptions::OPTION_RHIC_RUN_ID},
       {"mc",                  no_argument,         NULL,   'm'},
       {"wboson",              no_argument,         NULL,   'w'},
@@ -126,7 +125,7 @@ void AnaOptions::ProcessOptions(int argc, char **argv)
 
    int c;
 
-   while ((c = getopt_long(argc, argv, "?hl::f:n:jmwz", long_options, &option_index)) != -1)
+   while ((c = getopt_long(argc, argv, "?hl::f:n:jr:mwz", long_options, &option_index)) != -1)
    {
       switch (c) {
 
@@ -167,6 +166,7 @@ void AnaOptions::ProcessOptions(int argc, char **argv)
          Info("ProcessOptions", "Found fJetPtMin: %f", fJetPtMin);
          break;
 
+      case 'r':
       case AnaOptions::OPTION_RHIC_RUN_ID:
          sstr.clear();
          sstr.str(string(optarg));
