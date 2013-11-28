@@ -74,7 +74,7 @@
        </Package>
    </SandBox>
 
-   <!-- Run 11, SL11d -->
-   <input URL="catalog:star.bnl.gov?production=P11id,trgsetupname~pp500_production_2011,sname1~st_W,filetype=daq_reco_mudst,storage=hpss,runnumber~&JOB_RUN_FILE_NAME;%" nFiles="all" />
-
+   <!-- Run 12, SL13b -->
+	<input URL="catalog:star.bnl.gov?production=P13ib,trgsetupname~pp500_production_2012,sname1~st_W,filetype=daq_reco_mudst,storage=nfs,runnumber~&JOB_RUN_FILE_NAME;%" nFiles="all" />
+	
 </job>
