@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<job filesPerHour="150" maxFilesPerProcess="500" fileListSyntax="xrootd" inputOrder="runnumber" simulateSubmission="false" name="&RUN_ID;">
+<job filesPerHour="150" maxFilesPerProcess="500" fileListSyntax="xrootd" inputOrder="runnumber" simulateSubmission="false" name="&JOB_RUN_FILE_NAME;">
    <ResourceUsage>
       <StorageSpace>
          <MinStorage>20</MinStorage>
@@ -12,26 +12,30 @@
 
    <command>
       starver &STAR_VER;
+      source &CODE_DIR;/scripts/setup.csh
 
-      cp $FILELIST &OUT_DIR;/lists/R&RUN_ID;.lis
+      cp $FILELIST &OUT_DIR;/lists/R&JOB_RUN_FILE_NAME;.lis
 
-      setenv RUNLIST  &OUT_DIR;/lists/R&RUN_ID;.lis
+      setenv RUNLIST  &OUT_DIR;/lists/R&JOB_RUN_FILE_NAME;.lis
       setenv OPTIONS  `echo &STANA_OPTIONS; | sed 's/_/ /g'`
       setenv OPT_JETS `echo $OPTIONS | awk '{print index($0,"--jets")}'`
       setenv COMMAND  "./stana -f $RUNLIST $OPTIONS"
 
-      if ($OPT_JETS == 0) ln -s &OUT_DIR;_--jets/jets/R&RUN_ID;_jets.root
-      cp -r &CODE_DIR;/.sl53_gcc432 .
+      if ($OPT_JETS == 0) ln -s &OUT_DIR;_--jets/jets/R&JOB_RUN_FILE_NAME;_jets.root
+      cp -r &CODE_DIR;/.&STAR_HOST_SYS; .
       cp -r &CODE_DIR;/src/stana .
       ls -al
 
       echo
       echo "OUT_DIR:        " &OUT_DIR;
       echo "CODE_DIR:       " &CODE_DIR;
-      echo "RUN_ID:         " &RUN_ID;
+      echo "JOB_RUN_FILE_NAME:   " &JOB_RUN_FILE_NAME;
       echo "STAR_VER:       " &STAR_VER;
+      echo "STAR_HOST_SYS:  " &STAR_HOST_SYS;
       echo "STANA_OPTIONS:  " &STANA_OPTIONS;
       echo
+      echo "VBASYM_DIR:     " $VBASYM_DIR
+      echo "VBASYM_RESULTS_DIR:     " $VBASYM_RESULTS_DIR
       echo "STAR:           " $STAR
       echo "FILELIST:       " $FILELIST
       echo "RUNLIST:        " $RUNLIST
@@ -45,11 +49,11 @@
       `$COMMAND`
 
       # Remove files and links
-      if ($OPT_JETS == 0) rm R&RUN_ID;_jets.root
+      if ($OPT_JETS == 0) rm R&JOB_RUN_FILE_NAME;_jets.root
       chmod 664 *_hist.root *_jets.root *_tree.root *.ps *.txt
-      chmod 664 &OUT_DIR;/log/R&RUN_ID;.log
-      touch     &OUT_DIR;/log/R&RUN_ID;.log
-      rm -fr ./.sl53_gcc432
+      chmod 664 &OUT_DIR;/log/R&JOB_RUN_FILE_NAME;.log
+      touch     &OUT_DIR;/log/R&JOB_RUN_FILE_NAME;.log
+      rm -fr ./.&STAR_HOST_SYS;
       rm -fr ./stana
 
       echo "End of stana: tralala"
@@ -60,24 +64,23 @@
    <output fromScratch="*_hist.root" toURL="file:&OUT_DIR;/hist/"/>
    <output fromScratch="*_tree.root" toURL="file:&OUT_DIR;/tree/"/>
    <output fromScratch="*.txt"       toURL="file:&OUT_DIR;/lumi/"/>
-   <stdout URL="file:&OUT_DIR;/log/R&RUN_ID;.log"/>
-   <stderr URL="file:&OUT_DIR;/log/R&RUN_ID;.log"/>
+
+   <stdout URL="file:&OUT_DIR;/log/R&JOB_RUN_FILE_NAME;.log"/>
+   <stderr URL="file:&OUT_DIR;/log/R&JOB_RUN_FILE_NAME;.log"/>
 
    <SandBox>
        <Package>
-          <File>file:&CODE_DIR;/.sl53_gcc432</File>
+          <File>file:&CODE_DIR;/.&STAR_HOST_SYS;</File>
        </Package>
    </SandBox>
 
    <!-- Run 11, SL11d -->
-   <input URL="catalog:star.bnl.gov?filename~st_W,production=P11id,filetype=daq_reco_mudst,storage=hpss,runnumber~&RUN_ID;%" nFiles="all" />
-   <!--<input URL="catalog:star.bnl.gov?filename~st_W,library=SL11id,filetype=daq_reco_mudst,storage=nfs,runnumber=&RUN_ID;" nFiles="all" />-->
-   <!--<input URL="catalog:star.bnl.gov?filename~st_W,production=P09ig,filetype=daq_reco_mudst,runnumber=&RUN_ID;" nFiles="all" />-->
+   <input URL="catalog:star.bnl.gov?production=P11id,trgsetupname~pp500_production_2011,sname1~st_W,filetype=daq_reco_mudst,storage=hpss,runnumber~&JOB_RUN_FILE_NAME;%" nFiles="all" />
 
    <!-- Run 12, SL13b -->
-	<!--<input URL="catalog:star.bnl.gov?production=P13ib,trgsetupname~pp500_production_2012,sname1~st_W,filetype=daq_reco_mudst,storage=nfs,runnumber~&RUN_ID;%" nFiles="all" />-->
+	<!--<input URL="catalog:star.bnl.gov?production=P13ib,trgsetupname~pp500_production_2012,sname1~st_W,filetype=daq_reco_mudst,storage=nfs,runnumber~&JOB_RUN_FILE_NAME;%" nFiles="all" />-->
 	
    <!-- Run 13 -->
-	<!--<input URL="catalog:star.bnl.gov?production=DEV,trgsetupname~pp500_production_2013,sname1~st_W,storage=nfs,runnumber~&RUN_ID;%" nFiles="all" />-->
+	<!--<input URL="catalog:star.bnl.gov?production=DEV,trgsetupname~pp500_production_2013,sname1~st_W,storage=nfs,runnumber~&JOB_RUN_FILE_NAME;%" nFiles="all" />-->
 	
 </job>
