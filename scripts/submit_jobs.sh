@@ -2,9 +2,9 @@
 #
 # Requires at least one argument:
 #
-# submit_jobs.sh RUNLIST [STANA_OPTIONS]
+# submit_jobs.sh RUN_FILE_LIST [STANA_OPTIONS]
 #
-# RUNLIST is the name of the runlist file in $VBASYM_DIR/runlist/
+# RUN_FILE_LIST is the name of the runlist file in $VBASYM_DIR/runlist/
 # STANA_OPTIONS is a list of arguments to be passed to the stana executable
 #
 # Usage example:
@@ -27,7 +27,7 @@
 # STANA_OPTIONS="-z"
 #
 
-RUNLIST=$1
+RUN_FILE_LIST=$1
 STANA_OPTIONS=("$@")
 unset STANA_OPTIONS[0]
 
@@ -40,27 +40,27 @@ case $STANA_OPTIONS in
 esac
 
 echo
-echo RUNLIST       = $RUNLIST
+echo RUN_FILE_LIST = $RUN_FILE_LIST
 echo VBASYM_DIR    = $VBASYM_DIR
-echo OUT_DIR       = $VBASYM_RESULTS_DIR/$RUNLIST
+echo OUT_DIR       = $VBASYM_RESULTS_DIR/$RUN_FILE_LIST
 echo STAR_VER      = $STAR_VERSION
 echo STANA_OPTIONS = $STANA_OPTIONS
 echo RUN_PERIOD    = $RUN_PERIOD
 echo
 
-mkdir -p $VBASYM_RESULTS_DIR/$RUNLIST/lists
-mkdir -p $VBASYM_RESULTS_DIR/$RUNLIST/log
-mkdir -p $VBASYM_RESULTS_DIR/$RUNLIST/jets
-mkdir -p $VBASYM_RESULTS_DIR/$RUNLIST/hist
-mkdir -p $VBASYM_RESULTS_DIR/$RUNLIST/tree
-mkdir -p $VBASYM_RESULTS_DIR/$RUNLIST/lumi
+mkdir -p $VBASYM_RESULTS_DIR/$RUN_FILE_LIST/lists
+mkdir -p $VBASYM_RESULTS_DIR/$RUN_FILE_LIST/log
+mkdir -p $VBASYM_RESULTS_DIR/$RUN_FILE_LIST/jets
+mkdir -p $VBASYM_RESULTS_DIR/$RUN_FILE_LIST/hist
+mkdir -p $VBASYM_RESULTS_DIR/$RUN_FILE_LIST/tree
+mkdir -p $VBASYM_RESULTS_DIR/$RUN_FILE_LIST/lumi
 
-for RUN_ID in `cat $VBASYM_DIR/runlists/$RUNLIST`
+for JOB_RUN_FILE_NAME in `cat $VBASYM_DIR/runlists/$RUN_FILE_LIST`
 do
    echo
-   echo "Submitting job for RUN_ID =" $RUN_ID
+   echo "Submitting job for JOB_RUN_FILE_NAME =" $JOB_RUN_FILE_NAME
    star-submit-template -template $VBASYM_DIR/scripts/run${RUN_PERIOD}_job_template.xml \
-   -entities OUT_DIR=$VBASYM_RESULTS_DIR,CODE_DIR=$VBASYM_DIR,RUN_ID=$RUN_ID,STAR_VER=$STAR_VERSION,STAR_HOST_SYS=$STAR_HOST_SYS,STANA_OPTIONS=$STANA_OPTIONS
+      -entities OUT_DIR=$VBASYM_RESULTS_DIR/$RUN_FILE_LIST,CODE_DIR=$VBASYM_DIR,JOB_RUN_FILE_NAME=$JOB_RUN_FILE_NAME,STAR_VER=$STAR_VERSION,STAR_HOST_SYS=$STAR_HOST_SYS,STANA_OPTIONS=$STANA_OPTIONS
    echo
    sleep 1
 done
