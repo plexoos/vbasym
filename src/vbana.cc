@@ -37,16 +37,16 @@ int main(int argc, char *argv[])
    VecBosRootFile *vecBosRootFile;
    VecBosEvent    *vecBosEvent;
 
-	if (vbAnaOptions.GetBosonType() == kWBoson)
-	{
+   if (vbAnaOptions.GetBosonType() == kWBoson)
+   {
       vecBosRootFile = new WBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc());
-      vecBosEvent    = new WBosEvent();
+      vecBosEvent    = new WBosEvent( vbAnaOptions.UseOtherSolution() );
 
-	} else if (vbAnaOptions.GetBosonType() == kZBoson)
-	{
+   } else if (vbAnaOptions.GetBosonType() == kZBoson)
+   {
       vecBosRootFile = new ZBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc());
       vecBosEvent    = new ZBosEvent();
-	}
+   }
 
    TObject *o;
    TIter   *next = new TIter(utils::getFileList( vbAnaOptions.GetListFileName() ));
@@ -108,7 +108,10 @@ int main(int argc, char *argv[])
    vecBosRootFile->FillDerived();
    vecBosRootFile->PostFill();
 
-   vecBosRootFile->SaveAs((string) "^.*$", vbAnaOptions.GetImageDir());
+   if ( vbAnaOptions.SaveGraphs() ) {
+      vecBosRootFile->SaveAs((string) "^.*$", vbAnaOptions.GetImageDir());
+   }
+
    vecBosRootFile->Print();
    vecBosRootFile->Close();
 

@@ -43,6 +43,8 @@ include("head.html");
 
 <h2>W<sup>+</sup></h2>
 
+<h3>Primary solution</h3>
+
 <ul>
 
 <li><b>Asymmetry sine fits with phase=pi/2 and offset=0</b>
@@ -56,8 +58,25 @@ include("head.html");
 
 </ul>
 
+<h3>Secondary solution</h3>
+
+<ul>
+
+<li><b>Asymmetry sine fits with phase=pi/2 and offset=0</b>
+
+   <ul>
+   <li><a href="plots.php?ana=run11_pp_transverse_-o&vbt=wp&at=">Plain asymmetry</a>
+   <li><a href="plots.php?ana=run11_pp_transverse_-o&vbt=wp&at=phys">"Square root" formula: physics asymmetry</a>
+   <li><a href="plots.php?ana=run11_pp_transverse_-o&vbt=wp&at=geom">"Square root" formula: geometry asymmetry</a>
+   <li><a href="plots.php?ana=run11_pp_transverse_-o&vbt=wp&at=lumi">"Square root" formula: luminosity asymmetry</a>
+   </ul>
+
+</ul>
+
 
 <h2>W<sup>-</sup></h2>
+
+<h3>Primary solution</h3>
 
 <ul>
 
@@ -68,6 +87,21 @@ include("head.html");
    <li><a href="plots.php?ana=run11_pp_transverse&vbt=wm&at=phys">"Square root" formula: physics asymmetry</a>
    <li><a href="plots.php?ana=run11_pp_transverse&vbt=wm&at=geom">"Square root" formula: geometry asymmetry</a>
    <li><a href="plots.php?ana=run11_pp_transverse&vbt=wm&at=lumi">"Square root" formula: luminosity asymmetry</a>
+   </ul>
+
+</ul>
+
+<h3>Secondary solution</h3>
+
+<ul>
+
+<li><b>Asymmetry sine fits with phase=pi/2 and offset=0</b>
+
+   <ul>
+   <li><a href="plots.php?ana=run11_pp_transverse_-o&vbt=wm&at=">Plain asymmetry</a>
+   <li><a href="plots.php?ana=run11_pp_transverse_-o&vbt=wm&at=phys">"Square root" formula: physics asymmetry</a>
+   <li><a href="plots.php?ana=run11_pp_transverse_-o&vbt=wm&at=geom">"Square root" formula: geometry asymmetry</a>
+   <li><a href="plots.php?ana=run11_pp_transverse_-o&vbt=wm&at=lumi">"Square root" formula: luminosity asymmetry</a>
    </ul>
 
 </ul>

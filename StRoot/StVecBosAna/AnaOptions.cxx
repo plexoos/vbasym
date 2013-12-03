@@ -30,6 +30,7 @@ AnaOptions::AnaOptions() : TObject()
    , fListName("undefined")
    , fOutFileName("vbasym")
    , fMaxEventsUser(0)
+   , fSaveGraphs(false)
    , fIsMc(kFALSE)
    , fBosonType(kWBoson)
 {
@@ -94,8 +95,9 @@ string AnaOptions::GetImageDir()       const { return GetResultsDir() + "/images
 string AnaOptions::GetStdLogFileName() const { return GetResultsDir() + "/" + fFileStdLogName + GetSuffix() + ".log"; }
 string AnaOptions::GetRootFileName()   const { return GetResultsDir() + "/" + fOutFileName + GetSuffix() + ".root"; }
 string AnaOptions::GetListFileName()   const { return GetVbAsymDir() + "/runlists/" + fListName; }
-EBosonType AnaOptions::GetBosonType()   const { return fBosonType; }
-bool AnaOptions::IsMc()   const { return fIsMc; }
+EBosonType AnaOptions::GetBosonType()  const { return fBosonType; }
+bool AnaOptions::SaveGraphs()          const { return fSaveGraphs; }
+bool AnaOptions::IsMc()                const { return fIsMc; }
 uint32_t AnaOptions::GetMaxEventsUser() const { return fMaxEventsUser; }
 
 

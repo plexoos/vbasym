@@ -8,6 +8,7 @@ ClassImp(WBosEvent)
 using namespace std;
 
 
+bool WBosEvent::sUseOtherSolution = false;
 const float WBosEvent::sMinElectronPtLight = 15;
 const float WBosEvent::sMinElectronPtHard  = 25;
 const float WBosEvent::sMinNeutrinoPt      = 18;
@@ -19,6 +20,16 @@ WBosEvent::WBosEvent() : VecBosEvent(), mWBosMass(80.385), mElectronP3(), mNeutr
 }
 
 
+WBosEvent::WBosEvent(bool otherSolution) : VecBosEvent()
+   , mWBosMass(80.385)
+   , mElectronP3()
+   , mNeutrinoP3()
+   , mNeutrinoP3Other()
+{
+   sUseOtherSolution = otherSolution;
+}
+
+
 VecBosTrack& WBosEvent::GetElectronTrack() const
 {
    return *(*mTracksCandidate.begin());
@@ -27,6 +38,7 @@ VecBosTrack& WBosEvent::GetElectronTrack() const
 
 TVector3 WBosEvent::GetElectronP3() const { return mElectronP3; }
 TVector3 WBosEvent::GetNeutrinoP3() const { return mNeutrinoP3; }
+TVector3 WBosEvent::GetNeutrinoP3Other() const { return mNeutrinoP3Other; }
 
 
 TVector3 WBosEvent::CalcMissingEnergyP3() const
@@ -46,7 +58,7 @@ TVector3 WBosEvent::CalcSignedPtBalance() const
 }
 
 
-TVector3 WBosEvent::GetVecBosonP3() const { return mElectronP3 + mNeutrinoP3; }
+TVector3 WBosEvent::GetVecBosonP3() const { return mElectronP3 + (sUseOtherSolution ? mNeutrinoP3Other : mNeutrinoP3); }
 
 
 TLorentzVector WBosEvent::GetVecBosonP4() const
