@@ -99,6 +99,7 @@ EBosonType AnaOptions::GetBosonType()  const { return fBosonType; }
 bool AnaOptions::SaveGraphs()          const { return fSaveGraphs; }
 bool AnaOptions::IsMc()                const { return fIsMc; }
 uint32_t AnaOptions::GetMaxEventsUser() const { return fMaxEventsUser; }
+float AnaOptions::GetTracksPtMin()     const { return fTracksPtMin; }
 
 
 /** */

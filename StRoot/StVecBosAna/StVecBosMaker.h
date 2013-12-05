@@ -121,7 +121,7 @@ protected:
    int             mNumAcceptedEvents;      // event counters
    int             mRunNo;
    int             nRun;
-   int             mTracksPtMin;
+   float           mTracksPtMin;
    int             mIsMc;                   // 0 for real data
    int             mFindZ;                  // 0 for W boson
    int             Tfirst;
@@ -153,6 +153,7 @@ protected:
    char           *nameReweight;
    int             par_DsmThres, parE_DsmThres;     // not used in the algo
    int             par_maxDisplEve;
+   float           tracksPt;
 
    StBemcTables   *mBarrelTables;                   // used to access EMC status and ped info
 

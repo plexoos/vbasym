@@ -57,6 +57,7 @@ public:
    std::string  GetRootFileName() const;
    std::string  GetListFileName() const;
    EBosonType   GetBosonType() const;
+   float        GetTracksPtMin() const;
    bool         SaveGraphs() const;
    bool         IsMc() const;
    void         SetListName(std::string listName) { fListName = listName; }

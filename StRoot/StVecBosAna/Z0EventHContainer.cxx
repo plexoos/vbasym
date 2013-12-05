@@ -76,9 +76,9 @@ void Z0EventHContainer::BookHists()
    o["hCandidate2Eta"]   = h = new TH1F("hCandidate2Eta", ";Candidate 2 - #eta; Events", 20, -2, 2);
    h->SetOption("hist GRIDX GRIDY XY");
 
-   o["hZ0_MassInv"]   = h = new TH1F("hZ0_MassInv", "; M_{Z^{0}} (GeV/c^{2}); Events", 10, 70, 110);
+   o["hZ0_MassInv"]   = h = new TH1F("hZ0_MassInv", "; M_{Z^{0}} (GeV/c^{2}); Events", 20, 70, 110);
    h->SetOption("hist GRIDX GRIDY XY");
-   o["hZ0_Pt"]   = h = new TH1F("hZ0_Pt", "; Z0-P_{T} (GeV/c); Events", 10, 0, 25);
+   o["hZ0_Pt"]   = h = new TH1F("hZ0_Pt", "; Z0-P_{T} (GeV/c); Events", 20, 0, 25);
    h->SetOption("hist GRIDX GRIDY XY");
    o["hZ0_Eta"]   = h = new TH1F("hZ0_Eta", "; Z0- #eta; Events", 20, -4, 4);
    h->SetOption("hist GRIDX GRIDY XY");

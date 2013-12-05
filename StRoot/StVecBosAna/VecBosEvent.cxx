@@ -11,7 +11,7 @@ ClassImp(VecBosEvent)
 using namespace std;
 
 
-VecBosEvent::VecBosEvent() : ProtoEvent(),
+VecBosEvent::VecBosEvent(float TrPt) : ProtoEvent(),
    mStMuDst(0),
    fIsMc(false),
    fEventId(-1),
@@ -33,7 +33,8 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mP3BalanceFromTracks(),
    mBalanceDeltaPhiFromTracks(0),
    mNumRecoilTracksTpc(0),
-   mLumiEff(0)
+   mLumiEff(0),
+   mTracksPtMin(TrPt)
 {
 }
 
@@ -46,8 +47,7 @@ const float VecBosEvent::sMinTrackIsoDeltaPhi  = 0.7;
 const float VecBosEvent::sMaxVertexJetDeltaZ   = 1;    // distance between jet and vertex z coord, cm
 const float VecBosEvent::sMaxTrackJetDeltaZ    = 3;    // distance between jet and track z coord, cm
 const float VecBosEvent::sMinBTrackPt          = 10;
-const float VecBosEvent::sMinRecoilTrackPt     = 0;    // minimum Pt of a single track (cluster) in the recoil - S. Fazio 30 Sep 2013
-//const float VecBosEvent::sMinRecoilTrackPt     = mTracksPtMin;
+//const float VecBosEvent::sMinRecoilTrackPt     = 0;    // minimum Pt of a single track (cluster) in the recoil - S. Fazio 30 Sep 2013
 const float VecBosEvent::sMinTrackHitFrac      = 0.51;
 const float VecBosEvent::sMinClusterEnergyFrac = 0.90; // was 0.88
 const float VecBosEvent::sMaxJetCone           = 0.7;  // cone = delta R
@@ -430,7 +430,9 @@ void VecBosEvent::CalcRecoilFromTracks()
       if ( track.mVertex != trackCandidate.mVertex ) continue;
       if ( track == trackCandidate ) continue;
 
-      if ( track.mP3AtDca.Pt() < sMinRecoilTrackPt ) continue;
+      if ( track.mP3AtDca.Pt() < mTracksPtMin ) continue;
+
+      Info("Print", "mTracksPtMin:     %d",        mTracksPtMin);
 
       mP3TrackRecoilTpc   += track.mP3AtDca;
       mNumRecoilTracksTpc += 1;
@@ -488,7 +490,7 @@ void VecBosEvent::CalcRecoilFromTracks()
          }
       }
 
-      if (!hasMatch && !partOfElecCandidate && towerP3.Pt() > sMinRecoilTrackPt ) {
+      if (!hasMatch && !partOfElecCandidate && towerP3.Pt() > mTracksPtMin ) {
          mP3TrackRecoilNeutrals += towerP3;
       }
    }
@@ -971,12 +973,13 @@ void VecBosEvent::Print(const Option_t* opt) const
    GetGmt_day_hour( yyyymmdd,  hhmmss);
    Info("Print", "Event time is: day=%08d, hour=%06d (GMT)", yyyymmdd, hhmmss);
 
-   Info("Print", "GetNumJets():     %d", GetNumJets());
-   Info("Print", "GetNumVertices(): %d", GetNumVertices());
-   Info("Print", "GetNumTracks():   %d", GetNumTracks());
+   Info("Print", "GetNumJets():     %d",        GetNumJets());
+   Info("Print", "GetNumVertices(): %d",        GetNumVertices());
+   Info("Print", "GetNumTracks():   %d",        GetNumTracks());
    Info("Print", "GetNumCandidateTracks(): %d", GetNumCandidateTracks());
    Info("Print", "mTracksCandidate.size(): %d", mTracksCandidate.size());
    Info("Print", "mTracks.size():   %d",        mTracks.size());
+   Info("Print", "mTracksPtMin:     %d",        mTracksPtMin);
 
    VecBosTrackPtrSetIter iTrack = mTracks.begin();
    for ( ; iTrack != mTracks.end(); ++iTrack)

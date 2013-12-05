@@ -17,8 +17,8 @@ class WBosEvent : public VecBosEvent
 {
 public:
 
-   WBosEvent();
-   WBosEvent(bool otherSolution);
+   explicit WBosEvent(float TrPt);
+   explicit WBosEvent(bool otherSolution);
 
    VecBosTrack& GetElectronTrack() const;
    TVector3     GetElectronP3() const;
@@ -51,6 +51,7 @@ protected:
    TVector3  mElectronP3; //
    TVector3  mNeutrinoP3; //
    TVector3  mNeutrinoP3Other; //!< Neutrino momentum based on "wrong" p_z solution XXX:ds: is not persistent temporarily
+   //float     tracksPt;
 
    ClassDef(WBosEvent, 1);
 };

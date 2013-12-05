@@ -14,8 +14,8 @@ const float WBosEvent::sMinElectronPtHard  = 25;
 const float WBosEvent::sMinNeutrinoPt      = 18;
 
 
-WBosEvent::WBosEvent() : VecBosEvent(), mWBosMass(80.385), mElectronP3(), mNeutrinoP3(),
-   mNeutrinoP3Other()
+WBosEvent::WBosEvent(float TrPt) : VecBosEvent(TrPt), mWBosMass(80.385), mElectronP3(), mNeutrinoP3(),
+				      mNeutrinoP3Other()
 {
 }
 

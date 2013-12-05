@@ -189,7 +189,7 @@ Int_t StVecBosMaker::Init()
       mVecBosTree = new TTree("t", "mVecBosTree");
 
       if (mAnaOptions->GetBosonType() == kWBoson) {
-         mVecBosEvent = new WBosEvent();
+         mVecBosEvent = new WBosEvent(mTracksPtMin);
          mVecBosTree->Branch("e", "WBosEvent", &mVecBosEvent, 128000, 0); // splitlevel=0. very important for custom streamers
       } else if (mAnaOptions->GetBosonType() == kZBoson) {
          mVecBosEvent = new ZBosEvent();

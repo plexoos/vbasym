@@ -75,6 +75,19 @@
    </SandBox>
 
    <!-- Run 11, SL11d -->
+<<<<<<< Updated upstream
    <input URL="catalog:star.bnl.gov?production=P11id,trgsetupname~pp500_production_2011,sname1~st_W,filetype=daq_reco_mudst,storage=hpss,runnumber~&JOB_RUN_FILE_NAME;%" nFiles="all" />
 
+=======
+   <!--<input URL="catalog:star.bnl.gov?filename~st_W,production=P11id,filetype=daq_reco_mudst,storage=hpss,runnumber~&RUN_ID;%" nFiles="all" />-->
+   <!--<input URL="catalog:star.bnl.gov?filename~st_W,library=SL11id,filetype=daq_reco_mudst,storage=nfs,runnumber=&RUN_ID;" nFiles="all" />-->
+   <!--<input URL="catalog:star.bnl.gov?filename~st_W,production=P09ig,filetype=daq_reco_mudst,runnumber=&RUN_ID;" nFiles="all" />-->
+
+   <!-- Run 12, SL13b -->
+<input URL="catalog:star.bnl.gov?production=P13ib,trgsetupname~pp500_production_2012,sname1~st_W,filetype=daq_reco_mudst,storage=nfs,runnumber~&RUN_ID;%" nFiles="all" />
+	
+   <!-- Run 13 -->
+	<!--<input URL="catalog:star.bnl.gov?production=DEV,trgsetupname~pp500_production_2013,sname1~st_W,storage=nfs,runnumber~&RUN_ID;%" nFiles="all" />-->
+	
+>>>>>>> Stashed changes
 </job>
