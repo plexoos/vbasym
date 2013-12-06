@@ -35,6 +35,7 @@ public:
    double       GetFitSineOffset() const;
    float        GetTracksPtMin() const;
    bool         UseOtherSolution() const;
+   bool         GetIsMc() const;
    virtual void ProcessOptions(int argc, char **argv);
    void         Print(const Option_t* opt="") const;
    void         PrintAsPhp(FILE *f=stdout) const;
