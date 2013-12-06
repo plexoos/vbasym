@@ -17,8 +17,8 @@ class WBosEvent : public VecBosEvent
 {
 public:
 
-   explicit WBosEvent(float TrPt);
-   explicit WBosEvent(bool otherSolution);
+   //explicit WBosEvent(float TrPt);
+   explicit WBosEvent(float TrPt, bool otherSolution = false);
 
    VecBosTrack& GetElectronTrack() const;
    TVector3     GetElectronP3() const;

@@ -13,14 +13,17 @@ const float WBosEvent::sMinElectronPtLight = 15;
 const float WBosEvent::sMinElectronPtHard  = 25;
 const float WBosEvent::sMinNeutrinoPt      = 18;
 
-
-WBosEvent::WBosEvent(float TrPt) : VecBosEvent(TrPt), mWBosMass(80.385), mElectronP3(), mNeutrinoP3(),
-				      mNeutrinoP3Other()
+/*
+WBosEvent::WBosEvent(float TrPt) : VecBosEvent(TrPt)
+   , mWBosMass(80.385)
+   , mElectronP3()
+   , mNeutrinoP3()
+   , mNeutrinoP3Other()
 {
 }
+*/
 
-
-WBosEvent::WBosEvent(bool otherSolution) : VecBosEvent()
+WBosEvent::WBosEvent(float TrPt, bool otherSolution) : VecBosEvent(TrPt)
    , mWBosMass(80.385)
    , mElectronP3()
    , mNeutrinoP3()
