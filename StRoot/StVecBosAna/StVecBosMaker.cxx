@@ -188,6 +188,8 @@ Int_t StVecBosMaker::Init()
       mTreeFile->cd();
       mVecBosTree = new TTree("t", "mVecBosTree");
 
+      mTracksPtMin = mAnaOptions->GetTracksPtMin(); 
+      cout << "mTracksPtMin...............: " <<        mTracksPtMin << endl;
       if (mAnaOptions->GetBosonType() == kWBoson) {
          mVecBosEvent = new WBosEvent(mTracksPtMin);
          mVecBosTree->Branch("e", "WBosEvent", &mVecBosEvent, 128000, 0); // splitlevel=0. very important for custom streamers
