@@ -33,10 +33,12 @@ int main(int argc, char *argv[])
    Int_t  nMaxUserEvents = -1; // < 0 means all events
    //Int_t  nMaxUserEvents = 3000;
 
-   Bool_t isMc          = kFALSE;
+   //Bool_t isMc          = kFALSE;
+   //Bool_t isMc          = (vbAnaOptions.GetIsMc() == true  ? kTRUE : kFALSE);
    //Bool_t isMc          = kTRUE;
    //Bool_t isZ           = kFALSE;
-   Bool_t isZ           = kTRUE;
+   //Bool_t isZ           = kTRUE;
+   Bool_t isZ           = (vbAnaOptions.GetBosonType() == kZBoson  ? kTRUE : kFALSE);
 
    //string filelist       =   vbAnaOptions.GetListFileName();
    string filelist       =   vbAnaOptions.GetListName();
@@ -54,8 +56,8 @@ int main(int argc, char *argv[])
    string stana_options  = "--jpm_0.5";
    //stana_options = (isZ  ? "-z_" : "-w_") + stana_options;
    stana_options = (vbAnaOptions.GetBosonType() == kZBoson  ? "-z_" : "-w_") + stana_options;
-   stana_options = (isMc ? "-m_" : "") + stana_options;
-   stana_options = stana_options + (!isMc ? "_--run_11" : "");
+   stana_options = (vbAnaOptions.IsMc() ? "-m_" : "") + stana_options;
+   stana_options = stana_options + (!vbAnaOptions.IsMc() ? "_--run_11" : "");
    //stana_options = stana_options + (!isMc ? "_--run_12" : "");
 
    // this is the name of the output file
@@ -65,7 +67,7 @@ int main(int argc, char *argv[])
 
    Info("main", "nMaxUserEvents: %d", nMaxUserEvents);
    Info("main", "histFileName:   %s", histFileName.c_str());
-   Info("main", "isMc:           %d", isMc);
+   Info("main", "isMc():         %d", vbAnaOptions.IsMc());
    Info("main", "Boson type is:  %d", vbAnaOptions.GetBosonType());
    Info("main", "isZ:            %d", isZ);
 
@@ -76,15 +78,15 @@ int main(int argc, char *argv[])
    if (vbAnaOptions.GetBosonType() == kWBoson)
    {
       vecBosRootFile = new WBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc());
-      vecBosEvent    = new WBosEvent( vbAnaOptions.UseOtherSolution() );
+      vecBosEvent    = new WBosEvent(vbAnaOptions.GetTracksPtMin(), vbAnaOptions.UseOtherSolution() );
 
 	//} else if (vbAnaOptions.GetBosonType() == kZBoson)
 	  //{
 	  //vecBosRootFile = new ZBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc());
 	} else if (vbAnaOptions.GetBosonType() == kZBoson)
 	{
-      //vecBosRootFile = new ZBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc());
-      vecBosRootFile = new VecBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc(), isZ);
+      vecBosRootFile = new ZBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc());
+      //vecBosRootFile = new VecBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc(), isZ);
       vecBosEvent    = new ZBosEvent();
    }
 
