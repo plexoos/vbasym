@@ -17,16 +17,6 @@ case $STANA_OPTIONS in
 *) RUN_PERIOD=11 ;;
 esac
 
-#FILELIST=$1
-#CODE_DIR=~/vbasym/
-#STAR_VER=SL11d
-#STAR_VER=SL12c
-#STANA_OPTIONS=$2
-#STANA_OPTIONS="-m_--jpm_0.5_-n1000_--jets"
-#STANA_OPTIONS="-m_-w_--jpm_0.5_--jets"
-#STANA_OPTIONS="-m_-w_--jpm_0.5"
-#OUT_DIR=/star/institutions/bnl_me/fazio/stana_out/runlists/${FILELIST}_${STANA_OPTIONS}
-
 echo
 echo RUN_FILE_LIST = $RUN_FILE_LIST
 echo VBASYM_DIR    = $VBASYM_DIR

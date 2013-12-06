@@ -21,13 +21,8 @@
       setenv OPT_JETS `echo $OPTIONS | awk '{print index($0,"--jets")}'`
       setenv COMMAND  "./stana -f $RUNLIST $OPTIONS"
 
-<<<<<<< Updated upstream
       if ($OPT_JETS == 0) ln -s &OUT_DIR;_--jets/jets/&JOB_RUN_FILE_NAME;_jets.root
       cp -r &CODE_DIR;/.&STAR_HOST_SYS; .
-=======
-      if ($OPT_JETS == 0) ln -s &OUT_DIR;_--jets/jets/&MY_FILELIST;_jets.root
-      cp -r &CODE_DIR;/.sl53_gcc432 .
->>>>>>> Stashed changes
       cp -r &CODE_DIR;/src/stana .
       ls -al
 

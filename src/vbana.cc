@@ -21,55 +21,17 @@ int main(int argc, char *argv[])
    VbAnaOptions vbAnaOptions;
    vbAnaOptions.ProcessOptions(argc, argv);
 
-   gROOT->Macro("~/rootmacros/styles/style_vbana.C");
+   gROOT->Macro("~/root-helper/styles/style_vbana.C");
 
    TStopwatch stopwatch;
 
    setbuf(stdout, NULL);
 
-   //Int_t  nMaxUserEvents = vbAnaOptions.GetMaxEventsUser();
-   //string histFileName   = vbAnaOptions.GetRootFileName();
-
-   Int_t  nMaxUserEvents = -1; // < 0 means all events
-   //Int_t  nMaxUserEvents = 3000;
-
-   //Bool_t isMc          = kFALSE;
-   //Bool_t isMc          = (vbAnaOptions.GetIsMc() == true  ? kTRUE : kFALSE);
-   //Bool_t isMc          = kTRUE;
-   //Bool_t isZ           = kFALSE;
-   //Bool_t isZ           = kTRUE;
-   Bool_t isZ           = (vbAnaOptions.GetBosonType() == kZBoson  ? kTRUE : kFALSE);
-
-   //string filelist       =   vbAnaOptions.GetListFileName();
-   string filelist       =   vbAnaOptions.GetListName();
-   //string filelist       = "run11_pp_transverse";
-   //string filelist       = "run11_pp_longitudinal";
-   //string filelist       = "run12_pp";
-   //string filelist       = "run12_pp_long_j3";
-   //string filelist       = "run11_mc_Wp2enu.lis";
-   //string filelist       = "run11_mc_Wm2enu.lis";
-   //string filelist       = "run11_mc_Wp2taunu.lis";
-   //string filelist       = "run11_mc_Wm2taunu.lis";
-   //string filelist       = "run11_mc_Z02ee.lis";
-   //string filelist       = "run12_QCD.lis";
-
-   string stana_options  = "--jpm_0.5";
-   //stana_options = (isZ  ? "-z_" : "-w_") + stana_options;
-   stana_options = (vbAnaOptions.GetBosonType() == kZBoson  ? "-z_" : "-w_") + stana_options;
-   stana_options = (vbAnaOptions.IsMc() ? "-m_" : "") + stana_options;
-   stana_options = stana_options + (!vbAnaOptions.IsMc() ? "_--run_11" : "");
-   //stana_options = stana_options + (!isMc ? "_--run_12" : "");
-
-   // this is the name of the output file
-   string histFileName = "/star/institutions/bnl_me/fazio/stana_out/runlists/" + filelist + "_" + stana_options + "/hist/vbana.root";
-   //string histFileName = filelist + "_" + stana_options + "/hist/vbana.root";
-   //string histFileName   = vbAnaOptions.GetRootFileName();
+   Int_t  nMaxUserEvents = vbAnaOptions.GetMaxEventsUser();
+   string histFileName   = vbAnaOptions.GetRootFileName();
 
    Info("main", "nMaxUserEvents: %d", nMaxUserEvents);
    Info("main", "histFileName:   %s", histFileName.c_str());
-   Info("main", "isMc():         %d", vbAnaOptions.IsMc());
-   Info("main", "Boson type is:  %d", vbAnaOptions.GetBosonType());
-   Info("main", "isZ:            %d", isZ);
 
    AsymCalculator::sVbAnaOptions = &vbAnaOptions;
    VecBosRootFile *vecBosRootFile;
@@ -80,29 +42,22 @@ int main(int argc, char *argv[])
       vecBosRootFile = new WBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc());
       vecBosEvent    = new WBosEvent(vbAnaOptions.GetTracksPtMin(), vbAnaOptions.UseOtherSolution() );
 
-	//} else if (vbAnaOptions.GetBosonType() == kZBoson)
-	  //{
-	  //vecBosRootFile = new ZBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc());
-	} else if (vbAnaOptions.GetBosonType() == kZBoson)
-	{
+   } else if (vbAnaOptions.GetBosonType() == kZBoson)
+   {
       vecBosRootFile = new ZBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc());
-      //vecBosRootFile = new VecBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc(), isZ);
       vecBosEvent    = new ZBosEvent();
    }
 
    TObject *o;
    TIter   *next = new TIter(utils::getFileList( vbAnaOptions.GetListFileName() ));
-   //TIter   *next = new TIter(utils::getFileList("/star/u/fazio/vbasym/runlists/"+filelist));
    UInt_t   nProcEvents = 0;
 
    // Loop over the runs and record the time of the last flattop measurement in the fill
    while (next && (o = (*next)()) )
    {
       string fName    = string(((TObjString*) o)->GetName());
-      string fileName = vbAnaOptions.GetResultsDir() + "_" + stana_options + "/tree/";
+      string fileName = vbAnaOptions.GetResultsDir() + "/tree/";
       fileName += (vbAnaOptions.IsMc() ? "" : "R") + fName + "_tree.root";
-      //string fileName = "/star/institutions/bnl_me/fazio/stana_out/runlists/" + filelist + "_" + stana_options + "/tree/";
-      //fileName += (isMc ? "" : "R") + fName + "_tree.root";
 
       TFile *f = new TFile(fileName.c_str(), "READ");
 
