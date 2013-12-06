@@ -37,6 +37,7 @@ string VbAnaOptions::GetRootFileName()  const { return GetResultsDir() + "/hist/
 double VbAnaOptions::GetFitSinePhase()  const { return fFitSinePhase; }
 double VbAnaOptions::GetFitSineOffset() const { return fFitSineOffset; }
 bool   VbAnaOptions::UseOtherSolution() const { return fUseOtherSolution; }
+float  VbAnaOptions::GetTracksPtMin()   const { return fTracksPtMin; }
 
 
 /**
