@@ -38,7 +38,6 @@ double VbAnaOptions::GetFitSinePhase()  const { return fFitSinePhase; }
 double VbAnaOptions::GetFitSineOffset() const { return fFitSineOffset; }
 bool   VbAnaOptions::UseOtherSolution() const { return fUseOtherSolution; }
 bool   VbAnaOptions::GetIsMc()          const { return fIsMc; }
-float  VbAnaOptions::GetTracksPtMin()   const { return fTracksPtMin; }
 
 
 /**

@@ -33,7 +33,6 @@ public:
    std::string  GetRootFileName() const;
    double       GetFitSinePhase() const;
    double       GetFitSineOffset() const;
-   float        GetTracksPtMin() const;
    bool         UseOtherSolution() const;
    bool         GetIsMc() const;
    virtual void ProcessOptions(int argc, char **argv);
