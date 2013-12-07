@@ -39,8 +39,6 @@ class VecBosEvent : public ProtoEvent
 {
 public:
 
-   explicit VecBosEvent(float TrPt);
-
    int                     l2bitET;
    int                     l2bitRnd;
    int                     l2EbitET;
@@ -105,14 +103,13 @@ public:
    Double_t                mPtBalanceCosPhiFromTracks2;
    Double_t                mPtBalanceCosPhiFromJets;
    float                   mLumiEff;
-   float                   mTracksPtMin;
 
    static const float  sMinTrackIsoDeltaR;    //!< (rad) near-cone size
    static const float  sMinTrackIsoDeltaPhi;  //!< (rad) away-'cone' size, approx. 40 deg.
    static const float  sMaxVertexJetDeltaZ;   //!< distance between jet and vertex z coord, cm
    static const float  sMaxTrackJetDeltaZ;    //!< distance between jet and track z coord, cm
    static const float  sMinBTrackPt;          //!
-   //static const float  sMinRecoilTrackPt;     //!< Minimum p_T of a single track (cluster) in the recoil
+   static float  sMinRecoilTrackPt;           //!< Minimum P_T of a single track (cluster) in the recoil. 0 obviously means no minimum
    static const float  sMinTrackHitFrac;      //!
    static const float  sMinClusterEnergyFrac; //!
    static const float  sMaxJetCone;           //!

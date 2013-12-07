@@ -11,7 +11,7 @@ ClassImp(VecBosEvent)
 using namespace std;
 
 
-VecBosEvent::VecBosEvent(float TrPt) : ProtoEvent(),
+VecBosEvent::VecBosEvent() : ProtoEvent(),
    mStMuDst(0),
    fIsMc(false),
    fEventId(-1),
@@ -33,8 +33,7 @@ VecBosEvent::VecBosEvent(float TrPt) : ProtoEvent(),
    mP3BalanceFromTracks(),
    mBalanceDeltaPhiFromTracks(0),
    mNumRecoilTracksTpc(0),
-   mLumiEff(0),
-   mTracksPtMin(TrPt)
+   mLumiEff(0)
 {
 }
 
@@ -47,7 +46,7 @@ const float VecBosEvent::sMinTrackIsoDeltaPhi  = 0.7;
 const float VecBosEvent::sMaxVertexJetDeltaZ   = 1;    // distance between jet and vertex z coord, cm
 const float VecBosEvent::sMaxTrackJetDeltaZ    = 3;    // distance between jet and track z coord, cm
 const float VecBosEvent::sMinBTrackPt          = 10;
-//const float VecBosEvent::sMinRecoilTrackPt     = 0;    // minimum Pt of a single track (cluster) in the recoil - S. Fazio 30 Sep 2013
+float VecBosEvent::sMinRecoilTrackPt           = 0;    // Minimum P_T of a single track (cluster) in the recoil. 0 obviously means no minimum
 const float VecBosEvent::sMinTrackHitFrac      = 0.51;
 const float VecBosEvent::sMinClusterEnergyFrac = 0.90; // was 0.88
 const float VecBosEvent::sMaxJetCone           = 0.7;  // cone = delta R
@@ -344,15 +343,17 @@ void VecBosEvent::Process()
 
 void VecBosEvent::ProcessPersistent()
 {
+   Info("ProcessPersistent", "Called");
+
    VecBosTrackPtrSetIter iTrack = mTracks.begin();
    for ( ; iTrack != mTracks.end(); ++iTrack) {
       VecBosTrack *track = *iTrack;
 
-      //Info("Streamer", "this: %x, mStMuTrack: %x", track, track->mStMuTrack);
+      Info("ProcessPersistent", "this: %x, mStMuTrack: %x", track, track->mStMuTrack);
 
       // Set pointers to candidate tracks
       if ( track->IsCandidate() ) {
-         //Info("Streamer", "mTracksCandidate found: %x", track);
+         Info("ProcessPersistent", "mTracksCandidate found: %x", track);
          mTracksCandidate.insert(track);
       }
 
@@ -366,16 +367,13 @@ void VecBosEvent::ProcessPersistent()
       }
    }
 
-   mP4JetRecoil.SetXYZT(0, 0, 0, 0);
-
    VecBosJetPtrSetConstIter iJet = mJets.begin();
    for ( ; iJet != mJets.end(); ++iJet) {
       VecBosJet *vbJet = *iJet;
-      //Info("Streamer", "mJets this: %x", vbJet);
+      Info("ProcessPersistent", "mJets this: %x", vbJet);
 
       if ( IsRecoilJet(vbJet) ) {
-         //Info("Streamer", "Recoil jet found : %x", vbJet);
-         mP4JetRecoil += *vbJet;
+         Info("ProcessPersistent", "Recoil jet found : %x", vbJet);
          mJetsRecoil.insert(vbJet);
       }
    }
@@ -430,9 +428,7 @@ void VecBosEvent::CalcRecoilFromTracks()
       if ( track.mVertex != trackCandidate.mVertex ) continue;
       if ( track == trackCandidate ) continue;
 
-      if ( track.mP3AtDca.Pt() < mTracksPtMin ) continue;
-
-      Info("Print", "mTracksPtMin:     %d",        mTracksPtMin);
+      if ( track.mP3AtDca.Pt() < sMinRecoilTrackPt ) continue;
 
       mP3TrackRecoilTpc   += track.mP3AtDca;
       mNumRecoilTracksTpc += 1;
@@ -490,7 +486,7 @@ void VecBosEvent::CalcRecoilFromTracks()
          }
       }
 
-      if (!hasMatch && !partOfElecCandidate && towerP3.Pt() > mTracksPtMin ) {
+      if (!hasMatch && !partOfElecCandidate && towerP3.Pt() > sMinRecoilTrackPt ) {
          mP3TrackRecoilNeutrals += towerP3;
       }
    }
@@ -979,7 +975,6 @@ void VecBosEvent::Print(const Option_t* opt) const
    Info("Print", "GetNumCandidateTracks(): %d", GetNumCandidateTracks());
    Info("Print", "mTracksCandidate.size(): %d", mTracksCandidate.size());
    Info("Print", "mTracks.size():   %d",        mTracks.size());
-   Info("Print", "mTracksPtMin:     %d",        mTracksPtMin);
 
    VecBosTrackPtrSetIter iTrack = mTracks.begin();
    for ( ; iTrack != mTracks.end(); ++iTrack)
