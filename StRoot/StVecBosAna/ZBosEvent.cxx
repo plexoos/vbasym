@@ -180,11 +180,11 @@ void ZBosEvent::Streamer(TBuffer &R__b)
 {
 
    if (R__b.IsReading()) {
-     //Info("Streamer", "Reading...");
+      //Info("Streamer", "Reading...");
       R__b.ReadClassBuffer(ZBosEvent::Class(), this);
    }
    else {
-     //Info("Streamer", "Writing... ");
+      //Info("Streamer", "Writing... ");
       R__b.WriteClassBuffer(ZBosEvent::Class(), this);
    }
 

@@ -1,5 +1,3 @@
-// In this Macro, we are trying to make a root tree generated from pythia-pp
-
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -9,8 +7,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "wana.h"
-
 #include "TMath.h"
 #include "TString.h"
 #include "TObject.h"
@@ -19,13 +15,13 @@
 #include "TFile.h"
 #include "TVector3.h"
 
-#include "PyEvent.h"
-#include "WEvent.h"
+#include "StVecBosAna/PythiaEvent.h"
+#include "StVecBosAna/WBosMcEvent.h"
 
 using namespace std;
-// a comment
 
 
+/** This program creates a root tree generated from a pythia listing. */
 int main(int argc, char *argv[])
 {
    //string inputFileName = "/eicdata/eic0010/wana_mc_data/pythia_w.txt";
@@ -52,16 +48,16 @@ int main(int argc, char *argv[])
 
    outName.Append(".root");
 
-   PyEvent* pyEvent = new PyEvent();
-   WEvent*  wEvent  = new WEvent();
+   PythiaEvent* pyEvent = new PythiaEvent();
+   WBosMcEvent* wBosMcEvent = new WBosMcEvent();
 
-   TFile treefile(outName, "recreate" );
+   TFile treefile(outName, "recreate");
 
    TTree pyTree("pyTree", "pyTree");
    TTree wTree("wTree", "wTree");
 
-   pyTree.Branch( "pyEvent", &pyEvent, 640000, 99 );
-   wTree.Branch( "wEvent", &wEvent, 640000, 99 );
+   pyTree.Branch("PythiaEvent", &pyEvent, 640000, 99 );
+   wTree.Branch("WBosMcEvent", &wBosMcEvent, 640000, 99 );
 
    bool start   = false; // set a switch for reading data
    bool doboost = false; // set a switch for the boost
@@ -109,11 +105,11 @@ int main(int argc, char *argv[])
       // second pattern to find the end of an event and push it back to the event tree class
       if ( posit2 not_eq string::npos)
       {
-         if ( pyEvent->AcceptWEvent(*wEvent) ) {
+         if ( pyEvent->AcceptWEvent(*wBosMcEvent) ) {
             //cout << "Accepted event" << endl;
 
-            wEvent->RecoW();
-            wEvent->CalcRecoil(*pyEvent);
+            wBosMcEvent->RecoW();
+            wBosMcEvent->CalcRecoil(*pyEvent);
 
             pyTree.Fill();
             wTree.Fill();

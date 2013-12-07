@@ -13,15 +13,6 @@ const float WBosEvent::sMinElectronPtLight = 15;
 const float WBosEvent::sMinElectronPtHard  = 25;
 const float WBosEvent::sMinNeutrinoPt      = 18;
 
-/*
-WBosEvent::WBosEvent(float TrPt) : VecBosEvent(TrPt)
-   , mWBosMass(80.385)
-   , mElectronP3()
-   , mNeutrinoP3()
-   , mNeutrinoP3Other()
-{
-}
-*/
 
 WBosEvent::WBosEvent(float minTrackPt, bool otherSolution) : VecBosEvent()
    , mWBosMass(80.385)
@@ -92,7 +83,7 @@ void WBosEvent::ProcessPersistent()
    if ( !HasCandidateEle() ) return;
 
    mElectronP3 = GetElectronTrack().GetP3EScaled();
-   mNeutrinoP3 = CalcMissingEnergyP3(); // here we use only x and y components, and reconstruct the z one later
+   mNeutrinoP3 = CalcMissingEnergyP3(); // here we set only x and y components, and reconstruct the z one later
    mNeutrinoP3Other = mNeutrinoP3;
 
    ReconstructNeutrinoZ();

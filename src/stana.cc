@@ -1,13 +1,3 @@
-/* How to use this macro.
-To run w/o jets
-
-root4star -b -q 'analyzeMuDst.C(2e3,"st_W_12037041_raw_1400001.MuDst.root",0,0,5,7,"/star/data13/Magellan/reco/pp500_production_2011/ReversedFullField/P10k/2011/12037041/")'
-
-To  produce jets
-root4star -b -q 'analyzeMuDst.C(2e3,"st_W_12037041_raw_1400001.MuDst.root",0,1,5,7,"/star/data13/Magellan/reco/pp500_production_2011/ReversedFullField/P10k/2011/12037041/","/star/institutions/anl/balewski/jetTemp/")'
-
-*/
-
 #include <string>
 #include <cstdlib>
 #include <cassert>
@@ -42,7 +32,6 @@ root4star -b -q 'analyzeMuDst.C(2e3,"st_W_12037041_raw_1400001.MuDst.root",0,1,5
 #include "StJetFinder/StConePars.h"
 #include "StJetMaker/StJetReader.h"
 
-//#include "StVecBosAna/St2011pubMcMaker.h"
 #include "StVecBosAna/StVecBosMaker.h"
 #include "StVecBosAna/StZBosMaker.h"
 #include "StVecBosAna/St2011pubWanaMaker.h"
@@ -109,7 +98,7 @@ int analyzeMuDst(AnaOptions &anaOptions, bool findZ)
 
    VecBosRootFile vecBosRootFile(histFileName, "recreate");
 
-   printf("RUN NUMBER is: %s\n", runNo.Data());
+   printf("Run number: %s\n", runNo.Data());
    printf("Output file: %s\n", outputFile.Data());
    printf("isMC=%d, useJetFinder=%d\n", isMC, useJetFinder );
 
@@ -162,7 +151,6 @@ int analyzeMuDst(AnaOptions &anaOptions, bool findZ)
    stMuDstMaker->SetStatus("GlobalTracks", 1);
    stMuDstMaker->SetStatus("PrimaryTracks", 1);
 
-
    TChain *stMuDstMakerChain = stMuDstMaker->chain();
 
    assert(stMuDstMakerChain);
@@ -198,21 +186,12 @@ int analyzeMuDst(AnaOptions &anaOptions, bool findZ)
    // Load EEMC database
    StEEmcDbMaker *stEEmcDbMaker = new StEEmcDbMaker("eemcDb");
 
-#if 0 // drop abs lumi for now
-   if (!isMC && strstr(inMuDstFileListName, "fillListPhys")) {
-      StTriggerFilterMaker *filterMaker = new StTriggerFilterMaker;
-      filterMaker->addTrigger(230420); // AJP
-      filterMaker->addTrigger(230411); // JP2
-      filterMaker->addTrigger(bht3ID); // regular W -> e+ analysis
-   }
-#endif
-
    if (isMC && useJetFinder == 2) {
       StMcEventMaker *mcEventMaker = new StMcEventMaker();
       mcEventMaker->doPrintEventInfo  = false;
       mcEventMaker->doPrintMemoryInfo = false;
 
-      // don't need geant for trigger simu
+      // Do not need geant for trigger simu
       // BEMC simulator:
       StEmcSimulatorMaker *emcSim = new StEmcSimulatorMaker(); // use this instead to "redo" converstion from geant->adc
       emcSim->setCalibSpread(kBarrelEmcTowerId, 0.15);         // spread gains by 15%
@@ -232,14 +211,12 @@ int analyzeMuDst(AnaOptions &anaOptions, bool findZ)
 
       // Get TriggerMaker
       StTriggerSimuMaker *simuTrig = new StTriggerSimuMaker("StarTrigSimu");
-      //assert(simuTrig);
       simuTrig->setHList(HList);
       //simuTrig->setMC(isMC); // must be before individual detectors, to be passed
       simuTrig->setMC(2); // must be before individual detectors, to be passed
       simuTrig->useBbc();
       simuTrig->useEemc(0); // default=0: just process ADC, 1,2: comp w/trgData, see .
       assert(simuTrig->eemc);
-      //simuTrig->eemc->setSetupPath((char *) eemcSetupPath.c_str());
       simuTrig->useBemc();
       simuTrig->bemc->setConfig(2);
    }
@@ -427,12 +404,6 @@ int analyzeMuDst(AnaOptions &anaOptions, bool findZ)
       //WlumiMk->FinishRun(RunNo);
    }
 
-   //if (isMC && useJetFinder == 2) {
-   //   St2011pubMcMaker *pubMcMk = new St2011pubMcMaker("pubMc");
-   //   pubMcMk->AttachWalgoMaker(stVecBosMaker);
-   //   pubMcMk->setHList(HList);
-   //}
-
    if (findZ) {
       StZBosMaker *st2011ZMaker = new StZBosMaker("Z");
       st2011ZMaker->AttachWalgoMaker(stVecBosMaker);
@@ -520,7 +491,6 @@ int analyzeMuDst(AnaOptions &anaOptions, bool findZ)
       printf("\n Failed to open histo-file %s, continue\n", histFileName.Data());
    }
 
-   //vecBosRootFile.SaveAs((string) "^.*$", (string) "../vbasym_results/images_test/");
    vecBosRootFile.Print();
    vecBosRootFile.Close();
 
