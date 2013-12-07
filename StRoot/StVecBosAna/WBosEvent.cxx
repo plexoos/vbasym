@@ -23,12 +23,13 @@ WBosEvent::WBosEvent(float TrPt) : VecBosEvent(TrPt)
 }
 */
 
-WBosEvent::WBosEvent(float TrPt, bool otherSolution) : VecBosEvent(TrPt)
+WBosEvent::WBosEvent(float minTrackPt, bool otherSolution) : VecBosEvent()
    , mWBosMass(80.385)
    , mElectronP3()
    , mNeutrinoP3()
    , mNeutrinoP3Other()
 {
+   VecBosEvent::sMinRecoilTrackPt = minTrackPt;
    sUseOtherSolution = otherSolution;
 }
 
