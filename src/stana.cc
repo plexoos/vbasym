@@ -67,7 +67,6 @@ int analyzeMuDst(AnaOptions &anaOptions, bool findZ)
    bool    isMC                = anaOptions.IsMc();
    int     useJetFinder        = anaOptions.fDoReconstructJets ? 1 : 2; // 0: no jets = badWalgo; 1: generate jet trees; 2 read jet trees
    Float_t jetPtMin            = anaOptions.fJetPtMin;
-   Float_t tracksPtMin         = anaOptions.fTracksPtMin;
 
    string inputPathFile = inMuDstFileListName;
 
@@ -330,9 +329,6 @@ int analyzeMuDst(AnaOptions &anaOptions, bool findZ)
 
    StSpinDbMaker *stSpinDbMaker = new StSpinDbMaker("stSpinDbMaker");
    StVecBosMaker *stVecBosMaker = new StVecBosMaker(anaOptions, "StVecBosMaker", &vecBosRootFile);
-
-      // Set the Pt mim for recoil tracks and clusters
-      stVecBosMaker->setTracksPtMin(tracksPtMin);
 
    if (!isMC) {
       //stSpinDbMaker = new StSpinDbMaker("stSpinDbMaker");
