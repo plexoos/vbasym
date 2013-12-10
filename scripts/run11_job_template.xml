@@ -20,8 +20,8 @@
       setenv OPTIONS  `echo &STANA_OPTIONS; | sed 's/_/ /g'`
       setenv OPT_JETS `echo $OPTIONS | awk '{print index($0,"--jets")}'`
       setenv COMMAND  "./stana -f $RUNLIST $OPTIONS"
-
-      if ($OPT_JETS == 0) ln -s &OUT_DIR;_--jets/jets/R&JOB_RUN_FILE_NAME;_jets.root
+ 
+      if ($OPT_JETS == 0) ln -s &OUT_DIR;/jets/R&JOB_RUN_FILE_NAME;_jets.root
       cp -r &CODE_DIR;/.&STAR_HOST_SYS; .
       cp -r &CODE_DIR;/src/stana .
       ls -al

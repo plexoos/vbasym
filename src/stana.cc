@@ -253,7 +253,8 @@ int analyzeMuDst(AnaOptions &anaOptions, bool findZ)
       StppAnaPars *stppAnaPars = new StppAnaPars();
       stppAnaPars->setFlagMin(0);     // track->flag() > 0
       stppAnaPars->setNhits(12);      // track->nHitsFit()>12
-      stppAnaPars->setCutPtMin(0.2);  // track->pt() > 0.2
+      stppAnaPars->setCutPtMin(2.2);  // track->pt() > 0.2
+      //stppAnaPars->setCutPtMin(tracksPtMin);
       stppAnaPars->setAbsEtaMax(2.0); // abs(track->eta())<1.6
       stppAnaPars->setJetPtMin(jetPtMin);
       stppAnaPars->setJetEtaMax(100.0);

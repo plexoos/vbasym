@@ -68,16 +68,22 @@ void PtCorrPlot()
    gStyle->SetOptFit(1);
 
    // open histogram files
-   //TFile *fileData      = TFile::Open(inPath + "run11_pp_transverse_-w_--jpm_0.5_--run_11_vbana.root");
+   TFile *fileData      = TFile::Open(inPath + "run11_pp_transverse_-w_--jpm_0.5_--run_11_vbana.root");
    TFile *fileMCWp      = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_vbana.root");
    TFile *fileMCWpOld   = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_vbana_OldStylePtCorr.root");
 
 
    // fill histograms
+   TH1 *hd_Wp_PtWReco                       = (TH1*) fileData->Get("W+_event_pass_wbos/hTrackRecoilWithNeutralsPt");
+   TH1 *hd_Wp_PtWReco_zoomin                = (TH1*) fileData->Get("W+_event_pass_wbos/hTrackRecoilWithNeutralsPt_zoomin");
+   TH1 *hd_Wp_PtWRecoCorrected              = (TH1*) fileData->Get("W+_event_pass_wbos/hTrackRecoilWithNeutralsPtCorrected");
+   TH1 *hd_Wp_PtWRecoCorrected_zoomin       = (TH1*) fileData->Get("W+_event_pass_wbos/hTrackRecoilWithNeutralsPtCorrected_zoomin");
    TH1 *hWp_PtWReco                         = (TH1*) fileMCWp->Get("event_pass_wbos/hTrackRecoilWithNeutralsPt");
    TH1 *hWp_PtWReco_zoomin                  = (TH1*) fileMCWp->Get("event_pass_wbos/hTrackRecoilWithNeutralsPt_zoomin");
    TH1 *hWp_PtWRecoCorrected                = (TH1*) fileMCWp->Get("event_pass_wbos/hTrackRecoilWithNeutralsPtCorrected");
    TH1 *hWp_PtWRecoCorrected_zoomin         = (TH1*) fileMCWp->Get("event_pass_wbos/hTrackRecoilWithNeutralsPtCorrected_zoomin");
+   TH1 *hWp_Wp_PtWRecoCorrected                      = (TH1*) fileMCWp->Get("W+_event_pass_wbos/hTrackRecoilWithNeutralsPtCorrected");
+   TH1 *hWp_Wp_PtWRecoCorrected_zoomin               = (TH1*) fileMCWp->Get("W+_event_pass_wbos/hTrackRecoilWithNeutralsPtCorrected_zoomin");
    //TH1 *hWp_PtWRecoCorrectedOldStyle        = (TH1*) fileMCWpOld->Get("event_pass_wbos/hTrackRecoilWithNeutralsPtCorrected");
    //TH1 *hWp_PtWRecoCorrectedOldStyle_zoomin = (TH1*) fileMCWpOld->Get("event_pass_wbos/hTrackRecoilWithNeutralsPtCorrected_zoomin");
    TH1 *hWp_PtWGen                          = (TH1*) fileMCWp->Get("event_mc_pass_wbos/hWBosonPt");
@@ -87,6 +93,19 @@ void PtCorrPlot()
    TH2 *hWp_PtRecoilCorr_vs_PtWGen          = (TH2 *)fileMCWp->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt_copy");
 
    TH1 *hWp_PhiRecoil_vs_PhiWGen            = (TH1 *)fileMCWp->Get("event_mc_pass_wbos/hTrackRecoilPhiVsWBosonPhi");
+
+
+   // Luminosities
+   float lumiDataTot       = 24.42; // pb-1
+   float lumiDataEff       = 23.99; // pb-1
+   float lumiMC_Z          = 1621;  // pb-1
+   float lumiMC_WpToENU    = 1925;  // pb-1
+   float lumiMC_WpToTauTau = 1945;  // pb-1
+   float lumiMC_WmToTauTau = 1802;  // pb-1
+
+   // Scale factor for normalization to the luminosity
+   float scaleWp = lumiDataTot / lumiMC_WpToENU;
+
 
    /*
    TCanvas *c1   = new TCanvas("c1", "", 400, 400);
@@ -227,10 +246,44 @@ void PtCorrPlot()
    c3_3->cd();
    c3_3->SetLogz(1);
    hWp_PhiRecoil_vs_PhiWGen-> SetStats(0);
-   hWp_PhiRecoil_vs_PhiWGen->Draw();
+   hWp_PhiRecoil_vs_PhiWGen-> Draw();
    
    c3->Print(outPath + "/plot_c3.png");
    c3->Print(outPath + "/plot_c3.eps");
+
+
+   TCanvas *c4   = new TCanvas("c4", "", 400, 400);
+
+   TH1F * hd_Wp_PtWRecoCorrected_zoomin_1 = (TH1F *) hd_Wp_PtWRecoCorrected_zoomin->Clone(" hd_Wp_PtWRecoCorrected_zoomin_1");
+
+   TH1F * hWp_Wp_PtWRecoCorrected_zoomin_1 = (TH1F *) hWp_Wp_PtWRecoCorrected_zoomin->Clone(" hWp_Wp_PtWRecoCorrected_zoomin_1");
+
+   // Normalize to the integral:
+   //hWp_Wp_PtWRecoCorrected_zoomin_1->Scale(hd_Wp_PtWRecoCorrected_zoomin_1->Integral()/hWp_Wp_PtWRecoCorrected_zoomin_1->Integral());
+
+   // Normalize to the luminosity
+   hWp_Wp_PtWRecoCorrected_zoomin_1->Scale(scaleWp);
+
+   c4->cd();
+   hd_Wp_PtWRecoCorrected_zoomin_1    ->Rebin(2);
+   hd_Wp_PtWRecoCorrected_zoomin_1    ->GetYaxis()->SetTitleOffset(1.8);
+
+   hWp_Wp_PtWRecoCorrected_zoomin_1   ->Rebin(2);
+   hWp_Wp_PtWRecoCorrected_zoomin_1   ->Draw();
+   hd_Wp_PtWRecoCorrected_zoomin_1    ->SetMarkerStyle(20);
+   hd_Wp_PtWRecoCorrected_zoomin_1    ->SetTitle("W+ sample");
+   hd_Wp_PtWRecoCorrected_zoomin_1    ->Draw("E0");
+   hWp_Wp_PtWRecoCorrected_zoomin_1   ->Draw("same");
+   hd_Wp_PtWRecoCorrected_zoomin_1    ->Draw("E0 same");
+  
+   TLegend *leg4 = new TLegend(0.5, 0.75, 0.75, 0.9);
+   leg4 -> AddEntry(hd_Wp_PtWRecoCorrected_zoomin_1,"STAR run11 tran.", "P");
+   leg4 -> AddEntry(hWp_Wp_PtWRecoCorrected_zoomin_1,"PHYTHIA", "F");
+   leg4 -> Draw();
+
+
+   c4->SaveAs(outPath + "/plot_DataMc_WpPt.png");
+   c4->SaveAs(outPath + "/plot_DataMc_WpPt.eps");
   
 
 }

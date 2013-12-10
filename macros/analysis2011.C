@@ -1547,7 +1547,6 @@ void analysis2011()
    c10->Print(outPath + "/plot_10.eps");
    c10->Print(outPath + "/plot_10.png");
 
-   /*
 
    TCanvas *c10i = new TCanvas("c10i", "", 800, 400);
 
@@ -1826,10 +1825,8 @@ void analysis2011()
    //hd_Wm_PtWRelativeCorr_zoomin->Draw();
 
    c10ei->SaveAs(outPath + "/plot_10ei.png");
-   /*
 
    /*
-
    TCanvas *c11 = new TCanvas("c11", "", 800, 400);
 
    c11->SetTitle("DATA - Neutrino vs electron");
@@ -1852,7 +1849,7 @@ void analysis2011()
 
    c11->Print(outPath + "/plot_11.eps");
    c11->Print(outPath + "/plot_11.png");
-
    */
+  
 
 }

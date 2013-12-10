@@ -27,8 +27,43 @@ int main(int argc, char *argv[])
 
    setbuf(stdout, NULL);
 
-   Int_t  nMaxUserEvents = vbAnaOptions.GetMaxEventsUser();
-   string histFileName   = vbAnaOptions.GetRootFileName();
+   //Int_t  nMaxUserEvents = vbAnaOptions.GetMaxEventsUser();
+   //string histFileName   = vbAnaOptions.GetRootFileName();
+
+   Int_t  nMaxUserEvents = -1; // < 0 means all events
+   //Int_t  nMaxUserEvents = 3000;
+
+   //Bool_t isMc          = kFALSE;
+   //Bool_t isMc          = (vbAnaOptions.GetIsMc() == true  ? kTRUE : kFALSE);
+   //Bool_t isMc          = kTRUE;
+   //Bool_t isZ           = kFALSE;
+   //Bool_t isZ           = kTRUE;
+   Bool_t isZ           = (vbAnaOptions.GetBosonType() == kZBoson  ? kTRUE : kFALSE);
+
+   //string filelist       =   vbAnaOptions.GetListFileName();
+   string filelist       =   vbAnaOptions.GetListName();
+   //string filelist       = "run11_pp_transverse";
+   //string filelist       = "run11_pp_longitudinal";
+   //string filelist       = "run12_pp";
+   //string filelist       = "run12_pp_long_j3";
+   //string filelist       = "run11_mc_Wp2enu.lis";
+   //string filelist       = "run11_mc_Wm2enu.lis";
+   //string filelist       = "run11_mc_Wp2taunu.lis";
+   //string filelist       = "run11_mc_Wm2taunu.lis";
+   //string filelist       = "run11_mc_Z02ee.lis";
+   //string filelist       = "run12_QCD.lis";
+
+   string stana_options  = "--jpm_0.5_--tpm_0.2";
+   //stana_options = (isZ  ? "-z_" : "-w_") + stana_options;
+   stana_options = (vbAnaOptions.GetBosonType() == kZBoson  ? "-z_" : "-w_") + stana_options;
+   stana_options = (vbAnaOptions.IsMc() ? "-m_" : "") + stana_options;
+   stana_options = stana_options + (!vbAnaOptions.IsMc() ? "_--run_11" : "");
+   //stana_options = stana_options + (!isMc ? "_--run_12" : "");
+
+   // this is the name of the output file
+   string histFileName = "/star/institutions/bnl_me/fazio/stana_out/runlists/" + filelist + "_" + stana_options + "/hist/vbana.root";
+   //string histFileName = filelist + "_" + stana_options + "/hist/vbana.root";
+   //string histFileName   = vbAnaOptions.GetRootFileName();
 
    Info("main", "nMaxUserEvents: %d", nMaxUserEvents);
    Info("main", "histFileName:   %s", histFileName.c_str());
@@ -39,12 +74,13 @@ int main(int argc, char *argv[])
 
    if (vbAnaOptions.GetBosonType() == kWBoson)
    {
-      vecBosRootFile = new WBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc());
+     //vecBosRootFile = new WBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc());
+      vecBosRootFile = new VecBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc(), isZ);
       vecBosEvent    = new WBosEvent(vbAnaOptions.GetTracksPtMin(), vbAnaOptions.UseOtherSolution() );
-
    } else if (vbAnaOptions.GetBosonType() == kZBoson)
    {
-      vecBosRootFile = new ZBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc());
+      //vecBosRootFile = new ZBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc());
+      vecBosRootFile = new VecBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc(), isZ);
       vecBosEvent    = new ZBosEvent();
    }
 

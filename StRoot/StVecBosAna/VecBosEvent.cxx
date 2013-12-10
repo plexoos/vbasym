@@ -349,7 +349,7 @@ void VecBosEvent::ProcessPersistent()
    for ( ; iTrack != mTracks.end(); ++iTrack) {
       VecBosTrack *track = *iTrack;
 
-      Info("ProcessPersistent", "this: %x, mStMuTrack: %x", track, track->mStMuTrack);
+      //Info("ProcessPersistent", "this: %x, mStMuTrack: %x", track, track->mStMuTrack);
 
       // Set pointers to candidate tracks
       if ( track->IsCandidate() ) {
@@ -429,6 +429,7 @@ void VecBosEvent::CalcRecoilFromTracks()
       if ( track == trackCandidate ) continue;
 
       if ( track.mP3AtDca.Pt() < sMinRecoilTrackPt ) continue;
+      Info("Print", "sMinRecoilTrackPt:     %f",        sMinRecoilTrackPt);
 
       mP3TrackRecoilTpc   += track.mP3AtDca;
       mNumRecoilTracksTpc += 1;
