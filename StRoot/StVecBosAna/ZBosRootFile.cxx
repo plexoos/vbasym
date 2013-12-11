@@ -12,6 +12,7 @@
 #include "EventHContainer.h"
 #include "EventDisplayHContainer.h"
 #include "WBosEventHContainer.h"
+#include "Z0EventHContainer.h"
 #include "MCHContainer.h"
 #include "WBosEvent.h"
 #include "ZBosEvent.h"
@@ -55,6 +56,9 @@ void ZBosRootFile::BookHists()
 
    fHists->d["event"] = ph = new EventHContainer(new TDirectoryFile("event", "event", "", this));
    fHistCuts[kCUT_EVENT_NOCUT].insert(ph);
+
+   fHists->d["event_z"] = ph = new Z0EventHContainer(new TDirectoryFile("event_z", "event_z", "", this));
+   fHistCuts[kCUT_EVENT_Z].insert(ph);
 
    fHists->d["asym"] = ph = new AllAsymHContainer(new TDirectoryFile("asym", "asym", "", this));
    fHistCuts[kCUT_EVENT_Z].insert(ph);
