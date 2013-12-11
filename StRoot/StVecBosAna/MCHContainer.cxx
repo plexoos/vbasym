@@ -40,7 +40,7 @@ void MCHContainer::BookHists()
    fDir->cd();
 
    o["hWBosonE"]   = new rh::H1F("hWBosonE", "; W energy [GeV]; Events", 100, 20., 200., "hist GRIDX");
-   o["hWBosonPz"]  = new rh::H1F("hWBosonPz", "; P^{W}_{z} [GeV/c]; Events", 80, -40., 40., "hist GRIDX");
+   o["hWBosonPz"]  = new rh::H1F("hWBosonPz", "; P^{W}_{z} [GeV/c]; Events", 50, -80., 80., "hist GRIDX");
    o["hWBosonPt"]  = new rh::H1F("hWBosonPt", "; P^{W}_{T} [GeV/c]; Events", 40, 0., 40., "hist GRIDX");
    o["hWBosonPt_zoomin"] = new rh::H1F("hWBosonPt_zoomin", "; P^{W}_{T} [GeV/c]; Events", 20, 0., 10., "hist GRIDX");
    o["hWBosonEta"] = new rh::H1F("hWBosonEta", "; W pseudo-rapidity #eta; Events", 60, -6, 6, "hist GRIDX");
@@ -58,26 +58,25 @@ void MCHContainer::BookHists()
    o["hLeptonPt"] = new rh::H1I("hLeptonPt", "; P^{#nu}_{T} [GeV/c]; Events", 80, 0., 80., "hist GRIDX");
 
    o["hRecoVsGenLeptonPhi"] = new rh::H2I("hRecoVsGenLeptonPhi", "; Gen. Lepton #phi; Reco. Lepton #phi", 50, -M_PI, M_PI, 50, -M_PI, M_PI, "colz LOGZ");
-   o["hRecoVsGenLeptonPt"]  = new rh::H2I("hRecoVsGenLeptonPt",  "; Gen. Lepton P_{T}; Reco. Lepton P_{T}", 50, 10, 60, 50, 10, 60, "colz LOGZ");
-   o["hRecoVsGenLeptonPz"]  = new rh::H2I("hRecoVsGenLeptonPz",  "; Gen. Lepton P_{z}; Reco. Lepton P_{z}", 50, -50, 50, 50, -50, 50, "colz LOGZ");
+   o["hRecoVsGenLeptonPt"]  = new rh::H2I("hRecoVsGenLeptonPt",  "; Gen. Lepton P_{T}, GeV; Reco. Lepton P_{T}, GeV", 50, 10, 60, 50, 10, 60, "colz LOGZ");
+   o["hRecoVsGenLeptonPz"]  = new rh::H2I("hRecoVsGenLeptonPz",  "; Gen. Lepton P_{z}, GeV; Reco. Lepton P_{z}, GeV", 50, -50, 50, 50, -50, 50, "colz LOGZ");
    o["hRecoVsGenLeptonEta"] = new rh::H2I("hRecoVsGenLeptonEta", "; Gen. Lepton #eta; Reco. Lepton #eta", 50, -2, 2, 50, -2, 2, "colz LOGZ");
 
    o["hRecoVsGenNeutrinoPhi"] = new rh::H2I("hRecoVsGenNeutrinoPhi", "; Gen. Neutrino #phi; Reco. Neutrino #phi", 50, -M_PI, M_PI, 50, -M_PI, M_PI, "colz LOGZ");
-   o["hRecoVsGenNeutrinoPt"]  = new rh::H2I("hRecoVsGenNeutrinoPt",  "; Gen. Neutrino P_{T}; Reco. Neutrino P_{T}", 50, 10, 60, 50, 10, 60, "colz LOGZ");
-   o["hRecoVsGenNeutrinoPz"]  = new rh::H2I("hRecoVsGenNeutrinoPz",  "; Gen. Neutrino P_{z}; Reco. Neutrino P_{z}", 50, -70, 70, 50, -70, 70, "colz LOGZ");
+   o["hRecoVsGenNeutrinoPt"]  = new rh::H2I("hRecoVsGenNeutrinoPt",  "; Gen. Neutrino P_{T}, GeV; Reco. Neutrino P_{T}, GeV", 50, 10, 60, 50, 10, 60, "colz LOGZ");
+   o["hRecoVsGenNeutrinoPz"]  = new rh::H2I("hRecoVsGenNeutrinoPz",  "; Gen. Neutrino P_{z}, GeV; Reco. Neutrino P_{z}, GeV", 50, -70, 70, 50, -70, 70, "colz LOGZ");
    o["hRecoVsGenNeutrinoEta"] = new rh::H2I("hRecoVsGenNeutrinoEta", "; Gen. Neutrino #eta; Reco. Neutrino #eta", 50, -2, 2, 50, -2, 2, "colz LOGZ");
 
    o["hRecoVsGenWBosonPhi"] = new rh::H2I("hRecoVsGenWBosonPhi", "; Gen. W Boson #phi; Reco. W Boson #phi", 50, -M_PI, M_PI, 50, -M_PI, M_PI, "colz LOGZ");
-   o["hRecoVsGenWBosonPt"]  = new rh::H2I("hRecoVsGenWBosonPt",  "; Gen. W Boson P_{T}; Reco. W Boson P_{T}", 50, 0, 25, 50, 0, 25, "colz LOGZ");
-   o["hRecoVsGenWBosonPz"]  = new rh::H2I("hRecoVsGenWBosonPz",  "; Gen. W Boson P_{z}; Reco. W Boson P_{z}", 50, -80, 80, 50, -80, 80, "colz LOGZ");
+   o["hRecoVsGenWBosonPt"]  = new rh::H2I("hRecoVsGenWBosonPt",  "; Gen. W Boson P_{T}, GeV; Reco. W Boson P_{T}, GeV", 50, 0, 25, 50, 0, 25, "colz LOGZ");
+   o["hRecoVsGenWBosonPz"]  = new rh::H2I("hRecoVsGenWBosonPz",  "; Gen. W Boson P_{z}, GeV; Reco. W Boson P_{z}, GeV", 50, -80, 80, 50, -80, 80, "colz LOGZ");
    o["hRecoVsGenWBosonEta"] = new rh::H2I("hRecoVsGenWBosonEta", "; Gen. W Boson #eta; Reco. W Boson #eta", 50, -6, 6, 50, -6, 6, "colz LOGZ");
 
-   // Recoil momentum components
-   o["hGenRecoilE"]  = new rh::H1I("hGenRecoilE", "; Recoil energy [GeV]; Events", 100, 0., 200., "hist GRIDX");
-   o["hGenRecoilPx"] = new rh::H1I("hGenRecoilPx", "; P^{Recoil}_{x} [GeV/c]; Events", 100, -160., 160., "hist GRIDX");
-   o["hGenRecoilPy"] = new rh::H1I("hGenRecoilPy", "; P^{Recoil}_{y} [GeV/c]; Events", 100, -160., 160., "hist GRIDX");
-   o["hGenRecoilPz"] = new rh::H1I("hGenRecoilPz", "; P^{Recoil}_{z} [GeV/c]; Events", 100, -160., 160., "hist GRIDX");
-   o["hRecoilPt"]    = new rh::H1I("hRecoilPt", "; P^{Recoil}_{t} [GeV/c]; Events", 100, -160., 160., "hist GRIDX");
+   // W recoil momentum components
+   o["hGenRecoilE"]  = new rh::H1I("hGenRecoilE", "; Gen. W Recoil E, GeV; Events", 100, 0., 200., "hist GRIDX");
+   o["hGenRecoilPz"] = new rh::H1I("hGenRecoilPz", "; Gen. W Recoil p_{z}, GeV; Events", 100, -160., 160., "hist GRIDX");
+   o["hGenRecoilPt"] = new rh::H1I("hGenRecoilPt",  "; Gen. W Recoil p_{T}, GeV; Events", 50, 0., 25., "hist GRIDX");
+   o["hGenRecoilPhi"] = new rh::H1I("hGenRecoilPhi", "; Gen. W Recoil #phi; Events", 50, -M_PI, M_PI, "hist GRIDX");
 
    // Recoil in acceptance
    o["hRecInAccEnergy"]    = new rh::H1I("hRecInAccEenergy", "; Recoil energy [GeV]; Events", 100, 0., 200., "hist GRIDX");
@@ -93,9 +92,9 @@ void MCHContainer::BookHists()
    o["hRecOutAccMomentumZ"] = new rh::H1I("hRecOutAccMomentumZ", "; P^{Recoil}_{z} [GeV/c]; Events", 100, -160., 160., "hist GRIDX");
    o["hRecOutAccPt"]        = new rh::H1I("hRecOutAccPt", "; P^{Recoil}_{t} [GeV/c]; Events", 50, 0., 50., "hist GRIDX");
 
-   o["hGenRecoilVsWBosonPt"]       = new rh::H2I("hGenRecoilVsWBosonPt", "; Gen. W Recoil p_{T}; Gen. W Boson p_{T};", 50, 0, 25, 50, 0, 25, "colz LOGZ");
-   o["hGenRecoilInAccVsWBosonPt"]  = new rh::H2I("hGenRecoilInAccVsWBosonPt",  "; Gen. W Recoil p_{T} In Accept.; Gen. W Boson p_{T};", 50, 0, 25, 50, 0, 25, "colz LOGZ");
-   o["hGenRecoilOutAccVsWBosonPt"] = new rh::H2I("hGenRecoilOutAccVsWBosonPt", "; Gen. W Recoil p_{T} Out of Accept.; Gen. W Boson p_{T};", 50, 0, 25, 50, 0, 25, "colz LOGZ");
+   o["hGenRecoilVsWBosonPt"]       = new rh::H2I("hGenRecoilVsWBosonPt", "; Gen. W Boson p_{T}; Gen. W Recoil p_{T};", 50, 0, 25, 50, 0, 25, "colz LOGZ");
+   o["hGenRecoilInAccVsWBosonPt"]  = new rh::H2I("hGenRecoilInAccVsWBosonPt",  "; Gen. W Boson p_{T}; Gen. W Recoil p_{T} In Accept.;", 50, 0, 25, 50, 0, 25, "colz LOGZ");
+   o["hGenRecoilOutAccVsWBosonPt"] = new rh::H2I("hGenRecoilOutAccVsWBosonPt", "; Gen. W Boson p_{T}; Gen. W Recoil p_{T} Out of Accept.;", 50, 0, 25, 50, 0, 25, "colz LOGZ");
    o["hGenRecoilOutVsInAccPt"]     = new rh::H2I("hGenRecoilOutVsInAccPt", "; Gen. W Recoil p_{T} In Accept.; Gen. W Recoil p_{T} Out of Accept.;", 50, 0, 25, 50, 0, 25, "colz LOGZ");
    o["hGenRecoilInOutDeltaPhi"]    = new rh::H1I("hGenRecoilInOutDeltaPhi", "; Gen. W Recoil #Delta#phi(In, Out) ; Events;", 30, -M_PI, M_PI, "hist GRIDX GRIDY");
 
@@ -168,9 +167,9 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hRecoVsGenWBosonEta"])  ->Fill(mcEvent->mP4WBoson.Eta(),   event.GetVecBosonP3().Eta());
 
    ((TH1*) o["hGenRecoilE"]) ->Fill(mcEvent->mP4Recoil.E());
-   ((TH1*) o["hGenRecoilPx"])->Fill(mcEvent->mP4Recoil.Px());
-   ((TH1*) o["hGenRecoilPy"])->Fill(mcEvent->mP4Recoil.Py());
    ((TH1*) o["hGenRecoilPz"])->Fill(mcEvent->mP4Recoil.Pz());
+   ((TH1*) o["hGenRecoilPt"])->Fill(mcEvent->mP4Recoil.Pt());
+   ((TH1*) o["hGenRecoilPhi"])->Fill(mcEvent->mP4Recoil.Phi());
 
    ((TH1*) o["hRecInAccEnergy"])    ->Fill(mcEvent->mP4RecoilInAccept.E());
    ((TH1*) o["hRecInAccMomentumX"]) ->Fill(mcEvent->mP4RecoilInAccept.Px());
@@ -198,6 +197,7 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH2*) o["hTrackRecoilPhiVsWBosonPhi"])                  ->Fill(mcEvent->mP4WBoson.Phi(), event.GetTrackRecoil().Phi());
    ((TH2*) o["hTrackRecoilTpcPtVsWBosonPt"])                 ->Fill(mcEvent->mP4WBoson.Pt(),  event.mP3TrackRecoilTpc.Pt());
    ((TH2*) o["hTrackRecoilTpcNeutralsPtVsWBosonPt"])         ->Fill(mcEvent->mP4WBoson.Pt(),  event.GetTrackRecoilTpcNeutrals().Pt());
+   //((TH2*) o["hTrackRecoilTpcNeutralsPtVsWBosonPt"])         ->Fill(event.GetTrackRecoilTpcNeutrals().Pt(), mcEvent->mP4WBoson.Pt());
    ((TH2*) o["hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt"])->Fill(mcEvent->mP4WBoson.Pt(),  event.GetTrackRecoilTpcNeutralsCorrected().Pt());
    ((TH2*) o["hTrackRecoilTpcNeutralsPtVsWBosonPt_copy"])         ->Fill(mcEvent->mP4WBoson.Pt(),  event.GetTrackRecoilTpcNeutrals().Pt());
    ((TH2*) o["hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt_copy"])->Fill(mcEvent->mP4WBoson.Pt(),  event.GetTrackRecoilTpcNeutralsCorrected().Pt());
