@@ -19,7 +19,7 @@ VbAnaOptions::VbAnaOptions() : AnaOptions(),
       ("filelist,f",      po::value<string>(&fListName), "Name of the file with input list")
       ("max-events,n",    po::value<uint32_t>(&fMaxEventsUser)->default_value(0), "Maximum number of events to process")
       ("save-graphs,g",   po::value<bool>(&fSaveGraphs)->implicit_value(true), "Process input as Monte-Carlo")
-      ("tracks-ptmin,tpm",po::value<float>(&fTracksPtMin)->default_value(0.), "Minimum Pt for each track and cluster in the Recoil")
+      ("tpm,t",po::value<float>(&fTracksPtMin)->default_value(0.2), "Minimum Pt for each track and cluster in the Recoil")
       ("monte-carlo,m",   po::value<bool>(&fIsMc)->implicit_value(true), "Process input as Monte-Carlo")
       ("wboson,w",        "Process input events as W boson events. Mutually exclusive with --zboson")
       ("zboson,z",        "Process input events as Z boson events. Mutually exclusive with --wboson")
@@ -76,7 +76,7 @@ void VbAnaOptions::ProcessOptions(int argc, char **argv)
    }
 
    cout << "save-graphs:  "  << fSaveGraphs  << endl;
-   cout << "tracks-ptmin: "  << fTracksPtMin << endl;
+   cout << "tracks-ptmin (tpm): "  << fTracksPtMin << endl;
    cout << "monte-carlo:  "  << fIsMc        << endl;
 
    if (fOptionsValues.count("zboson") && fOptionsValues.count("wboson"))
