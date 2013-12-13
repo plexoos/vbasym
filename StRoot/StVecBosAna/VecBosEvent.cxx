@@ -487,7 +487,8 @@ void VecBosEvent::CalcRecoilFromTracks()
          }
       }
 
-      if (!hasMatch && !partOfElecCandidate && towerP3.Pt() > sMinRecoilTrackPt ) {
+      //if (!hasMatch && !partOfElecCandidate && towerP3.Pt() > sMinRecoilTrackPt ) {
+      if (!hasMatch && !partOfElecCandidate) {
          mP3TrackRecoilNeutrals += towerP3;
       }
    }
