@@ -23,8 +23,8 @@ analysis is the first attempt to reconstruct the kinematics of the W bosons at
 STAR. 
 
 
-How to produce the analysis ROOT trees
-======================================
+How to configure and build vbasym
+=================================
 
 The following environment variables must be set:
 
@@ -41,6 +41,16 @@ directory:
 
     scripts/setup.sh
     scripts/setup.csh
+
+Run a slightly modified `cons` command in the terminal
+
+    cons CXXFLAGS="-m32 -fPIC -pipe -Wall -Woverloaded-virtual -Wno-long-long" \
+         EXTRA_CXXFLAGS="-I/star/u/smirnovd/usr/local/include -Icontrib/root-helper" \
+         CPPPATH="#:#StRoot:#.sl64_gcc447/include:${ROOTSYS}/include:./contrib/root-helper"
+
+
+How to produce the analysis ROOT trees
+======================================
 
 To produce the jet root trees do:
 
