@@ -14,7 +14,7 @@ PROJECT(VBASYM)
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR})
 
 OPTION(FORCE_32BIT "compile 32-bit application" ON)
-OPTION(Boost_NO_BOOST_CMAKE "Address bug in boost cmake files in Scientific Linux" ON)
+OPTION(Boost_NO_BOOST_CMAKE "Due to bug in boost cmake files in Scientific Linux" ON)
 
 IF(FORCE_32BIT)
    SET_PROPERTY(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
@@ -23,15 +23,11 @@ ENDIF()
 #INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/Site-Config.cmake)
 
 # Find boost headers and library locations
-#find_package( Boost 1.55.0 COMPONENTS program_options )
-#if(NOT Boost_FOUND)
-#   message(ERROR ": Boost (version >= 1.55.0) not found in standard location.\n")
-#endif()
-
-# The above automatic library finding does not work use local libs
-set( Boost_INCLUDE_DIRS /star/u/smirnovd/usr/local/include/)
-set( Boost_LIBRARY_DIRS /star/u/smirnovd/usr/local/lib/)
-set( Boost_LIBRARIES boost_program_options)
+set(Boost_USE_MULTITHREADED OFF)
+find_package( Boost 1.41.0 COMPONENTS program_options )
+if(NOT Boost_FOUND)
+   message(FATAL_ERROR "Fatal error: Boost (version >= 1.41.0) not found in standard location")
+endif()
 
 
 find_package(MySQL)
@@ -126,7 +122,7 @@ StVecBosAna
 
 
 add_executable( vbana src/vbana.cc )
-target_link_libraries( vbana ${STAR_LIBRARIES} ${MYSQL_LIBRARY} ${ROOT_LIBRARIES} Table ${Boost_LIBRARIES} root-helper-utils-shared )
+target_link_libraries( vbana ${Boost_LIBRARIES} ${STAR_LIBRARIES} ${MYSQL_LIBRARY} ${ROOT_LIBRARIES} Table root-helper-utils-shared )
 
 IF(FORCE_32BIT)
    SET_TARGET_PROPERTIES(vbana PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32 -Wl,--warn-unresolved-symbols")
