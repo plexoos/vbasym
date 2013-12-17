@@ -41,12 +41,12 @@ ADD_SUBDIRECTORY(contrib/root-helper)
 include_directories(
    ${Boost_INCLUDE_DIRS}
    ${ROOT_INCLUDE_DIR}
-   ${CMAKE_CURRENT_SOURCE_DIR}/src/
+   ${CMAKE_CURRENT_SOURCE_DIR}/src
    ${CMAKE_CURRENT_SOURCE_DIR}
-   $ENV{VBASYM_DIR}/.$ENV{STAR_HOST_SYS}/include
-   /afs/rhic.bnl.gov/star/packages/$ENV{STAR_VERSION}/.$ENV{STAR_HOST_SYS}/include/
-   /afs/rhic.bnl.gov/star/packages/$ENV{STAR_VERSION}/StRoot/
-   /afs/rhic.bnl.gov/star/packages/$ENV{STAR_VERSION}/StRoot/StJetMaker/tracks/
+   $ENV{VBASYM_DIR}/StRoot
+   /afs/rhic.bnl.gov/star/packages/$ENV{STAR_VERSION}/.$ENV{STAR_HOST_SYS}/include
+   /afs/rhic.bnl.gov/star/packages/$ENV{STAR_VERSION}/StRoot
+   /afs/rhic.bnl.gov/star/packages/$ENV{STAR_VERSION}/StRoot/StJetMaker/tracks
    ${ROOT_HELPER_DIR}
 )
 
@@ -121,9 +121,20 @@ StVecBosAna
 )
 
 
+add_executable( stana src/stana.cc )
+target_link_libraries( stana ${Boost_LIBRARIES} ${STAR_LIBRARIES} ${MYSQL_LIBRARY} root-helper-utils-shared ${ROOT_LIBRARIES} Table )
+
 add_executable( vbana src/vbana.cc )
-target_link_libraries( vbana ${Boost_LIBRARIES} ${STAR_LIBRARIES} ${MYSQL_LIBRARY} ${ROOT_LIBRARIES} Table root-helper-utils-shared )
+target_link_libraries( vbana ${Boost_LIBRARIES} ${STAR_LIBRARIES} ${MYSQL_LIBRARY} root-helper-utils-shared ${ROOT_LIBRARIES} Table )
+
+add_executable( lumi_calc src/lumi_calc.cc )
+target_link_libraries( lumi_calc root-helper-utils-shared ${ROOT_LIBRARIES} )
+
+add_executable( events_calc src/events_calc.cc )
 
 IF(FORCE_32BIT)
+   SET_TARGET_PROPERTIES(stana PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32 -Wl,--warn-unresolved-symbols")
    SET_TARGET_PROPERTIES(vbana PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32 -Wl,--warn-unresolved-symbols")
+   SET_TARGET_PROPERTIES(lumi_calc PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
+   SET_TARGET_PROPERTIES(events_calc PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
 ENDIF()
