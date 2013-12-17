@@ -35,6 +35,7 @@ The following environment variables are assumed to be set in the standard STAR s
 
     STAR_VERSION
     STAR_HOST_SYS
+    ROOTSYS
 
 Example scripts setting up these variables can be found in the `scripts/`
 directory:
@@ -42,11 +43,19 @@ directory:
     scripts/setup.sh
     scripts/setup.csh
 
-Run a slightly modified `cons` command in the terminal
+To build the library run a slightly modified `cons` command in the terminal
 
+    cd $VBASYM_DIR
     cons CXXFLAGS="-m32 -fPIC -pipe -Wall -Woverloaded-virtual -Wno-long-long" \
-         EXTRA_CXXFLAGS="-I/star/u/smirnovd/usr/local/include -Icontrib/root-helper" \
+         EXTRA_CXXFLAGS="-I${OPTSTAR}/include -Icontrib/root-helper" \
          CPPPATH="#:#StRoot:#.sl64_gcc447/include:${ROOTSYS}/include:./contrib/root-helper"
+
+The binaries are compiled by issuing the following command:
+
+    mkdir build
+    cd build
+    cmake28 .. -DBOOST_ROOT=${OPTSTAR}
+    make
 
 
 How to produce the analysis ROOT trees
