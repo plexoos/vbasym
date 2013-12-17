@@ -26,12 +26,25 @@ STAR.
 How to configure and build vbasym
 =================================
 
-The following environment variables must be set:
+The best way to start with the analysis is to clone the latest version of the
+code from the git repository. From the location where the package will be
+installed on your machine issue the following command:
+
+    git clone git@github.com:plexoos/vbasym.git
+    cd vbasym
+    git submodule init
+    git submodule update
+
+Before you can build and run the program the following environment variables must
+be set:
 
     VBASYM_DIR
+       This variable contains the path to the project directory
     VBASYM_RESULTS_DIR
+       This variable contains the path to the output directory where the results will be put
 
-The following environment variables are assumed to be set in the standard STAR session:
+The following environment variables are assumed to be set in the standard STAR
+session:
 
     STAR_VERSION
     STAR_HOST_SYS
