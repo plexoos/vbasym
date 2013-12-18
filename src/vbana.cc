@@ -92,8 +92,7 @@ int main(int argc, char *argv[])
    while (next && (o = (*next)()) )
    {
       string fName    = string(((TObjString*) o)->GetName());
-      string fileName = vbAnaOptions.GetResultsDir() + "/tree/";
-      fileName += (vbAnaOptions.IsMc() ? "" : "R") + fName + "_tree.root";
+      string fileName = vbAnaOptions.GetResultsDir() + "/tree/" + fName + "_tree.root";
 
       TFile *f = new TFile(fileName.c_str(), "READ");
 

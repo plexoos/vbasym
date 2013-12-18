@@ -88,7 +88,6 @@ int analyzeMuDst(AnaOptions &anaOptions, bool findZ)
    outputFile = outputFile.ReplaceAll(".MuDst.root", "");
    outputFile = outputFile.ReplaceAll(".lis", "");
    TString runNo = outputFile;
-   runNo = runNo.ReplaceAll("R", "");
    int RunNo = runNo.Atoi();
 
    TString histFileName = outputFile + "_hist.root";
