@@ -70,6 +70,48 @@ The binaries are compiled by issuing the following command:
     cmake28 .. -DBOOST_ROOT=${OPTSTAR}
     make
 
+How to slit the Monte Carlo file lists
+======================================
+
+Embedded Monte Carlo files relevant for this analysis were produced using PYTHIA 
+and are stored in the STAR data disks. The file lists are containted in:
+/vbasym/runlists
+
+file list names use the following format:
+'run period'_mc_'process type' 
+
+i.e.: run11_mc_Wp2enu  is the run list for the W+ -> ev Monte Carlo embedded with run11 zero bias events
+
+the list points to several files. It is convenient, when submitting a job to condor, to split this very
+long list into several sublists. To do this:
+
+   cd runlists/
+   split -d -l '# of lines in each sublist' 'list name' 'list name'_
+
+i.e.: Executing the command
+   split -d -l 5 run11_mc_Z02ee run11_mc_Z02ee_ 
+
+it will split the content of the list run11_mc_Z02ee in many sublist each containing 5 lines of the original
+list and numbered in numerical order strating from 00. In your directory will appear many files named:
+   run11_mc_Z02ee_00 
+   run11_mc_Z02ee_01 
+   run11_mc_Z02ee_02 
+   ... etc...
+
+now all what you have to do is to reate a script file containing the names of this sublists you juste created.
+For example create the file named 
+
+   run11_mc_Z02ee.list 
+
+and copy in it the list 
+   run11_mc_Z02ee_00 
+   run11_mc_Z02ee_01 
+   run11_mc_Z02ee_02 
+   ... etc...
+
+now all what is needed it to submit to condor the file run11_mc_Z02ee.list 
+for how to submit to condor see below.
+
 
 How to produce the analysis ROOT trees
 ======================================
