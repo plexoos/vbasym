@@ -39,7 +39,8 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
 
 
 TString inPath  = "/star/institutions/bnl_me/fazio/vbana_out/ptcorr_samples/";
-TFile *fileMCWplus = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_vbana.root");
+//TFile *fileMCWplus = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_vbana.root");
+TFile *fileMCWplus = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_--tpm_0.2_vbana.root");
 
 const float VecBosEvent::sMinTrackIsoDeltaR    = 0.7;  // was 0.7
 const float VecBosEvent::sMinTrackIsoDeltaPhi  = 0.7;
