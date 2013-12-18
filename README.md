@@ -20,7 +20,7 @@ channel. However, the reconstruction of the W's decaying into a
 electron-neutrino pair is challenging due to the neutrino completely escaping
 the detector. The W has never been reconstructed with the STAR detector. This
 analysis is the first attempt to reconstruct the kinematics of the W bosons at
-STAR. 
+STAR.
 
 
 How to configure and build vbasym
@@ -70,47 +70,48 @@ The binaries are compiled by issuing the following command:
     cmake28 .. -DBOOST_ROOT=${OPTSTAR}
     make
 
-How to slit the Monte Carlo file lists
-======================================
+How to split the Monte Carlo file lists
+=======================================
 
-Embedded Monte Carlo files relevant for this analysis were produced using PYTHIA 
-and are stored in the STAR data disks. The file lists are containted in:
-/vbasym/runlists
+Embedded Monte Carlo files relevant for this analysis were produced using PYTHIA
+and are stored on the STAR data disks. The file lists are containted in
+`$VBASYM_DIR/runlists` with the following format used for their names: `<run
+period>_mc_<process type>`. For example, `run11_mc_Wp2enu` is a file list for
+the _W+ -> ev_ Monte Carlo embedded with Run 11 zero bias events.
 
-file list names use the following format:
-'run period'_mc_'process type' 
+The list may contain a large number of files. It is convenient, when submitting
+a job to *condor*, to split very long lists into several sublists. To split it do:
 
-i.e.: run11_mc_Wp2enu  is the run list for the W+ -> ev Monte Carlo embedded with run11 zero bias events
+    cd $VBASYM_DIR/runlists/
+    split -d -l <# of lines in each sublist> <list name> <list name>_
 
-the list points to several files. It is convenient, when submitting a job to condor, to split this very
-long list into several sublists. To do this:
+For example, executing the command
 
-   cd runlists/
-   split -d -l '# of lines in each sublist' 'list name' 'list name'_
+    split -d -l 5 run11_mc_Z02ee run11_mc_Z02ee_
 
-i.e.: Executing the command
-   split -d -l 5 run11_mc_Z02ee run11_mc_Z02ee_ 
+will split the content of the list `run11_mc_Z02ee` in many sublist each
+containing 5 lines of the original list and numbered in numerical order starting
+with 00. In your directory you should see files named:
 
-it will split the content of the list run11_mc_Z02ee in many sublist each containing 5 lines of the original
-list and numbered in numerical order strating from 00. In your directory will appear many files named:
-   run11_mc_Z02ee_00 
-   run11_mc_Z02ee_01 
-   run11_mc_Z02ee_02 
-   ... etc...
+    run11_mc_Z02ee_00
+    run11_mc_Z02ee_01
+    run11_mc_Z02ee_02
+    ...
 
-now all what you have to do is to reate a script file containing the names of this sublists you juste created.
-For example create the file named 
+Now all you have to do is to create a text file containing the names of this
+sublists you just created. For example create the file named
 
-   run11_mc_Z02ee.list 
+    run11_mc_Z02ee.lis
 
-and copy in it the list 
-   run11_mc_Z02ee_00 
-   run11_mc_Z02ee_01 
-   run11_mc_Z02ee_02 
-   ... etc...
+and copy in it the list
 
-now all what is needed it to submit to condor the file run11_mc_Z02ee.list 
-for how to submit to condor see below.
+    run11_mc_Z02ee_00
+    run11_mc_Z02ee_01
+    run11_mc_Z02ee_02
+    ...
+
+Now all what is needed it to submit to condor the file `run11_mc_Z02ee.lis`. The
+next section explains how to submit to condor.
 
 
 How to produce the analysis ROOT trees
@@ -118,7 +119,7 @@ How to produce the analysis ROOT trees
 
 To produce the jet root trees do:
 
-    cd runlists/
+    cd $VBASYM_DIR/runlists/
     ln -s run12_pp_j3 run12_pp_j3_--jets
     scripts/submit_jobs.sh run12_pp_j3_--jets -z -r12 --jets
 
