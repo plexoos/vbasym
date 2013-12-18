@@ -122,10 +122,10 @@ StVecBosAna
 
 
 add_executable( stana src/stana.cc )
-target_link_libraries( stana ${Boost_LIBRARIES} ${STAR_LIBRARIES} ${MYSQL_LIBRARY} root-helper-utils-shared ${ROOT_LIBRARIES} Table )
+target_link_libraries( stana ${Boost_LIBRARIES} ${STAR_LIBRARIES} ${MYSQL_LIBRARY} root-helper-utils-shared ${ROOT_LIBRARIES} Table Geom )
 
 add_executable( vbana src/vbana.cc )
-target_link_libraries( vbana ${Boost_LIBRARIES} ${STAR_LIBRARIES} ${MYSQL_LIBRARY} root-helper-utils-shared ${ROOT_LIBRARIES} Table )
+target_link_libraries( vbana ${Boost_LIBRARIES} ${STAR_LIBRARIES} ${MYSQL_LIBRARY} root-helper-utils-shared ${ROOT_LIBRARIES} Table Geom )
 
 add_executable( lumi_calc src/lumi_calc.cc )
 target_link_libraries( lumi_calc root-helper-utils-shared ${ROOT_LIBRARIES} )
