@@ -14,16 +14,16 @@
       starver &STAR_VER;
       source &CODE_DIR;/scripts/setup.csh
 
-      cp $FILELIST &OUT_DIR;/lists/R&JOB_RUN_FILE_NAME;.lis
+      cp $FILELIST &OUT_DIR;/lists/&JOB_RUN_FILE_NAME;.lis
 
-      setenv RUNLIST  &OUT_DIR;/lists/R&JOB_RUN_FILE_NAME;.lis
+      setenv RUNLIST  &OUT_DIR;/lists/&JOB_RUN_FILE_NAME;.lis
       setenv OPTIONS  `echo &STANA_OPTIONS; | sed 's/_/ /g'`
       setenv OPT_JETS `echo $OPTIONS | awk '{print index($0,"--jets")}'`
       setenv COMMAND  "./stana -f $RUNLIST $OPTIONS"
- 
-      if ($OPT_JETS == 0) ln -s &OUT_DIR;/jets/R&JOB_RUN_FILE_NAME;_jets.root
+
+      if ($OPT_JETS == 0) ln -s &OUT_DIR;/jets/&JOB_RUN_FILE_NAME;_jets.root
       cp -r &CODE_DIR;/.&STAR_HOST_SYS; .
-      cp -r &CODE_DIR;/src/stana .
+      cp -r &CODE_DIR;/build/stana .
       ls -al
 
       echo
@@ -33,6 +33,7 @@
       echo "STAR_VER:       " &STAR_VER;
       echo "STAR_HOST_SYS:  " &STAR_HOST_SYS;
       echo "STANA_OPTIONS:  " &STANA_OPTIONS;
+      echo "LOG_DIR:        " &LOG_DIR;
       echo
       echo "VBASYM_DIR:     " $VBASYM_DIR
       echo "VBASYM_RESULTS_DIR:     " $VBASYM_RESULTS_DIR
@@ -49,10 +50,10 @@
       `$COMMAND`
 
       # Remove files and links
-      if ($OPT_JETS == 0) rm R&JOB_RUN_FILE_NAME;_jets.root
+      if ($OPT_JETS == 0) rm &JOB_RUN_FILE_NAME;_jets.root
       chmod 664 *_hist.root *_jets.root *_tree.root *.ps *.txt
-      chmod 664 &OUT_DIR;/log/R&JOB_RUN_FILE_NAME;.log
-      touch     &OUT_DIR;/log/R&JOB_RUN_FILE_NAME;.log
+      chmod 664 &OUT_DIR;/&LOG_DIR;/&JOB_RUN_FILE_NAME;.log
+      touch     &OUT_DIR;/&LOG_DIR;/&JOB_RUN_FILE_NAME;.log
       rm -fr ./.&STAR_HOST_SYS;
       rm -fr ./stana
 
@@ -65,8 +66,8 @@
    <output fromScratch="*_tree.root" toURL="file:&OUT_DIR;/tree/"/>
    <output fromScratch="*.txt"       toURL="file:&OUT_DIR;/lumi/"/>
 
-   <stdout URL="file:&OUT_DIR;/log/R&JOB_RUN_FILE_NAME;.log"/>
-   <stderr URL="file:&OUT_DIR;/log/R&JOB_RUN_FILE_NAME;.log"/>
+   <stdout URL="file:&OUT_DIR;/&LOG_DIR;/&JOB_RUN_FILE_NAME;.log"/>
+   <stderr URL="file:&OUT_DIR;/&LOG_DIR;/&JOB_RUN_FILE_NAME;.log"/>
 
    <SandBox>
        <Package>

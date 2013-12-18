@@ -39,6 +39,16 @@ case $STANA_OPTIONS in
 *) RUN_PERIOD=11 ;;
 esac
 
+case $STANA_OPTIONS in
+*"--jets"* ) LOG_DIR="log_jets" ;;
+*) LOG_DIR="log" ;;
+esac
+
+case $STANA_OPTIONS in
+*"-m"* ) MC_SFX="_mc" ;;
+*) MC_SFX="" ;;
+esac
+
 echo
 echo RUN_FILE_LIST = $RUN_FILE_LIST
 echo VBASYM_DIR    = $VBASYM_DIR
@@ -46,10 +56,12 @@ echo OUT_DIR       = $VBASYM_RESULTS_DIR/$RUN_FILE_LIST
 echo STAR_VER      = $STAR_VERSION
 echo STANA_OPTIONS = $STANA_OPTIONS
 echo RUN_PERIOD    = $RUN_PERIOD
+echo LOG_DIR       = $LOG_DIR
+echo MC_SFX        = $MC_SFX
 echo
 
 mkdir -p $VBASYM_RESULTS_DIR/$RUN_FILE_LIST/lists
-mkdir -p $VBASYM_RESULTS_DIR/$RUN_FILE_LIST/log
+mkdir -p $VBASYM_RESULTS_DIR/$RUN_FILE_LIST/$LOG_DIR
 mkdir -p $VBASYM_RESULTS_DIR/$RUN_FILE_LIST/jets
 mkdir -p $VBASYM_RESULTS_DIR/$RUN_FILE_LIST/hist
 mkdir -p $VBASYM_RESULTS_DIR/$RUN_FILE_LIST/tree
@@ -59,8 +71,8 @@ for JOB_RUN_FILE_NAME in `cat $VBASYM_DIR/runlists/$RUN_FILE_LIST`
 do
    echo
    echo "Submitting job for JOB_RUN_FILE_NAME =" $JOB_RUN_FILE_NAME
-   star-submit-template -template $VBASYM_DIR/scripts/run${RUN_PERIOD}_job_template.xml \
-      -entities OUT_DIR=$VBASYM_RESULTS_DIR/$RUN_FILE_LIST,CODE_DIR=$VBASYM_DIR,JOB_RUN_FILE_NAME=$JOB_RUN_FILE_NAME,STAR_VER=$STAR_VERSION,STAR_HOST_SYS=$STAR_HOST_SYS,STANA_OPTIONS=$STANA_OPTIONS
+   star-submit-template -template $VBASYM_DIR/scripts/run${RUN_PERIOD}_job_template${MC_SFX}.xml \
+      -entities OUT_DIR=$VBASYM_RESULTS_DIR/$RUN_FILE_LIST,CODE_DIR=$VBASYM_DIR,JOB_RUN_FILE_NAME=$JOB_RUN_FILE_NAME,STAR_VER=$STAR_VERSION,STAR_HOST_SYS=$STAR_HOST_SYS,STANA_OPTIONS=$STANA_OPTIONS,LOG_DIR=$LOG_DIR
    echo
    sleep 1
 done
