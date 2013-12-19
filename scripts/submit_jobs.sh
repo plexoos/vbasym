@@ -13,9 +13,6 @@
 #
 # Current usage tips:
 #
-# The --jets option passed to stana must be the last one in the STANA_OPTIONS
-# list
-#
 # STAR_VERSION=SL11d  for Run 11 production P11id
 # STAR_VERSION=SL13b  for Run 12 production P13ib
 # STAR_VERSION=DEV    for Run 13 production
