@@ -241,13 +241,13 @@ void MCHContainer::PostFill()
 
    // Fit the correction curve
    TH2* hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin = (TH2*) o["hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin"];
-
-   o["hRecoilCorrection"] = (TProfile*) hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin->ProfileX("hRecoilCorrection", 0, 10);
+   o["hRecoilCorrection"] = (TProfile*) hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin->ProfileX("hRecoilCorrection");
    TProfile* hRecoilCorrection = (TProfile*) o["hRecoilCorrection"];
+   hRecoilCorrection->Print("all");
 
    if (hRecoilCorrection->Integral() ) {
-      hRecoilCorrection->Fit("pol3", "+", "", 0, 5);
-      hRecoilCorrection->Fit("pol0", "+", "", 5, 10);
+      hRecoilCorrection->Fit("pol3", "W +", "", 0, 5);  // The W option helps with low stat when error bar is 0
+      hRecoilCorrection->Fit("pol0", "W +", "", 5, 10);
    }
 
    // Fit the means
