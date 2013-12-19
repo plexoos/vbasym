@@ -65,6 +65,8 @@ void MCHContainer::BookHists()
    o["hRecoVsGenNeutrinoPhi"] = new rh::H2I("hRecoVsGenNeutrinoPhi", "; Gen. Neutrino #phi; Reco. Neutrino #phi", 50, -M_PI, M_PI, 50, -M_PI, M_PI, "colz LOGZ");
    o["hRecoVsGenNeutrinoPt"]  = new rh::H2I("hRecoVsGenNeutrinoPt",  "; Gen. Neutrino P_{T}, GeV; Reco. Neutrino P_{T}, GeV", 50, 10, 60, 50, 10, 60, "colz LOGZ");
    o["hRecoVsGenNeutrinoPz"]  = new rh::H2I("hRecoVsGenNeutrinoPz",  "; Gen. Neutrino P_{z}, GeV; Reco. Neutrino P_{z}, GeV", 50, -70, 70, 50, -70, 70, "colz LOGZ");
+   o["hRecoVsGenNeutrinoPz_c"]  = new rh::H2I("hRecoVsGenNeutrinoPz_c",  "; Gen. Neutrino P_{z}, GeV; Reco. Neutrino P_{z}, GeV", 50, -70, 70, 50, -70, 70, "colz LOGZ");
+   o["hRecoVsGenNeutrinoPz_f"]  = new rh::H2I("hRecoVsGenNeutrinoPz_f",  "; Gen. Neutrino P_{z}, GeV; Reco. Neutrino P_{z}, GeV", 50, -70, 70, 50, -70, 70, "colz LOGZ");
    o["hRecoVsGenNeutrinoEta"] = new rh::H2I("hRecoVsGenNeutrinoEta", "; Gen. Neutrino #eta; Reco. Neutrino #eta", 50, -2, 2, 50, -2, 2, "colz LOGZ");
 
    o["hRecoVsGenWBosonPhi"] = new rh::H2I("hRecoVsGenWBosonPhi", "; Gen. W Boson #phi; Reco. W Boson #phi", 50, -M_PI, M_PI, 50, -M_PI, M_PI, "colz LOGZ");
@@ -159,6 +161,17 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hRecoVsGenNeutrinoPhi"])->Fill(mcEvent->mP4Neutrino.Phi(), event.GetNeutrinoP3().Phi());
    ((TH1*) o["hRecoVsGenNeutrinoPt"]) ->Fill(mcEvent->mP4Neutrino.Pt(),  event.GetNeutrinoP3().Pt());
    ((TH1*) o["hRecoVsGenNeutrinoPz"]) ->Fill(mcEvent->mP4Neutrino.Pz(),  event.GetNeutrinoP3().Pz());
+
+   if ( fabs(mcEvent->mP4Neutrino.Pz() - event.GetNeutrinoP3().Pz()) <
+        fabs(mcEvent->mP4Neutrino.Pz() - event.GetNeutrinoP3Other().Pz()) )
+   {
+      ((TH1*) o["hRecoVsGenNeutrinoPz_c"]) ->Fill(mcEvent->mP4Neutrino.Pz(),  event.GetNeutrinoP3().Pz());
+      ((TH1*) o["hRecoVsGenNeutrinoPz_f"]) ->Fill(mcEvent->mP4Neutrino.Pz(),  event.GetNeutrinoP3Other().Pz());
+   } else {
+      ((TH1*) o["hRecoVsGenNeutrinoPz_c"]) ->Fill(mcEvent->mP4Neutrino.Pz(),  event.GetNeutrinoP3Other().Pz());
+      ((TH1*) o["hRecoVsGenNeutrinoPz_f"]) ->Fill(mcEvent->mP4Neutrino.Pz(),  event.GetNeutrinoP3().Pz());
+   }
+
    ((TH1*) o["hRecoVsGenNeutrinoEta"])->Fill(mcEvent->mP4Neutrino.Eta(), event.GetNeutrinoP3().Eta());
 
    ((TH1*) o["hRecoVsGenWBosonPhi"])  ->Fill(mcEvent->mP4WBoson.Phi(),   event.GetVecBosonP3().Phi());
