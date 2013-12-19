@@ -39,7 +39,6 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
 
 
 TString inPath  = "/star/institutions/bnl_me/fazio/vbana_out/ptcorr_samples/";
-//TFile *fileMCWplus = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_vbana.root");
 TFile *fileMCWplus = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_--tpm_0.2_vbana.root");
 
 const float VecBosEvent::sMinTrackIsoDeltaR    = 0.7;  // was 0.7
@@ -256,8 +255,6 @@ TVector3 VecBosEvent::CalcRecoilCorrected()
    mP3TrackRecoilTpcNeutralsCorrected.SetX(rndCorrection * mP3TrackRecoilTpcNeutralsCorrected.X());
    mP3TrackRecoilTpcNeutralsCorrected.SetY(rndCorrection * mP3TrackRecoilTpcNeutralsCorrected.Y());
 
-   cout << "random Correction = " <<  rndCorrection << endl; 
-
    return mP3TrackRecoilTpcNeutralsCorrected;
 }
 
@@ -430,7 +427,6 @@ void VecBosEvent::CalcRecoilFromTracks()
       if ( track == trackCandidate ) continue;
 
       if ( track.mP3AtDca.Pt() < sMinRecoilTrackPt ) continue;
-      Info("Print", "sMinRecoilTrackPt:     %f",        sMinRecoilTrackPt);
 
       mP3TrackRecoilTpc   += track.mP3AtDca;
       mNumRecoilTracksTpc += 1;
@@ -488,7 +484,6 @@ void VecBosEvent::CalcRecoilFromTracks()
          }
       }
 
-      //if (!hasMatch && !partOfElecCandidate && towerP3.Pt() > sMinRecoilTrackPt ) {
       if (!hasMatch && !partOfElecCandidate) {
          mP3TrackRecoilNeutrals += towerP3;
       }
