@@ -91,7 +91,7 @@ void WBosEventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hWBosonPt"])->Fill (event.GetVecBosonP3().Pt());
    ((TH1*) o["hWBosonPhi"])->Fill(event.GetVecBosonP3().Phi());
    ((TH1*) o["hWBosonEta"])->Fill(event.GetVecBosonP3().Eta());
-   ((TH1*) o["hWBosonRapidity"])->Fill(event.GetVecBosonP3().Rapidity());
+   ((TH1*) o["hWBosonRapidity"])->Fill(event.GetVecBosonP4().Rapidity());
 
    ((TH1*) o["hJetRecoilPt"])->Fill(event.GetJetRecoil().Pt());
    ((TH1*) o["hTrackRecoilPt"])->Fill(event.GetTrackRecoil().Pt());
