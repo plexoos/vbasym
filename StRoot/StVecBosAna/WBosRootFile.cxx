@@ -71,13 +71,14 @@ void WBosRootFile::BookHists()
    fHists->d["event_wm"] = ph = new WBosEventHContainer(new TDirectoryFile("event_wm", "event_wm", "", this));
    fHistCuts[kCUT_EVENT_W_MINUS].insert(ph);
 
-   if (!fIsMc) return;
+   if (fIsMc) {
+      fHists->d["event_mc"] = ph = new MCHContainer(new TDirectoryFile("event_mc", "event_mc", "", this));
+      fHistCuts[kCUT_EVENT_W].insert(ph);
+   } else {
 
-   fHists->d["asym"] = ph = new AllAsymHContainer(new TDirectoryFile("asym", "asym", "", this));
-   fHistCuts[kCUT_EVENT_W].insert(ph);
-
-   fHists->d["event_mc"] = ph = new MCHContainer(new TDirectoryFile("event_mc", "event_mc", "", this));
-   fHistCuts[kCUT_EVENT_W].insert(ph);
+      fHists->d["asym"] = ph = new AllAsymHContainer(new TDirectoryFile("asym", "asym", "", this));
+      fHistCuts[kCUT_EVENT_W].insert(ph);
+   }
 
    this->cd();
 }

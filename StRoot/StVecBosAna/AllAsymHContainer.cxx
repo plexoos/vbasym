@@ -97,8 +97,6 @@ void AllAsymHContainer::Fill(ProtoEvent &ev)
 {
    if (ev.InheritsFrom("WBosEvent"))
    {
-      Info("Fill", "WBosEvent detected");
-
       WBosEvent& w_event = (WBosEvent&) ev;
 
       Fill(ev, kCUT_EVENT_W);
@@ -111,8 +109,6 @@ void AllAsymHContainer::Fill(ProtoEvent &ev)
 
    } else if (ev.InheritsFrom("ZBosEvent"))
    {
-      Info("Fill", "ZBosEvent detected");
-
       Fill(ev, kCUT_EVENT_Z);
    }
 }
