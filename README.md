@@ -70,17 +70,18 @@ The binaries are compiled by issuing the following command:
     cmake28 .. -DBOOST_ROOT=${OPTSTAR}
     make
 
-How to split the Monte Carlo file lists
+How to split the Monte-Carlo file lists
 =======================================
 
-Embedded Monte Carlo files relevant for this analysis were produced using PYTHIA
+Embedded Monte-Carlo (MC) files relevant for this analysis were produced using PYTHIA
 and are stored on the STAR data disks. The file lists are containted in
 `$VBASYM_DIR/runlists` with the following format used for their names: `<run
 period>_mc_<process type>`. For example, `run11_mc_Wp2enu` is a file list for
-the _W+ -> ev_ Monte Carlo embedded with Run 11 zero bias events.
+the _W+ -> ev_ MC embedded with Run 11 zero bias events.
 
 The list may contain a large number of files. It is convenient, when submitting
-a job to *condor*, to split very long lists into several sublists. To split it do:
+a job to *condor*, to split very long lists into several sublists or "runs". To
+split it do:
 
     cd $VBASYM_DIR/runlists/
     split -d -l <# of lines in each sublist> <list name> <list name>_
@@ -101,7 +102,7 @@ with 00. In your directory you should see files named:
 Now all you have to do is to create a text file containing the names of this
 sublists you just created. For example create the file named
 
-    run11_mc_Z02ee.lis
+    run11_mc_Z02ee_
 
 and copy in it the list
 
@@ -110,7 +111,7 @@ and copy in it the list
     run11_mc_Z02ee_02
     ...
 
-Now all what is needed it to submit to condor the file `run11_mc_Z02ee.lis`. The
+Now all what is needed it to submit to condor the file `run11_mc_Z02ee_`. The
 next section explains how to submit to condor.
 
 
@@ -119,31 +120,41 @@ How to produce the analysis ROOT trees
 
 To produce the jet root trees do:
 
-    cd $VBASYM_DIR/runlists/
-    ln -s run12_pp_j3 run12_pp_j3_--jets
-    scripts/submit_jobs.sh run12_pp_j3_--jets -z -r12 --jets
+    cd $VBASYM_DIR/scripts
+    submit_jobs.sh run12_pp_j3 -z -r12 --jets
 
 Then to produce the analysis root trees do:
 
-    scripts/submit_jobs.sh run12_pp_j3 -z -r12
+    submit_jobs.sh run12_pp_j3 -z -r12
 
 Other examples:
 
-    scripts/submit_jobs.sh run11_pp_transverse --jets
-    scripts/submit_jobs.sh run11_pp_transverse
+    submit_jobs.sh run11_pp_transverse --jets
+    submit_jobs.sh run11_pp_transverse
+    submit_jobs.sh run11_mc_Wp2enu_ -m --jets
 
 
 How to check condor jobs output
 ===============================
 
-In the past it has been noticed that some of the jobs returned by condor do not
-finish properly. While the reason for this is not very clear one should check
-the consistency of the returned output. To check it two "markers" in the log
-files can be used:
+One can check the output files returned by condor by verifying the "tralala"
+marker in the log files. There should be just one entry per log file:
 
-    grep terminate /path/to/log/* > /tmp/check_jobs_bad &
     grep tralala /path/to/log/* > /tmp/check_jobs_tralala &
-
     diff --suppress-common-lines -y $VBASYM_DIR/runlists/run11_pp_transverse /tmp/check_jobs_tralala
 
 
+How to produce histograms from ROOT trees
+=========================================
+
+Various sets of histograms can be produced from the ROOT trees generated with
+`stana`. This stage of the analysis is done with the help of `vbana` executable.
+One can run
+
+    vbana -f run11_pp_transverse
+
+and on the MC samples:
+
+    vbana -f run11_mc_Wp2enu_
+
+For help with other options run `vbana -h`.
