@@ -4,9 +4,15 @@
 #include "TVector3.h"
 #include "TLorentzVector.h"
 
+#include "TFile.h"
+#include "TTree.h"
+#include "TH1.h"
+#include "TH2.h"
+
 #include "VecBosEvent.h"
 #include "VecBosTrack.h"
 
+#include <sstream>
 
 /**
  * This class extends the data structure and functionality of #VecBosEvent which is saved in the
@@ -27,6 +33,7 @@ public:
    TVector3     CalcSignedPtBalance() const;
    TVector3     GetVecBosonP3() const;
    TLorentzVector GetVecBosonP4() const;
+   void         PredictionAnEvol();
    virtual void Process();
    virtual void ProcessPersistent();
    virtual void ProcessMC();
@@ -36,6 +43,7 @@ public:
    bool         PassedCutWBosPlus(float minElePt=sMinElectronPtLight) const;
    bool         PassedCutWBosMinus(float minElePt=sMinElectronPtLight) const;
    bool         PassedCutQcdBkg(float minElePt=sMinElectronPtLight) const;
+   //Double_t     An_evol_ZK;
 
    static bool sUseOtherSolution;          //!< If true calculates the W kinematics using the second choice solution for the z-component
    static const float sMinElectronPtLight; //!

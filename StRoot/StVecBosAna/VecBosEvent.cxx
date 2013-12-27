@@ -33,7 +33,8 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
    mP3BalanceFromTracks(),
    mBalanceDeltaPhiFromTracks(0),
    mNumRecoilTracksTpc(0),
-   mLumiEff(0)
+   mLumiEff(0),An_evol_ZK(0)
+
 {
 }
 
@@ -416,6 +417,8 @@ void VecBosEvent::CalcRecoilFromTracks()
    if (mTracksCandidate.size() < 1) return;
 
    VecBosTrack &trackCandidate = **mTracksCandidate.begin();
+
+   cout << "sMinRecoilTrackPt = " << sMinRecoilTrackPt << endl;
 
    // Calculate the vector sum of all tracks in the event
    VecBosTrackPtrSetIter iTrack = mTracks.begin();
@@ -951,6 +954,7 @@ void VecBosEvent::Clear(const Option_t* opt)
    mMinVertexDeltaZ                    = -1;
    mNumRecoilTracksTpc                 =  0;
    mLumiEff                            = -0;
+   An_evol_ZK                          =  0;
 }
 
 
