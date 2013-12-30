@@ -41,6 +41,7 @@ void WBosEventHContainer::BookHists()
    o["hNeutrinoPhi"]      = hist = new TH1I("hNeutrinoPhi", "; Neutrino #phi; Events", 16, -M_PI, M_PI);
    o["hNeutrinoEta"]      = hist = new TH1I("hNeutrinoEta", "; Neutrino #eta; Events", 20, -2, 2);
    o["hWBosonPt"]         = hist = new TH1I("hWBosonPt", "   ; W Boson P_{T}; Events", 20, 0, 20);
+   o["hWBosonPt_zoomin"]         = hist = new TH1I("hWBosonPt_zoomin", "   ; W Boson P_{T}; Events", 20, 0, 10);
    o["hWBosonPhi"]        = hist = new TH1I("hWBosonPhi", "  ; W Boson #phi; Events", 16, -M_PI, M_PI);
    o["hWBosonEta"]        = hist = new TH1I("hWBosonEta", "  ; W Boson #eta; Events", 20, -4, 4);
    o["hWBosonRapidity"]   = hist = new TH1I("hWBosonRapidity", "  ; W Boson Rapidity; Events", 20, -4, 4);
@@ -89,6 +90,7 @@ void WBosEventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hNeutrinoPhi"])->Fill(event.GetNeutrinoP3().Phi());
    ((TH1*) o["hNeutrinoEta"])->Fill(event.GetNeutrinoP3().Eta());
    ((TH1*) o["hWBosonPt"])->Fill (event.GetVecBosonP3().Pt());
+   ((TH1*) o["hWBosonPt_zoomin"])->Fill (event.GetVecBosonP3().Pt());
    ((TH1*) o["hWBosonPhi"])->Fill(event.GetVecBosonP3().Phi());
    ((TH1*) o["hWBosonEta"])->Fill(event.GetVecBosonP3().Eta());
    ((TH1*) o["hWBosonRapidity"])->Fill(event.GetVecBosonP4().Rapidity());
