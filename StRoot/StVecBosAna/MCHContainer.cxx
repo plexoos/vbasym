@@ -123,8 +123,8 @@ void MCHContainer::BookHists()
 
    // A_N prediction from Zhongbo Kang
    o["hAn_evol_ZK"]  = new rh::H1F("hAn_evol_ZK", "; W A_{N}; Events", 20, -0.02, 0.0002, "hist GRIDX");
-   o["hAn_evol_ZK_Vs_PtGen"]  = new rh::H2F("hAn_evol_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 20, 0., 25., 20, -0.02, 0.0002, "colz LOGZ");
-   o["hAn_evol_ZK_Vs_PtRec"]  = new rh::H2F("hAn_evol_ZK_Vs_PtRec", "; W P_{T}^{GEN}; W A_{N}; Events", 20, 0., 25., 20, -0.02, 0.0002, "colz LOGZ");
+   o["hAn_evol_ZK_Vs_PtGen"]  = new rh::H2F("hAn_evol_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 10, 0., 15., 10, -0.02, 0.0002, "colz LOGZ");
+   o["hAn_evol_ZK_Vs_PtRec"]  = new rh::H2F("hAn_evol_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 10, 0., 15., 10, -0.02, 0.0002, "colz LOGZ");
 }
 
 
