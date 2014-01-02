@@ -103,7 +103,7 @@ void WBosEvent::ProcessMC()
    ((WBosMcEvent*) mMcEvent)->CalcRecoil(*stMcEvent);
 
    PredictionAnEvol();
-   //delete  ((WBosMcEvent*) mMcEvent);
+   PredictionAn();  
 }
 
 
@@ -188,9 +188,6 @@ void WBosEvent::ReconstructNeutrinoZ()
 }
 
 
-/**
- *
- */
 void WBosEvent::PredictionAnEvol()
 {
 
@@ -267,7 +264,7 @@ void WBosEvent::PredictionAnEvol()
 
    Double_t entries=h1->GetEntries();
 
-   if (PtGen < ( 1-(delta_pt/2)) || PtGen >= (15+(delta_pt/2)) ) { 
+   if (PtGen < ( 0.5-(delta_pt/2)) || PtGen >= (15+(delta_pt/2)) ) { 
        printf("WARNING! Generated Pt out of range of Zhongbo's An prediction [1.;15.] GeV -> PtGen= %f \n", PtGen);
        An_evol_ZK = -999;
        printf("Value of A_N prediction set to An_evol_ZK= %f \n", An_evol_ZK);
@@ -291,6 +288,110 @@ void WBosEvent::PredictionAnEvol()
        cout << "A_N Prediction (with Evol.) = " << mean << endl;
 
        An_evol_ZK = mean; 
+   }
+  
+   delete h1;
+
+}
+
+void WBosEvent::PredictionAn()
+{
+
+   // This function read the TNtuple file created (using the macro: PtCorrPlot.C in macros directory) from the ASCII text file provided by Zhongbo Kang and containing the predictions for W+ An asymmetry without evolution is included.
+ 
+   TString inPathCurves = "/star/institutions/bnl_me/fazio/zk_an_predictions/";
+   delete gROOT->GetListOfFiles()->FindObject(inPathCurves + "ZK_noevo_Wp_asymmetry.root"); // clear memory of file
+   TFile *fileAnNoEvo = TFile::Open(inPathCurves + "ZK_noevo_Wp_asymmetry.root");
+   //cout << " inPathCurves = " << inPathCurves << endl; 
+ 
+   // get a pointer to the tree
+   TTree *tAnNoEvo = (TTree *)fileAnNoEvo->Get("ntAnEvol");
+
+
+   // define the width of the y,pt binning in the original file/tree
+   float delta_y  = 0.1;
+   float delta_pt = 0.5;
+
+   //std::unique_ptr<WBosMcEvent> mWMcEvent(new WBosMcEvent());
+   Float_t PtGen       = ((WBosMcEvent*) mMcEvent) -> mP4WBoson.Pt();
+   Float_t RapidityGen = ((WBosMcEvent*) mMcEvent) ->mP4WBoson.Rapidity();
+
+   //cout << "W Pt Generated = "       << PtGen       << " GeV" << endl;
+   //cout << "W Rapidity Generated = " << RapidityGen << " GeV" << endl;
+
+   Float_t y_min    = RapidityGen - (delta_y/2);
+   Float_t y_max    = RapidityGen + (delta_y/2);
+   Float_t pt_min   = PtGen - (delta_pt/2);
+   Float_t pt_max   = PtGen + (delta_pt/2);
+   //cout << "y_min = "  << y_min  << endl;
+   //cout << "y_max = "  << y_max  << endl;
+   //cout << "pt_min = " << pt_min << endl;
+   //cout << "pt_max = " << pt_max << endl;
+
+   std::ostringstream ssymin;
+        ssymin << y_min;
+   std::string symin(ssymin.str());
+   std::ostringstream ssymax;
+        ssymax << y_max;
+   std::string symax(ssymax.str());
+   std::ostringstream ssptmin;
+        ssptmin << pt_min;
+   std::string sptmin(ssptmin.str());
+   std::ostringstream ssptmax;
+        ssptmax << pt_max;
+   std::string sptmax(ssptmax.str());
+
+   symin = "y >= " + symin;
+   //printf("string symin: %s \n", symin.c_str());
+   symax = "y < " + symax;
+   //printf("string symax: %s \n", symax.c_str());
+   sptmin = "pt >= " + sptmin;
+   sptmax = "pt < " + sptmax;
+
+   TString tsymin = symin;
+   //printf("TString tsymin: %s \n", tsymin.Data());
+   TString tsymax = symax;
+   //printf("TString tsymax: %s \n", tsymax.Data());
+   TString tsptmin = sptmin;
+   //printf("TString tsptmin: %s \n", tsptmin.Data());
+   TString tsptmax = sptmax;
+   //printf("TString tsptmax: %s \n", tsptmax.Data());
+
+   TCut cymin(tsymin.Data());
+   TCut cymax(tsymax.Data());
+   TCut cptmin(tsptmin.Data());
+   TCut cptmax(tsptmax.Data());
+
+   TH1F *h1 = new TH1F("h1","",100,-1,1); 
+
+   tAnNoEvo->Draw("an >> h1", cymin && cymax && cptmin && cptmax);
+
+   Double_t entries=h1->GetEntries();
+
+   if (PtGen < ( 0.5-(delta_pt/2)) || PtGen >= (15+(delta_pt/2)) ) { 
+     //printf("WARNING! Generated Pt out of range of Zhongbo's An prediction [1.;15.] GeV -> PtGen= %f \n", PtGen);
+       An_noevo_ZK = -999;
+       printf("Value of A_N prediction set to An_noevo_ZK= %f \n", An_noevo_ZK);
+   }
+
+   else if (RapidityGen < (-1.8-(delta_y/2)) || RapidityGen >= (1.8+(delta_y/2)) ) { 
+     //printf("WARNING! Generated rapidity out of range of Zhongbo's (No evol.) An prediction [-1.8;1.8] GeV -> RapidityGen= %f \n", RapidityGen);
+       An_noevo_ZK = -999;
+       printf("Value of A_N prediction set to An_noevo_ZK= %f \n", An_noevo_ZK);
+   }
+
+   else if (entries != 1 ) { 
+     //printf("WARNING! Entires in Zhongbo's An prediction (No evol.) histogram > 1 -> #entries= %f \n", entries);
+       An_noevo_ZK = -999;
+       printf("Value of A_N prediction set to An_noevo_ZK= %f \n", An_noevo_ZK);
+   }
+
+   else {
+       Double_t mean=h1->GetMean();
+       //cout << "Entries in the A_N istogram = " << entries << endl; 
+       cout << "A_N Prediction (No evol.) = " << mean << endl;
+
+       An_noevo_ZK = mean; 
    }
   
    delete h1;

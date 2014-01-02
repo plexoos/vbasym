@@ -34,6 +34,7 @@ public:
    TVector3     GetVecBosonP3() const;
    TLorentzVector GetVecBosonP4() const;
    void         PredictionAnEvol();
+   void         PredictionAn();
    virtual void Process();
    virtual void ProcessPersistent();
    virtual void ProcessMC();
