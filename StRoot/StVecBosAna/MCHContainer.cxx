@@ -125,6 +125,19 @@ void MCHContainer::BookHists()
    o["hAn_evol_ZK"]  = new rh::H1F("hAn_evol_ZK", "; W A_{N}; Events", 20, -0.02, 0.0002, "hist GRIDX");
    o["hAn_evol_ZK_Vs_PtGen"]  = new rh::H2F("hAn_evol_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 10, 0., 15., 10, -0.02, 0.0002, "colz LOGZ");
    o["hAn_evol_ZK_Vs_PtRec"]  = new rh::H2F("hAn_evol_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 10, 0., 15., 10, -0.02, 0.0002, "colz LOGZ");
+
+   o["hAn_noevo_ZK"]  = new rh::H1F("hAn_noevo_ZK", "; W A_{N}; Events", 20, -0.2, 0.2, "hist GRIDX");
+   o["hAn_noevo_ZK_Vs_PtGen"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 10, 0., 15., 10, -0.2, 0.2, "colz LOGZ");
+   o["hAn_noevo_ZK_Vs_PtRec"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 10, 0., 15., 10, -0.2, 0.2, "colz LOGZ");
+
+   o["hAn_evol_ZK_y>0"]  = new rh::H1F("hAn_evol_ZK_y>0", "; W A_{N}; Events", 20, -0.02, 0.0002, "hist GRIDX");
+   o["hAn_evol_ZK_Vs_PtGen_y>0"]  = new rh::H2F("hAn_evol_ZK_Vs_PtGen_y>0", "; W P_{T}^{GEN}; W A_{N}; Events", 10, 0., 15., 10, -0.02, 0.0002, "colz LOGZ");
+   o["hAn_evol_ZK_Vs_PtRec_y>0"]  = new rh::H2F("hAn_evol_ZK_Vs_PtRec_y>0", "; W P_{T}^{REC}; W A_{N}; Events", 10, 0., 15., 10, -0.02, 0.0002, "colz LOGZ");
+
+   o["hAn_noevo_ZK_y>0"]  = new rh::H1F("hAn_noevo_ZK_y>0", "; W A_{N}; Events", 20, -0.2, 0.2, "hist GRIDX");
+   o["hAn_noevo_ZK_Vs_PtGen_y>0"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtGen_y>0", "; W P_{T}^{GEN}; W A_{N}; Events", 10, 0., 15., 10, -0.2, 0.2, "colz LOGZ");
+   o["hAn_noevo_ZK_Vs_PtRec_y>0"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtRec_y>0", "; W P_{T}^{REC}; W A_{N}; Events", 10, 0., 15., 10, -0.2, 0.2, "colz LOGZ");
+
 }
 
 
@@ -209,6 +222,33 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hAn_evol_ZK"])                ->Fill(event.An_evol_ZK);
    ((TH2*) o["hAn_evol_ZK_Vs_PtGen"])       ->Fill(mcEvent->mP4WBoson.Pt(), event.An_evol_ZK);
    ((TH2*) o["hAn_evol_ZK_Vs_PtRec"])       ->Fill(event.GetVecBosonP3().Pt(), event.An_evol_ZK);
+   ((TH1*) o["hAn_noevo_ZK"])               ->Fill(event.An_noevo_ZK);
+   ((TH2*) o["hAn_noevo_ZK_Vs_PtGen"])      ->Fill(mcEvent->mP4WBoson.Pt(), event.An_noevo_ZK);
+   ((TH2*) o["hAn_noevo_ZK_Vs_PtRec"])      ->Fill(event.GetVecBosonP3().Pt(), event.An_noevo_ZK);
+
+   if (event.GetVecBosonP4().Rapidity() > 0) {
+
+      ((TH1*) o["hAn_evol_ZK_y>0"])                ->Fill(event.An_evol_ZK);
+      ((TH2*) o["hAn_evol_ZK_Vs_PtRec_y>0"])       ->Fill(event.GetVecBosonP3().Pt(), event.An_evol_ZK);
+      ((TH1*) o["hAn_noevo_ZK_y>0"])               ->Fill(event.An_noevo_ZK);
+      ((TH2*) o["hAn_noevo_ZK_Vs_PtRec_y>0"])      ->Fill(event.GetVecBosonP3().Pt(), event.An_noevo_ZK);   
+
+   } else {
+      ((TH1*) o["hAn_evol_ZK_y>0"])                ->Fill(1e5);
+      ((TH2*) o["hAn_evol_ZK_Vs_PtRec_y>0"])       ->Fill(1e5, 1e5);
+      ((TH1*) o["hAn_noevo_ZK_y>0"])               ->Fill(1e5);
+      ((TH2*) o["hAn_noevo_ZK_Vs_PtRec_y>0"])      ->Fill(1e5, 1e5);  
+   }
+
+   if (mcEvent->mP4WBoson.Rapidity() > 0) {
+
+      ((TH2*) o["hAn_evol_ZK_Vs_PtGen_y>0"])       ->Fill(mcEvent->mP4WBoson.Pt(), event.An_evol_ZK);
+      ((TH2*) o["hAn_noevo_ZK_Vs_PtGen_y>0"])      ->Fill(mcEvent->mP4WBoson.Pt(), event.An_noevo_ZK);
+
+   } else {
+      ((TH2*) o["hAn_evol_ZK_Vs_PtGen_y>0"])       ->Fill(1e5, 1e5);
+      ((TH2*) o["hAn_noevo_ZK_Vs_PtGen_y>0"])      ->Fill(1e5, 1e5); 
+   }
 
    ((TH2*) o["hJetRecoilPtVsWBosonPt"])         ->Fill(mcEvent->mP4WBoson.Pt(),  event.GetJetRecoil().Pt());
    ((TH2*) o["hJetRecoilPhiVsWBosonPhi"])       ->Fill(mcEvent->mP4WBoson.Phi(), event.GetJetRecoil().Phi());
