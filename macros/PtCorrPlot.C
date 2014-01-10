@@ -59,6 +59,7 @@ void PtCorrPlot()
 
    TString inPath        = "/star/institutions/bnl_me/fazio/vbana_out/";
    TString inPathNew     = "/star/institutions/bnl_me/fazio/stana_out/runlists/";
+   TString inPathScratch = "/star/data05/scratch/fazio/stana_out/runlists/";
    //TString inPathNew     = $VBASYM_RESULTS_DIR;
    TString outPath       = "~/vbasym_results/plots/";
 
@@ -77,10 +78,13 @@ void PtCorrPlot()
 
    // open histogram files
    //TFile *fileData      = TFile::Open(inPath + "run11_pp_transverse_-w_--jpm_0.5_--run_11_vbana.root");
-   TFile *fileData      = TFile::Open(inPathNew + "run11_pp_transverse_-w_--jpm_0.5_--tpm_0.2_--run_11/hist/vbana.root");
+   //TFile *fileData      = TFile::Open(inPathNew + "run11_pp_transverse_-w_--jpm_0.5_--tpm_0.2_--run_11/hist/vbana.root");
+   TFile *fileData      = TFile::Open(inPathScratch + "run11_pp_transverse/hist/vbana.root");
    //TFile *fileMCWp      = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_vbana.root");
-   TFile *fileMCWp      = TFile::Open(inPathNew + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_--tpm_0.2/hist/vbana.root");
+   ////TFile *fileMCWp      = TFile::Open(inPathNew + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_--tpm_0.2/hist/vbana_tpm02.root");
+   TFile *fileMCWp      = TFile::Open(inPathScratch + "run11_mc_Wp2enu.lis/hist/vbana.root");
    TFile *fileMCWpOld   = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_vbana_OldStylePtCorr.root");
+   TFile *fileMCWm      = TFile::Open(inPathScratch + "run11_mc_Wm2enu.lis/hist/vbana.root");
 
 //*** CREATE ROOT FILE FOR CURVES FROM ASCII FILE ***
    // open text files
@@ -96,13 +100,16 @@ void PtCorrPlot()
 
    ifstream inCurves;
    inCurves.open(Form("%sZK_evolution_Wp_asymmetry.txt",inPathCurves.Data()));
+   //inCurves.open(Form("%sZK_noevo_Wp_asymmetry.txt",inPathCurves.Data()));
+   //inCurves.open(Form("%sZK_evolution_Wm_asymmetry.txt",inPathCurves.Data()));
+   //inCurves.open(Form("%sZK_noevo_Wm_asymmetry.txt",inPathCurves.Data()));
+
    //FILE *fp = fopen("/direct/star+u/fazio/vbasym/macros/curves/ZK_evolution_Wp_asymmetry.txt","r");
    //Int_t ncols;
    Float_t x,y,z;
    Float_t y,pt,an;
    Int_t nlines = 0;
    TFile   *fAnEvol  = new TFile("./ZK_evolution_Wp_asymmetry.root","RECREATE");
-   //TH3F    *hAnEvol  = new TH3F("hAnEvol","A_N prediction with evolution");
    TH3F    *hAnEvol  = new TH3F("hAnEvol","A_N prediction with evolution",100,-4,4,100,0,25,100,0,0.2);
    TNtuple *ntAnEvol = new TNtuple("ntAnEvol","A_N prediction with evolution","y:pt:an");
 
@@ -147,6 +154,8 @@ void PtCorrPlot()
    TH1 *hWp_PtReco_zoomin                  = (TH1*) fileMCWp->Get("event_w/hTrackRecoilWithNeutralsPt_zoomin");
    TH1 *hWp_PtRecoCorrected                = (TH1*) fileMCWp->Get("event_w/hTrackRecoilWithNeutralsPtCorrected");
    TH1 *hWp_PtRecoCorrected_zoomin         = (TH1*) fileMCWp->Get("event_w/hTrackRecoilWithNeutralsPtCorrected_zoomin");
+   TH1 *hWp_Wp_PtReco                      = (TH1*) fileMCWp->Get("event_wp/hTrackRecoilWithNeutralsPt");
+   TH1 *hWp_Wp_PtReco_zoomin               = (TH1*) fileMCWp->Get("event_wp/hTrackRecoilWithNeutralsPt_zoomin");
    TH1 *hWp_Wp_PtRecoCorrected             = (TH1*) fileMCWp->Get("event_wp/hTrackRecoilWithNeutralsPtCorrected");
    TH1 *hWp_Wp_PtRecoCorrected_zoomin      = (TH1*) fileMCWp->Get("event_wp/hTrackRecoilWithNeutralsPtCorrected_zoomin");
    TH1 *hWp_Wp_WBosonPt                    = (TH1*) fileMCWp->Get("event_wp/hWBosonPt");
@@ -157,8 +166,23 @@ void PtCorrPlot()
    TH2 *hWp_PtRecoil_vs_PtWGen             = (TH2 *)fileMCWp->Get("event_mc/hTrackRecoilTpcNeutralsPtVsWBosonPt_copy");
    TH2 *hWp_PtRecoilCorr_vs_PtWGen         = (TH2 *)fileMCWp->Get("event_mc/hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt_copy");
    TH1 *hWp_PhiRecoil_vs_PhiWGen           = (TH1 *)fileMCWp->Get("event_mc/hTrackRecoilPhiVsWBosonPhi");
+   TH2 *hWp_An_evol_ZK_Vs_PtGen            = (TH2 *)fileMCWp->Get("event_mc/hAn_evol_ZK_Vs_PtGen");
+   TH2 *hWp_An_evol_ZK_Vs_PtRec            = (TH2 *)fileMCWp->Get("event_mc/hAn_evol_ZK_Vs_PtRec");
+   TH2 *hWp_An_noevo_ZK_Vs_PtGen           = (TH2 *)fileMCWp->Get("event_mc/hAn_noevo_ZK_Vs_PtGen");
+   TH2 *hWp_An_noevo_ZK_Vs_PtRec           = (TH2 *)fileMCWp->Get("event_mc/hAn_noevo_ZK_Vs_PtRec");
+
+   TH2 *hWm_PtRecoil_vs_PtWGen             = (TH2 *)fileMCWm->Get("event_mc/hTrackRecoilTpcNeutralsPtVsWBosonPt_copy");
+   TH2 *hWm_PtRecoilCorr_vs_PtWGen         = (TH2 *)fileMCWm->Get("event_mc/hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt_copy");
+   TH1 *hWm_PhiRecoil_vs_PhiWGen           = (TH1 *)fileMCWm->Get("event_mc/hTrackRecoilPhiVsWBosonPhi");
+   TH2 *hWm_An_evol_ZK_Vs_PtGen            = (TH2 *)fileMCWm->Get("event_mc/hAn_evol_ZK_Vs_PtGen");
+   TH2 *hWm_An_evol_ZK_Vs_PtRec            = (TH2 *)fileMCWm->Get("event_mc/hAn_evol_ZK_Vs_PtRec");
+   TH2 *hWm_An_noevo_ZK_Vs_PtGen           = (TH2 *)fileMCWm->Get("event_mc/hAn_noevo_ZK_Vs_PtGen");
+   TH2 *hWm_An_noevo_ZK_Vs_PtRec           = (TH2 *)fileMCWm->Get("event_mc/hAn_noevo_ZK_Vs_PtRec");
+   TH2 *hWm_An_noevo_ZK_Vs_PtGen_zoomin    = (TH2 *)fileMCWm->Get("event_mc/hAn_noevo_ZK_Vs_PtGen_zoomin");
+   TH2 *hWm_An_noevo_ZK_Vs_PtRec_zoomin    = (TH2 *)fileMCWm->Get("event_mc/hAn_noevo_ZK_Vs_PtRec_zoomin");
 
    hWp_PtReco_zoomin                ->SetFillColor(kYellow);
+   hWp_Wp_PtReco_zoomin             ->SetFillColor(kYellow);
    hWp_Wp_PtRecoCorrected_zoomin    ->SetFillColor(kYellow);
    hWp_Wp_WBosonPt_zoomin           ->SetFillColor(kYellow);
    hWp_PtWGen_zoomin                ->SetFillColor(kYellow);
@@ -373,7 +397,284 @@ void PtCorrPlot()
 
 
    c4->SaveAs(outPath + "/plot_DataMc_WpPt.png");
-   c4->SaveAs(outPath + "/plot_DataMc_WpPt.eps");
+   c4->SaveAs(outPath + "/plot_DataMc_WpPt.eps");;
+
+
+   TCanvas *c4b   = new TCanvas("c4b", "", 400, 400);
+
+   TH1F * hd_Wp_PtReco_zoomin_1  = (TH1F *) hd_Wp_PtReco_zoomin -> Clone("hd_Wp_PtReco_zoomin_1");
+
+   TH1F * hWp_Wp_PtReco_zoomin_1 = (TH1F *) hWp_Wp_PtReco_zoomin-> Clone("hWp_Wp_PtReco_zoomin_1");
+
+   // Normalize to the integral:
+   hWp_Wp_PtReco_zoomin_1->Scale(hd_Wp_PtReco_zoomin_1->Integral()/hWp_Wp_PtReco_zoomin_1->Integral());
+
+   // Normalize to the luminosity
+   //hWp_Wp_PtReco_zoomin_1->Scale(scaleWp);
+
+   c4b->cd();
+   hd_Wp_PtReco_zoomin_1    ->Rebin(2);
+   hd_Wp_PtReco_zoomin_1    ->GetYaxis()->SetTitleOffset(1.8);
+
+   hWp_Wp_PtReco_zoomin_1   ->Rebin(2);
+   hWp_Wp_PtReco_zoomin_1   ->Draw();
+   hd_Wp_PtReco_zoomin_1    ->SetMarkerStyle(20);
+   hd_Wp_PtReco_zoomin_1    ->SetTitle("W+ sample - Without W-Pt correction");
+   hd_Wp_PtReco_zoomin_1    ->Draw("E0");
+   hWp_Wp_PtReco_zoomin_1   ->Draw("same");
+   hd_Wp_PtReco_zoomin_1    ->Draw("E0 same");
+  
+   TLegend *leg4b = new TLegend(0.5, 0.75, 0.75, 0.9);
+   leg4b -> AddEntry(hd_Wp_PtReco_zoomin_1,"STAR run11 tran.", "P");
+   leg4b -> AddEntry(hWp_Wp_PtReco_zoomin_1,"PHYTHIA", "F");
+   leg4 -> Draw();
+
+
+   c4b->SaveAs(outPath + "/plot_DataMc_WpPt_nocorr.png");
+   c4b->SaveAs(outPath + "/plot_DataMc_WpPt_nocorr.eps");
   
 
+
+   TCanvas *c5   = new TCanvas("c5", "An predicction with evol.", 400, 400);
+
+   hWp_An_evol_ZK_Vs_PtGen ->ProfileX("hWp_An_evol_ZK_Vs_PtGen_pfx"); 
+   hWp_An_evol_ZK_Vs_PtRec ->ProfileX("hWp_An_evol_ZK_Vs_PtRec_pfx"); 
+
+
+   c5->Divide(1, 2);
+
+   c5_1->cd();
+   hWp_An_evol_ZK_Vs_PtGen->Draw();
+   hWp_An_evol_ZK_Vs_PtGen->GetYaxis()->SetTitleOffset(2.);
+   hWp_An_evol_ZK_Vs_PtGen->SetTitle("Prediction inlcudes evolution; W^{+} P_{T}^{GEN}; A_{N}");
+   //hWp_An_evol_ZK_Vs_PtGen_pfx->Draw();
+   //hWp_An_evol_ZK_Vs_PtGen_pfx->GetYaxis()->SetTitleOffset(2.);
+   //hWp_An_evol_ZK_Vs_PtGen_pfx->SetTitle("Prediction inlcudes evolution; W^{+} P_{T}^{GEN}; A_{N}");
+   c5_2->cd();
+   hWp_An_evol_ZK_Vs_PtGen_pfx->Draw();
+   hWp_An_evol_ZK_Vs_PtGen_pfx->GetYaxis()->SetTitleOffset(2.);
+   hWp_An_evol_ZK_Vs_PtGen_pfx->SetTitle("Prediction inlcudes evolution; W^{+} P_{T}^{GEN}; A_{N}");
+   //hWp_An_evol_ZK_Vs_PtRec_pfx->Draw();
+   //hWp_An_evol_ZK_Vs_PtRec_pfx->GetYaxis()->SetTitleOffset(2.);
+   //hWp_An_evol_ZK_Vs_PtRec_pfx->SetTitle("Prediction inlcudes evolution; W^{+} P_{T}^{REC}; A_{N}");
+
+   c5->SaveAs(outPath + "/plot_Wp_An_evol_ZK.png");
+   c5->SaveAs(outPath + "/plot_Wp_An_evol_ZK.eps");
+
+   TCanvas *c5bis   = new TCanvas("c5bis", "An predicction with evol.", 400, 400);
+
+   c5bis->Divide(1, 2);
+
+   c5bis_1->cd();
+   hWp_An_evol_ZK_Vs_PtRec->Draw();
+   hWp_An_evol_ZK_Vs_PtRec->GetYaxis()->SetTitleOffset(2.);
+   hWp_An_evol_ZK_Vs_PtRec->SetTitle("Prediction inlcudes evolution; W^{+} P_{T}^{REC}; A_{N}");
+   c5bis_2->cd();
+   hWp_An_evol_ZK_Vs_PtRec_pfx->Draw();
+   hWp_An_evol_ZK_Vs_PtRec_pfx->GetYaxis()->SetTitleOffset(2.);
+   hWp_An_evol_ZK_Vs_PtRec_pfx->SetTitle("Prediction inlcudes evolution; W^{+} P_{T}^{REC}; A_{N}");
+
+   c5bis->SaveAs(outPath + "/plot_Wp_An_evol_ZK_Ptrec.png");
+   c5bis->SaveAs(outPath + "/plot_Wp_An_evol_ZK_Ptrec.eps");
+
+
+   TCanvas *c5c   = new TCanvas("c5c", "An predicction no evol.", 400, 400);
+
+   hWp_An_noevo_ZK_Vs_PtGen ->ProfileX("hWp_An_noevo_ZK_Vs_PtGen_pfx"); 
+   hWp_An_noevo_ZK_Vs_PtRec ->ProfileX("hWp_An_noevo_ZK_Vs_PtRec_pfx"); 
+
+
+   c5c->Divide(1, 2);
+
+   c5c_1->cd();
+   hWp_An_noevo_ZK_Vs_PtGen->Draw();
+   hWp_An_noevo_ZK_Vs_PtGen->GetYaxis()->SetTitleOffset(2.);
+   hWp_An_noevo_ZK_Vs_PtGen->SetTitle("Prediction no evolution; W^{+} P_{T}^{GEN}; A_{N}");
+   c5c_2->cd();
+   hWp_An_noevo_ZK_Vs_PtGen_pfx->Draw();
+   hWp_An_noevo_ZK_Vs_PtGen_pfx->GetYaxis()->SetTitleOffset(2.);
+   hWp_An_noevo_ZK_Vs_PtGen_pfx->SetTitle("Prediction no evolution; W^{+} P_{T}^{GEN}; A_{N}");
+
+   c5c->SaveAs(outPath + "/plot_Wp_An_noevo_ZK.png");
+   c5c->SaveAs(outPath + "/plot_Wp_An_noevo_ZK.eps");
+
+   TCanvas *c5d   = new TCanvas("c5d", "An predicction no evol.", 400, 400);
+
+   c5d->Divide(1, 2);
+
+   c5d_1->cd();
+   hWp_An_noevo_ZK_Vs_PtRec->Draw();
+   hWp_An_noevo_ZK_Vs_PtRec->GetYaxis()->SetTitleOffset(2.);
+   hWp_An_noevo_ZK_Vs_PtRec->SetTitle("Prediction no evolution; W^{+} P_{T}^{REC}; A_{N}");
+   c5d_2->cd();
+   hWp_An_noevo_ZK_Vs_PtRec_pfx->Draw();
+   hWp_An_noevo_ZK_Vs_PtRec_pfx->GetYaxis()->SetTitleOffset(2.);
+   hWp_An_noevo_ZK_Vs_PtRec_pfx->SetTitle("Prediction inlcudes evolution; W^{+} P_{T}^{REC}; A_{N}");
+
+   c5d->SaveAs(outPath + "/plot_Wp_An_noevo_ZK_Ptrec.png");
+   c5d->SaveAs(outPath + "/plot_Wp_An_noevo_ZK_Ptrec.eps");
+
+
+   TCanvas *c6   = new TCanvas("c6", "An prediction with evol.", 400, 400);
+
+   hWm_An_evol_ZK_Vs_PtGen ->ProfileX("hWm_An_evol_ZK_Vs_PtGen_pfx"); 
+   hWm_An_evol_ZK_Vs_PtRec ->ProfileX("hWm_An_evol_ZK_Vs_PtRec_pfx"); 
+
+
+   c6->Divide(1, 2);
+
+   c6_1->cd();
+   hWm_An_evol_ZK_Vs_PtGen->Draw();
+   hWm_An_evol_ZK_Vs_PtGen->GetYaxis()->SetTitleOffset(2.);
+   hWm_An_evol_ZK_Vs_PtGen->SetTitle("Prediction inlcudes evolution; W^{-} P_{T}^{GEN}; A_{N}");
+   //hWm_An_evol_ZK_Vs_PtGen_pfx->Draw();
+   //hWm_An_evol_ZK_Vs_PtGen_pfx->GetYaxis()->SetTitleOffset(2.);
+   //hWm_An_evol_ZK_Vs_PtGen_pfx->SetTitle("Prediction inlcudes evolution; W P_{T}^{GEN}; A_{N}");
+   c6_2->cd();
+   hWm_An_evol_ZK_Vs_PtGen_pfx->Draw();
+   hWm_An_evol_ZK_Vs_PtGen_pfx->GetYaxis()->SetTitleOffset(2.);
+   hWm_An_evol_ZK_Vs_PtGen_pfx->SetTitle("Prediction inlcudes evolution; W^{-} P_{T}^{GEN}; A_{N}");
+   //hWm_An_evol_ZK_Vs_PtRec_pfx->Draw();
+   //hWm_An_evol_ZK_Vs_PtRec_pfx->GetYaxis()->SetTitleOffset(2.);
+   //hWm_An_evol_ZK_Vs_PtRec_pfx->SetTitle("Prediction inlcudes evolution; W P_{T}^{REC}; A_{N}");
+
+   c6->SaveAs(outPath + "/plot_Wm_An_evol_ZK.png");
+   c6->SaveAs(outPath + "/plot_Wm_An_evol_ZK.eps");
+
+   TCanvas *c6bis   = new TCanvas("c6bis", "An prediction with evol.", 400, 400);
+
+   c6bis->Divide(1, 2);
+
+   c6bis_1->cd();
+   hWm_An_evol_ZK_Vs_PtRec->Draw();
+   hWm_An_evol_ZK_Vs_PtRec->GetYaxis()->SetTitleOffset(2.);
+   hWm_An_evol_ZK_Vs_PtRec->SetTitle("Prediction inlcudes evolution; W^{-} P_{T}^{REC}; A_{N}");
+   c6bis_2->cd();
+   hWm_An_evol_ZK_Vs_PtRec_pfx->Draw();
+   hWm_An_evol_ZK_Vs_PtRec_pfx->GetYaxis()->SetTitleOffset(2.);
+   hWm_An_evol_ZK_Vs_PtRec_pfx->SetTitle("Prediction inlcudes evolution; W^{-} P_{T}^{REC}; A_{N}");
+
+   c6bis->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Ptrec.png");
+   c6bis->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Ptrec.eps");
+
+
+   TCanvas *c6c   = new TCanvas("c6c", "An predicction no evol.", 500, 500);
+
+   hWm_An_noevo_ZK_Vs_PtGen ->ProfileX("hWm_An_noevo_ZK_Vs_PtGen_pfx"); 
+   hWm_An_noevo_ZK_Vs_PtRec ->ProfileX("hWm_An_noevo_ZK_Vs_PtRec_pfx");
+   hWm_An_noevo_ZK_Vs_PtGen ->ProjectionY("hWm_An_noevo_ZK_Vs_PtGen_pjy1", 1, 1); 
+   hWm_An_noevo_ZK_Vs_PtGen ->ProjectionY("hWm_An_noevo_ZK_Vs_PtGen_pjy2", 2, 2); 
+   hWm_An_noevo_ZK_Vs_PtGen ->ProjectionY("hWm_An_noevo_ZK_Vs_PtGen_pjy3", 3, 3);  
+   hWm_An_noevo_ZK_Vs_PtGen ->ProjectionY("hWm_An_noevo_ZK_Vs_PtGen_pjy4", 4, 4); 
+   hWm_An_noevo_ZK_Vs_PtRec ->ProjectionY("hWm_An_noevo_ZK_Vs_PtRec_pjy1", 1, 1); 
+   hWm_An_noevo_ZK_Vs_PtRec ->ProjectionY("hWm_An_noevo_ZK_Vs_PtRec_pjy2", 2, 2); 
+   hWm_An_noevo_ZK_Vs_PtRec ->ProjectionY("hWm_An_noevo_ZK_Vs_PtRec_pjy3", 3, 3);  
+   hWm_An_noevo_ZK_Vs_PtRec ->ProjectionY("hWm_An_noevo_ZK_Vs_PtRec_pjy4", 4, 4); 
+   hWm_An_noevo_ZK_Vs_PtGen_zoomin ->ProfileX("hWm_An_noevo_ZK_Vs_PtGen_zoomin_pfx"); 
+   hWm_An_noevo_ZK_Vs_PtRec_zoomin ->ProfileX("hWm_An_noevo_ZK_Vs_PtRec_zoomin_pfx"); 
+
+
+   //c6c->Divide(1, 2);
+
+   c6c->cd();
+   hWm_An_noevo_ZK_Vs_PtGen->Draw();
+   hWm_An_noevo_ZK_Vs_PtGen->GetYaxis()->SetTitleOffset(1.8);
+   hWm_An_noevo_ZK_Vs_PtGen->SetTitle("Prediction no evolution; W^{-} P_{T}^{GEN}; A_{N}");
+   ////c6c_2->cd();
+   ////hWm_An_noevo_ZK_Vs_PtGen_pfx->Draw();
+   ////hWm_An_noevo_ZK_Vs_PtGen_pfx->GetYaxis()->SetTitleOffset(1.8);
+   ////hWm_An_noevo_ZK_Vs_PtGen_pfx->SetTitle("Prediction no evolution; W^{-} P_{T}^{GEN}; A_{N}");
+   //c6c_3->cd();
+   //hWm_An_noevo_ZK_Vs_PtGen_zoomin->Draw();
+   //hWm_An_noevo_ZK_Vs_PtGen_zoomin->GetYaxis()->SetTitleOffset(2.);
+   //hWm_An_noevo_ZK_Vs_PtGen_zoomin->SetTitle("Prediction no evolution; W^{-} P_{T}^{GEN}; A_{N}");
+   //c6c_4->cd();
+   //hWm_An_noevo_ZK_Vs_PtGen_zoomin_pfx->Draw();
+   //hWm_An_noevo_ZK_Vs_PtGen_zoomin_pfx->GetYaxis()->SetTitleOffset(2.);
+   //hWm_An_noevo_ZK_Vs_PtGen_zoomin_pfx->SetTitle("Prediction no evolution; W^{-} P_{T}^{GEN}; A_{N}");
+
+   c6c->SaveAs(outPath + "/plot_Wm_An_noevo_ZK.png");
+   c6c->SaveAs(outPath + "/plot_Wm_An_noevo_ZK.eps");
+
+   TCanvas *c6d   = new TCanvas("c6d", "An prediction no evol.", 500, 500);
+
+   //c6d->Divide(1, 2);
+
+   c6d->cd();
+   hWm_An_noevo_ZK_Vs_PtRec->Draw();
+   hWm_An_noevo_ZK_Vs_PtRec->GetYaxis()->SetTitleOffset(1.8);
+   hWm_An_noevo_ZK_Vs_PtRec->SetTitle("Prediction no evolution; W^{-} P_{T}^{REC}; A_{N}");
+   ////c6d_2->cd();
+   ////hWm_An_noevo_ZK_Vs_PtRec_pfx->Draw();
+   ////hWm_An_noevo_ZK_Vs_PtRec_pfx->GetYaxis()->SetTitleOffset(1.8);
+   ////hWm_An_noevo_ZK_Vs_PtRec_pfx->SetTitle("Prediction no evolution; W^{-} P_{T}^{REC}; A_{N}");
+   //c6d_3->cd();
+   //hWm_An_noevo_ZK_Vs_PtRec_zoomin->Draw();
+   //hWm_An_noevo_ZK_Vs_PtRec_zoomin->GetYaxis()->SetTitleOffset(2.);
+   //hWm_An_noevo_ZK_Vs_PtRec_zoomin->SetTitle("Prediction no evolution; W^{-} P_{T}^{REC}; A_{N}");
+   //c6d_4->cd();
+   //hWm_An_noevo_ZK_Vs_PtRec_zoomin_pfx->Draw();
+   //hWm_An_noevo_ZK_Vs_PtRec_zoomin_pfx->GetYaxis()->SetTitleOffset(2.);
+   //hWm_An_noevo_ZK_Vs_PtRec_zoomin_pfx->SetTitle("Prediction inlcudes evolution; W^{-} P_{T}^{REC}; A_{N}");
+
+   c6d->SaveAs(outPath + "/plot_Wm_An_noevo_ZK_Ptrec.png");
+   c6d->SaveAs(outPath + "/plot_Wm_An_noevo_ZK_Ptrec.eps");
+
+
+   TCanvas *c7   = new TCanvas("c7", "An prediction no evol.", 1200, 800);
+
+   c7-> Divide(2,2);
+   c7_1->cd();
+   hWm_An_noevo_ZK_Vs_PtGen_pjy1 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy1 -> SetTitle("PtGen BIN 1: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy1 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy1 -> Draw();
+   c7_2->cd();
+   hWm_An_noevo_ZK_Vs_PtGen_pjy2 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy2 ->SetTitle("PtGen BIN 2: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy2 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy2 -> Draw();
+   c7_3->cd();
+   hWm_An_noevo_ZK_Vs_PtGen_pjy3 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy3 ->SetTitle("PtGen BIN 3: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy3 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy3 -> Draw();
+   c7_4->cd();
+   hWm_An_noevo_ZK_Vs_PtGen_pjy4 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy4 ->SetTitle("PtGen BIN 4: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy4 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy4 -> Draw();
+
+
+   c7->SaveAs(outPath + "/plot_Wm_An_noevo_ZK_Vs_PtGen_projs.png");
+   c7->SaveAs(outPath + "/plot_Wm_An_noevo_ZK_Vs_PtGen_projs.eps");
+
+
+   TCanvas *c7b   = new TCanvas("c7b", "An prediction no evol.", 1200, 800);
+
+   c7b-> Divide(2,2);
+   c7b_1->cd();
+   hWm_An_noevo_ZK_Vs_PtRec_pjy1 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy1 -> SetTitle("PtRec BIN 1: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy1 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy1 -> Draw();
+   c7b_2->cd();
+   hWm_An_noevo_ZK_Vs_PtRec_pjy2 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy2 ->SetTitle("PtRec BIN 2: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy2 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy2 -> Draw();
+   c7b_3->cd();
+   hWm_An_noevo_ZK_Vs_PtRec_pjy3 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy3 ->SetTitle("PtRec BIN 3: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy3 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy3 -> Draw();
+   c7b_4->cd();
+   hWm_An_noevo_ZK_Vs_PtRec_pjy4 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy4 ->SetTitle("PtRec BIN 4: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy4 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy4 -> Draw();
+
+
+   c7b->SaveAs(outPath + "/plot_Wm_An_noevo_ZK_Vs_PtRec_projs.png");
+   c7b->SaveAs(outPath + "/plot_Wm_An_noevo_ZK_Vs_PtRec_projs.eps");
 }
