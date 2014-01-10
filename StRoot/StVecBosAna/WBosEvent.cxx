@@ -194,8 +194,13 @@ void WBosEvent::PredictionAnEvol()
   // This function read the TNtuple file created (using the macro: PtCorrPlot.C in macros directory) from the ASCII text file provided by Zhongbo Kang and containing the predictions for W+ An asymmetry when evolution is included.
  
   TString inPathCurves = "/star/institutions/bnl_me/fazio/zk_an_predictions/";
-  delete gROOT->GetListOfFiles()->FindObject(inPathCurves + "ZK_evolution_Wp_asymmetry.root"); // clear memory of file
-  TFile *fileAnEvol = TFile::Open(inPathCurves + "ZK_evolution_Wp_asymmetry.root");
+   // this file is for W+ Monte Carlo:
+   //delete gROOT->GetListOfFiles()->FindObject(inPathCurves + "ZK_evolution_Wp_asymmetry.root"); // clear memory of file
+   //TFile *fileAnEvol = TFile::Open(inPathCurves + "ZK_evolution_Wp_asymmetry.root");
+   // this file is for W- Monte Carlo:
+  delete gROOT->GetListOfFiles()->FindObject(inPathCurves + "ZK_evolution_Wm_asymmetry.root"); // clear memory of file
+  TFile *fileAnEvol = TFile::Open(inPathCurves + "ZK_evolution_Wm_asymmetry.root");
+
    //cout << " inPathCurves = " << inPathCurves << endl; 
  
    // get a pointer to the tree
@@ -300,8 +305,13 @@ void WBosEvent::PredictionAn()
    // This function read the TNtuple file created (using the macro: PtCorrPlot.C in macros directory) from the ASCII text file provided by Zhongbo Kang and containing the predictions for W+ An asymmetry without evolution is included.
  
    TString inPathCurves = "/star/institutions/bnl_me/fazio/zk_an_predictions/";
-   delete gROOT->GetListOfFiles()->FindObject(inPathCurves + "ZK_noevo_Wp_asymmetry.root"); // clear memory of file
-   TFile *fileAnNoEvo = TFile::Open(inPathCurves + "ZK_noevo_Wp_asymmetry.root");
+   // this file is for W+ Monte Carlo:
+   //delete gROOT->GetListOfFiles()->FindObject(inPathCurves + "ZK_noevo_Wp_asymmetry.root"); // clear memory of file
+   //TFile *fileAnNoEvo = TFile::Open(inPathCurves + "ZK_noevo_Wp_asymmetry.root");
+   // this file is for W- Monte Carlo:
+   delete gROOT->GetListOfFiles()->FindObject(inPathCurves + "ZK_noevo_Wm_asymmetry.root"); // clear memory of file
+   TFile *fileAnNoEvo = TFile::Open(inPathCurves + "ZK_noevo_Wm_asymmetry.root");
+
    //cout << " inPathCurves = " << inPathCurves << endl; 
  
    // get a pointer to the tree
