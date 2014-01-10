@@ -26,7 +26,8 @@ public:
    enum Option {OPTION_SUFFIX          = 0x20000002,
                 OPTION_JETS_PT_MIN     = 0x20000003,
                 OPTION_RHIC_RUN_ID     = 0x20000004,
-                OPTION_TRACKS_PT_MIN   = 0x20000005};
+                OPTION_TRACKS_PT_MIN   = 0x20000005,
+                OPTION_MC_TYPE         = 0x20000006};
 
 public:
 
@@ -35,6 +36,7 @@ public:
    bool             fDoReconstructJets;
    float            fTracksPtMin;
    float            fJetPtMin;
+   float            fMcType;            
    unsigned short   fRhicRunId;         //< RHIC run id, e.g. 9, 11, 12, 13, ...
    time_t           fAnaDateTime;       //< Date/time when data analysis started
    double           fAnaTimeReal;       //< Time in seconds to process input raw file
@@ -60,6 +62,7 @@ public:
    float        GetTracksPtMin() const;
    bool         SaveGraphs() const;
    bool         IsMc() const;
+   bool         IsMcWp() const;
    void         SetListName(std::string listName) { fListName = listName; }
    std::string  GetListName() const { return fListName; }
    uint32_t     GetMaxEventsUser() const;
@@ -79,6 +82,7 @@ protected:
    uint32_t    fMaxEventsUser;
    bool        fSaveGraphs;
    bool        fIsMc;
+   bool        fIsMcWp;
    EBosonType  fBosonType;
 
    ClassDef(AnaOptions, 1)

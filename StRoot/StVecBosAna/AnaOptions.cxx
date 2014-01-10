@@ -32,6 +32,7 @@ AnaOptions::AnaOptions() : TObject()
    , fMaxEventsUser(0)
    , fSaveGraphs(false)
    , fIsMc(kFALSE)
+   , fIsMcWp(kFALSE)
    , fBosonType(kWBoson)
 {
    ReadEnvVars();
@@ -98,6 +99,7 @@ string AnaOptions::GetListFileName()   const { return GetVbAsymDir() + "/runlist
 EBosonType AnaOptions::GetBosonType()  const { return fBosonType; }
 bool AnaOptions::SaveGraphs()          const { return fSaveGraphs; }
 bool AnaOptions::IsMc()                const { return fIsMc; }
+bool AnaOptions::IsMcWp()              const { return fIsMcWp; }
 uint32_t AnaOptions::GetMaxEventsUser() const { return fMaxEventsUser; }
 float AnaOptions::GetTracksPtMin()     const { return fTracksPtMin; }
 
@@ -117,7 +119,9 @@ void AnaOptions::ProcessOptions(int argc, char **argv)
       {"jpm",                 required_argument,   NULL,   AnaOptions::OPTION_JETS_PT_MIN},
       {"tpm",                 required_argument,   NULL,   AnaOptions::OPTION_TRACKS_PT_MIN},
       {"run",                 required_argument,   NULL,   AnaOptions::OPTION_RHIC_RUN_ID},
+      {"mctype",              required_argument,   NULL,   AnaOptions::OPTION_MC_TYPE},
       {"mc",                  no_argument,         NULL,   'm'},
+      {"mcwp",                no_argument,         NULL,   'mwp'},
       {"wboson",              no_argument,         NULL,   'w'},
       {"zboson",              no_argument,         NULL,   'z'},
       {NULL, 0, NULL, 0}
@@ -174,8 +178,24 @@ void AnaOptions::ProcessOptions(int argc, char **argv)
          Info("ProcessOptions", "Found fRhicRunId: %d", fRhicRunId);
          break;
 
+      case AnaOptions::OPTION_MC_TYPE:
+         sstr.clear();
+         sstr.str(string(optarg));
+         sstr >> fMcType;
+         Info("ProcessOptions", "Found fIsMc: %f", fMcType);
+         // fMcType = 0 -> data
+         // fMcType = 1 -> W+ MC
+         // fMcType = 3 -> W- Mc
+         // fMcType > 3 -> Any other Mc
+         break;
+
       case 'm':
          fIsMc = kTRUE;
+         break;
+
+      case 'mwp':
+         fIsMc   = kTRUE;
+         fIsMcWp = kTRUE;
          break;
 
       case 'w':
@@ -265,5 +285,6 @@ void AnaOptions::PrintUsage()
    cout << " -l, --log=[filename]                 : Optional log file to redirect stdout and stderr" << endl;
    cout << " -r, -f, --list                       : Input list file" << endl;
    cout << " -m, --mc                             : Process input as monte-carlo" << endl;
+   cout << " -mwp, --mcwp                         : Process input as W+ monte-carlo" << endl;
    cout << endl;
 }
