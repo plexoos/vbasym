@@ -93,8 +93,10 @@ void WBosEvent::ProcessPersistent()
 }
 
 
-void WBosEvent::ProcessMC()
+void WBosEvent::ProcessMC(int McType)
 {
+   cout << "Monte Carlo Type (1-> W+, 2-> W-, 3-> other) = "  << McType  << endl;
+
    fIsMc = true;
    StMcEvent *stMcEvent = (StMcEvent *) StMaker::GetChain()->GetDataSet("StMcEvent");
    assert(stMcEvent);
@@ -102,8 +104,10 @@ void WBosEvent::ProcessMC()
    mMcEvent = new WBosMcEvent();
    ((WBosMcEvent*) mMcEvent)->CalcRecoil(*stMcEvent);
 
-   PredictionAnEvol();
-   PredictionAn();  
+   if (McType == 1 || McType == 2) {  // do it only for W+ and W- MCs
+      PredictionAnEvol(McType);
+      PredictionAn(McType);  
+   }
 }
 
 
@@ -188,18 +192,26 @@ void WBosEvent::ReconstructNeutrinoZ()
 }
 
 
-void WBosEvent::PredictionAnEvol()
+void WBosEvent::PredictionAnEvol(int McType)
 {
 
   // This function read the TNtuple file created (using the macro: PtCorrPlot.C in macros directory) from the ASCII text file provided by Zhongbo Kang and containing the predictions for W+ An asymmetry when evolution is included.
  
   TString inPathCurves = "/star/institutions/bnl_me/fazio/zk_an_predictions/";
-   // this file is for W+ Monte Carlo:
-   //delete gROOT->GetListOfFiles()->FindObject(inPathCurves + "ZK_evolution_Wp_asymmetry.root"); // clear memory of file
-   //TFile *fileAnEvol = TFile::Open(inPathCurves + "ZK_evolution_Wp_asymmetry.root");
-   // this file is for W- Monte Carlo:
-  delete gROOT->GetListOfFiles()->FindObject(inPathCurves + "ZK_evolution_Wm_asymmetry.root"); // clear memory of file
-  TFile *fileAnEvol = TFile::Open(inPathCurves + "ZK_evolution_Wm_asymmetry.root");
+  TFile *fileAnEvol;
+
+  if (McType == 1) {           // this file is for W+ Monte Carlo:
+
+     delete gROOT->GetListOfFiles()->FindObject(inPathCurves + "ZK_evolution_Wp_asymmetry.root"); // clear memory of file
+     fileAnEvol = TFile::Open(inPathCurves + "ZK_evolution_Wp_asymmetry.root");
+     cout << " Open File: ZK_evolution_Wp_asymmetry.root" << endl; 
+
+  } else  if (McType == 2) {   // this file is for W- Monte Carlo:
+
+     delete gROOT->GetListOfFiles()->FindObject(inPathCurves + "ZK_evolution_Wm_asymmetry.root"); // clear memory of file
+     fileAnEvol = TFile::Open(inPathCurves + "ZK_evolution_Wm_asymmetry.root");
+     cout << " Open File: ZK_evolution_Wm_asymmetry.root" << endl; 
+  }
 
    //cout << " inPathCurves = " << inPathCurves << endl; 
  
@@ -299,18 +311,26 @@ void WBosEvent::PredictionAnEvol()
 
 }
 
-void WBosEvent::PredictionAn()
+void WBosEvent::PredictionAn(int McType)
 {
 
    // This function read the TNtuple file created (using the macro: PtCorrPlot.C in macros directory) from the ASCII text file provided by Zhongbo Kang and containing the predictions for W+ An asymmetry without evolution is included.
  
    TString inPathCurves = "/star/institutions/bnl_me/fazio/zk_an_predictions/";
-   // this file is for W+ Monte Carlo:
-   //delete gROOT->GetListOfFiles()->FindObject(inPathCurves + "ZK_noevo_Wp_asymmetry.root"); // clear memory of file
-   //TFile *fileAnNoEvo = TFile::Open(inPathCurves + "ZK_noevo_Wp_asymmetry.root");
-   // this file is for W- Monte Carlo:
-   delete gROOT->GetListOfFiles()->FindObject(inPathCurves + "ZK_noevo_Wm_asymmetry.root"); // clear memory of file
-   TFile *fileAnNoEvo = TFile::Open(inPathCurves + "ZK_noevo_Wm_asymmetry.root");
+   TFile *fileAnNoEvo;
+
+  if (McType == 1) {           // this file is for W+ Monte Carlo:
+  
+     delete gROOT->GetListOfFiles()->FindObject(inPathCurves + "ZK_noevo_Wp_asymmetry.root"); // clear memory of file
+     fileAnNoEvo = TFile::Open(inPathCurves + "ZK_noevo_Wp_asymmetry.root");
+     cout << " Open File: ZK_noevo_Wp_asymmetry.root" << endl; 
+
+  } else  if (McType == 2) {   // this file is for W- Monte Carlo:
+
+     delete gROOT->GetListOfFiles()->FindObject(inPathCurves + "ZK_noevo_Wm_asymmetry.root"); // clear memory of file
+     fileAnNoEvo = TFile::Open(inPathCurves + "ZK_noevo_Wm_asymmetry.root");
+     cout << " Open File: ZK_noevo_Wm_asymmetry.root" << endl; 
+  }
 
    //cout << " inPathCurves = " << inPathCurves << endl; 
  

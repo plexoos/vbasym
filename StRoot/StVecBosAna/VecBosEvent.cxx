@@ -402,7 +402,7 @@ void VecBosEvent::ProcessJets()
 }
 
 
-void VecBosEvent::ProcessMC()
+void VecBosEvent::ProcessMC(int McType)
 {
 }
 

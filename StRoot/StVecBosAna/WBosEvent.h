@@ -33,11 +33,11 @@ public:
    TVector3     CalcSignedPtBalance() const;
    TVector3     GetVecBosonP3() const;
    TLorentzVector GetVecBosonP4() const;
-   void         PredictionAnEvol();
-   void         PredictionAn();
+   void         PredictionAnEvol(int McType);
+   void         PredictionAn(int McType);
    virtual void Process();
    virtual void ProcessPersistent();
-   virtual void ProcessMC();
+   virtual void ProcessMC(int McType);
    virtual void Clear(const Option_t* opt="");
    virtual void Print(const Option_t* opt="") const;
    bool         PassedCutWBos(float minElePt=sMinElectronPtLight) const;

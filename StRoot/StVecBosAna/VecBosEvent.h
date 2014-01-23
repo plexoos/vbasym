@@ -164,7 +164,7 @@ public:
 
    virtual void   Process();
    virtual void   ProcessPersistent();
-   virtual void   ProcessMC();
+   virtual void   ProcessMC(int McType);
    bool           IsRecoilJet(VecBosJet *vbJet) const;
    bool           IsRecoilJetWithZVertexCut(VecBosJet *vbJet) const;
    virtual void   Clear(const Option_t* opt="");

@@ -389,7 +389,7 @@ Int_t StVecBosMaker::Make()
    mVecBosEvent->Process();
 
    if (mIsMc) {
-      mVecBosEvent->ProcessMC();
+      mVecBosEvent->ProcessMC(mIsMc);
    }
 
    mVecBosEvent->SetCpuTimeEventAna( mStopWatch.CpuTime() );
