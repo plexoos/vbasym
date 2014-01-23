@@ -35,8 +35,7 @@ public:
    uint64_t         fModes;
    bool             fDoReconstructJets;
    float            fTracksPtMin;
-   float            fJetPtMin;
-   float            fMcType;            
+   float            fJetPtMin;         
    unsigned short   fRhicRunId;         //< RHIC run id, e.g. 9, 11, 12, 13, ...
    time_t           fAnaDateTime;       //< Date/time when data analysis started
    double           fAnaTimeReal;       //< Time in seconds to process input raw file
@@ -62,6 +61,7 @@ public:
    float        GetTracksPtMin() const;
    bool         SaveGraphs() const;
    bool         IsMc() const;
+   int          McType() const;
    bool         IsMcWp() const;
    void         SetListName(std::string listName) { fListName = listName; }
    std::string  GetListName() const { return fListName; }
@@ -81,6 +81,7 @@ protected:
    std::string fOutFileName;
    uint32_t    fMaxEventsUser;
    bool        fSaveGraphs;
+   int         fMcType;   
    bool        fIsMc;
    bool        fIsMcWp;
    EBosonType  fBosonType;

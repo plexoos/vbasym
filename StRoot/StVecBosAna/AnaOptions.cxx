@@ -31,6 +31,7 @@ AnaOptions::AnaOptions() : TObject()
    , fOutFileName("vbasym")
    , fMaxEventsUser(0)
    , fSaveGraphs(false)
+   , fMcType(0)
    , fIsMc(kFALSE)
    , fIsMcWp(kFALSE)
    , fBosonType(kWBoson)
@@ -98,6 +99,7 @@ string AnaOptions::GetRootFileName()   const { return GetResultsDir() + "/" + fO
 string AnaOptions::GetListFileName()   const { return GetVbAsymDir() + "/runlists/" + fListName; }
 EBosonType AnaOptions::GetBosonType()  const { return fBosonType; }
 bool AnaOptions::SaveGraphs()          const { return fSaveGraphs; }
+int AnaOptions::McType()               const { return fMcType; }
 bool AnaOptions::IsMc()                const { return fIsMc; }
 bool AnaOptions::IsMcWp()              const { return fIsMcWp; }
 uint32_t AnaOptions::GetMaxEventsUser() const { return fMaxEventsUser; }
@@ -185,7 +187,7 @@ void AnaOptions::ProcessOptions(int argc, char **argv)
          Info("ProcessOptions", "Found fIsMc: %f", fMcType);
          // fMcType = 0 -> data
          // fMcType = 1 -> W+ MC
-         // fMcType = 3 -> W- Mc
+         // fMcType = 2 -> W- Mc
          // fMcType > 3 -> Any other Mc
          break;
 
