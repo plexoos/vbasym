@@ -64,7 +64,8 @@ int analyzeMuDst(AnaOptions &anaOptions, bool findZ)
 {
    UInt_t  maxEventsUser       = anaOptions.GetMaxEventsUser();
    string  inMuDstFileListName = anaOptions.GetListName();
-   bool    isMC                = anaOptions.IsMc();
+   //bool    isMC                = anaOptions.IsMc(); // s.f. 21 Jan 2014
+   int     isMC                = anaOptions.McType(); // s.f. 21 Jan 2014
    int     useJetFinder        = anaOptions.fDoReconstructJets ? 1 : 2; // 0: no jets = badWalgo; 1: generate jet trees; 2 read jet trees
    Float_t jetPtMin            = anaOptions.fJetPtMin;
 
@@ -94,7 +95,7 @@ int analyzeMuDst(AnaOptions &anaOptions, bool findZ)
 
    cout << "Output histo file " << histFileName << endl;
 
-   VecBosRootFile vecBosRootFile(histFileName, "recreate");
+   VecBosRootFile vecBosRootFile(histFileName, "recreate", isMC);
 
    printf("Run number: %s\n", runNo.Data());
    printf("Output file: %s\n", outputFile.Data());
@@ -210,7 +211,7 @@ int analyzeMuDst(AnaOptions &anaOptions, bool findZ)
       // Get TriggerMaker
       StTriggerSimuMaker *simuTrig = new StTriggerSimuMaker("StarTrigSimu");
       simuTrig->setHList(HList);
-      simuTrig->useOfflineDB();
+      //simuTrig->useOfflineDB();
       //simuTrig->setMC(isMC); // must be before individual detectors, to be passed
       simuTrig->setMC(2); // must be before individual detectors, to be passed
       simuTrig->useBbc();
