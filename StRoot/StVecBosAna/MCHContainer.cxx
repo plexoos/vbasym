@@ -27,6 +27,7 @@ MCHContainer::MCHContainer() : PlotHelper()
 
 MCHContainer::MCHContainer(TDirectory *dir, Int_t McType) : PlotHelper(dir)
 {
+   mMcType = McType;
    BookHists();
 }
 
@@ -122,7 +123,7 @@ void MCHContainer::BookHists()
    o["hJetTrackTpcNeutralsRecoilPtRelDiff"] = new rh::H1F("hJetTrackTpcNeutralsRecoilPtRelDiff", "; Jet- Track-based Recoil P_{T}, Rel. Diff.; ", 50, -2, 2., "hist");
 
    // A_N prediction from Zhongbo Kang
-   if (McType == 1 ) {   // limits for W+
+   if (mMcType == 1 ) {   // limits for W+
 
    o["hAn_evol_ZK"]  = new rh::H1F("hAn_evol_ZK", "; W A_{N}; Events", 20, -0.02, 0.0002, "hist GRIDX");
    o["hAn_evol_ZK_Vs_PtGen"]  = new rh::H2F("hAn_evol_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 15, 0., 15., 10, -0.02, 0.0002, "colz LOGZ");
@@ -140,7 +141,7 @@ void MCHContainer::BookHists()
    o["hAn_noevo_ZK_Vs_PtGen_y>0"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtGen_y>0", "; W P_{T}^{GEN}; W A_{N}; Events", 15, 0., 15., 10, -0.2, 0.2, "colz LOGZ");
    o["hAn_noevo_ZK_Vs_PtRec_y>0"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtRec_y>0", "; W P_{T}^{REC}; W A_{N}; Events", 15, 0., 15., 10, -0.2, 0.2, "colz LOGZ");
 
-   } else if (McType == 2) {   // limits for W-
+   } else if (mMcType == 2) {   // limits for W-
 
    o["hAn_evol_ZK"]  = new rh::H1F("hAn_evol_ZK", "; W A_{N}; Events", 20, 0.0, 0.035, "hist GRIDX");
    o["hAn_evol_ZK_Vs_PtGen"]  = new rh::H2F("hAn_evol_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 15, 0., 15., 50, 0.0, 0.035, "colz LOGZ");
@@ -241,7 +242,7 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH2*) o["hAn_noevo_ZK_Vs_PtGen_zoomin"])      ->Fill(mcEvent->mP4WBoson.Pt(), event.An_noevo_ZK);
    ((TH2*) o["hAn_noevo_ZK_Vs_PtRec_zoomin"])      ->Fill(event.GetVecBosonP3().Pt(), event.An_noevo_ZK);
 
-   if (McType == 1) { // W+ -> ep Monte Carlo
+   if (mMcType == 1) { // W+ -> ep Monte Carlo
      if (event.GetVecBosonP4().Rapidity() > 0) {
 
         ((TH1*) o["hAn_evol_ZK_y>0"])                ->Fill(event.An_evol_ZK);

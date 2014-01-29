@@ -37,7 +37,7 @@ public:
 private:
 
    void BookHists();
-   Int_t McType;
+   Int_t mMcType;
 
    ClassDef(MCHContainer, 1)
 };
