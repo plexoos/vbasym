@@ -1,3 +1,4 @@
+
 #include "TObject.h"
 #include "TIterator.h"
 #include "TROOT.h"
@@ -28,6 +29,12 @@ int main(int argc, char *argv[])
    setbuf(stdout, NULL);
 
    Int_t  nMaxUserEvents = vbAnaOptions.GetMaxEventsUser();
+
+   //Int_t  nMaxUserEvents = -1; // < 0 means all events
+   //Int_t  nMaxUserEvents = 3000;
+
+   Bool_t isZ            = (vbAnaOptions.GetBosonType() == kZBoson  ? kTRUE : kFALSE);
+
    string histFileName   = vbAnaOptions.GetRootFileName();
 
    Info("main", "nMaxUserEvents: %d", nMaxUserEvents);
@@ -39,12 +46,14 @@ int main(int argc, char *argv[])
 
    if (vbAnaOptions.GetBosonType() == kWBoson)
    {
-      vecBosRootFile = new WBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc());
+      vecBosRootFile = new WBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.McType());
+      //vecBosRootFile = new VecBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc(), isZ);
       vecBosEvent    = new WBosEvent(vbAnaOptions.GetTracksPtMin(), vbAnaOptions.UseOtherSolution() );
 
    } else if (vbAnaOptions.GetBosonType() == kZBoson)
    {
-      vecBosRootFile = new ZBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc());
+      vecBosRootFile = new ZBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.McType());
+      //vecBosRootFile = new VecBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc(), isZ);
       vecBosEvent    = new ZBosEvent();
    }
 
