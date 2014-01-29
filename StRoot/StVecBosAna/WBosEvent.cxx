@@ -12,6 +12,8 @@ bool WBosEvent::sUseOtherSolution = false;
 const float WBosEvent::sMinElectronPtLight = 15;
 const float WBosEvent::sMinElectronPtHard  = 25;
 const float WBosEvent::sMinNeutrinoPt      = 18;
+const float WBosEvent::sMinRecoilPt        = 0.5;  // Minimum P_T of the recoil before correction
+const float WBosEvent::sMaxRecoilPt        = 40;  // Maximum P_T of the recoil before correction
 
 //FILE  *fAnEvol  = fopen("/direct/star+u/fazio/vbasym/macros/curves/ZK_evolution_Wp_asymmetry.txt","r");
 
@@ -130,7 +132,12 @@ void WBosEvent::Print(const Option_t* opt) const
 
 bool WBosEvent::PassedCutWBos(float minElePt) const
 {
+   //cout << "sMinRecoilPt" << sMinRecoilPt << endl;
    if ( HasCandidateEle() &&
+        mP3TrackRecoilTpcNeutrals.Pt() > sMinRecoilPt &&
+        mP3TrackRecoilTpcNeutralsCorrected.Pt() > sMinRecoilPt &&
+        mP3TrackRecoilTpcNeutrals.Pt() < sMaxRecoilPt &&
+        mP3TrackRecoilTpcNeutralsCorrected.Pt() < sMaxRecoilPt &&
         mPtBalanceCosPhiFromTracks >= sMinNeutrinoPt &&
         //mNeutrinoP3.Pt() >= sMinNeutrinoPt &&
         mElectronP3.Pt() >= minElePt)

@@ -50,6 +50,8 @@ public:
    static const float sMinElectronPtLight; //!
    static const float sMinElectronPtHard;  //!
    static const float sMinNeutrinoPt;      //!
+   static const float sMinRecoilPt;        //!
+   static const float sMaxRecoilPt;        //!
 
 protected:
 
