@@ -21,7 +21,7 @@ class ZBosRootFile : public VecBosRootFile
 public:
 
    ZBosRootFile();
-   ZBosRootFile(const char* fname, Option_t* option = "", Bool_t isMc=kFALSE, Bool_t isZ=kFALSE, const char* ftitle = "", Int_t compress = 1);
+   ZBosRootFile(const char* fname, Option_t* option = "", Int_t isMc = 0, Bool_t isZ=kFALSE, const char* ftitle = "", Int_t compress = 1);
    ~ZBosRootFile();
 
    void Fill(ProtoEvent &ev);

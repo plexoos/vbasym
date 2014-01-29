@@ -30,7 +30,7 @@ ZBosRootFile::ZBosRootFile() : VecBosRootFile()
 }
 
 
-ZBosRootFile::ZBosRootFile(const char *fname, Option_t *option, Bool_t isMc, Bool_t isZ, const char *ftitle, Int_t compress) :
+ZBosRootFile::ZBosRootFile(const char *fname, Option_t *option, Int_t isMc, Bool_t isZ, const char *ftitle, Int_t compress) :
   VecBosRootFile(fname, option, isMc, isZ, ftitle, compress)
 {
    gBTowGeom = StEmcGeom::instance("bemc");

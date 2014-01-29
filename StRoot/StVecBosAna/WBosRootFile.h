@@ -21,7 +21,7 @@ class WBosRootFile : public VecBosRootFile
 public:
 
    WBosRootFile();
-   WBosRootFile(const char* fname, Option_t* option = "", Bool_t isMc=kFALSE, Bool_t isZ=kFALSE, const char* ftitle = "", Int_t compress = 1);
+   WBosRootFile(const char* fname, Option_t* option = "", Int_t isMc= 0, Bool_t isZ=kFALSE, const char* ftitle = "", Int_t compress = 1);
    ~WBosRootFile();
 
    void Fill(ProtoEvent &ev);
