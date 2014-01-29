@@ -28,13 +28,13 @@ VecBosRootFile::VecBosRootFile() : TFile(),
    fHists(0), fHistCuts(),
    fMinFill(UINT_MAX), fMaxFill(0),
    fMinTime(UINT_MAX), fMaxTime(0),
-   fIsMc(kFALSE), fIsZ(kFALSE)
+   fIsMc(0), fIsZ(kFALSE)
 {
    BookHists();
 }
 
 
-VecBosRootFile::VecBosRootFile(const char *fname, Option_t *option, Bool_t isMc, Bool_t isZ, const char *ftitle, Int_t compress) :
+VecBosRootFile::VecBosRootFile(const char *fname, Option_t *option, Int_t isMc, Bool_t isZ, const char *ftitle, Int_t compress) :
    TFile(fname, option, ftitle, compress),
    fHists(0), fHistCuts(),
    fMinFill(UINT_MAX), fMaxFill(0),

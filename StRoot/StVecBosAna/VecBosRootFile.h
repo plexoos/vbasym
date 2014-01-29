@@ -52,13 +52,13 @@ class VecBosRootFile : public TFile
 public:
 
    VecBosRootFile();
-   VecBosRootFile(const char* fname, Option_t* option = "", Bool_t isMc=kFALSE, Bool_t isZ=kFALSE, const char* ftitle = "", Int_t compress = 1);
+   VecBosRootFile(const char* fname, Option_t* option = "", Int_t isMc = 0, Bool_t isZ=kFALSE, const char* ftitle = "", Int_t compress = 1);
 
    using TObject::SaveAs;
 
    PlotHelper* GetHists();
    void SetHists(PlotHelper &hists);
-   void SetIsMc(Bool_t isMc) { fIsMc = isMc; }
+   void SetIsMc(Int_t isMc) { fIsMc = isMc; }
    void SetIsZ(Bool_t isZ) { fIsZ = isZ; }
    virtual void Fill(ProtoEvent &ev);
    virtual void Fill(ProtoEvent &ev, ECut cut);
@@ -79,7 +79,7 @@ protected:
    Float_t            fMaxFill;
    time_t             fMinTime;
    time_t             fMaxTime;
-   Bool_t             fIsMc;
+   Int_t              fIsMc;
    Bool_t             fIsZ;
 
 private:
