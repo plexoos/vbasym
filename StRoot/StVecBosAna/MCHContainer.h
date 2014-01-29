@@ -28,7 +28,7 @@ private:
 public:
 
    MCHContainer();
-   MCHContainer(TDirectory *dir);
+   MCHContainer(TDirectory *dir, Int_t);
 
    void Fill(ProtoEvent &ev);
    void PostFill();

@@ -72,7 +72,7 @@ void WBosRootFile::BookHists()
    fHistCuts[kCUT_EVENT_W_MINUS].insert(ph);
 
    if (fIsMc) {
-      fHists->d["event_mc"] = ph = new MCHContainer(new TDirectoryFile("event_mc", "event_mc", "", this));
+      fHists->d["event_mc"] = ph = new MCHContainer(new TDirectoryFile("event_mc", "event_mc", "", this), fIsMc);
       fHistCuts[kCUT_EVENT_W].insert(ph);
    } else {
 

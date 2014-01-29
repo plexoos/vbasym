@@ -25,7 +25,7 @@ MCHContainer::MCHContainer() : PlotHelper()
 }
 
 
-MCHContainer::MCHContainer(TDirectory *dir) : PlotHelper(dir)
+MCHContainer::MCHContainer(TDirectory *dir, Int_t McType) : PlotHelper(dir)
 {
    BookHists();
 }
@@ -124,12 +124,16 @@ void MCHContainer::BookHists()
    // A_N prediction from Zhongbo Kang
 
    // limits for W+
-   //o["hAn_evol_ZK"]  = new rh::H1F("hAn_evol_ZK", "; W A_{N}; Events", 20, -0.02, 0.0002, "hist GRIDX");
-   //o["hAn_evol_ZK_Vs_PtGen"]  = new rh::H2F("hAn_evol_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 10, 0., 15., 10, -0.02, 0.0002, "colz LOGZ");
-   //o["hAn_evol_ZK_Vs_PtRec"]  = new rh::H2F("hAn_evol_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 10, 0., 15., 10, -0.02, 0.0002, "colz LOGZ");
-   //o["hAn_noevo_ZK"]  = new rh::H1F("hAn_noevo_ZK", "; W A_{N}; Events", 20, -0.2, 0.2, "hist GRIDX");
-   //o["hAn_noevo_ZK_Vs_PtGen"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 10, 0., 15., 10, -0.2, 0.2, "colz LOGZ");
-   //o["hAn_noevo_ZK_Vs_PtRec"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 10, 0., 15., 10, -0.2, 0.2, "colz LOGZ");
+   /*
+   o["hAn_evol_ZK"]  = new rh::H1F("hAn_evol_ZK", "; W A_{N}; Events", 20, -0.02, 0.0002, "hist GRIDX");
+   o["hAn_evol_ZK_Vs_PtGen"]  = new rh::H2F("hAn_evol_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 10, 0., 15., 10, -0.02, 0.0002, "colz LOGZ");
+   o["hAn_evol_ZK_Vs_PtRec"]  = new rh::H2F("hAn_evol_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 10, 0., 15., 10, -0.02, 0.0002, "colz LOGZ");
+   o["hAn_noevo_ZK"]  = new rh::H1F("hAn_noevo_ZK", "; W A_{N}; Events", 20, -0.2, 0.2, "hist GRIDX");
+   o["hAn_noevo_ZK_Vs_PtGen"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 10, 0., 15., 10, -0.2, 0.2, "colz LOGZ");
+   o["hAn_noevo_ZK_Vs_PtRec"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 10, 0., 15., 10, -0.2, 0.2, "colz LOGZ");
+   o["hAn_noevo_ZK_Vs_PtGen_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtGen_zoomin", "; W P_{T}^{GEN}; W A_{N}; Events", 8, 2., 15., 40, -0.2, 0.2, "colz LOGZ");
+   o["hAn_noevo_ZK_Vs_PtRec_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtRec_zoomin", "; W P_{T}^{REC}; W A_{N}; Events", 8, 2., 15., 40, -0.2, 0.2, "colz LOGZ");
+   */
    o["hAn_evol_ZK_y>0"]  = new rh::H1F("hAn_evol_ZK_y>0", "; W A_{N}; Events", 20, -0.02, 0.0002, "hist GRIDX");
    o["hAn_evol_ZK_Vs_PtGen_y>0"]  = new rh::H2F("hAn_evol_ZK_Vs_PtGen_y>0", "; W P_{T}^{GEN}; W A_{N}; Events", 10, 0., 15., 10, -0.02, 0.0002, "colz LOGZ");
    o["hAn_evol_ZK_Vs_PtRec_y>0"]  = new rh::H2F("hAn_evol_ZK_Vs_PtRec_y>0", "; W P_{T}^{REC}; W A_{N}; Events", 10, 0., 15., 10, -0.02, 0.0002, "colz LOGZ");
@@ -146,7 +150,7 @@ void MCHContainer::BookHists()
    o["hAn_noevo_ZK_Vs_PtRec"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 10, 0., 15., 50, 0., 0.45, "colz LOGZ");
    o["hAn_noevo_ZK_Vs_PtGen_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtGen_zoomin", "; W P_{T}^{GEN}; W A_{N}; Events", 8, 2., 15., 40, 0., 0.03, "colz LOGZ");
    o["hAn_noevo_ZK_Vs_PtRec_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtRec_zoomin", "; W P_{T}^{REC}; W A_{N}; Events", 8, 2., 15., 40, 0., 0.03, "colz LOGZ");
-
+  
 }
 
 

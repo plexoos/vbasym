@@ -162,16 +162,16 @@ void VecBosRootFile::BookHists()
 
    if (!fIsMc) return;
 
-   fHists->d["event_mc"] = ph = new MCHContainer(new TDirectoryFile("event_mc", "event_mc", "", this));
+   fHists->d["event_mc"] = ph = new MCHContainer(new TDirectoryFile("event_mc", "event_mc", "", this), fIsMc);
    fHistCuts[kCUT_EVENT_NOCUT].insert(ph);
 
-   fHists->d["event_mc_has_jetrecoil"] = ph = new MCHContainer(new TDirectoryFile("event_mc_has_jetrecoil", "event_mc_has_jetrecoil", "", this));
+   fHists->d["event_mc_has_jetrecoil"] = ph = new MCHContainer(new TDirectoryFile("event_mc_has_jetrecoil", "event_mc_has_jetrecoil", "", this), fIsMc);
    fHistCuts[kCUT_EVENT_HAS_JETRECOIL].insert(ph);
 
-   fHists->d["event_mc_has_trackrecoil"] = ph = new MCHContainer(new TDirectoryFile("event_mc_has_trackrecoil", "event_mc_has_trackrecoil", "", this));
+   fHists->d["event_mc_has_trackrecoil"] = ph = new MCHContainer(new TDirectoryFile("event_mc_has_trackrecoil", "event_mc_has_trackrecoil", "", this), fIsMc);
    fHistCuts[kCUT_EVENT_HAS_TRACKRECOIL].insert(ph);
 
-   fHists->d["event_mc_pass_wbos"] = ph = new MCHContainer(new TDirectoryFile("event_mc_pass_wbos", "event_mc_pass_wbos", "", this));
+   fHists->d["event_mc_pass_wbos"] = ph = new MCHContainer(new TDirectoryFile("event_mc_pass_wbos", "event_mc_pass_wbos", "", this), fIsMc);
    fHistCuts[kCUT_EVENT_PASS_WBOS].insert(ph);
 
   } else {
