@@ -11,7 +11,7 @@ using namespace std;
 /** Default constructor. */
 VbAnaOptions::VbAnaOptions() : AnaOptions(),
    fOptions("Allowed options"), fOptionsValues(),
-   fFitSinePhase(0), fFitSineOffset(0), fUseOtherSolution(false)
+   fFitSinePhase(0), fFitSineOffset(0), fUseOtherSolution(false), fOldStyle(false)
 {
    // Declare the supported options
    fOptions.add_options()
@@ -28,6 +28,7 @@ VbAnaOptions::VbAnaOptions() : AnaOptions(),
                           "solution for longitudinal W momentum component")
       ("fit-sine-phase",  po::value<double>(&fFitSinePhase)->default_value(M_PI_2)->implicit_value(DBL_MAX), "Value for phase")
       ("fit-sine-offset", po::value<double>(&fFitSineOffset)->default_value(0)->implicit_value(DBL_MAX), "Value for offset")
+      ("old-style",       po::value<bool>(&fOldStyle)->implicit_value(true), "run with olds style ROOT Containers ")
    ;
 
    fOutFileName = "vbana";
@@ -39,6 +40,7 @@ double VbAnaOptions::GetFitSinePhase()  const { return fFitSinePhase; }
 double VbAnaOptions::GetFitSineOffset() const { return fFitSineOffset; }
 bool   VbAnaOptions::UseOtherSolution() const { return fUseOtherSolution; }
 bool   VbAnaOptions::GetIsMc()          const { return fIsMc; }
+bool   VbAnaOptions::GetOldStyle()      const { return fOldStyle; }
 
 
 /**
@@ -93,6 +95,7 @@ void VbAnaOptions::ProcessOptions(int argc, char **argv)
 
    cout << "w/z boson type: " << fBosonType << endl;
    cout << "wboson-other: " << fUseOtherSolution << endl;
+   cout << "old-style: " << fOldStyle << endl;
 
    if (fOptionsValues.count("fit-sine-phase"))
    {

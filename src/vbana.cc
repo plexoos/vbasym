@@ -46,14 +46,22 @@ int main(int argc, char *argv[])
 
    if (vbAnaOptions.GetBosonType() == kWBoson)
    {
-      vecBosRootFile = new WBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.McType());
-      //vecBosRootFile = new VecBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc(), isZ);
+
+     if (!vbAnaOptions.GetOldStyle()) {
+        vecBosRootFile = new WBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.McType());
+     } else { // old style containers used for background and control plots
+        vecBosRootFile = new VecBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.McType(), isZ);
+     }
       vecBosEvent    = new WBosEvent(vbAnaOptions.GetTracksPtMin(), vbAnaOptions.UseOtherSolution() );
 
    } else if (vbAnaOptions.GetBosonType() == kZBoson)
    {
-      vecBosRootFile = new ZBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.McType());
-      //vecBosRootFile = new VecBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.IsMc(), isZ);
+
+     if (!vbAnaOptions.GetOldStyle()) {
+        vecBosRootFile = new ZBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.McType());
+     } else { // old style containers used for background and control plots
+        vecBosRootFile = new VecBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.McType(), isZ);
+     }
       vecBosEvent    = new ZBosEvent();
    }
 

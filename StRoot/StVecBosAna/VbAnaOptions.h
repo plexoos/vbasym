@@ -35,6 +35,7 @@ public:
    double       GetFitSineOffset() const;
    bool         UseOtherSolution() const;
    bool         GetIsMc() const;
+   bool         GetOldStyle() const;
    virtual void ProcessOptions(int argc, char **argv);
    void         Print(const Option_t* opt="") const;
    void         PrintAsPhp(FILE *f=stdout) const;
@@ -46,6 +47,7 @@ protected:
    double                  fFitSinePhase;
    double                  fFitSineOffset;
    bool                    fUseOtherSolution;
+   bool                    fOldStyle;
 };
 
 #endif
