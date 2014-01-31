@@ -233,14 +233,16 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hGenRecoilOutVsInAccPt"])->Fill(mcEvent->mP4RecoilInAccept.Pt(), mcEvent->mP4RecoilOutAccept.Pt());
    ((TH1*) o["hGenRecoilInOutDeltaPhi"])->Fill(mcEvent->mP4RecoilInAccept.DeltaPhi( mcEvent->mP4RecoilOutAccept ));
 
-   ((TH1*) o["hAn_evol_ZK"])                ->Fill(event.An_evol_ZK);
-   ((TH2*) o["hAn_evol_ZK_Vs_PtGen"])       ->Fill(mcEvent->mP4WBoson.Pt(), event.An_evol_ZK);
-   ((TH2*) o["hAn_evol_ZK_Vs_PtRec"])       ->Fill(event.GetVecBosonP3().Pt(), event.An_evol_ZK);
-   ((TH1*) o["hAn_noevo_ZK"])               ->Fill(event.An_noevo_ZK);
-   ((TH2*) o["hAn_noevo_ZK_Vs_PtGen"])      ->Fill(mcEvent->mP4WBoson.Pt(), event.An_noevo_ZK);
-   ((TH2*) o["hAn_noevo_ZK_Vs_PtRec"])      ->Fill(event.GetVecBosonP3().Pt(), event.An_noevo_ZK);
-   ((TH2*) o["hAn_noevo_ZK_Vs_PtGen_zoomin"])      ->Fill(mcEvent->mP4WBoson.Pt(), event.An_noevo_ZK);
-   ((TH2*) o["hAn_noevo_ZK_Vs_PtRec_zoomin"])      ->Fill(event.GetVecBosonP3().Pt(), event.An_noevo_ZK);
+   if (mMcType == 1 || mMcType == 2) { 
+        ((TH1*) o["hAn_evol_ZK"])                    ->Fill(event.An_evol_ZK);
+        ((TH2*) o["hAn_evol_ZK_Vs_PtGen"])           ->Fill(mcEvent->mP4WBoson.Pt(), event.An_evol_ZK);
+        ((TH2*) o["hAn_evol_ZK_Vs_PtRec"])           ->Fill(event.GetVecBosonP3().Pt(), event.An_evol_ZK);
+        ((TH1*) o["hAn_noevo_ZK"])                   ->Fill(event.An_noevo_ZK);
+        ((TH2*) o["hAn_noevo_ZK_Vs_PtGen"])          ->Fill(mcEvent->mP4WBoson.Pt(), event.An_noevo_ZK);
+        ((TH2*) o["hAn_noevo_ZK_Vs_PtRec"])          ->Fill(event.GetVecBosonP3().Pt(), event.An_noevo_ZK);
+        ((TH2*) o["hAn_noevo_ZK_Vs_PtGen_zoomin"])   ->Fill(mcEvent->mP4WBoson.Pt(), event.An_noevo_ZK);
+        ((TH2*) o["hAn_noevo_ZK_Vs_PtRec_zoomin"])   ->Fill(event.GetVecBosonP3().Pt(), event.An_noevo_ZK);
+   }
 
    if (mMcType == 1) { // W+ -> ep Monte Carlo
      if (event.GetVecBosonP4().Rapidity() > 0) {
