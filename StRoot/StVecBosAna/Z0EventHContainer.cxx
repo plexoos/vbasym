@@ -80,6 +80,8 @@ void Z0EventHContainer::BookHists()
    h->SetOption("hist GRIDX GRIDY XY");
    o["hZ0_Pt"]   = h = new TH1F("hZ0_Pt", "; Z0-P_{T} (GeV/c); Events", 20, 0, 25);
    h->SetOption("hist GRIDX GRIDY XY");
+   o["hZ0_Pt_zoomin"]   = h = new TH1F("hZ0_Pt_zoomin", "; Z0-P_{T} (GeV/c); Events", 10, 0, 10);
+   h->SetOption("hist GRIDX GRIDY XY");
    o["hZ0_Eta"]   = h = new TH1F("hZ0_Eta", "; Z0- #eta; Events", 20, -4, 4);
    h->SetOption("hist GRIDX GRIDY XY");
 
@@ -112,6 +114,7 @@ void Z0EventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hCandidate2Pt"])   ->Fill(event.GetCandidate2_P3().Pt());
    ((TH1*) o["hZ0_MassInv"])     ->Fill(event.GetVecBosonP4().M());
    ((TH1*) o["hZ0_Pt"])          ->Fill(event.GetVecBosonP4().Pt());
+   ((TH1*) o["hZ0_Pt_zoomin"])          ->Fill(event.GetVecBosonP4().Pt());
 
    if ( event.GetCandidate1_P3().Pt() && event.GetCandidate2_P3().Pt() ) {
       ((TH1*) o["hCandidate1Eta"])  ->Fill(event.GetCandidate1_P3().Eta());
