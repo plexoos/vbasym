@@ -184,7 +184,7 @@ void AnaOptions::ProcessOptions(int argc, char **argv)
          sstr.clear();
          sstr.str(string(optarg));
          sstr >> fMcType;
-         Info("ProcessOptions", "Found fIsMc: %f", fMcType);
+         Info("ProcessOptions", "Found fMcType: %d", fMcType);
          // fMcType = 0 -> data
          // fMcType = 1 -> W+ MC
          // fMcType = 2 -> W- Mc
