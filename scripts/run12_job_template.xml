@@ -11,6 +11,7 @@
    </Generator>
 
    <command>
+      set nonomatch=1
       starver &STAR_VER;
       source &CODE_DIR;/scripts/setup.csh
 

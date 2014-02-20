@@ -11,6 +11,7 @@
    </Generator>
 
    <command>
+      set nonomatch=1
       starver &STAR_VER;
       source &CODE_DIR;/scripts/setup.csh
 
@@ -62,7 +63,7 @@
    </command>
 
    <output fromScratch="*_jets.root" toURL="file:&OUT_DIR;/jets/"/>
-   <output fromScratch="*_hist.root" toURL="file:&OUT_DIR;/hist/"/>
+   <output fromScratch="*_hist.root" toURL="file:&OUT_DIR;/hist/"/> 
    <output fromScratch="*_tree.root" toURL="file:&OUT_DIR;/tree/"/>
 
    <stdout URL="file:&OUT_DIR;/&LOG_DIR;/&JOB_RUN_FILE_NAME;.log"/>

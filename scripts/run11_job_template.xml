@@ -11,8 +11,9 @@
    </Generator>
 
    <command>
+      set nonomatch=1
       starver &STAR_VER;
-      source &CODE_DIR;/scripts/setup.csh
+      source &CODE_DIR;/scripts/setup.csh 
 
       cp $FILELIST &OUT_DIR;/lists/&JOB_RUN_FILE_NAME;.lis
 
@@ -62,7 +63,7 @@
    </command>
 
    <output fromScratch="*_jets.root" toURL="file:&OUT_DIR;/jets/"/>
-   <output fromScratch="*_hist.root" toURL="file:&OUT_DIR;/hist/"/>
+   <output fromScratch="*_hist.root" toURL="file:&OUT_DIR;/hist/"/> 
    <output fromScratch="*_tree.root" toURL="file:&OUT_DIR;/tree/"/>
    <output fromScratch="*.txt"       toURL="file:&OUT_DIR;/lumi/"/>
 
