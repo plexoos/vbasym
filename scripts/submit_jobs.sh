@@ -46,6 +46,11 @@ case $STANA_OPTIONS in
 *) MC_SFX="" ;;
 esac
 
+case $STANA_OPTIONS in
+*"--mctype_1"* | *"--mctype=1"* | *"--mctype_2"* | *"--mctype=2"* | *"--mctype_3"* | *"--mctype=3"*) MC_SFX="_mc" ;;
+*) MC_SFX="" ;;
+esac
+
 echo
 echo RUN_FILE_LIST = $RUN_FILE_LIST
 echo VBASYM_DIR    = $VBASYM_DIR
