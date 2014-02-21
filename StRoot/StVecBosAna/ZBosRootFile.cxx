@@ -65,8 +65,12 @@ void ZBosRootFile::BookHists()
 
    if (!fIsMc) return;
 
-   fHists->d["event_mc"] = ph = new MCHContainer(new TDirectoryFile("event_mc", "event_mc", "", this), fIsMc);
-   fHistCuts[kCUT_EVENT_Z].insert(ph);
+   /*
+   if (!fIsMc==3) {
+      fHists->d["event_mc"] = ph = new MCHContainer(new TDirectoryFile("event_mc", "event_mc", "", this), fIsMc);
+      fHistCuts[kCUT_EVENT_Z].insert(ph);
+   }
+   */
 
    this->cd();
 }
