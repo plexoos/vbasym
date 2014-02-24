@@ -32,6 +32,7 @@ public:
    TVector3     CalcMissingEnergyP3() const;
    TVector3     CalcSignedPtBalance() const;
    TVector3     GetVecBosonP3() const;
+   TVector3     GetVecBosonP3OtherSolution() const;
    TLorentzVector GetVecBosonP4() const;
    void         PredictionAnEvol(int McType);
    void         PredictionAn(int McType);
@@ -59,8 +60,8 @@ protected:
 
    float     mWBosMass;   //
    TVector3  mElectronP3; //
-   TVector3  mNeutrinoP3;      ///< Neutrion momentum based on the default (correct/most likely) p_z solution
-   TVector3  mNeutrinoP3Other; ///< Neutrino momentum based on the other ("wrong") p_z solution
+   TVector3  mNeutrinoP3;      // Neutrion momentum based on the default (correct/most likely) p_z solution
+   TVector3  mNeutrinoP3Other; // Neutrino momentum based on the other ("wrong") p_z solution
 
    ClassDef(WBosEvent, 1);
 };

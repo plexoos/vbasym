@@ -74,6 +74,7 @@ void MCHContainer::BookHists()
    o["hRecoVsGenWBosonPt"]  = new rh::H2I("hRecoVsGenWBosonPt",  "; Gen. W Boson P_{T}, GeV; Reco. W Boson P_{T}, GeV", 50, 0, 25, 50, 0, 25, "colz LOGZ");
    o["hRecoVsGenWBosonPz"]  = new rh::H2I("hRecoVsGenWBosonPz",  "; Gen. W Boson P_{z}, GeV; Reco. W Boson P_{z}, GeV", 50, -80, 80, 50, -80, 80, "colz LOGZ");
    o["hRecoVsGenWBosonEta"] = new rh::H2I("hRecoVsGenWBosonEta", "; Gen. W Boson #eta; Reco. W Boson #eta", 50, -6, 6, 50, -6, 6, "colz LOGZ");
+   o["hRecoVsGenWBosonPz_OtherSol"]  = new rh::H2I("hRecoVsGenWBosonPz_OtherSol",  "; Gen. W Boson (Other Solution) P_{z}, GeV; Reco. W Boson P_{z}, GeV", 50, -80, 80, 50, -80, 80, "colz LOGZ");
 
    // W recoil momentum components
    o["hGenRecoilE"]  = new rh::H1I("hGenRecoilE", "; Gen. W Recoil E, GeV; Events", 100, 0., 200., "hist GRIDX");
@@ -146,11 +147,18 @@ void MCHContainer::BookHists()
    o["hAn_evol_ZK"]  = new rh::H1F("hAn_evol_ZK", "; W A_{N}; Events", 20, 0.0, 0.035, "hist GRIDX");
    o["hAn_evol_ZK_Vs_PtGen"]  = new rh::H2F("hAn_evol_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 15, 0., 15., 50, 0.0, 0.035, "colz LOGZ");
    o["hAn_evol_ZK_Vs_PtRec"]  = new rh::H2F("hAn_evol_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 15, 0., 15., 50, 0.0, 0.035, "colz LOGZ");
+   //o["hAn_evol_ZK_Vs_RapGen"]  = new rh::H2F("hAn_evol_ZK_Vs_RapGen", "; W y^{GEN}; W A_{N}; Events", 15, 0., 15., 50, 0.0, 0.035, "colz LOGZ");
+   //o["hAn_evol_ZK_Vs_RapRec"]  = new rh::H2F("hAn_evol_ZK_Vs_RapRec", "; W y^{REC}; W A_{N}; Events", 15, 0., 15., 50, 0.0, 0.035, "colz LOGZ");
+
    o["hAn_noevo_ZK"]  = new rh::H1F("hAn_noevo_ZK", "; W A_{N}; Events", 20, 0., 0.45, "hist GRIDX");
-   o["hAn_noevo_ZK_Vs_PtGen"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 15, 0., 15., 50, 0., 0.45, "colz LOGZ");
-   o["hAn_noevo_ZK_Vs_PtRec"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 15, 0., 15., 50, 0., 0.45, "colz LOGZ");
+   o["hAn_noevo_ZK_Vs_PtGen"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 15, 0., 15., 100, 0., 0.45, "colz LOGZ");
+   o["hAn_noevo_ZK_Vs_PtRec"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 15, 0., 15., 100, 0., 0.45, "colz LOGZ");
+   //o["hAn_noevo_ZK_Vs_RapGen"]  = new rh::H2F("hAn_noevo_ZK_Vs_RapGen", "; W y^{GEN}; W A_{N}; Events", 15, 0., 15., 100, 0., 0.45, "colz LOGZ");
+   //o["hAn_noevo_ZK_Vs_RapRec"]  = new rh::H2F("hAn_noevo_ZK_Vs_RapRec", "; W y^{REC}; W A_{N}; Events", 15, 0., 15., 100, 0., 0.45, "colz LOGZ");
    o["hAn_noevo_ZK_Vs_PtGen_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtGen_zoomin", "; W P_{T}^{GEN}; W A_{N}; Events", 8, 2., 15., 40, 0., 0.03, "colz LOGZ");
    o["hAn_noevo_ZK_Vs_PtRec_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtRec_zoomin", "; W P_{T}^{REC}; W A_{N}; Events", 8, 2., 15., 40, 0., 0.03, "colz LOGZ");
+   //o["hAn_noevo_ZK_Vs_RapGen_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_RapGen_zoomin", "; W y^{GEN}; W A_{N}; Events", 8, 2., 15., 40, 0., 0.03, "colz LOGZ");
+   //o["hAn_noevo_ZK_Vs_RapRec_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_RapRec_zoomin", "; W y^{REC}; W A_{N}; Events", 8, 2., 15., 40, 0., 0.03, "colz LOGZ");
    }  
 }
 
@@ -210,6 +218,7 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hRecoVsGenWBosonPt"])   ->Fill(mcEvent->mP4WBoson.Pt(),    event.GetVecBosonP3().Pt());
    ((TH1*) o["hRecoVsGenWBosonPz"])   ->Fill(mcEvent->mP4WBoson.Pz(),    event.GetVecBosonP3().Pz());
    ((TH1*) o["hRecoVsGenWBosonEta"])  ->Fill(mcEvent->mP4WBoson.Eta(),   event.GetVecBosonP3().Eta());
+   ((TH1*) o["hRecoVsGenWBosonPz_OtherSol"])   ->Fill(mcEvent->mP4WBoson.Pz(),    event.GetVecBosonP3OtherSolution().Pz());
 
    ((TH1*) o["hGenRecoilE"]) ->Fill(mcEvent->mP4Recoil.E());
    ((TH1*) o["hGenRecoilPz"])->Fill(mcEvent->mP4Recoil.Pz());
@@ -234,6 +243,7 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hGenRecoilInOutDeltaPhi"])->Fill(mcEvent->mP4RecoilInAccept.DeltaPhi( mcEvent->mP4RecoilOutAccept ));
 
    if (mMcType == 1 || mMcType == 2) { 
+     if (event.GetVecBosonP3().Pt() > 0) {
         ((TH1*) o["hAn_evol_ZK"])                    ->Fill(event.An_evol_ZK);
         ((TH2*) o["hAn_evol_ZK_Vs_PtGen"])           ->Fill(mcEvent->mP4WBoson.Pt(), event.An_evol_ZK);
         ((TH2*) o["hAn_evol_ZK_Vs_PtRec"])           ->Fill(event.GetVecBosonP3().Pt(), event.An_evol_ZK);
@@ -242,6 +252,22 @@ void MCHContainer::Fill(ProtoEvent &ev)
         ((TH2*) o["hAn_noevo_ZK_Vs_PtRec"])          ->Fill(event.GetVecBosonP3().Pt(), event.An_noevo_ZK);
         ((TH2*) o["hAn_noevo_ZK_Vs_PtGen_zoomin"])   ->Fill(mcEvent->mP4WBoson.Pt(), event.An_noevo_ZK);
         ((TH2*) o["hAn_noevo_ZK_Vs_PtRec_zoomin"])   ->Fill(event.GetVecBosonP3().Pt(), event.An_noevo_ZK);
+     } else {
+        ((TH1*) o["hAn_evol_ZK"])                     ->Fill(1e5);
+        ((TH2*) o["hAn_evol_ZK_Vs_PtGen"])            ->Fill(1e5, 1e5);
+        ((TH2*) o["hAn_evol_ZK_Vs_PtRec"])            ->Fill(1e5, 1e5);
+        ((TH1*) o["hAn_noevo_ZK"])                    ->Fill(1e5);
+        ((TH2*) o["hAn_noevo_ZK_Vs_PtGen"])           ->Fill(1e5, 1e5);  
+        ((TH2*) o["hAn_noevo_ZK_Vs_PtRec"])           ->Fill(1e5, 1e5);  
+        ((TH2*) o["hAn_noevo_ZK_Vs_PtGen_zoomin"])    ->Fill(1e5, 1e5);   
+        ((TH2*) o["hAn_noevo_ZK_Vs_PtRec_zoomin"])    ->Fill(1e5, 1e5);  
+     }
+     //((TH2*) o["hAn_evol_ZK_Vs_RapGen"])           ->Fill(mcEvent->mP4WBoson.Rapidity(), event.An_evol_ZK);
+     // ((TH2*) o["hAn_evol_ZK_Vs_RapRec"])           ->Fill(event.GetVecBosonP3().Rapidity(), event.An_evol_ZK);
+     //((TH2*) o["hAn_noevo_ZK_Vs_RapGen"])          ->Fill(mcEvent->mP4WBoson.Rapidity(), event.An_noevo_ZK);
+     //((TH2*) o["hAn_noevo_ZK_Vs_RapRec"])          ->Fill(event.GetVecBosonP4().Rapidity(), event.An_noevo_ZK);
+     //((TH2*) o["hAn_noevo_ZK_Vs_RapGen_zoomin"])   ->Fill(mcEvent->mP4WBoson.Rapidity(), event.An_noevo_ZK);
+     //((TH2*) o["hAn_noevo_ZK_Vs_RapRec_zoomin"])   ->Fill(event.GetVecBosonP4().Rapidity(), event.An_noevo_ZK);
    }
 
    if (mMcType == 1) { // W+ -> ep Monte Carlo
@@ -347,7 +373,7 @@ void MCHContainer::PostFill()
    double integral = hRecoVsGenWBosonPz->Integral();
 
    char textFrac[10];
-   sprintf(textFrac, "f = %5.3f", (integralAboveLow-integralAboveHigh)/integral);
+   sprintf(textFrac, "frac = %5.3f", (integralAboveLow-integralAboveHigh)/integral);
 
    hRecoVsGenWBosonPz->GetListOfFunctions()->Add(funcLow.Clone());
    hRecoVsGenWBosonPz->GetListOfFunctions()->Add(funcHigh.Clone());

@@ -26,6 +26,9 @@ WBosEvent::WBosEvent(float minTrackPt, bool otherSolution) : VecBosEvent()
 {
    VecBosEvent::sMinRecoilTrackPt = minTrackPt;
    sUseOtherSolution = otherSolution;
+   cout << "sMinRecoilTrackPt: " <<  sMinRecoilTrackPt << endl;
+   cout << "WBosEvent: otherSolution: " << otherSolution << endl;
+   cout << "WBosEvent: sUseOtherSolution: " << sUseOtherSolution << endl;
 }
 
 
@@ -59,6 +62,7 @@ TVector3 WBosEvent::CalcSignedPtBalance() const
 
 TVector3 WBosEvent::GetVecBosonP3() const { return mElectronP3 + (sUseOtherSolution ? mNeutrinoP3Other : mNeutrinoP3); }
 
+TVector3 WBosEvent::GetVecBosonP3OtherSolution() const { return mElectronP3 + mNeutrinoP3Other; }
 
 TLorentzVector WBosEvent::GetVecBosonP4() const
 {
@@ -124,7 +128,7 @@ void WBosEvent::Clear(const Option_t* opt)
 void WBosEvent::Print(const Option_t* opt) const
 {
    Info("Print", ":");
-   //VecBosEvent::Print(opt);
+   VecBosEvent::Print(opt);
    cout << "sUseOtherSolution: " << sUseOtherSolution << endl;
    cout << "mElectronP3: " << endl;
    mElectronP3.Print();
@@ -137,7 +141,7 @@ void WBosEvent::Print(const Option_t* opt) const
 
 bool WBosEvent::PassedCutWBos(float minElePt) const
 {
-   //cout << "sMinRecoilPt" << sMinRecoilPt << endl;
+   //cout << "sMinRecoilPt: " << sMinRecoilPt << endl;
    if ( HasCandidateEle() &&
         mP3TrackRecoilTpcNeutrals.Pt() > sMinRecoilPt &&
         mP3TrackRecoilTpcNeutralsCorrected.Pt() > sMinRecoilPt &&
