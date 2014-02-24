@@ -84,6 +84,8 @@ void Z0EventHContainer::BookHists()
    h->SetOption("hist GRIDX GRIDY XY");
    o["hZ0_Eta"]   = h = new TH1F("hZ0_Eta", "; Z0- #eta; Events", 20, -4, 4);
    h->SetOption("hist GRIDX GRIDY XY");
+   o["hZ0_Rapidity"]   = h = new TH1F("hZ0_Rapidity", "; Z0- y; Events", 20, -2, 2);
+   h->SetOption("hist GRIDX GRIDY XY");
 
    d["tracks"] = new TrackHContainer(new TDirectoryFile("tracks", "tracks", "", fDir));
 }
@@ -120,6 +122,7 @@ void Z0EventHContainer::Fill(ProtoEvent &ev)
       ((TH1*) o["hCandidate1Eta"])  ->Fill(event.GetCandidate1_P3().Eta());
       ((TH1*) o["hCandidate2Eta"])  ->Fill(event.GetCandidate2_P3().Eta());
       ((TH1*) o["hZ0_Eta"])         ->Fill(event.GetVecBosonP4().Eta());
+      ((TH1*) o["hZ0_Rapidity"])         ->Fill(event.GetVecBosonP4().Rapidity());
    }
 
    d["tracks"]->Fill(ev);
