@@ -59,14 +59,8 @@ protected:
 
    float     mWBosMass;   //
    TVector3  mElectronP3; //
-<<<<<<< HEAD
-   TVector3  mNeutrinoP3; //
-   TVector3  mNeutrinoP3Other; // Neutrino momentum based on "wrong" p_z solution
-   //float     tracksPt;
-=======
    TVector3  mNeutrinoP3;      ///< Neutrion momentum based on the default (correct/most likely) p_z solution
    TVector3  mNeutrinoP3Other; ///< Neutrino momentum based on the other ("wrong") p_z solution
->>>>>>> da7f63367f7ed676d82e2a7cc75ced07d4e5d849
 
    ClassDef(WBosEvent, 1);
 };
