@@ -59,9 +59,8 @@ protected:
 
    float     mWBosMass;   //
    TVector3  mElectronP3; //
-   TVector3  mNeutrinoP3; //
-   TVector3  mNeutrinoP3Other; //!< Neutrino momentum based on "wrong" p_z solution XXX:ds: is not persistent temporarily
-   //float     tracksPt;
+   TVector3  mNeutrinoP3;      ///< Neutrion momentum based on the default (correct/most likely) p_z solution
+   TVector3  mNeutrinoP3Other; ///< Neutrino momentum based on the other ("wrong") p_z solution
 
    ClassDef(WBosEvent, 1);
 };
