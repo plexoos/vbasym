@@ -14,7 +14,7 @@ using namespace std;
 
 VbAnaOptions *AsymCalculator::sVbAnaOptions = 0;
 EAsymType AsymCalculator::sAsymType = kAsymPlain;
-
+const float AsymCalculator::sPolAverage = 0.527;
 
 void AsymCalculator::CalcAsimAsym(TH1I &hUp, TH1I &hDown, TH1D &hAsym)
 {
@@ -322,8 +322,10 @@ ValErrPair AsymCalculator::CalcAsymSqrtFormula(Double_t A, Double_t B, Double_t 
 
    if ( denom ) {
       //XXX:ds need to check the sign
-      asym    = (sqrt(C*D) - sqrt(A*B))/denom;
-      asymErr =  sqrt(A*B*(C+D) + C*D*(A+B))/denom/denom;
+      //asym    = (sqrt(C*D) - sqrt(A*B))/denom;
+      //asymErr = sqrt(A*B*(C+D) + C*D*(A+B))/denom/denom;
+      asym    = (1/sPolAverage)* (sqrt(C*D) - sqrt(A*B))/denom;
+      asymErr = (1/sPolAverage)* (sqrt(A*B*(C+D) + C*D*(A+B))/denom/denom);
    } else {
       asym    =  0;
       asymErr = -1; // set to -1 to indicate invalid result

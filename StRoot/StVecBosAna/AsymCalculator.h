@@ -35,6 +35,7 @@ public:
 
    static VbAnaOptions *sVbAnaOptions; ///< Pointer to class object with user options
    static EAsymType  sAsymType; ///< Type of the asymmetry to be calculated
+   static const float sPolAverage;
 };
 
 #endif
