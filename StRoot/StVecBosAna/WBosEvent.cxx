@@ -26,9 +26,6 @@ WBosEvent::WBosEvent(float minTrackPt, bool otherSolution) : VecBosEvent()
 {
    VecBosEvent::sMinRecoilTrackPt = minTrackPt;
    sUseOtherSolution = otherSolution;
-   cout << "sMinRecoilTrackPt: " <<  sMinRecoilTrackPt << endl;
-   cout << "WBosEvent: otherSolution: " << otherSolution << endl;
-   cout << "WBosEvent: sUseOtherSolution: " << sUseOtherSolution << endl;
 }
 
 
