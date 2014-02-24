@@ -60,7 +60,7 @@ protected:
    float     mWBosMass;   //
    TVector3  mElectronP3; //
    TVector3  mNeutrinoP3; //
-   TVector3  mNeutrinoP3Other; //!< Neutrino momentum based on "wrong" p_z solution XXX:ds: is not persistent temporarily
+   TVector3  mNeutrinoP3Other; // Neutrino momentum based on "wrong" p_z solution
    //float     tracksPt;
 
    ClassDef(WBosEvent, 1);
