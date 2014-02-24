@@ -136,9 +136,11 @@ void AsymHContainer::PostFill()
    AsymCalculator::CombineAsimAsym(*fAsymAmpVsRap_Beam[kBLUE_BEAM], *fAsymAmpVsRap_Beam[kYELLOW_BEAM], *fAsymAmpVsRap, true);
    AsymCalculator::CombineAsimAsym(*fAsymAmpVsPt_Beam[kBLUE_BEAM], *fAsymAmpVsPt_Beam[kYELLOW_BEAM], *fAsymAmpVsPt);
 
+   /* S.F. - should we really fit a straight line? 
    TF1 fitFunc("fitFunc", "[0]");
    fitFunc.SetParNames("Avrg.");
    fAsymAmpVsRap->Fit(&fitFunc);
+   */
 
    // This is mainly to cross check that the asymmetry sign flip works
    //TH1D* hWBosonAsymAmpVsEta_YEL_rev = new TH1D(*hWBosonAsymAmpVsEta_YEL);
