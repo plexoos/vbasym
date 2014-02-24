@@ -125,8 +125,13 @@ void WBosEvent::Print(const Option_t* opt) const
 {
    Info("Print", ":");
    //VecBosEvent::Print(opt);
+   cout << "sUseOtherSolution: " << sUseOtherSolution << endl;
+   cout << "mElectronP3: " << endl;
    mElectronP3.Print();
+   cout << "mNeutrinoP3: " << endl;
    mNeutrinoP3.Print();
+   cout << "mNeutrinoP3Other: " << endl;
+   mNeutrinoP3Other.Print();
 }
 
 
