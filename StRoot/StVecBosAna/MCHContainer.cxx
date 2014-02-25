@@ -380,4 +380,23 @@ void MCHContainer::PostFill()
    TText *text = new TText(0.5, 0.92, textFrac);
    text->SetNDC(true);
    hRecoVsGenWBosonPz->GetListOfFunctions()->Add(text);
+
+  
+   rh::H2I* hRecoVsGenWBosonPz_OtherSol = (rh::H2I*) o["hRecoVsGenWBosonPz_OtherSol"];
+
+   TF1 funcLow_OtherSol ("funcLow_OtherSol", "-30 + x", hRecoVsGenWBosonPz_OtherSol->GetXaxis()->GetXmin(), hRecoVsGenWBosonPz_OtherSol->GetXaxis()->GetXmax());
+   TF1 funcHigh_OtherSol("funcHigh_OtherSol", "30 + x", hRecoVsGenWBosonPz_OtherSol->GetXaxis()->GetXmin(), hRecoVsGenWBosonPz_OtherSol->GetXaxis()->GetXmax());
+
+   double integralAboveLow_OtherSol  = hRecoVsGenWBosonPz_OtherSol->CalcIntegralAbove(funcLow);
+   double integralAboveHigh_OtherSol = hRecoVsGenWBosonPz_OtherSol->CalcIntegralAbove(funcHigh);
+   double integral_OtherSol          = hRecoVsGenWBosonPz_OtherSol->Integral();
+
+   char textFrac_OtherSol[10];
+   sprintf(textFrac_OtherSol, "frac = %5.3f", (integralAboveLow_OtherSol-integralAboveHigh_OtherSol)/integral_OtherSol);
+
+   hRecoVsGenWBosonPz_OtherSol->GetListOfFunctions()->Add(funcLow_OtherSol.Clone());
+   hRecoVsGenWBosonPz_OtherSol->GetListOfFunctions()->Add(funcHigh_OtherSol.Clone());
+   TText *text_OtherSol = new TText(0.5, 0.92, textFrac_OtherSol);
+   text_OtherSol->SetNDC(true);
+   hRecoVsGenWBosonPz_OtherSol->GetListOfFunctions()->Add(text_OtherSol);
 }
