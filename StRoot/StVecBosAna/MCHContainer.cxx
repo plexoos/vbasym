@@ -74,7 +74,7 @@ void MCHContainer::BookHists()
    o["hRecoVsGenWBosonPt"]  = new rh::H2I("hRecoVsGenWBosonPt",  "; Gen. W Boson P_{T}, GeV; Reco. W Boson P_{T}, GeV", 50, 0, 25, 50, 0, 25, "colz LOGZ");
    o["hRecoVsGenWBosonPz"]  = new rh::H2F("hRecoVsGenWBosonPz",  "; Gen. W Boson P_{z}, GeV; Reco. W Boson P_{z}, GeV", 50, -80, 80, 50, -80, 80, "colz LOGZ");
    o["hRecoVsGenWBosonEta"] = new rh::H2F("hRecoVsGenWBosonEta", "; Gen. W Boson #eta; Reco. W Boson #eta", 50, -6, 6, 50, -6, 6, "colz LOGZ");
-   o["hRecoVsGenWBosonPz_OtherSol"]  = new rh::H2F("hRecoVsGenWBosonPz_OtherSol",  "; Gen. W Boson (Other Solution) P_{z}, GeV; Reco. W Boson P_{z}, GeV", 50, -80, 80, 50, -80, 80, "colz LOGZ");
+   o["hRecoVsGenWBosonPz_OtherSol"]  = new rh::H2F("hRecoVsGenWBosonPz_OtherSol",  "; Gen. W Boson P_{z}, GeV; Reco. W Boson P_{z} (Other Solution), GeV", 50, -80, 80, 50, -80, 80, "colz LOGZ");
 
    // W recoil momentum components
    o["hGenRecoilE"]  = new rh::H1I("hGenRecoilE", "; Gen. W Recoil E, GeV; Events", 100, 0., 200., "hist GRIDX");
