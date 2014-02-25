@@ -72,9 +72,9 @@ void MCHContainer::BookHists()
 
    o["hRecoVsGenWBosonPhi"] = new rh::H2I("hRecoVsGenWBosonPhi", "; Gen. W Boson #phi; Reco. W Boson #phi", 50, -M_PI, M_PI, 50, -M_PI, M_PI, "colz LOGZ");
    o["hRecoVsGenWBosonPt"]  = new rh::H2I("hRecoVsGenWBosonPt",  "; Gen. W Boson P_{T}, GeV; Reco. W Boson P_{T}, GeV", 50, 0, 25, 50, 0, 25, "colz LOGZ");
-   o["hRecoVsGenWBosonPz"]  = new rh::H2I("hRecoVsGenWBosonPz",  "; Gen. W Boson P_{z}, GeV; Reco. W Boson P_{z}, GeV", 50, -80, 80, 50, -80, 80, "colz LOGZ");
-   o["hRecoVsGenWBosonEta"] = new rh::H2I("hRecoVsGenWBosonEta", "; Gen. W Boson #eta; Reco. W Boson #eta", 50, -6, 6, 50, -6, 6, "colz LOGZ");
-   o["hRecoVsGenWBosonPz_OtherSol"]  = new rh::H2I("hRecoVsGenWBosonPz_OtherSol",  "; Gen. W Boson (Other Solution) P_{z}, GeV; Reco. W Boson P_{z}, GeV", 50, -80, 80, 50, -80, 80, "colz LOGZ");
+   o["hRecoVsGenWBosonPz"]  = new rh::H2F("hRecoVsGenWBosonPz",  "; Gen. W Boson P_{z}, GeV; Reco. W Boson P_{z}, GeV", 50, -80, 80, 50, -80, 80, "colz LOGZ");
+   o["hRecoVsGenWBosonEta"] = new rh::H2F("hRecoVsGenWBosonEta", "; Gen. W Boson #eta; Reco. W Boson #eta", 50, -6, 6, 50, -6, 6, "colz LOGZ");
+   o["hRecoVsGenWBosonPz_OtherSol"]  = new rh::H2F("hRecoVsGenWBosonPz_OtherSol",  "; Gen. W Boson (Other Solution) P_{z}, GeV; Reco. W Boson P_{z}, GeV", 50, -80, 80, 50, -80, 80, "colz LOGZ");
 
    // W recoil momentum components
    o["hGenRecoilE"]  = new rh::H1I("hGenRecoilE", "; Gen. W Recoil E, GeV; Events", 100, 0., 200., "hist GRIDX");
@@ -363,7 +363,7 @@ void MCHContainer::PostFill()
    hRecoilVsWBosonPt->GetListOfFunctions()->Add(hRecoilVsWBosonPt_pfx->Clone(), "same");
 
    // Calculate the fraction of missreconstructed events
-   rh::H2I* hRecoVsGenWBosonPz = (rh::H2I*) o["hRecoVsGenWBosonPz"];
+   rh::H2F* hRecoVsGenWBosonPz = (rh::H2F*) o["hRecoVsGenWBosonPz"];
 
    TF1 funcLow ("funcLow", "-30 + x", hRecoVsGenWBosonPz->GetXaxis()->GetXmin(), hRecoVsGenWBosonPz->GetXaxis()->GetXmax());
    TF1 funcHigh("funcHigh", "30 + x", hRecoVsGenWBosonPz->GetXaxis()->GetXmin(), hRecoVsGenWBosonPz->GetXaxis()->GetXmax());
@@ -381,8 +381,26 @@ void MCHContainer::PostFill()
    text->SetNDC(true);
    hRecoVsGenWBosonPz->GetListOfFunctions()->Add(text);
 
+   TString basename("hRecoVsGenWBosonPz_pjy");
+   Int_t ybins = hRecoVsGenWBosonPz->GetNbinsY();
+   for (int i = 1; i <= ybins; ++i) {
+     TString histname(basename);
+     histname += i;
+     o[histname.Data()] = (TProfile*) hRecoVsGenWBosonPz->ProjectionY(histname.Data(), i, i);
+     TH1D* hRecoVsGenWBosonPz_pjy = (TH1D*) o[histname.Data()];
+     //hRecoVsGenWBosonPz_pjy->Print("all");
+     cout << histname << endl;
+     hRecoVsGenWBosonPz_pjy->Write();
+   } // for
+
+   /*
+   o[TString(basename) += 1] = (TProfile*) hRecoVsGenWBosonPz->ProfileX("hRecoVsGenWBosonPz_p", 1, 1);
+   TProfile* hRecoVsGenWBosonPz_pfx1 = (TProfile*) o["hRecoVsGenWBosonPz_pfx1"];
+   hRecoVsGenWBosonPz_pfx1->Print("all");
+   */
+
   
-   rh::H2I* hRecoVsGenWBosonPz_OtherSol = (rh::H2I*) o["hRecoVsGenWBosonPz_OtherSol"];
+   rh::H2F* hRecoVsGenWBosonPz_OtherSol = (rh::H2F*) o["hRecoVsGenWBosonPz_OtherSol"];
 
    TF1 funcLow_OtherSol ("funcLow_OtherSol", "-30 + x", hRecoVsGenWBosonPz_OtherSol->GetXaxis()->GetXmin(), hRecoVsGenWBosonPz_OtherSol->GetXaxis()->GetXmax());
    TF1 funcHigh_OtherSol("funcHigh_OtherSol", "30 + x", hRecoVsGenWBosonPz_OtherSol->GetXaxis()->GetXmin(), hRecoVsGenWBosonPz_OtherSol->GetXaxis()->GetXmax());
