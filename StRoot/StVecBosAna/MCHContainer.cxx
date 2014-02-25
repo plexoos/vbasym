@@ -389,15 +389,7 @@ void MCHContainer::PostFill()
      o[histname.Data()] = (TProfile*) hRecoVsGenWBosonPz->ProjectionY(histname.Data(), i, i);
      TH1D* hRecoVsGenWBosonPz_pjy = (TH1D*) o[histname.Data()];
      //hRecoVsGenWBosonPz_pjy->Print("all");
-     cout << histname << endl;
-     hRecoVsGenWBosonPz_pjy->Write();
    } // for
-
-   /*
-   o[TString(basename) += 1] = (TProfile*) hRecoVsGenWBosonPz->ProfileX("hRecoVsGenWBosonPz_p", 1, 1);
-   TProfile* hRecoVsGenWBosonPz_pfx1 = (TProfile*) o["hRecoVsGenWBosonPz_pfx1"];
-   hRecoVsGenWBosonPz_pfx1->Print("all");
-   */
 
   
    rh::H2F* hRecoVsGenWBosonPz_OtherSol = (rh::H2F*) o["hRecoVsGenWBosonPz_OtherSol"];
@@ -417,4 +409,14 @@ void MCHContainer::PostFill()
    TText *text_OtherSol = new TText(0.5, 0.92, textFrac_OtherSol);
    text_OtherSol->SetNDC(true);
    hRecoVsGenWBosonPz_OtherSol->GetListOfFunctions()->Add(text_OtherSol);
+
+   TString basenameo("hRecoVsGenWBosonPz_OtherSol_pjy");
+   Int_t ybinso = hRecoVsGenWBosonPz_OtherSol->GetNbinsY();
+   for (int i = 1; i <= ybinso; ++i) {
+     TString histnameo(basenameo);
+     histnameo += i;
+     o[histnameo.Data()] = (TProfile*) hRecoVsGenWBosonPz_OtherSol->ProjectionY(histnameo.Data(), i, i);
+     TH1D* hRecoVsGenWBosonPz_OtherSol_pjy = (TH1D*) o[histnameo.Data()];
+     //hRecoVsGenWBosonPz_OtherSol_pjy->Print("all");
+   } // for
 }
