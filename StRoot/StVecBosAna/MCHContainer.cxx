@@ -10,6 +10,7 @@
 
 #include "utils/H1I.h"
 #include "utils/H1F.h"
+#include "utils/H1D.h"
 #include "utils/H2I.h"
 #include "utils/H2F.h"
 
@@ -159,7 +160,8 @@ void MCHContainer::BookHists()
    o["hAn_noevo_ZK_Vs_PtRec_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtRec_zoomin", "; W P_{T}^{REC}; W A_{N}; Events", 8, 2., 15., 40, 0., 0.03, "colz LOGZ");
    //o["hAn_noevo_ZK_Vs_RapGen_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_RapGen_zoomin", "; W y^{GEN}; W A_{N}; Events", 8, 2., 15., 40, 0., 0.03, "colz LOGZ");
    //o["hAn_noevo_ZK_Vs_RapRec_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_RapRec_zoomin", "; W y^{REC}; W A_{N}; Events", 8, 2., 15., 40, 0., 0.03, "colz LOGZ");
-   }  
+   } 
+
 }
 
 
@@ -380,15 +382,36 @@ void MCHContainer::PostFill()
    TText *text = new TText(0.5, 0.92, textFrac);
    text->SetNDC(true);
    hRecoVsGenWBosonPz->GetListOfFunctions()->Add(text);
+ 
 
+   Int_t range = 10;
    TString basename("hRecoVsGenWBosonPz_pjy");
    Int_t ybins = hRecoVsGenWBosonPz->GetNbinsY();
+
+   o["hWBosonPz_GoodRecoFraction"] = new rh::H1D("hWBosonPz_GoodRecoFraction", "First solution; W-P_{Z} [GeV/c]; Fraction", ybins, hRecoVsGenWBosonPz->GetYaxis()->GetXmin(), hRecoVsGenWBosonPz->GetYaxis()->GetXmax(), "P");
+   TH1D* hWBosonPz_GoodRecoFraction = (TH1D*) o["hWBosonPz_GoodRecoFraction"]; 
+   hWBosonPz_GoodRecoFraction -> SetMarkerStyle(20);
+   hWBosonPz_GoodRecoFraction -> SetStats(0);
+
    for (int i = 1; i <= ybins; ++i) {
      TString histname(basename);
      histname += i;
      o[histname.Data()] = (TProfile*) hRecoVsGenWBosonPz->ProjectionY(histname.Data(), i, i);
      TH1D* hRecoVsGenWBosonPz_pjy = (TH1D*) o[histname.Data()];
+
+     Int_t prjBins = hRecoVsGenWBosonPz_pjy->GetNbinsX();
+     Int_t minval = i - range;
+     Int_t maxval = i + range;
+     if (minval <= 0) minval = 1;
+     if (maxval >= prjBins) maxval = prjBins;
+     double   integral_pjy_inner   = hRecoVsGenWBosonPz_pjy->Integral(minval, maxval);
+     double   integral_pjy_total   = hRecoVsGenWBosonPz_pjy->Integral();
+     Double_t GoodRecoFraction_pjy = integral_pjy_inner/integral_pjy_total;
+     cout << "integral_pjy_inner: "   << integral_pjy_inner   << endl; 
+     cout << "integral_pjy_total: "   << integral_pjy_total   << endl;  
+     cout << "GoodRecoFraction_pjy: " << GoodRecoFraction_pjy << endl; 
      //hRecoVsGenWBosonPz_pjy->Print("all");
+     hWBosonPz_GoodRecoFraction -> SetBinContent(i, GoodRecoFraction_pjy);
    } // for
 
   
@@ -410,13 +433,30 @@ void MCHContainer::PostFill()
    text_OtherSol->SetNDC(true);
    hRecoVsGenWBosonPz_OtherSol->GetListOfFunctions()->Add(text_OtherSol);
 
+
    TString basenameo("hRecoVsGenWBosonPz_OtherSol_pjy");
    Int_t ybinso = hRecoVsGenWBosonPz_OtherSol->GetNbinsY();
+
+   o["hWBosonPz_GoodRecoFraction_OtherSol"] = new rh::H1D("hWBosonPz_GoodRecoFraction_OtherSol", "Other solution; W-P_{Z} [GeV/c]; Fraction", ybinso, hRecoVsGenWBosonPz_OtherSol->GetYaxis()->GetXmin(), hRecoVsGenWBosonPz_OtherSol->GetYaxis()->GetXmax(), "P");
+   TH1D* hWBosonPz_GoodRecoFraction_OtherSol = (TH1D*) o["hWBosonPz_GoodRecoFraction_OtherSol"]; 
+   hWBosonPz_GoodRecoFraction_OtherSol -> SetMarkerStyle(20);
+   hWBosonPz_GoodRecoFraction_OtherSol -> SetStats(0);
+
    for (int i = 1; i <= ybinso; ++i) {
      TString histnameo(basenameo);
      histnameo += i;
      o[histnameo.Data()] = (TProfile*) hRecoVsGenWBosonPz_OtherSol->ProjectionY(histnameo.Data(), i, i);
      TH1D* hRecoVsGenWBosonPz_OtherSol_pjy = (TH1D*) o[histnameo.Data()];
-     //hRecoVsGenWBosonPz_OtherSol_pjy->Print("all");
+
+     Int_t prjBins = hRecoVsGenWBosonPz_OtherSol_pjy->GetNbinsX();
+     Int_t minval = i - range;
+     Int_t maxval = i + range;
+     if (minval <= 0) minval = 1;
+     if (maxval >= prjBins) maxval = prjBins;
+     double   integral_pjy_inner   = hRecoVsGenWBosonPz_OtherSol_pjy->Integral(minval, maxval);
+     double   integral_pjy_total   = hRecoVsGenWBosonPz_OtherSol_pjy->Integral();
+     Double_t GoodRecoFraction_pjy = integral_pjy_inner/integral_pjy_total;
+     //hRecoVsGenWBosonPz_pjy->Print("all");
+     hWBosonPz_GoodRecoFraction_OtherSol -> SetBinContent(i, GoodRecoFraction_pjy);
    } // for
 }
