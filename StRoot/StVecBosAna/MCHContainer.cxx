@@ -75,6 +75,7 @@ void MCHContainer::BookHists()
    o["hRecoVsGenWBosonPt"]  = new rh::H2I("hRecoVsGenWBosonPt",  "; Gen. W Boson P_{T}, GeV; Reco. W Boson P_{T}, GeV", 50, 0, 25, 50, 0, 25, "colz LOGZ");
    o["hRecoVsGenWBosonPz"]  = new rh::H2F("hRecoVsGenWBosonPz",  "; Gen. W Boson P_{z}, GeV; Reco. W Boson P_{z}, GeV", 50, -80, 80, 50, -80, 80, "colz LOGZ");
    o["hRecoVsGenWBosonEta"] = new rh::H2F("hRecoVsGenWBosonEta", "; Gen. W Boson #eta; Reco. W Boson #eta", 50, -6, 6, 50, -6, 6, "colz LOGZ");
+   o["hRecoVsGenWBosonPz_FirstSol"]  = new rh::H2F("hRecoVsGenWBosonPz_FirstSol",  "; Gen. W Boson P_{z}, GeV; Reco. W Boson P_{z} (First Solution), GeV", 50, -80, 80, 50, -80, 80, "colz LOGZ");
    o["hRecoVsGenWBosonPz_OtherSol"]  = new rh::H2F("hRecoVsGenWBosonPz_OtherSol",  "; Gen. W Boson P_{z}, GeV; Reco. W Boson P_{z} (Other Solution), GeV", 50, -80, 80, 50, -80, 80, "colz LOGZ");
 
    // W recoil momentum components
@@ -220,6 +221,7 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hRecoVsGenWBosonPt"])   ->Fill(mcEvent->mP4WBoson.Pt(),    event.GetVecBosonP3().Pt());
    ((TH1*) o["hRecoVsGenWBosonPz"])   ->Fill(mcEvent->mP4WBoson.Pz(),    event.GetVecBosonP3().Pz());
    ((TH1*) o["hRecoVsGenWBosonEta"])  ->Fill(mcEvent->mP4WBoson.Eta(),   event.GetVecBosonP3().Eta());
+   ((TH1*) o["hRecoVsGenWBosonPz_FirstSol"])   ->Fill(mcEvent->mP4WBoson.Pz(),    event.GetVecBosonP3FirstSolution().Pz());
    ((TH1*) o["hRecoVsGenWBosonPz_OtherSol"])   ->Fill(mcEvent->mP4WBoson.Pz(),    event.GetVecBosonP3OtherSolution().Pz());
 
    ((TH1*) o["hGenRecoilE"]) ->Fill(mcEvent->mP4Recoil.E());
@@ -382,13 +384,34 @@ void MCHContainer::PostFill()
    TText *text = new TText(0.5, 0.92, textFrac);
    text->SetNDC(true);
    hRecoVsGenWBosonPz->GetListOfFunctions()->Add(text);
+   hRecoVsGenWBosonPz->SetStats(0);
+ 
+
+   rh::H2F* hRecoVsGenWBosonPz_FirstSol = (rh::H2F*) o["hRecoVsGenWBosonPz_FirstSol"];
+
+   TF1 funcLowf ("funcLow", "-30 + x", hRecoVsGenWBosonPz_FirstSol->GetXaxis()->GetXmin(), hRecoVsGenWBosonPz_FirstSol->GetXaxis()->GetXmax());
+   TF1 funcHighf("funcHigh", "30 + x", hRecoVsGenWBosonPz_FirstSol->GetXaxis()->GetXmin(), hRecoVsGenWBosonPz_FirstSol->GetXaxis()->GetXmax());
+
+   double integralAboveLowf  = hRecoVsGenWBosonPz_FirstSol->CalcIntegralAbove(funcLow);
+   double integralAboveHighf = hRecoVsGenWBosonPz_FirstSol->CalcIntegralAbove(funcHigh);
+   double integralf = hRecoVsGenWBosonPz_FirstSol->Integral();
+
+   char textFracf[10];
+   sprintf(textFracf, "frac = %5.3f", (integralAboveLowf-integralAboveHighf)/integralf);
+
+   hRecoVsGenWBosonPz_FirstSol->GetListOfFunctions()->Add(funcLowf.Clone());
+   hRecoVsGenWBosonPz_FirstSol->GetListOfFunctions()->Add(funcHighf.Clone());
+   TText *textf = new TText(0.5, 0.92, textFracf);
+   textf->SetNDC(true);
+   hRecoVsGenWBosonPz_FirstSol->GetListOfFunctions()->Add(textf);
+   hRecoVsGenWBosonPz_FirstSol->SetStats(0);
  
 
    Int_t range = 10;
-   TString basename("hRecoVsGenWBosonPz_pjy");
-   Int_t ybins = hRecoVsGenWBosonPz->GetNbinsY();
+   TString basename("hRecoVsGenWBosonPz_FirstSol_pjy");
+   Int_t ybins = hRecoVsGenWBosonPz_FirstSol->GetNbinsY();
 
-   o["hWBosonPz_GoodRecoFraction"] = new rh::H1D("hWBosonPz_GoodRecoFraction", "First solution; W-P_{Z} [GeV/c]; Fraction", ybins, hRecoVsGenWBosonPz->GetYaxis()->GetXmin(), hRecoVsGenWBosonPz->GetYaxis()->GetXmax(), "P");
+   o["hWBosonPz_GoodRecoFraction"] = new rh::H1D("hWBosonPz_GoodRecoFraction", "First solution; W-P_{Z} [GeV/c]; Fraction", ybins, hRecoVsGenWBosonPz_FirstSol->GetYaxis()->GetXmin(), hRecoVsGenWBosonPz_FirstSol->GetYaxis()->GetXmax(), "P");
    TH1D* hWBosonPz_GoodRecoFraction = (TH1D*) o["hWBosonPz_GoodRecoFraction"]; 
    hWBosonPz_GoodRecoFraction -> SetMarkerStyle(20);
    hWBosonPz_GoodRecoFraction -> SetStats(0);
@@ -396,21 +419,21 @@ void MCHContainer::PostFill()
    for (int i = 1; i <= ybins; ++i) {
      TString histname(basename);
      histname += i;
-     o[histname.Data()] = (TProfile*) hRecoVsGenWBosonPz->ProjectionY(histname.Data(), i, i);
-     TH1D* hRecoVsGenWBosonPz_pjy = (TH1D*) o[histname.Data()];
+     o[histname.Data()] = (TProfile*) hRecoVsGenWBosonPz_FirstSol->ProjectionY(histname.Data(), i, i);
+     TH1D* hRecoVsGenWBosonPz_FirstSol_pjy = (TH1D*) o[histname.Data()];
 
-     Int_t prjBins = hRecoVsGenWBosonPz_pjy->GetNbinsX();
+     Int_t prjBins = hRecoVsGenWBosonPz_FirstSol_pjy->GetNbinsX();
      Int_t minval = i - range;
      Int_t maxval = i + range;
      if (minval <= 0) minval = 1;
      if (maxval >= prjBins) maxval = prjBins;
-     double   integral_pjy_inner   = hRecoVsGenWBosonPz_pjy->Integral(minval, maxval);
-     double   integral_pjy_total   = hRecoVsGenWBosonPz_pjy->Integral();
+     double   integral_pjy_inner   = hRecoVsGenWBosonPz_FirstSol_pjy->Integral(minval, maxval);
+     double   integral_pjy_total   = hRecoVsGenWBosonPz_FirstSol_pjy->Integral();
      Double_t GoodRecoFraction_pjy = integral_pjy_inner/integral_pjy_total;
      cout << "integral_pjy_inner: "   << integral_pjy_inner   << endl; 
      cout << "integral_pjy_total: "   << integral_pjy_total   << endl;  
      cout << "GoodRecoFraction_pjy: " << GoodRecoFraction_pjy << endl; 
-     //hRecoVsGenWBosonPz_pjy->Print("all");
+     //hRecoVsGenWBosonPz_FirstSol_pjy->Print("all");
      hWBosonPz_GoodRecoFraction -> SetBinContent(i, GoodRecoFraction_pjy);
    } // for
 
@@ -432,6 +455,7 @@ void MCHContainer::PostFill()
    TText *text_OtherSol = new TText(0.5, 0.92, textFrac_OtherSol);
    text_OtherSol->SetNDC(true);
    hRecoVsGenWBosonPz_OtherSol->GetListOfFunctions()->Add(text_OtherSol);
+   hRecoVsGenWBosonPz_OtherSol->SetStats(0);
 
 
    TString basenameo("hRecoVsGenWBosonPz_OtherSol_pjy");
