@@ -32,6 +32,7 @@ public:
    TVector3     CalcMissingEnergyP3() const;
    TVector3     CalcSignedPtBalance() const;
    TVector3     GetVecBosonP3() const;
+   TVector3     GetVecBosonP3FirstSolution() const;
    TVector3     GetVecBosonP3OtherSolution() const;
    TLorentzVector GetVecBosonP4() const;
    void         PredictionAnEvol(int McType);

@@ -26,6 +26,9 @@ WBosEvent::WBosEvent(float minTrackPt, bool otherSolution) : VecBosEvent()
 {
    VecBosEvent::sMinRecoilTrackPt = minTrackPt;
    sUseOtherSolution = otherSolution;
+   //cout << "sMinRecoilTrackPt: " <<  sMinRecoilTrackPt << endl;
+   //cout << "WBosEvent: otherSolution: " << otherSolution << endl;
+   //cout << "WBosEvent: sUseOtherSolution: " << sUseOtherSolution << endl;
 }
 
 
@@ -57,9 +60,18 @@ TVector3 WBosEvent::CalcSignedPtBalance() const
 }
 
 
-TVector3 WBosEvent::GetVecBosonP3() const { return mElectronP3 + (sUseOtherSolution ? mNeutrinoP3Other : mNeutrinoP3); }
-
+TVector3 WBosEvent::GetVecBosonP3FirstSolution() const { return mElectronP3 + mNeutrinoP3; }
 TVector3 WBosEvent::GetVecBosonP3OtherSolution() const { return mElectronP3 + mNeutrinoP3Other; }
+TVector3 WBosEvent::GetVecBosonP3() const { return mElectronP3 + (sUseOtherSolution ? mNeutrinoP3Other : mNeutrinoP3); }
+/*
+TVector3 WBosEvent::GetVecBosonP3() const
+{
+  TVector3  wBosonP3; 
+  wBosonP3 = mElectronP3 + mNeutrinoP3;
+  if ( abs(wBosonP3.Pz()) > 40 ) wBosonP3 = mElectronP3 + mNeutrinoP3Other;
+  return wBosonP3;
+}
+*/
 
 TLorentzVector WBosEvent::GetVecBosonP4() const
 {
