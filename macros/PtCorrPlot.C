@@ -61,7 +61,7 @@ void PtCorrPlot()
    TString inPathNew     = "/star/institutions/bnl_me/fazio/stana_out/runlists/";
    TString inPathScratch = "/star/data05/scratch/fazio/stana_out/runlists/";
    //TString inPathNew     = $VBASYM_RESULTS_DIR;
-   TString outPath       = "~/vbasym_results/plots/";
+   TString outPath       = "~/vbasym_results/plots/4prelim";
 
    cout << "input path" << inPathNew << endl;
 
@@ -75,16 +75,17 @@ void PtCorrPlot()
    gStyle->SetMarkerStyle(20);
    gStyle->SetStatX(0.99);
    gStyle->SetOptFit(1);
+   gStyle->SetOptDate(0);
 
    // open histogram files
    //TFile *fileData      = TFile::Open(inPath + "run11_pp_transverse_-w_--jpm_0.5_--run_11_vbana.root");
    //TFile *fileData      = TFile::Open(inPathNew + "run11_pp_transverse_-w_--jpm_0.5_--tpm_0.2_--run_11/hist/vbana.root");
-   TFile *fileData      = TFile::Open(inPathScratch + "run11_pp_transverse/hist/vbana.root");
+   TFile *fileData      = TFile::Open(inPathNew + "run11_pp_transverse/hist/vbana.root");
    //TFile *fileMCWp      = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_vbana.root");
    ////TFile *fileMCWp      = TFile::Open(inPathNew + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_--tpm_0.2/hist/vbana_tpm02.root");
-   TFile *fileMCWp      = TFile::Open(inPathScratch + "run11_mc_Wp2enu.lis/hist/vbana.root");
+   TFile *fileMCWp      = TFile::Open(inPathNew + "run11_mc_Wp2enu.lis/hist/vbana.root");
    TFile *fileMCWpOld   = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_vbana_OldStylePtCorr.root");
-   TFile *fileMCWm      = TFile::Open(inPathScratch + "run11_mc_Wm2enu.lis/hist/vbana.root");
+   TFile *fileMCWm      = TFile::Open(inPathNew + "run11_mc_Wm2enu.lis/hist/vbana.root");
 
 //*** CREATE ROOT FILE FOR CURVES FROM ASCII FILE ***
    // open text files
@@ -180,6 +181,8 @@ void PtCorrPlot()
    TH2 *hWm_An_noevo_ZK_Vs_PtRec           = (TH2 *)fileMCWm->Get("event_mc/hAn_noevo_ZK_Vs_PtRec");
    TH2 *hWm_An_noevo_ZK_Vs_PtGen_zoomin    = (TH2 *)fileMCWm->Get("event_mc/hAn_noevo_ZK_Vs_PtGen_zoomin");
    TH2 *hWm_An_noevo_ZK_Vs_PtRec_zoomin    = (TH2 *)fileMCWm->Get("event_mc/hAn_noevo_ZK_Vs_PtRec_zoomin");
+   TH2 *hWm_An_evol_ZK_Vs_RapGen          = (TH2 *)fileMCWm->Get("event_mc/hAn_evol_ZK_Vs_RapGen");
+   TH2 *hWm_An_evol_ZK_Vs_RapRec          = (TH2 *)fileMCWm->Get("event_mc/hAn_evol_ZK_Vs_RapRec");
 
    hWp_PtReco_zoomin                ->SetFillColor(kYellow);
    hWp_Wp_PtReco_zoomin             ->SetFillColor(kYellow);
@@ -435,7 +438,7 @@ void PtCorrPlot()
   
 
 
-   TCanvas *c5   = new TCanvas("c5", "An predicction with evol.", 400, 400);
+   TCanvas *c5   = new TCanvas("c5", "An prediction with evol.", 400, 400);
 
    hWp_An_evol_ZK_Vs_PtGen ->ProfileX("hWp_An_evol_ZK_Vs_PtGen_pfx"); 
    hWp_An_evol_ZK_Vs_PtRec ->ProfileX("hWp_An_evol_ZK_Vs_PtRec_pfx"); 
@@ -461,7 +464,7 @@ void PtCorrPlot()
    c5->SaveAs(outPath + "/plot_Wp_An_evol_ZK.png");
    c5->SaveAs(outPath + "/plot_Wp_An_evol_ZK.eps");
 
-   TCanvas *c5bis   = new TCanvas("c5bis", "An predicction with evol.", 400, 400);
+   TCanvas *c5bis   = new TCanvas("c5bis", "An prediction with evol.", 400, 400);
 
    c5bis->Divide(1, 2);
 
@@ -478,7 +481,7 @@ void PtCorrPlot()
    c5bis->SaveAs(outPath + "/plot_Wp_An_evol_ZK_Ptrec.eps");
 
 
-   TCanvas *c5c   = new TCanvas("c5c", "An predicction no evol.", 400, 400);
+   TCanvas *c5c   = new TCanvas("c5c", "An prediction no evol.", 400, 400);
 
    hWp_An_noevo_ZK_Vs_PtGen ->ProfileX("hWp_An_noevo_ZK_Vs_PtGen_pfx"); 
    hWp_An_noevo_ZK_Vs_PtRec ->ProfileX("hWp_An_noevo_ZK_Vs_PtRec_pfx"); 
@@ -498,7 +501,7 @@ void PtCorrPlot()
    c5c->SaveAs(outPath + "/plot_Wp_An_noevo_ZK.png");
    c5c->SaveAs(outPath + "/plot_Wp_An_noevo_ZK.eps");
 
-   TCanvas *c5d   = new TCanvas("c5d", "An predicction no evol.", 400, 400);
+   TCanvas *c5d   = new TCanvas("c5d", "An prediction no evol.", 400, 400);
 
    c5d->Divide(1, 2);
 
@@ -515,166 +518,1123 @@ void PtCorrPlot()
    c5d->SaveAs(outPath + "/plot_Wp_An_noevo_ZK_Ptrec.eps");
 
 
-   TCanvas *c6   = new TCanvas("c6", "An prediction with evol.", 400, 400);
+   TCanvas *c6   = new TCanvas("c6", "Wm An prediction with evol.", 500, 500);
 
-   hWm_An_evol_ZK_Vs_PtGen ->ProfileX("hWm_An_evol_ZK_Vs_PtGen_pfx"); 
-   hWm_An_evol_ZK_Vs_PtRec ->ProfileX("hWm_An_evol_ZK_Vs_PtRec_pfx"); 
+   //hWm_An_evol_ZK_Vs_PtGen ->ProfileX("hWm_An_evol_ZK_Vs_PtGen_pfx"); 
+   //hWm_An_evol_ZK_Vs_PtRec ->ProfileX("hWm_An_evol_ZK_Vs_PtRec_pfx"); 
 
+   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy1", 1, 1);
+   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy2", 2, 2); 
+   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy3", 3, 3);  
+   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy4", 4, 4);  
+   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy5", 5, 5);  
+   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy6", 6, 6);  
+   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy7", 7, 7);  
+   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy8", 8, 8);  
+   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy9", 9, 9);  
+   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy10", 10, 10);  
+   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy11", 11, 11);  
+   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy12", 12, 12);  
+   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy13", 13, 13);  
+   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy14", 14, 14);  
+   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy15", 15, 15);
 
-   c6->Divide(1, 2);
+   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy1", 1, 1); 
+   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy2", 2, 2); 
+   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy3", 3, 3);  
+   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy4", 4, 4);  
+   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy5", 5, 5);  
+   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy6", 6, 6);  
+   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy7", 7, 7);  
+   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy8", 8, 8);  
+   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy9", 9, 9);  
+   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy10", 10, 10);  
+   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy11", 11, 11);  
+   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy12", 12, 12);  
+   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy13", 13, 13);  
+   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy14", 14, 14);  
+   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy15", 15, 15);
 
-   c6_1->cd();
+   //c6->Divide(1, 2);
+
+   c6->cd();
    hWm_An_evol_ZK_Vs_PtGen->Draw();
-   hWm_An_evol_ZK_Vs_PtGen->GetYaxis()->SetTitleOffset(2.);
-   hWm_An_evol_ZK_Vs_PtGen->SetTitle("Prediction inlcudes evolution; W^{-} P_{T}^{GEN}; A_{N}");
+   hWm_An_evol_ZK_Vs_PtGen->GetYaxis()->SetTitleOffset(1.8);
+   hWm_An_evol_ZK_Vs_PtGen->SetStats(0);
+   hWm_An_evol_ZK_Vs_PtGen->SetTitle("Prediction inlcudes evolution; W^{-} P_{T}^{GEN}; A_{N};");
+   //c6_2->cd();
    //hWm_An_evol_ZK_Vs_PtGen_pfx->Draw();
    //hWm_An_evol_ZK_Vs_PtGen_pfx->GetYaxis()->SetTitleOffset(2.);
-   //hWm_An_evol_ZK_Vs_PtGen_pfx->SetTitle("Prediction inlcudes evolution; W P_{T}^{GEN}; A_{N}");
-   c6_2->cd();
-   hWm_An_evol_ZK_Vs_PtGen_pfx->Draw();
-   hWm_An_evol_ZK_Vs_PtGen_pfx->GetYaxis()->SetTitleOffset(2.);
-   hWm_An_evol_ZK_Vs_PtGen_pfx->SetTitle("Prediction inlcudes evolution; W^{-} P_{T}^{GEN}; A_{N}");
-   //hWm_An_evol_ZK_Vs_PtRec_pfx->Draw();
-   //hWm_An_evol_ZK_Vs_PtRec_pfx->GetYaxis()->SetTitleOffset(2.);
-   //hWm_An_evol_ZK_Vs_PtRec_pfx->SetTitle("Prediction inlcudes evolution; W P_{T}^{REC}; A_{N}");
+   //hWm_An_evol_ZK_Vs_PtGen_pfx->SetTitle("Prediction inlcudes evolution; W^{-} P_{T}^{GEN}; A_{N}");
 
    c6->SaveAs(outPath + "/plot_Wm_An_evol_ZK.png");
    c6->SaveAs(outPath + "/plot_Wm_An_evol_ZK.eps");
 
-   TCanvas *c6bis   = new TCanvas("c6bis", "An prediction with evol.", 400, 400);
+   TCanvas *c6bis   = new TCanvas("c6bis", "Wm An prediction with evol.", 500, 500);
 
-   c6bis->Divide(1, 2);
+   //c6bis->Divide(1, 2);
 
-   c6bis_1->cd();
+   c6bis->cd();
    hWm_An_evol_ZK_Vs_PtRec->Draw();
-   hWm_An_evol_ZK_Vs_PtRec->GetYaxis()->SetTitleOffset(2.);
-   hWm_An_evol_ZK_Vs_PtRec->SetTitle("Prediction inlcudes evolution; W^{-} P_{T}^{REC}; A_{N}");
-   c6bis_2->cd();
-   hWm_An_evol_ZK_Vs_PtRec_pfx->Draw();
-   hWm_An_evol_ZK_Vs_PtRec_pfx->GetYaxis()->SetTitleOffset(2.);
-   hWm_An_evol_ZK_Vs_PtRec_pfx->SetTitle("Prediction inlcudes evolution; W^{-} P_{T}^{REC}; A_{N}");
+   hWm_An_evol_ZK_Vs_PtRec->GetYaxis()->SetTitleOffset(1.8);
+   hWm_An_evol_ZK_Vs_PtRec->SetStats(0);
+   hWm_An_evol_ZK_Vs_PtRec->SetTitle("Prediction inlcudes evolution; W^{-} P_{T}^{REC}; A_{N};");
+   //c6bis_2->cd();
+   //hWm_An_evol_ZK_Vs_PtRec_pfx->Draw();
+   //hWm_An_evol_ZK_Vs_PtRec_pfx->GetYaxis()->SetTitleOffset(2.);
+   //hWm_An_evol_ZK_Vs_PtRec_pfx->SetTitle("Prediction inlcudes evolution; W^{-} P_{T}^{REC}; A_{N}");
 
    c6bis->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Ptrec.png");
    c6bis->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Ptrec.eps");
 
 
-   TCanvas *c6c   = new TCanvas("c6c", "An predicction no evol.", 500, 500);
+   TCanvas *c6c   = new TCanvas("c6c", "Wm An prediction no evol.", 500, 500);
 
-   hWm_An_noevo_ZK_Vs_PtGen ->ProfileX("hWm_An_noevo_ZK_Vs_PtGen_pfx"); 
-   hWm_An_noevo_ZK_Vs_PtRec ->ProfileX("hWm_An_noevo_ZK_Vs_PtRec_pfx");
-   hWm_An_noevo_ZK_Vs_PtGen ->ProjectionY("hWm_An_noevo_ZK_Vs_PtGen_pjy1", 1, 1); 
+   //hWm_An_noevo_ZK_Vs_PtGen ->ProfileX("hWm_An_noevo_ZK_Vs_PtGen_pfx"); 
+   //hWm_An_noevo_ZK_Vs_PtRec ->ProfileX("hWm_An_noevo_ZK_Vs_PtRec_pfx");
+   //hWm_An_noevo_ZK_Vs_PtGen_zoomin ->ProfileX("hWm_An_noevo_ZK_Vs_PtGen_zoomin_pfx"); 
+   //hWm_An_noevo_ZK_Vs_PtRec_zoomin ->ProfileX("hWm_An_noevo_ZK_Vs_PtRec_zoomin_pfx"); 
+
+   hWm_An_noevo_ZK_Vs_PtGen ->ProjectionY("hWm_An_noevo_ZK_Vs_PtGen_pjy1", 1, 1);
    hWm_An_noevo_ZK_Vs_PtGen ->ProjectionY("hWm_An_noevo_ZK_Vs_PtGen_pjy2", 2, 2); 
    hWm_An_noevo_ZK_Vs_PtGen ->ProjectionY("hWm_An_noevo_ZK_Vs_PtGen_pjy3", 3, 3);  
-   hWm_An_noevo_ZK_Vs_PtGen ->ProjectionY("hWm_An_noevo_ZK_Vs_PtGen_pjy4", 4, 4); 
+   hWm_An_noevo_ZK_Vs_PtGen ->ProjectionY("hWm_An_noevo_ZK_Vs_PtGen_pjy4", 4, 4);  
+   hWm_An_noevo_ZK_Vs_PtGen ->ProjectionY("hWm_An_noevo_ZK_Vs_PtGen_pjy5", 5, 5);  
+   hWm_An_noevo_ZK_Vs_PtGen ->ProjectionY("hWm_An_noevo_ZK_Vs_PtGen_pjy6", 6, 6);  
+   hWm_An_noevo_ZK_Vs_PtGen ->ProjectionY("hWm_An_noevo_ZK_Vs_PtGen_pjy7", 7, 7);  
+   hWm_An_noevo_ZK_Vs_PtGen ->ProjectionY("hWm_An_noevo_ZK_Vs_PtGen_pjy8", 8, 8);  
+   hWm_An_noevo_ZK_Vs_PtGen ->ProjectionY("hWm_An_noevo_ZK_Vs_PtGen_pjy9", 9, 9);  
+   hWm_An_noevo_ZK_Vs_PtGen ->ProjectionY("hWm_An_noevo_ZK_Vs_PtGen_pjy10", 10, 10);  
+   hWm_An_noevo_ZK_Vs_PtGen ->ProjectionY("hWm_An_noevo_ZK_Vs_PtGen_pjy11", 11, 11);  
+   hWm_An_noevo_ZK_Vs_PtGen ->ProjectionY("hWm_An_noevo_ZK_Vs_PtGen_pjy12", 12, 12);  
+   hWm_An_noevo_ZK_Vs_PtGen ->ProjectionY("hWm_An_noevo_ZK_Vs_PtGen_pjy13", 13, 13);  
+   hWm_An_noevo_ZK_Vs_PtGen ->ProjectionY("hWm_An_noevo_ZK_Vs_PtGen_pjy14", 14, 14);  
+   hWm_An_noevo_ZK_Vs_PtGen ->ProjectionY("hWm_An_noevo_ZK_Vs_PtGen_pjy15", 15, 15);
+
    hWm_An_noevo_ZK_Vs_PtRec ->ProjectionY("hWm_An_noevo_ZK_Vs_PtRec_pjy1", 1, 1); 
    hWm_An_noevo_ZK_Vs_PtRec ->ProjectionY("hWm_An_noevo_ZK_Vs_PtRec_pjy2", 2, 2); 
    hWm_An_noevo_ZK_Vs_PtRec ->ProjectionY("hWm_An_noevo_ZK_Vs_PtRec_pjy3", 3, 3);  
-   hWm_An_noevo_ZK_Vs_PtRec ->ProjectionY("hWm_An_noevo_ZK_Vs_PtRec_pjy4", 4, 4); 
-   hWm_An_noevo_ZK_Vs_PtGen_zoomin ->ProfileX("hWm_An_noevo_ZK_Vs_PtGen_zoomin_pfx"); 
-   hWm_An_noevo_ZK_Vs_PtRec_zoomin ->ProfileX("hWm_An_noevo_ZK_Vs_PtRec_zoomin_pfx"); 
+   hWm_An_noevo_ZK_Vs_PtRec ->ProjectionY("hWm_An_noevo_ZK_Vs_PtRec_pjy4", 4, 4);  
+   hWm_An_noevo_ZK_Vs_PtRec ->ProjectionY("hWm_An_noevo_ZK_Vs_PtRec_pjy5", 5, 5);  
+   hWm_An_noevo_ZK_Vs_PtRec ->ProjectionY("hWm_An_noevo_ZK_Vs_PtRec_pjy6", 6, 6);  
+   hWm_An_noevo_ZK_Vs_PtRec ->ProjectionY("hWm_An_noevo_ZK_Vs_PtRec_pjy7", 7, 7);  
+   hWm_An_noevo_ZK_Vs_PtRec ->ProjectionY("hWm_An_noevo_ZK_Vs_PtRec_pjy8", 8, 8);  
+   hWm_An_noevo_ZK_Vs_PtRec ->ProjectionY("hWm_An_noevo_ZK_Vs_PtRec_pjy9", 9, 9);  
+   hWm_An_noevo_ZK_Vs_PtRec ->ProjectionY("hWm_An_noevo_ZK_Vs_PtRec_pjy10", 10, 10);  
+   hWm_An_noevo_ZK_Vs_PtRec ->ProjectionY("hWm_An_noevo_ZK_Vs_PtRec_pjy11", 11, 11);  
+   hWm_An_noevo_ZK_Vs_PtRec ->ProjectionY("hWm_An_noevo_ZK_Vs_PtRec_pjy12", 12, 12);  
+   hWm_An_noevo_ZK_Vs_PtRec ->ProjectionY("hWm_An_noevo_ZK_Vs_PtRec_pjy13", 13, 13);  
+   hWm_An_noevo_ZK_Vs_PtRec ->ProjectionY("hWm_An_noevo_ZK_Vs_PtRec_pjy14", 14, 14);  
+   hWm_An_noevo_ZK_Vs_PtRec ->ProjectionY("hWm_An_noevo_ZK_Vs_PtRec_pjy15", 15, 15);
 
-
-   //c6c->Divide(1, 2);
 
    c6c->cd();
    hWm_An_noevo_ZK_Vs_PtGen->Draw();
    hWm_An_noevo_ZK_Vs_PtGen->GetYaxis()->SetTitleOffset(1.8);
-   hWm_An_noevo_ZK_Vs_PtGen->SetTitle("Prediction no evolution; W^{-} P_{T}^{GEN}; A_{N}");
-   ////c6c_2->cd();
-   ////hWm_An_noevo_ZK_Vs_PtGen_pfx->Draw();
-   ////hWm_An_noevo_ZK_Vs_PtGen_pfx->GetYaxis()->SetTitleOffset(1.8);
-   ////hWm_An_noevo_ZK_Vs_PtGen_pfx->SetTitle("Prediction no evolution; W^{-} P_{T}^{GEN}; A_{N}");
-   //c6c_3->cd();
-   //hWm_An_noevo_ZK_Vs_PtGen_zoomin->Draw();
-   //hWm_An_noevo_ZK_Vs_PtGen_zoomin->GetYaxis()->SetTitleOffset(2.);
-   //hWm_An_noevo_ZK_Vs_PtGen_zoomin->SetTitle("Prediction no evolution; W^{-} P_{T}^{GEN}; A_{N}");
-   //c6c_4->cd();
-   //hWm_An_noevo_ZK_Vs_PtGen_zoomin_pfx->Draw();
-   //hWm_An_noevo_ZK_Vs_PtGen_zoomin_pfx->GetYaxis()->SetTitleOffset(2.);
-   //hWm_An_noevo_ZK_Vs_PtGen_zoomin_pfx->SetTitle("Prediction no evolution; W^{-} P_{T}^{GEN}; A_{N}");
+   hWm_An_noevo_ZK_Vs_PtGen->SetStats(0);
+   hWm_An_noevo_ZK_Vs_PtGen->SetTitle("Prediction no evolution; W^{-} P_{T}^{GEN}; A_{N};");
 
    c6c->SaveAs(outPath + "/plot_Wm_An_noevo_ZK.png");
    c6c->SaveAs(outPath + "/plot_Wm_An_noevo_ZK.eps");
 
-   TCanvas *c6d   = new TCanvas("c6d", "An prediction no evol.", 500, 500);
-
-   //c6d->Divide(1, 2);
+   TCanvas *c6d   = new TCanvas("c6d", "Wm An prediction no evol.", 500, 500);
 
    c6d->cd();
    hWm_An_noevo_ZK_Vs_PtRec->Draw();
    hWm_An_noevo_ZK_Vs_PtRec->GetYaxis()->SetTitleOffset(1.8);
-   hWm_An_noevo_ZK_Vs_PtRec->SetTitle("Prediction no evolution; W^{-} P_{T}^{REC}; A_{N}");
-   ////c6d_2->cd();
-   ////hWm_An_noevo_ZK_Vs_PtRec_pfx->Draw();
-   ////hWm_An_noevo_ZK_Vs_PtRec_pfx->GetYaxis()->SetTitleOffset(1.8);
-   ////hWm_An_noevo_ZK_Vs_PtRec_pfx->SetTitle("Prediction no evolution; W^{-} P_{T}^{REC}; A_{N}");
-   //c6d_3->cd();
-   //hWm_An_noevo_ZK_Vs_PtRec_zoomin->Draw();
-   //hWm_An_noevo_ZK_Vs_PtRec_zoomin->GetYaxis()->SetTitleOffset(2.);
-   //hWm_An_noevo_ZK_Vs_PtRec_zoomin->SetTitle("Prediction no evolution; W^{-} P_{T}^{REC}; A_{N}");
-   //c6d_4->cd();
-   //hWm_An_noevo_ZK_Vs_PtRec_zoomin_pfx->Draw();
-   //hWm_An_noevo_ZK_Vs_PtRec_zoomin_pfx->GetYaxis()->SetTitleOffset(2.);
-   //hWm_An_noevo_ZK_Vs_PtRec_zoomin_pfx->SetTitle("Prediction inlcudes evolution; W^{-} P_{T}^{REC}; A_{N}");
+   hWm_An_noevo_ZK_Vs_PtRec->SetStats(0);
+   hWm_An_noevo_ZK_Vs_PtRec->SetTitle("Prediction no evolution; W^{-} P_{T}^{REC}; A_{N};");
 
    c6d->SaveAs(outPath + "/plot_Wm_An_noevo_ZK_Ptrec.png");
    c6d->SaveAs(outPath + "/plot_Wm_An_noevo_ZK_Ptrec.eps");
 
+    
+   Print_Projections_evol(outPath); 
+   CalcSyst_evol(outPath); 
+   //Print_Projections_noevo(outPath);
+   //CalcSyst_noevo();
 
-   TCanvas *c7   = new TCanvas("c7", "An prediction no evol.", 1200, 800);
 
-   c7-> Divide(2,2);
-   c7_1->cd();
+   TCanvas *c8a   = new TCanvas("c8a", "Wm An prediction no evol.", 500, 500);
+
+   hWm_An_evol_ZK_Vs_RapGen ->ProjectionY("hWm_An_evol_ZK_Vs_RapGen_pjy1", 1, 1);
+   hWm_An_evol_ZK_Vs_RapGen ->ProjectionY("hWm_An_evol_ZK_Vs_RapGen_pjy2", 2, 2); 
+   hWm_An_evol_ZK_Vs_RapGen ->ProjectionY("hWm_An_evol_ZK_Vs_RapGen_pjy3", 3, 3);  
+   hWm_An_evol_ZK_Vs_RapGen ->ProjectionY("hWm_An_evol_ZK_Vs_RapGen_pjy4", 4, 4);
+
+   hWm_An_evol_ZK_Vs_RapRec ->ProjectionY("hWm_An_evol_ZK_Vs_RapRec_pjy1", 1, 1); 
+   hWm_An_evol_ZK_Vs_RapRec ->ProjectionY("hWm_An_evol_ZK_Vs_RapRec_pjy2", 2, 2); 
+   hWm_An_evol_ZK_Vs_RapRec ->ProjectionY("hWm_An_evol_ZK_Vs_RapRec_pjy3", 3, 3);  
+   hWm_An_evol_ZK_Vs_RapRec ->ProjectionY("hWm_An_evol_ZK_Vs_RapRec_pjy4", 4, 4);
+
+
+   c8a->cd();
+   hWm_An_evol_ZK_Vs_RapGen->Draw();
+   hWm_An_evol_ZK_Vs_RapGen->GetYaxis()->SetTitleOffset(1.8);
+   hWm_An_evol_ZK_Vs_RapGen->SetStats(0);
+   hWm_An_evol_ZK_Vs_RapGen->SetTitle("Prediction with evolution; W^{-} P_{T}^{GEN}; A_{N};");
+
+   c8a->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Rapgen.png");
+   c8a->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Rapgen.eps");
+
+
+   TCanvas *c8b   = new TCanvas("c8b", "Wm An Vs Rapidity prediction with evol.", 500, 500);
+
+   c8b->cd();
+   hWm_An_evol_ZK_Vs_RapRec->Draw();
+   hWm_An_evol_ZK_Vs_RapRec->GetYaxis()->SetTitleOffset(1.8);
+   hWm_An_evol_ZK_Vs_RapRec->SetStats(0);
+   hWm_An_evol_ZK_Vs_RapRec->SetTitle("Prediction with evolution; W^{-} y^{REC}; A_{N};");
+
+   c8b->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Raprec.png");
+   c8b->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Raprec.eps");
+
+
+   Print_Projections_evol_Rapidity(outPath);
+   CalcSyst_evol_Rapidity(outPath); 
+
+}
+
+
+void Print_Projections_evol(TString outPath)
+{
+
+   TCanvas *c7a   = new TCanvas("c7a", "Wm An prediction with evol.", 1200, 800);
+
+   //TF1 *fGaus1 = new TF1("fGaus1", "gaus", 0, 0.1);
+   //TF1 *fGaus2 = new TF1("fGaus2", "gaus", 0, 0.45);
+
+   c7a-> Divide(3,5);
+   c7a_1->cd();
+   hWm_An_evol_ZK_Vs_PtGen_pjy1 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtGen_pjy1 -> SetTitle("PtGen BIN 1: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtGen_pjy1 -> SetFillColor(kYellow); 
+   //hWm_An_evol_ZK_Vs_PtGen_pjy1 -> SetAxisRange(0, 0.1, "X");
+   //hWm_An_evol_ZK_Vs_PtGen_pjy1 -> Fit("fGaus2", "R");
+   hWm_An_evol_ZK_Vs_PtGen_pjy1 -> Draw();
+   c7a_2->cd();
+   hWm_An_evol_ZK_Vs_PtGen_pjy2 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtGen_pjy2 ->SetTitle("PtGen BIN 2: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtGen_pjy2 -> SetFillColor(kYellow); 
+   //hWm_An_evol_ZK_Vs_PtGen_pjy2 -> SetAxisRange(0, 0.1, "X");
+   //hWm_An_evol_ZK_Vs_PtGen_pjy2 -> Fit("fGaus2", "R");
+   hWm_An_evol_ZK_Vs_PtGen_pjy2 -> Draw();
+   c7a_3->cd();
+   hWm_An_evol_ZK_Vs_PtGen_pjy3 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtGen_pjy3 ->SetTitle("PtGen BIN 3: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtGen_pjy3 -> SetFillColor(kYellow); 
+   //hWm_An_evol_ZK_Vs_PtGen_pjy3 -> SetAxisRange(0, 0.1, "X");
+   //hWm_An_evol_ZK_Vs_PtGen_pjy3 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtGen_pjy3 -> Draw();
+   c7a_4->cd();
+   hWm_An_evol_ZK_Vs_PtGen_pjy4 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtGen_pjy4 ->SetTitle("PtGen BIN 4: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtGen_pjy4 -> SetFillColor(kYellow); 
+   //hWm_An_evol_ZK_Vs_PtGen_pjy4 -> SetAxisRange(0, 0.1, "X");
+   //hWm_An_evol_ZK_Vs_PtGen_pjy4 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtGen_pjy4 -> Draw();
+   c7a_5->cd();
+   hWm_An_evol_ZK_Vs_PtGen_pjy5 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtGen_pjy5 ->SetTitle("PtGen BIN 5: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtGen_pjy5 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_PtGen_pjy5 -> SetAxisRange(0, 0.1, "X"); 
+   //hWm_An_evol_ZK_Vs_PtGen_pjy5 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtGen_pjy5 -> Draw();
+   c7a_6->cd();
+   hWm_An_evol_ZK_Vs_PtGen_pjy6 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtGen_pjy6 ->SetTitle("PtGen BIN 6: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtGen_pjy6 -> SetFillColor(kYellow); 
+   //hWm_An_evol_ZK_Vs_PtGen_pjy6 -> SetAxisRange(0, 0.1, "X");
+   //hWm_An_evol_ZK_Vs_PtGen_pjy6 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtGen_pjy6 -> Draw();
+   c7a_7->cd();
+   hWm_An_evol_ZK_Vs_PtGen_pjy7 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtGen_pjy7 ->SetTitle("PtGen BIN 7: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtGen_pjy7 -> SetFillColor(kYellow); 
+   //hWm_An_evol_ZK_Vs_PtGen_pjy7 -> SetAxisRange(0, 0.1, "X");
+   //hWm_An_evol_ZK_Vs_PtGen_pjy7 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtGen_pjy7 -> Draw();
+   c7a_8->cd();
+   hWm_An_evol_ZK_Vs_PtGen_pjy8 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtGen_pjy8 ->SetTitle("PtGen BIN 8: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtGen_pjy8 -> SetFillColor(kYellow); 
+   //hWm_An_evol_ZK_Vs_PtGen_pjy8 -> SetAxisRange(0, 0.1, "X");
+   //hWm_An_evol_ZK_Vs_PtGen_pjy8 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtGen_pjy8 -> Draw();
+   c7a_9->cd();
+   hWm_An_evol_ZK_Vs_PtGen_pjy9 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtGen_pjy9 ->SetTitle("PtGen BIN 9: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtGen_pjy9 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_PtGen_pjy9 -> SetAxisRange(0, 0.1, "X"); 
+   //hWm_An_evol_ZK_Vs_PtGen_pjy9 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtGen_pjy9 -> Draw();
+   c7a_10->cd();
+   hWm_An_evol_ZK_Vs_PtGen_pjy10 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtGen_pjy10 ->SetTitle("PtGen BIN 10: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtGen_pjy10 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_PtGen_pjy10 -> SetAxisRange(0, 0.1, "X"); 
+   //hWm_An_evol_ZK_Vs_PtGen_pjy10 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtGen_pjy10 -> Draw();
+   c7a_11->cd();
+   hWm_An_evol_ZK_Vs_PtGen_pjy11 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtGen_pjy11 ->SetTitle("PtGen BIN 11: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtGen_pjy11 -> SetFillColor(kYellow); 
+   //hWm_An_evol_ZK_Vs_PtGen_pjy11 -> SetAxisRange(0, 0.1, "X"); 
+   //hWm_An_evol_ZK_Vs_PtGen_pjy11 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtGen_pjy11 -> Draw();
+   c7a_12->cd();
+   hWm_An_evol_ZK_Vs_PtGen_pjy12 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtGen_pjy12 ->SetTitle("PtGen BIN 12: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtGen_pjy12 -> SetFillColor(kYellow); 
+   //hWm_An_evol_ZK_Vs_PtGen_pjy12 -> SetAxisRange(0, 0.1, "X"); 
+   //hWm_An_evol_ZK_Vs_PtGen_pjy12 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtGen_pjy12 -> Draw();
+   c7a_13->cd();
+   hWm_An_evol_ZK_Vs_PtGen_pjy13 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtGen_pjy13 ->SetTitle("PtGen BIN 13: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtGen_pjy13 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_PtGen_pjy13 -> SetAxisRange(0, 0.1, "X");  
+   //hWm_An_evol_ZK_Vs_PtGen_pjy13 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtGen_pjy13 -> Draw();
+   c7a_14->cd();
+   hWm_An_evol_ZK_Vs_PtGen_pjy14 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtGen_pjy14 ->SetTitle("PtGen BIN 14: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtGen_pjy14 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_PtGen_pjy14 -> SetAxisRange(0, 0.1, "X");  
+   //hWm_An_evol_ZK_Vs_PtGen_pjy14 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtGen_pjy14 -> Draw();
+   c7a_15->cd();
+   hWm_An_evol_ZK_Vs_PtGen_pjy15 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtGen_pjy15 ->SetTitle("PtGen BIN 15: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtGen_pjy15 -> SetFillColor(kYellow); 
+   //hWm_An_evol_ZK_Vs_PtGen_pjy15 -> SetAxisRange(0, 0.1, "X"); 
+   //hWm_An_evol_ZK_Vs_PtGen_pjy15 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtGen_pjy15 -> Draw();
+
+
+   c7a->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Vs_PtGen_projs.png");
+   c7a->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Vs_PtGen_projs.eps");
+
+
+   TCanvas *c7b   = new TCanvas("c7b", "Wm An prediction with evol.", 1200, 800);
+
+   c7b-> Divide(3,5);
+   c7b_1->cd();
+   hWm_An_evol_ZK_Vs_PtRec_pjy1 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtRec_pjy1 -> SetTitle("PtRec BIN 1: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtRec_pjy1 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_PtRec_pjy1 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_evol_ZK_Vs_PtRec_pjy1 -> Draw(""); 
+   //hWm_An_evol_ZK_Vs_PtRec_pjy1 -> Fit("fGaus1", "R");
+   c7b_2->cd();
+   hWm_An_evol_ZK_Vs_PtRec_pjy2 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtRec_pjy2 -> SetTitle("PtRec BIN 2: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtRec_pjy2 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_PtRec_pjy2 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_evol_ZK_Vs_PtRec_pjy2 -> Draw();
+   //hWm_An_evol_ZK_Vs_PtRec_pjy2 -> Fit("fGaus1", "R");
+   c7b_3->cd();
+   hWm_An_evol_ZK_Vs_PtRec_pjy3 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtRec_pjy3 -> SetTitle("PtRec BIN 3: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtRec_pjy3 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_PtRec_pjy3 -> SetAxisRange(0, 0.1, "X");
+   //hWm_An_evol_ZK_Vs_PtRec_pjy3 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtRec_pjy3 -> Draw();
+   c7b_4->cd();
+   hWm_An_evol_ZK_Vs_PtRec_pjy4 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtRec_pjy4 -> SetTitle("PtRec BIN 4: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtRec_pjy4 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_PtRec_pjy4 -> SetAxisRange(0, 0.1, "X");
+   //hWm_An_evol_ZK_Vs_PtRec_pjy4 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtRec_pjy4 -> Draw();
+   c7b_5->cd();
+   hWm_An_evol_ZK_Vs_PtRec_pjy5 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtRec_pjy5 -> SetTitle("PtRec BIN 5: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtRec_pjy5 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_PtRec_pjy5 -> SetAxisRange(0, 0.1, "X");
+   //hWm_An_evol_ZK_Vs_PtRec_pjy5 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtRec_pjy5 -> Draw();
+   c7b_6->cd();
+   hWm_An_evol_ZK_Vs_PtRec_pjy6 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtRec_pjy6 -> SetTitle("PtRec BIN 6: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtRec_pjy6 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_PtRec_pjy6 -> SetAxisRange(0, 0.1, "X");
+   //hWm_An_evol_ZK_Vs_PtRec_pjy6 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtRec_pjy6 -> Draw();
+   c7b_7->cd();
+   hWm_An_evol_ZK_Vs_PtRec_pjy7 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtRec_pjy7 -> SetTitle("PtRec BIN 7: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtRec_pjy7 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_PtRec_pjy7 -> SetAxisRange(0, 0.1, "X");
+   //hWm_An_evol_ZK_Vs_PtRec_pjy7 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtRec_pjy7 -> Draw();
+   c7b_8->cd();
+   hWm_An_evol_ZK_Vs_PtRec_pjy8 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtRec_pjy8 -> SetTitle("PtRec BIN 8: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtRec_pjy8 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_PtRec_pjy8 -> SetAxisRange(0, 0.1, "X");
+   //hWm_An_evol_ZK_Vs_PtRec_pjy8 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtRec_pjy8 -> Draw();
+   c7b_9->cd();
+   hWm_An_evol_ZK_Vs_PtRec_pjy9 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtRec_pjy9 -> SetTitle("PtRec BIN 9: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtRec_pjy9 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_PtRec_pjy9 -> SetAxisRange(0, 0.1, "X");
+   //hWm_An_evol_ZK_Vs_PtRec_pjy9 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtRec_pjy9 -> Draw();
+   c7b_10->cd();
+   hWm_An_evol_ZK_Vs_PtRec_pjy10 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtRec_pjy10 -> SetTitle("PtRec BIN 10: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtRec_pjy10 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_PtRec_pjy10 -> SetAxisRange(0, 0.1, "X");
+   //hWm_An_evol_ZK_Vs_PtRec_pjy10 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtRec_pjy10 -> Draw();
+   c7b_11->cd();
+   hWm_An_evol_ZK_Vs_PtRec_pjy11 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtRec_pjy11 -> SetTitle("PtRec BIN 11: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtRec_pjy11 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_PtRec_pjy11 -> SetAxisRange(0, 0.1, "X");
+   //hWm_An_evol_ZK_Vs_PtRec_pjy11 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtRec_pjy11 -> Draw();
+   c7b_12->cd();
+   hWm_An_evol_ZK_Vs_PtRec_pjy12 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtRec_pjy12 -> SetTitle("PtRec BIN 12: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtRec_pjy12 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_PtRec_pjy12 -> SetAxisRange(0, 0.1, "X");
+   //hWm_An_evol_ZK_Vs_PtRec_pjy12 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtRec_pjy12 -> Draw();
+   c7b_13->cd();
+   hWm_An_evol_ZK_Vs_PtRec_pjy13 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtRec_pjy13 -> SetTitle("PtRec BIN 13: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtRec_pjy13 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_PtRec_pjy13 -> SetAxisRange(0, 0.1, "X");
+   //hWm_An_evol_ZK_Vs_PtRec_pjy13 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtRec_pjy13 -> Draw();
+   c7b_14->cd();
+   hWm_An_evol_ZK_Vs_PtRec_pjy14 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtRec_pjy14 -> SetTitle("PtRec BIN 14: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtRec_pjy14 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_PtRec_pjy14 -> SetAxisRange(0, 0.1, "X");
+   //hWm_An_evol_ZK_Vs_PtRec_pjy14 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtRec_pjy14 -> Draw();
+   c7b_15->cd();
+   hWm_An_evol_ZK_Vs_PtRec_pjy15 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_PtRec_pjy15 -> SetTitle("PtRec BIN 15: no evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_PtRec_pjy15 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_PtRec_pjy15 -> SetAxisRange(0, 0.1, "X");
+   //hWm_An_evol_ZK_Vs_PtRec_pjy15 -> Fit("fGaus1", "R");
+   hWm_An_evol_ZK_Vs_PtRec_pjy15 -> Draw();
+
+
+   c7b->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Vs_PtRec_projs.png");
+   c7b->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Vs_PtRec_projs.eps");
+}
+
+
+void Print_Projections_noevo(TString outPath)
+{
+
+   TCanvas *c7c   = new TCanvas("c7c", "Wm An prediction no evol.", 1200, 800);
+
+   TF1 *fGaus1 = new TF1("fGaus1", "gaus", 0, 0.1);
+   TF1 *fGaus2 = new TF1("fGaus2", "gaus", 0, 0.45);
+
+   c7c-> Divide(3,5);
+   c7c_1->cd();
    hWm_An_noevo_ZK_Vs_PtGen_pjy1 -> GetXaxis() -> SetTitleOffset(1.2);
    hWm_An_noevo_ZK_Vs_PtGen_pjy1 -> SetTitle("PtGen BIN 1: no evolution; W- A_{N}");
-   hWm_An_noevo_ZK_Vs_PtGen_pjy1 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy1 -> SetFillColor(kYellow); 
+   hWm_An_noevo_ZK_Vs_PtGen_pjy1 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy1 -> Fit("fGaus2", "R");
    hWm_An_noevo_ZK_Vs_PtGen_pjy1 -> Draw();
-   c7_2->cd();
+   c7c_2->cd();
    hWm_An_noevo_ZK_Vs_PtGen_pjy2 -> GetXaxis() -> SetTitleOffset(1.2);
    hWm_An_noevo_ZK_Vs_PtGen_pjy2 ->SetTitle("PtGen BIN 2: no evolution; W- A_{N}");
-   hWm_An_noevo_ZK_Vs_PtGen_pjy2 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy2 -> SetFillColor(kYellow); 
+   hWm_An_noevo_ZK_Vs_PtGen_pjy2 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy2 -> Fit("fGaus2", "R");
    hWm_An_noevo_ZK_Vs_PtGen_pjy2 -> Draw();
-   c7_3->cd();
+   c7c_3->cd();
    hWm_An_noevo_ZK_Vs_PtGen_pjy3 -> GetXaxis() -> SetTitleOffset(1.2);
    hWm_An_noevo_ZK_Vs_PtGen_pjy3 ->SetTitle("PtGen BIN 3: no evolution; W- A_{N}");
-   hWm_An_noevo_ZK_Vs_PtGen_pjy3 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy3 -> SetFillColor(kYellow); 
+   hWm_An_noevo_ZK_Vs_PtGen_pjy3 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy3 -> Fit("fGaus1", "R");
    hWm_An_noevo_ZK_Vs_PtGen_pjy3 -> Draw();
-   c7_4->cd();
+   c7c_4->cd();
    hWm_An_noevo_ZK_Vs_PtGen_pjy4 -> GetXaxis() -> SetTitleOffset(1.2);
    hWm_An_noevo_ZK_Vs_PtGen_pjy4 ->SetTitle("PtGen BIN 4: no evolution; W- A_{N}");
-   hWm_An_noevo_ZK_Vs_PtGen_pjy4 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy4 -> SetFillColor(kYellow); 
+   hWm_An_noevo_ZK_Vs_PtGen_pjy4 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy4 -> Fit("fGaus1", "R");
    hWm_An_noevo_ZK_Vs_PtGen_pjy4 -> Draw();
+   c7c_5->cd();
+   hWm_An_noevo_ZK_Vs_PtGen_pjy5 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy5 ->SetTitle("PtGen BIN 5: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy5 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy5 -> SetAxisRange(0, 0.1, "X"); 
+   hWm_An_noevo_ZK_Vs_PtGen_pjy5 -> Fit("fGaus1", "R");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy5 -> Draw();
+   c7c_6->cd();
+   hWm_An_noevo_ZK_Vs_PtGen_pjy6 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy6 ->SetTitle("PtGen BIN 6: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy6 -> SetFillColor(kYellow); 
+   hWm_An_noevo_ZK_Vs_PtGen_pjy6 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy6 -> Fit("fGaus1", "R");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy6 -> Draw();
+   c7c_7->cd();
+   hWm_An_noevo_ZK_Vs_PtGen_pjy7 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy7 ->SetTitle("PtGen BIN 7: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy7 -> SetFillColor(kYellow); 
+   hWm_An_noevo_ZK_Vs_PtGen_pjy7 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy7 -> Fit("fGaus1", "R");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy7 -> Draw();
+   c7c_8->cd();
+   hWm_An_noevo_ZK_Vs_PtGen_pjy8 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy8 ->SetTitle("PtGen BIN 8: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy8 -> SetFillColor(kYellow); 
+   hWm_An_noevo_ZK_Vs_PtGen_pjy8 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy8 -> Fit("fGaus1", "R");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy8 -> Draw();
+   c7c_9->cd();
+   hWm_An_noevo_ZK_Vs_PtGen_pjy9 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy9 ->SetTitle("PtGen BIN 9: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy9 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy9 -> SetAxisRange(0, 0.1, "X"); 
+   hWm_An_noevo_ZK_Vs_PtGen_pjy9 -> Fit("fGaus1", "R");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy9 -> Draw();
+   c7c_10->cd();
+   hWm_An_noevo_ZK_Vs_PtGen_pjy10 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy10 ->SetTitle("PtGen BIN 10: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy10 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy10 -> SetAxisRange(0, 0.1, "X"); 
+   hWm_An_noevo_ZK_Vs_PtGen_pjy10 -> Fit("fGaus1", "R");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy10 -> Draw();
+   c7c_11->cd();
+   hWm_An_noevo_ZK_Vs_PtGen_pjy11 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy11 ->SetTitle("PtGen BIN 11: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy11 -> SetFillColor(kYellow); 
+   hWm_An_noevo_ZK_Vs_PtGen_pjy11 -> SetAxisRange(0, 0.1, "X"); 
+   hWm_An_noevo_ZK_Vs_PtGen_pjy11 -> Fit("fGaus1", "R");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy11 -> Draw();
+   c7c_12->cd();
+   hWm_An_noevo_ZK_Vs_PtGen_pjy12 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy12 ->SetTitle("PtGen BIN 12: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy12 -> SetFillColor(kYellow); 
+   hWm_An_noevo_ZK_Vs_PtGen_pjy12 -> SetAxisRange(0, 0.1, "X"); 
+   hWm_An_noevo_ZK_Vs_PtGen_pjy12 -> Fit("fGaus1", "R");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy12 -> Draw();
+   c7c_13->cd();
+   hWm_An_noevo_ZK_Vs_PtGen_pjy13 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy13 ->SetTitle("PtGen BIN 13: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy13 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy13 -> SetAxisRange(0, 0.1, "X");  
+   hWm_An_noevo_ZK_Vs_PtGen_pjy13 -> Fit("fGaus1", "R");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy13 -> Draw();
+   c7c_14->cd();
+   hWm_An_noevo_ZK_Vs_PtGen_pjy14 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy14 ->SetTitle("PtGen BIN 14: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy14 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy14 -> SetAxisRange(0, 0.1, "X");  
+   hWm_An_noevo_ZK_Vs_PtGen_pjy14 -> Fit("fGaus1", "R");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy14 -> Draw();
+   c7c_15->cd();
+   hWm_An_noevo_ZK_Vs_PtGen_pjy15 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtGen_pjy15 ->SetTitle("PtGen BIN 15: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy15 -> SetFillColor(kYellow); 
+   hWm_An_noevo_ZK_Vs_PtGen_pjy15 -> SetAxisRange(0, 0.1, "X"); 
+   hWm_An_noevo_ZK_Vs_PtGen_pjy15 -> Fit("fGaus1", "R");
+   hWm_An_noevo_ZK_Vs_PtGen_pjy15 -> Draw();
 
 
-   c7->SaveAs(outPath + "/plot_Wm_An_noevo_ZK_Vs_PtGen_projs.png");
-   c7->SaveAs(outPath + "/plot_Wm_An_noevo_ZK_Vs_PtGen_projs.eps");
+   c7c->SaveAs(outPath + "/plot_Wm_An_noevo_ZK_Vs_PtGen_projs.png");
+   c7c->SaveAs(outPath + "/plot_Wm_An_noevo_ZK_Vs_PtGen_projs.eps");
 
 
-   TCanvas *c7b   = new TCanvas("c7b", "An prediction no evol.", 1200, 800);
+   TCanvas *c7d   = new TCanvas("c7d", "Wm An prediction no evol.", 1200, 800);
 
-   c7b-> Divide(2,2);
-   c7b_1->cd();
+   c7d-> Divide(3,5);
+   c7d_1->cd();
    hWm_An_noevo_ZK_Vs_PtRec_pjy1 -> GetXaxis() -> SetTitleOffset(1.2);
    hWm_An_noevo_ZK_Vs_PtRec_pjy1 -> SetTitle("PtRec BIN 1: no evolution; W- A_{N}");
    hWm_An_noevo_ZK_Vs_PtRec_pjy1 -> SetFillColor(kYellow);
-   hWm_An_noevo_ZK_Vs_PtRec_pjy1 -> Draw();
-   c7b_2->cd();
+   hWm_An_noevo_ZK_Vs_PtRec_pjy1 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy1 -> Draw(""); 
+   hWm_An_noevo_ZK_Vs_PtRec_pjy1 -> Fit("fGaus1", "R");
+   c7d_2->cd();
    hWm_An_noevo_ZK_Vs_PtRec_pjy2 -> GetXaxis() -> SetTitleOffset(1.2);
-   hWm_An_noevo_ZK_Vs_PtRec_pjy2 ->SetTitle("PtRec BIN 2: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy2 -> SetTitle("PtRec BIN 2: no evolution; W- A_{N}");
    hWm_An_noevo_ZK_Vs_PtRec_pjy2 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy2 -> SetAxisRange(0, 0.1, "X");
    hWm_An_noevo_ZK_Vs_PtRec_pjy2 -> Draw();
-   c7b_3->cd();
+   hWm_An_noevo_ZK_Vs_PtRec_pjy2 -> Fit("fGaus1", "R");
+   c7d_3->cd();
    hWm_An_noevo_ZK_Vs_PtRec_pjy3 -> GetXaxis() -> SetTitleOffset(1.2);
-   hWm_An_noevo_ZK_Vs_PtRec_pjy3 ->SetTitle("PtRec BIN 3: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy3 -> SetTitle("PtRec BIN 3: no evolution; W- A_{N}");
    hWm_An_noevo_ZK_Vs_PtRec_pjy3 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy3 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy3 -> Fit("fGaus1", "R");
    hWm_An_noevo_ZK_Vs_PtRec_pjy3 -> Draw();
-   c7b_4->cd();
+   c7d_4->cd();
    hWm_An_noevo_ZK_Vs_PtRec_pjy4 -> GetXaxis() -> SetTitleOffset(1.2);
-   hWm_An_noevo_ZK_Vs_PtRec_pjy4 ->SetTitle("PtRec BIN 4: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy4 -> SetTitle("PtRec BIN 4: no evolution; W- A_{N}");
    hWm_An_noevo_ZK_Vs_PtRec_pjy4 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy4 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy4 -> Fit("fGaus1", "R");
    hWm_An_noevo_ZK_Vs_PtRec_pjy4 -> Draw();
+   c7d_5->cd();
+   hWm_An_noevo_ZK_Vs_PtRec_pjy5 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy5 -> SetTitle("PtRec BIN 5: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy5 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy5 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy5 -> Fit("fGaus1", "R");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy5 -> Draw();
+   c7d_6->cd();
+   hWm_An_noevo_ZK_Vs_PtRec_pjy6 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy6 -> SetTitle("PtRec BIN 6: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy6 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy6 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy6 -> Fit("fGaus1", "R");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy6 -> Draw();
+   c7d_7->cd();
+   hWm_An_noevo_ZK_Vs_PtRec_pjy7 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy7 -> SetTitle("PtRec BIN 7: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy7 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy7 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy7 -> Fit("fGaus1", "R");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy7 -> Draw();
+   c7d_8->cd();
+   hWm_An_noevo_ZK_Vs_PtRec_pjy8 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy8 -> SetTitle("PtRec BIN 8: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy8 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy8 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy8 -> Fit("fGaus1", "R");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy8 -> Draw();
+   c7d_9->cd();
+   hWm_An_noevo_ZK_Vs_PtRec_pjy9 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy9 -> SetTitle("PtRec BIN 9: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy9 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy9 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy9 -> Fit("fGaus1", "R");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy9 -> Draw();
+   c7d_10->cd();
+   hWm_An_noevo_ZK_Vs_PtRec_pjy10 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy10 -> SetTitle("PtRec BIN 10: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy10 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy10 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy10 -> Fit("fGaus1", "R");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy10 -> Draw();
+   c7d_11->cd();
+   hWm_An_noevo_ZK_Vs_PtRec_pjy11 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy11 -> SetTitle("PtRec BIN 11: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy11 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy11 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy11 -> Fit("fGaus1", "R");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy11 -> Draw();
+   c7d_12->cd();
+   hWm_An_noevo_ZK_Vs_PtRec_pjy12 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy12 -> SetTitle("PtRec BIN 12: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy12 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy12 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy12 -> Fit("fGaus1", "R");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy12 -> Draw();
+   c7d_13->cd();
+   hWm_An_noevo_ZK_Vs_PtRec_pjy13 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy13 -> SetTitle("PtRec BIN 13: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy13 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy13 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy13 -> Fit("fGaus1", "R");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy13 -> Draw();
+   c7d_14->cd();
+   hWm_An_noevo_ZK_Vs_PtRec_pjy14 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy14 -> SetTitle("PtRec BIN 14: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy14 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy14 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy14 -> Fit("fGaus1", "R");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy14 -> Draw();
+   c7d_15->cd();
+   hWm_An_noevo_ZK_Vs_PtRec_pjy15 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy15 -> SetTitle("PtRec BIN 15: no evolution; W- A_{N}");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy15 -> SetFillColor(kYellow);
+   hWm_An_noevo_ZK_Vs_PtRec_pjy15 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy15 -> Fit("fGaus1", "R");
+   hWm_An_noevo_ZK_Vs_PtRec_pjy15 -> Draw();
 
 
-   c7b->SaveAs(outPath + "/plot_Wm_An_noevo_ZK_Vs_PtRec_projs.png");
-   c7b->SaveAs(outPath + "/plot_Wm_An_noevo_ZK_Vs_PtRec_projs.eps");
+   c7d->SaveAs(outPath + "/plot_Wm_An_noevo_ZK_Vs_PtRec_projs.png");
+   c7d->SaveAs(outPath + "/plot_Wm_An_noevo_ZK_Vs_PtRec_projs.eps");
+}
+
+
+void CalcSyst_evol(TString outPath)
+{
+   Double_t rms_Gen_evol_pjy1  = hWm_An_evol_ZK_Vs_PtGen_pjy1  -> GetRMS();
+   Double_t rms_Gen_evol_pjy2  = hWm_An_evol_ZK_Vs_PtGen_pjy2  -> GetRMS();
+   Double_t rms_Gen_evol_pjy3  = hWm_An_evol_ZK_Vs_PtGen_pjy3  -> GetRMS();
+   Double_t rms_Gen_evol_pjy4  = hWm_An_evol_ZK_Vs_PtGen_pjy4  -> GetRMS();
+   Double_t rms_Gen_evol_pjy5  = hWm_An_evol_ZK_Vs_PtGen_pjy5  -> GetRMS();
+   Double_t rms_Gen_evol_pjy6  = hWm_An_evol_ZK_Vs_PtGen_pjy6  -> GetRMS();
+   Double_t rms_Gen_evol_pjy7  = hWm_An_evol_ZK_Vs_PtGen_pjy7  -> GetRMS();
+   Double_t rms_Gen_evol_pjy8  = hWm_An_evol_ZK_Vs_PtGen_pjy8  -> GetRMS();
+   Double_t rms_Gen_evol_pjy9  = hWm_An_evol_ZK_Vs_PtGen_pjy9  -> GetRMS();
+   Double_t rms_Gen_evol_pjy10 = hWm_An_evol_ZK_Vs_PtGen_pjy10 -> GetRMS();
+   Double_t rms_Gen_evol_pjy11 = hWm_An_evol_ZK_Vs_PtGen_pjy11 -> GetRMS();
+   Double_t rms_Gen_evol_pjy12 = hWm_An_evol_ZK_Vs_PtGen_pjy12 -> GetRMS();
+   Double_t rms_Gen_evol_pjy13 = hWm_An_evol_ZK_Vs_PtGen_pjy13 -> GetRMS();
+   Double_t rms_Gen_evol_pjy14 = hWm_An_evol_ZK_Vs_PtGen_pjy14 -> GetRMS();
+   Double_t rms_Gen_evol_pjy15 = hWm_An_evol_ZK_Vs_PtGen_pjy15 -> GetRMS();
+   cout << "rms_Gen_evol_pjy1:  " << rms_Gen_evol_pjy1  << endl; 
+   cout << "rms_Gen_evol_pjy2:  " << rms_Gen_evol_pjy2  << endl; 
+   cout << "rms_Gen_evol_pjy3:  " << rms_Gen_evol_pjy3  << endl; 
+   cout << "rms_Gen_evol_pjy4:  " << rms_Gen_evol_pjy4  << endl; 
+   cout << "rms_Gen_evol_pjy5:  " << rms_Gen_evol_pjy5  << endl; 
+   cout << "rms_Gen_evol_pjy6:  " << rms_Gen_evol_pjy6  << endl; 
+   cout << "rms_Gen_evol_pjy7:  " << rms_Gen_evol_pjy7  << endl; 
+   cout << "rms_Gen_evol_pjy8:  " << rms_Gen_evol_pjy8  << endl; 
+   cout << "rms_Gen_evol_pjy9:  " << rms_Gen_evol_pjy9  << endl; 
+   cout << "rms_Gen_evol_pjy10: " << rms_Gen_evol_pjy10 << endl; 
+   cout << "rms_Gen_evol_pjy11: " << rms_Gen_evol_pjy11 << endl; 
+   cout << "rms_Gen_evol_pjy12: " << rms_Gen_evol_pjy12 << endl; 
+   cout << "rms_Gen_evol_pjy13: " << rms_Gen_evol_pjy13 << endl; 
+   cout << "rms_Gen_evol_pjy14: " << rms_Gen_evol_pjy14 << endl;  
+   cout << "rms_Gen_evol_pjy15: " << rms_Gen_evol_pjy15 << endl;
+   Double_t rms_Rec_evol_pjy1  = hWm_An_evol_ZK_Vs_PtRec_pjy1  -> GetRMS();
+   Double_t rms_Rec_evol_pjy2  = hWm_An_evol_ZK_Vs_PtRec_pjy2  -> GetRMS();
+   Double_t rms_Rec_evol_pjy3  = hWm_An_evol_ZK_Vs_PtRec_pjy3  -> GetRMS();
+   Double_t rms_Rec_evol_pjy4  = hWm_An_evol_ZK_Vs_PtRec_pjy4  -> GetRMS();
+   Double_t rms_Rec_evol_pjy5  = hWm_An_evol_ZK_Vs_PtRec_pjy5  -> GetRMS();
+   Double_t rms_Rec_evol_pjy6  = hWm_An_evol_ZK_Vs_PtRec_pjy6  -> GetRMS();
+   Double_t rms_Rec_evol_pjy7  = hWm_An_evol_ZK_Vs_PtRec_pjy7  -> GetRMS();
+   Double_t rms_Rec_evol_pjy8  = hWm_An_evol_ZK_Vs_PtRec_pjy8  -> GetRMS();
+   Double_t rms_Rec_evol_pjy9  = hWm_An_evol_ZK_Vs_PtRec_pjy9  -> GetRMS();
+   Double_t rms_Rec_evol_pjy10 = hWm_An_evol_ZK_Vs_PtRec_pjy10 -> GetRMS();
+   Double_t rms_Rec_evol_pjy11 = hWm_An_evol_ZK_Vs_PtRec_pjy11 -> GetRMS();
+   Double_t rms_Rec_evol_pjy12 = hWm_An_evol_ZK_Vs_PtRec_pjy12 -> GetRMS();
+   Double_t rms_Rec_evol_pjy13 = hWm_An_evol_ZK_Vs_PtRec_pjy13 -> GetRMS();
+   Double_t rms_Rec_evol_pjy14 = hWm_An_evol_ZK_Vs_PtRec_pjy14 -> GetRMS();
+   Double_t rms_Rec_evol_pjy15 = hWm_An_evol_ZK_Vs_PtRec_pjy15 -> GetRMS();
+   cout << "rms_Rec_evol_pjy1:  " << rms_Rec_evol_pjy1  << endl; 
+   cout << "rms_Rec_evol_pjy2:  " << rms_Rec_evol_pjy2  << endl; 
+   cout << "rms_Rec_evol_pjy3:  " << rms_Rec_evol_pjy3  << endl; 
+   cout << "rms_Rec_evol_pjy4:  " << rms_Rec_evol_pjy4  << endl; 
+   cout << "rms_Rec_evol_pjy5:  " << rms_Rec_evol_pjy5  << endl; 
+   cout << "rms_Rec_evol_pjy6:  " << rms_Rec_evol_pjy6  << endl; 
+   cout << "rms_Rec_evol_pjy7:  " << rms_Rec_evol_pjy7  << endl; 
+   cout << "rms_Rec_evol_pjy8:  " << rms_Rec_evol_pjy8  << endl; 
+   cout << "rms_Rec_evol_pjy9:  " << rms_Rec_evol_pjy9  << endl; 
+   cout << "rms_Rec_evol_pjy10: " << rms_Rec_evol_pjy10 << endl; 
+   cout << "rms_Rec_evol_pjy11: " << rms_Rec_evol_pjy11 << endl; 
+   cout << "rms_Rec_evol_pjy12: " << rms_Rec_evol_pjy12 << endl; 
+   cout << "rms_Rec_evol_pjy13: " << rms_Rec_evol_pjy13 << endl; 
+   cout << "rms_Rec_evol_pjy14: " << rms_Rec_evol_pjy14 << endl;  
+   cout << "rms_Rec_evol_pjy15: " << rms_Rec_evol_pjy15 << endl; 
+
+   Double_t diff_rms_evol_pjy1  = rms_Rec_evol_pjy1 - rms_Gen_evol_pjy1;
+   Double_t diff_rms_evol_pjy2  = rms_Rec_evol_pjy2 - rms_Gen_evol_pjy2;
+   Double_t diff_rms_evol_pjy3  = rms_Rec_evol_pjy3 - rms_Gen_evol_pjy3;
+   Double_t diff_rms_evol_pjy4  = rms_Rec_evol_pjy4 - rms_Gen_evol_pjy4;
+   Double_t diff_rms_evol_pjy5  = rms_Rec_evol_pjy5 - rms_Gen_evol_pjy5;
+   Double_t diff_rms_evol_pjy6  = rms_Rec_evol_pjy6 - rms_Gen_evol_pjy6;
+   Double_t diff_rms_evol_pjy7  = rms_Rec_evol_pjy7 - rms_Gen_evol_pjy7;
+   Double_t diff_rms_evol_pjy8  = rms_Rec_evol_pjy8 - rms_Gen_evol_pjy8;
+   Double_t diff_rms_evol_pjy9  = rms_Rec_evol_pjy9 - rms_Gen_evol_pjy9;
+   Double_t diff_rms_evol_pjy10 = rms_Rec_evol_pjy10 - rms_Gen_evol_pjy10;
+   Double_t diff_rms_evol_pjy11 = rms_Rec_evol_pjy11 - rms_Gen_evol_pjy11;
+   Double_t diff_rms_evol_pjy12 = rms_Rec_evol_pjy12 - rms_Gen_evol_pjy12;
+   Double_t diff_rms_evol_pjy13 = rms_Rec_evol_pjy13 - rms_Gen_evol_pjy13;
+   Double_t diff_rms_evol_pjy14 = rms_Rec_evol_pjy14 - rms_Gen_evol_pjy14;
+   Double_t diff_rms_evol_pjy15 = rms_Rec_evol_pjy15 - rms_Gen_evol_pjy15;
+   cout << "diff_rms_evol_pjy1: " << diff_rms_evol_pjy1 << endl; 
+   cout << "diff_rms_evol_pjy2: " << diff_rms_evol_pjy2 << endl; 
+   cout << "diff_rms_evol_pjy3: " << diff_rms_evol_pjy3 << endl; 
+   cout << "diff_rms_evol_pjy4: " << diff_rms_evol_pjy4 << endl; 
+   cout << "diff_rms_evol_pjy5: " << diff_rms_evol_pjy5 << endl; 
+   cout << "diff_rms_evol_pjy6: " << diff_rms_evol_pjy6 << endl; 
+   cout << "diff_rms_evol_pjy7: " << diff_rms_evol_pjy7 << endl; 
+   cout << "diff_rms_evol_pjy8: " << diff_rms_evol_pjy8 << endl; 
+   cout << "diff_rms_evol_pjy9: " << diff_rms_evol_pjy9 << endl; 
+   cout << "diff_rms_evol_pjy10: " << diff_rms_evol_pjy10 << endl; 
+   cout << "diff_rms_evol_pjy11: " << diff_rms_evol_pjy11 << endl; 
+   cout << "diff_rms_evol_pjy12: " << diff_rms_evol_pjy12 << endl; 
+   cout << "diff_rms_evol_pjy13: " << diff_rms_evol_pjy13 << endl; 
+   cout << "diff_rms_evol_pjy14: " << diff_rms_evol_pjy14 << endl; 
+   cout << "diff_rms_evol_pjy15: " << diff_rms_evol_pjy15 << endl; 
+
+   Double_t syst_evol_pjy1  = fabs(diff_rms_evol_pjy1) / rms_Gen_evol_pjy1 /2;
+   Double_t syst_evol_pjy2  = fabs(diff_rms_evol_pjy2) / rms_Gen_evol_pjy2 /2;
+   Double_t syst_evol_pjy3  = fabs(diff_rms_evol_pjy3) / rms_Gen_evol_pjy3 /2;
+   Double_t syst_evol_pjy4  = fabs(diff_rms_evol_pjy4) / rms_Gen_evol_pjy4 /2;
+   Double_t syst_evol_pjy5  = fabs(diff_rms_evol_pjy5) / rms_Gen_evol_pjy5 /2;
+   Double_t syst_evol_pjy6  = fabs(diff_rms_evol_pjy6) / rms_Gen_evol_pjy6 /2;
+   Double_t syst_evol_pjy7  = fabs(diff_rms_evol_pjy7) / rms_Gen_evol_pjy7 /2;
+   Double_t syst_evol_pjy8  = fabs(diff_rms_evol_pjy8) / rms_Gen_evol_pjy8 /2;
+   Double_t syst_evol_pjy9  = fabs(diff_rms_evol_pjy9) / rms_Gen_evol_pjy9 /2;
+   Double_t syst_evol_pjy10 = fabs(diff_rms_evol_pjy10) / rms_Gen_evol_pjy10 /2;
+   Double_t syst_evol_pjy11 = fabs(diff_rms_evol_pjy11) / rms_Gen_evol_pjy11 /2;
+   Double_t syst_evol_pjy12 = fabs(diff_rms_evol_pjy12) / rms_Gen_evol_pjy12 /2;
+   Double_t syst_evol_pjy13 = fabs(diff_rms_evol_pjy13) / rms_Gen_evol_pjy13 /2;
+   Double_t syst_evol_pjy14 = fabs(diff_rms_evol_pjy14) / rms_Gen_evol_pjy14 /2;
+   Double_t syst_evol_pjy15 = fabs(diff_rms_evol_pjy15) / rms_Gen_evol_pjy15 /2; 
+   cout << "syst_evol_pjy1: " << syst_evol_pjy1 << endl;  
+   cout << "syst_evol_pjy2: " << syst_evol_pjy2 << endl;  
+   cout << "syst_evol_pjy3: " << syst_evol_pjy3 << endl;  
+   cout << "syst_evol_pjy4: " << syst_evol_pjy4 << endl;  
+   cout << "syst_evol_pjy5: " << syst_evol_pjy5 << endl;  
+   cout << "syst_evol_pjy6: " << syst_evol_pjy6 << endl;  
+   cout << "syst_evol_pjy7: " << syst_evol_pjy7 << endl;  
+   cout << "syst_evol_pjy8: " << syst_evol_pjy8 << endl;  
+   cout << "syst_evol_pjy9: " << syst_evol_pjy9 << endl;  
+   cout << "syst_evol_pjy10: " << syst_evol_pjy10 << endl;  
+   cout << "syst_evol_pjy11: " << syst_evol_pjy11 << endl;  
+   cout << "syst_evol_pjy12: " << syst_evol_pjy12 << endl;  
+   cout << "syst_evol_pjy13: " << syst_evol_pjy13 << endl;  
+   cout << "syst_evol_pjy14: " << syst_evol_pjy14 << endl;  
+   cout << "syst_evol_pjy15: " << syst_evol_pjy15 << endl; 
+
+   TH1D* hSystematics_evol = new TH1D("hSystematics_evol", "; W P_{T}; systematic uncertainty (%)", 15, 0, 15);
+   hSystematics_evol -> SetBinContent(1, syst_evol_pjy1*100);
+   hSystematics_evol -> SetBinContent(2, syst_evol_pjy2*100);
+   hSystematics_evol -> SetBinContent(3, syst_evol_pjy3*100);
+   hSystematics_evol -> SetBinContent(4, syst_evol_pjy4*100);
+   hSystematics_evol -> SetBinContent(5, syst_evol_pjy5*100);
+   hSystematics_evol -> SetBinContent(6, syst_evol_pjy6*100);
+   hSystematics_evol -> SetBinContent(7, syst_evol_pjy7*100);
+   hSystematics_evol -> SetBinContent(8, syst_evol_pjy8*100);
+   hSystematics_evol -> SetBinContent(9, syst_evol_pjy9*100);
+   hSystematics_evol -> SetBinContent(10, syst_evol_pjy10*100);
+   hSystematics_evol -> SetBinContent(11, syst_evol_pjy11*100);
+   hSystematics_evol -> SetBinContent(12, syst_evol_pjy12*100);
+   hSystematics_evol -> SetBinContent(13, syst_evol_pjy13*100);
+   hSystematics_evol -> SetBinContent(14, syst_evol_pjy14*100);
+   hSystematics_evol -> SetBinContent(15, syst_evol_pjy15*100);
+
+
+   TCanvas *c8   = new TCanvas("c8", "Systematics evol.", 500, 500);
+   c8->cd();
+   hSystematics_evol -> GetYaxis() -> SetTitleOffset(1.5);
+   hSystematics_evol -> SetMarkerStyle(20);
+   hSystematics_evol -> SetMarkerColor(kRed);
+   hSystematics_evol -> SetStats(0);
+   hSystematics_evol -> Draw("P");
+
+   TFile fileSys("histSysPt.root", "recreate"); 
+   hSystematics_evol -> Write(); 
+
+   c8->SaveAs(outPath + "/plot_systematics_evol.png");
+   c8->SaveAs(outPath + "/plot_systematics_evol.eps");
+}
+
+
+void CalcSyst_noevo()
+{
+   Double_t rms_Gen_noevo_pjy1  = hWm_An_noevo_ZK_Vs_PtGen_pjy1  -> GetRMS();
+   Double_t rms_Gen_noevo_pjy2  = hWm_An_noevo_ZK_Vs_PtGen_pjy2  -> GetRMS();
+   Double_t rms_Gen_noevo_pjy3  = hWm_An_noevo_ZK_Vs_PtGen_pjy3  -> GetRMS();
+   Double_t rms_Gen_noevo_pjy4  = hWm_An_noevo_ZK_Vs_PtGen_pjy4  -> GetRMS();
+   Double_t rms_Gen_noevo_pjy5  = hWm_An_noevo_ZK_Vs_PtGen_pjy5  -> GetRMS();
+   Double_t rms_Gen_noevo_pjy6  = hWm_An_noevo_ZK_Vs_PtGen_pjy6  -> GetRMS();
+   Double_t rms_Gen_noevo_pjy7  = hWm_An_noevo_ZK_Vs_PtGen_pjy7  -> GetRMS();
+   Double_t rms_Gen_noevo_pjy8  = hWm_An_noevo_ZK_Vs_PtGen_pjy8  -> GetRMS();
+   Double_t rms_Gen_noevo_pjy9  = hWm_An_noevo_ZK_Vs_PtGen_pjy9  -> GetRMS();
+   Double_t rms_Gen_noevo_pjy10 = hWm_An_noevo_ZK_Vs_PtGen_pjy10 -> GetRMS();
+   Double_t rms_Gen_noevo_pjy11 = hWm_An_noevo_ZK_Vs_PtGen_pjy11 -> GetRMS();
+   Double_t rms_Gen_noevo_pjy12 = hWm_An_noevo_ZK_Vs_PtGen_pjy12 -> GetRMS();
+   Double_t rms_Gen_noevo_pjy13 = hWm_An_noevo_ZK_Vs_PtGen_pjy13 -> GetRMS();
+   Double_t rms_Gen_noevo_pjy14 = hWm_An_noevo_ZK_Vs_PtGen_pjy14 -> GetRMS();
+   Double_t rms_Gen_noevo_pjy15 = hWm_An_noevo_ZK_Vs_PtGen_pjy15 -> GetRMS();
+   cout << "rms_Gen_noevo_pjy1:  " << rms_Gen_noevo_pjy1  << endl; 
+   cout << "rms_Gen_noevo_pjy2:  " << rms_Gen_noevo_pjy2  << endl; 
+   cout << "rms_Gen_noevo_pjy3:  " << rms_Gen_noevo_pjy3  << endl; 
+   cout << "rms_Gen_noevo_pjy4:  " << rms_Gen_noevo_pjy4  << endl; 
+   cout << "rms_Gen_noevo_pjy5:  " << rms_Gen_noevo_pjy5  << endl; 
+   cout << "rms_Gen_noevo_pjy6:  " << rms_Gen_noevo_pjy6  << endl; 
+   cout << "rms_Gen_noevo_pjy7:  " << rms_Gen_noevo_pjy7  << endl; 
+   cout << "rms_Gen_noevo_pjy8:  " << rms_Gen_noevo_pjy8  << endl; 
+   cout << "rms_Gen_noevo_pjy9:  " << rms_Gen_noevo_pjy9  << endl; 
+   cout << "rms_Gen_noevo_pjy10: " << rms_Gen_noevo_pjy10 << endl; 
+   cout << "rms_Gen_noevo_pjy11: " << rms_Gen_noevo_pjy11 << endl; 
+   cout << "rms_Gen_noevo_pjy12: " << rms_Gen_noevo_pjy12 << endl; 
+   cout << "rms_Gen_noevo_pjy13: " << rms_Gen_noevo_pjy13 << endl; 
+   cout << "rms_Gen_noevo_pjy14: " << rms_Gen_noevo_pjy14 << endl;  
+   cout << "rms_Gen_noevo_pjy15: " << rms_Gen_noevo_pjy15 << endl;
+   Double_t rms_Rec_noevo_pjy1  = hWm_An_noevo_ZK_Vs_PtRec_pjy1  -> GetRMS();
+   Double_t rms_Rec_noevo_pjy2  = hWm_An_noevo_ZK_Vs_PtRec_pjy2  -> GetRMS();
+   Double_t rms_Rec_noevo_pjy3  = hWm_An_noevo_ZK_Vs_PtRec_pjy3  -> GetRMS();
+   Double_t rms_Rec_noevo_pjy4  = hWm_An_noevo_ZK_Vs_PtRec_pjy4  -> GetRMS();
+   Double_t rms_Rec_noevo_pjy5  = hWm_An_noevo_ZK_Vs_PtRec_pjy5  -> GetRMS();
+   Double_t rms_Rec_noevo_pjy6  = hWm_An_noevo_ZK_Vs_PtRec_pjy6  -> GetRMS();
+   Double_t rms_Rec_noevo_pjy7  = hWm_An_noevo_ZK_Vs_PtRec_pjy7  -> GetRMS();
+   Double_t rms_Rec_noevo_pjy8  = hWm_An_noevo_ZK_Vs_PtRec_pjy8  -> GetRMS();
+   Double_t rms_Rec_noevo_pjy9  = hWm_An_noevo_ZK_Vs_PtRec_pjy9  -> GetRMS();
+   Double_t rms_Rec_noevo_pjy10 = hWm_An_noevo_ZK_Vs_PtRec_pjy10 -> GetRMS();
+   Double_t rms_Rec_noevo_pjy11 = hWm_An_noevo_ZK_Vs_PtRec_pjy11 -> GetRMS();
+   Double_t rms_Rec_noevo_pjy12 = hWm_An_noevo_ZK_Vs_PtRec_pjy12 -> GetRMS();
+   Double_t rms_Rec_noevo_pjy13 = hWm_An_noevo_ZK_Vs_PtRec_pjy13 -> GetRMS();
+   Double_t rms_Rec_noevo_pjy14 = hWm_An_noevo_ZK_Vs_PtRec_pjy14 -> GetRMS();
+   Double_t rms_Rec_noevo_pjy15 = hWm_An_noevo_ZK_Vs_PtRec_pjy15 -> GetRMS();
+   cout << "rms_Rec_noevo_pjy1:  " << rms_Rec_noevo_pjy1  << endl; 
+   cout << "rms_Rec_noevo_pjy2:  " << rms_Rec_noevo_pjy2  << endl; 
+   cout << "rms_Rec_noevo_pjy3:  " << rms_Rec_noevo_pjy3  << endl; 
+   cout << "rms_Rec_noevo_pjy4:  " << rms_Rec_noevo_pjy4  << endl; 
+   cout << "rms_Rec_noevo_pjy5:  " << rms_Rec_noevo_pjy5  << endl; 
+   cout << "rms_Rec_noevo_pjy6:  " << rms_Rec_noevo_pjy6  << endl; 
+   cout << "rms_Rec_noevo_pjy7:  " << rms_Rec_noevo_pjy7  << endl; 
+   cout << "rms_Rec_noevo_pjy8:  " << rms_Rec_noevo_pjy8  << endl; 
+   cout << "rms_Rec_noevo_pjy9:  " << rms_Rec_noevo_pjy9  << endl; 
+   cout << "rms_Rec_noevo_pjy10: " << rms_Rec_noevo_pjy10 << endl; 
+   cout << "rms_Rec_noevo_pjy11: " << rms_Rec_noevo_pjy11 << endl; 
+   cout << "rms_Rec_noevo_pjy12: " << rms_Rec_noevo_pjy12 << endl; 
+   cout << "rms_Rec_noevo_pjy13: " << rms_Rec_noevo_pjy13 << endl; 
+   cout << "rms_Rec_noevo_pjy14: " << rms_Rec_noevo_pjy14 << endl;  
+   cout << "rms_Rec_noevo_pjy15: " << rms_Rec_noevo_pjy15 << endl; 
+
+   Double_t diff_rms_noevo_pjy1  = rms_Rec_noevo_pjy1 - rms_Gen_noevo_pjy1;
+   Double_t diff_rms_noevo_pjy2  = rms_Rec_noevo_pjy2 - rms_Gen_noevo_pjy2;
+   Double_t diff_rms_noevo_pjy3  = rms_Rec_noevo_pjy3 - rms_Gen_noevo_pjy3;
+   Double_t diff_rms_noevo_pjy4  = rms_Rec_noevo_pjy4 - rms_Gen_noevo_pjy4;
+   Double_t diff_rms_noevo_pjy5  = rms_Rec_noevo_pjy5 - rms_Gen_noevo_pjy5;
+   Double_t diff_rms_noevo_pjy6  = rms_Rec_noevo_pjy6 - rms_Gen_noevo_pjy6;
+   Double_t diff_rms_noevo_pjy7  = rms_Rec_noevo_pjy7 - rms_Gen_noevo_pjy7;
+   Double_t diff_rms_noevo_pjy8  = rms_Rec_noevo_pjy8 - rms_Gen_noevo_pjy8;
+   Double_t diff_rms_noevo_pjy9  = rms_Rec_noevo_pjy9 - rms_Gen_noevo_pjy9;
+   Double_t diff_rms_noevo_pjy10 = rms_Rec_noevo_pjy10 - rms_Gen_noevo_pjy10;
+   Double_t diff_rms_noevo_pjy11 = rms_Rec_noevo_pjy11 - rms_Gen_noevo_pjy11;
+   Double_t diff_rms_noevo_pjy12 = rms_Rec_noevo_pjy12 - rms_Gen_noevo_pjy12;
+   Double_t diff_rms_noevo_pjy13 = rms_Rec_noevo_pjy13 - rms_Gen_noevo_pjy13;
+   Double_t diff_rms_noevo_pjy14 = rms_Rec_noevo_pjy14 - rms_Gen_noevo_pjy14;
+   Double_t diff_rms_noevo_pjy15 = rms_Rec_noevo_pjy15 - rms_Gen_noevo_pjy15;
+   cout << "diff_rms_noevo_pjy1: " << diff_rms_noevo_pjy1 << endl; 
+   cout << "diff_rms_noevo_pjy2: " << diff_rms_noevo_pjy2 << endl; 
+   cout << "diff_rms_noevo_pjy3: " << diff_rms_noevo_pjy3 << endl; 
+   cout << "diff_rms_noevo_pjy4: " << diff_rms_noevo_pjy4 << endl; 
+   cout << "diff_rms_noevo_pjy5: " << diff_rms_noevo_pjy5 << endl; 
+   cout << "diff_rms_noevo_pjy6: " << diff_rms_noevo_pjy6 << endl; 
+   cout << "diff_rms_noevo_pjy7: " << diff_rms_noevo_pjy7 << endl; 
+   cout << "diff_rms_noevo_pjy8: " << diff_rms_noevo_pjy8 << endl; 
+   cout << "diff_rms_noevo_pjy9: " << diff_rms_noevo_pjy9 << endl; 
+   cout << "diff_rms_noevo_pjy10: " << diff_rms_noevo_pjy10 << endl; 
+   cout << "diff_rms_noevo_pjy11: " << diff_rms_noevo_pjy11 << endl; 
+   cout << "diff_rms_noevo_pjy12: " << diff_rms_noevo_pjy12 << endl; 
+   cout << "diff_rms_noevo_pjy13: " << diff_rms_noevo_pjy13 << endl; 
+   cout << "diff_rms_noevo_pjy14: " << diff_rms_noevo_pjy14 << endl; 
+   cout << "diff_rms_noevo_pjy15: " << diff_rms_noevo_pjy15 << endl; 
+
+   Double_t syst_noevo_pjy1  = fabs(diff_rms_noevo_pjy1) / rms_Gen_noevo_pjy1;
+   Double_t syst_noevo_pjy2  = fabs(diff_rms_noevo_pjy2) / rms_Gen_noevo_pjy2;
+   Double_t syst_noevo_pjy3  = fabs(diff_rms_noevo_pjy3) / rms_Gen_noevo_pjy3;
+   Double_t syst_noevo_pjy4  = fabs(diff_rms_noevo_pjy4) / rms_Gen_noevo_pjy4;
+   Double_t syst_noevo_pjy5  = fabs(diff_rms_noevo_pjy5) / rms_Gen_noevo_pjy5;
+   Double_t syst_noevo_pjy6  = fabs(diff_rms_noevo_pjy6) / rms_Gen_noevo_pjy6;
+   Double_t syst_noevo_pjy7  = fabs(diff_rms_noevo_pjy7) / rms_Gen_noevo_pjy7;
+   Double_t syst_noevo_pjy8  = fabs(diff_rms_noevo_pjy8) / rms_Gen_noevo_pjy8;
+   Double_t syst_noevo_pjy9  = fabs(diff_rms_noevo_pjy9) / rms_Gen_noevo_pjy9;
+   Double_t syst_noevo_pjy10 = fabs(diff_rms_noevo_pjy10) / rms_Gen_noevo_pjy10;
+   Double_t syst_noevo_pjy11 = fabs(diff_rms_noevo_pjy11) / rms_Gen_noevo_pjy11;
+   Double_t syst_noevo_pjy12 = fabs(diff_rms_noevo_pjy12) / rms_Gen_noevo_pjy12;
+   Double_t syst_noevo_pjy13 = fabs(diff_rms_noevo_pjy13) / rms_Gen_noevo_pjy13;
+   Double_t syst_noevo_pjy14 = fabs(diff_rms_noevo_pjy14) / rms_Gen_noevo_pjy14;
+   Double_t syst_noevo_pjy15 = fabs(diff_rms_noevo_pjy15) / rms_Gen_noevo_pjy15; 
+   cout << "syst_noevo_pjy1: " << syst_noevo_pjy1 << endl;  
+   cout << "syst_noevo_pjy2: " << syst_noevo_pjy2 << endl;  
+   cout << "syst_noevo_pjy3: " << syst_noevo_pjy3 << endl;  
+   cout << "syst_noevo_pjy4: " << syst_noevo_pjy4 << endl;  
+   cout << "syst_noevo_pjy5: " << syst_noevo_pjy5 << endl;  
+   cout << "syst_noevo_pjy6: " << syst_noevo_pjy6 << endl;  
+   cout << "syst_noevo_pjy7: " << syst_noevo_pjy7 << endl;  
+   cout << "syst_noevo_pjy8: " << syst_noevo_pjy8 << endl;  
+   cout << "syst_noevo_pjy9: " << syst_noevo_pjy9 << endl;  
+   cout << "syst_noevo_pjy10: " << syst_noevo_pjy10 << endl;  
+   cout << "syst_noevo_pjy11: " << syst_noevo_pjy11 << endl;  
+   cout << "syst_noevo_pjy12: " << syst_noevo_pjy12 << endl;  
+   cout << "syst_noevo_pjy13: " << syst_noevo_pjy13 << endl;  
+   cout << "syst_noevo_pjy14: " << syst_noevo_pjy14 << endl;  
+   cout << "syst_noevo_pjy15: " << syst_noevo_pjy15 << endl; 
+}
+
+
+
+void Print_Projections_evol_Rapidity(TString outPath)
+{
+
+   TCanvas *c9a   = new TCanvas("c9a", "Wm An prediction with evol. Vs Rapidity", 800, 800);
+
+   c9a-> Divide(2,2);
+   c9a_1->cd();
+   hWm_An_evol_ZK_Vs_RapGen_pjy1 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_RapGen_pjy1 -> SetTitle("RapGen BIN 1: with evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_RapGen_pjy1 -> SetFillColor(kYellow); 
+   //hWm_An_evol_ZK_Vs_RapGen_pjy1 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_evol_ZK_Vs_RapGen_pjy1 -> Fit("gaus");
+   hWm_An_evol_ZK_Vs_RapGen_pjy1 -> Draw();
+   c9a_2->cd();
+   hWm_An_evol_ZK_Vs_RapGen_pjy2 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_RapGen_pjy2 ->SetTitle("RapGen BIN 2: with evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_RapGen_pjy2 -> SetFillColor(kYellow); 
+   //hWm_An_evol_ZK_Vs_RapGen_pjy2 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_evol_ZK_Vs_RapGen_pjy2 -> Rebin(2);
+   hWm_An_evol_ZK_Vs_RapGen_pjy2 -> Fit("gaus");
+   hWm_An_evol_ZK_Vs_RapGen_pjy2 -> Draw();
+   c9a_3->cd();
+   hWm_An_evol_ZK_Vs_RapGen_pjy3 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_RapGen_pjy3 ->SetTitle("RapGen BIN 3: with evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_RapGen_pjy3 -> SetFillColor(kYellow); 
+   //hWm_An_evol_ZK_Vs_RapGen_pjy3 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_evol_ZK_Vs_RapGen_pjy3 -> Fit("gaus");
+   hWm_An_evol_ZK_Vs_RapGen_pjy3 -> Draw();
+   c9a_4->cd();
+   hWm_An_evol_ZK_Vs_RapGen_pjy4 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_RapGen_pjy4 ->SetTitle("RapGen BIN 4: with evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_RapGen_pjy4 -> SetFillColor(kYellow); 
+   //hWm_An_evol_ZK_Vs_RapGen_pjy4 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_evol_ZK_Vs_RapGen_pjy4 -> Fit("gaus");
+   hWm_An_evol_ZK_Vs_RapGen_pjy4 -> Draw();
+
+
+   c9a->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Vs_RapGen_projs.png");
+   c9a->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Vs_RapGen_projs.eps");
+
+
+   TCanvas *c9b   = new TCanvas("c9b", "Wm An prediction with evol. Vs Rapidity", 800, 800);
+
+   c9b-> Divide(2,2);
+   c9b_1->cd();
+   hWm_An_evol_ZK_Vs_RapRec_pjy1 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_RapRec_pjy1 -> SetTitle("RapRec BIN 1: with evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_RapRec_pjy1 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_RapRec_pjy1 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_evol_ZK_Vs_RapRec_pjy1 -> Fit("gaus", "", 0, 0.015);
+   hWm_An_evol_ZK_Vs_RapRec_pjy1 -> Draw(""); 
+   c9b_2->cd();
+   hWm_An_evol_ZK_Vs_RapRec_pjy2 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_RapRec_pjy2 -> SetTitle("RapRec BIN 2: with evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_RapRec_pjy2 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_RapRec_pjy2 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_evol_ZK_Vs_RapRec_pjy2 -> Rebin(2);
+   hWm_An_evol_ZK_Vs_RapRec_pjy2 -> Fit("gaus");
+   hWm_An_evol_ZK_Vs_RapRec_pjy2 -> Draw();
+   c9b_3->cd();
+   hWm_An_evol_ZK_Vs_RapRec_pjy3 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_RapRec_pjy3 -> SetTitle("RapRec BIN 3: with evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_RapRec_pjy3 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_RapRec_pjy3 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_evol_ZK_Vs_RapRec_pjy3 -> Fit("gaus");
+   hWm_An_evol_ZK_Vs_RapRec_pjy3 -> Draw();
+   c9b_4->cd();
+   hWm_An_evol_ZK_Vs_RapRec_pjy4 -> GetXaxis() -> SetTitleOffset(1.2);
+   hWm_An_evol_ZK_Vs_RapRec_pjy4 -> SetTitle("RapRec BIN 4: with evolution; W- A_{N}");
+   hWm_An_evol_ZK_Vs_RapRec_pjy4 -> SetFillColor(kYellow);
+   //hWm_An_evol_ZK_Vs_RapRec_pjy4 -> SetAxisRange(0, 0.1, "X");
+   hWm_An_evol_ZK_Vs_RapRec_pjy4 -> Fit("gaus");
+   hWm_An_evol_ZK_Vs_RapRec_pjy4 -> Draw();
+
+
+   c9b->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Vs_RapRec_projs.png");
+   c9b->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Vs_RapRec_projs.eps");
+}
+
+
+
+void CalcSyst_evol_Rapidity(TString outPath)
+{
+  /*
+   Double_t rms_Gen_evol_pjy1  = hWm_An_evol_ZK_Vs_RapGen_pjy1  -> GetRMS();
+   Double_t rms_Gen_evol_pjy2  = hWm_An_evol_ZK_Vs_RapGen_pjy2  -> GetRMS();
+   Double_t rms_Gen_evol_pjy3  = hWm_An_evol_ZK_Vs_RapGen_pjy3  -> GetRMS();
+   Double_t rms_Gen_evol_pjy4  = hWm_An_evol_ZK_Vs_RapGen_pjy4  -> GetRMS();
+   cout << "rms_Gen_evol_pjy1:  " << rms_Gen_evol_pjy1  << endl; 
+   cout << "rms_Gen_evol_pjy2:  " << rms_Gen_evol_pjy2  << endl; 
+   cout << "rms_Gen_evol_pjy3:  " << rms_Gen_evol_pjy3  << endl; 
+   cout << "rms_Gen_evol_pjy4:  " << rms_Gen_evol_pjy4  << endl;
+   Double_t rms_Rec_evol_pjy1  = hWm_An_evol_ZK_Vs_RapRec_pjy1  -> GetRMS();
+   Double_t rms_Rec_evol_pjy2  = hWm_An_evol_ZK_Vs_RapRec_pjy2  -> GetRMS();
+   Double_t rms_Rec_evol_pjy3  = hWm_An_evol_ZK_Vs_RapRec_pjy3  -> GetRMS();
+   Double_t rms_Rec_evol_pjy4  = hWm_An_evol_ZK_Vs_RapRec_pjy4  -> GetRMS();
+   cout << "rms_Rec_evol_pjy1:  " << rms_Rec_evol_pjy1  << endl; 
+   cout << "rms_Rec_evol_pjy2:  " << rms_Rec_evol_pjy2  << endl; 
+   cout << "rms_Rec_evol_pjy3:  " << rms_Rec_evol_pjy3  << endl; 
+   cout << "rms_Rec_evol_pjy4:  " << rms_Rec_evol_pjy4  << endl; 
+
+   Double_t diff_rms_evol_pjy1  = rms_Rec_evol_pjy1 - rms_Gen_evol_pjy1;
+   Double_t diff_rms_evol_pjy2  = rms_Rec_evol_pjy2 - rms_Gen_evol_pjy2;
+   Double_t diff_rms_evol_pjy3  = rms_Rec_evol_pjy3 - rms_Gen_evol_pjy3;
+   Double_t diff_rms_evol_pjy4  = rms_Rec_evol_pjy4 - rms_Gen_evol_pjy4;
+   cout << "diff_rms_evol_pjy1: " << diff_rms_evol_pjy1 << endl; 
+   cout << "diff_rms_evol_pjy2: " << diff_rms_evol_pjy2 << endl; 
+   cout << "diff_rms_evol_pjy3: " << diff_rms_evol_pjy3 << endl; 
+   cout << "diff_rms_evol_pjy4: " << diff_rms_evol_pjy4 << endl; 
+
+   Double_t syst_evol_pjy1  = fabs(diff_rms_evol_pjy1) / rms_Gen_evol_pjy1;
+   Double_t syst_evol_pjy2  = fabs(diff_rms_evol_pjy2) / rms_Gen_evol_pjy2;
+   Double_t syst_evol_pjy3  = fabs(diff_rms_evol_pjy3) / rms_Gen_evol_pjy3;
+   Double_t syst_evol_pjy4  = fabs(diff_rms_evol_pjy4) / rms_Gen_evol_pjy4;
+   cout << "syst_evol_pjy1: " << syst_evol_pjy1 << endl;  
+   cout << "syst_evol_pjy2: " << syst_evol_pjy2 << endl;  
+   cout << "syst_evol_pjy3: " << syst_evol_pjy3 << endl;  
+   cout << "syst_evol_pjy4: " << syst_evol_pjy4 << endl; 
+  */ 
+ 
+   TF1 *f1g = hWm_An_evol_ZK_Vs_RapGen_pjy1->GetFunction("gaus");
+   double sigma_Gen_evol_pjy1 = f1g->GetParameter(2);
+   TF1 *f2g = hWm_An_evol_ZK_Vs_RapGen_pjy2->GetFunction("gaus");
+   double sigma_Gen_evol_pjy2 = f2g->GetParameter(2);
+   TF1 *f3g = hWm_An_evol_ZK_Vs_RapGen_pjy3->GetFunction("gaus");
+   double sigma_Gen_evol_pjy3 = f3g->GetParameter(2);
+   TF1 *f4g = hWm_An_evol_ZK_Vs_RapGen_pjy4->GetFunction("gaus");
+   double sigma_Gen_evol_pjy4 = f4g->GetParameter(2);
+   cout << "Rpidity: sigma_Gen_evol_pjy1:  " << sigma_Gen_evol_pjy1  << endl; 
+   cout << "Rpidity: sigma_Gen_evol_pjy2:  " << sigma_Gen_evol_pjy2  << endl; 
+   cout << "Rpidity: sigma_Gen_evol_pjy3:  " << sigma_Gen_evol_pjy3  << endl; 
+   cout << "Rpidity: sigma_Gen_evol_pjy4:  " << sigma_Gen_evol_pjy4  << endl;
+   TF1 *f1r = hWm_An_evol_ZK_Vs_RapRec_pjy1->GetFunction("gaus");
+   double sigma_Rec_evol_pjy1 = f1r->GetParameter(2);
+   TF1 *f2r = hWm_An_evol_ZK_Vs_RapRec_pjy2->GetFunction("gaus");
+   double sigma_Rec_evol_pjy2 = f2r->GetParameter(2);
+   TF1 *f3r = hWm_An_evol_ZK_Vs_RapRec_pjy3->GetFunction("gaus");
+   double sigma_Rec_evol_pjy3 = f3r->GetParameter(2);
+   TF1 *f4r = hWm_An_evol_ZK_Vs_RapRec_pjy4->GetFunction("gaus");
+   double sigma_Rec_evol_pjy4 = f4r->GetParameter(2);
+   cout << "Rpidity: sigma_Rec_evol_pjy1:  " << sigma_Rec_evol_pjy1  << endl; 
+   cout << "Rpidity: sigma_Rec_evol_pjy2:  " << sigma_Rec_evol_pjy2  << endl; 
+   cout << "Rpidity: sigma_Rec_evol_pjy3:  " << sigma_Rec_evol_pjy3  << endl; 
+   cout << "Rpidity: sigma_Rec_evol_pjy4:  " << sigma_Rec_evol_pjy4  << endl; 
+
+   Double_t diff_sigma_evol_pjy1  = sigma_Rec_evol_pjy1 - sigma_Gen_evol_pjy1;
+   Double_t diff_sigma_evol_pjy2  = sigma_Rec_evol_pjy2 - sigma_Gen_evol_pjy2;
+   Double_t diff_sigma_evol_pjy3  = sigma_Rec_evol_pjy3 - sigma_Gen_evol_pjy3;
+   Double_t diff_sigma_evol_pjy4  = sigma_Rec_evol_pjy4 - sigma_Gen_evol_pjy4;
+   cout << "Rpidity: diff_sigma_evol_pjy1: " << diff_sigma_evol_pjy1 << endl; 
+   cout << "Rpidity: diff_sigma_evol_pjy2: " << diff_sigma_evol_pjy2 << endl; 
+   cout << "Rpidity: diff_sigma_evol_pjy3: " << diff_sigma_evol_pjy3 << endl; 
+   cout << "Rpidity: diff_sigma_evol_pjy4: " << diff_sigma_evol_pjy4 << endl; 
+
+   Double_t syst_evol_pjy1  = fabs(diff_sigma_evol_pjy1) / sigma_Gen_evol_pjy1 /2;
+   Double_t syst_evol_pjy2  = fabs(diff_sigma_evol_pjy2) / sigma_Gen_evol_pjy2 /2;
+   Double_t syst_evol_pjy3  = fabs(diff_sigma_evol_pjy3) / sigma_Gen_evol_pjy3 /2;
+   Double_t syst_evol_pjy4  = fabs(diff_sigma_evol_pjy4) / sigma_Gen_evol_pjy4 /2;
+   cout << "Rpidity: syst_evol_pjy1: " << syst_evol_pjy1 << endl;  
+   cout << "Rpidity: syst_evol_pjy2: " << syst_evol_pjy2 << endl;  
+   cout << "Rpidity: syst_evol_pjy3: " << syst_evol_pjy3 << endl;  
+   cout << "Rpidity: syst_evol_pjy4: " << syst_evol_pjy4 << endl; 
+
+   TH1D* hSystematics_evol = new TH1D("hSystematics_evol", "; y; systematic uncertainty (%)", 4, -1., 1.);
+   hSystematics_evol -> SetBinContent(1, syst_evol_pjy1*100);
+   hSystematics_evol -> SetBinContent(2, syst_evol_pjy2*100);
+   hSystematics_evol -> SetBinContent(3, syst_evol_pjy3*100);
+   hSystematics_evol -> SetBinContent(4, syst_evol_pjy4*100);
+
+
+   TCanvas *c10   = new TCanvas("c10", "Systematics evol. Vs Rapidity", 500, 500);
+   c10->cd();
+   hSystematics_evol -> GetYaxis() -> SetTitleOffset(1.5);
+   hSystematics_evol -> SetMarkerStyle(20);
+   hSystematics_evol -> SetMarkerColor(kRed);
+   hSystematics_evol -> SetStats(0);
+   hSystematics_evol -> Draw("P");
+
+   TFile fileSys("histSysRap.root", "recreate"); 
+   hSystematics_evol -> Write(); 
+   //fileSys -> Write(hSystematics_evol);
+
+   c10->SaveAs(outPath + "/plot_systematics_evol_Rap.png");
+   c10->SaveAs(outPath + "/plot_systematics_evol_Rap.eps");
 }
