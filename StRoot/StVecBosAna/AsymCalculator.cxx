@@ -321,11 +321,10 @@ ValErrPair AsymCalculator::CalcAsymSqrtFormula(Double_t A, Double_t B, Double_t 
    Double_t denom = sqrt(A*B) + sqrt(C*D);
 
    if ( denom ) {
-      //XXX:ds need to check the sign
       //asym    = (sqrt(C*D) - sqrt(A*B))/denom;
       //asymErr = sqrt(A*B*(C+D) + C*D*(A+B))/denom/denom;
       asym    = (1/sPolAverage)* (sqrt(C*D) - sqrt(A*B))/denom;
-      asymErr = (1/sPolAverage)* (sqrt(A*B*(C+D) + C*D*(A+B))/denom/denom);
+      asymErr = (1/sPolAverage)* sqrt(A*B*(C+D) + C*D*(A+B))/denom/denom;
    } else {
       asym    =  0;
       asymErr = -1; // set to -1 to indicate invalid result
