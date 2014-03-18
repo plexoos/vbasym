@@ -11,6 +11,7 @@
 #include "utils/H1I.h"
 #include "utils/H1F.h"
 #include "utils/H1D.h"
+#include "utils/H2D.h"
 #include "utils/H2I.h"
 #include "utils/H2F.h"
 
@@ -148,9 +149,12 @@ void MCHContainer::BookHists()
 
    } else if (mMcType == 2) {   // limits for W-
 
+   Double_t xBinsPt[8] = {0, 1, 2, 3, 4, 5, 6, 10};
    o["hAn_evol_ZK"]  = new rh::H1F("hAn_evol_ZK", "; W A_{N}; Events", 20, 0.0, 0.035, "hist GRIDX");
-   o["hAn_evol_ZK_Vs_PtGen"]  = new rh::H2F("hAn_evol_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 15, 0., 15., 50, 0.0, 0.035, "colz LOGZ");
-   o["hAn_evol_ZK_Vs_PtRec"]  = new rh::H2F("hAn_evol_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 15, 0., 15., 50, 0.0, 0.035, "colz LOGZ");
+   //o["hAn_evol_ZK_Vs_PtGen"]  = new rh::H2F("hAn_evol_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 15, 0., 15., 50, 0.0, 0.035, "colz LOGZ");
+   //o["hAn_evol_ZK_Vs_PtRec"]  = new rh::H2F("hAn_evol_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 15, 0., 15., 50, 0.0, 0.035, "colz LOGZ");
+   o["hAn_evol_ZK_Vs_PtGen"]  = new rh::H2D("hAn_evol_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 7, xBinsPt, 50, 0.0, 0.035, "colz LOGZ");
+   o["hAn_evol_ZK_Vs_PtRec"]  = new rh::H2D("hAn_evol_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 7, xBinsPt, 50, 0.0, 0.035, "colz LOGZ");
    o["hAn_evol_ZK_Vs_RapGen"]  = new rh::H2F("hAn_evol_ZK_Vs_RapGen", "; W y^{GEN}; W A_{N}; Events", 4, -1., 1., 50, 0.0, 0.035, "colz LOGZ");
    o["hAn_evol_ZK_Vs_RapRec"]  = new rh::H2F("hAn_evol_ZK_Vs_RapRec", "; W y^{REC}; W A_{N}; Events", 4, -1., 1., 50, 0.0, 0.035, "colz LOGZ");
 
