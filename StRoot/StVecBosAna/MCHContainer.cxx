@@ -433,6 +433,15 @@ void MCHContainer::PostFill()
    hWBosonPz_GoodRecoFraction -> SetMarkerStyle(20);
    hWBosonPz_GoodRecoFraction -> SetStats(0);
 
+   TLine *l10 = new TLine(10,  hWBosonPz_GoodRecoFraction ->GetYaxis()->GetXmin(), 10, hWBosonPz_GoodRecoFraction ->GetYaxis()->GetXmax());
+   l10 -> SetLineColor(kRed);
+   l10 -> SetLineWidth(2);
+   l10 -> SetLineStyle(2);
+   TLine *lm10 = new TLine(-10, hWBosonPz_GoodRecoFraction ->GetYaxis()->GetXmin(), -10, hWBosonPz_GoodRecoFraction ->GetYaxis()->GetXmax());
+   lm10 -> SetLineColor(kRed);
+   lm10 -> SetLineWidth(2);
+   lm10 -> SetLineStyle(2);
+
    for (int i = 1; i <= ybins; ++i) {
      TString histname(basename);
      histname += i;
@@ -454,6 +463,8 @@ void MCHContainer::PostFill()
      hWBosonPz_GoodRecoFraction -> SetBinContent(i, GoodRecoFraction_pjy);
    } // for
 
+   hWBosonPz_GoodRecoFraction -> GetListOfFunctions() -> Add(l10);
+   hWBosonPz_GoodRecoFraction -> GetListOfFunctions() -> Add(lm10);
   
    rh::H2F* hRecoVsGenWBosonPz_OtherSol = (rh::H2F*) o["hRecoVsGenWBosonPz_OtherSol"];
 
