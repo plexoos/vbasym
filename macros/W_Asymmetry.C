@@ -162,7 +162,7 @@ void W_Asymmetry()
    textLumi -> SetNDC(); 
    textLumi -> SetTextFont(32); 
    textLumi -> SetTextSize(0.04);
-   TLatex *textPtLim = new TLatex(0.2, 0.8, "0.5 < P_{T} < 40 GeV");
+   TLatex *textPtLim = new TLatex(0.2, 0.8, "0.5 < P_{T} < 7 GeV");
    textPtLim -> SetNDC(); 
    textPtLim -> SetTextFont(32);
    textPtLim -> SetTextSize(0.04);
@@ -421,7 +421,7 @@ void W_Asymmetry()
   hd_Z0_AsymAmpSqrtVsRap -> Draw("E1");
 
   textSTAR  -> DrawLatex(0.2, 0.3, "STAR p-p 500 GeV - L = 25 pb^{-1}");
-  textPtLim -> DrawLatex(0.2, 0.25, "0 < P_{T} < 40 GeV");
+  textPtLim -> DrawLatex(0.2, 0.25, "0 < P_{T} < 7 GeV");
   textLSys  -> DrawLatex(0.2, 0.2, "Overall pol. syst. = 3.4%");
   //hd_Z0_AsymAmpSqrtVsRap -> GetYaxis() -> SetRangeUser(-1.5, 1.5);
 
