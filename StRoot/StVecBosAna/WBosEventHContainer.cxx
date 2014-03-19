@@ -42,9 +42,13 @@ void WBosEventHContainer::BookHists()
    o["hNeutrinoEta"]      = hist = new TH1I("hNeutrinoEta", "; Neutrino #eta; Events", 20, -2, 2);
    o["hWBosonPt"]         = hist = new TH1I("hWBosonPt", "   ; W Boson P_{T}; Events", 20, 0, 20);
    o["hWBosonPt_zoomin"]         = hist = new TH1I("hWBosonPt_zoomin", "   ; W Boson P_{T}; Events", 20, 0, 10);
+   o["hWBosonPz"]         = hist = new TH1I("hWBosonPz", "   ; W Boson P_{z}; Events", 50, -50, 50);
+   o["hWBosonPz_zoomin"]         = hist = new TH1I("hWBosonPz_zoomin", "   ; W Boson P_{z}; Events", 20, -20, 20);
    o["hWBosonPhi"]        = hist = new TH1I("hWBosonPhi", "  ; W Boson #phi; Events", 16, -M_PI, M_PI);
    o["hWBosonEta"]        = hist = new TH1I("hWBosonEta", "  ; W Boson #eta; Events", 20, -4, 4);
    o["hWBosonRapidity"]   = hist = new TH1I("hWBosonRapidity", "  ; W Boson Rapidity; Events", 20, -4, 4);
+
+   o["hWBosonMassInv"]    = hist = new TH1F("hWBosonMassInv", "; M_{W} (GeV/c^{2}); Events", 20, 70, 110);
 
    o["hJetRecoilPt"]               = hist = new TH1F("hJetRecoilPt", "Recoil from Jets; Jet-based Recoil P_{T}; Events", 40, 0, 40);
    o["hTrackRecoilPt"]             = hist = new TH1F("hTrackRecoilPt", "Recoil from Tracks: TPC+TOW; Track-based Recoil P_{T}; Events;", 40, 0, 40);
@@ -91,9 +95,12 @@ void WBosEventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hNeutrinoEta"])->Fill(event.GetNeutrinoP3().Eta());
    ((TH1*) o["hWBosonPt"])->Fill (event.GetVecBosonP3().Pt());
    ((TH1*) o["hWBosonPt_zoomin"])->Fill (event.GetVecBosonP3().Pt());
+   ((TH1*) o["hWBosonPz"])->Fill (event.GetVecBosonP4().Pz());
+   ((TH1*) o["hWBosonPz_zoomin"])->Fill (event.GetVecBosonP4().Pz());
    ((TH1*) o["hWBosonPhi"])->Fill(event.GetVecBosonP3().Phi());
    ((TH1*) o["hWBosonEta"])->Fill(event.GetVecBosonP3().Eta());
    ((TH1*) o["hWBosonRapidity"])->Fill(event.GetVecBosonP4().Rapidity());
+   ((TH1*) o["hWBosonMassInv"])->Fill(event.GetVecBosonP4().M());
 
    ((TH1*) o["hJetRecoilPt"])->Fill(event.GetJetRecoil().Pt());
    ((TH1*) o["hTrackRecoilPt"])->Fill(event.GetTrackRecoil().Pt());
