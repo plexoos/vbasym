@@ -421,7 +421,7 @@ void W_Asymmetry()
   hd_Z0_AsymAmpSqrtVsRap -> Draw("E1");
 
   textSTAR  -> DrawLatex(0.2, 0.3, "STAR p-p 500 GeV - L = 25 pb^{-1}");
-  textPtLim -> DrawLatex(0.2, 0.25, "0 < P_{T} < 7 GeV");
+  textPtLim -> DrawLatex(0.2, 0.25, "0 < P_{T} < 25 GeV");
   textLSys  -> DrawLatex(0.2, 0.2, "Overall pol. syst. = 3.4%");
   //hd_Z0_AsymAmpSqrtVsRap -> GetYaxis() -> SetRangeUser(-1.5, 1.5);
 
