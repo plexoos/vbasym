@@ -53,10 +53,10 @@ void analysis2011()
    // Load the libraries:
    //gROOT->Macro("/star/u/fazio/offline/users/fazio/vbasym/macros/loadLibs.C");
 
-   TString inPath  = "/star/institutions/bnl_me/fazio/vbana_out/";
-   //TString inPath  = "/star/u/fazio/offline/users/fazio/vbasym/";
-   //TString inPath  = "~/vbasym_results/root_hists/";
-   TString outPath = "~/vbasym_results/plots/";
+   TString inPath     = "/star/institutions/bnl_me/fazio/vbana_out/";
+   TString inPathNew  = "/star/institutions/bnl_me/fazio/stana_out/runlists/";
+   //TString inPath     = "~/vbasym_results/root_hists/";
+   TString outPath    = "~/vbasym_results/plots/4prelim";
 
    //Styles:
    gStyle->SetPadBottomMargin(0.15);
@@ -68,6 +68,7 @@ void analysis2011()
    gStyle->SetMarkerStyle(20);
    gStyle->SetStatX(0.99);
    gStyle->SetOptFit(1);
+   gStyle->SetOptDate(0);
 
 
    float lumiDataTot       = 24.42; // pb-1
@@ -101,6 +102,14 @@ void analysis2011()
    cout << "*****************************************" << endl;
 
    // open histogram files
+   TFile *fileData   = TFile::Open(inPathNew + "run11_pp_transverse/hist/vbana_oldstyle.root");
+   TFile *fileMCWp   = TFile::Open(inPathNew + "run11_mc_Wp2enu.lis/hist/vbana_oldstyle.root");
+   TFile *fileMCWm   = TFile::Open(inPathNew + "run11_mc_Wm2enu.lis/hist/vbana_oldstyle.root");
+   TFile *fileMCQCD  = TFile::Open(inPathNew + "run12_QCD.lis/hist/vbana_oldstyle.root");
+   TFile *fileMCZ    = TFile::Open(inPathNew + "run11_mc_Z02ee.lis/hist/vbana_oldstyle.root");
+   TFile *fileMCWptt = TFile::Open(inPathNew + "run11_mc_Wp2taunu.lis/hist/vbana_oldstyle.root");
+   TFile *fileMCWmtt = TFile::Open(inPathNew + "run11_mc_Wm2taunu.lis/hist/vbana_oldstyle.root");
+   /*
    TFile *fileData   = TFile::Open(inPath + "run11_pp_transverse_-w_--jpm_0.5_--run_11_vbana.root");
    TFile *fileMCWp   = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_vbana.root");
    TFile *fileMCWm   = TFile::Open(inPath + "run11_mc_Wm2enu.lis_-m_-w_--jpm_0.5_vbana.root");
@@ -108,6 +117,7 @@ void analysis2011()
    TFile *fileMCZ    = TFile::Open(inPath + "run11_mc_Z02ee.lis_-m_-w_--jpm_0.5_vbana.root");
    TFile *fileMCWptt = TFile::Open(inPath + "run11_mc_Wp2taunu.lis_-m_-w_--jpm_0.5_vbana.root");
    TFile *fileMCWmtt = TFile::Open(inPath + "run11_mc_Wm2taunu.lis_-m_-w_--jpm_0.5_vbana.root");
+   */
    /*
    TFile *fileData   = TFile::Open(inPath + "vbana_cut05_data_final.root");
    TFile *fileMCWp   = TFile::Open(inPath + "vbana_cut05_mc_wp.root");
@@ -216,7 +226,8 @@ void analysis2011()
    TH1 *hWp_PhiRecoil_vs_PhiWGen  = (TH1 *)fileMCWp->Get("event_mc_pass_wbos/hTrackRecoilPhiVsWBosonPhi");
 
    TH1 *hWp_PtRecoil_vs_PtWGen    = (TH1 *)fileMCWp->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPtVsWBosonPt");
-   TH1 *hWp_PtRecoilCorr_vs_PtWGen    = (TH1 *)fileMCWp->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt");
+   //TH1 *hWp_PtRecoilCorr_vs_PtWGen    = (TH1 *)fileMCWp->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt");
+   TH1 *hWp_PtRecoilCorr_vs_PtWGen    = (TH1 *)fileMCWp->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt_copy");
 
    TH1 *hWp_PhiRecoil_vs_PhiWGen  = (TH1 *)fileMCWp->Get("event_mc_pass_wbos/hTrackRecoilPhiVsWBosonPhi");
 
@@ -285,6 +296,8 @@ void analysis2011()
    //hd_Wp_PtWRecoCorrected->Scale(hd_Wp_PtWReco->Integral()/hd_Wp_PtWRecoCorrected->Integral());
    TH1 *hd_Wp_PtWRecoCorrected          = (TH1*) fileData->Get("W+_event_pass_wbos/hTrackRecoilWithNeutralsPtCorrected");
    TH1 *hd_Wp_PtWRecoCorrected_zoomin   = (TH1*) fileData->Get("W+_event_pass_wbos/hTrackRecoilWithNeutralsPtCorrected_zoomin");
+
+   TH2 *hWp_RecoVsGenLeptonPt           = (TH2*) fileMCWp->Get("event_mc/hRecoVsGenLeptonPt");
 
    /*
    TH1 *hd_Wp_PtWRelativeCorr         = (TH1*) hd_Wp_PtWReco->Clone("hd_Wp_PtWRelativeCorr");
@@ -1611,6 +1624,19 @@ void analysis2011()
    c10bi->Print(outPath + "/plot_10bi.png");
 
 
+   TCanvas *cLeptonPt = new TCanvas("cLeptonPt", "Wp MC sample - Lepton Pt: Reco vs Gen", 500, 500);
+
+   cLeptonPt -> cd();
+   cLeptonPt -> SetLogz(1);
+   hWp_RecoVsGenLeptonPt -> GetYaxis()->SetTitleOffset(1.3);
+   hWp_RecoVsGenLeptonPt -> SetTitle(";Gen.lepton-P_{T} (GeV); Reco. lepton-P_{T} (GeV)");
+   hWp_RecoVsGenLeptonPt -> SetStats(0);
+   hWp_RecoVsGenLeptonPt -> Draw("colz");
+
+   cLeptonPt->Print(outPath + "/plot_RecoVsGenLeptonPt.eps");
+   cLeptonPt->Print(outPath + "/plot_RecoVsGenLeptonPt.png");
+ 
+
    TCanvas *c10c = new TCanvas("c10c", "", 1000, 400);
 
    c10c-> SetTitle("Reco vs Gen");
@@ -1634,7 +1660,7 @@ void analysis2011()
    hWp_PhiRecoil_vs_PhiWGen-> SetStats(0);
    hWp_PhiRecoil_vs_PhiWGen->Draw();
 
-   //c10c->Print(outPath + "/plot_10c.eps");
+   c10c->Print(outPath + "/plot_10c.eps");
    c10c->Print(outPath + "/plot_10c.png");
 
 
