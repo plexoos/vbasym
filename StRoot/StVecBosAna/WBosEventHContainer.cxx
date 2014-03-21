@@ -34,19 +34,19 @@ void WBosEventHContainer::BookHists()
 
    fDir->cd();
 
-   o["hElectronPt"]       = hist = new TH1I("hElectronPt", " ; Electron P_{T}; Events", 20, 15, 55);
+   o["hElectronPt"]       = hist = new TH1I("hElectronPt", "; Electron P_{T}; Events", 20, 15, 55);
    o["hElectronPhi"]      = hist = new TH1I("hElectronPhi", "; Electron #phi; Events", 16, -M_PI, M_PI);
    o["hElectronEta"]      = hist = new TH1I("hElectronEta", "; Electron #eta; Events", 20, -2, 2);
    o["hNeutrinoPt"]       = hist = new TH1I("hNeutrinoPt", " ; Neutrino P_{T}; Events", 20, 15, 55);
    o["hNeutrinoPhi"]      = hist = new TH1I("hNeutrinoPhi", "; Neutrino #phi; Events", 16, -M_PI, M_PI);
    o["hNeutrinoEta"]      = hist = new TH1I("hNeutrinoEta", "; Neutrino #eta; Events", 20, -2, 2);
-   o["hWBosonPt"]         = hist = new TH1I("hWBosonPt", "   ; W Boson P_{T}; Events", 20, 0, 20);
+   o["hWBosonPt"]         = hist = new TH1I("hWBosonPt", "; W Boson P_{T}; Events", 20, 0, 20);
    o["hWBosonPt_zoomin"]         = hist = new TH1I("hWBosonPt_zoomin", "   ; W Boson P_{T}; Events", 20, 0, 10);
-   o["hWBosonPz"]         = hist = new TH1I("hWBosonPz", "   ; W Boson P_{z}; Events", 50, -50, 50);
-   o["hWBosonPz_zoomin"]         = hist = new TH1I("hWBosonPz_zoomin", "   ; W Boson P_{z}; Events", 20, -20, 20);
-   o["hWBosonPhi"]        = hist = new TH1I("hWBosonPhi", "  ; W Boson #phi; Events", 16, -M_PI, M_PI);
-   o["hWBosonEta"]        = hist = new TH1I("hWBosonEta", "  ; W Boson #eta; Events", 20, -4, 4);
-   o["hWBosonRapidity"]   = hist = new TH1I("hWBosonRapidity", "  ; W Boson Rapidity; Events", 20, -4, 4);
+   o["hWBosonPz"]         = hist = new TH1I("hWBosonPz", "; W Boson P_{z}; Events", 30, -60, 60);
+   o["hWBosonPz_zoomin"]         = hist = new TH1I("hWBosonPz_zoomin", "   ; W Boson P_{z}; Events", 10, -20, 20);
+   o["hWBosonPhi"]        = hist = new TH1I("hWBosonPhi", "; W Boson #phi; Events", 16, -M_PI, M_PI);
+   o["hWBosonEta"]        = hist = new TH1I("hWBosonEta", "; W Boson #eta; Events", 20, -4, 4);
+   o["hWBosonRapidity"]   = hist = new TH1I("hWBosonRapidity", "; W Boson Rapidity; Events", 20, -4, 4);
 
    o["hWBosonMassInv"]    = hist = new TH1F("hWBosonMassInv", "; M_{W} (GeV/c^{2}); Events", 20, 70, 110);
 

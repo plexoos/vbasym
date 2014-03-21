@@ -428,19 +428,10 @@ void MCHContainer::PostFill()
    TString basename("hRecoVsGenWBosonPz_FirstSol_pjy");
    Int_t ybins = hRecoVsGenWBosonPz_FirstSol->GetNbinsY();
 
-   o["hWBosonPz_GoodRecoFraction"] = new rh::H1D("hWBosonPz_GoodRecoFraction", "First solution; W-P_{Z} [GeV/c]; Fraction", ybins, hRecoVsGenWBosonPz_FirstSol->GetYaxis()->GetXmin(), hRecoVsGenWBosonPz_FirstSol->GetYaxis()->GetXmax(), "P");
+   o["hWBosonPz_GoodRecoFraction"] = new rh::H1D("hWBosonPz_GoodRecoFraction", "First solution; W-P_{Z} [GeV/c]; Fraction", ybins, hRecoVsGenWBosonPz_FirstSol->GetYaxis()->GetXmin(), hRecoVsGenWBosonPz_FirstSol->GetYaxis()->GetXmax(), "P GRIDX");
    TH1D* hWBosonPz_GoodRecoFraction = (TH1D*) o["hWBosonPz_GoodRecoFraction"]; 
    hWBosonPz_GoodRecoFraction -> SetMarkerStyle(20);
    hWBosonPz_GoodRecoFraction -> SetStats(0);
-
-   TLine *l10 = new TLine(10,  hWBosonPz_GoodRecoFraction ->GetYaxis()->GetXmin(), 10, hWBosonPz_GoodRecoFraction ->GetYaxis()->GetXmax());
-   l10 -> SetLineColor(kRed);
-   l10 -> SetLineWidth(2);
-   l10 -> SetLineStyle(2);
-   TLine *lm10 = new TLine(-10, hWBosonPz_GoodRecoFraction ->GetYaxis()->GetXmin(), -10, hWBosonPz_GoodRecoFraction ->GetYaxis()->GetXmax());
-   lm10 -> SetLineColor(kRed);
-   lm10 -> SetLineWidth(2);
-   lm10 -> SetLineStyle(2);
 
    for (int i = 1; i <= ybins; ++i) {
      TString histname(basename);
@@ -462,6 +453,17 @@ void MCHContainer::PostFill()
      //hRecoVsGenWBosonPz_FirstSol_pjy->Print("all");
      hWBosonPz_GoodRecoFraction -> SetBinContent(i, GoodRecoFraction_pjy);
    } // for
+
+   //TLine *l10 = new TLine(20,  hRecoVsGenWBosonPz_FirstSol->GetYaxis()->GetXmin(), 20, hWBosonPz_GoodRecoFraction ->GetYaxis()->GetXmax());  
+   TLine *l10 = new TLine(20,  0.18, 20, 0.96);
+   l10 -> SetLineColor(kRed);
+   l10 -> SetLineWidth(2);
+   l10 -> SetLineStyle(2);
+   //TLine *lm10 = new TLine(-20, hWBosonPz_GoodRecoFraction ->GetYaxis()->GetXmin(), -20, hWBosonPz_GoodRecoFraction ->GetYaxis()->GetXmax());
+   TLine *lm10 = new TLine(-20, 0.18, -20, 0.96);
+   lm10 -> SetLineColor(kRed);
+   lm10 -> SetLineWidth(2);
+   lm10 -> SetLineStyle(2);
 
    hWBosonPz_GoodRecoFraction -> GetListOfFunctions() -> Add(l10);
    hWBosonPz_GoodRecoFraction -> GetListOfFunctions() -> Add(lm10);
@@ -489,7 +491,7 @@ void MCHContainer::PostFill()
    TString basenameo("hRecoVsGenWBosonPz_OtherSol_pjy");
    Int_t ybinso = hRecoVsGenWBosonPz_OtherSol->GetNbinsY();
 
-   o["hWBosonPz_GoodRecoFraction_OtherSol"] = new rh::H1D("hWBosonPz_GoodRecoFraction_OtherSol", "Other solution; W-P_{Z} [GeV/c]; Fraction", ybinso, hRecoVsGenWBosonPz_OtherSol->GetYaxis()->GetXmin(), hRecoVsGenWBosonPz_OtherSol->GetYaxis()->GetXmax(), "P");
+   o["hWBosonPz_GoodRecoFraction_OtherSol"] = new rh::H1D("hWBosonPz_GoodRecoFraction_OtherSol", "Other solution; W-P_{Z} [GeV/c]; Fraction", ybinso, hRecoVsGenWBosonPz_OtherSol->GetYaxis()->GetXmin(), hRecoVsGenWBosonPz_OtherSol->GetYaxis()->GetXmax(), "P GRIDX");
    TH1D* hWBosonPz_GoodRecoFraction_OtherSol = (TH1D*) o["hWBosonPz_GoodRecoFraction_OtherSol"]; 
    hWBosonPz_GoodRecoFraction_OtherSol -> SetMarkerStyle(20);
    hWBosonPz_GoodRecoFraction_OtherSol -> SetStats(0);
