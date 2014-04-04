@@ -43,15 +43,15 @@ void MCHContainer::BookHists()
    fDir->cd();
 
    o["hResolutionRap"]       = hist = new TH1D("hResolutionRap", "; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
-   hist->SetOption("GRIDX");
+   //hist->SetOption("hist GRIDX");
    o["hResolutionRap_bin1"]  = hist = new TH1D("hResolutionRap_bin1", "bin 1; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
-   hist->SetOption("GRIDX");
+   //hist->SetOption("GRIDX");
    o["hResolutionRap_bin2"]  = hist = new TH1D("hResolutionRap_bin2", "bin 2; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
-   hist->SetOption("GRIDX");
+   //hist->SetOption("hist GRIDX");
    o["hResolutionRap_bin3"]  = hist = new TH1D("hResolutionRap_bin3", "bin 3; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
-   hist->SetOption("GRIDX");
+   //hist->SetOption("hist GRIDX");
    o["hResolutionRap_bin4"]  = hist = new TH1D("hResolutionRap_bin4", "bin 4; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
-   hist->SetOption("GRIDX");
+   //hist->SetOption("hist GRIDX");
 
    o["hRecoVsGenLeptonPhi"] = new rh::H2I("hRecoVsGenLeptonPhi", "; Gen. Lepton #phi; Reco. Lepton #phi", 50, -M_PI, M_PI, 50, -M_PI, M_PI, "colz LOGZ");
    o["hRecoVsGenLeptonPt"]  = new rh::H2I("hRecoVsGenLeptonPt",  "; Gen. Lepton P_{T}, GeV; Reco. Lepton P_{T}, GeV", 50, 10, 60, 50, 10, 60, "colz LOGZ");
@@ -548,8 +548,24 @@ void MCHContainer::PostFill()
 
 
    // Fit the RESOLUTION plots
-   //TH1F* hResolutionRap = (TH1F*) o["hResolutionRap"];
+   TH1D* hResolutionRap_bin1 = (TH1D*) o["hResolutionRap_bin1"];
+   TH1D* hResolutionRap_bin2 = (TH1D*) o["hResolutionRap_bin2"];
+   TH1D* hResolutionRap_bin3 = (TH1D*) o["hResolutionRap_bin3"];
+   TH1D* hResolutionRap_bin4 = (TH1D*) o["hResolutionRap_bin4"];
    //TF1 fitGaus("fitGaus", "gaus", -4, 4);
    //hResolutionRap -> Fit(&fitGaus);
-   //hResolutionRap -> GetListOfFunctions()->Add(hResolutionRap, "same");  
+   hResolutionRap_bin1 -> Fit("gaus");
+   hResolutionRap_bin2 -> Fit("gaus", "","", -3, 3);
+   hResolutionRap_bin3 -> Fit("gaus", "","", -3, 3);
+   hResolutionRap_bin4 -> Fit("gaus");
+   //TF1 *fResRap = hResolutionRap -> GetFunction("gaus");
+   //hResolutionRap -> GetListOfFunctions(fResRap);
+       double sigma_ResoBin1 =  hResolutionRap_bin1 -> GetFunction("gaus") -> GetParameter(2);   
+       double sigma_ResoBin2 =  hResolutionRap_bin2 -> GetFunction("gaus") -> GetParameter(2);     
+       double sigma_ResoBin3 =  hResolutionRap_bin3 -> GetFunction("gaus") -> GetParameter(2);     
+       double sigma_ResoBin4 =  hResolutionRap_bin4 -> GetFunction("gaus") -> GetParameter(2);   
+       cout << "sigma_ResoBin1 = " << sigma_ResoBin1 << endl;   
+       cout << "sigma_ResoBin2 = " << sigma_ResoBin2 << endl;   
+       cout << "sigma_ResoBin3 = " << sigma_ResoBin3 << endl;   
+       cout << "sigma_ResoBin4 = " << sigma_ResoBin4 << endl;  
 }
