@@ -35,6 +35,7 @@ public:
    TVector3     GetVecBosonP3FirstSolution() const;
    TVector3     GetVecBosonP3OtherSolution() const;
    TLorentzVector GetVecBosonP4() const;
+   TLorentzVector GetVecBosonP4OtherSolution() const;
    void         PredictionAnEvol(int McType);
    void         PredictionAn(int McType);
    virtual void Process();
@@ -45,6 +46,8 @@ public:
    bool         PassedCutWBos(float minElePt=sMinElectronPtLight) const;
    bool         PassedCutWBosPlus(float minElePt=sMinElectronPtLight) const;
    bool         PassedCutWBosMinus(float minElePt=sMinElectronPtLight) const;
+   bool         PassedCutWPlusAn(float minElePt=sMinElectronPtLight) const;
+   bool         PassedCutWMinusAn(float minElePt=sMinElectronPtLight) const;
    bool         PassedCutQcdBkg(float minElePt=sMinElectronPtLight) const;
    //Double_t     An_evol_ZK;
 

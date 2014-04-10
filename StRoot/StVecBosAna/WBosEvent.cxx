@@ -80,6 +80,12 @@ TLorentzVector WBosEvent::GetVecBosonP4() const
    return wBosonP4;
 }
 
+TLorentzVector WBosEvent::GetVecBosonP4OtherSolution() const
+{
+   TLorentzVector wBosonP4OtherSolution;
+   wBosonP4OtherSolution.SetVectM(GetVecBosonP3OtherSolution(), mWBosMass);
+   return wBosonP4OtherSolution;
+}
 
 /**
  * The primary method to identify and reconstruct the event with a W boson.
@@ -176,6 +182,16 @@ bool WBosEvent::PassedCutWBosPlus(float minElePt) const
 bool WBosEvent::PassedCutWBosMinus(float minElePt) const
 {
    return PassedCutWBos(minElePt) && GetElectronTrack().GetChargeSign() < 0;
+}
+
+bool WBosEvent::PassedCutWPlusAn(float minElePt) const
+{
+   return PassedCutWBosPlus(minElePt) && GetVecBosonP3().Pt() <= 7;
+}
+
+bool WBosEvent::PassedCutWMinusAn(float minElePt) const
+{
+   return PassedCutWBosMinus(minElePt) && GetVecBosonP3().Pt() <= 7;
 }
 
 
