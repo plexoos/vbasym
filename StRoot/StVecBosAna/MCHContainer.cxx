@@ -1,5 +1,6 @@
 #include "MCHContainer.h"
 
+#include "TNtuple.h"
 #include "TF1.h"
 #include "TProfile.h"
 #include "TText.h"
@@ -45,13 +46,9 @@ void MCHContainer::BookHists()
    o["hResolutionRap"]       = hist = new TH1D("hResolutionRap", "; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
    //hist->SetOption("hist GRIDX");
    o["hResolutionRap_bin1"]  = hist = new TH1D("hResolutionRap_bin1", "bin 1; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
-   //hist->SetOption("GRIDX");
    o["hResolutionRap_bin2"]  = hist = new TH1D("hResolutionRap_bin2", "bin 2; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
-   //hist->SetOption("hist GRIDX");
    o["hResolutionRap_bin3"]  = hist = new TH1D("hResolutionRap_bin3", "bin 3; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
-   //hist->SetOption("hist GRIDX");
    o["hResolutionRap_bin4"]  = hist = new TH1D("hResolutionRap_bin4", "bin 4; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
-   //hist->SetOption("hist GRIDX");
 
    o["hRecoVsGenLeptonPhi"] = new rh::H2I("hRecoVsGenLeptonPhi", "; Gen. Lepton #phi; Reco. Lepton #phi", 50, -M_PI, M_PI, 50, -M_PI, M_PI, "colz LOGZ");
    o["hRecoVsGenLeptonPt"]  = new rh::H2I("hRecoVsGenLeptonPt",  "; Gen. Lepton P_{T}, GeV; Reco. Lepton P_{T}, GeV", 50, 10, 60, 50, 10, 60, "colz LOGZ");
@@ -162,8 +159,30 @@ void MCHContainer::BookHists()
 
    } else if (mMcType == 2) {   // limits for W-
 
-   Double_t xBinsPt[8]  = {0, 1, 2, 3, 4, 5, 6, 10};
-   Double_t xBinsRap[5] = {-0.6, -0.2, 0, 0.2, 0.6};
+   Double_t xBinsPt[8]    = {0, 1, 2, 3, 4, 5, 6, 10};
+
+   // Define the W-rapidity binning
+   //Double_t xBinsRap[5]   = {-0.6, -0.25, 0, 0.25, 0.6};
+   if (RapBins == 4) {
+     xBinsRap[0] = -0.6;
+     xBinsRap[1] = -0.25;
+     xBinsRap[2] = 0;
+     xBinsRap[3] = 0.25;
+     xBinsRap[4] = 0.6;
+   } else if (RapBins == 3){
+     xBinsRap[0] = -0.6;
+     xBinsRap[1] = -0.2;
+     xBinsRap[2] = 0.2;
+     xBinsRap[3] = 0.6;
+     Double_t binvar = 0.1;
+     for (int i=0; i <= RapBins; ++i) {
+       xBinsRapPR[i] = xBinsRap[i] + binvar;
+       xBinsRapMR[i] = xBinsRap[i] - binvar;
+     }
+   }
+
+   //Double_t aPR_bin1 = xBinsRap[0]+ResoRap[0];
+
    o["hAn_evol_ZK"]  = new rh::H1F("hAn_evol_ZK", "; W A_{N}; Events", 20, 0.0, 0.035, "hist GRIDX");
    //o["hAn_evol_ZK_Vs_PtGen"]  = new rh::H2F("hAn_evol_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 15, 0., 15., 50, 0.0, 0.035, "colz LOGZ");
    //o["hAn_evol_ZK_Vs_PtRec"]  = new rh::H2F("hAn_evol_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 15, 0., 15., 50, 0.0, 0.035, "colz LOGZ");
@@ -171,8 +190,11 @@ void MCHContainer::BookHists()
    o["hAn_evol_ZK_Vs_PtRec"]  = new rh::H2D("hAn_evol_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 7, xBinsPt, 50, 0.0, 0.035, "colz LOGZ");
    //o["hAn_evol_ZK_Vs_RapGen"]  = new rh::H2F("hAn_evol_ZK_Vs_RapGen", "; W y^{GEN}; W A_{N}; Events", 4, -1., 1., 50, 0.0, 0.035, "colz LOGZ");
    //o["hAn_evol_ZK_Vs_RapRec"]  = new rh::H2F("hAn_evol_ZK_Vs_RapRec", "; W y^{REC}; W A_{N}; Events", 4, -1., 1., 50, 0.0, 0.035, "colz LOGZ");
-   o["hAn_evol_ZK_Vs_RapGen"]  = new rh::H2D("hAn_evol_ZK_Vs_RapGen", "; W y^{GEN}; W A_{N}; Events", 4, xBinsRap, 50, 0.0, 0.035, "colz LOGZ");
-   o["hAn_evol_ZK_Vs_RapRec"]  = new rh::H2D("hAn_evol_ZK_Vs_RapRec", "; W y^{REC}; W A_{N}; Events", 4, xBinsRap, 50, 0.0, 0.035, "colz LOGZ");
+   o["hAn_evol_ZK_Vs_RapGen"]  = new rh::H2D("hAn_evol_ZK_Vs_RapGen", "; W y^{GEN}; W A_{N}; Events", RapBins, xBinsRap, 50, 0.0, 0.035, "colz LOGZ");
+   o["hAn_evol_ZK_Vs_RapRec"]  = new rh::H2D("hAn_evol_ZK_Vs_RapRec", "; W y^{REC}; W A_{N}; Events", RapBins, xBinsRap, 50, 0.0, 0.035, "colz LOGZ");
+
+   o["hAn_evol_ZK_Vs_RapRecPR"]  = new rh::H2D("hAn_evol_ZK_Vs_RapRecPR", "; W y^{REC}; W A_{N}; Events", RapBins, xBinsRapPR, 50, 0.0, 0.035, "colz LOGZ");
+   o["hAn_evol_ZK_Vs_RapRecMR"]  = new rh::H2D("hAn_evol_ZK_Vs_RapRecMR", "; W y^{REC}; W A_{N}; Events", RapBins, xBinsRapMR, 50, 0.0, 0.035, "colz LOGZ");
 
    o["hAn_noevo_ZK"]  = new rh::H1F("hAn_noevo_ZK", "; W A_{N}; Events", 20, 0., 0.45, "hist GRIDX");
    o["hAn_noevo_ZK_Vs_PtGen"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 15, 0., 15., 100, 0., 0.45, "colz LOGZ");
@@ -183,6 +205,10 @@ void MCHContainer::BookHists()
    o["hAn_noevo_ZK_Vs_PtRec_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtRec_zoomin", "; W P_{T}^{REC}; W A_{N}; Events", 8, 2., 15., 40, 0., 0.03, "colz LOGZ");
    //o["hAn_noevo_ZK_Vs_RapGen_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_RapGen_zoomin", "; W y^{GEN}; W A_{N}; Events", 8, 2., 15., 40, 0., 0.03, "colz LOGZ");
    //o["hAn_noevo_ZK_Vs_RapRec_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_RapRec_zoomin", "; W y^{REC}; W A_{N}; Events", 8, 2., 15., 40, 0., 0.03, "colz LOGZ");
+
+   //TNtuple *ntAnEvolution = new TNtuple("ntAnEvolution","A_N prediction with evolution","Wy_gen:Wy_rec:An_evol");
+   o["ntAnEvolution"] = new TNtuple("ntAnEvolution","A_N prediction with evolution","Wy_gen:Wy_rec:An_evol");
+
    } 
 
 }
@@ -293,20 +319,63 @@ void MCHContainer::Fill(ProtoEvent &ev)
      }
 
      if (event.GetVecBosonP4().Rapidity() ) {
+
+	Wy_gen  = mcEvent->mP4WBoson.Rapidity();
+        Wy_rec  = event.GetVecBosonP4().Rapidity();
+	An_evol = event.An_evol_ZK;
+        ((TNtuple*) o["ntAnEvolution"]) ->Fill(Wy_gen, Wy_rec, An_evol);
+
         ((TH2*) o["hAn_evol_ZK_Vs_RapGen"])           ->Fill(mcEvent->mP4WBoson.Rapidity(), event.An_evol_ZK);
-        ((TH2*) o["hAn_evol_ZK_Vs_RapRec"])           ->Fill(event.GetVecBosonP4().Rapidity(), event.An_evol_ZK);
+
+        //Double_t xBinsRap[5] = {-0.6, -0.25, 0, 0.25, 0.6};
+
+        Double_t RapReco = event.GetVecBosonP4().Rapidity();
+	/*
+        Double_t ResoRap[4]    = {0.67, 1.50, 1.43, 0.65}; // vector containing the hard coded rapidity resolution values in each of the rapidity bins as coming from the gaussian fits 
+	Double_t RapRecoPlusReso;
+	Double_t RapRecoMinusReso;
+        if      (RapReco >= xBinsRap[0] && RapReco < xBinsRap[1]) {
+	  RapRecoPlusReso  = RapReco + fabs(RapReco*ResoRap[0]);
+	  RapRecoMinusReso = RapReco - fabs(RapReco*ResoRap[0]); 
+	} else if (RapReco >= xBinsRap[1] && RapReco < xBinsRap[2]) { 
+	  RapRecoPlusReso  = RapReco + fabs(RapReco*ResoRap[1]);
+	  RapRecoMinusReso = RapReco - fabs(RapReco*ResoRap[1]); 
+        } else if (RapReco >= xBinsRap[2] && RapReco < xBinsRap[3]) { 
+	  RapRecoPlusReso  = RapReco + fabs(RapReco*ResoRap[2]);
+	  RapRecoMinusReso = RapReco - fabs(RapReco*ResoRap[2]); 
+        } else if (RapReco >= xBinsRap[3] && RapReco < xBinsRap[4]) {
+	  RapRecoPlusReso  = RapReco + fabs(RapReco*ResoRap[3]);
+	  RapRecoMinusReso = RapReco - fabs(RapReco*ResoRap[3]); 
+	}
+	*/
+
+        //((TH2*) o["hAn_evol_ZK_Vs_RapRec"])           ->Fill(event.GetVecBosonP4().Rapidity(), event.An_evol_ZK);
+        ((TH2*) o["hAn_evol_ZK_Vs_RapRec"])           ->Fill(RapReco, event.An_evol_ZK);
+        ((TH2*) o["hAn_evol_ZK_Vs_RapRecPR"])         ->Fill(RapReco, event.An_evol_ZK);
+        ((TH2*) o["hAn_evol_ZK_Vs_RapRecMR"])         ->Fill(RapReco, event.An_evol_ZK);
         ((TH2*) o["hRecoVsGenWBosonRap"])             ->Fill(mcEvent->mP4WBoson.Rapidity(),   event.GetVecBosonP4().Rapidity());
         ((TH1*) o["hResolutionRap"])                  ->Fill((mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity())/mcEvent->mP4WBoson.Rapidity());
 
-        Double_t xBinsRap[5] = {-0.6, -0.2, 0, 0.2, 0.6};
-        if (mcEvent->mP4WBoson.Rapidity()>= xBinsRap[0] && mcEvent->mP4WBoson.Rapidity() < xBinsRap[1]) {
-           ((TH1*) o["hResolutionRap_bin1"])   ->Fill((mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity())/mcEvent->mP4WBoson.Rapidity());
-	} else if (mcEvent->mP4WBoson.Rapidity()>= xBinsRap[1] && mcEvent->mP4WBoson.Rapidity() < xBinsRap[2]) {
-           ((TH1*) o["hResolutionRap_bin2"])   ->Fill((mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity())/mcEvent->mP4WBoson.Rapidity());
-	} else if (mcEvent->mP4WBoson.Rapidity()>= xBinsRap[2] && mcEvent->mP4WBoson.Rapidity() < xBinsRap[3]) {
-           ((TH1*) o["hResolutionRap_bin3"])   ->Fill((mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity())/mcEvent->mP4WBoson.Rapidity());
-	} else if (mcEvent->mP4WBoson.Rapidity()>= xBinsRap[3] && mcEvent->mP4WBoson.Rapidity() < xBinsRap[4]) {
-           ((TH1*) o["hResolutionRap_bin4"])   ->Fill((mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity())/mcEvent->mP4WBoson.Rapidity());
+	// Calculate the rapidity resolution in each of the rapidity bins we use for A_N
+        Double_t WRap = mcEvent->mP4WBoson.Rapidity();
+        if (RapBins == 4) {
+          if (WRap >= xBinsRap[0] && WRap < xBinsRap[1]) {
+             ((TH1*) o["hResolutionRap_bin1"])   ->Fill((mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity())/mcEvent->mP4WBoson.Rapidity());
+      	  } else if (WRap >= xBinsRap[1] && WRap < xBinsRap[2]) {
+             ((TH1*) o["hResolutionRap_bin2"])   ->Fill((mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity())/mcEvent->mP4WBoson.Rapidity());
+	  } else if (WRap >= xBinsRap[2] && WRap < xBinsRap[3]) {
+             ((TH1*) o["hResolutionRap_bin3"])   ->Fill((mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity())/mcEvent->mP4WBoson.Rapidity());
+ 	  } else if (WRap >= xBinsRap[3] && WRap < xBinsRap[4]) {
+             ((TH1*) o["hResolutionRap_bin4"])   ->Fill((mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity())/mcEvent->mP4WBoson.Rapidity());
+	  }
+	} else if (RapBins == 3) {
+          if (WRap >= xBinsRap[0] && WRap < xBinsRap[1]) {
+             ((TH1*) o["hResolutionRap_bin1"])   ->Fill((mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity())/mcEvent->mP4WBoson.Rapidity());
+      	  } else if (WRap >= xBinsRap[1] && WRap < xBinsRap[2]) {
+             ((TH1*) o["hResolutionRap_bin2"])   ->Fill((mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity())/mcEvent->mP4WBoson.Rapidity());
+	  } else if (WRap >= xBinsRap[2] && WRap < xBinsRap[3]) {
+             ((TH1*) o["hResolutionRap_bin3"])   ->Fill((mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity())/mcEvent->mP4WBoson.Rapidity());
+ 	  }
 	}
      }
    }
@@ -546,7 +615,7 @@ void MCHContainer::PostFill()
      hWBosonPz_GoodRecoFraction_OtherSol -> SetBinContent(i, GoodRecoFraction_pjy);
    } // for
 
-
+ 
    // Fit the RESOLUTION plots
    TH1D* hResolutionRap_bin1 = (TH1D*) o["hResolutionRap_bin1"];
    TH1D* hResolutionRap_bin2 = (TH1D*) o["hResolutionRap_bin2"];
@@ -560,12 +629,105 @@ void MCHContainer::PostFill()
    hResolutionRap_bin4 -> Fit("gaus");
    //TF1 *fResRap = hResolutionRap -> GetFunction("gaus");
    //hResolutionRap -> GetListOfFunctions(fResRap);
-       double sigma_ResoBin1 =  hResolutionRap_bin1 -> GetFunction("gaus") -> GetParameter(2);   
-       double sigma_ResoBin2 =  hResolutionRap_bin2 -> GetFunction("gaus") -> GetParameter(2);     
-       double sigma_ResoBin3 =  hResolutionRap_bin3 -> GetFunction("gaus") -> GetParameter(2);     
-       double sigma_ResoBin4 =  hResolutionRap_bin4 -> GetFunction("gaus") -> GetParameter(2);   
-       cout << "sigma_ResoBin1 = " << sigma_ResoBin1 << endl;   
-       cout << "sigma_ResoBin2 = " << sigma_ResoBin2 << endl;   
-       cout << "sigma_ResoBin3 = " << sigma_ResoBin3 << endl;   
-       cout << "sigma_ResoBin4 = " << sigma_ResoBin4 << endl;  
+   double sigma_ResoBin1 =  hResolutionRap_bin1 -> GetFunction("gaus") -> GetParameter(2);   
+   double sigma_ResoBin2 =  hResolutionRap_bin2 -> GetFunction("gaus") -> GetParameter(2);      
+   double sigma_ResoBin3 =  hResolutionRap_bin3 -> GetFunction("gaus") -> GetParameter(2);     
+   double sigma_ResoBin4 =  hResolutionRap_bin4 -> GetFunction("gaus") -> GetParameter(2);   
+   cout << "sigma_ResoBin1 = " << sigma_ResoBin1 << endl;   
+   cout << "sigma_ResoBin2 = " << sigma_ResoBin2 << endl;   
+   cout << "sigma_ResoBin3 = " << sigma_ResoBin3 << endl;   
+   cout << "sigma_ResoBin4 = " << sigma_ResoBin4 << endl;
+
+
+   // Calculate the survival probability per Rapidity bin *****************************
+   TNtuple* ntAnEvolution = (TNtuple*) o["ntAnEvolution"];
+   Double_t xBinUpper = -0.2;
+
+   o["hWy_RecVsGen"] = new TH2D("hWy_RecVsGen", "; W Rapidity Gen; W Rapidity Rec", RapBins, xBinsRap, RapBins, xBinsRap);
+   TH2D* hWy_RecVsGen = (TH2D*) o["hWy_RecVsGen"];
+   hWy_RecVsGen -> SetOption("colz");
+
+   o["hWy_rec_gbin1"] = new TH1D("hWy_rec_gbin1", "Generated bin 1; W Rapidity Rec; Events", 30, -1.5, 1.5);
+   TH1D* hWy_rec_gbin1 = (TH1D*) o["hWy_rec_gbin1"];
+   o["hWy_rec_gbin2"] = new TH1D("hWy_rec_gbin2", "Generated bin 2; W Rapidity Rec; Events", 30, -1.5, 1.5);
+   TH1D* hWy_rec_gbin2 = (TH1D*) o["hWy_rec_gbin2"];
+
+   ntAnEvolution -> Project("hWy_rec_gbin1", "Wy_rec", "Wy_gen > -0.6 && Wy_gen < -0.2"); 
+
+   ntAnEvolution -> Project("hWy_rec_gbin2", "Wy_rec", "Wy_gen > -0.2 && Wy_gen < 0."); 
+
+   ntAnEvolution -> Project("hWy_RecVsGen", "Wy_rec:Wy_gen"); 
+       
+   for (int i = 1; i <= RapBins; ++i) {
+     Double_t gbin = hWy_RecVsGen -> Integral(i, i, i, i);
+     Double_t col  = hWy_RecVsGen -> Integral(i, i, 0, 5); //includes under and over-flows events
+     cout << "gbin =" << gbin << endl;
+     cout << "col ="  << col  << endl;
+     cout << "survival probability =" << gbin/col << endl;  
+   }
+   //**************  END SURVIVAL PROBABILITY CALC. ***********************
+
+   TH2D* hAn_evol_ZK_Vs_RapRec = (TH2D*) o["hAn_evol_ZK_Vs_RapRec"];
+   TH2D* hAn_evol_ZK_Vs_RapRecPR = (TH2D*) o["hAn_evol_ZK_Vs_RapRecPR"];
+   TH2D* hAn_evol_ZK_Vs_RapRecMR = (TH2D*) o["hAn_evol_ZK_Vs_RapRecMR"];
+
+   TString hAn_evol_ZK_Vs_RapRec_nameo("hAn_evol_ZK_Vs_RapRec_pjy");
+   TString hAn_evol_ZK_Vs_RapRecPR_nameo("hAn_evol_ZK_Vs_RapRecPR_pjy");
+   TString hAn_evol_ZK_Vs_RapRecMR_nameo("hAn_evol_ZK_Vs_RapRecMR_pjy");
+   TString bin("bin");
+   o["hSystematics_evol_PR"] = new TH1D("hSystematics_evol_PR", "; y; systematic uncertainty (%)", RapBins, xBinsRap);
+   o["hSystematics_evol_MR"] = new TH1D("hSystematics_evol_MR", "; y; systematic uncertainty (%)", RapBins, xBinsRap);
+   TH1D* hSystematics_evol_PR = (TH1D*) o["hSystematics_evol_PR"];
+   TH1D* hSystematics_evol_MR = (TH1D*) o["hSystematics_evol_MR"];
+   hSystematics_evol_PR -> SetOption("P");
+   hSystematics_evol_PR -> SetMarkerColor(kRed);
+   hSystematics_evol_PR -> SetMarkerStyle(22);
+   hSystematics_evol_PR -> SetMarkerSize(3);
+   hSystematics_evol_PR -> SetStats(0);
+
+   hSystematics_evol_MR -> SetOption("P");
+   hSystematics_evol_MR -> SetMarkerColor(kBlue);
+   hSystematics_evol_MR -> SetMarkerStyle(23);
+   hSystematics_evol_MR -> SetMarkerSize(3);
+   hSystematics_evol_MR -> SetStats(0);
+
+   for (int i = 1; i <= RapBins; ++i) {
+     TString histnameo(hAn_evol_ZK_Vs_RapRec_nameo);
+     TString histnameoPR(hAn_evol_ZK_Vs_RapRecPR_nameo);
+     TString histnameoMR(hAn_evol_ZK_Vs_RapRecMR_nameo);
+     TString bino(bin);
+     histnameo += i;
+     histnameoPR += i;
+     histnameoMR += i;
+     bino += i;
+     o[histnameo.Data()]   = (TProfile*) hAn_evol_ZK_Vs_RapRec   -> ProjectionY(histnameo.Data(), i, i);
+     o[histnameoPR.Data()] = (TProfile*) hAn_evol_ZK_Vs_RapRecPR -> ProjectionY(histnameoPR.Data(), i, i);
+     o[histnameoMR.Data()] = (TProfile*) hAn_evol_ZK_Vs_RapRecMR -> ProjectionY(histnameoMR.Data(), i, i);
+     TH1D* hAn_evol_ZK_Vs_RapRec_pjy   = (TH1D*) o[histnameo.Data()];
+     TH1D* hAn_evol_ZK_Vs_RapRecPR_pjy = (TH1D*) o[histnameoPR.Data()];
+     TH1D* hAn_evol_ZK_Vs_RapRecMR_pjy = (TH1D*) o[histnameoMR.Data()];
+     Double_t mean   = hAn_evol_ZK_Vs_RapRec_pjy   -> GetMean();
+     Double_t meanPR = hAn_evol_ZK_Vs_RapRecPR_pjy -> GetMean();
+     Double_t meanMR = hAn_evol_ZK_Vs_RapRecMR_pjy -> GetMean();
+     cout << "mean " << bino << " = " << mean << endl;
+     cout << "meanPR " << bino << " = " << meanPR << endl;
+     cout << "meanMR " << bino << " = " << meanMR << endl;
+
+     Double_t diffPR = meanPR - mean;
+     Double_t diffMR = meanMR - mean;  
+     cout << "diffPR " << bino << " = " << diffPR << endl; 
+     cout << "diffMR " << bino << " = " << diffMR << endl;
+     //Double_t systPR = fabs(meanPR - mean) / mean;
+     //Double_t systMR = fabs(meanMR - mean) / mean; 
+     Double_t systPR = (meanPR - mean) / mean;
+     Double_t systMR = (meanMR - mean) / mean; 
+     cout << "systPR " << bino << " = " << systPR << endl;
+     cout << "systMR " << bino << " = " << systMR << endl;
+
+     hSystematics_evol_PR -> SetBinContent(i, systPR*100);
+     hSystematics_evol_MR -> SetBinContent(i, systMR*100);
+
+   } // for
+
+
 }
