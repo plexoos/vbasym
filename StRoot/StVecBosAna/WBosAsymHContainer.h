@@ -23,6 +23,8 @@ private:
 
    void BookHists();
 
+   static const int RapBins = 3;
+   Double_t xBinsRap[RapBins+1];
 
    ClassDef(WBosAsymHContainer, 1)
 };
