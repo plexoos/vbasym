@@ -41,7 +41,31 @@ void MCHContainer::BookHists()
    string shName;
    TH1*   hist;
 
+   // Define the W-Pt binning
+   Double_t xBinsPt[8] = {0, 1, 2, 3, 4, 5, 6, 10};
+
+   // Define the W-rapidity binning
+   if (RapBins == 4) {
+     xBinsRap[0] = -0.6;
+     xBinsRap[1] = -0.25;
+     xBinsRap[2] = 0;
+     xBinsRap[3] = 0.25;
+     xBinsRap[4] = 0.6;
+   } else if (RapBins == 3){
+     xBinsRap[0] = -0.6;
+     xBinsRap[1] = -0.2;
+     xBinsRap[2] = 0.2;
+     xBinsRap[3] = 0.6;
+     Double_t binvar = 0.1;
+     for (int i=0; i <= RapBins; ++i) {
+       xBinsRapPR[i] = xBinsRap[i] + binvar;
+       xBinsRapMR[i] = xBinsRap[i] - binvar;
+     }
+   }
+
    fDir->cd();
+
+   o["ntAnEvolution"] = new TNtuple("ntAnEvolution","A_N prediction with evolution","Wy_gen:Wy_rec:An_evol");
 
    o["hResolutionRap"]       = hist = new TH1D("hResolutionRap", "; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
    //hist->SetOption("hist GRIDX");
@@ -140,15 +164,18 @@ void MCHContainer::BookHists()
    if (mMcType == 1 ) {   // limits for W+
 
    o["hAn_evol_ZK"]  = new rh::H1F("hAn_evol_ZK", "; W A_{N}; Events", 20, -0.02, 0.0002, "hist GRIDX");
-   o["hAn_evol_ZK_Vs_PtGen"]  = new rh::H2F("hAn_evol_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 15, 0., 15., 10, -0.02, 0.0002, "colz LOGZ");
-   o["hAn_evol_ZK_Vs_PtRec"]  = new rh::H2F("hAn_evol_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 15, 0., 15., 10, -0.02, 0.0002, "colz LOGZ");
+   o["hAn_evol_ZK_Vs_PtGen"]  = new rh::H2D("hAn_evol_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 7, xBinsPt, 10, -0.02, 0.0002, "colz LOGZ");
+   o["hAn_evol_ZK_Vs_PtRec"]  = new rh::H2D("hAn_evol_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 7, xBinsPt, 10, -0.02, 0.0002, "colz LOGZ");
    o["hAn_noevo_ZK"]  = new rh::H1F("hAn_noevo_ZK", "; W A_{N}; Events", 20, -0.2, 0.2, "hist GRIDX");
-   o["hAn_noevo_ZK_Vs_PtGen"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 15, 0., 15., 10, -0.2, 0.2, "colz LOGZ");
-   o["hAn_noevo_ZK_Vs_PtRec"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 15, 0., 15., 10, -0.2, 0.2, "colz LOGZ");
+   o["hAn_noevo_ZK_Vs_PtGen"]  = new rh::H2D("hAn_noevo_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 7, xBinsPt, 10, -0.2, 0.2, "colz LOGZ");
+   o["hAn_noevo_ZK_Vs_PtRec"]  = new rh::H2D("hAn_noevo_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 7, xBinsPt, 10, -0.2, 0.2, "colz LOGZ");
    o["hAn_noevo_ZK_Vs_PtGen_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtGen_zoomin", "; W P_{T}^{GEN}; W A_{N}; Events", 8, 2., 15., 40, -0.2, 0.2, "colz LOGZ");
    o["hAn_noevo_ZK_Vs_PtRec_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtRec_zoomin", "; W P_{T}^{REC}; W A_{N}; Events", 8, 2., 15., 40, -0.2, 0.2, "colz LOGZ");
-   o["hAn_evol_ZK_Vs_RapGen"]  = new rh::H2F("hAn_evol_ZK_Vs_RapGen", "; W y^{GEN}; W A_{N}; Events", 4, -1., 1., 50, 0.0, 0.035, "colz LOGZ");
-   o["hAn_evol_ZK_Vs_RapRec"]  = new rh::H2F("hAn_evol_ZK_Vs_RapRec", "; W y^{REC}; W A_{N}; Events", 4, -1., 1., 50, 0.0, 0.035, "colz LOGZ");
+   o["hAn_evol_ZK_Vs_RapGen"]  = new rh::H2D("hAn_evol_ZK_Vs_RapGen", "; W y^{GEN}; W A_{N}; Events", RapBins, xBinsRap, 50, 0.0, 0.035, "colz LOGZ");
+   o["hAn_evol_ZK_Vs_RapRec"]  = new rh::H2D("hAn_evol_ZK_Vs_RapRec", "; W y^{REC}; W A_{N}; Events", RapBins, xBinsRap, 50, 0.0, 0.035, "colz LOGZ");
+
+   o["hAn_evol_ZK_Vs_RapRecPR"]  = new rh::H2D("hAn_evol_ZK_Vs_RapRecPR", "; W y^{REC}; W A_{N}; Events", RapBins, xBinsRapPR, 50, 0.0, 0.035, "colz LOGZ");
+   o["hAn_evol_ZK_Vs_RapRecMR"]  = new rh::H2D("hAn_evol_ZK_Vs_RapRecMR", "; W y^{REC}; W A_{N}; Events", RapBins, xBinsRapMR, 50, 0.0, 0.035, "colz LOGZ");
 
    o["hAn_evol_ZK_y>0"]  = new rh::H1F("hAn_evol_ZK_y>0", "; W A_{N}; Events", 20, -0.02, 0.0002, "hist GRIDX");
    o["hAn_evol_ZK_Vs_PtGen_y>0"]  = new rh::H2F("hAn_evol_ZK_Vs_PtGen_y>0", "; W P_{T}^{GEN}; W A_{N}; Events", 15, 0., 15., 10, -0.02, 0.0002, "colz LOGZ");
@@ -159,37 +186,9 @@ void MCHContainer::BookHists()
 
    } else if (mMcType == 2) {   // limits for W-
 
-   Double_t xBinsPt[8]    = {0, 1, 2, 3, 4, 5, 6, 10};
-
-   // Define the W-rapidity binning
-   //Double_t xBinsRap[5]   = {-0.6, -0.25, 0, 0.25, 0.6};
-   if (RapBins == 4) {
-     xBinsRap[0] = -0.6;
-     xBinsRap[1] = -0.25;
-     xBinsRap[2] = 0;
-     xBinsRap[3] = 0.25;
-     xBinsRap[4] = 0.6;
-   } else if (RapBins == 3){
-     xBinsRap[0] = -0.6;
-     xBinsRap[1] = -0.2;
-     xBinsRap[2] = 0.2;
-     xBinsRap[3] = 0.6;
-     Double_t binvar = 0.1;
-     for (int i=0; i <= RapBins; ++i) {
-       xBinsRapPR[i] = xBinsRap[i] + binvar;
-       xBinsRapMR[i] = xBinsRap[i] - binvar;
-     }
-   }
-
-   //Double_t aPR_bin1 = xBinsRap[0]+ResoRap[0];
-
    o["hAn_evol_ZK"]  = new rh::H1F("hAn_evol_ZK", "; W A_{N}; Events", 20, 0.0, 0.035, "hist GRIDX");
-   //o["hAn_evol_ZK_Vs_PtGen"]  = new rh::H2F("hAn_evol_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 15, 0., 15., 50, 0.0, 0.035, "colz LOGZ");
-   //o["hAn_evol_ZK_Vs_PtRec"]  = new rh::H2F("hAn_evol_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 15, 0., 15., 50, 0.0, 0.035, "colz LOGZ");
    o["hAn_evol_ZK_Vs_PtGen"]  = new rh::H2D("hAn_evol_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 7, xBinsPt, 50, 0.0, 0.035, "colz LOGZ");
    o["hAn_evol_ZK_Vs_PtRec"]  = new rh::H2D("hAn_evol_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 7, xBinsPt, 50, 0.0, 0.035, "colz LOGZ");
-   //o["hAn_evol_ZK_Vs_RapGen"]  = new rh::H2F("hAn_evol_ZK_Vs_RapGen", "; W y^{GEN}; W A_{N}; Events", 4, -1., 1., 50, 0.0, 0.035, "colz LOGZ");
-   //o["hAn_evol_ZK_Vs_RapRec"]  = new rh::H2F("hAn_evol_ZK_Vs_RapRec", "; W y^{REC}; W A_{N}; Events", 4, -1., 1., 50, 0.0, 0.035, "colz LOGZ");
    o["hAn_evol_ZK_Vs_RapGen"]  = new rh::H2D("hAn_evol_ZK_Vs_RapGen", "; W y^{GEN}; W A_{N}; Events", RapBins, xBinsRap, 50, 0.0, 0.035, "colz LOGZ");
    o["hAn_evol_ZK_Vs_RapRec"]  = new rh::H2D("hAn_evol_ZK_Vs_RapRec", "; W y^{REC}; W A_{N}; Events", RapBins, xBinsRap, 50, 0.0, 0.035, "colz LOGZ");
 
@@ -199,15 +198,8 @@ void MCHContainer::BookHists()
    o["hAn_noevo_ZK"]  = new rh::H1F("hAn_noevo_ZK", "; W A_{N}; Events", 20, 0., 0.45, "hist GRIDX");
    o["hAn_noevo_ZK_Vs_PtGen"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 15, 0., 15., 100, 0., 0.45, "colz LOGZ");
    o["hAn_noevo_ZK_Vs_PtRec"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 15, 0., 15., 100, 0., 0.45, "colz LOGZ");
-   //o["hAn_noevo_ZK_Vs_RapGen"]  = new rh::H2F("hAn_noevo_ZK_Vs_RapGen", "; W y^{GEN}; W A_{N}; Events", 15, 0., 15., 100, 0., 0.45, "colz LOGZ");
-   //o["hAn_noevo_ZK_Vs_RapRec"]  = new rh::H2F("hAn_noevo_ZK_Vs_RapRec", "; W y^{REC}; W A_{N}; Events", 15, 0., 15., 100, 0., 0.45, "colz LOGZ");
    o["hAn_noevo_ZK_Vs_PtGen_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtGen_zoomin", "; W P_{T}^{GEN}; W A_{N}; Events", 8, 2., 15., 40, 0., 0.03, "colz LOGZ");
    o["hAn_noevo_ZK_Vs_PtRec_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtRec_zoomin", "; W P_{T}^{REC}; W A_{N}; Events", 8, 2., 15., 40, 0., 0.03, "colz LOGZ");
-   //o["hAn_noevo_ZK_Vs_RapGen_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_RapGen_zoomin", "; W y^{GEN}; W A_{N}; Events", 8, 2., 15., 40, 0., 0.03, "colz LOGZ");
-   //o["hAn_noevo_ZK_Vs_RapRec_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_RapRec_zoomin", "; W y^{REC}; W A_{N}; Events", 8, 2., 15., 40, 0., 0.03, "colz LOGZ");
-
-   //TNtuple *ntAnEvolution = new TNtuple("ntAnEvolution","A_N prediction with evolution","Wy_gen:Wy_rec:An_evol");
-   o["ntAnEvolution"] = new TNtuple("ntAnEvolution","A_N prediction with evolution","Wy_gen:Wy_rec:An_evol");
 
    } 
 
@@ -330,24 +322,6 @@ void MCHContainer::Fill(ProtoEvent &ev)
         //Double_t xBinsRap[5] = {-0.6, -0.25, 0, 0.25, 0.6};
 
         Double_t RapReco = event.GetVecBosonP4().Rapidity();
-	/*
-        Double_t ResoRap[4]    = {0.67, 1.50, 1.43, 0.65}; // vector containing the hard coded rapidity resolution values in each of the rapidity bins as coming from the gaussian fits 
-	Double_t RapRecoPlusReso;
-	Double_t RapRecoMinusReso;
-        if      (RapReco >= xBinsRap[0] && RapReco < xBinsRap[1]) {
-	  RapRecoPlusReso  = RapReco + fabs(RapReco*ResoRap[0]);
-	  RapRecoMinusReso = RapReco - fabs(RapReco*ResoRap[0]); 
-	} else if (RapReco >= xBinsRap[1] && RapReco < xBinsRap[2]) { 
-	  RapRecoPlusReso  = RapReco + fabs(RapReco*ResoRap[1]);
-	  RapRecoMinusReso = RapReco - fabs(RapReco*ResoRap[1]); 
-        } else if (RapReco >= xBinsRap[2] && RapReco < xBinsRap[3]) { 
-	  RapRecoPlusReso  = RapReco + fabs(RapReco*ResoRap[2]);
-	  RapRecoMinusReso = RapReco - fabs(RapReco*ResoRap[2]); 
-        } else if (RapReco >= xBinsRap[3] && RapReco < xBinsRap[4]) {
-	  RapRecoPlusReso  = RapReco + fabs(RapReco*ResoRap[3]);
-	  RapRecoMinusReso = RapReco - fabs(RapReco*ResoRap[3]); 
-	}
-	*/
 
         //((TH2*) o["hAn_evol_ZK_Vs_RapRec"])           ->Fill(event.GetVecBosonP4().Rapidity(), event.An_evol_ZK);
         ((TH2*) o["hAn_evol_ZK_Vs_RapRec"])           ->Fill(RapReco, event.An_evol_ZK);
