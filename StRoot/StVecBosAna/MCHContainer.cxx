@@ -42,7 +42,7 @@ void MCHContainer::BookHists()
    TH1*   hist;
 
    // Define the W-Pt binning
-   Double_t xBinsPt[8] = {0, 1, 2, 3, 4, 5, 6, 10};
+   Double_t xBinsPt[8] = {0.5, 1, 2, 3, 4, 5, 6, 10};
 
    // Define the W-rapidity binning
    if (RapBins == 4) {
@@ -184,6 +184,9 @@ void MCHContainer::BookHists()
    o["hAn_noevo_ZK_Vs_PtGen_y>0"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtGen_y>0", "; W P_{T}^{GEN}; W A_{N}; Events", 15, 0., 15., 10, -0.2, 0.2, "colz LOGZ");
    o["hAn_noevo_ZK_Vs_PtRec_y>0"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtRec_y>0", "; W P_{T}^{REC}; W A_{N}; Events", 15, 0., 15., 10, -0.2, 0.2, "colz LOGZ");
 
+   o["hAnEvolVsWgen_WrongReco_FirstSol"]  = new rh::H2D("hAnEvolVsWgen_WrongReco_FirstSol",  "Test wrong Reco events A_{N}; Gen. W Boson P_{z}, GeV; A_{N} evol", 50, -80, 80, 10, -0.02, 0.0002, "colz LOGZ");
+   o["hAnEvolVsWgen_FirstSol"]  = new rh::H2D("hAnEvolVsWgen_FirstSol",  "Test well Reco events WPz_reco < 0 (GeV); Gen. W Boson P_{z}, GeV; A_{N} evol;", 1, -50, -47, 20, -0.02, 0.0002, "colz LOGZ");
+
    } else if (mMcType == 2) {   // limits for W-
 
    o["hAn_evol_ZK"]  = new rh::H1F("hAn_evol_ZK", "; W A_{N}; Events", 20, 0.0, 0.035, "hist GRIDX");
@@ -201,6 +204,9 @@ void MCHContainer::BookHists()
    o["hAn_noevo_ZK_Vs_PtGen_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtGen_zoomin", "; W P_{T}^{GEN}; W A_{N}; Events", 8, 2., 15., 40, 0., 0.03, "colz LOGZ");
    o["hAn_noevo_ZK_Vs_PtRec_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtRec_zoomin", "; W P_{T}^{REC}; W A_{N}; Events", 8, 2., 15., 40, 0., 0.03, "colz LOGZ");
 
+
+   o["hAnEvolVsWgen_WrongReco_FirstSol"]  = new rh::H2D("hAnEvolVsWgen_WrongReco_FirstSol",  "Test wrong Reco events WPz_reco > 0 (GeV); Gen. W Boson P_{z}, GeV; A_{N} evol;", 1, -50, -47, 20, 0.0, 0.01, "colz LOGZ");
+   o["hAnEvolVsWgen_FirstSol"]  = new rh::H2D("hAnEvolVsWgen_FirstSol",  "Test well Reco events WPz_reco < 0 (GeV); Gen. W Boson P_{z}, GeV; A_{N} evol;", 1, -50, -47, 20, 0.0, 0.01, "colz LOGZ");
    } 
 
 }
@@ -299,6 +305,14 @@ void MCHContainer::Fill(ProtoEvent &ev)
         ((TH2*) o["hAn_noevo_ZK_Vs_PtRec"])          ->Fill(event.GetVecBosonP3().Pt(), event.An_noevo_ZK);
         ((TH2*) o["hAn_noevo_ZK_Vs_PtGen_zoomin"])   ->Fill(mcEvent->mP4WBoson.Pt(), event.An_noevo_ZK);
         ((TH2*) o["hAn_noevo_ZK_Vs_PtRec_zoomin"])   ->Fill(event.GetVecBosonP3().Pt(), event.An_noevo_ZK);
+	// TEST 
+        Double_t genPz = mcEvent->mP4WBoson.Pz();
+	Double_t recPz = event.GetVecBosonP3FirstSolution().Pz();
+        if (recPz > 0) {
+          ((TH2*) o["hAnEvolVsWgen_WrongReco_FirstSol"])   ->Fill(genPz, event.An_evol_ZK);
+        } else {
+          ((TH2*) o["hAnEvolVsWgen_FirstSol"])   ->Fill(genPz, event.An_evol_ZK);
+        }
      } else {
         ((TH1*) o["hAn_evol_ZK"])                     ->Fill(1e5);
         ((TH2*) o["hAn_evol_ZK_Vs_PtGen"])            ->Fill(1e5, 1e5);
@@ -524,17 +538,14 @@ void MCHContainer::PostFill()
      Double_t GoodRecoFraction_pjy = integral_pjy_inner/integral_pjy_total;
      cout << "integral_pjy_inner: "   << integral_pjy_inner   << endl; 
      cout << "integral_pjy_total: "   << integral_pjy_total   << endl;  
-     cout << "GoodRecoFraction_pjy: " << GoodRecoFraction_pjy << endl; 
-     //hRecoVsGenWBosonPz_FirstSol_pjy->Print("all");
+     cout << "GoodRecoFraction_pjy: " << GoodRecoFraction_pjy << endl;
      hWBosonPz_GoodRecoFraction -> SetBinContent(i, GoodRecoFraction_pjy);
    } // for
 
-   //TLine *l10 = new TLine(20,  hRecoVsGenWBosonPz_FirstSol->GetYaxis()->GetXmin(), 20, hWBosonPz_GoodRecoFraction ->GetYaxis()->GetXmax());  
    TLine *l10 = new TLine(20,  0.18, 20, 0.96);
    l10 -> SetLineColor(kRed);
    l10 -> SetLineWidth(2);
    l10 -> SetLineStyle(2);
-   //TLine *lm10 = new TLine(-20, hWBosonPz_GoodRecoFraction ->GetYaxis()->GetXmin(), -20, hWBosonPz_GoodRecoFraction ->GetYaxis()->GetXmax());
    TLine *lm10 = new TLine(-20, 0.18, -20, 0.96);
    lm10 -> SetLineColor(kRed);
    lm10 -> SetLineWidth(2);
@@ -585,7 +596,6 @@ void MCHContainer::PostFill()
      double   integral_pjy_inner   = hRecoVsGenWBosonPz_OtherSol_pjy->Integral(minval, maxval);
      double   integral_pjy_total   = hRecoVsGenWBosonPz_OtherSol_pjy->Integral();
      Double_t GoodRecoFraction_pjy = integral_pjy_inner/integral_pjy_total;
-     //hRecoVsGenWBosonPz_pjy->Print("all");
      hWBosonPz_GoodRecoFraction_OtherSol -> SetBinContent(i, GoodRecoFraction_pjy);
    } // for
 
@@ -637,7 +647,11 @@ void MCHContainer::PostFill()
      Double_t col  = hWy_RecVsGen -> Integral(i, i, 0, 5); //includes under and over-flows events
      cout << "gbin =" << gbin << endl;
      cout << "col ="  << col  << endl;
-     cout << "survival probability =" << gbin/col << endl;  
+     cout << "survival probability =" << gbin/col << endl; 
+     TString histnameo("hWy_RecVsGen_pjy");
+     histnameo += i;
+     o[histnameo.Data()] = (TProfile*) hWy_RecVsGen -> ProjectionY(histnameo.Data(), i, i);
+     TH1D* hWy_RecVsGen_pjy = (TH1D*) o[histnameo.Data()];
    }
    //**************  END SURVIVAL PROBABILITY CALC. ***********************
 
