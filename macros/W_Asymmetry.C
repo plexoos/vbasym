@@ -13,11 +13,13 @@ void W_Asymmetry()
    TString inPathScratch = "/star/data05/scratch/fazio/stana_out/runlists/";
    TString outPath       = "~/vbasym_results/plots/4prelim";
 
-   TFile *fileData      = TFile::Open(inPathNew + "run11_pp_transverse/hist/vbana.root");
-   TFile *fileDataZ0    = TFile::Open(inPathNew + "run11_pp_transverse_zboson/hist/vbana.root");
-   TFile *fileMCWm      = TFile::Open(inPathNew + "run11_mc_Wm2enu.lis/hist/vbana.root");
-   TFile *fileSystRap   = TFile::Open("./histSysRap.root");
-   TFile *fileSystPt    = TFile::Open("./histSysPt.root");
+   TFile *fileData         = TFile::Open(inPathNew + "run11_pp_transverse/hist/vbana.root");
+   TFile *fileDataZ0       = TFile::Open(inPathNew + "run11_pp_transverse_zboson/hist/vbana.root");
+   TFile *fileMCWm         = TFile::Open(inPathNew + "run11_mc_Wm2enu.lis/hist/vbana.root");
+   TFile *fileSystRap      = TFile::Open("./histSysRap.root");
+   TFile *fileSystGMeanRap = TFile::Open("./histSysGMeanRap.root");
+   TFile *fileSystPt       = TFile::Open("./histSysPt.root");
+   TFile *fileSystMeanPt   = TFile::Open("./histMeanSysPt.root");
 
    // take the histograms
 
@@ -31,8 +33,10 @@ void W_Asymmetry()
    TH1 *hd_Z0_AsymAmpSqrtVsRap          = (TH1*) fileDataZ0->Get("asym/asym_z_phys/hZBosonAsymAmpVsRap_");
    TH1 *hd_Z0_AsymAmpSqrtVsPt           = (TH1*) fileDataZ0->Get("asym/asym_z_phys/hZBosonAsymAmpVsPt_");
    // take the histograms for the systematics 
-   TH1 *hSysRap                         = (TH1*) fileSystRap->Get("hSystematics_evol");
    TH1 *hSysPt                          = (TH1*) fileSystPt->Get("hSystematics_evol");
+   TH1 *hSysMeanPt                      = (TH1*) fileSystMeanPt->Get("hSystematicsMean_evol");
+   TH1 *hSysRap                         = (TH1*) fileSystRap->Get("hSystematics_evol");
+   TH1 *hSysRapGMean                    = (TH1*) fileSystGMeanRap->Get("hSystematicsGMean_evol");
    TH1 *hSysRapPR                       = (TH1*) fileMCWm->Get("event_mc/hSystematics_evol_PR");
    TH1 *hSysRapMR                       = (TH1*) fileMCWm->Get("event_mc/hSystematics_evol_MR");
 
@@ -45,15 +49,18 @@ void W_Asymmetry()
 
    // Add the systematic uncertainties
 
+   //hSysRapGMean -> SetMarkerSize(2);  
    hSysRapPR -> SetMarkerSize(2);  
    hSysRapMR -> SetMarkerSize(2);  
 
    const Int_t nRapBins =  hd_Wp_AsymAmpSqrtVsRap->GetNbinsX();
+   std::vector<Double_t> sysRapGMean(nRapBins); // vector of relative systematics of An vs W-Rapidity
    //std::vector<Double_t> sysRap(nRapBins); // vector of relative systematics of An vs W-Rapidity
    std::vector<Double_t> sysRapPR(nRapBins); // vector of relative POSITIVE systematics of An vs W-Rapidity 
    std::vector<Double_t> sysRapMR(nRapBins); // vector of relative NEGATIVE systematics of An vs W-Rapidity 
 
    for (int i = 1; i <= nRapBins; ++i) {
+     sysRapGMean[i-1] =  hSysRapGMean -> GetBinContent(i);
      //sysRap[i-1] =  hSysRap -> GetBinContent(i);
      sysRapPR[i-1] =  hSysRapPR -> GetBinContent(i);
      sysRapPR[i-1] =  hSysRapMR -> GetBinContent(i);
@@ -63,32 +70,38 @@ void W_Asymmetry()
    std::vector<Double_t> sysPt(nPtBins); // vector of relative systematics of An vs W-Pt
 
    for (int i = 1; i <= nPtBins; ++i) {
-     sysPt[i-1] =  hSysPt -> GetBinContent(i);
+     //sysPt[i-1] =  hSysPt -> GetBinContent(i);
+     sysPt[i-1] =  hSysMeanPt -> GetBinContent(i);
    }
 
 
-   TGraphAsymmErrors* gd_Wp_AsymAmpSqrtVsRap = new TGraphAsymmErrors(nRapBins);
+   //TGraphAsymmErrors* gd_Wp_AsymAmpSqrtVsRap = new TGraphAsymmErrors(nRapBins);
 
    for (int i = 1; i <= nRapBins; ++i) { // loop over Rapidity bins
      Double_t AsymBin = hd_Wp_AsymAmpSqrtVsRap->GetBinContent(i);
      cout  << "W+ Rapidity-Bin " << i << " AsymBin= " << AsymBin << endl;
      Double_t errStatBin = hd_Wp_AsymAmpSqrtVsRap->GetBinError(i);
      cout  << "W+ Rapidity-Bin " << i << " errStatBin= " << errStatBin << endl;
-     cout  << "W+ Rapidity-Bin " << i << " Relative positive syst.= " << sysRapPR[i-1] << "%" << endl;
-     cout  << "W+ Rapidity-Bin " << i << " Relative negative syst.= " << sysRapMR[i-1] << "%" << endl;
-     Double_t errSysBinPR = fabs(AsymBin * sysRapPR[i-1]/100);
-     Double_t errSysBinMR = fabs(AsymBin * sysRapMR[i-1]/100);
-     cout  << "W+ Rapidity-Bin " << i << " errSysBinPR= " << errSysBinPR << endl;
-     cout  << "W+ Rapidity-Bin " << i << " errSysBinMR= " << errSysBinMR << endl;
-     Double_t errBinPR = sqrt(pow(errStatBin,2) + pow(errSysBinPR,2)) ;  // sum stat. and sys. errors in quadrature
-     Double_t errBinMR = sqrt(pow(errStatBin,2) + pow(errSysBinMR,2)) ;  // sum stat. and sys. errors in quadrature
-     cout  << "W+ Rapidity-Bin " << i << " errBinPR= " << errBinPR << endl;
-     cout  << "W+ Rapidity-Bin " << i << " errBinMR= " << errBinMR << endl;
-     hd_Wp_AsymAmpSqrtVsRap -> SetBinError(i, errBinPR);
-     Double_t binX = hd_Wp_AsymAmpSqrtVsRap->GetBinCenter(i);
-     //Double_t errXL =  hd_Wp_AsymAmpSqrtVsRap->GetBinError(i);
-     gd_Wp_AsymAmpSqrtVsRap -> SetPoint(i, binX, AsymBin)
-     gd_Wp_AsymAmpSqrtVsRap -> SetPointError(i, 0, 0, errBinMR, errBinPR); 
+     cout  << "W+ Rapidity-Bin " << i << " Relative syst.= " << sysRapGMean[i-1] << "%" << endl;
+     //cout  << "W+ Rapidity-Bin " << i << " Relative positive syst.= " << sysRapPR[i-1] << "%" << endl;
+     //cout  << "W+ Rapidity-Bin " << i << " Relative negative syst.= " << sysRapMR[i-1] << "%" << endl;
+     Double_t errSysBin = fabs(AsymBin * sysRapGMean[i-1]/100);
+     //Double_t errSysBinPR = fabs(AsymBin * sysRapPR[i-1]/100);
+     //Double_t errSysBinMR = fabs(AsymBin * sysRapMR[i-1]/100);
+     cout  << "W+ Rapidity-Bin " << i << " errSysBin= " << errSysBin << endl;
+     //cout  << "W+ Rapidity-Bin " << i << " errSysBinPR= " << errSysBinPR << endl;
+     //cout  << "W+ Rapidity-Bin " << i << " errSysBinMR= " << errSysBinMR << endl;
+     Double_t errBin = sqrt(pow(errStatBin,2) + pow(errSysBin,2)) ;  // sum stat. and sys. errors in quadrature
+     //Double_t errBinPR = sqrt(pow(errStatBin,2) + pow(errSysBinPR,2)) ;  // sum stat. and sys. errors in quadrature
+     //Double_t errBinMR = sqrt(pow(errStatBin,2) + pow(errSysBinMR,2)) ;  // sum stat. and sys. errors in quadrature
+     cout  << "W+ Rapidity-Bin " << i << " errBin= " << errBin << endl;
+     //cout  << "W+ Rapidity-Bin " << i << " errBinPR= " << errBinPR << endl;
+     //cout  << "W+ Rapidity-Bin " << i << " errBinMR= " << errBinMR << endl;
+     hd_Wp_AsymAmpSqrtVsRap -> SetBinError(i, errBin);
+     //hd_Wp_AsymAmpSqrtVsRap -> SetBinError(i, errBinPR);
+     //Double_t binX = hd_Wp_AsymAmpSqrtVsRap->GetBinCenter(i);
+     //gd_Wp_AsymAmpSqrtVsRap -> SetPoint(i, binX, AsymBin)
+     //gd_Wp_AsymAmpSqrtVsRap -> SetPointError(i, 0, 0, errBinMR, errBinPR); 
    } // for
 
    for (int i = 1; i <= hd_Wp_AsymAmpSqrtVsPt->GetNbinsX(); ++i) { // loop over Pt bins
@@ -111,8 +124,8 @@ void W_Asymmetry()
      cout  << "W- Rapidity-Bin " << i << " AsymBin= " << AsymBin << endl;
      Double_t errStatBin = hd_Wm_AsymAmpSqrtVsRap->GetBinError(i);
      cout  << "W- Rapidity-Bin " << i << " errStatBin= " << errStatBin << endl;
-     cout  << "W- Rapidity-Bin " << i << " Relativ syst.= " << sysRapPR[i-1] << "%" << endl;
-     Double_t errSysBin = fabs(AsymBin * sysRapPR[i-1]/100);
+     cout  << "W- Rapidity-Bin " << i << " Relativ syst.= " << sysRapGMean[i-1] << "%" << endl;
+     Double_t errSysBin = fabs(AsymBin * sysRapGMean[i-1]/100);
      cout  << "W- Rapidity-Bin " << i << " errSysBin= " << errSysBin << endl;
      Double_t errBin = sqrt(pow(errStatBin,2) + pow(errSysBin,2)) ;  // sum stat. and sys. errors in quadrature
      cout  << "W- Rapidity-Bin " << i << " errBin= " << errBin << endl;
@@ -149,9 +162,9 @@ void W_Asymmetry()
 
    //Double_t xLeg = 0.2;
    Double_t xLeg = 0.43;
-   TLatex *textSTAR = new TLatex(xLeg, 0.15, "STAR p-p 500 GeV - L = 25 pb^{-1}");
+   Double_t yLeg = 0.17;
+   TLatex *textSTAR = new TLatex(xLeg, yLeg, "STAR p-p 500 GeV #intL = 25 pb^{-1}");
    textSTAR -> SetNDC(); 
-   //textSTAR -> SetTextFont(32); 
    textSTAR -> SetTextSize(0.035);
    TLatex *textWp = new TLatex(0.2, 0.83, "W^{+} #rightarrow l^{+} #nu");
    textWp -> SetNDC(); 
@@ -161,24 +174,24 @@ void W_Asymmetry()
    textWm -> SetNDC(); 
    textWm -> SetTextFont(32);
    textWm -> SetTextSize(0.07);
+   TLatex *textArrow = new TLatex(0.18, 0.83, "#uparrow 106%");
+   textArrow -> SetNDC(); 
+   textArrow -> SetTextFont(32);
+   textArrow -> SetTextSize(0.15);
+   textArrow -> SetTextColor(kRed);
    TLatex *textZ0 = new TLatex(0.2, 0.83, "Z^{0} #rightarrow l^{+} l^{-}");
    textZ0 -> SetNDC(); 
    textZ0 -> SetTextFont(32);
    textZ0 -> SetTextSize(0.07);
-   //TLatex *textLumi = new TLatex(xLeg, 0.8, "L = 25 pb^{-1}");
-   //textLumi -> SetNDC(); 
-   //textLumi -> SetTextFont(32); 
-   //textLumi -> SetTextSize(0.04);
-   TLatex *textPtLim = new TLatex(xLeg, 0.1, "0.5 < P_{T} < 7 GeV");
+   TLatex *textPtLim = new TLatex(xLeg, yLeg-0.05, "0.5 < P_{T} < 7 GeV");
    textPtLim -> SetNDC(); 
    textPtLim -> SetTextFont(32);
    textPtLim -> SetTextSize(0.04);
-   TLatex *textRapLim = new TLatex(xLeg, 0.1, "|y| < 1");
+   TLatex *textRapLim = new TLatex(xLeg, yLeg-0.05, "|y| < 1");
    textRapLim -> SetNDC(); 
    textRapLim -> SetTextFont(32);
    textRapLim -> SetTextSize(0.04);
-   //TLatex *textLSys = new TLatex(xLeg, 0.75, "Overall pol. syst. = 3.4%");
-   TLatex *textLSys = new TLatex(xLeg, 0.05, "3.4% beam pol. uncertainty not shown");
+   TLatex *textLSys = new TLatex(xLeg,  yLeg-0.1, "3.4% beam pol. uncertainty not shown");
    textLSys -> SetNDC(); 
    textLSys -> SetTextFont(32);
    textLSys -> SetTextSize(0.04);
@@ -199,15 +212,15 @@ void W_Asymmetry()
   hd_Wp_AsymAmpSqrtVsEta -> GetYaxis() -> SetTitleOffset(1.3);
   hd_Wp_AsymAmpSqrtVsEta -> SetStats(0);
   hd_Wp_AsymAmpSqrtVsEta -> SetMarkerStyle(20);
-  hd_Wp_AsymAmpSqrtVsEta -> SetTitle("Asymmetry amplitude; #eta^{W}; A_{N}");
+  hd_Wp_AsymAmpSqrtVsEta -> SetTitle("; #eta^{W}; A_{N}");
   hd_Wp_AsymAmpSqrtVsEta -> GetYaxis() -> SetRangeUser(-1.5, 1.5);
   //hd_Wp_AsymAmpSqrtVsEta -> GetListOfFunctions() -> Add(textSTAR);
   //hd_Wp_AsymAmpSqrtVsEta -> GetListOfFunctions() -> Add(textPtLim);
   //hd_Wp_AsymAmpSqrtVsEta -> GetListOfFunctions() -> Add(textLSys);
   hd_Wp_AsymAmpSqrtVsEta -> Draw();
-  textPtLim -> DrawLatex(0.2, 0.85, "STAR p-p 500 GeV - L = 25 pb^{-1}");
-  textSTAR  -> DrawLatex(0.2, 0.80, "0.5 < P_{T} < 7 GeV");
-  textLSys  -> DrawLatex(0.2, 0.75, "3.4% beam pol. uncertainty not shown");
+  textPtLim -> DrawLatex(0.2, 0.82, "STAR p-p 500 GeV #int L = 25 pb^{-1}");
+  textSTAR  -> DrawLatex(0.2, 0.77, "0.5 < P_{T} < 7 GeV");
+  textLSys  -> DrawLatex(0.2, 0.72, "3.4% beam pol. uncertainty not shown");
   textWp    -> DrawLatex(0.2, 0.2, "W^{+} #rightarrow l^{+} #nu");
   //leg1 -> Draw();
 
@@ -220,7 +233,8 @@ void W_Asymmetry()
   TPad*    upperPad = new TPad("upperPad", "upperPad", .005, .25, .995, .995);
   TPad*    lowerPad = new TPad("lowerPad", "lowerPad", .005, .005, .995, .25);
   upperPad -> SetBottomMargin(0.017);
-  lowerPad -> SetTopMargin(0.017);
+  lowerPad -> SetTopMargin(0.03);
+  //lowerPad -> SetTopMargin(0.017);
   lowerPad -> SetBottomMargin(0.35);
   upperPad->Draw();
   lowerPad->Draw();
@@ -234,7 +248,7 @@ void W_Asymmetry()
   hd_Wp_AsymAmpSqrtVsRap -> GetXaxis() -> SetLabelOffset(1.3);
   hd_Wp_AsymAmpSqrtVsRap -> SetStats(0);
   hd_Wp_AsymAmpSqrtVsRap -> SetMarkerStyle(20);
-  hd_Wp_AsymAmpSqrtVsRap -> SetTitle("Asymmetry amplitude; y^{W}; A_{N}");
+  hd_Wp_AsymAmpSqrtVsRap -> SetTitle("; y^{W}; A_{N}");
   hd_Wp_AsymAmpSqrtVsRap -> GetXaxis() -> SetRangeUser(-1., 0.99);
   hd_Wp_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textSTAR);
   hd_Wp_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textWp);
@@ -243,6 +257,8 @@ void W_Asymmetry()
   hd_Wp_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textStarPrel);
   hd_Wp_AsymAmpSqrtVsRap -> Draw("E0");
   hd_Wp_AsymAmpSqrtVsRap -> GetYaxis() -> SetRangeUser(-1.5, 1.5);
+  hd_Wp_AsymAmpSqrtVsRap -> GetYaxis() -> SetLabelFont(62);
+  hd_Wp_AsymAmpSqrtVsRap -> GetYaxis() -> SetTitleFont(62);
   hd_Wp_AsymAmpSqrtVsRap_clone -> SetStats(0);
   hd_Wp_AsymAmpSqrtVsRap_clone -> Draw("same E1");
   //leg1 -> Draw();
@@ -251,16 +267,18 @@ void W_Asymmetry()
   lowerPad->cd();
   gPad -> SetGrid(0);
   gPad-> Modified();
-  TH2F *frameSysRap = new TH2F("frameSysRap","",5,-0.6,0.6,5,-12,12);
+  TH2F *frameSysRap = new TH2F("frameSysRap","",5,-0.6,0.6,5,0,11);
+  //TH2F *frameSysRap = new TH2F("frameSysRap","",5,-0.6,0.6,5,-12,12);
   frameSysRap -> SetStats(0); 
   frameSysRap -> SetTitle("; y^{W}; syst.(%)");
   //frameSysRap -> GetXaxis() -> SetTitleOffset(0.7) 
   frameSysRap -> GetXaxis() -> SetNdivisions(8); 
-  frameSysRap -> GetXaxis() -> SetLabelSize(0.15);  
+  frameSysRap -> GetXaxis() -> SetLabelSize(0.15); 
+  frameSysRap -> GetXaxis() -> SetLabelOffset(0.03);  
   frameSysRap -> GetYaxis() -> SetNdivisions(8); 
   frameSysRap -> GetYaxis() -> SetLabelSize(0.1); ;
   frameSysRap -> SetTitleSize(0.2, "x");
-  frameSysRap -> SetTitleOffset(0.7, "x"); 
+  frameSysRap -> SetTitleOffset(0.78, "x"); 
   frameSysRap -> SetTitleSize(0.12, "Y");
   frameSysRap -> SetTitleOffset(0.5, "Y"); 
   frameSysRap -> Draw(); 
@@ -273,8 +291,9 @@ void W_Asymmetry()
   //hSysRapPR   -> GetYaxis() -> SetLabelSize(0.1);
   //hSysRapPR   -> SetTitleSize(0.2, "X");
   //hSysRapPR   -> SetTitleSize(0.12, "Y");
-  hSysRapPR   -> Draw("same P");
-  hSysRapMR   -> Draw("same P");
+  hSysRapGMean   -> Draw("same P");
+  //hSysRapPR   -> Draw("same P");
+  //hSysRapMR   -> Draw("same P");
 
   //cWpAmpRap -> Update();  
   cWpAmpRap->SaveAs(outPath + "/hd_Wp_AsymAmpSqrtVsRap.png");
@@ -296,7 +315,7 @@ void W_Asymmetry()
   hd_Wp_AsymAmpSqrtVsPt -> GetXaxis() -> SetLabelOffset(1.3);
   hd_Wp_AsymAmpSqrtVsPt -> SetStats(0);
   hd_Wp_AsymAmpSqrtVsPt -> SetMarkerStyle(20);
-  hd_Wp_AsymAmpSqrtVsPt -> SetTitle("Asymmetry amplitude; P_{T}^{W}; A_{N}");
+  hd_Wp_AsymAmpSqrtVsPt -> SetTitle("; P_{T}^{W}; A_{N}");
   hd_Wp_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textSTAR);
   hd_Wp_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textWp);
   hd_Wp_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textRapLim);
@@ -304,6 +323,8 @@ void W_Asymmetry()
   hd_Wp_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textStarPrel);
   hd_Wp_AsymAmpSqrtVsPt -> Draw("E0");
   hd_Wp_AsymAmpSqrtVsPt -> GetYaxis() -> SetRangeUser(-1.5, 1.5);
+  hd_Wp_AsymAmpSqrtVsPt -> GetYaxis() -> SetLabelFont(62);
+  hd_Wp_AsymAmpSqrtVsPt -> GetYaxis() -> SetTitleFont(62);
   hd_Wp_AsymAmpSqrtVsPt_clone -> SetStats(0);
   hd_Wp_AsymAmpSqrtVsPt_clone -> Draw("same E1");
   //leg1 -> Draw();
@@ -311,17 +332,24 @@ void W_Asymmetry()
   lowerPad_WpPt->cd();
   gPad -> SetGrid(0);
   gPad-> Modified();
-  hSysPt   -> SetTitle("; P_{T}^{W}; syst.(%)");
-  hSysPt   -> GetXaxis() -> SetRangeUser(0, 9.99);
-  hSysPt   -> GetXaxis() -> SetTitleOffset(0.75);
-  hSysPt   -> GetXaxis() -> SetNdivisions(10);
-  hSysPt   -> GetXaxis() -> SetLabelSize(0.15);
-  hSysPt   -> GetYaxis() -> SetTitleOffset(0.5);
-  hSysPt   -> GetYaxis() -> SetNdivisions(8);
-  hSysPt   -> GetYaxis() -> SetLabelSize(0.1);
-  hSysPt   -> SetTitleSize(0.2, "X");
-  hSysPt   -> SetTitleSize(0.12, "Y");
-  hSysPt   -> Draw("PL");
+  hSysMeanPt   -> SetTitle("; P_{T}^{W}; syst.(%)");
+  hSysMeanPt   -> GetXaxis() -> SetRangeUser(0, 9.99);
+  hSysMeanPt   -> GetXaxis() -> SetTitleOffset(0.75);
+  hSysMeanPt   -> GetXaxis() -> SetNdivisions(10);
+  hSysMeanPt   -> GetXaxis() -> SetLabelSize(0.15);
+  hSysMeanPt   -> GetYaxis() -> SetTitleOffset(0.5);
+  hSysMeanPt   -> GetYaxis() -> SetNdivisions(8);
+  hSysMeanPt   -> GetYaxis() -> SetLabelSize(0.1);
+  hSysMeanPt   -> GetYaxis() -> SetRangeUser(0, 26);
+  hSysMeanPt   -> SetBinContent(1,0); // mask the syst. for the first Pt bin
+  hSysMeanPt   -> SetTitleSize(0.2, "X");
+  hSysMeanPt   -> SetTitleSize(0.12, "Y");
+  hSysMeanPt   -> Draw("P");
+  //TArrow *arrow = new TArrow(hSysMeanPt->GetBinCenter(1), 5, hSysMeanPt->GetBinCenter(1), 20, 0.15, "|>");
+  //arrow -> SetAngle(40);
+  //arrow -> SetLineWidth(2);
+  //arrow -> Draw("same");
+  textArrow ->  Draw();
 
   cWpAmpPt -> Update();  
   cWpAmpPt->SaveAs(outPath + "/hd_Wp_AsymAmpSqrtVsPt.png");
@@ -332,7 +360,7 @@ void W_Asymmetry()
   cWmAmpEta -> cd();
   hd_Wm_AsymAmpSqrtVsEta -> GetYaxis() -> SetTitleOffset(1.3);
   hd_Wm_AsymAmpSqrtVsEta -> SetStats(0);
-  hd_Wm_AsymAmpSqrtVsEta -> SetTitle("Asymmetry amplitude; #eta^{W}; A_{N}");
+  hd_Wm_AsymAmpSqrtVsEta -> SetTitle("; #eta^{W}; A_{N}");
   hd_Wm_AsymAmpSqrtVsEta -> SetMarkerStyle(20);
   //hd_Wm_AsymAmpSqrtVsEta -> GetListOfFunctions() -> Add(textSTAR);
   //hd_Wm_AsymAmpSqrtVsEta -> GetListOfFunctions() -> Add(textWm);
@@ -340,9 +368,9 @@ void W_Asymmetry()
   //hd_Wm_AsymAmpSqrtVsEta -> GetListOfFunctions() -> Add(textLSys);
   hd_Wm_AsymAmpSqrtVsEta -> GetYaxis() -> SetRangeUser(-1.5, 1.5);
   hd_Wm_AsymAmpSqrtVsEta -> Draw();
-  textPtLim -> DrawLatex(0.2, 0.85, "STAR p-p 500 GeV - L = 25 pb^{-1}");
-  textSTAR  -> DrawLatex(0.2, 0.80, "0.5 < P_{T} < 7 GeV");
-  textLSys  -> DrawLatex(0.2, 0.75, "3.4% beam pol. uncertainty not shown");
+  textPtLim -> DrawLatex(0.2, 0.82, "STAR p-p 500 GeV #intL = 25 pb^{-1}");
+  textSTAR  -> DrawLatex(0.2, 0.77, "0.5 < P_{T} < 7 GeV");
+  textLSys  -> DrawLatex(0.2, 0.72, "3.4% beam pol. uncertainty not shown");
   textWm ->  DrawLatex(0.2, 0.2, "W^{-} #rightarrow l^{-} #nu");
   //leg1 -> Draw();
 
@@ -354,7 +382,8 @@ void W_Asymmetry()
   TPad*    upperPad_WmRap = new TPad("upperPad_WmRap", "upperPad_WmRap", .005, .25, .995, .995);
   TPad*    lowerPad_WmRap = new TPad("lowerPad_WmRap", "lowerPad_WmRap", .005, .005, .995, .25);
   upperPad_WmRap -> SetBottomMargin(0.017);
-  lowerPad_WmRap -> SetTopMargin(0.017);
+  //lowerPad_WmRap -> SetTopMargin(0.017);
+  lowerPad_WmRap -> SetTopMargin(0.03);
   lowerPad_WmRap -> SetBottomMargin(0.35);
   upperPad_WmRap -> Draw();
   lowerPad_WmRap -> Draw();
@@ -365,7 +394,7 @@ void W_Asymmetry()
   hd_Wm_AsymAmpSqrtVsRap -> GetYaxis() -> SetTitleOffset(1.3);
   hd_Wm_AsymAmpSqrtVsRap -> GetXaxis() -> SetLabelOffset(1.3);
   hd_Wm_AsymAmpSqrtVsRap -> SetStats(0);
-  hd_Wm_AsymAmpSqrtVsRap -> SetTitle("Asymmetry amplitude; y^{W}; A_{N}");
+  hd_Wm_AsymAmpSqrtVsRap -> SetTitle("; y^{W}; A_{N}");
   hd_Wm_AsymAmpSqrtVsRap -> SetMarkerStyle(20);
   hd_Wm_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textSTAR);
   hd_Wm_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textWm);
@@ -375,6 +404,8 @@ void W_Asymmetry()
   hd_Wm_AsymAmpSqrtVsRap -> GetXaxis() -> SetRangeUser(-1., 0.99);
   hd_Wm_AsymAmpSqrtVsRap -> Draw("E0");
   hd_Wm_AsymAmpSqrtVsRap -> GetYaxis() -> SetRangeUser(-1.5, 1.5);
+  hd_Wm_AsymAmpSqrtVsRap -> GetYaxis() -> SetLabelFont(62);
+  hd_Wm_AsymAmpSqrtVsRap -> GetYaxis() -> SetTitleFont(62);
   hd_Wm_AsymAmpSqrtVsRap_clone -> SetStats(0);
   hd_Wm_AsymAmpSqrtVsRap_clone -> Draw("same E1");
   //leg1 -> Draw();
@@ -392,8 +423,9 @@ void W_Asymmetry()
   //hSysRapPR   -> GetYaxis() -> SetLabelSize(0.1);
   //hSysRapPR   -> SetTitleSize(0.2, "X");
   //hSysRapPR   -> SetTitleSize(0.12, "Y");
-  hSysRapPR   -> Draw("same P");
-  hSysRapMR   -> Draw("same P");
+  hSysRapGMean   -> Draw("same P");
+  //hSysRapPR   -> Draw("same P");
+  //hSysRapMR   -> Draw("same P");
 
   cWpAmpRap -> Update();  
   cWmAmpRap->SaveAs(outPath + "/hd_Wm_AsymAmpSqrtVsRap.png");
@@ -414,7 +446,7 @@ void W_Asymmetry()
   hd_Wm_AsymAmpSqrtVsPt -> GetYaxis() -> SetTitleOffset(1.3);
   hd_Wm_AsymAmpSqrtVsPt -> GetXaxis() -> SetLabelOffset(1.3);
   hd_Wm_AsymAmpSqrtVsPt -> SetStats(0);
-  hd_Wm_AsymAmpSqrtVsPt -> SetTitle("Asymmetry amplitude; P_{T}^{W}; A_{N}");
+  hd_Wm_AsymAmpSqrtVsPt -> SetTitle("; P_{T}^{W}; A_{N}");
   hd_Wm_AsymAmpSqrtVsPt -> SetMarkerStyle(20);
   hd_Wm_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textSTAR);
   hd_Wm_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textWm);
@@ -423,6 +455,8 @@ void W_Asymmetry()
   hd_Wm_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textStarPrel);
   hd_Wm_AsymAmpSqrtVsPt -> Draw("E0");
   hd_Wm_AsymAmpSqrtVsPt -> GetYaxis() -> SetRangeUser(-1.5, 1.5);
+  hd_Wm_AsymAmpSqrtVsPt -> GetYaxis() -> SetLabelFont(62);
+  hd_Wm_AsymAmpSqrtVsPt -> GetYaxis() -> SetTitleFont(62);
   hd_Wm_AsymAmpSqrtVsPt_clone -> SetStats(0);
   hd_Wm_AsymAmpSqrtVsPt_clone -> Draw("same E1");
   //leg1 -> Draw();
@@ -430,17 +464,18 @@ void W_Asymmetry()
   lowerPad_WmPt->cd();
   gPad -> SetGrid(0);
   gPad-> Modified();
-  hSysPt   -> SetTitle("; P_{T}^{W}; syst.(%)");
-  hSysPt   -> GetXaxis() -> SetRangeUser(0, 9.99);
-  hSysPt   -> GetXaxis() -> SetTitleOffset(0.75);
-  hSysPt   -> GetXaxis() -> SetNdivisions(10);
-  hSysPt   -> GetXaxis() -> SetLabelSize(0.15);
-  hSysPt   -> GetYaxis() -> SetTitleOffset(0.5);
-  hSysPt   -> GetYaxis() -> SetNdivisions(8);
-  hSysPt   -> GetYaxis() -> SetLabelSize(0.1);
-  hSysPt   -> SetTitleSize(0.2, "X");
-  hSysPt   -> SetTitleSize(0.12, "Y");
-  hSysPt   -> Draw("PL");
+  hSysMeanPt   -> SetTitle("; P_{T}^{W}; syst.(%)");
+  hSysMeanPt   -> GetXaxis() -> SetRangeUser(0, 9.99);
+  hSysMeanPt   -> GetXaxis() -> SetTitleOffset(0.75);
+  hSysMeanPt   -> GetXaxis() -> SetNdivisions(10);
+  hSysMeanPt   -> GetXaxis() -> SetLabelSize(0.15);
+  hSysMeanPt   -> GetYaxis() -> SetTitleOffset(0.5);
+  hSysMeanPt   -> GetYaxis() -> SetNdivisions(8);
+  hSysMeanPt   -> GetYaxis() -> SetLabelSize(0.1);
+  hSysMeanPt   -> SetTitleSize(0.2, "X");
+  hSysMeanPt   -> SetTitleSize(0.12, "Y");
+  hSysMeanPt   -> Draw("P");
+  textArrow    ->  Draw();
 
   cWmAmpPt -> Update();  
   cWmAmpPt->SaveAs(outPath + "/hd_Wm_AsymAmpSqrtVsPt.png");
@@ -453,7 +488,7 @@ void W_Asymmetry()
   cZ0AmpRap -> cd();
   hd_Z0_AsymAmpSqrtVsRap -> GetYaxis() -> SetTitleOffset(1.6);
   hd_Z0_AsymAmpSqrtVsRap -> SetStats(0);
-  hd_Z0_AsymAmpSqrtVsRap -> SetTitle("Asymmetry amplitude; y^{Z^{0}}; A_{N}");
+  hd_Z0_AsymAmpSqrtVsRap -> SetTitle("; y^{Z^{0}}; A_{N}");
   hd_Z0_AsymAmpSqrtVsRap -> SetMarkerStyle(20);
   //hd_Z0_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textSTAR);
   hd_Z0_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textZ0);
@@ -463,7 +498,7 @@ void W_Asymmetry()
   hd_Z0_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textStarPrel_1w);
   hd_Z0_AsymAmpSqrtVsRap -> Draw("E1");
 
-  textSTAR  -> DrawLatex(0.2, 0.3, "STAR p-p 500 GeV - L = 25 pb^{-1}");
+  textSTAR  -> DrawLatex(0.2, 0.3, "STAR p-p 500 GeV #intL = 25 pb^{-1}");
   textPtLim -> DrawLatex(0.2, 0.25, "0 < P_{T} < 25 GeV");
   textLSys  -> DrawLatex(0.2, 0.2, "3.4% beam pol. uncertainty not shown");
   //hd_Z0_AsymAmpSqrtVsRap -> GetYaxis() -> SetRangeUser(-1.5, 1.5);

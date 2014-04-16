@@ -165,10 +165,12 @@ void PtCorrPlot()
    TH1 *hWp_Wp_WBosonPz                    = (TH1*) fileMCWp->Get("event_wp/hWBosonPz");
    TH1 *hWp_PtWGen                         = (TH1*) fileMCWp->Get("event_mc/hWBosonPt");
    TH1 *hWp_PtWGen_zoomin                  = (TH1*) fileMCWp->Get("event_mc/hWBosonPt_zoomin");
+   TH1 *hWp_hRecoVsGenWBosonRap            = (TH1*) fileMCWp->Get("event_mc/hRecoVsGenWBosonRap");
    TH1 *hWp_Wp_WBosonPzVsRapidity          = (TH1*) fileMCWp->Get("event_wp/hWBosonPzVsRapidity");
 
    TH2 *hWp_PtRecoil_vs_PtWGen             = (TH2 *)fileMCWp->Get("event_mc/hTrackRecoilTpcNeutralsPtVsWBosonPt_copy");
    TH2 *hWp_PtRecoilCorr_vs_PtWGen         = (TH2 *)fileMCWp->Get("event_mc/hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt_copy");
+   TH2 *hWp_PtRecoil_vs_Pt_GenOverReco     = (TH2 *)fileMCWp->Get("event_mc/hTrackRecoilTpcNeutralsPt_GenOverReco");
    TH1 *hWp_PhiRecoil_vs_PhiWGen           = (TH1 *)fileMCWp->Get("event_mc/hTrackRecoilPhiVsWBosonPhi");
    TH2 *hWp_An_evol_ZK_Vs_PtGen            = (TH2 *)fileMCWp->Get("event_mc/hAn_evol_ZK_Vs_PtGen");
    TH2 *hWp_An_evol_ZK_Vs_PtRec            = (TH2 *)fileMCWp->Get("event_mc/hAn_evol_ZK_Vs_PtRec");
@@ -515,6 +517,17 @@ void PtCorrPlot()
    c4c->SaveAs(outPath + "/plot_DataMc_WpPz.eps");;
 
 
+   TCanvas *cPtCorrFact   = new TCanvas("cPtCorrFact", "W Pt correction factor", 800, 500);
+
+   cPtCorrFact -> cd();
+   cPtCorrFact -> SetLogz(1);
+   hWp_PtRecoil_vs_Pt_GenOverReco  -> SetStats(0);
+   hWp_PtRecoil_vs_Pt_GenOverReco  -> Draw();
+
+   cPtCorrFact->SaveAs(outPath + "/plot_PtCorrFactor.png");
+   cPtCorrFact->SaveAs(outPath + "/plot_PtCorrFactor.eps");
+
+
    TCanvas *c4d   = new TCanvas("c4d", "W Rapidity vs Pz", 700, 500);
 
    c4d->cd();
@@ -532,6 +545,19 @@ void PtCorrPlot()
 
    c4d->SaveAs(outPath + "/plot_MCWp_PzVsRap.png");
    c4d->SaveAs(outPath + "/plot_MCWp_PzVsRap.eps");
+
+
+   TCanvas *cRecVsGenRap   = new TCanvas("cRecVsGenRap", "Reco Vs Gen Wp-Rapidity", 700, 500);
+
+   cRecVsGenRap -> cd();
+   cRecVsGenRap -> SetGrid(0,0);
+   //cRecVsGenRap -> SetLogz(1);
+   hWp_hRecoVsGenWBosonRap->Draw();
+   //hWp_hRecoVsGenWBosonRap->GetYaxis()->SetTitleOffset(1.8);
+   hWp_hRecoVsGenWBosonRap->SetStats(0);
+
+   cRecVsGenRap->SaveAs(outPath + "/hRecoVsGenWBosonRap.png");
+   cRecVsGenRap->SaveAs(outPath + "/hRecoVsGenWBosonRap.eps");
 
 
    TCanvas *c5   = new TCanvas("c5", "An prediction with evol.", 400, 400);
@@ -757,15 +783,16 @@ void PtCorrPlot()
 
    TCanvas *c8a   = new TCanvas("c8a", "Wm An prediction no evol.", 500, 500);
 
+
    hWm_An_evol_ZK_Vs_RapGen ->ProjectionY("hWm_An_evol_ZK_Vs_RapGen_pjy1", 1, 1);
    hWm_An_evol_ZK_Vs_RapGen ->ProjectionY("hWm_An_evol_ZK_Vs_RapGen_pjy2", 2, 2); 
    hWm_An_evol_ZK_Vs_RapGen ->ProjectionY("hWm_An_evol_ZK_Vs_RapGen_pjy3", 3, 3);  
-   hWm_An_evol_ZK_Vs_RapGen ->ProjectionY("hWm_An_evol_ZK_Vs_RapGen_pjy4", 4, 4);
+   //hWm_An_evol_ZK_Vs_RapGen ->ProjectionY("hWm_An_evol_ZK_Vs_RapGen_pjy4", 4, 4);
 
    hWm_An_evol_ZK_Vs_RapRec ->ProjectionY("hWm_An_evol_ZK_Vs_RapRec_pjy1", 1, 1); 
    hWm_An_evol_ZK_Vs_RapRec ->ProjectionY("hWm_An_evol_ZK_Vs_RapRec_pjy2", 2, 2); 
    hWm_An_evol_ZK_Vs_RapRec ->ProjectionY("hWm_An_evol_ZK_Vs_RapRec_pjy3", 3, 3);  
-   hWm_An_evol_ZK_Vs_RapRec ->ProjectionY("hWm_An_evol_ZK_Vs_RapRec_pjy4", 4, 4);
+   //hWm_An_evol_ZK_Vs_RapRec ->ProjectionY("hWm_An_evol_ZK_Vs_RapRec_pjy4", 4, 4);
 
 
    c8a->cd();
@@ -881,65 +908,6 @@ void Print_Projections_evol(TString outPath)
    //hWm_An_evol_ZK_Vs_PtGen_pjy7 -> Fit("fGaus1", "R");
    hWm_An_evol_ZK_Vs_PtGen_pjy7 -> Draw();
 
-   /*
-   c7a_8->cd();
-   hWm_An_evol_ZK_Vs_PtGen_pjy8 -> GetXaxis() -> SetTitleOffset(1.2);
-   hWm_An_evol_ZK_Vs_PtGen_pjy8 ->SetTitle("PtGen BIN 8: with evolution; W- A_{N}");
-   hWm_An_evol_ZK_Vs_PtGen_pjy8 -> SetFillColor(kYellow); 
-   //hWm_An_evol_ZK_Vs_PtGen_pjy8 -> SetAxisRange(0, 0.1, "X");
-   //hWm_An_evol_ZK_Vs_PtGen_pjy8 -> Fit("fGaus1", "R");
-   hWm_An_evol_ZK_Vs_PtGen_pjy8 -> Draw();
-   c7a_9->cd();
-   hWm_An_evol_ZK_Vs_PtGen_pjy9 -> GetXaxis() -> SetTitleOffset(1.2);
-   hWm_An_evol_ZK_Vs_PtGen_pjy9 ->SetTitle("PtGen BIN 9: with evolution; W- A_{N}");
-   hWm_An_evol_ZK_Vs_PtGen_pjy9 -> SetFillColor(kYellow);
-   //hWm_An_evol_ZK_Vs_PtGen_pjy9 -> SetAxisRange(0, 0.1, "X"); 
-   //hWm_An_evol_ZK_Vs_PtGen_pjy9 -> Fit("fGaus1", "R");
-   hWm_An_evol_ZK_Vs_PtGen_pjy9 -> Draw();
-   c7a_10->cd();
-   hWm_An_evol_ZK_Vs_PtGen_pjy10 -> GetXaxis() -> SetTitleOffset(1.2);
-   hWm_An_evol_ZK_Vs_PtGen_pjy10 ->SetTitle("PtGen BIN 10: with evolution; W- A_{N}");
-   hWm_An_evol_ZK_Vs_PtGen_pjy10 -> SetFillColor(kYellow);
-   //hWm_An_evol_ZK_Vs_PtGen_pjy10 -> SetAxisRange(0, 0.1, "X"); 
-   //hWm_An_evol_ZK_Vs_PtGen_pjy10 -> Fit("fGaus1", "R");
-   hWm_An_evol_ZK_Vs_PtGen_pjy10 -> Draw();
-   c7a_11->cd();
-   hWm_An_evol_ZK_Vs_PtGen_pjy11 -> GetXaxis() -> SetTitleOffset(1.2);
-   hWm_An_evol_ZK_Vs_PtGen_pjy11 ->SetTitle("PtGen BIN 11: with evolution; W- A_{N}");
-   hWm_An_evol_ZK_Vs_PtGen_pjy11 -> SetFillColor(kYellow); 
-   //hWm_An_evol_ZK_Vs_PtGen_pjy11 -> SetAxisRange(0, 0.1, "X"); 
-   //hWm_An_evol_ZK_Vs_PtGen_pjy11 -> Fit("fGaus1", "R");
-   hWm_An_evol_ZK_Vs_PtGen_pjy11 -> Draw();
-   c7a_12->cd();
-   hWm_An_evol_ZK_Vs_PtGen_pjy12 -> GetXaxis() -> SetTitleOffset(1.2);
-   hWm_An_evol_ZK_Vs_PtGen_pjy12 ->SetTitle("PtGen BIN 12: with evolution; W- A_{N}");
-   hWm_An_evol_ZK_Vs_PtGen_pjy12 -> SetFillColor(kYellow); 
-   //hWm_An_evol_ZK_Vs_PtGen_pjy12 -> SetAxisRange(0, 0.1, "X"); 
-   //hWm_An_evol_ZK_Vs_PtGen_pjy12 -> Fit("fGaus1", "R");
-   hWm_An_evol_ZK_Vs_PtGen_pjy12 -> Draw();
-   c7a_13->cd();
-   hWm_An_evol_ZK_Vs_PtGen_pjy13 -> GetXaxis() -> SetTitleOffset(1.2);
-   hWm_An_evol_ZK_Vs_PtGen_pjy13 ->SetTitle("PtGen BIN 13: with evolution; W- A_{N}");
-   hWm_An_evol_ZK_Vs_PtGen_pjy13 -> SetFillColor(kYellow);
-   //hWm_An_evol_ZK_Vs_PtGen_pjy13 -> SetAxisRange(0, 0.1, "X");  
-   //hWm_An_evol_ZK_Vs_PtGen_pjy13 -> Fit("fGaus1", "R");
-   hWm_An_evol_ZK_Vs_PtGen_pjy13 -> Draw();
-   c7a_14->cd();
-   hWm_An_evol_ZK_Vs_PtGen_pjy14 -> GetXaxis() -> SetTitleOffset(1.2);
-   hWm_An_evol_ZK_Vs_PtGen_pjy14 ->SetTitle("PtGen BIN 14: with evolution; W- A_{N}");
-   hWm_An_evol_ZK_Vs_PtGen_pjy14 -> SetFillColor(kYellow);
-   //hWm_An_evol_ZK_Vs_PtGen_pjy14 -> SetAxisRange(0, 0.1, "X");  
-   //hWm_An_evol_ZK_Vs_PtGen_pjy14 -> Fit("fGaus1", "R");
-   hWm_An_evol_ZK_Vs_PtGen_pjy14 -> Draw();
-   c7a_15->cd();
-   hWm_An_evol_ZK_Vs_PtGen_pjy15 -> GetXaxis() -> SetTitleOffset(1.2);
-   hWm_An_evol_ZK_Vs_PtGen_pjy15 ->SetTitle("PtGen BIN 15: with evolution; W- A_{N}");
-   hWm_An_evol_ZK_Vs_PtGen_pjy15 -> SetFillColor(kYellow); 
-   //hWm_An_evol_ZK_Vs_PtGen_pjy15 -> SetAxisRange(0, 0.1, "X"); 
-   //hWm_An_evol_ZK_Vs_PtGen_pjy15 -> Fit("fGaus1", "R");
-   hWm_An_evol_ZK_Vs_PtGen_pjy15 -> Draw();
-   */
-
    c7a->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Vs_PtGen_projs.png");
    c7a->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Vs_PtGen_projs.eps");
 
@@ -998,65 +966,6 @@ void Print_Projections_evol(TString outPath)
    //hWm_An_evol_ZK_Vs_PtRec_pjy7 -> SetAxisRange(0, 0.1, "X");
    //hWm_An_evol_ZK_Vs_PtRec_pjy7 -> Fit("fGaus1", "R");
    hWm_An_evol_ZK_Vs_PtRec_pjy7 -> Draw();
-
-   /*
-   c7b_8->cd();
-   hWm_An_evol_ZK_Vs_PtRec_pjy8 -> GetXaxis() -> SetTitleOffset(1.2);
-   hWm_An_evol_ZK_Vs_PtRec_pjy8 -> SetTitle("PtRec BIN 8: with evolution; W- A_{N}");
-   hWm_An_evol_ZK_Vs_PtRec_pjy8 -> SetFillColor(kYellow);
-   //hWm_An_evol_ZK_Vs_PtRec_pjy8 -> SetAxisRange(0, 0.1, "X");
-   //hWm_An_evol_ZK_Vs_PtRec_pjy8 -> Fit("fGaus1", "R");
-   hWm_An_evol_ZK_Vs_PtRec_pjy8 -> Draw();
-   c7b_9->cd();
-   hWm_An_evol_ZK_Vs_PtRec_pjy9 -> GetXaxis() -> SetTitleOffset(1.2);
-   hWm_An_evol_ZK_Vs_PtRec_pjy9 -> SetTitle("PtRec BIN 9: with evolution; W- A_{N}");
-   hWm_An_evol_ZK_Vs_PtRec_pjy9 -> SetFillColor(kYellow);
-   //hWm_An_evol_ZK_Vs_PtRec_pjy9 -> SetAxisRange(0, 0.1, "X");
-   //hWm_An_evol_ZK_Vs_PtRec_pjy9 -> Fit("fGaus1", "R");
-   hWm_An_evol_ZK_Vs_PtRec_pjy9 -> Draw();
-   c7b_10->cd();
-   hWm_An_evol_ZK_Vs_PtRec_pjy10 -> GetXaxis() -> SetTitleOffset(1.2);
-   hWm_An_evol_ZK_Vs_PtRec_pjy10 -> SetTitle("PtRec BIN 10: with evolution; W- A_{N}");
-   hWm_An_evol_ZK_Vs_PtRec_pjy10 -> SetFillColor(kYellow);
-   //hWm_An_evol_ZK_Vs_PtRec_pjy10 -> SetAxisRange(0, 0.1, "X");
-   //hWm_An_evol_ZK_Vs_PtRec_pjy10 -> Fit("fGaus1", "R");
-   hWm_An_evol_ZK_Vs_PtRec_pjy10 -> Draw();
-   c7b_11->cd();
-   hWm_An_evol_ZK_Vs_PtRec_pjy11 -> GetXaxis() -> SetTitleOffset(1.2);
-   hWm_An_evol_ZK_Vs_PtRec_pjy11 -> SetTitle("PtRec BIN 11: with evolution; W- A_{N}");
-   hWm_An_evol_ZK_Vs_PtRec_pjy11 -> SetFillColor(kYellow);
-   //hWm_An_evol_ZK_Vs_PtRec_pjy11 -> SetAxisRange(0, 0.1, "X");
-   //hWm_An_evol_ZK_Vs_PtRec_pjy11 -> Fit("fGaus1", "R");
-   hWm_An_evol_ZK_Vs_PtRec_pjy11 -> Draw();
-   c7b_12->cd();
-   hWm_An_evol_ZK_Vs_PtRec_pjy12 -> GetXaxis() -> SetTitleOffset(1.2);
-   hWm_An_evol_ZK_Vs_PtRec_pjy12 -> SetTitle("PtRec BIN 12: with evolution; W- A_{N}");
-   hWm_An_evol_ZK_Vs_PtRec_pjy12 -> SetFillColor(kYellow);
-   //hWm_An_evol_ZK_Vs_PtRec_pjy12 -> SetAxisRange(0, 0.1, "X");
-   //hWm_An_evol_ZK_Vs_PtRec_pjy12 -> Fit("fGaus1", "R");
-   hWm_An_evol_ZK_Vs_PtRec_pjy12 -> Draw();
-   c7b_13->cd();
-   hWm_An_evol_ZK_Vs_PtRec_pjy13 -> GetXaxis() -> SetTitleOffset(1.2);
-   hWm_An_evol_ZK_Vs_PtRec_pjy13 -> SetTitle("PtRec BIN 13: with evolution; W- A_{N}");
-   hWm_An_evol_ZK_Vs_PtRec_pjy13 -> SetFillColor(kYellow);
-   //hWm_An_evol_ZK_Vs_PtRec_pjy13 -> SetAxisRange(0, 0.1, "X");
-   //hWm_An_evol_ZK_Vs_PtRec_pjy13 -> Fit("fGaus1", "R");
-   hWm_An_evol_ZK_Vs_PtRec_pjy13 -> Draw();
-   c7b_14->cd();
-   hWm_An_evol_ZK_Vs_PtRec_pjy14 -> GetXaxis() -> SetTitleOffset(1.2);
-   hWm_An_evol_ZK_Vs_PtRec_pjy14 -> SetTitle("PtRec BIN 14: with evolution; W- A_{N}");
-   hWm_An_evol_ZK_Vs_PtRec_pjy14 -> SetFillColor(kYellow);
-   //hWm_An_evol_ZK_Vs_PtRec_pjy14 -> SetAxisRange(0, 0.1, "X");
-   //hWm_An_evol_ZK_Vs_PtRec_pjy14 -> Fit("fGaus1", "R");
-   hWm_An_evol_ZK_Vs_PtRec_pjy14 -> Draw();
-   c7b_15->cd();
-   hWm_An_evol_ZK_Vs_PtRec_pjy15 -> GetXaxis() -> SetTitleOffset(1.2);
-   hWm_An_evol_ZK_Vs_PtRec_pjy15 -> SetTitle("PtRec BIN 15: with evolution; W- A_{N}");
-   hWm_An_evol_ZK_Vs_PtRec_pjy15 -> SetFillColor(kYellow);
-   //hWm_An_evol_ZK_Vs_PtRec_pjy15 -> SetAxisRange(0, 0.1, "X");
-   //hWm_An_evol_ZK_Vs_PtRec_pjy15 -> Fit("fGaus1", "R");
-   hWm_An_evol_ZK_Vs_PtRec_pjy15 -> Draw();
-   */
 
    c7b->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Vs_PtRec_projs.png");
    c7b->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Vs_PtRec_projs.eps");
@@ -1371,33 +1280,13 @@ void CalcSyst_evol(TString outPath)
    Double_t rms_Gen_evol_pjy5  = hWm_An_evol_ZK_Vs_PtGen_pjy5  -> GetRMS();
    Double_t rms_Gen_evol_pjy6  = hWm_An_evol_ZK_Vs_PtGen_pjy6  -> GetRMS();
    Double_t rms_Gen_evol_pjy7  = hWm_An_evol_ZK_Vs_PtGen_pjy7  -> GetRMS();
-   /*
-   Double_t rms_Gen_evol_pjy8  = hWm_An_evol_ZK_Vs_PtGen_pjy8  -> GetRMS();
-   Double_t rms_Gen_evol_pjy9  = hWm_An_evol_ZK_Vs_PtGen_pjy9  -> GetRMS();
-   Double_t rms_Gen_evol_pjy10 = hWm_An_evol_ZK_Vs_PtGen_pjy10 -> GetRMS();
-   Double_t rms_Gen_evol_pjy11 = hWm_An_evol_ZK_Vs_PtGen_pjy11 -> GetRMS();
-   Double_t rms_Gen_evol_pjy12 = hWm_An_evol_ZK_Vs_PtGen_pjy12 -> GetRMS();
-   Double_t rms_Gen_evol_pjy13 = hWm_An_evol_ZK_Vs_PtGen_pjy13 -> GetRMS();
-   Double_t rms_Gen_evol_pjy14 = hWm_An_evol_ZK_Vs_PtGen_pjy14 -> GetRMS();
-   Double_t rms_Gen_evol_pjy15 = hWm_An_evol_ZK_Vs_PtGen_pjy15 -> GetRMS();
-   */
    cout << "rms_Gen_evol_pjy1:  " << rms_Gen_evol_pjy1  << endl; 
    cout << "rms_Gen_evol_pjy2:  " << rms_Gen_evol_pjy2  << endl; 
    cout << "rms_Gen_evol_pjy3:  " << rms_Gen_evol_pjy3  << endl; 
    cout << "rms_Gen_evol_pjy4:  " << rms_Gen_evol_pjy4  << endl; 
    cout << "rms_Gen_evol_pjy5:  " << rms_Gen_evol_pjy5  << endl; 
    cout << "rms_Gen_evol_pjy6:  " << rms_Gen_evol_pjy6  << endl; 
-   cout << "rms_Gen_evol_pjy7:  " << rms_Gen_evol_pjy7  << endl; 
-   /*
-   cout << "rms_Gen_evol_pjy8:  " << rms_Gen_evol_pjy8  << endl; 
-   cout << "rms_Gen_evol_pjy9:  " << rms_Gen_evol_pjy9  << endl; 
-   cout << "rms_Gen_evol_pjy10: " << rms_Gen_evol_pjy10 << endl; 
-   cout << "rms_Gen_evol_pjy11: " << rms_Gen_evol_pjy11 << endl; 
-   cout << "rms_Gen_evol_pjy12: " << rms_Gen_evol_pjy12 << endl; 
-   cout << "rms_Gen_evol_pjy13: " << rms_Gen_evol_pjy13 << endl; 
-   cout << "rms_Gen_evol_pjy14: " << rms_Gen_evol_pjy14 << endl;  
-   cout << "rms_Gen_evol_pjy15: " << rms_Gen_evol_pjy15 << endl;
-   */
+   cout << "rms_Gen_evol_pjy7:  " << rms_Gen_evol_pjy7  << endl;
    Double_t rms_Rec_evol_pjy1  = hWm_An_evol_ZK_Vs_PtRec_pjy1  -> GetRMS();
    Double_t rms_Rec_evol_pjy2  = hWm_An_evol_ZK_Vs_PtRec_pjy2  -> GetRMS();
    Double_t rms_Rec_evol_pjy3  = hWm_An_evol_ZK_Vs_PtRec_pjy3  -> GetRMS();
@@ -1405,33 +1294,13 @@ void CalcSyst_evol(TString outPath)
    Double_t rms_Rec_evol_pjy5  = hWm_An_evol_ZK_Vs_PtRec_pjy5  -> GetRMS();
    Double_t rms_Rec_evol_pjy6  = hWm_An_evol_ZK_Vs_PtRec_pjy6  -> GetRMS();
    Double_t rms_Rec_evol_pjy7  = hWm_An_evol_ZK_Vs_PtRec_pjy7  -> GetRMS();
-   /*
-   Double_t rms_Rec_evol_pjy8  = hWm_An_evol_ZK_Vs_PtRec_pjy8  -> GetRMS();
-   Double_t rms_Rec_evol_pjy9  = hWm_An_evol_ZK_Vs_PtRec_pjy9  -> GetRMS();
-   Double_t rms_Rec_evol_pjy10 = hWm_An_evol_ZK_Vs_PtRec_pjy10 -> GetRMS();
-   Double_t rms_Rec_evol_pjy11 = hWm_An_evol_ZK_Vs_PtRec_pjy11 -> GetRMS();
-   Double_t rms_Rec_evol_pjy12 = hWm_An_evol_ZK_Vs_PtRec_pjy12 -> GetRMS();
-   Double_t rms_Rec_evol_pjy13 = hWm_An_evol_ZK_Vs_PtRec_pjy13 -> GetRMS();
-   Double_t rms_Rec_evol_pjy14 = hWm_An_evol_ZK_Vs_PtRec_pjy14 -> GetRMS();
-   Double_t rms_Rec_evol_pjy15 = hWm_An_evol_ZK_Vs_PtRec_pjy15 -> GetRMS();
-   */
    cout << "rms_Rec_evol_pjy1:  " << rms_Rec_evol_pjy1  << endl; 
    cout << "rms_Rec_evol_pjy2:  " << rms_Rec_evol_pjy2  << endl; 
    cout << "rms_Rec_evol_pjy3:  " << rms_Rec_evol_pjy3  << endl; 
    cout << "rms_Rec_evol_pjy4:  " << rms_Rec_evol_pjy4  << endl; 
    cout << "rms_Rec_evol_pjy5:  " << rms_Rec_evol_pjy5  << endl; 
    cout << "rms_Rec_evol_pjy6:  " << rms_Rec_evol_pjy6  << endl; 
-   cout << "rms_Rec_evol_pjy7:  " << rms_Rec_evol_pjy7  << endl; 
-   /*
-   cout << "rms_Rec_evol_pjy8:  " << rms_Rec_evol_pjy8  << endl; 
-   cout << "rms_Rec_evol_pjy9:  " << rms_Rec_evol_pjy9  << endl; 
-   cout << "rms_Rec_evol_pjy10: " << rms_Rec_evol_pjy10 << endl; 
-   cout << "rms_Rec_evol_pjy11: " << rms_Rec_evol_pjy11 << endl; 
-   cout << "rms_Rec_evol_pjy12: " << rms_Rec_evol_pjy12 << endl; 
-   cout << "rms_Rec_evol_pjy13: " << rms_Rec_evol_pjy13 << endl; 
-   cout << "rms_Rec_evol_pjy14: " << rms_Rec_evol_pjy14 << endl;  
-   cout << "rms_Rec_evol_pjy15: " << rms_Rec_evol_pjy15 << endl; 
-   */
+   cout << "rms_Rec_evol_pjy7:  " << rms_Rec_evol_pjy7  << endl;
    Double_t diff_rms_evol_pjy1  = rms_Rec_evol_pjy1 - rms_Gen_evol_pjy1;
    Double_t diff_rms_evol_pjy2  = rms_Rec_evol_pjy2 - rms_Gen_evol_pjy2;
    Double_t diff_rms_evol_pjy3  = rms_Rec_evol_pjy3 - rms_Gen_evol_pjy3;
@@ -1439,33 +1308,13 @@ void CalcSyst_evol(TString outPath)
    Double_t diff_rms_evol_pjy5  = rms_Rec_evol_pjy5 - rms_Gen_evol_pjy5;
    Double_t diff_rms_evol_pjy6  = rms_Rec_evol_pjy6 - rms_Gen_evol_pjy6;
    Double_t diff_rms_evol_pjy7  = rms_Rec_evol_pjy7 - rms_Gen_evol_pjy7;
-   /*
-   Double_t diff_rms_evol_pjy8  = rms_Rec_evol_pjy8 - rms_Gen_evol_pjy8;
-   Double_t diff_rms_evol_pjy9  = rms_Rec_evol_pjy9 - rms_Gen_evol_pjy9;
-   Double_t diff_rms_evol_pjy10 = rms_Rec_evol_pjy10 - rms_Gen_evol_pjy10;
-   Double_t diff_rms_evol_pjy11 = rms_Rec_evol_pjy11 - rms_Gen_evol_pjy11;
-   Double_t diff_rms_evol_pjy12 = rms_Rec_evol_pjy12 - rms_Gen_evol_pjy12;
-   Double_t diff_rms_evol_pjy13 = rms_Rec_evol_pjy13 - rms_Gen_evol_pjy13;
-   Double_t diff_rms_evol_pjy14 = rms_Rec_evol_pjy14 - rms_Gen_evol_pjy14;
-   Double_t diff_rms_evol_pjy15 = rms_Rec_evol_pjy15 - rms_Gen_evol_pjy15;
-   */
    cout << "diff_rms_evol_pjy1: " << diff_rms_evol_pjy1 << endl; 
    cout << "diff_rms_evol_pjy2: " << diff_rms_evol_pjy2 << endl; 
    cout << "diff_rms_evol_pjy3: " << diff_rms_evol_pjy3 << endl; 
    cout << "diff_rms_evol_pjy4: " << diff_rms_evol_pjy4 << endl; 
    cout << "diff_rms_evol_pjy5: " << diff_rms_evol_pjy5 << endl; 
    cout << "diff_rms_evol_pjy6: " << diff_rms_evol_pjy6 << endl; 
-   cout << "diff_rms_evol_pjy7: " << diff_rms_evol_pjy7 << endl; 
-   /*
-   cout << "diff_rms_evol_pjy8: " << diff_rms_evol_pjy8 << endl; 
-   cout << "diff_rms_evol_pjy9: " << diff_rms_evol_pjy9 << endl; 
-   cout << "diff_rms_evol_pjy10: " << diff_rms_evol_pjy10 << endl; 
-   cout << "diff_rms_evol_pjy11: " << diff_rms_evol_pjy11 << endl; 
-   cout << "diff_rms_evol_pjy12: " << diff_rms_evol_pjy12 << endl; 
-   cout << "diff_rms_evol_pjy13: " << diff_rms_evol_pjy13 << endl; 
-   cout << "diff_rms_evol_pjy14: " << diff_rms_evol_pjy14 << endl; 
-   cout << "diff_rms_evol_pjy15: " << diff_rms_evol_pjy15 << endl; 
-   */
+   cout << "diff_rms_evol_pjy7: " << diff_rms_evol_pjy7 << endl;
    Double_t syst_evol_pjy1  = fabs(diff_rms_evol_pjy1) / rms_Gen_evol_pjy1 /2;
    Double_t syst_evol_pjy2  = fabs(diff_rms_evol_pjy2) / rms_Gen_evol_pjy2 /2;
    Double_t syst_evol_pjy3  = fabs(diff_rms_evol_pjy3) / rms_Gen_evol_pjy3 /2;
@@ -1473,38 +1322,18 @@ void CalcSyst_evol(TString outPath)
    Double_t syst_evol_pjy5  = fabs(diff_rms_evol_pjy5) / rms_Gen_evol_pjy5 /2;
    Double_t syst_evol_pjy6  = fabs(diff_rms_evol_pjy6) / rms_Gen_evol_pjy6 /2;
    Double_t syst_evol_pjy7  = fabs(diff_rms_evol_pjy7) / rms_Gen_evol_pjy7 /2;
-   /*
-   Double_t syst_evol_pjy8  = fabs(diff_rms_evol_pjy8) / rms_Gen_evol_pjy8 /2;
-   Double_t syst_evol_pjy9  = fabs(diff_rms_evol_pjy9) / rms_Gen_evol_pjy9 /2;
-   Double_t syst_evol_pjy10 = fabs(diff_rms_evol_pjy10) / rms_Gen_evol_pjy10 /2;
-   Double_t syst_evol_pjy11 = fabs(diff_rms_evol_pjy11) / rms_Gen_evol_pjy11 /2;
-   Double_t syst_evol_pjy12 = fabs(diff_rms_evol_pjy12) / rms_Gen_evol_pjy12 /2;
-   Double_t syst_evol_pjy13 = fabs(diff_rms_evol_pjy13) / rms_Gen_evol_pjy13 /2;
-   Double_t syst_evol_pjy14 = fabs(diff_rms_evol_pjy14) / rms_Gen_evol_pjy14 /2;
-   Double_t syst_evol_pjy15 = fabs(diff_rms_evol_pjy15) / rms_Gen_evol_pjy15 /2; 
-   */
    cout << "syst_evol_pjy1: " << syst_evol_pjy1 << endl;  
    cout << "syst_evol_pjy2: " << syst_evol_pjy2 << endl;  
    cout << "syst_evol_pjy3: " << syst_evol_pjy3 << endl;  
    cout << "syst_evol_pjy4: " << syst_evol_pjy4 << endl;  
    cout << "syst_evol_pjy5: " << syst_evol_pjy5 << endl;  
    cout << "syst_evol_pjy6: " << syst_evol_pjy6 << endl;  
-   cout << "syst_evol_pjy7: " << syst_evol_pjy7 << endl;  
-   /*
-   cout << "syst_evol_pjy8: " << syst_evol_pjy8 << endl;  
-   cout << "syst_evol_pjy9: " << syst_evol_pjy9 << endl;  
-   cout << "syst_evol_pjy10: " << syst_evol_pjy10 << endl;  
-   cout << "syst_evol_pjy11: " << syst_evol_pjy11 << endl;  
-   cout << "syst_evol_pjy12: " << syst_evol_pjy12 << endl;  
-   cout << "syst_evol_pjy13: " << syst_evol_pjy13 << endl;  
-   cout << "syst_evol_pjy14: " << syst_evol_pjy14 << endl;  
-   cout << "syst_evol_pjy15: " << syst_evol_pjy15 << endl; 
-   */
+   cout << "syst_evol_pjy7: " << syst_evol_pjy7 << endl;
 
 
-   Double_t xBinsPt[8] = {0, 1, 2, 3, 4, 5, 6, 10}; 
+   Double_t xBinsPt[8] = {0.5, 1, 2, 3, 4, 5, 6, 10}; 
 
-   TH1D* hRelativeOffset_evol = new TH1D("hRelativeOffset_evol", "; y; Relative difference in the means", 7, xBinsPt);
+   TH1D* hRelativeOffset_evol = new TH1D("hRelativeOffset_evol", "; W P_{T}; Relative difference in the means", 7, xBinsPt);
    hRelativeOffset_evol -> SetBinContent(1, relDiff_evol_pjy1);
    hRelativeOffset_evol -> SetBinContent(2, relDiff_evol_pjy2);
    hRelativeOffset_evol -> SetBinContent(3, relDiff_evol_pjy3);
@@ -1512,7 +1341,16 @@ void CalcSyst_evol(TString outPath)
    hRelativeOffset_evol -> SetBinContent(5, relDiff_evol_pjy5);
    hRelativeOffset_evol -> SetBinContent(6, relDiff_evol_pjy6);
    hRelativeOffset_evol -> SetBinContent(7, relDiff_evol_pjy7);
-   TH1D* hOffset_evol = new TH1D("hOffset_evol", "; y; Difference in the means", 7, xBinsPt);
+   TH1D* hSystematicsMean_evol = new TH1D("hSystematicsMean_evol", "; W P_{T};  systematic uncertainty (%)", 7, xBinsPt);
+   hSystematicsMean_evol -> SetBinContent(1, fabs(relDiff_evol_pjy1)*100);
+   hSystematicsMean_evol -> SetBinContent(2, fabs(relDiff_evol_pjy2)*100);
+   hSystematicsMean_evol -> SetBinContent(3, fabs(relDiff_evol_pjy3)*100);
+   hSystematicsMean_evol -> SetBinContent(4, fabs(relDiff_evol_pjy4)*100);
+   hSystematicsMean_evol -> SetBinContent(5, fabs(relDiff_evol_pjy5)*100);
+   hSystematicsMean_evol -> SetBinContent(6, fabs(relDiff_evol_pjy6)*100);
+   hSystematicsMean_evol -> SetBinContent(7, fabs(relDiff_evol_pjy7)*100);
+
+   TH1D* hOffset_evol = new TH1D("hOffset_evol", "; W P_{T}; Difference in the means", 7, xBinsPt);
    hOffset_evol -> SetBinContent(1, diff_mean_evol_pjy1);
    hOffset_evol -> SetBinContent(2, diff_mean_evol_pjy2);
    hOffset_evol -> SetBinContent(3, diff_mean_evol_pjy3);
@@ -1523,7 +1361,6 @@ void CalcSyst_evol(TString outPath)
 
 
    TH1D* hSystematics_evol = new TH1D("hSystematics_evol", "; W P_{T}; systematic uncertainty (%)", 7, xBinsPt);
-   //TH1D* hSystematics_evol = new TH1D("hSystematics_evol", "; W P_{T}; systematic uncertainty (%)", 15, 0, 15);
    hSystematics_evol -> SetBinContent(1, syst_evol_pjy1*100);
    hSystematics_evol -> SetBinContent(2, syst_evol_pjy2*100);
    hSystematics_evol -> SetBinContent(3, syst_evol_pjy3*100);
@@ -1531,16 +1368,6 @@ void CalcSyst_evol(TString outPath)
    hSystematics_evol -> SetBinContent(5, syst_evol_pjy5*100);
    hSystematics_evol -> SetBinContent(6, syst_evol_pjy6*100);
    hSystematics_evol -> SetBinContent(7, syst_evol_pjy7*100);
-   /*
-   hSystematics_evol -> SetBinContent(8, syst_evol_pjy8*100);
-   hSystematics_evol -> SetBinContent(9, syst_evol_pjy9*100);
-   hSystematics_evol -> SetBinContent(10, syst_evol_pjy10*100);
-   hSystematics_evol -> SetBinContent(11, syst_evol_pjy11*100);
-   hSystematics_evol -> SetBinContent(12, syst_evol_pjy12*100);
-   hSystematics_evol -> SetBinContent(13, syst_evol_pjy13*100);
-   hSystematics_evol -> SetBinContent(14, syst_evol_pjy14*100);
-   hSystematics_evol -> SetBinContent(15, syst_evol_pjy15*100);
-   */
 
    TCanvas *c8   = new TCanvas("c8", "Systematics evol.", 500, 500);
    c8->cd();
@@ -1551,10 +1378,25 @@ void CalcSyst_evol(TString outPath)
    hSystematics_evol -> Draw("P");
 
    TFile fileSys("histSysPt.root", "recreate"); 
-   hSystematics_evol -> Write(); 
+   hSystematics_evol -> Write();
 
    c8->SaveAs(outPath + "/plot_systematics_evol.png");
    c8->SaveAs(outPath + "/plot_systematics_evol.eps");
+
+
+   TCanvas *cSysMeanPt   = new TCanvas("cSysMeanPt", "Systematics evol.vs Pt from Means", 500, 500);
+   cSysMeanPt->cd();
+   hSystematicsMean_evol  -> GetYaxis() -> SetTitleOffset(1.5);
+   hSystematicsMean_evol  -> SetMarkerStyle(20);
+   hSystematicsMean_evol  -> SetMarkerColor(kRed);
+   hSystematicsMean_evol  -> SetStats(0);
+   hSystematicsMean_evol  -> Draw("P");
+
+   TFile fileMeanSys("histMeanSysPt.root", "recreate"); 
+   hSystematicsMean_evol -> Write(); 
+
+   cSysMeanPt->SaveAs(outPath + "/plot_systematicsMean_evol.png");
+   cSysMeanPt->SaveAs(outPath + "/plot_systematicsMean_evol.eps");
 
 
    TCanvas *cOffsetPt   = new TCanvas("cOffsetPt", "Offset Vs Pt", 500, 500);
@@ -1735,9 +1577,11 @@ void Print_Projections_evol_Rapidity(TString outPath)
    hWm_An_evol_ZK_Vs_RapGen_pjy3 -> SetFillColor(kYellow); 
    //hWm_An_evol_ZK_Vs_RapGen_pjy3 -> SetAxisRange(0, 0.1, "X");
    hWm_An_evol_ZK_Vs_RapGen_pjy3 -> Rebin(2);
-   hWm_An_evol_ZK_Vs_RapGen_pjy3 -> Fit("gaus", "", "", 0, 0.023);
+   //hWm_An_evol_ZK_Vs_RapGen_pjy3 -> Fit("gaus", "", "", 0, 0.03);
+   hWm_An_evol_ZK_Vs_RapGen_pjy3 -> Fit("gaus");
    hWm_An_evol_ZK_Vs_RapGen_pjy3 -> Draw();
    c9a_4->cd();
+   /*
    hWm_An_evol_ZK_Vs_RapGen_pjy4 -> GetXaxis() -> SetTitleOffset(1.2);
    hWm_An_evol_ZK_Vs_RapGen_pjy4 ->SetTitle("RapGen BIN 4: with evolution; W- A_{N}");
    hWm_An_evol_ZK_Vs_RapGen_pjy4 -> SetFillColor(kYellow); 
@@ -1745,7 +1589,7 @@ void Print_Projections_evol_Rapidity(TString outPath)
    hWm_An_evol_ZK_Vs_RapGen_pjy4 -> Rebin(2);
    hWm_An_evol_ZK_Vs_RapGen_pjy4 -> Fit("gaus");
    hWm_An_evol_ZK_Vs_RapGen_pjy4 -> Draw();
-
+   */
 
    c9a->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Vs_RapGen_projs.png");
    c9a->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Vs_RapGen_projs.eps");
@@ -1760,7 +1604,8 @@ void Print_Projections_evol_Rapidity(TString outPath)
    hWm_An_evol_ZK_Vs_RapRec_pjy1 -> SetFillColor(kYellow);
    //hWm_An_evol_ZK_Vs_RapRec_pjy1 -> SetAxisRange(0, 0.1, "X");
    hWm_An_evol_ZK_Vs_RapRec_pjy1 -> Rebin(2);
-   hWm_An_evol_ZK_Vs_RapRec_pjy1 -> Fit("gaus", "", "", 0, 0.015);
+   //hWm_An_evol_ZK_Vs_RapRec_pjy1 -> Fit("gaus", "", "", 0, 0.015);
+   hWm_An_evol_ZK_Vs_RapRec_pjy1 -> Fit("gaus");
    hWm_An_evol_ZK_Vs_RapRec_pjy1 -> Draw(""); 
    c9b_2->cd();
    hWm_An_evol_ZK_Vs_RapRec_pjy2 -> GetXaxis() -> SetTitleOffset(1.2);
@@ -1768,7 +1613,8 @@ void Print_Projections_evol_Rapidity(TString outPath)
    hWm_An_evol_ZK_Vs_RapRec_pjy2 -> SetFillColor(kYellow);
    //hWm_An_evol_ZK_Vs_RapRec_pjy2 -> SetAxisRange(0, 0.1, "X");
    hWm_An_evol_ZK_Vs_RapRec_pjy2 -> Rebin(2);
-   hWm_An_evol_ZK_Vs_RapRec_pjy2 -> Fit("gaus", "", "", 0, 0.018);
+   //hWm_An_evol_ZK_Vs_RapRec_pjy2 -> Fit("gaus", "", "", 0, 0.018);
+   hWm_An_evol_ZK_Vs_RapRec_pjy2 -> Fit("gaus");
    hWm_An_evol_ZK_Vs_RapRec_pjy2 -> Draw();
    c9b_3->cd();
    hWm_An_evol_ZK_Vs_RapRec_pjy3 -> GetXaxis() -> SetTitleOffset(1.2);
@@ -1776,8 +1622,10 @@ void Print_Projections_evol_Rapidity(TString outPath)
    hWm_An_evol_ZK_Vs_RapRec_pjy3 -> SetFillColor(kYellow);
    //hWm_An_evol_ZK_Vs_RapRec_pjy3 -> SetAxisRange(0, 0.1, "X");
    hWm_An_evol_ZK_Vs_RapRec_pjy3 -> Rebin(2);
-   hWm_An_evol_ZK_Vs_RapRec_pjy3 -> Fit("gaus", "", "", 0, 0.020);
+   //hWm_An_evol_ZK_Vs_RapRec_pjy3 -> Fit("gaus", "", "", 0, 0.030);
+   hWm_An_evol_ZK_Vs_RapRec_pjy3 -> Fit("gaus");
    hWm_An_evol_ZK_Vs_RapRec_pjy3 -> Draw();
+   /*
    c9b_4->cd();
    hWm_An_evol_ZK_Vs_RapRec_pjy4 -> GetXaxis() -> SetTitleOffset(1.2);
    hWm_An_evol_ZK_Vs_RapRec_pjy4 -> SetTitle("RapRec BIN 4: with evolution; W- A_{N}");
@@ -1786,7 +1634,7 @@ void Print_Projections_evol_Rapidity(TString outPath)
    hWm_An_evol_ZK_Vs_RapRec_pjy4 -> Rebin(2);
    hWm_An_evol_ZK_Vs_RapRec_pjy4 -> Fit("gaus", "", "", 0.01, 0.035);
    hWm_An_evol_ZK_Vs_RapRec_pjy4 -> Draw();
-
+   */
 
    c9b->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Vs_RapRec_projs.png");
    c9b->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Vs_RapRec_projs.eps");
@@ -1835,106 +1683,148 @@ void CalcSyst_evol_Rapidity(TString outPath)
    Double_t mean_Gen_evol_pjy1  = hWm_An_evol_ZK_Vs_RapGen_pjy1  -> GetMean();
    Double_t mean_Gen_evol_pjy2  = hWm_An_evol_ZK_Vs_RapGen_pjy2  -> GetMean();
    Double_t mean_Gen_evol_pjy3  = hWm_An_evol_ZK_Vs_RapGen_pjy3  -> GetMean();
-   Double_t mean_Gen_evol_pjy4  = hWm_An_evol_ZK_Vs_RapGen_pjy4  -> GetMean(); 
+   //Double_t mean_Gen_evol_pjy4  = hWm_An_evol_ZK_Vs_RapGen_pjy4  -> GetMean(); 
 
    Double_t mean_Rec_evol_pjy1  = hWm_An_evol_ZK_Vs_RapRec_pjy1  -> GetMean();
    Double_t mean_Rec_evol_pjy2  = hWm_An_evol_ZK_Vs_RapRec_pjy2  -> GetMean();
    Double_t mean_Rec_evol_pjy3  = hWm_An_evol_ZK_Vs_RapRec_pjy3  -> GetMean();
-   Double_t mean_Rec_evol_pjy4  = hWm_An_evol_ZK_Vs_RapRec_pjy4  -> GetMean(); 
+   //Double_t mean_Rec_evol_pjy4  = hWm_An_evol_ZK_Vs_RapRec_pjy4  -> GetMean(); 
 
    cout << "Rpidity: mean_Gen_evol_pjy1:  " << mean_Gen_evol_pjy1  << endl; 
    cout << "Rpidity: mean_Gen_evol_pjy2:  " << mean_Gen_evol_pjy2  << endl; 
    cout << "Rpidity: mean_Gen_evol_pjy3:  " << mean_Gen_evol_pjy3  << endl; 
-   cout << "Rpidity: mean_Gen_evol_pjy4:  " << mean_Gen_evol_pjy4  << endl;
+   //cout << "Rpidity: mean_Gen_evol_pjy4:  " << mean_Gen_evol_pjy4  << endl;
 
    cout << "Rpidity: mean_Rec_evol_pjy1:  " << mean_Rec_evol_pjy1  << endl; 
    cout << "Rpidity: mean_Rec_evol_pjy2:  " << mean_Rec_evol_pjy2  << endl; 
    cout << "Rpidity: mean_Rec_evol_pjy3:  " << mean_Rec_evol_pjy3  << endl; 
-   cout << "Rpidity: mean_Rec_evol_pjy4:  " << mean_Rec_evol_pjy4  << endl;
+   //cout << "Rpidity: mean_Rec_evol_pjy4:  " << mean_Rec_evol_pjy4  << endl;
 
    Double_t diff_mean_evol_pjy1  = mean_Rec_evol_pjy1 - mean_Gen_evol_pjy1;
    Double_t diff_mean_evol_pjy2  = mean_Rec_evol_pjy2 - mean_Gen_evol_pjy2;
    Double_t diff_mean_evol_pjy3  = mean_Rec_evol_pjy3 - mean_Gen_evol_pjy3;
-   Double_t diff_mean_evol_pjy4  = mean_Rec_evol_pjy4 - mean_Gen_evol_pjy4;
+   //Double_t diff_mean_evol_pjy4  = mean_Rec_evol_pjy4 - mean_Gen_evol_pjy4;
    cout << "Rpidity: diff_mean_evol_pjy1: " << diff_mean_evol_pjy1 << endl; 
    cout << "Rpidity: diff_mean_evol_pjy2: " << diff_mean_evol_pjy2 << endl; 
    cout << "Rpidity: diff_mean_evol_pjy3: " << diff_mean_evol_pjy3 << endl; 
-   cout << "Rpidity: diff_mean_evol_pjy4: " << diff_mean_evol_pjy4 << endl; 
+   //cout << "Rpidity: diff_mean_evol_pjy4: " << diff_mean_evol_pjy4 << endl; 
 
    Double_t relDiff_evol_pjy1  = diff_mean_evol_pjy1 / mean_Gen_evol_pjy1;
    Double_t relDiff_evol_pjy2  = diff_mean_evol_pjy2 / mean_Gen_evol_pjy2;
    Double_t relDiff_evol_pjy3  = diff_mean_evol_pjy3 / mean_Gen_evol_pjy3;
-   Double_t relDiff_evol_pjy4  = diff_mean_evol_pjy4 / mean_Gen_evol_pjy4;
+   //Double_t relDiff_evol_pjy4  = diff_mean_evol_pjy4 / mean_Gen_evol_pjy4;
    cout << "Rpidity: relDiff_evol_pjy1: " << relDiff_evol_pjy1 << endl;  
    cout << "Rpidity: relDiff_evol_pjy2: " << relDiff_evol_pjy2 << endl;  
    cout << "Rpidity: relDiff_evol_pjy3: " << relDiff_evol_pjy3 << endl;  
-   cout << "Rpidity: relDiff_evol_pjy4: " << relDiff_evol_pjy4 << endl; 
+   //cout << "Rpidity: relDiff_evol_pjy4: " << relDiff_evol_pjy4 << endl; 
 
 
-   Double_t xBinsRap[5] = {-0.6, -0.25, 0, 0.25, 0.6};
+   //Double_t xBinsRap[5] = {-0.6, -0.25, 0, 0.25, 0.6};
+   static const int RapBins = 3;
+   Double_t xBinsRap[RapBins+1];
+   if (RapBins == 4) {
+     xBinsRap[0] = -0.6;
+     xBinsRap[1] = -0.25;
+     xBinsRap[2] = 0;
+     xBinsRap[3] = 0.25;
+     xBinsRap[4] = 0.6;
+   } else if (RapBins == 3){
+     xBinsRap[0] = -0.6;
+     xBinsRap[1] = -0.2;
+     xBinsRap[2] = 0.2;
+     xBinsRap[3] = 0.6;
+   }
 
-   //TH1D* hRelativeOffset_evol = new TH1D("hRelativeOffset_evol", "; y; Relative difference in the means", 4, -1., 1.);
-   TH1D* hRelativeOffset_evol = new TH1D("hRelativeOffset_evol", "; y; Relative difference in the means", 4, xBinsRap);
+   TH1D* hRelativeOffset_evol = new TH1D("hRelativeOffset_evol", "; y; Relative difference in the means", RapBins, xBinsRap);
    hRelativeOffset_evol -> SetBinContent(1, relDiff_evol_pjy1);
    hRelativeOffset_evol -> SetBinContent(2, relDiff_evol_pjy2);
    hRelativeOffset_evol -> SetBinContent(3, relDiff_evol_pjy3);
-   hRelativeOffset_evol -> SetBinContent(4, relDiff_evol_pjy4);
-   //TH1D* hOffset_evol = new TH1D("hOffset_evol", "; y; Difference in the means", 4, -1., 1.);
-   TH1D* hOffset_evol = new TH1D("hOffset_evol", "; y; Difference in the means", 4, xBinsRap);
+   //hRelativeOffset_evol -> SetBinContent(4, relDiff_evol_pjy4);
+  
+   TH1D* hOffset_evol = new TH1D("hOffset_evol", "; y; Difference in the means", RapBins, xBinsRap);
    hOffset_evol -> SetBinContent(1, diff_mean_evol_pjy1);
    hOffset_evol -> SetBinContent(2, diff_mean_evol_pjy2);
    hOffset_evol -> SetBinContent(3, diff_mean_evol_pjy3);
-   hOffset_evol -> SetBinContent(4, diff_mean_evol_pjy4);
+   //hOffset_evol -> SetBinContent(4, diff_mean_evol_pjy4);
 
    TF1 *f1g = hWm_An_evol_ZK_Vs_RapGen_pjy1->GetFunction("gaus");
+   double gmean_Gen_evol_pjy1 = f1g->GetParameter(1);
    double sigma_Gen_evol_pjy1 = f1g->GetParameter(2);
    TF1 *f2g = hWm_An_evol_ZK_Vs_RapGen_pjy2->GetFunction("gaus");
+   double gmean_Gen_evol_pjy2 = f2g->GetParameter(1);
    double sigma_Gen_evol_pjy2 = f2g->GetParameter(2);
    TF1 *f3g = hWm_An_evol_ZK_Vs_RapGen_pjy3->GetFunction("gaus");
+   double gmean_Gen_evol_pjy3 = f3g->GetParameter(1);
    double sigma_Gen_evol_pjy3 = f3g->GetParameter(2);
-   TF1 *f4g = hWm_An_evol_ZK_Vs_RapGen_pjy4->GetFunction("gaus");
-   double sigma_Gen_evol_pjy4 = f4g->GetParameter(2);
+   //TF1 *f4g = hWm_An_evol_ZK_Vs_RapGen_pjy4->GetFunction("gaus");
+   //double sigma_Gen_evol_pjy4 = f4g->GetParameter(2);
+   cout << "Rpidity: gmean_Gen_evol_pjy1:  " << gmean_Gen_evol_pjy1  << endl; 
+   cout << "Rpidity: gmean_Gen_evol_pjy2:  " << gmean_Gen_evol_pjy2  << endl; 
+   cout << "Rpidity: gmean_Gen_evol_pjy3:  " << gmean_Gen_evol_pjy3  << endl; 
    cout << "Rpidity: sigma_Gen_evol_pjy1:  " << sigma_Gen_evol_pjy1  << endl; 
    cout << "Rpidity: sigma_Gen_evol_pjy2:  " << sigma_Gen_evol_pjy2  << endl; 
    cout << "Rpidity: sigma_Gen_evol_pjy3:  " << sigma_Gen_evol_pjy3  << endl; 
-   cout << "Rpidity: sigma_Gen_evol_pjy4:  " << sigma_Gen_evol_pjy4  << endl;
+   //cout << "Rpidity: sigma_Gen_evol_pjy4:  " << sigma_Gen_evol_pjy4  << endl;
    TF1 *f1r = hWm_An_evol_ZK_Vs_RapRec_pjy1->GetFunction("gaus");
+   double gmean_Rec_evol_pjy1 = f1r->GetParameter(1);
    double sigma_Rec_evol_pjy1 = f1r->GetParameter(2);
    TF1 *f2r = hWm_An_evol_ZK_Vs_RapRec_pjy2->GetFunction("gaus");
+   double gmean_Rec_evol_pjy2 = f2r->GetParameter(1);
    double sigma_Rec_evol_pjy2 = f2r->GetParameter(2);
    TF1 *f3r = hWm_An_evol_ZK_Vs_RapRec_pjy3->GetFunction("gaus");
+   double gmean_Rec_evol_pjy3 = f3r->GetParameter(1);
    double sigma_Rec_evol_pjy3 = f3r->GetParameter(2);
-   TF1 *f4r = hWm_An_evol_ZK_Vs_RapRec_pjy4->GetFunction("gaus");
-   double sigma_Rec_evol_pjy4 = f4r->GetParameter(2);
+   //TF1 *f4r = hWm_An_evol_ZK_Vs_RapRec_pjy4->GetFunction("gaus");
+   //double sigma_Rec_evol_pjy4 = f4r->GetParameter(2);
+   cout << "Rpidity: gmean_Rec_evol_pjy1:  " << gmean_Rec_evol_pjy1  << endl;
+   cout << "Rpidity: gmean_Rec_evol_pjy2:  " << gmean_Rec_evol_pjy2  << endl;
+   cout << "Rpidity: gmean_Rec_evol_pjy3:  " << gmean_Rec_evol_pjy3  << endl;
    cout << "Rpidity: sigma_Rec_evol_pjy1:  " << sigma_Rec_evol_pjy1  << endl; 
    cout << "Rpidity: sigma_Rec_evol_pjy2:  " << sigma_Rec_evol_pjy2  << endl; 
    cout << "Rpidity: sigma_Rec_evol_pjy3:  " << sigma_Rec_evol_pjy3  << endl; 
-   cout << "Rpidity: sigma_Rec_evol_pjy4:  " << sigma_Rec_evol_pjy4  << endl; 
+   //cout << "Rpidity: sigma_Rec_evol_pjy4:  " << sigma_Rec_evol_pjy4  << endl; 
 
+   Double_t diff_gmean_evol_pjy1  = gmean_Rec_evol_pjy1 - gmean_Gen_evol_pjy1;
+   Double_t diff_gmean_evol_pjy2  = gmean_Rec_evol_pjy2 - gmean_Gen_evol_pjy2;
+   Double_t diff_gmean_evol_pjy3  = gmean_Rec_evol_pjy3 - gmean_Gen_evol_pjy3;
    Double_t diff_sigma_evol_pjy1  = sigma_Rec_evol_pjy1 - sigma_Gen_evol_pjy1;
    Double_t diff_sigma_evol_pjy2  = sigma_Rec_evol_pjy2 - sigma_Gen_evol_pjy2;
    Double_t diff_sigma_evol_pjy3  = sigma_Rec_evol_pjy3 - sigma_Gen_evol_pjy3;
-   Double_t diff_sigma_evol_pjy4  = sigma_Rec_evol_pjy4 - sigma_Gen_evol_pjy4;
+   //Double_t diff_sigma_evol_pjy4  = sigma_Rec_evol_pjy4 - sigma_Gen_evol_pjy4;
+   cout << "Rpidity: diff_gmean_evol_pjy1: " << diff_gmean_evol_pjy1 << endl; 
+   cout << "Rpidity: diff_gmean_evol_pjy2: " << diff_gmean_evol_pjy2 << endl; 
+   cout << "Rpidity: diff_gmean_evol_pjy3: " << diff_gmean_evol_pjy3 << endl; 
    cout << "Rpidity: diff_sigma_evol_pjy1: " << diff_sigma_evol_pjy1 << endl; 
    cout << "Rpidity: diff_sigma_evol_pjy2: " << diff_sigma_evol_pjy2 << endl; 
    cout << "Rpidity: diff_sigma_evol_pjy3: " << diff_sigma_evol_pjy3 << endl; 
-   cout << "Rpidity: diff_sigma_evol_pjy4: " << diff_sigma_evol_pjy4 << endl; 
+   //cout << "Rpidity: diff_sigma_evol_pjy4: " << diff_sigma_evol_pjy4 << endl; 
 
+   Double_t systFromGMean_evol_pjy1  = fabs(diff_gmean_evol_pjy1) / gmean_Gen_evol_pjy1 ;
+   Double_t systFromGMean_evol_pjy2  = fabs(diff_gmean_evol_pjy2) / gmean_Gen_evol_pjy2 ;
+   Double_t systFromGMean_evol_pjy3  = fabs(diff_gmean_evol_pjy3) / gmean_Gen_evol_pjy3 ;
    Double_t syst_evol_pjy1  = fabs(diff_sigma_evol_pjy1) / sigma_Gen_evol_pjy1 ;
    Double_t syst_evol_pjy2  = fabs(diff_sigma_evol_pjy2) / sigma_Gen_evol_pjy2 ;
    Double_t syst_evol_pjy3  = fabs(diff_sigma_evol_pjy3) / sigma_Gen_evol_pjy3 ;
-   Double_t syst_evol_pjy4  = fabs(diff_sigma_evol_pjy4) / sigma_Gen_evol_pjy4 ;
+   //Double_t syst_evol_pjy4  = fabs(diff_sigma_evol_pjy4) / sigma_Gen_evol_pjy4 ;
+   cout << "Rpidity: systFromGMean_evol_pjy1: " << systFromGMean_evol_pjy1 << endl;  
+   cout << "Rpidity: systFromGMean_evol_pjy2: " << systFromGMean_evol_pjy2 << endl;  
+   cout << "Rpidity: systFromGMean_evol_pjy3: " << systFromGMean_evol_pjy3 << endl;  
    cout << "Rpidity: syst_evol_pjy1: " << syst_evol_pjy1 << endl;  
    cout << "Rpidity: syst_evol_pjy2: " << syst_evol_pjy2 << endl;  
    cout << "Rpidity: syst_evol_pjy3: " << syst_evol_pjy3 << endl;  
-   cout << "Rpidity: syst_evol_pjy4: " << syst_evol_pjy4 << endl; 
+   //cout << "Rpidity: syst_evol_pjy4: " << syst_evol_pjy4 << endl; 
 
-   //TH1D* hSystematics_evol = new TH1D("hSystematics_evol", "; y; systematic uncertainty (%)", 4, -1., 1.);
-   TH1D* hSystematics_evol = new TH1D("hSystematics_evol", "; y; systematic uncertainty (%)", 4, xBinsRap);
+ 
+   TH1D* hSystematicsGMean_evol = new TH1D("hSystematicsGMean_evol", "; y; systematic uncertainty (%)", RapBins, xBinsRap);
+   hSystematicsGMean_evol -> SetBinContent(1, systFromGMean_evol_pjy1*100);
+   hSystematicsGMean_evol -> SetBinContent(2, systFromGMean_evol_pjy2*100);
+   hSystematicsGMean_evol -> SetBinContent(3, systFromGMean_evol_pjy3*100);
+
+   TH1D* hSystematics_evol = new TH1D("hSystematics_evol", "; y; systematic uncertainty (%)", RapBins, xBinsRap);
    hSystematics_evol -> SetBinContent(1, syst_evol_pjy1*100);
    hSystematics_evol -> SetBinContent(2, syst_evol_pjy2*100);
    hSystematics_evol -> SetBinContent(3, syst_evol_pjy3*100);
-   hSystematics_evol -> SetBinContent(4, syst_evol_pjy4*100);
+   //hSystematics_evol -> SetBinContent(4, syst_evol_pjy4*100);
 
 
    TCanvas *c10   = new TCanvas("c10", "Systematics evol. Vs Rapidity", 500, 500);
@@ -1951,6 +1841,21 @@ void CalcSyst_evol_Rapidity(TString outPath)
 
    c10->SaveAs(outPath + "/plot_systematics_evol_Rap.png");
    c10->SaveAs(outPath + "/plot_systematics_evol_Rap.eps");
+
+
+   TCanvas *cSysFromGMean   = new TCanvas("cSysFromGMean", "Systematics (From GMean) evol. Vs Rapidity", 500, 500);
+   cSysFromGMean->cd();
+   hSystematicsGMean_evol -> GetYaxis() -> SetTitleOffset(1.5);
+   hSystematicsGMean_evol -> SetMarkerStyle(20);
+   hSystematicsGMean_evol -> SetMarkerColor(kRed);
+   hSystematicsGMean_evol -> SetStats(0);
+   hSystematicsGMean_evol -> Draw("P");
+
+   TFile fileSysGMean("histSysGMeanRap.root", "recreate"); 
+   hSystematicsGMean_evol -> Write(); 
+
+   cSysFromGMean->SaveAs(outPath + "/plot_systematicsGMean_evol_Rap.png");
+   cSysFromGMean->SaveAs(outPath + "/plot_systematicsGMean_evol_Rap.eps");
 
 
    TCanvas *cOffsetRap   = new TCanvas("cOffsetRap", "Offset Vs Rapidity", 500, 500);
