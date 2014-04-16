@@ -46,7 +46,7 @@ void WBosAsymHContainer::BookHists()
    rh::MultiGraph *mg;
 
    DoubleSpinStateSetIter iDSS = gDoubleSpinStateSet.begin();
-   Double_t xBinsPt[8]  = {0, 1, 2, 3, 4, 5, 6, 10};
+   Double_t xBinsPt[8]  = {0.5, 1, 2, 3, 4, 5, 6, 10};
    //Double_t xBinsRap[5] = {-0.6, -0.2, 0, 0.2, 0.6};
    if (RapBins == 4) {
      xBinsRap[0] = -0.6;
