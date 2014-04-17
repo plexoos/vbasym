@@ -7,7 +7,7 @@ void W_Asymmetry()
    gStyle->SetPadLeftMargin(0.17);
    gStyle->SetMarkerStyle(20);
    gStyle->SetOptDate(0);
-   //gStyle->SetErrorX(0);
+   gStyle->SetErrorX();
 
    TString inPathNew     = "/star/institutions/bnl_me/fazio/stana_out/runlists/";
    TString inPathScratch = "/star/data05/scratch/fazio/stana_out/runlists/";
@@ -132,7 +132,7 @@ void W_Asymmetry()
      hd_Wm_AsymAmpSqrtVsRap->SetBinError(i, errBin);
    }
 
-   for (int i = 1; i <= hd_Wm_AsymAmpSqrtVsPt->GetNbinsX(); ++i) { // loop over Rapidity bins 
+   for (int i = 1; i <= hd_Wm_AsymAmpSqrtVsPt->GetNbinsX(); ++i) { // loop over Pt bins 
      Double_t AsymBin = hd_Wm_AsymAmpSqrtVsPt->GetBinContent(i);
      cout  << "W- Pt-Bin " << i << " AsymBin= " << AsymBin << endl;
      Double_t errStatBin = hd_Wm_AsymAmpSqrtVsPt->GetBinError(i);
@@ -150,15 +150,49 @@ void W_Asymmetry()
    }
 
 
+   // Clone the histograms with errors bars rescaled to 2016 and values set to zero. 
+   TH1D *hd_Wp_AsymAmpSqrtVsRap_2016Pr = (TH1D*)hd_Wp_AsymAmpSqrtVsRap -> Clone("hd_Wp_AsymAmpSqrtVsRap_2016Pr");
+   TH1D *hd_Wp_AsymAmpSqrtVsPt_2016Pr  = (TH1D*)hd_Wp_AsymAmpSqrtVsPt  -> Clone("hd_Wp_AsymAmpSqrtVsPt_2016Pr");
+   TH1D *hd_Wm_AsymAmpSqrtVsRap_2016Pr = (TH1D*)hd_Wm_AsymAmpSqrtVsRap -> Clone("hd_Wm_AsymAmpSqrtVsRap_2016Pr");
+   TH1D *hd_Wm_AsymAmpSqrtVsPt_2016Pr  = (TH1D*)hd_Wm_AsymAmpSqrtVsPt  -> Clone("hd_Wm_AsymAmpSqrtVsPt_2016Pr");
+   Double_t projFactor2016 = 5;
+
+   for (int i = 1; i <= hd_Wp_AsymAmpSqrtVsRap_2016Pr->GetNbinsX(); ++i) { // loop over Rapidity bins 
+     hd_Wp_AsymAmpSqrtVsRap_2016Pr -> SetBinContent(i, 0);
+     Double_t errBin = hd_Wp_AsymAmpSqrtVsRap_2016Pr -> GetBinError(i);
+     Double_t errProj2016Bin = errBin / projFactor2016;
+     hd_Wp_AsymAmpSqrtVsRap_2016Pr -> SetBinError(i, errProj2016Bin);
+   }
+
+   for (int i = 1; i <= hd_Wp_AsymAmpSqrtVsPt_2016Pr->GetNbinsX(); ++i) { // loop over Pt bins 
+     hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetBinContent(i, 0);
+     Double_t errBin = hd_Wp_AsymAmpSqrtVsPt_2016Pr -> GetBinError(i);
+     Double_t errProj2016Bin = errBin / projFactor2016;
+     hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetBinError(i, errProj2016Bin);
+   }
+
+   for (int i = 1; i <= hd_Wm_AsymAmpSqrtVsRap_2016Pr->GetNbinsX(); ++i) { // loop over Rapidity bins 
+     hd_Wm_AsymAmpSqrtVsRap_2016Pr -> SetBinContent(i, 0);
+     Double_t errBin = hd_Wm_AsymAmpSqrtVsRap_2016Pr -> GetBinError(i);
+     Double_t errProj2016Bin = errBin / projFactor2016;
+     hd_Wm_AsymAmpSqrtVsRap_2016Pr -> SetBinError(i, errProj2016Bin);
+   }
+
+   for (int i = 1; i <= hd_Wm_AsymAmpSqrtVsPt_2016Pr->GetNbinsX(); ++i) { // loop over Pt bins 
+     hd_Wm_AsymAmpSqrtVsPt_2016Pr -> SetBinContent(i, 0);
+     Double_t errBin = hd_Wm_AsymAmpSqrtVsPt_2016Pr -> GetBinError(i);
+     Double_t errProj2016Bin = errBin / projFactor2016;
+     hd_Wm_AsymAmpSqrtVsPt_2016Pr -> SetBinError(i, errProj2016Bin);
+   }
+
+
   // Plot the asymmetries: 
 
-  
-   TLegend *leg1 = new TLegend(0.15, 0.8, 0.66, 0.9);
-   leg1 -> SetFillColor(0);
-   leg1 -> SetFillStyle(0);
-   leg1 -> SetLineColor(0);
-   leg1 -> SetBorderSize(0);
-   leg1 -> AddEntry(hd_Wp_AsymAmpSqrtVsEta,"STAR p-p 500 GeV - L = 25 pb^{-1}", "P");
+ 
+   TLine *line1 = new TLine(-0.6, 0, 10, 0);
+   //line1->SetLineColor(kRed);
+   line1->SetLineWidth(2);
+   line1->SetLineStyle(2);
 
    //Double_t xLeg = 0.2;
    Double_t xLeg = 0.43;
@@ -205,6 +239,11 @@ void W_Asymmetry()
    textStarPrel_1w -> SetTextColor(kRed); 
    textStarPrel_1w -> SetTextFont(32);
    textStarPrel_1w -> SetTextSize(0.04);
+   TLatex *textStarProj = new TLatex(0.27, 0.8, "STAR projection #intL = 600 pb^{-1}");
+   textStarProj -> SetNDC(); 
+   textStarProj -> SetTextColor(kRed); 
+   textStarProj -> SetTextFont(32);
+   textStarProj -> SetTextSize(0.06);
   
   TCanvas *cWpAmpEta   = new TCanvas("cWpAmpEta", "An Wp Eta", 600, 600);
 
@@ -213,7 +252,7 @@ void W_Asymmetry()
   hd_Wp_AsymAmpSqrtVsEta -> SetStats(0);
   hd_Wp_AsymAmpSqrtVsEta -> SetMarkerStyle(20);
   hd_Wp_AsymAmpSqrtVsEta -> SetTitle("; #eta^{W}; A_{N}");
-  hd_Wp_AsymAmpSqrtVsEta -> GetYaxis() -> SetRangeUser(-1.5, 1.5);
+  hd_Wp_AsymAmpSqrtVsEta -> GetYaxis() -> SetRangeUser(-1.49, 1.49);
   //hd_Wp_AsymAmpSqrtVsEta -> GetListOfFunctions() -> Add(textSTAR);
   //hd_Wp_AsymAmpSqrtVsEta -> GetListOfFunctions() -> Add(textPtLim);
   //hd_Wp_AsymAmpSqrtVsEta -> GetListOfFunctions() -> Add(textLSys);
@@ -222,7 +261,7 @@ void W_Asymmetry()
   textSTAR  -> DrawLatex(0.2, 0.77, "0.5 < P_{T} < 7 GeV");
   textLSys  -> DrawLatex(0.2, 0.72, "3.4% beam pol. uncertainty not shown");
   textWp    -> DrawLatex(0.2, 0.2, "W^{+} #rightarrow l^{+} #nu");
-  //leg1 -> Draw();
+  line1 -> DrawLine(hd_Wp_AsymAmpSqrtVsEta -> GetXaxis() -> GetXmin(), 0, hd_Wp_AsymAmpSqrtVsEta -> GetXaxis() -> GetXmax(), 0);
 
   cWpAmpEta->SaveAs(outPath + "/hd_Wp_AsymAmpSqrtVsEta.png");
   cWpAmpEta->SaveAs(outPath + "/hd_Wp_AsymAmpSqrtVsEta.eps");
@@ -232,9 +271,10 @@ void W_Asymmetry()
   //TPad*    upperPad = new TPad("upperPad", "upperPad", .005, .7525, .995, .995);
   TPad*    upperPad = new TPad("upperPad", "upperPad", .005, .25, .995, .995);
   TPad*    lowerPad = new TPad("lowerPad", "lowerPad", .005, .005, .995, .25);
-  upperPad -> SetBottomMargin(0.017);
-  lowerPad -> SetTopMargin(0.03);
-  //lowerPad -> SetTopMargin(0.017);
+  upperPad -> SetBottomMargin(0.0);
+  lowerPad -> SetTopMargin(0.0);
+  //upperPad -> SetBottomMargin(0.017);
+  //lowerPad -> SetTopMargin(0.03);
   lowerPad -> SetBottomMargin(0.35);
   upperPad->Draw();
   lowerPad->Draw();
@@ -256,12 +296,14 @@ void W_Asymmetry()
   hd_Wp_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textLSys);
   hd_Wp_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textStarPrel);
   hd_Wp_AsymAmpSqrtVsRap -> Draw("E0");
-  hd_Wp_AsymAmpSqrtVsRap -> GetYaxis() -> SetRangeUser(-1.5, 1.5);
+  hd_Wp_AsymAmpSqrtVsRap -> GetYaxis() -> SetRangeUser(-1.49, 1.49);
   hd_Wp_AsymAmpSqrtVsRap -> GetYaxis() -> SetLabelFont(62);
   hd_Wp_AsymAmpSqrtVsRap -> GetYaxis() -> SetTitleFont(62);
   hd_Wp_AsymAmpSqrtVsRap_clone -> SetStats(0);
   hd_Wp_AsymAmpSqrtVsRap_clone -> Draw("same E1");
-  //leg1 -> Draw();
+  //Double_t xMin =  hd_Wp_AsymAmpSqrtVsRap_clone  -> GetXaxis() -> GetXmin();
+  //Double_d xMax = hd_Wp_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmax;
+  line1 -> DrawLine(hd_Wp_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmin(), 0, hd_Wp_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmax(), 0);
 
   //cWpAmpRap -> cd(2);
   lowerPad->cd();
@@ -303,8 +345,10 @@ void W_Asymmetry()
 
   TPad*    upperPad_WpPt = new TPad("upperPad_WpPt", "upperPad_WpPt", .005, .25, .995, .995);
   TPad*    lowerPad_WpPt = new TPad("lowerPad_WpPt", "lowerPad_WpPt", .005, .005, .995, .25);
-  upperPad_WpPt -> SetBottomMargin(0.017);
-  lowerPad_WpPt -> SetTopMargin(0.017);
+  upperPad_WpPt -> SetBottomMargin(0.0);
+  lowerPad_WpPt -> SetTopMargin(0.0);
+  //upperPad_WpPt -> SetBottomMargin(0.017);
+  //lowerPad_WpPt -> SetTopMargin(0.017);
   lowerPad_WpPt -> SetBottomMargin(0.35);
   upperPad_WpPt -> Draw();
   lowerPad_WpPt -> Draw();
@@ -322,12 +366,12 @@ void W_Asymmetry()
   hd_Wp_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textLSys);
   hd_Wp_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textStarPrel);
   hd_Wp_AsymAmpSqrtVsPt -> Draw("E0");
-  hd_Wp_AsymAmpSqrtVsPt -> GetYaxis() -> SetRangeUser(-1.5, 1.5);
+  hd_Wp_AsymAmpSqrtVsPt -> GetYaxis() -> SetRangeUser(-1.49, 1.49);
   hd_Wp_AsymAmpSqrtVsPt -> GetYaxis() -> SetLabelFont(62);
   hd_Wp_AsymAmpSqrtVsPt -> GetYaxis() -> SetTitleFont(62);
   hd_Wp_AsymAmpSqrtVsPt_clone -> SetStats(0);
   hd_Wp_AsymAmpSqrtVsPt_clone -> Draw("same E1");
-  //leg1 -> Draw();
+  line1 -> DrawLine(hd_Wp_AsymAmpSqrtVsPt -> GetXaxis() -> GetXmin(), 0, hd_Wp_AsymAmpSqrtVsPt -> GetXaxis() -> GetXmax(), 0);
 
   lowerPad_WpPt->cd();
   gPad -> SetGrid(0);
@@ -340,7 +384,7 @@ void W_Asymmetry()
   hSysMeanPt   -> GetYaxis() -> SetTitleOffset(0.5);
   hSysMeanPt   -> GetYaxis() -> SetNdivisions(8);
   hSysMeanPt   -> GetYaxis() -> SetLabelSize(0.1);
-  hSysMeanPt   -> GetYaxis() -> SetRangeUser(0, 26);
+  hSysMeanPt   -> GetYaxis() -> SetRangeUser(0, 27);
   hSysMeanPt   -> SetBinContent(1,0); // mask the syst. for the first Pt bin
   hSysMeanPt   -> SetTitleSize(0.2, "X");
   hSysMeanPt   -> SetTitleSize(0.12, "Y");
@@ -366,13 +410,13 @@ void W_Asymmetry()
   //hd_Wm_AsymAmpSqrtVsEta -> GetListOfFunctions() -> Add(textWm);
   //hd_Wm_AsymAmpSqrtVsEta -> GetListOfFunctions() -> Add(textPtLim);
   //hd_Wm_AsymAmpSqrtVsEta -> GetListOfFunctions() -> Add(textLSys);
-  hd_Wm_AsymAmpSqrtVsEta -> GetYaxis() -> SetRangeUser(-1.5, 1.5);
+  hd_Wm_AsymAmpSqrtVsEta -> GetYaxis() -> SetRangeUser(-1.49, 1.49);
   hd_Wm_AsymAmpSqrtVsEta -> Draw();
   textPtLim -> DrawLatex(0.2, 0.82, "STAR p-p 500 GeV #intL = 25 pb^{-1}");
   textSTAR  -> DrawLatex(0.2, 0.77, "0.5 < P_{T} < 7 GeV");
   textLSys  -> DrawLatex(0.2, 0.72, "3.4% beam pol. uncertainty not shown");
   textWm ->  DrawLatex(0.2, 0.2, "W^{-} #rightarrow l^{-} #nu");
-  //leg1 -> Draw();
+  line1 -> DrawLine(hd_Wm_AsymAmpSqrtVsEta -> GetXaxis() -> GetXmin(), 0, hd_Wm_AsymAmpSqrtVsEta -> GetXaxis() -> GetXmax(), 0);
 
   cWmAmpEta->SaveAs(outPath + "/hd_Wm_AsymAmpSqrtVsEta.png");
   cWmAmpEta->SaveAs(outPath + "/hd_Wm_AsymAmpSqrtVsEta.eps");
@@ -381,9 +425,10 @@ void W_Asymmetry()
 
   TPad*    upperPad_WmRap = new TPad("upperPad_WmRap", "upperPad_WmRap", .005, .25, .995, .995);
   TPad*    lowerPad_WmRap = new TPad("lowerPad_WmRap", "lowerPad_WmRap", .005, .005, .995, .25);
-  upperPad_WmRap -> SetBottomMargin(0.017);
-  //lowerPad_WmRap -> SetTopMargin(0.017);
-  lowerPad_WmRap -> SetTopMargin(0.03);
+  upperPad_WmRap -> SetBottomMargin(0.0);
+  lowerPad_WmRap -> SetTopMargin(0.0);
+  //upperPad_WmRap -> SetBottomMargin(0.017);
+  //lowerPad_WmRap -> SetTopMargin(0.03);
   lowerPad_WmRap -> SetBottomMargin(0.35);
   upperPad_WmRap -> Draw();
   lowerPad_WmRap -> Draw();
@@ -403,12 +448,12 @@ void W_Asymmetry()
   hd_Wm_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textStarPrel);
   hd_Wm_AsymAmpSqrtVsRap -> GetXaxis() -> SetRangeUser(-1., 0.99);
   hd_Wm_AsymAmpSqrtVsRap -> Draw("E0");
-  hd_Wm_AsymAmpSqrtVsRap -> GetYaxis() -> SetRangeUser(-1.5, 1.5);
+  hd_Wm_AsymAmpSqrtVsRap -> GetYaxis() -> SetRangeUser(-1.49, 1.49);
   hd_Wm_AsymAmpSqrtVsRap -> GetYaxis() -> SetLabelFont(62);
   hd_Wm_AsymAmpSqrtVsRap -> GetYaxis() -> SetTitleFont(62);
   hd_Wm_AsymAmpSqrtVsRap_clone -> SetStats(0);
   hd_Wm_AsymAmpSqrtVsRap_clone -> Draw("same E1");
-  //leg1 -> Draw();
+  line1 -> DrawLine(hd_Wm_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmin(), 0, hd_Wm_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmax(), 0);
 
   lowerPad_WmRap->cd();
   gPad -> SetGrid(0);
@@ -435,8 +480,10 @@ void W_Asymmetry()
 
   TPad*    upperPad_WmPt = new TPad("upperPad_WmPt", "upperPad_WmPt", .005, .25, .995, .995);
   TPad*    lowerPad_WmPt = new TPad("lowerPad_WmPt", "lowerPad_WmPt", .005, .005, .995, .25);
-  upperPad_WmPt -> SetBottomMargin(0.017);
-  lowerPad_WmPt -> SetTopMargin(0.017);
+  upperPad_WmPt -> SetBottomMargin(0.0);
+  lowerPad_WmPt -> SetTopMargin(0.0);
+  //upperPad_WmPt -> SetBottomMargin(0.017);
+  //lowerPad_WmPt -> SetTopMargin(0.017);
   lowerPad_WmPt -> SetBottomMargin(0.35);
   upperPad_WmPt -> Draw();
   lowerPad_WmPt -> Draw();
@@ -454,12 +501,12 @@ void W_Asymmetry()
   hd_Wm_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textLSys);
   hd_Wm_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textStarPrel);
   hd_Wm_AsymAmpSqrtVsPt -> Draw("E0");
-  hd_Wm_AsymAmpSqrtVsPt -> GetYaxis() -> SetRangeUser(-1.5, 1.5);
+  hd_Wm_AsymAmpSqrtVsPt -> GetYaxis() -> SetRangeUser(-1.49, 1.49);
   hd_Wm_AsymAmpSqrtVsPt -> GetYaxis() -> SetLabelFont(62);
   hd_Wm_AsymAmpSqrtVsPt -> GetYaxis() -> SetTitleFont(62);
   hd_Wm_AsymAmpSqrtVsPt_clone -> SetStats(0);
   hd_Wm_AsymAmpSqrtVsPt_clone -> Draw("same E1");
-  //leg1 -> Draw();
+  line1 -> DrawLine(hd_Wm_AsymAmpSqrtVsPt -> GetXaxis() -> GetXmin(), 0, hd_Wm_AsymAmpSqrtVsPt -> GetXaxis() -> GetXmax(), 0);
 
   lowerPad_WmPt->cd();
   gPad -> SetGrid(0);
@@ -497,14 +544,189 @@ void W_Asymmetry()
   //hd_Z0_AsymAmpSqrtVsRap -> GetXaxis() -> SetRangeUser(-1., 0.99);
   hd_Z0_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textStarPrel_1w);
   hd_Z0_AsymAmpSqrtVsRap -> Draw("E1");
+  line1 -> DrawLine(hd_Z0_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmin(), 0, hd_Z0_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmax(), 0);
 
   textSTAR  -> DrawLatex(0.2, 0.3, "STAR p-p 500 GeV #intL = 25 pb^{-1}");
   textPtLim -> DrawLatex(0.2, 0.25, "0 < P_{T} < 25 GeV");
   textLSys  -> DrawLatex(0.2, 0.2, "3.4% beam pol. uncertainty not shown");
-  //hd_Z0_AsymAmpSqrtVsRap -> GetYaxis() -> SetRangeUser(-1.5, 1.5);
+  //hd_Z0_AsymAmpSqrtVsRap -> GetYaxis() -> SetRangeUser(-1.49, 1.49);
 
 
   cZ0AmpRap->SaveAs(outPath + "/hd_Z0_AsymAmpSqrtVsRap.png");
   cZ0AmpRap->SaveAs(outPath + "/hd_Z0_AsymAmpSqrtVsRap.eps");
+
+
+  TCanvas *cWAmpProjRap   = new TCanvas("cWAmpProjRap", "W An 2016 projection Rapidity", 600, 650);
+
+  gStyle -> SetErrorX(0);
+
+  TPad*    upperPad_WRapProj = new TPad("upperPad_WRapProj", "upperPad_WRapProj", .005, .25, .995, .995);
+  TPad*    lowerPad_WRapProj = new TPad("lowerPad_WRapProj", "lowerPad_WRapProj", .005, .005, .995, .25);
+  upperPad_WRapProj -> SetBottomMargin(0.0);
+  lowerPad_WRapProj -> SetTopMargin(0.0);
+  lowerPad_WRapProj -> SetBottomMargin(0.35);
+  upperPad_WRapProj -> Draw();
+  lowerPad_WRapProj -> Draw();
+
+  upperPad_WRapProj->cd();
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr -> GetYaxis() -> SetTitleOffset(1.3);
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr -> GetXaxis() -> SetLabelOffset(1.3);
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr -> SetStats(0);
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr -> SetTitle("; y^{W}; A_{N}");
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr -> SetMarkerStyle(20);
+  //hd_Wm_AsymAmpSqrtVsRap_2016Pr -> GetListOfFunctions() -> Add(textSTAR);
+  //hd_Wm_AsymAmpSqrtVsRap_2016Pr -> GetListOfFunctions() -> Add(textWm);
+  //hd_Wm_AsymAmpSqrtVsRap_2016Pr -> GetListOfFunctions() -> Add(textPtLim);
+  //hd_Wm_AsymAmpSqrtVsRap_2016Pr -> GetListOfFunctions() -> Add(textLSys);
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr -> GetListOfFunctions() -> Add(textStarProj);
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr -> GetYaxis() -> SetRangeUser(-1.49, 1.49);
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr -> GetYaxis() -> SetLabelFont(62);
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr -> GetYaxis() -> SetTitleFont(62);
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr -> SetLineColor(kBlue);
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr -> SetLineWidth(2);
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr -> Draw("E1");
+
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr -> GetYaxis() -> SetTitleOffset(1.3);
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr -> GetXaxis() -> SetLabelOffset(1.3);
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr -> SetStats(0);
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr -> SetTitle("; P_{T}^{W}; A_{N}");
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr -> SetMarkerStyle(20);
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr -> SetLineColor(kRed);
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr -> SetLineWidth(2);
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr -> Draw("same E1");
+ 
+  line1 -> DrawLine(hd_Wm_AsymAmpSqrtVsRap_2016Pr -> GetXaxis() -> GetXmin(), 0, hd_Wm_AsymAmpSqrtVsRap_2016Pr -> GetXaxis() -> GetXmax(), 0);
+ 
+  TLegend *leg1 = new TLegend(0.2, 0.03, 0.7, 0.2);
+  leg1 -> SetFillColor(0);
+  leg1 -> SetFillStyle(0);
+  leg1 -> SetLineColor(0);
+  leg1 -> SetBorderSize(0);
+  leg1 -> AddEntry(hd_Wp_AsymAmpSqrtVsRap_2016Pr,"W^{+} stat. uncertainty", "l");
+  leg1 -> AddEntry(hd_Wm_AsymAmpSqrtVsRap_2016Pr,"W^{-} stat. uncertainty", "l");
+  leg1  -> Draw();
+
+  lowerPad_WRapProj->cd();
+  gPad -> SetGrid(0);
+  gPad-> Modified();
+  frameSysRap  -> Draw(); 
+  hSysRapGMean -> Draw("same P");
+  textArrow    -> Draw();
+
+  cWAmpProjRap -> Update();  
+  cWAmpProjRap->SaveAs(outPath + "/hd_WAsym2016ProjRap.png");
+  cWAmpProjRap->SaveAs(outPath + "/hd_WAsym2016ProjRap.eps");
+
+
+  TCanvas *cWAmpProjRapZoom   = new TCanvas("cWAmpProjRapZoom", "W An 2016 projection Rapidity Zoom", 600, 650);
+
+  TPad*    upperPad_WRapProjZoom = new TPad("upperPad_WRapProjZoom", "upperPad_WRapProjZoom", .005, .25, .995, .995);
+  TPad*    lowerPad_WRapProjZoom = new TPad("lowerPad_WRapProjZoom", "lowerPad_WRapProjZoom", .005, .005, .995, .25);
+  upperPad_WRapProjZoom -> SetBottomMargin(0.0);
+  lowerPad_WRapProjZoom -> SetTopMargin(0.0);
+  lowerPad_WRapProjZoom -> SetBottomMargin(0.35);
+  upperPad_WRapProjZoom -> Draw();
+  lowerPad_WRapProjZoom -> Draw();
+
+  upperPad_WRapProjZoom->cd();
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr -> GetYaxis() -> SetRangeUser(-0.49, 0.49);
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr -> Draw("E1");
+
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr -> Draw("same E1");
+ 
+  line1 -> DrawLine(hd_Wm_AsymAmpSqrtVsRap_2016Pr -> GetXaxis() -> GetXmin(), 0, hd_Wm_AsymAmpSqrtVsRap_2016Pr -> GetXaxis() -> GetXmax(), 0);
+  leg1  -> Draw();
+
+  lowerPad_WRapProjZoom->cd();
+  gPad -> SetGrid(0);
+  gPad -> Modified();
+  frameSysRap  -> Draw(); 
+  hSysRapGMean -> Draw("same P");
+  textArrow    -> Draw();
+
+  cWAmpProjRapZoom -> Update();  
+  cWAmpProjRapZoom->SaveAs(outPath + "/hd_WAsym2016ProjRap_zoom.png");
+  cWAmpProjRapZoom->SaveAs(outPath + "/hd_WAsym2016ProjRap_zoom.eps");
+
+
+  TCanvas *cWAmpProjPt   = new TCanvas("cWAmpProjPt", "W An 2016 projection Pt", 600, 650);
+
+  TPad*    upperPad_WPtProj = new TPad("upperPad_WPtProj", "upperPad_WPtProj", .005, .25, .995, .995);
+  TPad*    lowerPad_WPtProj = new TPad("lowerPad_WPtProj", "lowerPad_WPtProj", .005, .005, .995, .25);
+  upperPad_WPtProj -> SetBottomMargin(0.0);
+  lowerPad_WPtProj -> SetTopMargin(0.0);
+  lowerPad_WPtProj -> SetBottomMargin(0.35);
+  upperPad_WPtProj -> Draw();
+  lowerPad_WPtProj -> Draw();
+
+  upperPad_WPtProj->cd();
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr -> GetYaxis() -> SetTitleOffset(1.3);
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr -> GetXaxis() -> SetLabelOffset(1.3);
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr -> SetStats(0);
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr -> SetTitle("; P_{T}^{W}; A_{N}");
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr -> SetMarkerStyle(20);
+  //hd_Wm_AsymAmpSqrtVsPt_2016Pr -> GetListOfFunctions() -> Add(textSTAR);
+  //hd_Wm_AsymAmpSqrtVsPt_2016Pr -> GetListOfFunctions() -> Add(textWm);
+  //hd_Wm_AsymAmpSqrtVsPt_2016Pr -> GetListOfFunctions() -> Add(textRapLim);
+  //hd_Wm_AsymAmpSqrtVsPt_2016Pr -> GetListOfFunctions() -> Add(textLSys);
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr -> GetListOfFunctions() -> Add(textStarProj);
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr -> GetYaxis() -> SetRangeUser(-1.49, 1.49);
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr -> GetYaxis() -> SetLabelFont(62);
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr -> GetYaxis() -> SetTitleFont(62);
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr -> SetLineColor(kBlue);
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr -> SetLineWidth(2);
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr -> Draw("E1");
+
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> GetYaxis() -> SetTitleOffset(1.3);
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> GetXaxis() -> SetLabelOffset(1.3);
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetStats(0);
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetTitle("; P_{T}^{W}; A_{N}");
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetMarkerStyle(20);
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetLineColor(kRed);
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetLineWidth(2);
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> Draw("same E1");
+ 
+  line1 -> DrawLine(hd_Wm_AsymAmpSqrtVsPt_2016Pr -> GetXaxis() -> GetXmin(), 0, hd_Wm_AsymAmpSqrtVsPt_2016Pr -> GetXaxis() -> GetXmax(), 0);
+  leg1  -> Draw();
+
+  lowerPad_WPtProj->cd();
+  gPad -> SetGrid(0);
+  gPad-> Modified();
+  hSysMeanPt   -> Draw("P");
+  textArrow    -> Draw();
+
+  cWAmpProjPt -> Update();  
+  cWAmpProjPt->SaveAs(outPath + "/hd_WAsym2016ProjPt.png");
+  cWAmpProjPt->SaveAs(outPath + "/hd_WAsym2016ProjPt.eps");
+
+
+  TCanvas *cWAmpProjPtZoom   = new TCanvas("cWAmpProjPtZoom", "W An 2016 projection Pt Zoom", 600, 650);
+
+  TPad*    upperPad_WPtProjZoom = new TPad("upperPad_WPtProjZoom", "upperPad_WPtProjZoom", .005, .25, .995, .995);
+  TPad*    lowerPad_WPtProjZoom = new TPad("lowerPad_WPtProjZoom", "lowerPad_WPtProjZoom", .005, .005, .995, .25);
+  upperPad_WPtProjZoom -> SetBottomMargin(0.0);
+  lowerPad_WPtProjZoom -> SetTopMargin(0.0);
+  lowerPad_WPtProjZoom -> SetBottomMargin(0.35);
+  upperPad_WPtProjZoom -> Draw();
+  lowerPad_WPtProjZoom -> Draw();
+
+  upperPad_WPtProjZoom->cd();
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr -> GetYaxis() -> SetRangeUser(-0.49, 0.49);
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr -> Draw("E1");
+
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> Draw("same E1");
+ 
+  line1 -> DrawLine(hd_Wm_AsymAmpSqrtVsPt_2016Pr -> GetXaxis() -> GetXmin(), 0, hd_Wm_AsymAmpSqrtVsPt_2016Pr -> GetXaxis() -> GetXmax(), 0);
+  leg1  -> Draw();
+
+  lowerPad_WPtProjZoom->cd();
+  gPad -> SetGrid(0);
+  gPad -> Modified();
+  hSysMeanPt   -> Draw("P");
+  textArrow    -> Draw();
+
+  cWAmpProjPtZoom -> Update();  
+  cWAmpProjPtZoom->SaveAs(outPath + "/hd_WAsym2016ProjPt_zoom.png");
+  cWAmpProjPtZoom->SaveAs(outPath + "/hd_WAsym2016ProjPt_zoom.eps");
 
 }
