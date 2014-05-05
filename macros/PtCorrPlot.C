@@ -273,7 +273,8 @@ void PtCorrPlot()
    scaleGraph(g1, 0.5*scale_g1);
 
    c2->cd();
-   hWp_PtReco_zoomin ->GetYaxis()->SetTitleOffset(1.8);
+   hWp_PtReco_zoomin -> GetYaxis() -> SetTitleOffset(1.8);
+   hWp_PtReco_zoomin -> GetXaxis() -> SetTitle("Recoil P_{T}");
    hWp_PtRecoCorrected_zoomin ->SetFillStyle(3448);
    hWp_PtRecoCorrected_zoomin ->SetFillColor(kGreen);
    //hWp_PtRecoCorrected_zoomin ->Draw();
@@ -297,6 +298,7 @@ void PtCorrPlot()
 
    c2b->cd();
    hWp_PtReco_zoomin ->GetYaxis()->SetTitleOffset(1.8);
+   hWp_PtReco_zoomin -> GetXaxis() -> SetTitle("Recoil P_{T}");
    hWp_PtRecoCorrected_zoomin ->SetFillStyle(3448);
    hWp_PtRecoCorrected_zoomin ->SetLineColor(kGreen);
    hWp_PtRecoCorrected_zoomin ->SetFillColor(kGreen);
@@ -404,8 +406,8 @@ void PtCorrPlot()
    hWp_Wp_WBosonPt_zoomin_1   ->Draw("same");
    hd_Wp_WBosonPt_zoomin_1    ->Draw("E0 same");
   
-   TLegend *leg4 = new TLegend(0.5, 0.75, 0.75, 0.9);
-   leg4 -> AddEntry(hd_Wp_WBosonPt_zoomin_1,"STAR run11 tran.", "P");
+   TLegend *leg4 = new TLegend(0.4, 0.7, 0.75, 0.9);
+   leg4 -> AddEntry(hd_Wp_WBosonPt_zoomin_1,"STAR 2011 tran.", "P");
    leg4 -> AddEntry(hWp_Wp_WBosonPt_zoomin_1,"PHYTHIA", "F");
    leg4 -> Draw();
 
@@ -438,8 +440,8 @@ void PtCorrPlot()
    hWp_Wp_WBosonPt_1   ->Draw("same");
    hd_Wp_WBosonPt_1    ->Draw("E0 same");
   
-   TLegend *leg4II = new TLegend(0.5, 0.75, 0.75, 0.9);
-   leg4II -> AddEntry(hd_Wp_WBosonPt_1,"STAR run11 tran.", "P");
+   TLegend *leg4II = new TLegend(0.4, 0.7, 0.75, 0.9);
+   leg4II -> AddEntry(hd_Wp_WBosonPt_1,"STAR 2011 tran.", "P");
    leg4II -> AddEntry(hWp_Wp_WBosonPt_1,"PHYTHIA", "F");
    leg4II -> Draw();
 
@@ -471,17 +473,18 @@ void PtCorrPlot()
    hd_Wp_PtReco_zoomin_1    ->Draw("E0");
    hWp_Wp_PtReco_zoomin_1   ->Draw("same");
    hd_Wp_PtReco_zoomin_1    ->Draw("E0 same");
-  
-   TLegend *leg4b = new TLegend(0.5, 0.75, 0.75, 0.9);
-   leg4b -> AddEntry(hd_Wp_PtReco_zoomin_1,"STAR run11 tran.", "P");
+    
+   TLegend *leg4b = new TLegend(0.5, 0.75, 0.75, 0.9);  
+   //TLegend *leg4b = new TLegend(0.4, 0.7, 0.75, 0.9);
+   leg4b -> AddEntry(hd_Wp_PtReco_zoomin_1,"STAR 2011 tran.", "P");
    leg4b -> AddEntry(hWp_Wp_PtReco_zoomin_1,"PHYTHIA", "F");
-   leg4 -> Draw();
+   leg4b -> SetTextSize(0.03);
+   leg4b -> Draw();
 
 
    c4b->SaveAs(outPath + "/plot_DataMc_WpPt_nocorr.png");
    c4b->SaveAs(outPath + "/plot_DataMc_WpPt_nocorr.eps");
   
-
 
    TCanvas *c4c   = new TCanvas("c4c", "", 400, 400);
 
@@ -502,14 +505,17 @@ void PtCorrPlot()
    hWp_Wp_WBosonPz_1   ->Rebin(2);
    hWp_Wp_WBosonPz_1   ->Draw();
    hd_Wp_WBosonPz_1    ->SetMarkerStyle(20);
-   hd_Wp_WBosonPz_1    ->SetTitle("W+ sample");
+   hd_Wp_WBosonPz_1    ->SetTitle("W+ sample"); 
+   //hd_Wp_WBosonPz_1    -> SetAxisRange(0, 160, "Y");
    hd_Wp_WBosonPz_1    ->Draw("E0");
    hWp_Wp_WBosonPz_1   ->Draw("same");
    hd_Wp_WBosonPz_1    ->Draw("E0 same");
   
-   TLegend *leg4c = new TLegend(0.5, 0.75, 0.75, 0.9);
-   leg4c -> AddEntry(hd_Wp_WBosonPz_1,"STAR run11 tran.", "P");
+   TLegend *leg4c = new TLegend(0.5, 0.75, 0.75, 0.9); 
+   //TLegend *leg4c = new TLegend(0.47, 0.7, 0.75, 0.9);
+   leg4c -> AddEntry(hd_Wp_WBosonPz_1,"STAR 2011 tran.", "P");
    leg4c -> AddEntry(hWp_Wp_WBosonPz_1,"PHYTHIA", "F");
+   leg4c -> SetTextSize(0.03);
    leg4c -> Draw();
 
 
@@ -521,6 +527,7 @@ void PtCorrPlot()
 
    cPtCorrFact -> cd();
    cPtCorrFact -> SetLogz(1);
+   hWp_PtRecoil_vs_Pt_GenOverReco  -> GetXaxis() -> SetTitle("Recoil P_{T}");
    hWp_PtRecoil_vs_Pt_GenOverReco  -> SetStats(0);
    hWp_PtRecoil_vs_Pt_GenOverReco  -> Draw();
 
@@ -652,16 +659,6 @@ void PtCorrPlot()
    hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy5", 5, 5);  
    hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy6", 6, 6);  
    hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy7", 7, 7);  
-   /*
-   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy8", 8, 8);  
-   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy9", 9, 9);  
-   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy10", 10, 10);  
-   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy11", 11, 11);  
-   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy12", 12, 12);  
-   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy13", 13, 13);  
-   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy14", 14, 14);  
-   hWm_An_evol_ZK_Vs_PtGen ->ProjectionY("hWm_An_evol_ZK_Vs_PtGen_pjy15", 15, 15);
-   */
 
    hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy1", 1, 1); 
    hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy2", 2, 2); 
@@ -670,16 +667,7 @@ void PtCorrPlot()
    hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy5", 5, 5);  
    hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy6", 6, 6);  
    hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy7", 7, 7);
-   /*  
-   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy8", 8, 8);  
-   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy9", 9, 9);  
-   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy10", 10, 10);  
-   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy11", 11, 11);  
-   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy12", 12, 12);  
-   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy13", 13, 13);  
-   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy14", 14, 14);  
-   hWm_An_evol_ZK_Vs_PtRec ->ProjectionY("hWm_An_evol_ZK_Vs_PtRec_pjy15", 15, 15);
-   */
+
 
    //c6->Divide(1, 2);
 
@@ -819,31 +807,7 @@ void PtCorrPlot()
 
    Print_Projections_evol_Rapidity(outPath);
    CalcSyst_evol_Rapidity(outPath); 
-
-
-   /*
-   TCanvas *cResoRap  = new TCanvas("cResoRap", "Resolution in W-Rapidity", 700, 700);
-   
-   cResoRap -> Divide(2,2);
-
-   //TF1 *fGaus = new TF1("fGaus", "gaus", -2, 2);
-   cResoRap_1 -> cd();
-   //hWm_ResolutionRap_bin1 -> Fit("gaus");
-   hWm_ResolutionRap_bin1 -> Draw();
-   cResoRap_2 -> cd();
-   //hWm_ResolutionRap_bin2 -> Fit("gaus");
-   hWm_ResolutionRap_bin2 -> Draw();
-   cResoRap_3 -> cd();
-   //hWm_ResolutionRap_bin3 -> Fit("gaus");
-   hWm_ResolutionRap_bin3 -> Draw();
-   cResoRap_4 -> cd();
-   TF1* myfit("myfit", "gaus", -2, 2);
-   myfit->SetLineColor(kRed);
-   myfit->SetLineWidth(5);
-   hWm_ResolutionRap_bin4 -> Fit("myfit");
-   hWm_ResolutionRap_bin4 -> Draw();
-   */   
-   
+     
 }
 
 
@@ -1562,6 +1526,7 @@ void Print_Projections_evol_Rapidity(TString outPath)
    //hWm_An_evol_ZK_Vs_RapGen_pjy1 -> SetAxisRange(0, 0.1, "X");
    hWm_An_evol_ZK_Vs_RapGen_pjy1 -> Rebin(2);
    hWm_An_evol_ZK_Vs_RapGen_pjy1 -> Fit("gaus");
+   hWm_An_evol_ZK_Vs_RapGen_pjy1 -> GetXaxis() -> SetNdivisions(4);
    hWm_An_evol_ZK_Vs_RapGen_pjy1 -> Draw();
    c9a_2->cd();
    hWm_An_evol_ZK_Vs_RapGen_pjy2 -> GetXaxis() -> SetTitleOffset(1.2);
@@ -1570,6 +1535,7 @@ void Print_Projections_evol_Rapidity(TString outPath)
    //hWm_An_evol_ZK_Vs_RapGen_pjy2 -> SetAxisRange(0, 0.1, "X");
    hWm_An_evol_ZK_Vs_RapGen_pjy2 -> Rebin(2);
    hWm_An_evol_ZK_Vs_RapGen_pjy2 -> Fit("gaus");
+   hWm_An_evol_ZK_Vs_RapGen_pjy2 -> GetXaxis() -> SetNdivisions(4);
    hWm_An_evol_ZK_Vs_RapGen_pjy2 -> Draw();
    c9a_3->cd();
    hWm_An_evol_ZK_Vs_RapGen_pjy3 -> GetXaxis() -> SetTitleOffset(1.2);
@@ -1579,17 +1545,9 @@ void Print_Projections_evol_Rapidity(TString outPath)
    hWm_An_evol_ZK_Vs_RapGen_pjy3 -> Rebin(2);
    //hWm_An_evol_ZK_Vs_RapGen_pjy3 -> Fit("gaus", "", "", 0, 0.03);
    hWm_An_evol_ZK_Vs_RapGen_pjy3 -> Fit("gaus");
+   hWm_An_evol_ZK_Vs_RapGen_pjy3 -> GetXaxis() -> SetNdivisions(4);
    hWm_An_evol_ZK_Vs_RapGen_pjy3 -> Draw();
    c9a_4->cd();
-   /*
-   hWm_An_evol_ZK_Vs_RapGen_pjy4 -> GetXaxis() -> SetTitleOffset(1.2);
-   hWm_An_evol_ZK_Vs_RapGen_pjy4 ->SetTitle("RapGen BIN 4: with evolution; W- A_{N}");
-   hWm_An_evol_ZK_Vs_RapGen_pjy4 -> SetFillColor(kYellow); 
-   //hWm_An_evol_ZK_Vs_RapGen_pjy4 -> SetAxisRange(0, 0.1, "X");
-   hWm_An_evol_ZK_Vs_RapGen_pjy4 -> Rebin(2);
-   hWm_An_evol_ZK_Vs_RapGen_pjy4 -> Fit("gaus");
-   hWm_An_evol_ZK_Vs_RapGen_pjy4 -> Draw();
-   */
 
    c9a->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Vs_RapGen_projs.png");
    c9a->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Vs_RapGen_projs.eps");
@@ -1606,6 +1564,8 @@ void Print_Projections_evol_Rapidity(TString outPath)
    hWm_An_evol_ZK_Vs_RapRec_pjy1 -> Rebin(2);
    //hWm_An_evol_ZK_Vs_RapRec_pjy1 -> Fit("gaus", "", "", 0, 0.015);
    hWm_An_evol_ZK_Vs_RapRec_pjy1 -> Fit("gaus");
+   hWm_An_evol_ZK_Vs_RapRec_pjy1 -> GetXaxis() -> SetNdivisions(4);
+   hWm_An_evol_ZK_Vs_RapRec_pjy1 -> LabelsOption("v", "X");
    hWm_An_evol_ZK_Vs_RapRec_pjy1 -> Draw(""); 
    c9b_2->cd();
    hWm_An_evol_ZK_Vs_RapRec_pjy2 -> GetXaxis() -> SetTitleOffset(1.2);
@@ -1615,6 +1575,7 @@ void Print_Projections_evol_Rapidity(TString outPath)
    hWm_An_evol_ZK_Vs_RapRec_pjy2 -> Rebin(2);
    //hWm_An_evol_ZK_Vs_RapRec_pjy2 -> Fit("gaus", "", "", 0, 0.018);
    hWm_An_evol_ZK_Vs_RapRec_pjy2 -> Fit("gaus");
+   hWm_An_evol_ZK_Vs_RapRec_pjy2 -> GetXaxis() -> SetNdivisions(4);
    hWm_An_evol_ZK_Vs_RapRec_pjy2 -> Draw();
    c9b_3->cd();
    hWm_An_evol_ZK_Vs_RapRec_pjy3 -> GetXaxis() -> SetTitleOffset(1.2);
@@ -1624,17 +1585,8 @@ void Print_Projections_evol_Rapidity(TString outPath)
    hWm_An_evol_ZK_Vs_RapRec_pjy3 -> Rebin(2);
    //hWm_An_evol_ZK_Vs_RapRec_pjy3 -> Fit("gaus", "", "", 0, 0.030);
    hWm_An_evol_ZK_Vs_RapRec_pjy3 -> Fit("gaus");
+   hWm_An_evol_ZK_Vs_RapRec_pjy3 -> GetXaxis() -> SetNdivisions(4);
    hWm_An_evol_ZK_Vs_RapRec_pjy3 -> Draw();
-   /*
-   c9b_4->cd();
-   hWm_An_evol_ZK_Vs_RapRec_pjy4 -> GetXaxis() -> SetTitleOffset(1.2);
-   hWm_An_evol_ZK_Vs_RapRec_pjy4 -> SetTitle("RapRec BIN 4: with evolution; W- A_{N}");
-   hWm_An_evol_ZK_Vs_RapRec_pjy4 -> SetFillColor(kYellow);
-   //hWm_An_evol_ZK_Vs_RapRec_pjy4 -> SetAxisRange(0, 0.1, "X");
-   hWm_An_evol_ZK_Vs_RapRec_pjy4 -> Rebin(2);
-   hWm_An_evol_ZK_Vs_RapRec_pjy4 -> Fit("gaus", "", "", 0.01, 0.035);
-   hWm_An_evol_ZK_Vs_RapRec_pjy4 -> Draw();
-   */
 
    c9b->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Vs_RapRec_projs.png");
    c9b->SaveAs(outPath + "/plot_Wm_An_evol_ZK_Vs_RapRec_projs.eps");
@@ -1679,7 +1631,7 @@ void CalcSyst_evol_Rapidity(TString outPath)
    cout << "syst_evol_pjy2: " << syst_evol_pjy2 << endl;  
    cout << "syst_evol_pjy3: " << syst_evol_pjy3 << endl;  
    cout << "syst_evol_pjy4: " << syst_evol_pjy4 << endl; 
-  */ 
+   */ 
    Double_t mean_Gen_evol_pjy1  = hWm_An_evol_ZK_Vs_RapGen_pjy1  -> GetMean();
    Double_t mean_Gen_evol_pjy2  = hWm_An_evol_ZK_Vs_RapGen_pjy2  -> GetMean();
    Double_t mean_Gen_evol_pjy3  = hWm_An_evol_ZK_Vs_RapGen_pjy3  -> GetMean();
@@ -1877,5 +1829,4 @@ void CalcSyst_evol_Rapidity(TString outPath)
 
    cOffsetRap->SaveAs(outPath + "/plot_Offset_evol_Rap.png");
    cOffsetRap->SaveAs(outPath + "/plot_Offset_evol_Rap.eps");
-
 }
