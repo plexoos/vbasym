@@ -31,6 +31,9 @@ void Z0EventHContainer::BookHists()
    string shName;
    TH1*   h;
 
+   Double_t xBinsPt2016Pr[4]  = {0, 5, 10, 25};
+   Double_t xBinsRap2016Pr[4] = {-0.6, -0.2, 0.2, 0.6};
+
    fDir->cd();
 
    o["hRunId"]                 = h = new TH1I("hRunId", "; Run Id; Events", 20, 0, 20);
@@ -82,6 +85,8 @@ void Z0EventHContainer::BookHists()
    h->SetOption("hist GRIDX GRIDY XY");
    o["hZ0_Pt_zoomin"]   = h = new TH1F("hZ0_Pt_zoomin", "; Z^{0}-P_{T} (GeV/c); Events", 10, 0, 10);
    h->SetOption("hist GRIDX GRIDY XY");
+   o["hZ0_Pt_2016Pr"]   = h = new TH1D("hZ0_Pt_2016Pr", "; Z^{0}-P_{T} (GeV/c); Events", 3, xBinsPt2016Pr);
+   h->SetOption("hist GRIDX GRIDY XY");
    o["hZ0_Pz"]          = h = new TH1D("hZ0_Pz", "; Z^{0}-P_{z}; Events", 30, -60, 60);
    h->SetOption("hist GRIDX GRIDY XY");
    o["hZ0_Pz_zoomin"]   = h = new TH1D("hZ0_Pz_zoomin", "; Z^{0}-P_{z}; Events", 10, -20, 20);
@@ -89,6 +94,8 @@ void Z0EventHContainer::BookHists()
    o["hZ0_Eta"]   = h = new TH1F("hZ0_Eta", "; Z^{0}- #eta; Events", 20, -4, 4);
    h->SetOption("hist GRIDX GRIDY XY");
    o["hZ0_Rapidity"]   = h = new TH1F("hZ0_Rapidity", "; Z^{0}- y; Events", 20, -2, 2);
+   h->SetOption("hist GRIDX GRIDY XY");
+   o["hZ0_Rapidity_2016Pr"]   = h = new TH1D("hZ0_Rapidity_2016Pr", "; Z^{0}- y; Events", 3, xBinsRap2016Pr);
    h->SetOption("hist GRIDX GRIDY XY");
    o["hZ0_Phi"]        = h = new TH1F("hZ0_Phi", "  ; Z^{0} #phi; Events", 16, -M_PI, M_PI);
    h->SetOption("hist GRIDX GRIDY XY");
@@ -123,15 +130,17 @@ void Z0EventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hZ0_MassInv"])     ->Fill(event.GetVecBosonP4().M());
    ((TH1*) o["hZ0_Pt"])          ->Fill(event.GetVecBosonP4().Pt());
    ((TH1*) o["hZ0_Pt_zoomin"])   ->Fill(event.GetVecBosonP4().Pt());
+   ((TH1*) o["hZ0_Pt_2016Pr"])   ->Fill(event.GetVecBosonP4().Pt());
    ((TH1*) o["hZ0_Pz"])          ->Fill(event.GetVecBosonP4().Pz());
    ((TH1*) o["hZ0_Pz_zoomin"])   ->Fill(event.GetVecBosonP4().Pz());
 
    if ( event.GetCandidate1_P3().Pt() && event.GetCandidate2_P3().Pt() ) {
-      ((TH1*) o["hCandidate1Eta"])  ->Fill(event.GetCandidate1_P3().Eta());
-      ((TH1*) o["hCandidate2Eta"])  ->Fill(event.GetCandidate2_P3().Eta());
-      ((TH1*) o["hZ0_Eta"])         ->Fill(event.GetVecBosonP4().Eta());
-      ((TH1*) o["hZ0_Rapidity"])    ->Fill(event.GetVecBosonP4().Rapidity());
-      ((TH1*) o["hZ0_Phi"])         ->Fill(event.GetVecBosonP4().Phi());
+      ((TH1*) o["hCandidate1Eta"])      ->Fill(event.GetCandidate1_P3().Eta());
+      ((TH1*) o["hCandidate2Eta"])      ->Fill(event.GetCandidate2_P3().Eta());
+      ((TH1*) o["hZ0_Eta"])             ->Fill(event.GetVecBosonP4().Eta());
+      ((TH1*) o["hZ0_Rapidity"])        ->Fill(event.GetVecBosonP4().Rapidity());
+      ((TH1*) o["hZ0_Rapidity_2016Pr"]) ->Fill(event.GetVecBosonP4().Rapidity());
+      ((TH1*) o["hZ0_Phi"])             ->Fill(event.GetVecBosonP4().Phi());
    }
 
    d["tracks"]->Fill(ev);
