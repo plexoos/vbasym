@@ -85,25 +85,11 @@ void W_Asymmetry()
      Double_t errStatBin = hd_Wp_AsymAmpSqrtVsRap->GetBinError(i);
      cout  << "W+ Rapidity-Bin " << i << " errStatBin= " << errStatBin << endl;
      cout  << "W+ Rapidity-Bin " << i << " Relative syst.= " << sysRapGMean[i-1] << "%" << endl;
-     //cout  << "W+ Rapidity-Bin " << i << " Relative positive syst.= " << sysRapPR[i-1] << "%" << endl;
-     //cout  << "W+ Rapidity-Bin " << i << " Relative negative syst.= " << sysRapMR[i-1] << "%" << endl;
      Double_t errSysBin = fabs(AsymBin * sysRapGMean[i-1]/100);
-     //Double_t errSysBinPR = fabs(AsymBin * sysRapPR[i-1]/100);
-     //Double_t errSysBinMR = fabs(AsymBin * sysRapMR[i-1]/100);
      cout  << "W+ Rapidity-Bin " << i << " errSysBin= " << errSysBin << endl;
-     //cout  << "W+ Rapidity-Bin " << i << " errSysBinPR= " << errSysBinPR << endl;
-     //cout  << "W+ Rapidity-Bin " << i << " errSysBinMR= " << errSysBinMR << endl;
      Double_t errBin = sqrt(pow(errStatBin,2) + pow(errSysBin,2)) ;  // sum stat. and sys. errors in quadrature
-     //Double_t errBinPR = sqrt(pow(errStatBin,2) + pow(errSysBinPR,2)) ;  // sum stat. and sys. errors in quadrature
-     //Double_t errBinMR = sqrt(pow(errStatBin,2) + pow(errSysBinMR,2)) ;  // sum stat. and sys. errors in quadrature
      cout  << "W+ Rapidity-Bin " << i << " errBin= " << errBin << endl;
-     //cout  << "W+ Rapidity-Bin " << i << " errBinPR= " << errBinPR << endl;
-     //cout  << "W+ Rapidity-Bin " << i << " errBinMR= " << errBinMR << endl;
      hd_Wp_AsymAmpSqrtVsRap -> SetBinError(i, errBin);
-     //hd_Wp_AsymAmpSqrtVsRap -> SetBinError(i, errBinPR);
-     //Double_t binX = hd_Wp_AsymAmpSqrtVsRap->GetBinCenter(i);
-     //gd_Wp_AsymAmpSqrtVsRap -> SetPoint(i, binX, AsymBin)
-     //gd_Wp_AsymAmpSqrtVsRap -> SetPointError(i, 0, 0, errBinMR, errBinPR); 
    } // for
 
    for (int i = 1; i <= hd_Wp_AsymAmpSqrtVsPt->GetNbinsX(); ++i) { // loop over Pt bins
@@ -155,6 +141,8 @@ void W_Asymmetry()
    // Clone the histograms with errors bars rescaled to 2016 and values set to zero. 
    TH1D *hd_Wp_AsymAmpSqrtVsRap_2016Pr = (TH1D*)hd_Wp_AsymAmpSqrtVsRap -> Clone("hd_Wp_AsymAmpSqrtVsRap_2016Pr");
    TH1D *hd_Wp_AsymAmpSqrtVsPt_2016Pr  = (TH1D*)hd_Wp_AsymAmpSqrtVsPt  -> Clone("hd_Wp_AsymAmpSqrtVsPt_2016Pr");
+   TH1D *hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb = (TH1D*)hd_Wp_AsymAmpSqrtVsRap -> Clone("hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb");
+   TH1D *hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb  = (TH1D*)hd_Wp_AsymAmpSqrtVsPt  -> Clone("hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb");
    TH1D *hd_Wm_AsymAmpSqrtVsRap_2016Pr = (TH1D*)hd_Wm_AsymAmpSqrtVsRap -> Clone("hd_Wm_AsymAmpSqrtVsRap_2016Pr");
    TH1D *hd_Wm_AsymAmpSqrtVsPt_2016Pr  = (TH1D*)hd_Wm_AsymAmpSqrtVsPt  -> Clone("hd_Wm_AsymAmpSqrtVsPt_2016Pr");
 
@@ -165,46 +153,81 @@ void W_Asymmetry()
      xBinsRap[1] = -0.2  + shiftRap;
      xBinsRap[2] = 0.2   + shiftRap;
      xBinsRap[3] = 0.6   + shiftRap;
-   Double_t xBinsPt[8] = {0.5+shiftPt, 1+shiftPt, 2+shiftPt, 3+shiftPt, 4+shiftPt, 5+shiftPt, 6+shiftPt, 10+shiftPt}; 
+   Double_t xBinsPt[8]       = {0.5+shiftPt, 1+shiftPt, 2+shiftPt, 3+shiftPt, 4+shiftPt, 5+shiftPt, 6+shiftPt, 10+shiftPt}; 
+   /*
+   Double_t xBinsRap_wp_400pb[4];
+     xBinsRap_wp_400pb[0] = -0.6  + (2*shiftRap);
+     xBinsRap_wp_400pb[1] = -0.2  + (2*shiftRap);
+     xBinsRap_wp_400pb[2] = 0.2   + (2*shiftRap);
+     xBinsRap_wp_400pb[3] = 0.6   + (2*shiftRap);
+   Double_t xBinsPt_wp_400pb[8] = {0.5+2*shiftPt, 1+2*shiftPt, 2+2*shiftPt, 3+2*shiftPt, 4+2*shiftPt, 5+2*shiftPt, 6+2*shiftPt, 10+2*shiftPt};
+   Double_t xBinsRap_wm_400pb[4];
+     xBinsRap_wm_400pb[0] = -0.6  + 3*shiftRap;
+     xBinsRap_wm_400pb[1] = -0.2  + 3*shiftRap;
+     xBinsRap_wm_400pb[2] = 0.2   + 3*shiftRap;
+     xBinsRap_wm_400pb[3] = 0.6   + 3*shiftRap;
+   Double_t xBinsPt_wm_400pb[8] = {0.5+3*shiftPt, 1+3*shiftPt, 2+3*shiftPt, 3+3*shiftPt, 4+3*shiftPt, 5+3*shiftPt, 6+3*shiftPt, 10+3*shiftPt};
+   */
    TH1D *hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift = new TH1D("hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift", "", 3, xBinsRap); //shift to make it visible
    TH1D *hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift  = new TH1D("hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift", "", 7, xBinsPt); //shift to make it visible
+
+   //TH1D *hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb_shift = new TH1D("hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb_shift", "", 3, xBinsRap_wp_400pb); //shift to make it visible
+   //TH1D *hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb_shift  = new TH1D("hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb_shift", "", 7, xBinsPt_wp_400pb); //shift to make it visible
+   TH1D *hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift = new TH1D("hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift", "", 3, xBinsRap); //shift to make it visible
+   TH1D *hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift  = new TH1D("hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift", "", 7, xBinsPt); //shift to make it visible
+
    Double_t projFactor2016 = 5;
+   Double_t projFactor2016_400pb = 0.4444444;
 
    for (int i = 1; i <= hd_Wp_AsymAmpSqrtVsRap_2016Pr->GetNbinsX(); ++i) { // loop over Rapidity bins 
      hd_Wp_AsymAmpSqrtVsRap_2016Pr -> SetBinContent(i, 0);
+     hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> SetBinContent(i, 0);
      Double_t errBin = hd_Wp_AsymAmpSqrtVsRap_2016Pr -> GetBinError(i);
-     Double_t errProj2016Bin = errBin / projFactor2016;
+     Double_t errProj2016Bin       = errBin / projFactor2016;
+     Double_t errProj2016Bin_400pb = errProj2016Bin / projFactor2016_400pb;
      hd_Wp_AsymAmpSqrtVsRap_2016Pr -> SetBinError(i, errProj2016Bin);
+     hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> SetBinError(i, errProj2016Bin_400pb);
    }
 
    for (int i = 1; i <= hd_Wp_AsymAmpSqrtVsPt_2016Pr->GetNbinsX(); ++i) { // loop over Pt bins 
      hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetBinContent(i, 0);
+     hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> SetBinContent(i, 0);
      Double_t errBin = hd_Wp_AsymAmpSqrtVsPt_2016Pr -> GetBinError(i);
      Double_t errProj2016Bin = errBin / projFactor2016;
+     Double_t errProj2016Bin_400pb = errProj2016Bin / projFactor2016_400pb;
      hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetBinError(i, errProj2016Bin);
+     hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> SetBinError(i, errProj2016Bin_400pb);
    }
 
    for (int i = 1; i <= hd_Wm_AsymAmpSqrtVsRap_2016Pr->GetNbinsX(); ++i) { // loop over Rapidity bins 
      hd_Wm_AsymAmpSqrtVsRap_2016Pr       -> SetBinContent(i, 0);
      hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift -> SetBinContent(i, 0);
+     hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift -> SetBinContent(i, 0);
      Double_t errBin = hd_Wm_AsymAmpSqrtVsRap_2016Pr -> GetBinError(i);
      Double_t errProj2016Bin = errBin / projFactor2016;
+     Double_t errProj2016Bin_400pb = errProj2016Bin / projFactor2016_400pb;
      hd_Wm_AsymAmpSqrtVsRap_2016Pr       -> SetBinError(i, errProj2016Bin);
      hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift -> SetBinError(i, errProj2016Bin);
+     hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift -> SetBinError(i, errProj2016Bin_400pb);
    }
 
    for (int i = 1; i <= hd_Wm_AsymAmpSqrtVsPt_2016Pr->GetNbinsX(); ++i) { // loop over Pt bins 
      hd_Wm_AsymAmpSqrtVsPt_2016Pr       -> SetBinContent(i, 0); 
      hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> SetBinContent(i, 0);
+     hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> SetBinContent(i, 0);
      Double_t errBin = hd_Wm_AsymAmpSqrtVsPt_2016Pr -> GetBinError(i);
      Double_t errProj2016Bin = errBin / projFactor2016;
+     Double_t errProj2016Bin_400pb = errProj2016Bin / projFactor2016_400pb;
      hd_Wm_AsymAmpSqrtVsPt_2016Pr       -> SetBinError(i, errProj2016Bin);
      hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> SetBinError(i, errProj2016Bin);
+     hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> SetBinError(i, errProj2016Bin_400pb);
    }
 
 
    TH1D *hd_Z0_AsymAmpSqrtVsRap_2016Pr = (TH1D*)hd_Z0_Rap_2016Pr  -> Clone("hd_Z0_AsymAmpSqrtVsRap_2016Pr");
    TH1D *hd_Z0_AsymAmpSqrtVsPt_2016Pr  = (TH1D*)hd_Z0_Pt_2016Pr   -> Clone("hd_Z0_AsymAmpSqrtVsPt_2016Pr");
+   TH1D *hd_Z0_AsymAmpSqrtVsRap_2016Pr_400pb = (TH1D*)hd_Z0_Rap_2016Pr  -> Clone("hd_Z0_AsymAmpSqrtVsRap_2016Pr_400pb");
+   TH1D *hd_Z0_AsymAmpSqrtVsPt_2016Pr_400pb  = (TH1D*)hd_Z0_Pt_2016Pr   -> Clone("hd_Z0_AsymAmpSqrtVsPt_2016Pr_400pb");
 
    TH1D *hd_Z0_Asym_2016Pr_oneBin = (TH1D*)hd_Z0_AsymAmpSqrtVsRap -> Clone("hd_Z0_Asym_2016Pr_oneBin");
 
@@ -232,11 +255,15 @@ void W_Asymmetry()
      cout << "Z0 Rap errBin = " << errBin << endl;
      //Double_t errProj2016Bin = (errBin/projFactor2016) * asymScaleFromYelds;
      Double_t errProj2016Bin = errBin / projFactor2016_Z0;
+     Double_t errProj2016Bin_400pb = errProj2016Bin / projFactor2016_400pb;
      cout << "Z0 Rap error = " << errProj2016Bin << endl;
      Double_t relError = errProj2016Bin / binVal;
+     Double_t relError_400pb = errProj2016Bin_400pb / binVal;
      cout << "Z0 Rap Relative error = " << relError << endl;
      hd_Z0_AsymAmpSqrtVsRap_2016Pr       -> SetBinContent(i, 0); 
+     hd_Z0_AsymAmpSqrtVsRap_2016Pr_400pb -> SetBinContent(i, 0);
      hd_Z0_AsymAmpSqrtVsRap_2016Pr       -> SetBinError(i, relError);
+     hd_Z0_AsymAmpSqrtVsRap_2016Pr_400pb -> SetBinError(i, relError_400pb);
    }
 
    for (int i = 0; i <= hd_Z0_AsymAmpSqrtVsPt_2016Pr->GetNbinsX(); ++i) { // loop over Pt bins  
@@ -246,11 +273,15 @@ void W_Asymmetry()
      cout << "Z0 Pt errBin = " << errBin << endl;
      //Double_t errProj2016Bin = (errBin/projFactor2016) * asymScaleFromYelds;;
      Double_t errProj2016Bin = errBin / projFactor2016_Z0;
+     Double_t errProj2016Bin_400pb = errProj2016Bin / projFactor2016_400pb;
      cout << "Z0 Pt error = " << errProj2016Bin << endl;
      if (binVal != 0) Double_t relError = errProj2016Bin / binVal;
+     if (binVal != 0) Double_t relError_400pb = errProj2016Bin_400pb / binVal;
      cout << "Z0 Pt Relative error = " << relError << endl;
-     hd_Z0_AsymAmpSqrtVsPt_2016Pr       -> SetBinContent(i, 0); 
+     hd_Z0_AsymAmpSqrtVsPt_2016Pr       -> SetBinContent(i, 0);  
+     hd_Z0_AsymAmpSqrtVsPt_2016Pr_400pb -> SetBinContent(i, 0);
      hd_Z0_AsymAmpSqrtVsPt_2016Pr       -> SetBinError(i, relError);
+     hd_Z0_AsymAmpSqrtVsPt_2016Pr_400pb -> SetBinError(i, relError_400pb);
    }
 
   // Plot the asymmetries: 
@@ -306,26 +337,40 @@ void W_Asymmetry()
    textStarPrel_1w -> SetTextColor(kRed); 
    textStarPrel_1w -> SetTextFont(32);
    textStarPrel_1w -> SetTextSize(0.04);
-   TLatex *textStarProj = new TLatex(0.25, 0.8, "STAR projection \\int");
+   //TLatex *textStarProj = new TLatex(0.25, 0.8, "STAR projection \\int");
+   TLatex *textStarProj = new TLatex(0.25, 0.8, "STAR projection");
    textStarProj -> SetNDC(); 
    textStarProj -> SetTextColor(kRed); 
    textStarProj -> SetTextFont(32);
-   textStarProj -> SetTextSize(0.06);;
-   TLatex *textStarProjBis = new TLatex(0.6, 0.8, "L_{DEL} = 900 pb^{-1}");
+   textStarProj -> SetTextSize(0.06);
+   //TLatex *textStarProjBis = new TLatex(0.6, 0.8, "L_{DEL} = 900 pb^{-1}");
+   TLatex *textStarProjBis = new TLatex(0.6, 0.8, "");
    textStarProjBis -> SetNDC(); 
    textStarProjBis -> SetTextColor(kRed); 
    textStarProjBis -> SetTextFont(32);
    textStarProjBis -> SetTextSize(0.06);
-   TLatex *textStarProj_1w = new TLatex(0.25, 0.83, "STAR projection \\int");
+   //TLatex *textStarProj_1w = new TLatex(0.25, 0.83, "STAR projection \\int");
+   TLatex *textStarProj_1w = new TLatex(0.25, 0.83, "STAR projection");
    textStarProj_1w -> SetNDC(); 
    textStarProj_1w -> SetTextColor(kRed); 
    textStarProj_1w -> SetTextFont(32);
    textStarProj_1w -> SetTextSize(0.04);;
-   TLatex *textStarProjBis_1w = new TLatex(0.54, 0.83, "L_{DEL} = 900 pb^{-1}");
+   //TLatex *textStarProjBis_1w = new TLatex(0.54, 0.83, "L_{DEL} = 900 pb^{-1}");
+   TLatex *textStarProjBis_1w = new TLatex(0.54, 0.83, "");
    textStarProjBis_1w -> SetNDC(); 
    textStarProjBis_1w -> SetTextColor(kRed); 
    textStarProjBis_1w -> SetTextFont(32);
    textStarProjBis_1w -> SetTextSize(0.04);
+   TText *textLetter = new TText(0.2, 0.07, "(a)");
+   textLetter -> SetNDC();
+   textLetter -> SetTextColor(kRed); 
+   textLetter -> SetTextFont(32);
+   textLetter -> SetTextSize(0.06);
+   TText *textLetter_1w = new TText(0.82, 0.31, "(e)");
+   textLetter_1w -> SetNDC();
+   textLetter_1w -> SetTextColor(kRed); 
+   textLetter_1w -> SetTextFont(32);
+   textLetter_1w -> SetTextSize(0.06);
   
   TCanvas *cWpAmpEta   = new TCanvas("cWpAmpEta", "An Wp Eta", 600, 600);
 
@@ -377,6 +422,7 @@ void W_Asymmetry()
   hd_Wp_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textPtLim);
   hd_Wp_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textLSys);
   hd_Wp_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textStarPrel);
+  hd_Wp_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textLetter);
   hd_Wp_AsymAmpSqrtVsRap -> Draw("E0");
   hd_Wp_AsymAmpSqrtVsRap -> GetYaxis() -> SetRangeUser(-1.49, 1.49);
   hd_Wp_AsymAmpSqrtVsRap -> GetYaxis() -> SetLabelFont(62);
@@ -447,12 +493,14 @@ void W_Asymmetry()
   hd_Wp_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textRapLim);
   hd_Wp_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textLSys);
   hd_Wp_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textStarPrel);
+  //hd_Wp_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textLetter);
   hd_Wp_AsymAmpSqrtVsPt -> Draw("E0");
   hd_Wp_AsymAmpSqrtVsPt -> GetYaxis() -> SetRangeUser(-1.49, 1.49);
   hd_Wp_AsymAmpSqrtVsPt -> GetYaxis() -> SetLabelFont(62);
   hd_Wp_AsymAmpSqrtVsPt -> GetYaxis() -> SetTitleFont(62);
   hd_Wp_AsymAmpSqrtVsPt_clone -> SetStats(0);
   hd_Wp_AsymAmpSqrtVsPt_clone -> Draw("same E1");
+  textLetter -> DrawText(0.2, 0.07, "(c)");
   line1 -> DrawLine(hd_Wp_AsymAmpSqrtVsPt -> GetXaxis() -> GetXmin(), 0, hd_Wp_AsymAmpSqrtVsPt -> GetXaxis() -> GetXmax(), 0);
 
   lowerPad_WpPt->cd();
@@ -528,6 +576,7 @@ void W_Asymmetry()
   hd_Wm_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textPtLim);
   hd_Wm_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textLSys);
   hd_Wm_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textStarPrel);
+  //hd_Wm_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textLetter);
   hd_Wm_AsymAmpSqrtVsRap -> GetXaxis() -> SetRangeUser(-1., 0.99);
   hd_Wm_AsymAmpSqrtVsRap -> Draw("E0");
   hd_Wm_AsymAmpSqrtVsRap -> GetYaxis() -> SetRangeUser(-1.49, 1.49);
@@ -535,6 +584,7 @@ void W_Asymmetry()
   hd_Wm_AsymAmpSqrtVsRap -> GetYaxis() -> SetTitleFont(62);
   hd_Wm_AsymAmpSqrtVsRap_clone -> SetStats(0);
   hd_Wm_AsymAmpSqrtVsRap_clone -> Draw("same E1");
+  textLetter -> DrawText(0.2, 0.07, "(b)");
   line1 -> DrawLine(hd_Wm_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmin(), 0, hd_Wm_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmax(), 0);
 
   lowerPad_WmRap->cd();
@@ -588,6 +638,7 @@ void W_Asymmetry()
   hd_Wm_AsymAmpSqrtVsPt -> GetYaxis() -> SetTitleFont(62);
   hd_Wm_AsymAmpSqrtVsPt_clone -> SetStats(0);
   hd_Wm_AsymAmpSqrtVsPt_clone -> Draw("same E1");
+  textLetter -> DrawText(0.2, 0.07, "(d)");
   line1 -> DrawLine(hd_Wm_AsymAmpSqrtVsPt -> GetXaxis() -> GetXmin(), 0, hd_Wm_AsymAmpSqrtVsPt -> GetXaxis() -> GetXmax(), 0);
 
   lowerPad_WmPt->cd();
@@ -627,12 +678,14 @@ void W_Asymmetry()
   //hd_Z0_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textLSys);
   //hd_Z0_AsymAmpSqrtVsRap -> GetXaxis() -> SetRangeUser(-1., 0.99);
   hd_Z0_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textStarPrel_1w);
+  hd_Z0_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textLetter_1w);
   hd_Z0_AsymAmpSqrtVsRap -> Draw("E1");
   line1 -> DrawLine(hd_Z0_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmin(), 0, hd_Z0_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmax(), 0);
 
   textSTAR  -> DrawLatex(0.2, 0.3, "STAR p-p 500 GeV #intL = 25 pb^{-1}");
   textPtLim -> DrawLatex(0.2, 0.25, "0 < P_{T} < 25 GeV");
   textLSys  -> DrawLatex(0.2, 0.2, "3.4% beam pol. uncertainty not shown");
+  //textLetter_1w -> DrawText(0.2, 0.07, "(e)");
   //hd_Z0_AsymAmpSqrtVsRap -> GetYaxis() -> SetRangeUser(-1.49, 1.49);
 
 
@@ -669,12 +722,8 @@ void W_Asymmetry()
   hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift -> SetStats(0);
   hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift -> SetTitle("; y^{W}; A_{N}");
   hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift -> SetMarkerStyle(20);
-  //hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift -> GetListOfFunctions() -> Add(textSTAR);
-  //hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift -> GetListOfFunctions() -> Add(textWm);
-  //hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift -> GetListOfFunctions() -> Add(textPtLim);
-  //hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift -> GetListOfFunctions() -> Add(textLSys);
-  hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift -> GetListOfFunctions() -> Add(textStarProj);
-  hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift -> GetListOfFunctions() -> Add(textStarProjBis);
+  //hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift -> GetListOfFunctions() -> Add(textStarProj);
+  //hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift -> GetListOfFunctions() -> Add(textStarProjBis);
   hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift -> GetYaxis() -> SetLabelFont(62);
   hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift -> GetYaxis() -> SetTitleFont(62);
   hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift -> SetMarkerStyle(20);
@@ -683,16 +732,53 @@ void W_Asymmetry()
   hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift -> SetLineWidth(2);
   hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift -> Draw("same E1");
 
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> GetYaxis() -> SetTitleOffset(1.3);
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> GetXaxis() -> SetLabelOffset(1.3);
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> SetStats(0);
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> SetTitle("; y^{W}; A_{N}");
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> SetMarkerStyle(20);
+  //hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> GetListOfFunctions() -> Add(textStarProj);
+  //hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> GetListOfFunctions() -> Add(textStarProjBis);
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> GetYaxis() -> SetLabelFont(62);
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> GetYaxis() -> SetTitleFont(62);
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> SetMarkerStyle(20);
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> SetMarkerColor(kRed);
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> SetLineColor(kRed);
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> SetLineWidth(2);
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> SetLineStyle(2);
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> Draw("same E1");
+
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift -> GetYaxis() -> SetTitleOffset(1.3);
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift -> GetXaxis() -> SetLabelOffset(1.3);
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift -> SetStats(0);
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift -> SetTitle("; y^{W}; A_{N}");
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift -> SetMarkerStyle(20);
+  //hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift -> GetListOfFunctions() -> Add(textStarProj);
+  //hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift -> GetListOfFunctions() -> Add(textStarProjBis);
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift -> GetYaxis() -> SetLabelFont(62);
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift -> GetYaxis() -> SetTitleFont(62);
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift -> SetMarkerStyle(20);
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift -> SetMarkerColor(kBlue);
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift -> SetLineColor(kBlue);
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift -> SetLineWidth(2);
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift -> SetLineStyle(2);
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift -> Draw("same E1");
+
  
   line1 -> DrawLine(hd_Wp_AsymAmpSqrtVsRap_2016Pr -> GetXaxis() -> GetXmin(), 0, hd_Wp_AsymAmpSqrtVsRap_2016Pr -> GetXaxis() -> GetXmax(), 0);
  
-  TLegend *leg1 = new TLegend(0.2, 0.03, 0.7, 0.2);
+  TLegend *leg1 = new TLegend(0.5, 0.005, 0.9, 0.31);
   leg1 -> SetFillColor(0);
   leg1 -> SetFillStyle(0);
   leg1 -> SetLineColor(0);
   leg1 -> SetBorderSize(0);
-  leg1 -> AddEntry(hd_Wp_AsymAmpSqrtVsRap_2016Pr,"W^{+} stat. uncertainty", "lp");
-  leg1 -> AddEntry(hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift,"W^{-} stat. uncertainty", "lp");
+  leg1 -> SetTextSize(0.035);
+  //leg1 -> AddEntry(hd_Wp_AsymAmpSqrtVsRap_2016Pr,"W^{+} stat. uncertainty", "lp");
+  //leg1 -> AddEntry(hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift,"W^{-} stat. uncertainty", "lp");
+  leg1 -> AddEntry(hd_Wp_AsymAmpSqrtVsRap_2016Pr,"W^{+} - \\int L(del.) = 900 pb^{-1}", "lp");
+  leg1 -> AddEntry(hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb,"W^{+} - \\int L(del.) = 400 pb^{-1}", "lp");
+  leg1 -> AddEntry(hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift,"W^{-} - \\int L(del.) = 900 pb^{-1}", "lp");
+  leg1 -> AddEntry(hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift,"W^{-} - \\int L(del.) = 400 pb^{-1}", "lp");
   leg1  -> Draw();
 
   lowerPad_WRapProj->cd();
@@ -717,9 +803,12 @@ void W_Asymmetry()
   lowerPad_WRapProjZoom -> Draw();
 
   upperPad_WRapProjZoom->cd();
+  upperPad_WRapProjZoom-> SetGrid(0,0);
   hd_Wp_AsymAmpSqrtVsRap_2016Pr -> Draw("E1");
   hd_Wp_AsymAmpSqrtVsRap_2016Pr -> GetYaxis() -> SetRangeUser(-0.49, 0.49);
   hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift -> Draw("same E1");
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> Draw("same E1");
+  hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift -> Draw("same E1");
  
   line1 -> DrawLine(hd_Wp_AsymAmpSqrtVsRap_2016Pr -> GetXaxis() -> GetXmin(), 0, hd_Wp_AsymAmpSqrtVsRap_2016Pr -> GetXaxis() -> GetXmax(), 0);
   leg1  -> Draw();
@@ -746,12 +835,14 @@ void W_Asymmetry()
   lowerPad_WPtProj -> Draw();
 
   upperPad_WPtProj->cd();
+  upperPad_WPtProj-> SetGrid(0,0);
   hd_Wp_AsymAmpSqrtVsPt_2016Pr -> GetYaxis() -> SetTitleOffset(1.3);
   hd_Wp_AsymAmpSqrtVsPt_2016Pr -> GetXaxis() -> SetLabelOffset(1.3);
   hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetStats(0);
   hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetTitle("; P_{T}^{W}; A_{N}");
   hd_Wp_AsymAmpSqrtVsPt_2016Pr -> GetYaxis() -> SetRangeUser(-1.49, 1.49);
   hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetMarkerStyle(20);
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetMarkerSize(1);
   hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetMarkerColor(kRed);
   hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetLineColor(kRed);
   hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetLineWidth(2);
@@ -762,19 +853,44 @@ void W_Asymmetry()
   hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> SetStats(0);
   hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> SetTitle("; P_{T}^{W}; A_{N}");
   hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> SetMarkerStyle(20);
-  //hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> GetListOfFunctions() -> Add(textSTAR);
-  //hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> GetListOfFunctions() -> Add(textWm);
-  //hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> GetListOfFunctions() -> Add(textRapLim);
-  //hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> GetListOfFunctions() -> Add(textLSys);
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> GetListOfFunctions() -> Add(textStarProj);
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> GetListOfFunctions() -> Add(textStarProjBis);
-  //hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> GetYaxis() -> SetRangeUser(-1.49, 1.49);
+  //hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> GetListOfFunctions() -> Add(textStarProj);
+  //hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> GetListOfFunctions() -> Add(textStarProjBis);
   hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> GetYaxis() -> SetLabelFont(62);
   hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> GetYaxis() -> SetTitleFont(62);
   hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> SetMarkerColor(kBlue);
   hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> SetLineColor(kBlue);
   hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> SetLineWidth(2);
   hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> Draw("same E1");
+
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> GetYaxis() -> SetTitleOffset(1.3);
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> GetXaxis() -> SetLabelOffset(1.3);
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> SetStats(0);
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> SetTitle("; P_{T}^{W}; A_{N}");
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> SetMarkerStyle(20);
+  //hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> GetListOfFunctions() -> Add(textStarProj);
+  //hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> GetListOfFunctions() -> Add(textStarProjBis);
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> GetYaxis() -> SetLabelFont(62);
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> GetYaxis() -> SetTitleFont(62);
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> SetMarkerColor(kRed);
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> SetLineColor(kRed);
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> SetLineWidth(2);
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> SetLineStyle(2);
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> Draw("same E1");
+
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> GetYaxis() -> SetTitleOffset(1.3);
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> GetXaxis() -> SetLabelOffset(1.3);
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> SetStats(0);
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> SetTitle("; P_{T}^{W}; A_{N}");
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> SetMarkerStyle(20);
+  //hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> GetListOfFunctions() -> Add(textStarProj);
+  //hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> GetListOfFunctions() -> Add(textStarProjBis);
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> GetYaxis() -> SetLabelFont(62);
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> GetYaxis() -> SetTitleFont(62);
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> SetMarkerColor(kBlue);
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> SetLineColor(kBlue);
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> SetLineWidth(2);
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> SetLineStyle(2);
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> Draw("same E1");
  
   line1 -> DrawLine(hd_Wp_AsymAmpSqrtVsPt_2016Pr -> GetXaxis() -> GetXmin(), 0, hd_Wp_AsymAmpSqrtVsPt_2016Pr -> GetXaxis() -> GetXmax(), 0);
   leg1  -> Draw();
@@ -801,11 +917,13 @@ void W_Asymmetry()
   lowerPad_WPtProjZoom -> Draw();
 
   upperPad_WPtProjZoom->cd();
+  upperPad_WPtProjZoom-> SetGrid(0,0);
   hd_Wp_AsymAmpSqrtVsPt_2016Pr -> GetYaxis() -> SetRangeUser(-0.49, 0.49);
   hd_Wp_AsymAmpSqrtVsPt_2016Pr -> Draw("E1");
 
-  //hd_Wm_AsymAmpSqrtVsPt_2016Pr -> GetYaxis() -> SetRangeUser(-0.49, 0.49);
   hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> Draw("same E1");
+  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> Draw("same E1");
+  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> Draw("same E1");
  
   line1 -> DrawLine(hd_Wp_AsymAmpSqrtVsPt_2016Pr -> GetXaxis() -> GetXmin(), 0, hd_Wp_AsymAmpSqrtVsPt_2016Pr -> GetXaxis() -> GetXmax(), 0);
   leg1  -> Draw();
@@ -823,27 +941,34 @@ void W_Asymmetry()
 
   TCanvas *cZ0AmpProjPt   = new TCanvas("cZ0AmpProjPt", "Z0 An 2016 projection Pt", 600, 650);
 
+  cZ0AmpProjPt -> SetGrid(0,0);
   hd_Z0_AsymAmpSqrtVsPt_2016Pr -> GetYaxis() -> SetTitleOffset(1.3);
   hd_Z0_AsymAmpSqrtVsPt_2016Pr -> SetStats(0);
   hd_Z0_AsymAmpSqrtVsPt_2016Pr -> SetTitle("; P_{T}^{Z}; A_{N}");
-  hd_Z0_AsymAmpSqrtVsPt_2016Pr -> GetListOfFunctions() -> Add(textStarProj_1w);
-  hd_Z0_AsymAmpSqrtVsPt_2016Pr -> GetListOfFunctions() -> Add(textStarProjBis_1w);
+  //hd_Z0_AsymAmpSqrtVsPt_2016Pr -> GetListOfFunctions() -> Add(textStarProj_1w);
+  //hd_Z0_AsymAmpSqrtVsPt_2016Pr -> GetListOfFunctions() -> Add(textStarProjBis_1w);
   hd_Z0_AsymAmpSqrtVsPt_2016Pr -> GetYaxis() -> SetRangeUser(-0.49, 0.49);
   hd_Z0_AsymAmpSqrtVsPt_2016Pr -> SetMarkerStyle(20);
   hd_Z0_AsymAmpSqrtVsPt_2016Pr -> SetLineWidth(2);
+  hd_Z0_AsymAmpSqrtVsPt_2016Pr -> Draw("E1");
 
   //hd_Z0_Pt_2016Pr -> SetMarkerStyle(20);
   //hd_Z0_Pt_2016Pr -> Draw("E1");
-  hd_Z0_AsymAmpSqrtVsPt_2016Pr -> Draw("E1");
+  hd_Z0_AsymAmpSqrtVsPt_2016Pr_400pb -> SetMarkerStyle(20);
+  hd_Z0_AsymAmpSqrtVsPt_2016Pr_400pb -> SetLineWidth(2);
+  hd_Z0_AsymAmpSqrtVsPt_2016Pr_400pb -> SetLineStyle(2);
+  hd_Z0_AsymAmpSqrtVsPt_2016Pr_400pb -> Draw("same E1");
  
   line1 -> DrawLine(hd_Z0_AsymAmpSqrtVsPt_2016Pr -> GetXaxis() -> GetXmin(), 0, hd_Z0_AsymAmpSqrtVsPt_2016Pr -> GetXaxis() -> GetXmax(), 0);
 
-  TLegend *leg2 = new TLegend(0.2, 0.15, 0.7, 0.25);
+  TLegend *leg2 = new TLegend(0.2, 0.15, 0.7, 0.34);
   leg2 -> SetFillColor(0);
   leg2 -> SetFillStyle(0);
   leg2 -> SetLineColor(0);
   leg2 -> SetBorderSize(0);
-  leg2 -> AddEntry(hd_Z0_AsymAmpSqrtVsPt_2016Pr,"Z^{0} stat. uncertainty", "lp");
+  //leg2 -> AddEntry(hd_Z0_AsymAmpSqrtVsPt_2016Pr,"Z^{0} stat. uncertainty", "lp");
+  leg2 -> AddEntry(hd_Z0_AsymAmpSqrtVsPt_2016Pr,"Z^{0} - \\int L(del.) = 900 pb^{-1}", "lp");
+  leg2 -> AddEntry(hd_Z0_AsymAmpSqrtVsPt_2016Pr_400pb,"Z^{0} - \\int L(del.) = 400 pb^{-1}", "lp");
   leg2  -> Draw();
 
   cZ0AmpProjPt -> Update();  
@@ -853,11 +978,12 @@ void W_Asymmetry()
 
   TCanvas *cZ0AmpProjRap   = new TCanvas("cZ0AmpProjRap", "Z0 An 2016 projection Rapidity", 600, 650);
 
+  cZ0AmpProjRap -> SetGrid(0,0);
   hd_Z0_AsymAmpSqrtVsRap_2016Pr -> GetYaxis() -> SetTitleOffset(1.3);
   hd_Z0_AsymAmpSqrtVsRap_2016Pr -> SetStats(0);
   hd_Z0_AsymAmpSqrtVsRap_2016Pr -> SetTitle("; y^{Z}; A_{N}");
-  hd_Z0_AsymAmpSqrtVsRap_2016Pr -> GetListOfFunctions() -> Add(textStarProj_1w);
-  hd_Z0_AsymAmpSqrtVsRap_2016Pr -> GetListOfFunctions() -> Add(textStarProjBis_1w);
+  //hd_Z0_AsymAmpSqrtVsRap_2016Pr -> GetListOfFunctions() -> Add(textStarProj_1w);
+  //hd_Z0_AsymAmpSqrtVsRap_2016Pr -> GetListOfFunctions() -> Add(textStarProjBis_1w);
   hd_Z0_AsymAmpSqrtVsRap_2016Pr -> GetYaxis() -> SetRangeUser(-0.49, 0.49);
   hd_Z0_AsymAmpSqrtVsRap_2016Pr -> SetMarkerStyle(20);
   hd_Z0_AsymAmpSqrtVsRap_2016Pr -> SetLineWidth(2);
@@ -865,15 +991,14 @@ void W_Asymmetry()
   //hd_Z0_Rap_2016Pr -> SetMarkerStyle(20);
   //hd_Z0_Rap_2016Pr -> Draw("E1");
   hd_Z0_AsymAmpSqrtVsRap_2016Pr -> Draw("E1");
+
+  hd_Z0_AsymAmpSqrtVsRap_2016Pr_400pb -> SetMarkerStyle(20);
+  hd_Z0_AsymAmpSqrtVsRap_2016Pr_400pb -> SetLineWidth(2);
+  hd_Z0_AsymAmpSqrtVsRap_2016Pr_400pb -> SetLineStyle(2);
+  hd_Z0_AsymAmpSqrtVsRap_2016Pr_400pb -> Draw("same E1");
  
   line1 -> DrawLine(hd_Z0_AsymAmpSqrtVsRap_2016Pr -> GetXaxis() -> GetXmin(), 0, hd_Z0_AsymAmpSqrtVsRap_2016Pr -> GetXaxis() -> GetXmax(), 0);
 
-  TLegend *leg2 = new TLegend(0.2, 0.15, 0.7, 0.25);
-  leg2 -> SetFillColor(0);
-  leg2 -> SetFillStyle(0);
-  leg2 -> SetLineColor(0);
-  leg2 -> SetBorderSize(0);
-  leg2 -> AddEntry(hd_Z0_AsymAmpSqrtVsRap_2016Pr,"Z^{0} stat. uncertainty", "lp");
   leg2  -> Draw();
 
   cZ0AmpProjRap -> Update();  
@@ -886,8 +1011,8 @@ void W_Asymmetry()
   hd_Z0_Asym_2016Pr_oneBin -> GetYaxis() -> SetTitleOffset(1.3);
   hd_Z0_Asym_2016Pr_oneBin -> SetStats(0);
   hd_Z0_Asym_2016Pr_oneBin -> SetTitle("; y^{Z}; A_{N}");
-  hd_Z0_Asym_2016Pr_oneBin -> GetListOfFunctions() -> Add(textStarProj_1w);
-  hd_Z0_Asym_2016Pr_oneBin -> GetListOfFunctions() -> Add(textStarProjBis_1w);
+  //hd_Z0_Asym_2016Pr_oneBin -> GetListOfFunctions() -> Add(textStarProj_1w);
+  //hd_Z0_Asym_2016Pr_oneBin -> GetListOfFunctions() -> Add(textStarProjBis_1w);
   hd_Z0_Asym_2016Pr_oneBin -> GetYaxis() -> SetRangeUser(-0.49, 0.49);
   hd_Z0_Asym_2016Pr_oneBin -> SetMarkerStyle(20);
   hd_Z0_Asym_2016Pr_oneBin -> SetLineWidth(2);
