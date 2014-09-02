@@ -49,6 +49,8 @@ void WBosEventHContainer::BookHists()
    o["hWBosonRapidity"]   = hist = new TH1D("hWBosonRapidity", "; W Boson Rapidity; Events", 20, -1.5, 1.5);
    o["hWBosonPzVsRapidity"]   = hist = new TH2D("hWBosonPzVsRapidity", "; W Boson P_{z}; W Boson Rapidity", 60, -60, 60, 40, -1, 1);
    hist->SetOption("colz LOGZ");
+   o["hWBosonEtaVsElectronEta"]   = hist = new TH2D("hWBosonEtaVsElectronEta", "; W Boson #eta; Electron #eta", 20, -4, 4, 20, -2, 2);
+   hist->SetOption("colz LOGZ");
 
    o["hWBosonMassInv"]    = hist = new TH1F("hWBosonMassInv", "; M_{W} (GeV/c^{2}); Events", 20, 70, 110);
 
@@ -103,6 +105,7 @@ void WBosEventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hWBosonEta"])->Fill(event.GetVecBosonP3().Eta());
    ((TH1*) o["hWBosonRapidity"])->Fill(event.GetVecBosonP4().Rapidity());
    ((TH2*) o["hWBosonPzVsRapidity"])->Fill(event.GetVecBosonP4().Pz(), event.GetVecBosonP4().Rapidity());
+   ((TH2*) o["hWBosonEtaVsElectronEta"])->Fill(event.GetVecBosonP3().Eta(), event.GetElectronP3().Eta());
    ((TH1*) o["hWBosonMassInv"])->Fill(event.GetVecBosonP4().M());
 
    ((TH1*) o["hJetRecoilPt"])->Fill(event.GetJetRecoil().Pt());
