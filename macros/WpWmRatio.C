@@ -21,35 +21,123 @@ void WpWmRatio()
 
    // open histogram files
    TFile *fileData      = TFile::Open(inPathNew + "run11_pp_transverse/hist/vbana.root");
+   TFile *fileData12    = TFile::Open(inPathNew + "run12_pp_long_j3/hist/vbana.root");
 
-   // fill histograms
+   // fill histograms run 11 transverse
    TH1 *hd_Wp_WBosonPt                     = (TH1*) fileData->Get("event_wp/hWBosonPt");
    TH1 *hd_Wp_WBosonPt_zoomin              = (TH1*) fileData->Get("event_wp/hWBosonPt_zoomin");
    TH1 *hd_Wp_WBosonPz                     = (TH1*) fileData->Get("event_wp/hWBosonPz");
    TH1 *hd_Wp_WBosonEta                    = (TH1*) fileData->Get("event_wp/hWBosonEta");
    TH1 *hd_Wp_WBosonRapidity               = (TH1*) fileData->Get("event_wp/hWBosonRapidity");
+   TH1 *hd_Wp_ElectronPt                   = (TH1*) fileData->Get("event_wp/hElectronPt");
+   TH1 *hd_Wp_ElectronEta                  = (TH1*) fileData->Get("event_wp/hElectronEta");
 
    TH1 *hd_Wm_WBosonPt                     = (TH1*) fileData->Get("event_wm/hWBosonPt");
    TH1 *hd_Wm_WBosonPt_zoomin              = (TH1*) fileData->Get("event_wm/hWBosonPt_zoomin");
    TH1 *hd_Wm_WBosonPz                     = (TH1*) fileData->Get("event_wm/hWBosonPz");
    TH1 *hd_Wm_WBosonEta                    = (TH1*) fileData->Get("event_wm/hWBosonEta");
    TH1 *hd_Wm_WBosonRapidity               = (TH1*) fileData->Get("event_wm/hWBosonRapidity");
+   TH1 *hd_Wm_ElectronPt                   = (TH1*) fileData->Get("event_wm/hElectronPt");
+   TH1 *hd_Wm_ElectronEta                  = (TH1*) fileData->Get("event_wm/hElectronEta");
+
+   // fill histograms run 12
+   TH1 *hd12_Wp_WBosonPt                   = (TH1*) fileData12->Get("event_wp/hWBosonPt");
+   TH1 *hd12_Wp_WBosonPt_zoomin            = (TH1*) fileData12->Get("event_wp/hWBosonPt_zoomin");
+   TH1 *hd12_Wp_WBosonPz                   = (TH1*) fileData12->Get("event_wp/hWBosonPz");
+   TH1 *hd12_Wp_WBosonEta                  = (TH1*) fileData12->Get("event_wp/hWBosonEta");
+   TH1 *hd12_Wp_WBosonRapidity             = (TH1*) fileData12->Get("event_wp/hWBosonRapidity");
+   TH1 *hd12_Wp_ElectronPt                 = (TH1*) fileData12->Get("event_wp/hElectronPt");
+   TH1 *hd12_Wp_ElectronEta                = (TH1*) fileData12->Get("event_wp/hElectronEta");
+
+   TH1 *hd12_Wm_WBosonPt                   = (TH1*) fileData12->Get("event_wm/hWBosonPt");
+   TH1 *hd12_Wm_WBosonPt_zoomin            = (TH1*) fileData12->Get("event_wm/hWBosonPt_zoomin");
+   TH1 *hd12_Wm_WBosonPz                   = (TH1*) fileData12->Get("event_wm/hWBosonPz");
+   TH1 *hd12_Wm_WBosonEta                  = (TH1*) fileData12->Get("event_wm/hWBosonEta");
+   TH1 *hd12_Wm_WBosonRapidity             = (TH1*) fileData12->Get("event_wm/hWBosonRapidity");
+   TH1 *hd12_Wm_ElectronPt                 = (TH1*) fileData12->Get("event_wm/hElectronPt");
+   TH1 *hd12_Wm_ElectronEta                = (TH1*) fileData12->Get("event_wm/hElectronEta");
 
    // rebin
-   hd_Wp_WBosonEta -> Rebin(3);
-   hd_Wm_WBosonEta -> Rebin(3);
+   hd_Wp_WBosonEta     -> Rebin(4);
+   hd_Wm_WBosonEta     -> Rebin(4);
+   hd12_Wp_WBosonEta   -> Rebin(4);
+   hd12_Wm_WBosonEta   -> Rebin(4);
+
+   hd_Wp_ElectronEta   -> Rebin(2);
+   hd_Wm_ElectronEta   -> Rebin(2);
+   hd12_Wp_ElectronEta -> Rebin(2);
+   hd12_Wm_ElectronEta -> Rebin(2);
+
 
    // calculate the ratios
    //int bins = hd_Wp_WBosonEta -> GetBinX();
    //cout << "# bins = " << bins << endl;
-
-   TH1D *hd_WpWmRatio         = (TH1D*) hd_Wp_WBosonEta->Clone("hd_WpWmRatio");
+   TH1D *hd_WpWmRatio           = (TH1D*) hd_Wp_WBosonEta   -> Clone("hd_WpWmRatio");
+   TH1D *hd_WpWmRatio_vs_EleEta = (TH1D*) hd_Wp_ElectronEta -> Clone("hd_WpWmRatio_vs_EleEta");
+   //TH1D *hd_Wp_WBosonEta_bis  = (TH1D*) hd_Wp_WBosonEta->Clone("hd_Wp_WBosonEta_bis");
+   hd_Wp_WBosonEta   -> Sumw2();
+   hd_Wm_WBosonEta   -> Sumw2();
+   hd_Wp_ElectronEta -> Sumw2();
+   hd_Wm_ElectronEta -> Sumw2();
+   //hd_Wp_WBosonEta_bis -> Divide(hd_Wm_WBosonEta);
+   //hd_WpWmRatio  -> Sumw2();
    hd_WpWmRatio  -> Divide(hd_Wp_WBosonEta, hd_Wm_WBosonEta);
+   hd_WpWmRatio  -> SetMaximum(6);
+   hd_WpWmRatio  -> SetMinimum(0);
    hd_WpWmRatio  -> SetMarkerStyle(20);
-   hd_WpWmRatio  -> SetTitle("; #eta; W^{+}/W^{-}");
+   hd_WpWmRatio  -> SetTitle("run11; #eta_{W}; W^{+}/W^{-}");
+   hd_WpWmRatio_vs_EleEta  -> Divide(hd_Wp_ElectronEta, hd_Wm_ElectronEta);
+   hd_WpWmRatio_vs_EleEta  -> SetMaximum(6);
+   hd_WpWmRatio_vs_EleEta  -> SetMinimum(0);
+   hd_WpWmRatio_vs_EleEta  -> SetMarkerStyle(20);
+   hd_WpWmRatio_vs_EleEta  -> SetTitle("run11; #eta_{el}; W^{+}/W^{-}");
+
+   TH1D *hd12_WpWmRatio           = (TH1D*) hd12_Wp_WBosonEta   -> Clone("hd12_WpWmRatio");
+   TH1D *hd12_WpWmRatio_vs_EleEta = (TH1D*) hd12_Wp_ElectronEta -> Clone("hd12_WpWmRatio_vs_EleEta");
+   hd12_Wp_WBosonEta   -> Sumw2();
+   hd12_Wm_WBosonEta   -> Sumw2();
+   hd12_Wp_ElectronEta -> Sumw2();
+   hd12_Wm_ElectronEta -> Sumw2();
+   //hd12_WpWmRatio  -> Sumw2();
+   hd12_WpWmRatio  -> Divide(hd12_Wp_WBosonEta, hd12_Wm_WBosonEta);
+   hd12_WpWmRatio  -> SetMaximum(6);
+   hd12_WpWmRatio  -> SetMinimum(0);
+   hd12_WpWmRatio  -> SetMarkerStyle(20);
+   hd12_WpWmRatio  -> SetTitle("run 12; #eta_{W}; W^{+}/W^{-}");
+   hd12_WpWmRatio_vs_EleEta  -> Divide(hd12_Wp_ElectronEta, hd12_Wm_ElectronEta);
+   hd12_WpWmRatio_vs_EleEta  -> SetMaximum(6);
+   hd12_WpWmRatio_vs_EleEta  -> SetMinimum(0);
+   hd12_WpWmRatio_vs_EleEta  -> SetMarkerStyle(20);
+   hd12_WpWmRatio_vs_EleEta  -> SetTitle("run12; #eta_{el}; W^{+}/W^{-}");
+
+   TH1D *hd1112_Wp_WBosonEta        = (TH1D*) hd12_Wp_WBosonEta   -> Clone("hd1112_Wp_WBosonEta");
+   TH1D *hd1112_Wm_WBosonEta        = (TH1D*) hd12_Wm_WBosonEta   -> Clone("hd1112_Wm_WBosonEta");   
+   TH1D *hd1112_Wp_ElectronEta      = (TH1D*) hd12_Wp_ElectronEta -> Clone("hd1112_Wp_ElectronEta");
+   TH1D *hd1112_Wm_ElectronEta      = (TH1D*) hd12_Wm_ElectronEta -> Clone("hd1112_Wm_ElectronEta");      
+   TH1D *hd1112_WpWmRatio           = (TH1D*) hd12_Wp_WBosonEta   -> Clone("hd1112_WpWmRatio");      
+   TH1D *hd1112_WpWmRatio_vs_EleEta = (TH1D*) hd12_Wp_ElectronEta -> Clone("hd1112_WpWmRatio_vs_EleEta");
+   hd1112_Wp_WBosonEta   -> Sumw2();
+   hd1112_Wm_WBosonEta   -> Sumw2();
+   hd1112_Wp_ElectronEta -> Sumw2();
+   hd1112_Wm_ElectronEta -> Sumw2();
+   hd1112_Wp_WBosonEta   -> Add(hd_Wp_WBosonEta, hd12_Wp_WBosonEta);
+   hd1112_Wm_WBosonEta   -> Add(hd_Wm_WBosonEta, hd12_Wm_WBosonEta);
+   hd1112_Wp_ElectronEta -> Add(hd_Wp_ElectronEta, hd12_Wp_ElectronEta);
+   hd1112_Wm_ElectronEta -> Add(hd_Wm_ElectronEta, hd12_Wm_ElectronEta);
+   //hd1112_WpWmRatio  -> Sumw2();
+   hd1112_WpWmRatio  -> Divide(hd1112_Wp_WBosonEta, hd1112_Wm_WBosonEta);
+   hd1112_WpWmRatio  -> SetMaximum(6);
+   hd1112_WpWmRatio  -> SetMinimum(0);
+   hd1112_WpWmRatio  -> SetMarkerStyle(20);
+   hd1112_WpWmRatio  -> SetTitle("run 11+12; #eta_{W}; W^{+}/W^{-}");
+   hd1112_WpWmRatio_vs_EleEta  -> Divide(hd1112_Wp_ElectronEta, hd1112_Wm_ElectronEta);
+   hd1112_WpWmRatio_vs_EleEta  -> SetMaximum(6);
+   hd1112_WpWmRatio_vs_EleEta  -> SetMinimum(0);
+   hd1112_WpWmRatio_vs_EleEta  -> SetMarkerStyle(20);
+   hd1112_WpWmRatio_vs_EleEta  -> SetTitle("run 11+12; #eta_{el}; W^{+}/W^{-}");
 
    // plots
-   TCanvas *c0    = new TCanvas("c0", "W versus Eta", 800, 500);
+   TCanvas *c0    = new TCanvas("c0", "run11: W-Eta", 800, 500);
    c0 -> Divide(2,1);
    c0_1 -> cd();
    hd_Wp_WBosonEta -> SetMarkerStyle(20);
@@ -63,10 +151,116 @@ void WpWmRatio()
    c0->Print(outPath + "/plot_WEta.eps");
    c0->Print(outPath + "/plot_WEta.png");
 
-   TCanvas *c1    = new TCanvas("c1", "W+/W- versus Eta", 800, 500);
+   TCanvas *c1    = new TCanvas("c1", "run 11: W+/W- versus Eta", 800, 500);
    c1 -> cd();
    hd_WpWmRatio -> Draw("e");
 
    c1->Print(outPath + "/plot_WpWmRatio_vs_Eta.eps");
    c1->Print(outPath + "/plot_WpWmRatio_vs_Eta.png");
+
+   TCanvas *c0el    = new TCanvas("c0el", "run11: Electron-Eta", 800, 500);
+   c0el -> Divide(2,1);
+   c0el_1 -> cd();
+   hd_Wp_ElectronEta -> SetMarkerStyle(20);
+   hd_Wp_ElectronEta -> SetTitle("W^{+}");
+   hd_Wp_ElectronEta -> Draw("e");
+   c0el_2 -> cd();
+   hd_Wm_ElectronEta -> SetTitle("W^{-}");
+   hd_Wm_ElectronEta -> SetMarkerStyle(20);
+   hd_Wm_ElectronEta -> Draw("e");
+
+   c0el->Print(outPath + "/plot_ElecEta.eps");
+   c0el->Print(outPath + "/plot_ElecEta.png");
+
+   TCanvas *c1el    = new TCanvas("c1el", "run 11: W+/W- versus Elec-Eta", 800, 500);
+   c1el -> cd();
+   hd_WpWmRatio_vs_EleEta -> Draw("e");
+
+   c1el->Print(outPath + "/plot_WpWmRatio_vs_ElecEta.eps");
+   c1el->Print(outPath + "/plot_WpWmRatio_vs_ElecEta.png");
+
+   TCanvas *c2    = new TCanvas("c2", "run12: W-Eta", 800, 500);
+   c2 -> Divide(2,1);
+   c2_1 -> cd();
+   hd12_Wp_WBosonEta -> SetMarkerStyle(20);
+   hd12_Wp_WBosonEta -> SetTitle("W^{+}");
+   hd12_Wp_WBosonEta -> Draw("e");
+   c2_2 -> cd();
+   hd12_Wm_WBosonEta -> SetTitle("W^{-}");
+   hd12_Wm_WBosonEta -> SetMarkerStyle(20);
+   hd12_Wm_WBosonEta -> Draw("e");
+
+   c2->Print(outPath + "/plot_r12_WEta.eps");
+   c2->Print(outPath + "/plot_r12_WEta.png");
+
+   TCanvas *c3    = new TCanvas("c3", "run 12: W+/W- versus Eta", 800, 500);
+   c3 -> cd();
+   hd12_WpWmRatio -> Draw("e");
+   //hd_Wp_WBosonEta_bis ->Draw("e");
+
+   c3->Print(outPath + "/plot_r12_WpWmRatio_vs_Eta.eps");
+   c3->Print(outPath + "/plot_r12_WpWmRatio_vs_Eta.png");
+
+   TCanvas *c2el    = new TCanvas("c2el", "run12: Electron-Eta", 800, 500);
+   c2el -> Divide(2,1);
+   c2el_1 -> cd();
+   hd12_Wp_ElectronEta -> SetMarkerStyle(20);
+   hd12_Wp_ElectronEta -> SetTitle("W^{+}");
+   hd12_Wp_ElectronEta -> Draw("e");
+   c2el_2 -> cd();
+   hd12_Wm_ElectronEta -> SetTitle("W^{-}");
+   hd12_Wm_ElectronEta -> SetMarkerStyle(20);
+   hd12_Wm_ElectronEta -> Draw("e");
+
+   c2el->Print(outPath + "/plot_r12_ElecEta.eps");
+   c2el->Print(outPath + "/plot_r12_ElecEta.png");
+
+   TCanvas *c3el    = new TCanvas("c3el", "run 12: W+/W- versus Elec-Eta", 800, 500);
+   c3el -> cd();
+   hd12_WpWmRatio_vs_EleEta -> Draw("e");
+
+   c3el->Print(outPath + "/plot_r12_WpWmRatio_vs_ElecEta.eps");
+   c3el->Print(outPath + "/plot_r12_WpWmRatio_vs_ElecEta.png");
+
+   TCanvas *c4    = new TCanvas("c4", "run 11+12: W-Eta", 800, 500);
+   c4 -> Divide(2,1);
+   c4_1 -> cd();
+   hd1112_Wp_WBosonEta -> SetMarkerStyle(20);
+   hd1112_Wp_WBosonEta -> SetTitle("W^{+}");
+   hd1112_Wp_WBosonEta -> Draw("e");
+   c4_2 -> cd();
+   hd1112_Wm_WBosonEta -> SetTitle("W^{-}");
+   hd1112_Wm_WBosonEta -> SetMarkerStyle(20);
+   hd1112_Wm_WBosonEta -> Draw("e");
+
+   c4->Print(outPath + "/plot_r11r12_WEta.eps");
+   c4->Print(outPath + "/plot_r11r12_WEta.png");
+
+   TCanvas *c5    = new TCanvas("c5", "run 11+12: W+/W- versus Eta", 800, 500);
+   c5 -> cd();
+   hd1112_WpWmRatio -> Draw("e");
+
+   c5->Print(outPath + "/plot_r11r12_WpWmRatio_vs_Eta.eps");
+   c5->Print(outPath + "/plot_r11r12_WpWmRatio_vs_Eta.png");
+
+   TCanvas *c4el    = new TCanvas("c4el", "run 11+12: Electron-Eta", 800, 500);
+   c4el -> Divide(2,1);
+   c4el_1 -> cd();
+   hd1112_Wp_ElectronEta -> SetMarkerStyle(20);
+   hd1112_Wp_ElectronEta -> SetTitle("W^{+}");
+   hd1112_Wp_ElectronEta -> Draw("e");
+   c4el_2 -> cd();
+   hd1112_Wm_ElectronEta -> SetTitle("W^{-}");
+   hd1112_Wm_ElectronEta -> SetMarkerStyle(20);
+   hd1112_Wm_ElectronEta -> Draw("e");
+
+   c4el->Print(outPath + "/plot_r11r12_ElecEta.eps");
+   c4el->Print(outPath + "/plot_r11r12_ElecEta.png");
+
+   TCanvas *c5el    = new TCanvas("c5el", "run 11+12: W+/W- versus Elec-Eta", 800, 500);
+   c5el -> cd();
+   hd1112_WpWmRatio_vs_EleEta -> Draw("e");
+
+   c5el->Print(outPath + "/plot_r11r12_WpWmRatio_vs_ElecEta.eps");
+   c5el->Print(outPath + "/plot_r11r12_WpWmRatio_vs_ElecEta.png");
 }
