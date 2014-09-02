@@ -3,9 +3,16 @@
 *.root
 *.log
 *~
+*.old
+*.save*
+*_save*
+*.test*
+*_test*
+*#
 *.dataset
 *.session.xml
 .*.swp
+build/
 src/wana_dict.*
 src/stana
 src/vbana
@@ -18,3 +25,4 @@ nohup*
 runlists/run12_mc*
 runlists/run11_mc*
 runlists/run12_QCD*
+src/vbana_ds.cc
