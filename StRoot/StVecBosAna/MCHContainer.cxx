@@ -113,6 +113,11 @@ void MCHContainer::BookHists()
    o["hRecoVsGenWBosonPz_FirstSol"]  = new rh::H2F("hRecoVsGenWBosonPz_FirstSol",  "; Gen. W Boson P_{z}, GeV; Reco. W Boson P_{z} (First Solution), GeV", 50, -80, 80, 50, -80, 80, "colz LOGZ");
    o["hRecoVsGenWBosonPz_OtherSol"]  = new rh::H2F("hRecoVsGenWBosonPz_OtherSol",  "; Gen. W Boson P_{z}, GeV; Reco. W Boson P_{z} (Other Solution), GeV", 50, -80, 80, 50, -80, 80, "colz LOGZ");
 
+   o["hGen_WBosonEtaVsElectronEta"]   = hist = new TH2D("hGen_WBosonEtaVsElectronEta", "; W Boson #eta; Electron #eta", 20, -4, 4, 20, -2, 2);
+   hist->SetOption("colz LOGZ");
+   o["hReco_WBosonEtaVsElectronEta"]  = hist = new TH2D("hReco_WBosonEtaVsElectronEta", "; W Boson #eta; Electron #eta", 20, -4, 4, 20, -2, 2);
+   hist->SetOption("colz LOGZ");
+
    // W recoil momentum components
    o["hGenRecoilE"]  = new rh::H1I("hGenRecoilE", "; Gen. W Recoil E (GeV); Events", 100, 0., 200., "hist GRIDX");
    o["hGenRecoilPz"] = new rh::H1I("hGenRecoilPz", "; Gen. W Recoil p_{z} (GeV); Events", 100, -160., 160., "hist GRIDX");
@@ -272,6 +277,9 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH2*) o["hRecoVsGenWBosonEta"])  ->Fill(mcEvent->mP4WBoson.Eta(),   event.GetVecBosonP3().Eta());
    ((TH1*) o["hRecoVsGenWBosonPz_FirstSol"])   ->Fill(mcEvent->mP4WBoson.Pz(),    event.GetVecBosonP3FirstSolution().Pz());
    ((TH1*) o["hRecoVsGenWBosonPz_OtherSol"])   ->Fill(mcEvent->mP4WBoson.Pz(),    event.GetVecBosonP3OtherSolution().Pz());
+
+   ((TH2*) o["hGen_WBosonEtaVsElectronEta"]) -> Fill(mcEvent->mP4WBoson.Eta(), mcEvent->mP4Lepton.Eta());
+   ((TH2*) o["hReco_WBosonEtaVsElectronEta"])-> Fill(event.GetVecBosonP3().Eta(), event.GetElectronP3().Eta());
 
    ((TH1*) o["hGenRecoilE"]) ->Fill(mcEvent->mP4Recoil.E());
    ((TH1*) o["hGenRecoilPz"])->Fill(mcEvent->mP4Recoil.Pz());
