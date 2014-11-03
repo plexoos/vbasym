@@ -78,14 +78,16 @@ void PtCorrPlot()
    gStyle->SetOptDate(0);
 
    // open histogram files
-   //TFile *fileData      = TFile::Open(inPath + "run11_pp_transverse_-w_--jpm_0.5_--run_11_vbana.root");
-   //TFile *fileData      = TFile::Open(inPathNew + "run11_pp_transverse_-w_--jpm_0.5_--tpm_0.2_--run_11/hist/vbana.root");
-   TFile *fileData      = TFile::Open(inPathNew + "run11_pp_transverse/hist/vbana.root");
-   //TFile *fileMCWp      = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_vbana.root");
-   ////TFile *fileMCWp      = TFile::Open(inPathNew + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_--tpm_0.2/hist/vbana_tpm02.root");
-   TFile *fileMCWp      = TFile::Open(inPathNew + "run11_mc_Wp2enu.lis/hist/vbana.root");
-   TFile *fileMCWpOld   = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_vbana_OldStylePtCorr.root");
-   TFile *fileMCWm      = TFile::Open(inPathNew + "run11_mc_Wm2enu.lis/hist/vbana.root");
+   //TFile *fileData          = TFile::Open(inPath + "run11_pp_transverse_-w_--jpm_0.5_--run_11_vbana.root");
+   //TFile *fileData          = TFile::Open(inPathNew + "run11_pp_transverse_-w_--jpm_0.5_--tpm_0.2_--run_11/hist/vbana.root");
+   TFile *fileData          = TFile::Open(inPathNew + "run11_pp_transverse/hist/vbana.root");
+   //TFile *fileMCWp          = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_vbana.root");
+   ////TFile *fileMCWp        = TFile::Open(inPathNew + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_--tpm_0.2/hist/vbana_tpm02.root");
+   TFile *fileMCWp          = TFile::Open(inPathNew + "run11_mc_Wp2enu.lis/hist/vbana.root");
+   TFile *fileMCWp_ZDChigh  = TFile::Open(inPathNew + "run11_mc_Wp2enu_ZDCrate_gt_90k.lis/hist/vbana.root");
+   TFile *fileMCWp_TuneA    = TFile::Open(inPathNew + "run11_mc_Wp2enu_tuneA.lis/hist/vbana.root");
+   TFile *fileMCWpOld       = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_vbana_OldStylePtCorr.root");
+   TFile *fileMCWm          = TFile::Open(inPathNew + "run11_mc_Wm2enu.lis/hist/vbana.root");
 
 //*** CREATE ROOT FILE FOR CURVES FROM ASCII FILE ***
    // open text files
@@ -124,7 +126,7 @@ void PtCorrPlot()
       hAnEvol  ->Fill(y,pt,an);
       ntAnEvol ->Fill(y,pt,an);
       nlines++;
-   }
+     }
    printf(" found %d points\n",nlines);
 
    inCurves.close();
@@ -152,10 +154,23 @@ void PtCorrPlot()
    TH1 *hd_Wp_WBosonPt                     = (TH1*) fileData->Get("event_wp/hWBosonPt");
    TH1 *hd_Wp_WBosonPt_zoomin              = (TH1*) fileData->Get("event_wp/hWBosonPt_zoomin");
    TH1 *hd_Wp_WBosonPz                     = (TH1*) fileData->Get("event_wp/hWBosonPz");
+   TH1 *hd_Wm_PtReco                       = (TH1*) fileData->Get("event_wm/hTrackRecoilWithNeutralsPt");
+   TH1 *hd_Wm_PtReco_zoomin                = (TH1*) fileData->Get("event_wm/hTrackRecoilWithNeutralsPt_zoomin");
+   TH1 *hd_Wm_PtRecoCorrected              = (TH1*) fileData->Get("event_wm/hTrackRecoilWithNeutralsPtCorrected");
+   TH1 *hd_Wm_PtRecoCorrected_zoomin       = (TH1*) fileData->Get("event_wm/hTrackRecoilWithNeutralsPtCorrected_zoomin");
+   TH1 *hd_Wm_WBosonPt                     = (TH1*) fileData->Get("event_wm/hWBosonPt");
+   TH1 *hd_Wm_WBosonPt_zoomin              = (TH1*) fileData->Get("event_wm/hWBosonPt_zoomin");
+   TH1 *hd_Wm_WBosonPz                     = (TH1*) fileData->Get("event_wm/hWBosonPz");
+
    TH1 *hWp_PtReco                         = (TH1*) fileMCWp->Get("event_w/hTrackRecoilWithNeutralsPt");
    TH1 *hWp_PtReco_zoomin                  = (TH1*) fileMCWp->Get("event_w/hTrackRecoilWithNeutralsPt_zoomin");
    TH1 *hWp_PtRecoCorrected                = (TH1*) fileMCWp->Get("event_w/hTrackRecoilWithNeutralsPtCorrected");
    TH1 *hWp_PtRecoCorrected_zoomin         = (TH1*) fileMCWp->Get("event_w/hTrackRecoilWithNeutralsPtCorrected_zoomin");
+   TH1 *hWm_PtReco                         = (TH1*) fileMCWm->Get("event_w/hTrackRecoilWithNeutralsPt");
+   TH1 *hWm_PtReco_zoomin                  = (TH1*) fileMCWm->Get("event_w/hTrackRecoilWithNeutralsPt_zoomin");
+   TH1 *hWm_PtRecoCorrected                = (TH1*) fileMCWm->Get("event_w/hTrackRecoilWithNeutralsPtCorrected");
+   TH1 *hWm_PtRecoCorrected_zoomin         = (TH1*) fileMCWm->Get("event_w/hTrackRecoilWithNeutralsPtCorrected_zoomin");
+
    TH1 *hWp_Wp_PtReco                      = (TH1*) fileMCWp->Get("event_wp/hTrackRecoilWithNeutralsPt");
    TH1 *hWp_Wp_PtReco_zoomin               = (TH1*) fileMCWp->Get("event_wp/hTrackRecoilWithNeutralsPt_zoomin");
    TH1 *hWp_Wp_PtRecoCorrected             = (TH1*) fileMCWp->Get("event_wp/hTrackRecoilWithNeutralsPtCorrected");
@@ -163,10 +178,23 @@ void PtCorrPlot()
    TH1 *hWp_Wp_WBosonPt                    = (TH1*) fileMCWp->Get("event_wp/hWBosonPt");
    TH1 *hWp_Wp_WBosonPt_zoomin             = (TH1*) fileMCWp->Get("event_wp/hWBosonPt_zoomin");
    TH1 *hWp_Wp_WBosonPz                    = (TH1*) fileMCWp->Get("event_wp/hWBosonPz");
+   TH1 *hWp_Wp_WBosonPzVsRapidity          = (TH1*) fileMCWp->Get("event_wp/hWBosonPzVsRapidity");
+
+   TH1 *hWm_Wm_PtReco                      = (TH1*) fileMCWm->Get("event_wm/hTrackRecoilWithNeutralsPt");
+   TH1 *hWm_Wm_PtReco_zoomin               = (TH1*) fileMCWm->Get("event_wm/hTrackRecoilWithNeutralsPt_zoomin");
+   TH1 *hWm_Wm_PtRecoCorrected             = (TH1*) fileMCWm->Get("event_wm/hTrackRecoilWithNeutralsPtCorrected");
+   TH1 *hWm_Wm_PtRecoCorrected_zoomin      = (TH1*) fileMCWm->Get("event_wm/hTrackRecoilWithNeutralsPtCorrected_zoomin");
+   TH1 *hWm_Wm_WBosonPt                    = (TH1*) fileMCWm->Get("event_wm/hWBosonPt");
+   TH1 *hWm_Wm_WBosonPt_zoomin             = (TH1*) fileMCWm->Get("event_wm/hWBosonPt_zoomin");
+   TH1 *hWm_Wm_WBosonPz                    = (TH1*) fileMCWm->Get("event_wm/hWBosonPz");
+   TH1 *hWm_Wm_WBosonPzVsRapidity          = (TH1*) fileMCWm->Get("event_wm/hWBosonPzVsRapidity");
+
    TH1 *hWp_PtWGen                         = (TH1*) fileMCWp->Get("event_mc/hWBosonPt");
    TH1 *hWp_PtWGen_zoomin                  = (TH1*) fileMCWp->Get("event_mc/hWBosonPt_zoomin");
    TH1 *hWp_hRecoVsGenWBosonRap            = (TH1*) fileMCWp->Get("event_mc/hRecoVsGenWBosonRap");
-   TH1 *hWp_Wp_WBosonPzVsRapidity          = (TH1*) fileMCWp->Get("event_wp/hWBosonPzVsRapidity");
+   TH1 *hWm_PtWGen                         = (TH1*) fileMCWm->Get("event_mc/hWBosonPt");
+   TH1 *hWm_PtWGen_zoomin                  = (TH1*) fileMCWm->Get("event_mc/hWBosonPt_zoomin");
+   TH1 *hWm_hRecoVsGenWBosonRap            = (TH1*) fileMCWm->Get("event_mc/hRecoVsGenWBosonRap");
 
    TH2 *hWp_PtRecoil_vs_PtWGen             = (TH2 *)fileMCWp->Get("event_mc/hTrackRecoilTpcNeutralsPtVsWBosonPt_copy");
    TH2 *hWp_PtRecoilCorr_vs_PtWGen         = (TH2 *)fileMCWp->Get("event_mc/hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt_copy");
@@ -176,6 +204,10 @@ void PtCorrPlot()
    TH2 *hWp_An_evol_ZK_Vs_PtRec            = (TH2 *)fileMCWp->Get("event_mc/hAn_evol_ZK_Vs_PtRec");
    TH2 *hWp_An_noevo_ZK_Vs_PtGen           = (TH2 *)fileMCWp->Get("event_mc/hAn_noevo_ZK_Vs_PtGen");
    TH2 *hWp_An_noevo_ZK_Vs_PtRec           = (TH2 *)fileMCWp->Get("event_mc/hAn_noevo_ZK_Vs_PtRec");
+
+   TH2 *hWm_PtRecoil_vs_Pt_GenOverReco     = (TH2 *)fileMCWm->Get("event_mc/hTrackRecoilTpcNeutralsPt_GenOverReco");
+   TH2 *hWp_ZDChigh_PtRecoil_vs_Pt_GenOverReco   = (TH2 *)fileMCWp_ZDChigh->Get("event_mc/hTrackRecoilTpcNeutralsPt_GenOverReco");
+   TH2 *hWp_TuneA_PtRecoil_vs_Pt_GenOverReco     = (TH2 *)fileMCWp_TuneA->Get("event_mc/hTrackRecoilTpcNeutralsPt_GenOverReco");
 
    TH2 *hWm_PtRecoil_vs_PtWGen             = (TH2 *)fileMCWm->Get("event_mc/hTrackRecoilTpcNeutralsPtVsWBosonPt_copy");
    TH2 *hWm_PtRecoilCorr_vs_PtWGen         = (TH2 *)fileMCWm->Get("event_mc/hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt_copy");
@@ -264,7 +296,7 @@ void PtCorrPlot()
    c1->SaveAs(outPath + "/plot_PtCorr_OldStyle.png");
    */
 
-   TCanvas *c2   = new TCanvas("c2", "", 400, 400);
+   TCanvas *c2   = new TCanvas("c2", "W+ RhicBOS 500 GeV", 400, 400);
 
    TGraph *g1       = new TGraph("./curves/0304002.Wptcurve.txt","%lg %lg");   
    Double_t int_g1  =  integrateGraph(g1); // the method Integral() not yet implemented on TGraph in ROOT4STAR  
@@ -294,7 +326,37 @@ void PtCorrPlot()
    c2->SaveAs(outPath + "/plot_PtCorr.eps");
 
 
-   TCanvas *c2b   = new TCanvas("c2b", "", 400, 400);
+   TCanvas *c2_Wm   = new TCanvas("c2_Wm", "W- RhicBOS 500 GeV", 400, 400);
+
+   TGraph *g1_Wm       = new TGraph("./curves/0304002.Wptcurve.txt","%lg %lg");   
+   Double_t int_g1_Wm  =  integrateGraph(g1_Wm); // the method Integral() not yet implemented on TGraph in ROOT4STAR  
+   Double_t int_hWm_PtRecoCorrected_zoomin    =  hWm_PtRecoCorrected_zoomin  -> Integral(); 
+   float scale_g1_Wm   = int_hWm_PtRecoCorrected_zoomin / int_g1_Wm;
+   scaleGraph(g1_Wm, 0.5*scale_g1_Wm);
+
+   c2_Wm->cd();
+   hWm_PtReco_zoomin -> GetYaxis() -> SetTitleOffset(1.8);
+   hWm_PtReco_zoomin -> GetXaxis() -> SetTitle("Recoil P_{T}");
+   hWm_PtReco_zoomin -> GetYaxis() -> SetTitle("Events (W^{-})");
+   hWm_PtRecoCorrected_zoomin ->SetFillStyle(3448);
+   hWm_PtRecoCorrected_zoomin ->SetFillColor(kGreen);
+   hWm_PtReco_zoomin          ->Draw();
+   hWm_PtRecoCorrected_zoomin ->Draw("same");
+   g1_Wm                           -> SetLineColor(kBlue); 
+   g1_Wm                           -> SetLineWidth(3); 
+   g1_Wm                           -> Draw("same");
+   TLegend *leg1_Wm = new TLegend(0.45, 0.6, 0.75, 0.9);
+   leg1_Wm -> AddEntry(hWm_PtReco_zoomin,"Before P_{T} correction", "F");
+   leg1_Wm -> AddEntry(hWm_PtRecoCorrected_zoomin,"After P_{T} correction", "F" );
+   leg1_Wm -> AddEntry(g1_Wm,"RhicBOS 500 GeV", "l");
+   leg1_Wm -> Draw();
+
+
+   c2_Wm->SaveAs(outPath + "/plot_PtCorr_Wm.png");
+   c2_Wm->SaveAs(outPath + "/plot_PtCorr_Wm.eps");
+
+
+   TCanvas *c2b   = new TCanvas("c2b", "W+", 400, 400);
 
    c2b->cd();
    hWp_PtReco_zoomin ->GetYaxis()->SetTitleOffset(1.8);
@@ -318,6 +380,33 @@ void PtCorrPlot()
 
    c2b->SaveAs(outPath + "/plot_PtCorr2.png");
    c2b->SaveAs(outPath + "/plot_PtCorr2.eps");
+
+
+   TCanvas *c2b_Wm   = new TCanvas("c2b_Wm", "W-", 400, 400);
+
+   c2b_Wm->cd();
+   hWm_PtReco_zoomin -> GetYaxis() -> SetTitleOffset(1.8);
+   hWm_PtReco_zoomin -> GetXaxis() -> SetTitle("Recoil P_{T}");
+   hWm_PtReco_zoomin -> GetYaxis() -> SetTitle("Events (W^{-})");
+   hWm_PtRecoCorrected_zoomin ->SetFillStyle(3448);
+   hWm_PtRecoCorrected_zoomin ->SetLineColor(kGreen);
+   hWm_PtRecoCorrected_zoomin ->SetFillColor(kGreen);
+   hWm_PtReco_zoomin          ->Draw();
+   //hWm_PtWGen_zoomin           ->SetFillStyle(3490);
+   hWm_PtWGen_zoomin           ->SetFillStyle(0);
+   //hWm_PtWGen_zoomin           ->SetFillColor(kRed);
+   hWm_PtWGen_zoomin           ->SetLineColor(kRed);
+   hWm_PtRecoCorrected_zoomin ->Draw("same");
+   hWm_PtWGen_zoomin          ->Draw("same");
+   TLegend *leg2_Wm = new TLegend(0.45, 0.6, 0.75, 0.9);
+   leg2_Wm -> AddEntry(hWm_PtReco_zoomin,"Before P_{T} correction", "F");
+   leg2_Wm -> AddEntry(hWm_PtRecoCorrected_zoomin,"After P_{T} correction", "F" );
+   leg2_Wm -> AddEntry(hWm_PtWGen_zoomin,"PHYTHIA Generated", "L");
+   leg2_Wm -> Draw();
+
+
+   c2b_Wm->SaveAs(outPath + "/plot_PtCorr2_Wm.png");
+   c2b_Wm->SaveAs(outPath + "/plot_PtCorr2_Wm.eps");
 
   
    TCanvas *c3 = new TCanvas("c3", "", 1000, 400);
@@ -413,7 +502,41 @@ void PtCorrPlot()
 
 
    c4->SaveAs(outPath + "/plot_DataMc_WpPt_zoomin.png");
-   c4->SaveAs(outPath + "/plot_DataMc_WpPt_zoomin.eps");;
+   c4->SaveAs(outPath + "/plot_DataMc_WpPt_zoomin.eps");
+
+
+   TCanvas *c4_Wm   = new TCanvas("c4_Wm", "", 400, 400);
+
+   TH1F * hd_Wm_WBosonPt_zoomin_1 = (TH1F *) hd_Wm_WBosonPt_zoomin->Clone(" hd_Wm_WBosonPt_zoomin_1");
+
+   TH1F * hWm_Wm_WBosonPt_zoomin_1 = (TH1F *) hWm_Wm_WBosonPt_zoomin->Clone(" hWm_Wm_WBosonPt_zoomin_1");
+
+   // Normalize to the integral:
+   hWm_Wm_WBosonPt_zoomin_1->Scale(hd_Wm_WBosonPt_zoomin_1->Integral()/hWm_Wm_WBosonPt_zoomin_1->Integral());
+
+   // Normalize to the luminosity
+   //hWm_Wm_WBosonPt_zoomin_1->Scale(scaleWm);
+
+   c4_Wm->cd();
+   hd_Wm_WBosonPt_zoomin_1    ->Rebin(2);
+   hd_Wm_WBosonPt_zoomin_1    ->GetYaxis()->SetTitleOffset(1.8);
+
+   hWm_Wm_WBosonPt_zoomin_1   ->Rebin(2);
+   hWm_Wm_WBosonPt_zoomin_1   ->Draw();
+   hd_Wm_WBosonPt_zoomin_1    ->SetMarkerStyle(20);
+   hd_Wm_WBosonPt_zoomin_1    ->SetTitle("W- sample");
+   hd_Wm_WBosonPt_zoomin_1    ->Draw("E0");
+   hWm_Wm_WBosonPt_zoomin_1   ->Draw("same");
+   hd_Wm_WBosonPt_zoomin_1    ->Draw("E0 same");
+  
+   TLegend *leg4_Wm = new TLegend(0.4, 0.7, 0.75, 0.9);
+   leg4_Wm -> AddEntry(hd_Wm_WBosonPt_zoomin_1,"STAR 2011 tran.", "P");
+   leg4_Wm -> AddEntry(hWm_Wm_WBosonPt_zoomin_1,"PHYTHIA", "F");
+   leg4_Wm -> Draw();
+
+
+   c4_Wm->SaveAs(outPath + "/plot_DataMc_WmPt_zoomin.png");
+   c4_Wm->SaveAs(outPath + "/plot_DataMc_WmPt_zoomin.eps");
 
 
    TCanvas *c4II   = new TCanvas("c4II", "", 400, 400);
@@ -447,7 +570,41 @@ void PtCorrPlot()
 
 
    c4II->SaveAs(outPath + "/plot_DataMc_WpPt.png");
-   c4II->SaveAs(outPath + "/plot_DataMc_WpPt.eps");;
+   c4II->SaveAs(outPath + "/plot_DataMc_WpPt.eps");
+
+
+   TCanvas *c4II_Wm   = new TCanvas("c4II_Wm", "", 400, 400);
+
+   TH1F * hd_Wm_WBosonPt_1 = (TH1F *) hd_Wm_WBosonPt->Clone(" hd_Wm_WBosonPt_1");
+
+   TH1F * hWm_Wm_WBosonPt_1 = (TH1F *) hWm_Wm_WBosonPt->Clone(" hWm_Wm_WBosonPt_1");
+
+   // Normalize to the integral:
+   hWm_Wm_WBosonPt_1->Scale(hd_Wm_WBosonPt_1->Integral()/hWm_Wm_WBosonPt_1->Integral());
+
+   // Normalize to the luminosity
+   //hWm_Wm_WBosonPt_1->Scale(scaleWm);
+
+   c4II_Wm->cd();
+   hd_Wm_WBosonPt_1    ->Rebin(2);
+   hd_Wm_WBosonPt_1    ->GetYaxis()->SetTitleOffset(1.8);
+
+   hWm_Wm_WBosonPt_1   ->Rebin(2);
+   hWm_Wm_WBosonPt_1   ->Draw();
+   hd_Wm_WBosonPt_1    ->SetMarkerStyle(20);
+   hd_Wm_WBosonPt_1    ->SetTitle("W- sample");
+   hd_Wm_WBosonPt_1    ->Draw("E0");
+   hWm_Wm_WBosonPt_1   ->Draw("same");
+   hd_Wm_WBosonPt_1    ->Draw("E0 same");
+  
+   TLegend *leg4II_Wm = new TLegend(0.4, 0.7, 0.75, 0.9);
+   leg4II_Wm -> AddEntry(hd_Wm_WBosonPt_1,"STAR 2011 tran.", "P");
+   leg4II_Wm -> AddEntry(hWm_Wm_WBosonPt_1,"PHYTHIA", "F");
+   leg4II_Wm -> Draw();
+
+
+   c4II_Wm->SaveAs(outPath + "/plot_DataMc_WmPt.png");
+   c4II_Wm->SaveAs(outPath + "/plot_DataMc_WmPt.eps");
 
 
    TCanvas *c4b   = new TCanvas("c4b", "", 400, 400);
@@ -520,10 +677,46 @@ void PtCorrPlot()
 
 
    c4c->SaveAs(outPath + "/plot_DataMc_WpPz.png");
-   c4c->SaveAs(outPath + "/plot_DataMc_WpPz.eps");;
+   c4c->SaveAs(outPath + "/plot_DataMc_WpPz.eps");
+  
+
+   TCanvas *c4c_Wm   = new TCanvas("c4c_Wm", "", 400, 400);
+
+   TH1F * hd_Wm_WBosonPz_1 = (TH1F *) hd_Wm_WBosonPz->Clone(" hd_Wm_WBosonPz_1");
+
+   TH1F * hWm_Wm_WBosonPz_1 = (TH1F *) hWm_Wm_WBosonPz->Clone(" hWm_Wm_WBosonPz_1");
+
+   // Normalize to the integral:
+   hWm_Wm_WBosonPz_1->Scale(hd_Wm_WBosonPz_1->Integral()/hWm_Wm_WBosonPz_1->Integral());
+
+   // Normalize to the luminosity
+   //hWm_Wm_WBosonPz_1->Scale(scaleWp);
+
+   c4c_Wm->cd();
+   hd_Wm_WBosonPz_1    ->Rebin(2);
+   hd_Wm_WBosonPz_1    ->GetYaxis()->SetTitleOffset(1.8);
+
+   hWm_Wm_WBosonPz_1   ->Rebin(2);
+   hWm_Wm_WBosonPz_1   ->Draw();
+   hd_Wm_WBosonPz_1    ->SetMarkerStyle(20);
+   hd_Wm_WBosonPz_1    ->SetTitle("W- sample"); 
+   //hd_Wm_WBosonPz_1    -> SetAxisRange(0, 160, "Y");
+   hd_Wm_WBosonPz_1    ->Draw("E0");
+   hWm_Wm_WBosonPz_1   ->Draw("same");
+   hd_Wm_WBosonPz_1    ->Draw("E0 same");
+  
+   TLegend *leg4c_Wm = new TLegend(0.5, 0.75, 0.75, 0.9); 
+   leg4c_Wm -> AddEntry(hd_Wm_WBosonPz_1,"STAR 2011 tran.", "P");
+   leg4c_Wm -> AddEntry(hWm_Wm_WBosonPz_1,"PHYTHIA", "F");
+   leg4c_Wm -> SetTextSize(0.03);
+   leg4c_Wm -> Draw();
 
 
-   TCanvas *cPtCorrFact   = new TCanvas("cPtCorrFact", "W Pt correction factor", 800, 500);
+   c4c_Wm->SaveAs(outPath + "/plot_DataMc_WmPz.png");
+   c4c_Wm->SaveAs(outPath + "/plot_DataMc_WmPz.eps");
+
+
+   TCanvas *cPtCorrFact   = new TCanvas("cPtCorrFact", "W+ Pt correction factor", 800, 500);
 
    cPtCorrFact -> cd();
    cPtCorrFact -> SetLogz(1);
@@ -533,6 +726,109 @@ void PtCorrPlot()
 
    cPtCorrFact->SaveAs(outPath + "/plot_PtCorrFactor.png");
    cPtCorrFact->SaveAs(outPath + "/plot_PtCorrFactor.eps");
+
+
+   TCanvas *cPtCorrFact_Wm   = new TCanvas("cPtCorrFact_Wm", "W- Pt correction factor", 800, 500);
+
+   cPtCorrFact_Wm -> cd();
+   cPtCorrFact_Wm -> SetLogz(1);
+   hWm_PtRecoil_vs_Pt_GenOverReco  -> SetTitle("W^{-}");
+   hWm_PtRecoil_vs_Pt_GenOverReco  -> GetXaxis() -> SetTitle("Recoil P_{T}");
+   hWm_PtRecoil_vs_Pt_GenOverReco  -> SetStats(0);
+   hWm_PtRecoil_vs_Pt_GenOverReco  -> Draw();
+
+   cPtCorrFact_Wm->SaveAs(outPath + "/plot_PtCorrFactor_Wm.png");
+   cPtCorrFact_Wm->SaveAs(outPath + "/plot_PtCorrFactor_Wm.eps");
+
+
+   TCanvas *cPtCorrFact_ZDChigh   = new TCanvas("cPtCorrFact_ZDChigh", "W+ Pt correction factor for ZDC rate > 90k", 800, 500);
+
+   cPtCorrFact_ZDChigh -> cd();
+   cPtCorrFact_ZDChigh -> SetLogz(1);
+   hWp_ZDChigh_PtRecoil_vs_Pt_GenOverReco  -> SetTitle("W^{+} - ZDC rate > 90k");
+   hWp_ZDChigh_PtRecoil_vs_Pt_GenOverReco  -> GetXaxis() -> SetTitle("Recoil P_{T}");
+   hWp_ZDChigh_PtRecoil_vs_Pt_GenOverReco  -> SetStats(0);
+   hWp_ZDChigh_PtRecoil_vs_Pt_GenOverReco  -> Draw();
+
+   cPtCorrFact_ZDChigh->SaveAs(outPath + "/plot_PtCorrFactor_ZDChigh.png");
+   cPtCorrFact_ZDChigh->SaveAs(outPath + "/plot_PtCorrFactor_ZDChigh.eps");
+
+
+   TCanvas *cPtCorrFact_TuneA   = new TCanvas("cPtCorrFact_TuneA", "W+ Pt correction factor for Tune A", 800, 500);
+
+   cPtCorrFact_TuneA -> cd();
+   cPtCorrFact_TuneA -> SetLogz(1);
+   hWp_TuneA_PtRecoil_vs_Pt_GenOverReco  -> SetTitle("W^{+} - Tune A");
+   hWp_TuneA_PtRecoil_vs_Pt_GenOverReco  -> GetXaxis() -> SetTitle("Recoil P_{T}");
+   hWp_TuneA_PtRecoil_vs_Pt_GenOverReco  -> SetStats(0);
+   hWp_TuneA_PtRecoil_vs_Pt_GenOverReco  -> Draw();
+
+   cPtCorrFact_TuneA->SaveAs(outPath + "/plot_PtCorrFactor_TuneA.png");
+   cPtCorrFact_TuneA->SaveAs(outPath + "/plot_PtCorrFactor_TuneA.eps");
+
+
+   TCanvas *cPtCorrFact_pfx   = new TCanvas("cPtCorrFact_pfx", "Pt correction factor", 800, 500);
+
+   cPtCorrFact_pfx -> cd();
+   hWp_PtRecoil_vs_Pt_GenOverReco -> ProfileX("hWp_PtRecoil_vs_Pt_GenOverReco_pfx",1,-1,"s");
+   hWm_PtRecoil_vs_Pt_GenOverReco -> ProfileX("hWm_PtRecoil_vs_Pt_GenOverReco_pfx",1,-1,"s");
+   hWp_PtRecoil_vs_Pt_GenOverReco_pfx -> SetTitle("; Recoil P_{T}; Correction Factor");
+   hWp_PtRecoil_vs_Pt_GenOverReco_pfx -> SetMarkerStyle(20);
+   hWp_PtRecoil_vs_Pt_GenOverReco_pfx -> SetMarkerColor(kRed);
+   hWm_PtRecoil_vs_Pt_GenOverReco_pfx -> SetMarkerStyle(20);
+   hWm_PtRecoil_vs_Pt_GenOverReco_pfx -> SetMarkerColor(kBlue);
+
+   hWp_PtRecoil_vs_Pt_GenOverReco_pfx -> Draw("E");
+   hWm_PtRecoil_vs_Pt_GenOverReco_pfx -> Draw("Esame");
+  
+   TLegend *legPtCorrFact_pfx = new TLegend(0.5, 0.75, 0.75, 0.9); 
+   legPtCorrFact_pfx -> AddEntry(hWp_PtRecoil_vs_Pt_GenOverReco_pfx,"W^{+}", "P");
+   legPtCorrFact_pfx -> AddEntry(hWm_PtRecoil_vs_Pt_GenOverReco_pfx,"W^{-}", "P");
+   //legPtCorrFact_pfx -> SetTextSize(0.03);
+   legPtCorrFact_pfx -> Draw();;
+
+   cPtCorrFact_pfx->SaveAs(outPath + "/plot_PtCorrFactor_ProfileX.png");
+   cPtCorrFact_pfx->SaveAs(outPath + "/plot_PtCorrFactor_ProfileX.eps");
+
+
+   TCanvas *cPtCorrFact_ZDChigh_pfx   = new TCanvas("cPtCorrFact_ZDChigh_pfx", "Pt correction factor ZDC rate > 90k", 800, 500);
+
+   cPtCorrFact_ZDChigh_pfx -> cd();
+   hWp_ZDChigh_PtRecoil_vs_Pt_GenOverReco -> ProfileX("hWp_ZDChigh_PtRecoil_vs_Pt_GenOverReco_pfx",1,-1,"s");
+   hWp_ZDChigh_PtRecoil_vs_Pt_GenOverReco_pfx -> SetTitle("; Recoil P_{T}; Correction Factor");
+   hWp_ZDChigh_PtRecoil_vs_Pt_GenOverReco_pfx -> SetMarkerStyle(20);
+   hWp_ZDChigh_PtRecoil_vs_Pt_GenOverReco_pfx -> SetMarkerColor(kGreen);
+
+   hWp_PtRecoil_vs_Pt_GenOverReco_pfx         -> Draw("E");
+   hWp_ZDChigh_PtRecoil_vs_Pt_GenOverReco_pfx -> Draw("Esame");
+  
+   TLegend *legPtCorrFact_ZDChigh_pfx = new TLegend(0.5, 0.75, 0.75, 0.9); 
+   legPtCorrFact_ZDChigh_pfx -> AddEntry(hWp_ZDChigh_PtRecoil_vs_Pt_GenOverReco_pfx,"W^{+}, ZDC rate > 90k ", "P");
+   legPtCorrFact_ZDChigh_pfx -> AddEntry(hWp_PtRecoil_vs_Pt_GenOverReco_pfx,"W^{+}", "P");
+   legPtCorrFact_ZDChigh_pfx -> Draw();;
+
+   cPtCorrFact_ZDChigh_pfx->SaveAs(outPath + "/plot_PtCorrFactor_ZDChigh_ProfileX.png");
+   cPtCorrFact_ZDChigh_pfx->SaveAs(outPath + "/plot_PtCorrFactor_ZDChigh_ProfileX.eps");
+
+
+   TCanvas *cPtCorrFact_TuneA_pfx   = new TCanvas("cPtCorrFact_TuneA_pfx", "Pt correction factor Tune A", 800, 500);
+
+   cPtCorrFact_TuneA_pfx -> cd();
+   hWp_TuneA_PtRecoil_vs_Pt_GenOverReco -> ProfileX("hWp_TuneA_PtRecoil_vs_Pt_GenOverReco_pfx",1,-1,"s");
+   hWp_TuneA_PtRecoil_vs_Pt_GenOverReco_pfx -> SetTitle("; Recoil P_{T}; Correction Factor");
+   hWp_TuneA_PtRecoil_vs_Pt_GenOverReco_pfx -> SetMarkerStyle(20);
+   hWp_TuneA_PtRecoil_vs_Pt_GenOverReco_pfx -> SetMarkerColor(kGreen);
+
+   hWp_PtRecoil_vs_Pt_GenOverReco_pfx         -> Draw("E");
+   hWp_TuneA_PtRecoil_vs_Pt_GenOverReco_pfx -> Draw("Esame");
+  
+   TLegend *legPtCorrFact_TuneA_pfx = new TLegend(0.5, 0.75, 0.75, 0.9); 
+   legPtCorrFact_TuneA_pfx -> AddEntry(hWp_TuneA_PtRecoil_vs_Pt_GenOverReco_pfx,"W^{+}, Tune A ", "P");
+   legPtCorrFact_TuneA_pfx -> AddEntry(hWp_PtRecoil_vs_Pt_GenOverReco_pfx,"W^{+}, Perugia 0 ", "P");
+   legPtCorrFact_TuneA_pfx -> Draw();;
+
+   cPtCorrFact_TuneA_pfx->SaveAs(outPath + "/plot_PtCorrFactor_TuneA_ProfileX.png");
+   cPtCorrFact_TuneA_pfx->SaveAs(outPath + "/plot_PtCorrFactor_TuneA_ProfileX.eps");
 
 
    TCanvas *c4d   = new TCanvas("c4d", "W Rapidity vs Pz", 700, 500);

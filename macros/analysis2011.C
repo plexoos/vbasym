@@ -941,15 +941,15 @@ void analysis2011()
    TH1F *hWptt_Wp_PtLep_2 = (TH1F *)hWptt_Wp_PtLep->Clone("hWptt_Wp_PtLep_2");
    TH1F *hd_Wp_PtLep_2 = (TH1F *)hd_Wp_PtLep->Clone("hd_Wp_PtLep_2");
 
-   c4->Divide(2, 2);
+   //c4->Divide(2, 2);
 
    TLegend *leg4 = new TLegend(0.5, 0.6, 0.75, 0.9);
    leg4 -> AddEntry(hd_Wp_PtLep_1,"STAR data", "F");
    leg4 -> AddEntry(hWptt_Wp_PtLep_2,"PYTHIA W^{+}-> #tau#nu_{#tau} ", "F" );
    leg4 -> AddEntry(hZ_Wp_PtLep_2,"PYTHIA Z^{0}-> e^{+}e^{-}", "F");
 
-   c4_1->cd();
-   c4_1->SetLogy(1);
+   c4->cd();
+   c4->SetLogy(1);
    hZ_Wp_PtLep_2-> SetFillStyle(3448);
    hZ_Wp_PtLep_2-> SetFillColor(kGreen);
    hd_Wp_PtLep_1->Draw();
@@ -960,7 +960,7 @@ void analysis2011()
    hWptt_Wp_PtLep_2->Draw("same");
    hZ_Wp_PtLep_2->Draw("same");
    leg4 -> Draw();
-
+   /*
    c4_2->cd();
    c4_2->SetLogy(1);
    hZ_Wp_PtLep_2-> SetStats(1);
@@ -973,7 +973,7 @@ void analysis2011()
    hWptt_Wp_PtLep_2->SetNameTitle("hWptt_Wp_PtLep_2", "W^{+}->#tau#nu_{#tau} - norm. to data lumi");
    hWptt_Wp_PtLep_2-> SetFillColor(kRed);
    hWptt_Wp_PtLep_2->Draw();
-
+   */
 
    c4->Print(outPath + "/plot_4.eps");
    c4->Print(outPath + "/plot_4.png");
@@ -1186,9 +1186,9 @@ void analysis2011()
    leg6 -> AddEntry(hZ_Wm_PtLep_2,"PYTHIA Z^{0}-> e^{+}e^{-}", "F");
 
    c6-> SetTitle("W- sample");
-   c6->Divide(2, 2);
-   c6_1->cd();
-   c6_1->SetLogy(1);
+   //c6->Divide(2, 2);
+   c6->cd();
+   c6->SetLogy(1);
    hZ_Wm_PtLep_2   -> SetFillStyle(3448);
    hZ_Wm_PtLep_2   -> SetFillColor(kGreen);
    hd_Wm_PtLep_1   -> Draw();
@@ -1199,6 +1199,8 @@ void analysis2011()
    hWmtt_Wm_PtLep_2-> Draw("same");
    hZ_Wm_PtLep_2   -> Draw("same");
    leg6            -> Draw();
+
+   /*
    c6_2->cd();
    c6_2->SetLogy(1);
    hZ_Wm_PtLep_2-> SetStats(1);
@@ -1212,7 +1214,7 @@ void analysis2011()
    hWmtt_Wm_PtLep_2->SetNameTitle("hWptt_Wm_PtLep_2", "W^{-}->#tau#nu_{#tau} - norm. to data lumi");
    hWmtt_Wm_PtLep_2-> SetFillColor(kRed);
    hWmtt_Wm_PtLep_2->Draw();
-
+   */
 
    c6->Print(outPath + "/plot_6.eps");
    c6->Print(outPath + "/plot_6.png");
