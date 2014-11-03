@@ -39,8 +39,11 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
 }
 
 
-TString inPath  = "/star/institutions/bnl_me/fazio/vbana_out/ptcorr_samples/";
-TFile *fileMCWplus = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_--tpm_0.2_vbana.root");
+//TString inPath  = "/star/institutions/bnl_me/fazio/vbana_out/ptcorr_samples/";
+//TFile *fileMCWplus = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_--tpm_0.2_vbana.root");
+TString inPath  = "/star/institutions/bnl_me/fazio/stana_out/runlists/";
+TFile *fileMCWplus  = TFile::Open(inPath + "run11_mc_Wp2enu.lis/hist/vbana_oldstyle.root");
+TFile *fileMCWminus = TFile::Open(inPath + "run11_mc_Wm2enu.lis/hist/vbana_oldstyle.root");
 
 const float VecBosEvent::sMinTrackIsoDeltaR    = 0.7;  // was 0.7
 const float VecBosEvent::sMinTrackIsoDeltaPhi  = 0.7;
@@ -241,6 +244,30 @@ TVector3 VecBosEvent::CalcRecoilCorrected()
 
 
    TH2 *hCorrFacVsRecoilPt = (TH2*) fileMCWplus->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPt_GenOverReco");
+   Int_t nbins = hCorrFacVsRecoilPt->GetNbinsX();
+
+   // Find the bin corresponding to the un-corrected recoil p_T
+   int ptBinIndex = hCorrFacVsRecoilPt->GetXaxis()->FindBin(mP3TrackRecoilTpcNeutrals.Pt());
+
+   // Get the distribution of correction factors for that bin
+   TH1D* ptBinYSlice = hCorrFacVsRecoilPt->ProjectionY("ptBinYSlice", ptBinIndex, ptBinIndex);
+
+   // Throw a random number based on that distribution
+   double rndCorrection = ptBinYSlice->GetRandom();
+   delete ptBinYSlice;
+
+   mP3TrackRecoilTpcNeutralsCorrected.SetX(rndCorrection * mP3TrackRecoilTpcNeutralsCorrected.X());
+   mP3TrackRecoilTpcNeutralsCorrected.SetY(rndCorrection * mP3TrackRecoilTpcNeutralsCorrected.Y());
+
+   return mP3TrackRecoilTpcNeutralsCorrected;
+}
+
+TVector3 VecBosEvent::CalcRecoilCorrected_Wminus()
+{
+   mP3TrackRecoilTpcNeutralsCorrected = mP3TrackRecoilTpcNeutrals;
+
+
+   TH2 *hCorrFacVsRecoilPt = (TH2*) fileMCWminus->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPt_GenOverReco");
    Int_t nbins = hCorrFacVsRecoilPt->GetNbinsX();
 
    // Find the bin corresponding to the un-corrected recoil p_T
