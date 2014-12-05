@@ -53,8 +53,8 @@
       # Remove files and links
       if ($OPT_JETS == 0) rm &JOB_RUN_FILE_NAME;_jets.root
       chmod 664 *_hist.root *_jets.root *_tree.root *.ps *.txt
-      chmod 664 &OUT_DIR;/&LOG_DIR;/R&JOB_RUN_FILE_NAME;.log
-      touch     &OUT_DIR;/&LOG_DIR;/R&JOB_RUN_FILE_NAME;.log
+      chmod 664 &OUT_DIR;/&LOG_DIR;/&JOB_RUN_FILE_NAME;.log
+      touch     &OUT_DIR;/&LOG_DIR;/&JOB_RUN_FILE_NAME;.log
       rm -fr ./.&STAR_HOST_SYS;
       rm -fr ./stana
 
@@ -67,8 +67,8 @@
    <output fromScratch="*_tree.root" toURL="file:&OUT_DIR;/tree/"/>
    <output fromScratch="*.txt"       toURL="file:&OUT_DIR;/lumi/"/>
 
-   <stdout URL="file:&OUT_DIR;/&LOG_DIR;/R&JOB_RUN_FILE_NAME;.log"/>
-   <stderr URL="file:&OUT_DIR;/&LOG_DIR;/R&JOB_RUN_FILE_NAME;.log"/>
+   <stdout URL="file:&OUT_DIR;/&LOG_DIR;/&JOB_RUN_FILE_NAME;.log"/>
+   <stderr URL="file:&OUT_DIR;/&LOG_DIR;/&JOB_RUN_FILE_NAME;.log"/>
 
    <SandBox>
        <Package>
