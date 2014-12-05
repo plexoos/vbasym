@@ -53,10 +53,11 @@ void analysis2011()
    // Load the libraries:
    //gROOT->Macro("/star/u/fazio/offline/users/fazio/vbasym/macros/loadLibs.C");
 
-   TString inPath     = "/star/institutions/bnl_me/fazio/vbana_out/";
-   TString inPathNew  = "/star/institutions/bnl_me/fazio/stana_out/runlists/";
-   //TString inPath     = "~/vbasym_results/root_hists/";
-   TString outPath    = "~/vbasym_results/plots/4prelim";
+   TString inPath        = "/star/institutions/bnl_me/fazio/vbana_out/";
+   TString inPathNew     = "/star/institutions/bnl_me/fazio/stana_out/runlists/";
+   //TString inPath        = "~/vbasym_results/root_hists/";
+   TString outPath       = "~/vbasym_results/plots/4prelim";
+   TString outPathPaper  = "~/vbasym_results/plots/paper";
 
    //Styles:
    gStyle->SetPadBottomMargin(0.15);
@@ -1024,7 +1025,7 @@ void analysis2011()
    TCanvas *c4c = new TCanvas("c4c", "W+ sample - QCD data driven - PtEle > 15 GeV", 800, 400);
 
 
-   TH1F *hd_Wp_PtLepQCDPt15_1 = (TH1F *)hd_Wp_PtLepQCDPt15->Clone("hd_Wp_PtLepQCDPt15_1");
+   // TH1F *hd_Wp_PtLepQCDPt15_1 = (TH1F *)hd_Wp_PtLepQCDPt15->Clone("hd_Wp_PtLepQCDPt15_1");
 
    // Double_t integral_Wp_15_18=  hd_Wp_PtLepPt15_2-> Integral(15,18);
 
@@ -1060,14 +1061,14 @@ void analysis2011()
 
    c4c_1->cd();
    // hd_Wp_PtLepPt15_2-> SetMinimum(30.);
-   hd_Wp_PtLepPt15_2->Draw();
+   hd_Wp_PtLepPt15_2   -> Draw();
    hd_Wp_PtLepQCDPt15_2-> SetFillStyle(3448);
    hd_Wp_PtLepQCDPt15_2-> SetFillColor(kMagenta);
-   hd_Wp_PtLepQCDPt15_2->Draw("same");
+   hd_Wp_PtLepQCDPt15_2-> Draw("same");
    leg4c               -> Draw();
 
    c4c_2->cd();
-   hd_Wp_PtLepPt15_3   ->Draw();
+   hd_Wp_PtLepPt15_3   -> Draw();
 
 
    c4c->Print(outPath + "/plot_4c.eps");
@@ -1407,6 +1408,66 @@ void analysis2011()
 
    c7b->Print(outPath + "/plot_7b.eps");
    c7b->Print(outPath + "/plot_7b.png");
+
+
+   TCanvas *c8paper = new TCanvas("c8paper", "Data/MC summary - PAPER FIGURE", 800, 400);
+
+   c8paper -> Divide(2, 1);
+
+   TLatex *textWp = new TLatex(0.2, 0.84, "W^{+} #rightarrow e^{+} #nu_{e}");
+   textWp -> SetNDC(); 
+   textWp -> SetTextFont(32);
+   textWp -> SetTextSize(0.06);
+   TLatex *textWm = new TLatex(0.2, 0.84, "W^{-} #rightarrow e^{-} #nu_{e}");
+   textWm -> SetNDC(); 
+   textWm -> SetTextFont(32);
+   textWm -> SetTextSize(0.06);
+
+   TLegend *leg9 = new TLegend(0.51, 0.6, 0.9, 0.9);
+   leg9 -> SetFillColor(kWhite);
+   leg9 -> AddEntry(hd_Wp_PtLep_1,"STAR data", "F");
+   leg9 -> AddEntry(hWptt_Wp_PtLep_2,"PYTHIA W^{+}-> #tau#nu_{#tau} ", "F" );
+   leg9 -> AddEntry(hZ_Wp_PtLep_2,"PYTHIA Z^{0}-> e^{+}e^{-}", "F");;
+   leg9 -> AddEntry(hd_Wp_PtLepQCD_2,"data driven QCD", "F");
+
+   c8paper_1 -> cd();
+   c8paper_1 -> SetLeftMargin(0.15);
+   c8paper_1 -> SetRightMargin(0.1);
+   c8paper_1 -> SetGrid(0,0);
+   c8paper_1 -> SetLogy(1);
+   hd_Wp_PtLep_1   -> GetXaxis()->SetRangeUser(20, 81);
+   hd_Wp_PtLep_1   -> SetStats(0);
+   //hd_Wp_PtLep_1   -> SetNameTitle("hd_Wp_PtLep_1","W^{+}->e^{+}#nu_{e}");
+   hd_Wp_PtLep_1   -> SetNameTitle("hd_Wp_PtLep_1","");
+   hd_Wp_PtLep_1   -> Draw();
+   hWptt_Wp_PtLep_2-> Draw("same");
+   hZ_Wp_PtLep_2   -> Draw("same");
+   hZ_Wp_PtLep_2   -> Draw("same");
+   hd_Wp_PtLepQCD_2-> SetFillColor(kBlue);
+   hd_Wp_PtLepQCD_2-> Draw("same");
+   textWp          -> Draw();
+   leg9            -> Draw();
+
+   c8paper_2 -> cd();
+   c8paper_2 -> SetLeftMargin(0.15);
+   c8paper_2 -> SetRightMargin(0.1);
+   c8paper_2 -> SetGrid(0,0);
+   c8paper_2 -> SetLogy(1);
+   hd_Wm_PtLep_1   -> GetXaxis()->SetRangeUser(20, 81);
+   hd_Wm_PtLep_1   -> SetStats(0);
+   //hd_Wm_PtLep_1   -> SetNameTitle("hd_Wm_PtLep_1","W^{-}->e^{-}#nu_{e}");
+   hd_Wm_PtLep_1   -> SetNameTitle("hd_Wm_PtLep_1","");
+   hd_Wm_PtLep_1   -> Draw();
+   hWmtt_Wm_PtLep_2-> Draw("same");
+   hZ_Wm_PtLep_2   -> Draw("same");
+   hZ_Wm_PtLep_2   -> Draw("same");
+   hd_Wm_PtLepQCD_2-> SetFillColor(kBlue);
+   hd_Wm_PtLepQCD_2-> Draw("same");
+   textWm          -> Draw();
+   leg9            -> Draw();
+
+   c8paper -> Print(outPathPaper + "/PapePlot_DataMC.eps");
+   c8paper -> Print(outPathPaper + "/PaperPlot_DataMC.png");
 
 
    // Calculate Signal/Bkgnd ratios and their errors:

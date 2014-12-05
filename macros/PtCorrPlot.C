@@ -62,6 +62,7 @@ void PtCorrPlot()
    TString inPathScratch = "/star/data05/scratch/fazio/stana_out/runlists/";
    //TString inPathNew     = $VBASYM_RESULTS_DIR;
    TString outPath       = "~/vbasym_results/plots/4prelim";
+   TString outPathPaper  = "~/vbasym_results/plots/paper";
 
    cout << "input path" << inPathNew << endl;
 
@@ -359,18 +360,19 @@ void PtCorrPlot()
    TCanvas *c2b   = new TCanvas("c2b", "W+", 400, 400);
 
    c2b->cd();
-   hWp_PtReco_zoomin ->GetYaxis()->SetTitleOffset(1.8);
+   hWp_PtReco_zoomin ->GetYaxis()-> SetTitleOffset(1.8);
    hWp_PtReco_zoomin -> GetXaxis() -> SetTitle("Recoil P_{T}");
-   hWp_PtRecoCorrected_zoomin ->SetFillStyle(3448);
-   hWp_PtRecoCorrected_zoomin ->SetLineColor(kGreen);
-   hWp_PtRecoCorrected_zoomin ->SetFillColor(kGreen);
-   hWp_PtReco_zoomin          ->Draw();
-   //hWp_PtWGen_zoomin           ->SetFillStyle(3490);
-   hWp_PtWGen_zoomin           ->SetFillStyle(0);
-   //hWp_PtWGen_zoomin           ->SetFillColor(kRed);
-   hWp_PtWGen_zoomin           ->SetLineColor(kRed);
-   hWp_PtRecoCorrected_zoomin ->Draw("same");
-   hWp_PtWGen_zoomin           ->Draw("same");
+   hWp_PtRecoCorrected_zoomin -> SetFillStyle(3448);
+   hWp_PtRecoCorrected_zoomin -> SetLineColor(kGreen);
+   hWp_PtRecoCorrected_zoomin -> SetFillColor(kGreen);
+   hWp_PtReco_zoomin          -> Draw();
+   //hWp_PtWGen_zoomin          ->SetFillStyle(3490);
+   hWp_PtWGen_zoomin          -> SetFillStyle(0);
+   //hWp_PtWGen_zoomin          ->SetFillColor(kRed);
+   hWp_PtWGen_zoomin          -> SetLineColor(kRed);
+   hWp_PtWGen_zoomin          -> SetLineWidth(3); 
+   hWp_PtRecoCorrected_zoomin -> Draw("same");
+   hWp_PtWGen_zoomin          -> Draw("same");
    TLegend *leg2 = new TLegend(0.45, 0.6, 0.75, 0.9);
    leg2 -> AddEntry(hWp_PtReco_zoomin,"Before P_{T} correction", "F");
    leg2 -> AddEntry(hWp_PtRecoCorrected_zoomin,"After P_{T} correction", "F" );
@@ -388,16 +390,17 @@ void PtCorrPlot()
    hWm_PtReco_zoomin -> GetYaxis() -> SetTitleOffset(1.8);
    hWm_PtReco_zoomin -> GetXaxis() -> SetTitle("Recoil P_{T}");
    hWm_PtReco_zoomin -> GetYaxis() -> SetTitle("Events (W^{-})");
-   hWm_PtRecoCorrected_zoomin ->SetFillStyle(3448);
-   hWm_PtRecoCorrected_zoomin ->SetLineColor(kGreen);
-   hWm_PtRecoCorrected_zoomin ->SetFillColor(kGreen);
-   hWm_PtReco_zoomin          ->Draw();
+   hWm_PtRecoCorrected_zoomin -> SetFillStyle(3448);
+   hWm_PtRecoCorrected_zoomin -> SetLineColor(kGreen);
+   hWm_PtRecoCorrected_zoomin -> SetFillColor(kGreen);
+   hWm_PtReco_zoomin          -> Draw();
    //hWm_PtWGen_zoomin           ->SetFillStyle(3490);
-   hWm_PtWGen_zoomin           ->SetFillStyle(0);
-   //hWm_PtWGen_zoomin           ->SetFillColor(kRed);
-   hWm_PtWGen_zoomin           ->SetLineColor(kRed);
-   hWm_PtRecoCorrected_zoomin ->Draw("same");
-   hWm_PtWGen_zoomin          ->Draw("same");
+   hWm_PtWGen_zoomin          -> SetFillStyle(0);
+   //hWm_PtWGen_zoomin          ->SetFillColor(kRed);
+   hWm_PtWGen_zoomin          -> SetLineColor(kRed);
+   hWm_PtWGen_zoomin          -> SetLineWidth(3); 
+   hWm_PtRecoCorrected_zoomin -> Draw("same");
+   hWm_PtWGen_zoomin          -> Draw("same");
    TLegend *leg2_Wm = new TLegend(0.45, 0.6, 0.75, 0.9);
    leg2_Wm -> AddEntry(hWm_PtReco_zoomin,"Before P_{T} correction", "F");
    leg2_Wm -> AddEntry(hWm_PtRecoCorrected_zoomin,"After P_{T} correction", "F" );
@@ -407,6 +410,37 @@ void PtCorrPlot()
 
    c2b_Wm->SaveAs(outPath + "/plot_PtCorr2_Wm.png");
    c2b_Wm->SaveAs(outPath + "/plot_PtCorr2_Wm.eps");
+
+
+
+
+   TCanvas *c2b_paper   = new TCanvas("c2b_paper", "W+ Paper Fig", 400, 400);
+
+   c2b_paper-> cd();
+   c2b_paper-> SetGrid(0,0);
+   //hWp_PtReco_zoomin ->GetYaxis()->SetTitleOffset(1.8);
+   //hWp_PtReco_zoomin -> GetXaxis() -> SetTitle("Recoil P_{T}");
+   //hWp_PtRecoCorrected_zoomin ->SetFillStyle(3448);
+   //hWp_PtRecoCorrected_zoomin ->SetLineColor(kGreen);
+   //hWp_PtRecoCorrected_zoomin ->SetFillColor(kGreen);
+   hWp_PtReco_zoomin          -> SetTitle("");
+   hWp_PtReco_zoomin          -> SetStats(0);
+   hWp_PtReco_zoomin          -> Draw();
+   //hWp_PtWGen_zoomin           ->SetFillStyle(0);
+   //hWp_PtWGen_zoomin           ->SetLineColor(kRed);
+   hWp_PtRecoCorrected_zoomin -> Draw("same");
+   hWp_PtWGen_zoomin          -> Draw("same"); 
+   g1                         -> Draw("same");
+   TLegend *leg2_paper = new TLegend(0.45, 0.6, 0.75, 0.9);
+   leg2_paper -> AddEntry(hWp_PtReco_zoomin,"Before P_{T} correction", "F");
+   leg2_paper -> AddEntry(hWp_PtRecoCorrected_zoomin,"After P_{T} correction", "F" );
+   leg2_paper -> AddEntry(hWp_PtWGen_zoomin,"PHYTHIA Generated", "L");;
+   leg2_paper -> AddEntry(g1,"RhicBOS 500 GeV", "L");
+   leg2_paper -> Draw();
+
+
+   c2b_paper->SaveAs(outPathPaper + "/PaperPlot_PtCorr.png");
+   c2b_paper->SaveAs(outPathPaper + "/PaperPlot_PtCorr.eps");
 
   
    TCanvas *c3 = new TCanvas("c3", "", 1000, 400);

@@ -3,11 +3,13 @@
 void W_Asymmetry()
 {
 
-   gStyle->SetPadBottomMargin(0.15);
-   gStyle->SetPadLeftMargin(0.17);
-   gStyle->SetMarkerStyle(20);
-   gStyle->SetOptDate(0);
-   gStyle->SetErrorX();
+   gStyle -> SetPadBottomMargin(0.15);
+   gStyle -> SetPadLeftMargin(0.17);
+   gStyle -> SetMarkerStyle(20);
+   gStyle -> SetOptDate(0);
+   gStyle -> SetErrorX();
+   gStyle -> SetEndErrorSize(4);
+   gStyle -> SetHistLineWidth(2);
 
    TString inPathNew     = "/star/institutions/bnl_me/fazio/stana_out/runlists/";
    TString inPathScratch = "/star/data05/scratch/fazio/stana_out/runlists/";
@@ -418,17 +420,20 @@ void W_Asymmetry()
   hd_Wp_AsymAmpSqrtVsRap -> SetTitle("; y^{W}; A_{N}");
   hd_Wp_AsymAmpSqrtVsRap -> GetXaxis() -> SetRangeUser(-1., 0.99);
   hd_Wp_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textSTAR);
-  hd_Wp_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textWp);
+  //hd_Wp_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textWp);
   hd_Wp_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textPtLim);
   hd_Wp_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textLSys);
-  hd_Wp_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textStarPrel);
-  hd_Wp_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textLetter);
+  //hd_Wp_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textStarPrel);
+  //hd_Wp_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textLetter);
   hd_Wp_AsymAmpSqrtVsRap -> Draw("E0");
   hd_Wp_AsymAmpSqrtVsRap -> GetYaxis() -> SetRangeUser(-1.49, 1.49);
   hd_Wp_AsymAmpSqrtVsRap -> GetYaxis() -> SetLabelFont(62);
   hd_Wp_AsymAmpSqrtVsRap -> GetYaxis() -> SetTitleFont(62);
   hd_Wp_AsymAmpSqrtVsRap_clone -> SetStats(0);
   hd_Wp_AsymAmpSqrtVsRap_clone -> Draw("same E1");
+  textLetter -> Draw();
+  textWp -> Draw();
+  textStarPrel -> Draw();
   //Double_t xMin =  hd_Wp_AsymAmpSqrtVsRap_clone  -> GetXaxis() -> GetXmin();
   //Double_d xMax = hd_Wp_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmax;
   line1 -> DrawLine(hd_Wp_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmin(), 0, hd_Wp_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmax(), 0);
@@ -489,10 +494,10 @@ void W_Asymmetry()
   hd_Wp_AsymAmpSqrtVsPt -> SetMarkerStyle(20);
   hd_Wp_AsymAmpSqrtVsPt -> SetTitle("; P_{T}^{W}; A_{N}");
   hd_Wp_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textSTAR);
-  hd_Wp_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textWp);
+  //hd_Wp_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textWp);
   hd_Wp_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textRapLim);
   hd_Wp_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textLSys);
-  hd_Wp_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textStarPrel);
+  //hd_Wp_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textStarPrel);
   //hd_Wp_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textLetter);
   hd_Wp_AsymAmpSqrtVsPt -> Draw("E0");
   hd_Wp_AsymAmpSqrtVsPt -> GetYaxis() -> SetRangeUser(-1.49, 1.49);
@@ -501,6 +506,8 @@ void W_Asymmetry()
   hd_Wp_AsymAmpSqrtVsPt_clone -> SetStats(0);
   hd_Wp_AsymAmpSqrtVsPt_clone -> Draw("same E1");
   textLetter -> DrawText(0.2, 0.07, "(c)");
+  textWp -> Draw();
+  textStarPrel -> Draw();
   line1 -> DrawLine(hd_Wp_AsymAmpSqrtVsPt -> GetXaxis() -> GetXmin(), 0, hd_Wp_AsymAmpSqrtVsPt -> GetXaxis() -> GetXmax(), 0);
 
   lowerPad_WpPt->cd();
@@ -572,10 +579,10 @@ void W_Asymmetry()
   hd_Wm_AsymAmpSqrtVsRap -> SetTitle("; y^{W}; A_{N}");
   hd_Wm_AsymAmpSqrtVsRap -> SetMarkerStyle(20);
   hd_Wm_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textSTAR);
-  hd_Wm_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textWm);
+  //hd_Wm_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textWm);
   hd_Wm_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textPtLim);
   hd_Wm_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textLSys);
-  hd_Wm_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textStarPrel);
+  //hd_Wm_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textStarPrel);
   //hd_Wm_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textLetter);
   hd_Wm_AsymAmpSqrtVsRap -> GetXaxis() -> SetRangeUser(-1., 0.99);
   hd_Wm_AsymAmpSqrtVsRap -> Draw("E0");
@@ -585,6 +592,8 @@ void W_Asymmetry()
   hd_Wm_AsymAmpSqrtVsRap_clone -> SetStats(0);
   hd_Wm_AsymAmpSqrtVsRap_clone -> Draw("same E1");
   textLetter -> DrawText(0.2, 0.07, "(b)");
+  textWm -> Draw();
+  textStarPrel -> Draw();
   line1 -> DrawLine(hd_Wm_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmin(), 0, hd_Wm_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmax(), 0);
 
   lowerPad_WmRap->cd();
@@ -628,10 +637,10 @@ void W_Asymmetry()
   hd_Wm_AsymAmpSqrtVsPt -> SetTitle("; P_{T}^{W}; A_{N}");
   hd_Wm_AsymAmpSqrtVsPt -> SetMarkerStyle(20);
   hd_Wm_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textSTAR);
-  hd_Wm_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textWm);
+  //hd_Wm_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textWm);
   hd_Wm_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textRapLim);
   hd_Wm_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textLSys);
-  hd_Wm_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textStarPrel);
+  //hd_Wm_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textStarPrel);
   hd_Wm_AsymAmpSqrtVsPt -> Draw("E0");
   hd_Wm_AsymAmpSqrtVsPt -> GetYaxis() -> SetRangeUser(-1.49, 1.49);
   hd_Wm_AsymAmpSqrtVsPt -> GetYaxis() -> SetLabelFont(62);
@@ -639,6 +648,8 @@ void W_Asymmetry()
   hd_Wm_AsymAmpSqrtVsPt_clone -> SetStats(0);
   hd_Wm_AsymAmpSqrtVsPt_clone -> Draw("same E1");
   textLetter -> DrawText(0.2, 0.07, "(d)");
+  textWm -> Draw();
+  textStarPrel -> Draw();
   line1 -> DrawLine(hd_Wm_AsymAmpSqrtVsPt -> GetXaxis() -> GetXmin(), 0, hd_Wm_AsymAmpSqrtVsPt -> GetXaxis() -> GetXmax(), 0);
 
   lowerPad_WmPt->cd();
@@ -655,11 +666,124 @@ void W_Asymmetry()
   hSysMeanPt   -> SetTitleSize(0.2, "X");
   hSysMeanPt   -> SetTitleSize(0.12, "Y");
   hSysMeanPt   -> Draw("P");
-  textArrow    ->  Draw();
+  textArrow    -> Draw();
 
   cWmAmpPt -> Update();  
   cWmAmpPt->SaveAs(outPath + "/hd_Wm_AsymAmpSqrtVsPt.png");
   cWmAmpPt->SaveAs(outPath + "/hd_Wm_AsymAmpSqrtVsPt.eps");
+
+
+  TCanvas *cWAmpPt   = new TCanvas("cWAmpPt", "An vs Pt", 600, 650);
+
+  TPad*    upperPad_WPt = new TPad("upperPad_WPt", "upperPad_WPt", .005, .25, .995, .995);
+  TPad*    lowerPad_WPt = new TPad("lowerPad_WPt", "lowerPad_WPt", .005, .005, .995, .25);
+  upperPad_WPt -> SetBottomMargin(0.0);
+  lowerPad_WPt -> SetTopMargin(0.0);
+  lowerPad_WPt -> SetBottomMargin(0.35);
+  upperPad_WPt -> Draw();
+  lowerPad_WPt -> Draw();
+
+  upperPad_WPt->cd();
+  gPad -> SetGrid(0,0);
+  gPad -> Modified();
+  hd_Wm_AsymAmpSqrtVsPt -> SetMarkerColor(kBlue);
+  hd_Wm_AsymAmpSqrtVsPt -> SetMarkerSize(1.3);
+  hd_Wm_AsymAmpSqrtVsPt -> SetLineColor(kBlue);
+  hd_Wm_AsymAmpSqrtVsPt -> SetLineWidth(2);
+  hd_Wm_AsymAmpSqrtVsPt -> Draw("E0");
+  hd_Wm_AsymAmpSqrtVsPt_clone -> SetMarkerColor(kBlue);
+  hd_Wm_AsymAmpSqrtVsPt_clone -> SetMarkerSize(1.3);
+  hd_Wm_AsymAmpSqrtVsPt_clone -> SetLineColor(kBlue);
+  hd_Wm_AsymAmpSqrtVsPt_clone -> SetLineWidth(2);
+  hd_Wm_AsymAmpSqrtVsPt_clone -> Draw("same E1");
+  hd_Wp_AsymAmpSqrtVsPt -> SetMarkerColor(kRed);
+  hd_Wp_AsymAmpSqrtVsPt -> SetMarkerSize(1.3);
+  hd_Wp_AsymAmpSqrtVsPt -> SetLineColor(kRed);
+  hd_Wp_AsymAmpSqrtVsPt -> SetLineWidth(2);
+  hd_Wp_AsymAmpSqrtVsPt -> Draw("same E0");
+  hd_Wp_AsymAmpSqrtVsPt_clone -> SetMarkerColor(kRed);
+  hd_Wp_AsymAmpSqrtVsPt_clone -> SetMarkerSize(1.3);
+  hd_Wp_AsymAmpSqrtVsPt_clone -> SetLineColor(kRed);
+  hd_Wp_AsymAmpSqrtVsPt_clone -> SetLineWidth(2);
+  hd_Wp_AsymAmpSqrtVsPt_clone -> Draw("same E1");
+  //textLetter -> DrawText(0.2, 0.07, "(d)");
+  textStarPrel -> DrawLatex(0.2, 0.83, "STAR preliminary");
+  line1 -> DrawLine(hd_Wm_AsymAmpSqrtVsPt -> GetXaxis() -> GetXmin(), 0, hd_Wm_AsymAmpSqrtVsPt -> GetXaxis() -> GetXmax(), 0);
+
+  TLegend *leg_hSysMean = new TLegend(0.6, 0.7, 0.95, 0.9);
+  leg_hSysMean -> SetFillColor(0);
+  leg_hSysMean -> SetFillStyle(0);
+  leg_hSysMean -> SetLineColor(0);
+  leg_hSysMean -> SetBorderSize(0);
+  leg_hSysMean -> AddEntry(hd_Wp_AsymAmpSqrtVsPt,"W^{+} #rightarrow l^{+} #nu", "p");
+  leg_hSysMean -> AddEntry(hd_Wm_AsymAmpSqrtVsPt,"W^{-} #rightarrow l^{-} #nu", "p");
+  leg_hSysMean -> Draw();
+
+
+  lowerPad_WPt->cd();
+  gPad -> SetGrid(0);
+  gPad -> Modified();
+  hSysMeanPt   -> SetMarkerColor(1);
+  hSysMeanPt   -> Draw("P");
+  textArrow -> SetTextColor(kBlack);
+  textArrow    -> Draw();
+
+  cWAmpPt -> Update();  
+  cWAmpPt->SaveAs(outPath + "/hd_W_AsymAmpSqrtVsPt.png");
+  cWAmpPt->SaveAs(outPath + "/hd_W_AsymAmpSqrtVsPt.eps");
+
+
+
+  TCanvas *cWAmpRap   = new TCanvas("cWAmpRap", "An vs Rap", 600, 650);
+
+  TPad*    upperPad_WRap = new TPad("upperPad_WRap", "upperPad_WRap", .005, .25, .995, .995);
+  TPad*    lowerPad_WRap = new TPad("lowerPad_WRap", "lowerPad_WRap", .005, .005, .995, .25);
+  upperPad_WRap -> SetBottomMargin(0.0);
+  lowerPad_WRap -> SetTopMargin(0.0);
+  lowerPad_WRap -> SetBottomMargin(0.35);
+  upperPad_WRap -> Draw();
+  lowerPad_WRap -> Draw();
+
+  upperPad_WRap->cd();
+  gPad -> SetGrid(0,0);
+  gPad -> Modified();
+  hd_Wm_AsymAmpSqrtVsRap -> SetMarkerColor(kBlue);
+  hd_Wm_AsymAmpSqrtVsRap -> SetMarkerSize(1.3);
+  hd_Wm_AsymAmpSqrtVsRap -> SetLineColor(kBlue);
+  hd_Wm_AsymAmpSqrtVsRap -> SetLineWidth(2);
+  hd_Wm_AsymAmpSqrtVsRap -> Draw("E0");
+  hd_Wm_AsymAmpSqrtVsRap_clone -> SetMarkerColor(kBlue);
+  hd_Wm_AsymAmpSqrtVsRap_clone -> SetMarkerSize(1.3);
+  hd_Wm_AsymAmpSqrtVsRap_clone -> SetLineColor(kBlue);
+  hd_Wm_AsymAmpSqrtVsRap_clone -> SetLineWidth(2);
+  hd_Wm_AsymAmpSqrtVsRap_clone -> Draw("same E1");
+  hd_Wp_AsymAmpSqrtVsRap -> SetMarkerColor(kRed);
+  hd_Wp_AsymAmpSqrtVsRap -> SetMarkerSize(1.3);
+  hd_Wp_AsymAmpSqrtVsRap -> SetLineColor(kRed);
+  hd_Wp_AsymAmpSqrtVsRap -> SetLineWidth(2);
+  hd_Wp_AsymAmpSqrtVsRap -> Draw("same E0");
+  hd_Wp_AsymAmpSqrtVsRap_clone -> SetMarkerColor(kRed);
+  hd_Wp_AsymAmpSqrtVsRap_clone -> SetMarkerSize(1.3);
+  hd_Wp_AsymAmpSqrtVsRap_clone -> SetLineColor(kRed);
+  hd_Wp_AsymAmpSqrtVsRap_clone -> SetLineWidth(2);
+  hd_Wp_AsymAmpSqrtVsRap_clone -> Draw("same E1");
+  //textLetter -> DrawText(0.2, 0.07, "(d)");
+  textStarPrel -> DrawLatex(0.2, 0.83, "STAR preliminary");
+  line1 -> DrawLine(hd_Wm_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmin(), 0, hd_Wm_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmax(), 0);
+
+  leg_hSysMean -> Draw();
+
+
+  lowerPad_WRap->cd();
+  gPad -> SetGrid(0);
+  gPad -> Modified();
+  frameSysRap  -> Draw(); 
+  hSysRapGMean -> SetMarkerColor(1);
+  hSysRapGMean -> Draw("same P");
+
+  cWAmpRap -> Update();  
+  cWAmpRap -> SaveAs(outPath + "/hd_W_AsymAmpSqrtVsRap.png");
+  cWAmpRap -> SaveAs(outPath + "/hd_W_AsymAmpSqrtVsRap.eps");
 
 
   TCanvas *cZ0AmpRap   = new TCanvas("cZ0AmpRap", "An Z0 Rapidity", 600, 600);

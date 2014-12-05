@@ -263,4 +263,136 @@ void WpWmRatio()
 
    c5el->Print(outPath + "/plot_r11r12_WpWmRatio_vs_ElecEta.eps");
    c5el->Print(outPath + "/plot_r11r12_WpWmRatio_vs_ElecEta.png");
+
+
+
+
+   // We make now expected projections of uncertainties including run13 (~300 pb-1)
+   // the projection factor (to be divided for) will be sqrt(3.7)
+   Double_t projFactor = 1.92;
+
+   TH1D *hd1112run13proj_Wp_WBosonEta   = (TH1D*) hd1112_Wp_WBosonEta   -> Clone("hd1112run13proj_Wp_WBosonEta");
+   TH1D *hd1112run13proj_Wm_WBosonEta   = (TH1D*) hd1112_Wm_WBosonEta   -> Clone("hd1112run13proj_Wm_WBosonEta");
+   TH1D *hd1112run13proj_Wp_ElectronEta = (TH1D*) hd1112_Wp_ElectronEta -> Clone("hd1112run13proj_Wp_ElectronEta");
+   TH1D *hd1112run13proj_Wm_ElectronEta = (TH1D*) hd1112_Wm_ElectronEta -> Clone("hd1112run13proj_Wm_ElectronEta");
+
+   for (int i = 1; i <= hd1112run13proj_Wp_WBosonEta->GetNbinsX(); ++i) {
+     //hd1112run13proj_Wp_WBosonEta   -> SetBinContent(1, 0); 
+     Double_t errBin = hd1112run13proj_Wp_WBosonEta -> GetBinError(i);
+     Double_t Bin    = hd1112run13proj_Wp_WBosonEta -> GetBinContent(i);
+     cout << "Bin = " << Bin << endl;
+     cout << "errBin = " << errBin << endl;
+     Double_t errBinProjected = errBin / projFactor;
+     cout << "errBinProjected = " << errBinProjected << endl;
+     hd1112run13proj_Wp_WBosonEta   -> SetBinError(i, errBinProjected);
+   }
+
+   for (int i = 1; i <= hd1112run13proj_Wm_WBosonEta->GetNbinsX(); ++i) {
+     Double_t errBin = hd1112run13proj_Wm_WBosonEta -> GetBinError(i);
+     Double_t errBinProjected = errBin / projFactor;
+     cout << "Wm - errBinProjected = " << errBinProjected << endl;
+     hd1112run13proj_Wm_WBosonEta   -> SetBinError(i, errBinProjected);
+   }
+
+   for (int i = 1; i <= hd1112run13proj_Wp_ElectronEta->GetNbinsX(); ++i) {
+     Double_t errBin = hd1112run13proj_Wp_ElectronEta -> GetBinError(i);
+     Double_t Bin    = hd1112run13proj_Wp_ElectronEta -> GetBinContent(i);
+     cout << "Wp elPt - Bin = " << Bin << endl;
+     cout << "Wp elPt - errBin = " << errBin << endl;
+     Double_t errBinProjected = errBin / projFactor;
+     cout << "Wp elPt - errBinProjected = " << errBinProjected << endl;
+     hd1112run13proj_Wp_ElectronEta   -> SetBinError(i, errBinProjected);
+   }
+
+   for (int i = 1; i <= hd1112run13proj_Wm_ElectronEta->GetNbinsX(); ++i) {
+     Double_t errBin = hd1112run13proj_Wm_ElectronEta -> GetBinError(i);
+     Double_t errBinProjected = errBin / projFactor;
+     cout << "Wm - errBinProjected = " << errBinProjected << endl;
+     hd1112run13proj_Wm_ElectronEta   -> SetBinError(i, errBinProjected);
+   }
+
+   TH1D *hd1112run13proj_WpWmRatio = (TH1D*) hd1112run13proj_Wp_WBosonEta   -> Clone("hd1112run13proj_WpWmRatio");
+   hd1112run13proj_WpWmRatio  -> Divide(hd1112run13proj_Wp_WBosonEta, hd1112run13proj_Wm_WBosonEta);
+   hd1112run13proj_WpWmRatio  -> SetMaximum(6);
+   hd1112run13proj_WpWmRatio  -> SetMinimum(0);
+   hd1112run13proj_WpWmRatio  -> SetMarkerStyle(20);
+   hd1112run13proj_WpWmRatio  -> SetTitle("run 11+12+run13proj; #eta_{W}; W^{+}/W^{-}");
+
+   TH1D *hd1112run13proj_WpWmRatio_vs_EleEta = (TH1D*) hd1112run13proj_Wp_ElectronEta   -> Clone("hd1112run13proj_WpWmRatio_vs_EleEta");
+   hd1112run13proj_WpWmRatio_vs_EleEta  -> Divide(hd1112run13proj_Wp_ElectronEta, hd1112run13proj_Wm_ElectronEta);
+   hd1112run13proj_WpWmRatio_vs_EleEta  -> SetMaximum(6);
+   hd1112run13proj_WpWmRatio_vs_EleEta  -> SetMinimum(0);
+   hd1112run13proj_WpWmRatio_vs_EleEta  -> SetMarkerStyle(20);
+   hd1112run13proj_WpWmRatio_vs_EleEta  -> SetTitle("run 11+12+run13proj; #eta_{el}; W^{+}/W^{-}");
+
+
+   TCanvas *c4run13proj    = new TCanvas("c4run13proj", "run 11+12+run13proj: W-Eta", 800, 500);
+   c4run13proj   -> Divide(2,1);
+   c4run13proj_1 -> cd();
+   hd1112run13proj_Wp_WBosonEta -> SetMarkerStyle(20);
+   hd1112run13proj_Wp_WBosonEta -> SetTitle("W^{+}");
+   hd1112run13proj_Wp_WBosonEta -> Draw("e");
+   c4run13proj_2 -> cd();
+   hd1112run13proj_Wm_WBosonEta -> SetTitle("W^{-}");
+   hd1112run13proj_Wm_WBosonEta -> SetMarkerStyle(20);
+   hd1112run13proj_Wm_WBosonEta -> Draw("e");
+
+   c4run13proj->Print(outPath + "/plot_r11r12run13proj_WEta.eps");
+   c4run13proj->Print(outPath + "/plot_r11r12run13proj_WEta.png");
+
+   TCanvas *c5run13proj    = new TCanvas("c5run13proj", "run 11+12+run13proj: W+/W- versus Eta", 800, 500);
+   c5run13proj     -> cd();
+   hd1112run13proj_WpWmRatio -> Draw("e");
+
+   c5run13proj->Print(outPath + "/plot_r11r12run13proj_WpWmRatio_vs_Eta.eps");
+   c5run13proj->Print(outPath + "/plot_r11r12run13proj_WpWmRatio_vs_Eta.png");
+
+   // PRINT the table of contents
+   cout << " " << endl;
+   cout << " " << endl;
+   cout << "W+/W- 2013 proj. versus boson pseudo-rapidity " << endl;
+   cout << "Pseudo-rapidity  " << "ratio  " << "error  " << endl;
+   for (int i = 1; i <= hd1112run13proj_WpWmRatio->GetNbinsX(); ++i) {
+     //hd1112run13proj_WpWmRatio_vs_EleEta   -> SetBinContent(1, 0); 
+     Double_t errBin    = hd1112run13proj_WpWmRatio -> GetBinError(i);
+     Double_t Bin       = hd1112run13proj_WpWmRatio -> GetBinContent(i);
+     Double_t BinCenter = hd1112run13proj_WpWmRatio -> GetXaxis() -> GetBinCenter(i);
+     cout << BinCenter <<"   " << Bin << "   " << errBin << endl;
+   }
+
+
+   TCanvas *c4run13projel    = new TCanvas("c4run13projel", "run 11+12+run13proj: Electron-Eta", 800, 500);
+   c4run13projel -> Divide(2,1);
+   c4run13projel_1 -> cd();
+   hd1112run13proj_Wp_ElectronEta -> SetMarkerStyle(20);
+   hd1112run13proj_Wp_ElectronEta -> SetTitle("W^{+}");
+   hd1112run13proj_Wp_ElectronEta -> Draw("e");
+   c4run13projel_2 -> cd();
+   hd1112run13proj_Wm_ElectronEta -> SetTitle("W^{-}");
+   hd1112run13proj_Wm_ElectronEta -> SetMarkerStyle(20);
+   hd1112run13proj_Wm_ElectronEta -> Draw("e");
+
+   c4run13projel->Print(outPath + "/plot_r11r12run13proj_ElecEta.eps");
+   c4run13projel->Print(outPath + "/plot_r11r12run13proj_ElecEta.png");
+
+   TCanvas *c5run13projel    = new TCanvas("c5run13projel", "run 11+12+run13proj: W+/W- versus Elec-Eta", 800, 500);
+   c5run13projel -> cd();
+   hd1112run13proj_WpWmRatio_vs_EleEta -> Draw("e");
+
+   c5run13projel->Print(outPath + "/plot_r11r12run13proj_WpWmRatio_vs_ElecEta.eps");
+   c5run13projel->Print(outPath + "/plot_r11r12run13proj_WpWmRatio_vs_ElecEta.png");
+
+   // PRINT the table of contents
+   cout << " " << endl;
+   cout << " " << endl;
+   cout << "W+/W- 2013 proj. versus lepton pseudo-rapidity " << endl;
+   cout << "Pseudo-rapidity  " << "ratio  " << "error  " << endl;
+   for (int i = 3; i <= hd1112run13proj_WpWmRatio_vs_EleEta->GetNbinsX()-2; ++i) {
+     //hd1112run13proj_WpWmRatio_vs_EleEta   -> SetBinContent(1, 0); 
+     Double_t errBin    = hd1112run13proj_WpWmRatio_vs_EleEta -> GetBinError(i);
+     Double_t Bin       = hd1112run13proj_WpWmRatio_vs_EleEta -> GetBinContent(i);
+     Double_t BinCenter = hd1112run13proj_WpWmRatio_vs_EleEta -> GetXaxis() -> GetBinCenter(i);
+     cout << BinCenter <<"   " << Bin << "   " << errBin << endl;
+   }
+
 }
