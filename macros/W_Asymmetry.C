@@ -13,7 +13,7 @@ void W_Asymmetry()
 
    TString inPathNew     = "/star/institutions/bnl_me/fazio/stana_out/runlists/";
    TString inPathScratch = "/star/data05/scratch/fazio/stana_out/runlists/";
-   TString outPath       = "~/vbasym_results/plots/4prelim";
+   TString outPath       = "~/vbasym_results/plots/postPrelim";
 
    TFile *fileData         = TFile::Open(inPathNew + "run11_pp_transverse/hist/vbana.root");
    TFile *fileDataZ0       = TFile::Open(inPathNew + "run11_pp_transverse_zboson/hist/vbana.root");
@@ -313,7 +313,8 @@ void W_Asymmetry()
    textArrow -> SetTextFont(32);
    textArrow -> SetTextSize(0.15);
    textArrow -> SetTextColor(kRed);
-   TLatex *textZ0 = new TLatex(0.2, 0.83, "Z^{0} #rightarrow l^{+} l^{-}");
+   //TLatex *textZ0 = new TLatex(0.2, 0.83, "Z^{0} #rightarrow l^{+} l^{-}");
+   TLatex *textZ0 = new TLatex(0.6, 0.83, "Z^{0} #rightarrow l^{+} l^{-}");
    textZ0 -> SetNDC(); 
    textZ0 -> SetTextFont(32);
    textZ0 -> SetTextSize(0.07);
@@ -334,6 +335,11 @@ void W_Asymmetry()
    textStarPrel -> SetTextColor(kRed); 
    textStarPrel -> SetTextFont(32);
    textStarPrel -> SetTextSize(0.06);
+   TLatex *textStarName = new TLatex(0.55, 0.83, "STAR");
+   textStarName -> SetNDC(); 
+   textStarName -> SetTextColor(kRed); 
+   textStarName -> SetTextFont(32);
+   textStarName -> SetTextSize(0.06);
    TLatex *textStarPrel_1w = new TLatex(0.6, 0.83, "STAR preliminary");
    textStarPrel_1w -> SetNDC(); 
    textStarPrel_1w -> SetTextColor(kRed); 
@@ -707,7 +713,7 @@ void W_Asymmetry()
   hd_Wp_AsymAmpSqrtVsPt_clone -> SetLineWidth(2);
   hd_Wp_AsymAmpSqrtVsPt_clone -> Draw("same E1");
   //textLetter -> DrawText(0.2, 0.07, "(d)");
-  textStarPrel -> DrawLatex(0.2, 0.83, "STAR preliminary");
+  textStarName -> DrawLatex(0.2, 0.83, "STAR");
   line1 -> DrawLine(hd_Wm_AsymAmpSqrtVsPt -> GetXaxis() -> GetXmin(), 0, hd_Wm_AsymAmpSqrtVsPt -> GetXaxis() -> GetXmax(), 0);
 
   TLegend *leg_hSysMean = new TLegend(0.6, 0.7, 0.95, 0.9);
@@ -723,6 +729,7 @@ void W_Asymmetry()
   lowerPad_WPt->cd();
   gPad -> SetGrid(0);
   gPad -> Modified();
+  hSysMeanPt   -> SetTitle("; P_{T}^{W}; rel. syst.(%)");
   hSysMeanPt   -> SetMarkerColor(1);
   hSysMeanPt   -> Draw("P");
   textArrow -> SetTextColor(kBlack);
@@ -768,7 +775,8 @@ void W_Asymmetry()
   hd_Wp_AsymAmpSqrtVsRap_clone -> SetLineWidth(2);
   hd_Wp_AsymAmpSqrtVsRap_clone -> Draw("same E1");
   //textLetter -> DrawText(0.2, 0.07, "(d)");
-  textStarPrel -> DrawLatex(0.2, 0.83, "STAR preliminary");
+  textStarName -> DrawLatex(0.2, 0.83, "STAR Preliminary");
+  //textStarName -> DrawLatex(0.2, 0.83, "STAR");
   line1 -> DrawLine(hd_Wm_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmin(), 0, hd_Wm_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmax(), 0);
 
   leg_hSysMean -> Draw();
@@ -777,6 +785,7 @@ void W_Asymmetry()
   lowerPad_WRap->cd();
   gPad -> SetGrid(0);
   gPad -> Modified();
+  frameSysRap  -> SetTitle("; y^{W}; rel. syst.(%)");
   frameSysRap  -> Draw(); 
   hSysRapGMean -> SetMarkerColor(1);
   hSysRapGMean -> Draw("same P");
@@ -790,21 +799,32 @@ void W_Asymmetry()
 
 
   cZ0AmpRap -> cd();
+  cZ0AmpRap -> SetGrid(0,0);
+  TH2F *frame_Z0_Rap = new TH2F("frameSysRap","",5,-1.5,1.5,5,-1.49,1.49);
+  frame_Z0_Rap -> SetStats(0);
+  frame_Z0_Rap ->  SetTitle("; y^{Z^{0}}; A_{N}");
+  frame_Z0_Rap -> Draw();
+  line1 -> DrawLine(frame_Z0_Rap -> GetXaxis() -> GetXmin(), 0, frame_Z0_Rap -> GetXaxis() -> GetXmax(), 0);   
+
   hd_Z0_AsymAmpSqrtVsRap -> GetYaxis() -> SetTitleOffset(1.6);
   hd_Z0_AsymAmpSqrtVsRap -> SetStats(0);
   hd_Z0_AsymAmpSqrtVsRap -> SetTitle("; y^{Z^{0}}; A_{N}");
   hd_Z0_AsymAmpSqrtVsRap -> SetMarkerStyle(20);
   hd_Z0_AsymAmpSqrtVsRap -> SetMarkerColor(kBlue);
+  hd_Z0_AsymAmpSqrtVsRap -> SetLineColor(kBlue);
+  hd_Z0_AsymAmpSqrtVsRap -> SetLineWidth(2);
   hd_Z0_AsymAmpSqrtVsRap -> SetMarkerSize(2);
   //hd_Z0_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textSTAR);
   hd_Z0_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textZ0);
   //hd_Z0_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textPtLim);
   //hd_Z0_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textLSys);
   //hd_Z0_AsymAmpSqrtVsRap -> GetXaxis() -> SetRangeUser(-1., 0.99);
-  hd_Z0_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textStarPrel_1w);
-  hd_Z0_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textLetter_1w);
-  hd_Z0_AsymAmpSqrtVsRap -> Draw("E1");
-  line1 -> DrawLine(hd_Z0_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmin(), 0, hd_Z0_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmax(), 0);
+  //hd_Z0_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textStarPrel_1w);
+  //hd_Z0_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textLetter_1w);
+  hd_Z0_AsymAmpSqrtVsRap -> Draw("E1 same");
+  textStarName -> DrawLatex(0.2, 0.83, "STAR Prel.");
+  //textStarName -> DrawLatex(0.2, 0.83, "STAR");
+  //line1 -> DrawLine(hd_Z0_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmin(), 0, hd_Z0_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmax(), 0);
 
   textSTAR  -> DrawLatex(0.2, 0.3, "STAR p-p 500 GeV #intL = 25 pb^{-1}");
   textPtLim -> DrawLatex(0.2, 0.25, "0 < P_{T} < 25 GeV");
