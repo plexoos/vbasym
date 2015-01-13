@@ -15,6 +15,7 @@ using namespace std;
 VbAnaOptions *AsymCalculator::sVbAnaOptions = 0;
 EAsymType AsymCalculator::sAsymType = kAsymPlain;
 const float AsymCalculator::sPolAverage = 0.527;
+//const float AsymCalculator::sPolAverage = 0.5256;  //S.F. Dec. 8th 2014
 
 void AsymCalculator::CalcAsimAsym(TH1I &hUp, TH1I &hDown, TH1D &hAsym)
 {
