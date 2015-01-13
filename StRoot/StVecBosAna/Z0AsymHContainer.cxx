@@ -56,7 +56,7 @@ void Z0AsymHContainer::BookHists()
       o[shName] = fYieldPhiVsEta_Dss[dss] = h2i;
 
       shName = "hZBosonPhiVsRap_" + sDblSpinState;
-      h2i = new rh::H2I(shName.c_str(), "; Z Boson Rapidity; Z Boson #phi;", 1, -1.5, 1.5, 6, -M_PI, M_PI, "colz DUMP");
+      h2i = new rh::H2I(shName.c_str(), "; Z Boson Rapidity; Z Boson #phi;", 1, -0.8, 0.8, 6, -M_PI, M_PI, "colz DUMP");
       o[shName] = fYieldPhiVsRap_Dss[dss] = h2i;
 
       shName = "hZBosonPhiVsPt_" + sDblSpinState;
@@ -75,7 +75,7 @@ void Z0AsymHContainer::BookHists()
       o[shName] = fYieldPhiVsEta_Sss[sss] = h2i;
 
       shName = "hZBosonPhiVsRap_" + sSnglSpinState;
-      h2i = new rh::H2I(shName.c_str(), "; Z Boson Rapidity; Z Boson #phi;", 1, -1.5, 1.5, 6, -M_PI, M_PI, "colz DUMP");
+      h2i = new rh::H2I(shName.c_str(), "; Z Boson Rapidity; Z Boson #phi;", 1, -0.8, 0.8, 6, -M_PI, M_PI, "colz DUMP");
       o[shName] = fYieldPhiVsRap_Sss[sss] = h2i;
 
       shName = "hZBosonPhiVsPt_" + sSnglSpinState;
@@ -114,12 +114,12 @@ void Z0AsymHContainer::BookHists()
 
       // Asymmetry vs Phi vs rapidity
       shName = "hZBosonAsymVsPhiVsRap_" + sBeam;
-      h2d = new rh::H2D(shName.c_str(), "; Z Boson Rapidity; Z Boson #phi;", 1, -1.5, 1.5, 6, -M_PI, M_PI, "colz");
+      h2d = new rh::H2D(shName.c_str(), "; Z Boson Rapidity; Z Boson #phi;", 1, -0.8, 0.8, 6, -M_PI, M_PI, "colz");
       o[shName] = fAsymVsPhiVsRap_Beam[beamId] = h2d;
 
       // Asymmetry amplitude vs rapidity
       shName = "hZBosonAsymAmpVsRap_" + sBeam;
-      h1d = new rh::H1D(shName.c_str(), "; Z Boson Rapidity; Asym Amp.;", 1, -1.5, 1.5, "E1 GRIDX GRIDY");
+      h1d = new rh::H1D(shName.c_str(), "; Z Boson Rapidity; Asym Amp.;", 1, -0.8, 0.8, "E1 GRIDX GRIDY");
       h1d->GetYaxis()->SetRangeUser(-1, 1);
       o[shName] = fAsymAmpVsRap_Beam[beamId] = h1d;
 
@@ -157,7 +157,7 @@ void Z0AsymHContainer::BookHists()
    o[shName] = fAsymAmpVsEta = h1d;
 
    shName = "hZBosonAsymAmpVsRap_";
-   h1d = new rh::H1D(shName.c_str(), "; Z Boson Rapidity; Asym Amp.;", 1, -1.5, 1.5, "E1 GRIDX GRIDY");
+   h1d = new rh::H1D(shName.c_str(), "; Z Boson Rapidity; Asym Amp.;", 1, -0.8, 0.8, "E1 GRIDX GRIDY");
    h1d->GetYaxis()->SetRangeUser(-1, 1);
    o[shName] = fAsymAmpVsRap = h1d;
 
