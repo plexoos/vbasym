@@ -178,15 +178,19 @@ void W_Asymmetry()
    TH1D *hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift = new TH1D("hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift", "", 3, xBinsRap); //shift to make it visible
    TH1D *hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift  = new TH1D("hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift", "", 7, xBinsPt); //shift to make it visible
 
+   // Scale factors come from assuming the collected lumi as from 
+   // the delivered lumi multiplied by 70% (assumed STAR efficiency)
    Double_t projFactor2016 = 5;
-   Double_t projFactor2016_400pb = 0.4444444;
+   //Double_t projFactor2016_400pb = 0.4444444;
+   Double_t projFactor2016_400pb = 3.3;
 
    for (int i = 1; i <= hd_Wp_AsymAmpSqrtVsRap_2016Pr->GetNbinsX(); ++i) { // loop over Rapidity bins 
      hd_Wp_AsymAmpSqrtVsRap_2016Pr -> SetBinContent(i, 0);
      hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> SetBinContent(i, 0);
      Double_t errBin = hd_Wp_AsymAmpSqrtVsRap_2016Pr -> GetBinError(i);
      Double_t errProj2016Bin       = errBin / projFactor2016;
-     Double_t errProj2016Bin_400pb = errProj2016Bin / projFactor2016_400pb;
+     //Double_t errProj2016Bin_400pb = errProj2016Bin / projFactor2016_400pb;
+     Double_t errProj2016Bin_400pb = errBin / projFactor2016_400pb;
      hd_Wp_AsymAmpSqrtVsRap_2016Pr -> SetBinError(i, errProj2016Bin);
      hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> SetBinError(i, errProj2016Bin_400pb);
    }
@@ -196,7 +200,8 @@ void W_Asymmetry()
      hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> SetBinContent(i, 0);
      Double_t errBin = hd_Wp_AsymAmpSqrtVsPt_2016Pr -> GetBinError(i);
      Double_t errProj2016Bin = errBin / projFactor2016;
-     Double_t errProj2016Bin_400pb = errProj2016Bin / projFactor2016_400pb;
+     //Double_t errProj2016Bin_400pb = errProj2016Bin / projFactor2016_400pb;
+     Double_t errProj2016Bin_400pb = errBin / projFactor2016_400pb;
      hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetBinError(i, errProj2016Bin);
      hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> SetBinError(i, errProj2016Bin_400pb);
    }
@@ -207,7 +212,8 @@ void W_Asymmetry()
      hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift -> SetBinContent(i, 0);
      Double_t errBin = hd_Wm_AsymAmpSqrtVsRap_2016Pr -> GetBinError(i);
      Double_t errProj2016Bin = errBin / projFactor2016;
-     Double_t errProj2016Bin_400pb = errProj2016Bin / projFactor2016_400pb;
+     //Double_t errProj2016Bin_400pb = errProj2016Bin / projFactor2016_400pb;
+     Double_t errProj2016Bin_400pb = errBin / projFactor2016_400pb;
      hd_Wm_AsymAmpSqrtVsRap_2016Pr       -> SetBinError(i, errProj2016Bin);
      hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift -> SetBinError(i, errProj2016Bin);
      hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift -> SetBinError(i, errProj2016Bin_400pb);
@@ -219,7 +225,8 @@ void W_Asymmetry()
      hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> SetBinContent(i, 0);
      Double_t errBin = hd_Wm_AsymAmpSqrtVsPt_2016Pr -> GetBinError(i);
      Double_t errProj2016Bin = errBin / projFactor2016;
-     Double_t errProj2016Bin_400pb = errProj2016Bin / projFactor2016_400pb;
+     //Double_t errProj2016Bin_400pb = errProj2016Bin / projFactor2016_400pb;
+     Double_t errProj2016Bin_400pb = errBin / projFactor2016_400pb;
      hd_Wm_AsymAmpSqrtVsPt_2016Pr       -> SetBinError(i, errProj2016Bin);
      hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> SetBinError(i, errProj2016Bin);
      hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> SetBinError(i, errProj2016Bin_400pb);
@@ -236,7 +243,9 @@ void W_Asymmetry()
    Double_t xBinsPt_Z0Pr[4]  = {0, 5, 10, 25};
    Double_t xBinsRap_Z0Pr[4] = {-0.6, -0.2, 0.2, 0.6};
    //Double_t asymScaleFromYelds = 2.;
-   Double_t projFactor2016_Z0 = 2.5;
+   //Double_t projFactor2016_Z0 = 2.5;
+   Double_t projFactor2016_Z0 = projFactor2016 / 2. ; // because we here project fro the yelds not the measured asymmetry
+   Double_t projFactor2016_Z0_400pb = projFactor2016_400pb / 2. ; // because we here project fro the yelds not the measured asymmetry
    Double_t projFactor2016_Z0_oneBin = 5.;
 
    for (int i = 1; i <= hd_Z0_Asym_2016Pr_oneBin->GetNbinsX(); ++i) {
@@ -257,7 +266,8 @@ void W_Asymmetry()
      cout << "Z0 Rap errBin = " << errBin << endl;
      //Double_t errProj2016Bin = (errBin/projFactor2016) * asymScaleFromYelds;
      Double_t errProj2016Bin = errBin / projFactor2016_Z0;
-     Double_t errProj2016Bin_400pb = errProj2016Bin / projFactor2016_400pb;
+     //Double_t errProj2016Bin_400pb = errProj2016Bin / projFactor2016_400pb;
+     Double_t errProj2016Bin_400pb = errBin / projFactor2016_Z0_400pb;
      cout << "Z0 Rap error = " << errProj2016Bin << endl;
      Double_t relError = errProj2016Bin / binVal;
      Double_t relError_400pb = errProj2016Bin_400pb / binVal;
@@ -275,7 +285,8 @@ void W_Asymmetry()
      cout << "Z0 Pt errBin = " << errBin << endl;
      //Double_t errProj2016Bin = (errBin/projFactor2016) * asymScaleFromYelds;;
      Double_t errProj2016Bin = errBin / projFactor2016_Z0;
-     Double_t errProj2016Bin_400pb = errProj2016Bin / projFactor2016_400pb;
+     //Double_t errProj2016Bin_400pb = errProj2016Bin / projFactor2016_400pb;
+     Double_t errProj2016Bin_400pb = errBin / projFactor2016_Z0_400pb;
      cout << "Z0 Pt error = " << errProj2016Bin << endl;
      if (binVal != 0) Double_t relError = errProj2016Bin / binVal;
      if (binVal != 0) Double_t relError_400pb = errProj2016Bin_400pb / binVal;
