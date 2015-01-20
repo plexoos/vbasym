@@ -68,6 +68,18 @@ void WpWmRatio()
    hd12_Wp_ElectronEta -> Rebin(2);
    hd12_Wm_ElectronEta -> Rebin(2);
 
+   hd_Wp_WBosonRapidity     -> Rebin(2);
+   hd_Wm_WBosonRapidity     -> Rebin(2);
+   hd12_Wp_WBosonRapidity   -> Rebin(2);
+   hd12_Wm_WBosonRapidity   -> Rebin(2);
+   hd_Wp_WBosonRapidity -> GetXaxis() -> SetRange(3, 8);
+   hd_Wm_WBosonRapidity -> GetXaxis() -> SetRange(3, 8);
+   hd12_Wp_WBosonRapidity -> GetXaxis() -> SetRange(3, 8);
+   hd12_Wm_WBosonRapidity -> GetXaxis() -> SetRange(3, 8);
+   //hd_Wp_WBosonRapidity -> GetXaxis() -> SetRangeUser(-0.99, 0.99);
+   //hd_Wm_WBosonRapidity -> GetXaxis() -> SetRangeUser(-0.99, 0.99);
+   //hd12_Wp_WBosonRapidity -> GetXaxis() -> SetRangeUser(-0.99, 0.99);
+   //hd12_Wm_WBosonRapidity -> GetXaxis() -> SetRangeUser(-0.99, 0.99);
 
    // calculate the ratios
    //int bins = hd_Wp_WBosonEta -> GetBinX();
@@ -135,6 +147,40 @@ void WpWmRatio()
    hd1112_WpWmRatio_vs_EleEta  -> SetMinimum(0);
    hd1112_WpWmRatio_vs_EleEta  -> SetMarkerStyle(20);
    hd1112_WpWmRatio_vs_EleEta  -> SetTitle("run 11+12; #eta_{el}; W^{+}/W^{-}");
+
+
+
+
+   TH1D *hd_WpWmRatio_vs_WBosonRapidity  = (TH1D*) hd_Wp_WBosonRapidity   -> Clone("hd_WpWmRatio_vs_WBosonRapidity");
+   hd_Wp_WBosonRapidity   -> Sumw2();
+   hd_Wm_WBosonRapidity   -> Sumw2();
+   hd_WpWmRatio_vs_WBosonRapidity  -> Divide(hd_Wp_WBosonRapidity, hd_Wm_WBosonRapidity);
+   hd_WpWmRatio_vs_WBosonRapidity  -> SetMaximum(6);
+   hd_WpWmRatio_vs_WBosonRapidity  -> SetMinimum(0);
+   hd_WpWmRatio_vs_WBosonRapidity  -> SetMarkerStyle(20);
+   hd_WpWmRatio_vs_WBosonRapidity  -> SetTitle("run11; y_{W}; W^{+}/W^{-}");
+
+   TH1D *hd12_WpWmRatio_vs_WBosonRapidity = (TH1D*) hd12_Wp_WBosonRapidity   -> Clone("hd12_WpWmRatio_vs_WBosonRapidity");
+   hd12_Wp_WBosonRapidity   -> Sumw2();
+   hd12_Wm_WBosonRapidity   -> Sumw2();
+   hd12_WpWmRatio_vs_WBosonRapidity  -> Divide(hd12_Wp_WBosonRapidity, hd12_Wm_WBosonRapidity);
+   hd12_WpWmRatio_vs_WBosonRapidity  -> SetMaximum(6);
+   hd12_WpWmRatio_vs_WBosonRapidity  -> SetMinimum(0);
+   hd12_WpWmRatio_vs_WBosonRapidity  -> SetMarkerStyle(20);
+   hd12_WpWmRatio_vs_WBosonRapidity  -> SetTitle("run 12; y_{W}; W^{+}/W^{-}");
+
+   TH1D *hd1112_Wp_WBosonRapidity        = (TH1D*) hd12_Wp_WBosonRapidity   -> Clone("hd1112_Wp_WBosonRapidity");
+   TH1D *hd1112_Wm_WBosonRapidity        = (TH1D*) hd12_Wm_WBosonRapidity   -> Clone("hd1112_Wm_WBosonRapidity");      
+   TH1D *hd1112_WpWmRatio_vs_WBosonRapidity = (TH1D*) hd12_Wp_WBosonRapidity   -> Clone("hd1112_WpWmRatio_vs_WBosonRapidity");
+   hd1112_Wp_WBosonRapidity   -> Sumw2();
+   hd1112_Wm_WBosonRapidity   -> Sumw2();
+   hd1112_Wp_WBosonRapidity   -> Add(hd_Wp_WBosonRapidity, hd12_Wp_WBosonRapidity);
+   hd1112_Wm_WBosonRapidity   -> Add(hd_Wm_WBosonRapidity, hd12_Wm_WBosonRapidity);
+   hd1112_WpWmRatio_vs_WBosonRapidity  -> Divide(hd1112_Wp_WBosonRapidity, hd1112_Wm_WBosonRapidity);
+   hd1112_WpWmRatio_vs_WBosonRapidity  -> SetMaximum(6);
+   hd1112_WpWmRatio_vs_WBosonRapidity  -> SetMinimum(0);
+   hd1112_WpWmRatio_vs_WBosonRapidity  -> SetMarkerStyle(20);
+   hd1112_WpWmRatio_vs_WBosonRapidity  -> SetTitle("run 11+12; y_{W}; W^{+}/W^{-}");
 
    // plots
    TCanvas *c0    = new TCanvas("c0", "run11: W-Eta", 800, 500);
@@ -243,6 +289,13 @@ void WpWmRatio()
    c5->Print(outPath + "/plot_r11r12_WpWmRatio_vs_Eta.eps");
    c5->Print(outPath + "/plot_r11r12_WpWmRatio_vs_Eta.png");
 
+   TCanvas *c5rap    = new TCanvas("c5rap", "run 11+12: W+/W- versus Rapidity", 800, 500);
+   c5rap -> cd();
+   hd1112_WpWmRatio_vs_WBosonRapidity -> Draw("e");
+
+   c5rap->Print(outPath + "/plot_r11r12_WpWmRatio_vs_Rapidity.eps");
+   c5rap->Print(outPath + "/plot_r11r12_WpWmRatio_vs_Rapidity.png");
+
    TCanvas *c4el    = new TCanvas("c4el", "run 11+12: Electron-Eta", 800, 500);
    c4el -> Divide(2,1);
    c4el_1 -> cd();
@@ -271,10 +324,12 @@ void WpWmRatio()
    // the projection factor (to be divided for) will be sqrt(3.7)
    Double_t projFactor = 1.92;
 
-   TH1D *hd1112run13proj_Wp_WBosonEta   = (TH1D*) hd1112_Wp_WBosonEta   -> Clone("hd1112run13proj_Wp_WBosonEta");
-   TH1D *hd1112run13proj_Wm_WBosonEta   = (TH1D*) hd1112_Wm_WBosonEta   -> Clone("hd1112run13proj_Wm_WBosonEta");
-   TH1D *hd1112run13proj_Wp_ElectronEta = (TH1D*) hd1112_Wp_ElectronEta -> Clone("hd1112run13proj_Wp_ElectronEta");
-   TH1D *hd1112run13proj_Wm_ElectronEta = (TH1D*) hd1112_Wm_ElectronEta -> Clone("hd1112run13proj_Wm_ElectronEta");
+   TH1D *hd1112run13proj_Wp_WBosonEta        = (TH1D*) hd1112_Wp_WBosonEta        -> Clone("hd1112run13proj_Wp_WBosonEta");
+   TH1D *hd1112run13proj_Wm_WBosonEta        = (TH1D*) hd1112_Wm_WBosonEta        -> Clone("hd1112run13proj_Wm_WBosonEta");
+   TH1D *hd1112run13proj_Wp_WBosonRapidity   = (TH1D*) hd1112_Wp_WBosonRapidity   -> Clone("hd1112run13proj_Wp_WBosonRapidity");
+   TH1D *hd1112run13proj_Wm_WBosonRapidity   = (TH1D*) hd1112_Wm_WBosonRapidity   -> Clone("hd1112run13proj_Wm_WBosonRapidity");
+   TH1D *hd1112run13proj_Wp_ElectronEta      = (TH1D*) hd1112_Wp_ElectronEta      -> Clone("hd1112run13proj_Wp_ElectronEta");
+   TH1D *hd1112run13proj_Wm_ElectronEta      = (TH1D*) hd1112_Wm_ElectronEta      -> Clone("hd1112run13proj_Wm_ElectronEta");
 
    for (int i = 1; i <= hd1112run13proj_Wp_WBosonEta->GetNbinsX(); ++i) {
      //hd1112run13proj_Wp_WBosonEta   -> SetBinContent(1, 0); 
@@ -294,6 +349,24 @@ void WpWmRatio()
      hd1112run13proj_Wm_WBosonEta   -> SetBinError(i, errBinProjected);
    }
 
+   for (int i = 1; i <= hd1112run13proj_Wp_WBosonRapidity->GetNbinsX(); ++i) {
+     //hd1112run13proj_Wp_WBosonRapidity   -> SetBinContent(1, 0); 
+     Double_t errBin = hd1112run13proj_Wp_WBosonRapidity -> GetBinError(i);
+     Double_t Bin    = hd1112run13proj_Wp_WBosonRapidity -> GetBinContent(i);
+     cout << "Wp WRapidity - Bin = " << Bin << endl;
+     cout << "Wp WRapidity - errBin = " << errBin << endl;
+     Double_t errBinProjected = errBin / projFactor;
+     cout << "Wp WRapidity - errBinProjected = " << errBinProjected << endl;
+     hd1112run13proj_Wp_WBosonRapidity   -> SetBinError(i, errBinProjected);
+   }
+
+   for (int i = 1; i <= hd1112run13proj_Wm_WBosonRapidity->GetNbinsX(); ++i) {
+     Double_t errBin = hd1112run13proj_Wm_WBosonRapidity -> GetBinError(i);
+     Double_t errBinProjected = errBin / projFactor;
+     cout << "Wm - errBinProjected = " << errBinProjected << endl;
+     hd1112run13proj_Wm_WBosonRapidity   -> SetBinError(i, errBinProjected);
+   }
+
    for (int i = 1; i <= hd1112run13proj_Wp_ElectronEta->GetNbinsX(); ++i) {
      Double_t errBin = hd1112run13proj_Wp_ElectronEta -> GetBinError(i);
      Double_t Bin    = hd1112run13proj_Wp_ElectronEta -> GetBinContent(i);
@@ -311,19 +384,66 @@ void WpWmRatio()
      hd1112run13proj_Wm_ElectronEta   -> SetBinError(i, errBinProjected);
    }
 
+
+   TLatex *textStarProj = new TLatex(0.25, 0.8, "STAR projection: #intL = 410 pb^{-1}");
+   textStarProj -> SetNDC(); 
+   textStarProj -> SetTextColor(kRed); 
+   textStarProj -> SetTextFont(32);
+   textStarProj -> SetTextSize(0.06);
+
+   //TLatex *textSTAR = new TLatex(0.43, 0.17, "STAR p-p 500 GeV #intL = 25 pb^{-1}");
+   //textSTAR -> SetNDC(); 
+   //textSTAR -> SetTextSize(0.035);
+
+   TLine *line1 = new TLine(-4, 3, 4, 3);
+   //line1->SetLineColor(kRed);
+   line1->SetLineWidth(2);
+   line1->SetLineStyle(2);
+   TLine *line2 = new TLine(-0.9, 2, 0.9, 2);
+   line2->SetLineWidth(2);
+   line2->SetLineStyle(2);
+
+   gStyle->SetErrorX(0);
+
+   TH1D *hd1112run13proj_WpWmRatio_vs_WBosonRapidity = (TH1D*) hd1112run13proj_Wp_WBosonRapidity   -> Clone("hd1112run13proj_WpWmRatio_vs_WBosonRapidity");
+   hd1112run13proj_WpWmRatio_vs_WBosonRapidity  -> Divide(hd1112run13proj_Wp_WBosonRapidity, hd1112run13proj_Wm_WBosonRapidity);
+   hd1112run13proj_WpWmRatio_vs_WBosonRapidity  -> SetMaximum(6);
+   hd1112run13proj_WpWmRatio_vs_WBosonRapidity  -> SetMinimum(0);
+   hd1112run13proj_WpWmRatio_vs_WBosonRapidity  -> SetMarkerStyle(20);
+   //hd1112run13proj_WpWmRatio_vs_WBosonRapidity  -> SetTitle("run 11+12+run13proj; #eta_{W}; W^{+}/W^{-}");
+   hd1112run13proj_WpWmRatio_vs_WBosonRapidity  -> SetTitle("; y_{W}; W^{+}/W^{-}");
+   hd1112run13proj_WpWmRatio_vs_WBosonRapidity  -> SetStats(0);
+
+   for (int i = 1; i <= hd1112run13proj_WpWmRatio_vs_WBosonRapidity->GetNbinsX(); ++i) {
+     hd1112run13proj_WpWmRatio_vs_WBosonRapidity   -> SetBinContent(i, 2);
+   }
+
+
    TH1D *hd1112run13proj_WpWmRatio = (TH1D*) hd1112run13proj_Wp_WBosonEta   -> Clone("hd1112run13proj_WpWmRatio");
    hd1112run13proj_WpWmRatio  -> Divide(hd1112run13proj_Wp_WBosonEta, hd1112run13proj_Wm_WBosonEta);
    hd1112run13proj_WpWmRatio  -> SetMaximum(6);
    hd1112run13proj_WpWmRatio  -> SetMinimum(0);
    hd1112run13proj_WpWmRatio  -> SetMarkerStyle(20);
-   hd1112run13proj_WpWmRatio  -> SetTitle("run 11+12+run13proj; #eta_{W}; W^{+}/W^{-}");
+   //hd1112run13proj_WpWmRatio  -> SetTitle("run 11+12+run13proj; #eta_{W}; W^{+}/W^{-}");
+   hd1112run13proj_WpWmRatio  -> SetTitle("; #eta_{W}; W^{+}/W^{-}");
+   hd1112run13proj_WpWmRatio  -> SetStats(0);
+
+   for (int i = 1; i <= hd1112run13proj_WpWmRatio->GetNbinsX(); ++i) {
+     hd1112run13proj_WpWmRatio   -> SetBinContent(i, 3);
+   }
 
    TH1D *hd1112run13proj_WpWmRatio_vs_EleEta = (TH1D*) hd1112run13proj_Wp_ElectronEta   -> Clone("hd1112run13proj_WpWmRatio_vs_EleEta");
    hd1112run13proj_WpWmRatio_vs_EleEta  -> Divide(hd1112run13proj_Wp_ElectronEta, hd1112run13proj_Wm_ElectronEta);
    hd1112run13proj_WpWmRatio_vs_EleEta  -> SetMaximum(6);
    hd1112run13proj_WpWmRatio_vs_EleEta  -> SetMinimum(0);
    hd1112run13proj_WpWmRatio_vs_EleEta  -> SetMarkerStyle(20);
-   hd1112run13proj_WpWmRatio_vs_EleEta  -> SetTitle("run 11+12+run13proj; #eta_{el}; W^{+}/W^{-}");
+   //hd1112run13proj_WpWmRatio_vs_EleEta  -> SetTitle("run 11+12+run13proj; #eta_{el}; W^{+}/W^{-}");
+   hd1112run13proj_WpWmRatio_vs_EleEta  -> SetTitle("; #eta_{el}; W^{+}/W^{-}");
+   hd1112run13proj_WpWmRatio_vs_EleEta  -> SetStats(0);
+
+   for (int i = 3; i <= hd1112run13proj_WpWmRatio_vs_EleEta->GetNbinsX()-2; ++i) {
+     hd1112run13proj_WpWmRatio_vs_EleEta   -> SetBinContent(i, 3);
+   }
 
 
    TCanvas *c4run13proj    = new TCanvas("c4run13proj", "run 11+12+run13proj: W-Eta", 800, 500);
@@ -342,7 +462,10 @@ void WpWmRatio()
 
    TCanvas *c5run13proj    = new TCanvas("c5run13proj", "run 11+12+run13proj: W+/W- versus Eta", 800, 500);
    c5run13proj     -> cd();
+   c5run13proj     -> SetGrid(0,0);
    hd1112run13proj_WpWmRatio -> Draw("e");
+   textStarProj    -> Draw();
+   line1           -> Draw();
 
    c5run13proj->Print(outPath + "/plot_r11r12run13proj_WpWmRatio_vs_Eta.eps");
    c5run13proj->Print(outPath + "/plot_r11r12run13proj_WpWmRatio_vs_Eta.png");
@@ -357,6 +480,28 @@ void WpWmRatio()
      Double_t errBin    = hd1112run13proj_WpWmRatio -> GetBinError(i);
      Double_t Bin       = hd1112run13proj_WpWmRatio -> GetBinContent(i);
      Double_t BinCenter = hd1112run13proj_WpWmRatio -> GetXaxis() -> GetBinCenter(i);
+     cout << BinCenter <<"   " << Bin << "   " << errBin << endl;
+   }
+
+   TCanvas *c5run13projRapidity    = new TCanvas("c5run13projRapidity", "run 11+12+run13proj: W+/W- versus Rapidity", 800, 500);
+   c5run13projRapidity     -> cd();
+   c5run13projRapidity     -> SetGrid(0,0);
+   hd1112run13proj_WpWmRatio_vs_WBosonRapidity -> Draw("e");
+   textStarProj    -> Draw();
+   line2           -> Draw();
+
+   c5run13projRapidity->Print(outPath + "/plot_r11r12run13proj_WpWmRatio_vs_Rapidity.eps");
+   c5run13projRapidity->Print(outPath + "/plot_r11r12run13proj_WpWmRatio_vs_Rapidity.png");
+
+   // PRINT the table of contents
+   cout << " " << endl;
+   cout << " " << endl;
+   cout << "W+/W- 2013 proj. versus boson Rapidity " << endl;
+   cout << "Rapidity  " << "ratio  " << "error  " << endl;
+   for (int i = 1; i <= hd1112run13proj_WpWmRatio_vs_WBosonRapidity->GetNbinsX(); ++i) {
+     Double_t errBin    = hd1112run13proj_WpWmRatio_vs_WBosonRapidity -> GetBinError(i);
+     Double_t Bin       = hd1112run13proj_WpWmRatio_vs_WBosonRapidity -> GetBinContent(i);
+     Double_t BinCenter = hd1112run13proj_WpWmRatio_vs_WBosonRapidity -> GetXaxis() -> GetBinCenter(i);
      cout << BinCenter <<"   " << Bin << "   " << errBin << endl;
    }
 
@@ -377,7 +522,10 @@ void WpWmRatio()
 
    TCanvas *c5run13projel    = new TCanvas("c5run13projel", "run 11+12+run13proj: W+/W- versus Elec-Eta", 800, 500);
    c5run13projel -> cd();
+   c5run13projel -> SetGrid(0,0);
    hd1112run13proj_WpWmRatio_vs_EleEta -> Draw("e");
+   textStarProj    -> Draw();
+   line1           -> DrawLine(-2, 3, 2, 3);
 
    c5run13projel->Print(outPath + "/plot_r11r12run13proj_WpWmRatio_vs_ElecEta.eps");
    c5run13projel->Print(outPath + "/plot_r11r12run13proj_WpWmRatio_vs_ElecEta.png");
