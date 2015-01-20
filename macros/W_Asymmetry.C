@@ -67,7 +67,7 @@ void W_Asymmetry()
      sysRapGMean[i-1] =  hSysRapGMean -> GetBinContent(i);
      //sysRap[i-1] =  hSysRap -> GetBinContent(i);
      sysRapPR[i-1] =  hSysRapPR -> GetBinContent(i);
-     sysRapPR[i-1] =  hSysRapMR -> GetBinContent(i);
+     sysRapMR[i-1] =  hSysRapMR -> GetBinContent(i);
    }
 
    const Int_t nPtBins =  hd_Wp_AsymAmpSqrtVsPt->GetNbinsX();
@@ -107,6 +107,10 @@ void W_Asymmetry()
      errBin = sqrt(pow(errStatBin,2) + pow(errSysBin,2)) ;  // sum stat. and sys. errors in quadrature
      cout  << "W+ Pt-Bin " << i << " errBin= " << errBin << endl;
      hd_Wp_AsymAmpSqrtVsPt->SetBinError(i, errBin);
+     // TABLE of Asymmetry (Pt)
+     //cout << " ------------------------------------------------" << endl;
+     //cout << " W+ asymmetry versus boson Rapidity " << endl;
+     //cout << " Rapidity Bin        " << " Asymmetry " << endl;
    }
 
    for (int i = 1; i <= nRapBins; ++i) { // loop over Rapidity bins 
@@ -184,6 +188,7 @@ void W_Asymmetry()
    //Double_t projFactor2016_400pb = 0.4444444;
    Double_t projFactor2016_400pb = 3.3;
 
+   cout << "W+ Rapidity-Bin  " << " Projected error (400pb-1) " << endl;
    for (int i = 1; i <= hd_Wp_AsymAmpSqrtVsRap_2016Pr->GetNbinsX(); ++i) { // loop over Rapidity bins 
      hd_Wp_AsymAmpSqrtVsRap_2016Pr -> SetBinContent(i, 0);
      hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> SetBinContent(i, 0);
@@ -193,8 +198,10 @@ void W_Asymmetry()
      Double_t errProj2016Bin_400pb = errBin / projFactor2016_400pb;
      hd_Wp_AsymAmpSqrtVsRap_2016Pr -> SetBinError(i, errProj2016Bin);
      hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> SetBinError(i, errProj2016Bin_400pb);
+     cout << i << "                 " << errProj2016Bin_400pb << endl;
    }
 
+   cout << "W+ Pt-Bin        " << " Projected error (400pb-1) " << endl;
    for (int i = 1; i <= hd_Wp_AsymAmpSqrtVsPt_2016Pr->GetNbinsX(); ++i) { // loop over Pt bins 
      hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetBinContent(i, 0);
      hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> SetBinContent(i, 0);
@@ -204,8 +211,10 @@ void W_Asymmetry()
      Double_t errProj2016Bin_400pb = errBin / projFactor2016_400pb;
      hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetBinError(i, errProj2016Bin);
      hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> SetBinError(i, errProj2016Bin_400pb);
+     cout << i << "                 " << errProj2016Bin_400pb << endl;
    }
 
+   cout << "W- Rapidity-Bin  " << " Projected error (400pb-1) " << endl;
    for (int i = 1; i <= hd_Wm_AsymAmpSqrtVsRap_2016Pr->GetNbinsX(); ++i) { // loop over Rapidity bins 
      hd_Wm_AsymAmpSqrtVsRap_2016Pr       -> SetBinContent(i, 0);
      hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift -> SetBinContent(i, 0);
@@ -217,8 +226,10 @@ void W_Asymmetry()
      hd_Wm_AsymAmpSqrtVsRap_2016Pr       -> SetBinError(i, errProj2016Bin);
      hd_Wm_AsymAmpSqrtVsRap_2016Pr_shift -> SetBinError(i, errProj2016Bin);
      hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb_shift -> SetBinError(i, errProj2016Bin_400pb);
+     cout << i << "                 " << errProj2016Bin_400pb << endl;
    }
 
+   cout << "W- Pt-Bin        " << " Projected error (400pb-1) " << endl;
    for (int i = 1; i <= hd_Wm_AsymAmpSqrtVsPt_2016Pr->GetNbinsX(); ++i) { // loop over Pt bins 
      hd_Wm_AsymAmpSqrtVsPt_2016Pr       -> SetBinContent(i, 0); 
      hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> SetBinContent(i, 0);
@@ -230,6 +241,7 @@ void W_Asymmetry()
      hd_Wm_AsymAmpSqrtVsPt_2016Pr       -> SetBinError(i, errProj2016Bin);
      hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> SetBinError(i, errProj2016Bin);
      hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> SetBinError(i, errProj2016Bin_400pb);
+     cout << i << "                 " << errProj2016Bin_400pb << endl;
    }
 
 
