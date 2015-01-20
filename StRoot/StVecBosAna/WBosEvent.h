@@ -23,7 +23,7 @@ class WBosEvent : public VecBosEvent
 {
 public:
 
-   WBosEvent(float minTrackPt=0, bool otherSolution=false);
+  WBosEvent(float minTrackPt=0, int RhicRunId=11, bool otherSolution=false);
 
    VecBosTrack& GetElectronTrack() const;
    TVector3     GetElectronP3() const;

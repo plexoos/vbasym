@@ -42,8 +42,9 @@ VecBosEvent::VecBosEvent() : ProtoEvent(),
 //TString inPath  = "/star/institutions/bnl_me/fazio/vbana_out/ptcorr_samples/";
 //TFile *fileMCWplus = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_--tpm_0.2_vbana.root");
 TString inPath  = "/star/institutions/bnl_me/fazio/stana_out/runlists/";
-TFile *fileMCWplus  = TFile::Open(inPath + "run11_mc_Wp2enu.lis/hist/vbana_oldstyle.root");
-TFile *fileMCWminus = TFile::Open(inPath + "run11_mc_Wm2enu.lis/hist/vbana_oldstyle.root");
+TFile *fileMCWplus     = TFile::Open(inPath + "run11_mc_Wp2enu.lis/hist/vbana_oldstyle.root");
+TFile *fileMCWplusR12  = TFile::Open(inPath + "run12_mc_Wp2enu.lis/hist/vbana_oldstyle.root");
+TFile *fileMCWminus    = TFile::Open(inPath + "run11_mc_Wm2enu.lis/hist/vbana_oldstyle.root");
 
 const float VecBosEvent::sMinTrackIsoDeltaR    = 0.7;  // was 0.7
 const float VecBosEvent::sMinTrackIsoDeltaPhi  = 0.7;
@@ -54,6 +55,7 @@ float VecBosEvent::sMinRecoilTrackPt           = 0;    // Minimum P_T of a singl
 const float VecBosEvent::sMinTrackHitFrac      = 0.51;
 const float VecBosEvent::sMinClusterEnergyFrac = 0.90; // was 0.88
 const float VecBosEvent::sMaxJetCone           = 0.7;  // cone = delta R
+int   VecBosEvent::sRhicRunId                  = 11;   // RHIC run 2011 
 
 
 VecBosEvent::~VecBosEvent()
@@ -241,11 +243,19 @@ TVector3 VecBosEvent::CalcTrackRecoilTpcNeutralsCorrected()
 TVector3 VecBosEvent::CalcRecoilCorrected()
 {
    mP3TrackRecoilTpcNeutralsCorrected = mP3TrackRecoilTpcNeutrals;
+   TH2 *hCorrFacVsRecoilPt ;
+   cout << "sRhicRunId = " << sRhicRunId << endl;
+   if (sRhicRunId == 11) {
+     //TH2 *hCorrFacVsRecoilPt = (TH2*) fileMCWplus->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPt_GenOverReco");
+     hCorrFacVsRecoilPt = (TH2*) fileMCWplus->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPt_GenOverReco");
+   } else if (sRhicRunId == 12) {
+     hCorrFacVsRecoilPt = (TH2*) fileMCWplusR12->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPt_GenOverReco");
+   } else {
+     cout << "WARNING sRhicRunId = " << sRhicRunId << " is an unknown RHIC run id" << endl;
+   }
 
-
-   TH2 *hCorrFacVsRecoilPt = (TH2*) fileMCWplus->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPt_GenOverReco");
    Int_t nbins = hCorrFacVsRecoilPt->GetNbinsX();
-
+   
    // Find the bin corresponding to the un-corrected recoil p_T
    int ptBinIndex = hCorrFacVsRecoilPt->GetXaxis()->FindBin(mP3TrackRecoilTpcNeutrals.Pt());
 
@@ -445,6 +455,7 @@ void VecBosEvent::CalcRecoilFromTracks()
 
    VecBosTrack &trackCandidate = **mTracksCandidate.begin();
 
+   cout << "sRhicRunId        = " << sRhicRunId << endl;
    cout << "sMinRecoilTrackPt = " << sMinRecoilTrackPt << endl;
 
    // Calculate the vector sum of all tracks in the event

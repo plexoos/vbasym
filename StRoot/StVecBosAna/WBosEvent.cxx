@@ -18,13 +18,14 @@ const float WBosEvent::sMaxRecoilPt        = 40;  // Maximum P_T of the recoil b
 //FILE  *fAnEvol  = fopen("/direct/star+u/fazio/vbasym/macros/curves/ZK_evolution_Wp_asymmetry.txt","r");
 
 
-WBosEvent::WBosEvent(float minTrackPt, bool otherSolution) : VecBosEvent()
+WBosEvent::WBosEvent(float minTrackPt, int RhicRunId, bool otherSolution) : VecBosEvent()
    , mWBosMass(80.385)
    , mElectronP3()
    , mNeutrinoP3()
    , mNeutrinoP3Other()
 {
    VecBosEvent::sMinRecoilTrackPt = minTrackPt;
+   VecBosEvent::sRhicRunId         = RhicRunId;
    sUseOtherSolution = otherSolution;
    //cout << "sMinRecoilTrackPt: " <<  sMinRecoilTrackPt << endl;
    //cout << "WBosEvent: otherSolution: " << otherSolution << endl;

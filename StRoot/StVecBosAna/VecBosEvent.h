@@ -112,6 +112,7 @@ public:
    static const float  sMaxTrackJetDeltaZ;    //!< distance between jet and track z coord, cm
    static const float  sMinBTrackPt;          //!
    static float  sMinRecoilTrackPt;           //!< Minimum P_T of a single track (cluster) in the recoil. 0 obviously means no minimum
+   static int  sRhicRunId;                    //!< RHIC run 2011  
    static const float  sMinTrackHitFrac;      //!
    static const float  sMinClusterEnergyFrac; //!
    static const float  sMaxJetCone;           //!
