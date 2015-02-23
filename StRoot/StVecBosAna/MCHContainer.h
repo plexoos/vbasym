@@ -39,6 +39,8 @@ private:
    void BookHists();
    Int_t mMcType;
    Double_t Wy_gen, Wy_rec, An_evol;
+   static const int PtBins = 7;
+   Double_t xBinsPt[PtBins+1];
 
    static const int RapBins = 3;
    Double_t xBinsRap[RapBins+1];

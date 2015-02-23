@@ -42,7 +42,15 @@ void MCHContainer::BookHists()
    TH1*   hist;
 
    // Define the W-Pt binning
-   Double_t xBinsPt[8] = {0.5, 1, 2, 3, 4, 5, 6, 10};
+   //Double_t  xBinsPt[0] = {0.5,1,2,3,4,5,6,10}
+   xBinsPt[0] = 0.5; 
+   xBinsPt[1] = 1; 
+   xBinsPt[2] = 2; 
+   xBinsPt[3] = 3; 
+   xBinsPt[4] = 4; 
+   xBinsPt[5] = 5; 
+   xBinsPt[6] = 6; 
+   xBinsPt[7] = 10;
 
    // Define the W-rapidity binning
    if (RapBins == 4) {
@@ -67,12 +75,59 @@ void MCHContainer::BookHists()
 
    o["ntAnEvolution"] = new TNtuple("ntAnEvolution","A_N prediction with evolution","Wy_gen:Wy_rec:An_evol");
 
+   o["hResolutionPt_bin1"]  = hist = new TH1D("hResolutionPt_bin1", "bin 1; (Gen-Rec)/Gen WBoson P_{T}; Events", 80, -5, 5.);
+   o["hResolutionPt_bin2"]  = hist = new TH1D("hResolutionPt_bin2", "bin 2; (Gen-Rec)/Gen WBoson P_{T}; Events", 80, -5, 5.);
+   o["hResolutionPt_bin3"]  = hist = new TH1D("hResolutionPt_bin3", "bin 3; (Gen-Rec)/Gen WBoson P_{T}; Events", 80, -5, 5.);
+   o["hResolutionPt_bin4"]  = hist = new TH1D("hResolutionPt_bin4", "bin 4; (Gen-Rec)/Gen WBoson P_{T}; Events", 80, -5, 5.);
+   o["hResolutionPt_bin5"]  = hist = new TH1D("hResolutionPt_bin5", "bin 5; (Gen-Rec)/Gen WBoson P_{T}; Events", 80, -5, 5.);
+   o["hResolutionPt_bin6"]  = hist = new TH1D("hResolutionPt_bin6", "bin 6; (Gen-Rec)/Gen WBoson P_{T}; Events", 80, -5, 5.);
+   o["hResolutionPt_bin7"]  = hist = new TH1D("hResolutionPt_bin7", "bin 7; (Gen-Rec)/Gen WBoson P_{T}; Events", 80, -5, 5.);
+
+   o["hResolutionPtCorr_bin1"]  = hist = new TH1D("hResolutionPtCorr_bin1", "bin 1; (Gen-Rec)/Gen WBoson P_{T}; Events", 80, -5, 5.);
+   o["hResolutionPtCorr_bin2"]  = hist = new TH1D("hResolutionPtCorr_bin2", "bin 2; (Gen-Rec)/Gen WBoson P_{T}; Events", 80, -5, 5.);
+   o["hResolutionPtCorr_bin3"]  = hist = new TH1D("hResolutionPtCorr_bin3", "bin 3; (Gen-Rec)/Gen WBoson P_{T}; Events", 80, -5, 5.);
+   o["hResolutionPtCorr_bin4"]  = hist = new TH1D("hResolutionPtCorr_bin4", "bin 4; (Gen-Rec)/Gen WBoson P_{T}; Events", 80, -5, 5.);
+   o["hResolutionPtCorr_bin5"]  = hist = new TH1D("hResolutionPtCorr_bin5", "bin 5; (Gen-Rec)/Gen WBoson P_{T}; Events", 80, -5, 5.);
+   o["hResolutionPtCorr_bin6"]  = hist = new TH1D("hResolutionPtCorr_bin6", "bin 6; (Gen-Rec)/Gen WBoson P_{T}; Events", 80, -5, 5.);
+   o["hResolutionPtCorr_bin7"]  = hist = new TH1D("hResolutionPtCorr_bin7", "bin 7; (Gen-Rec)/Gen WBoson P_{T}; Events", 80, -5, 5.);
+
+   o["hResolution_RecoilInAcc_Pt_bin1"]  = hist = new TH1D("hResolution_RecoilInAcc_Pt_bin1", "bin 1; (Gen-Rec)/Gen Recoil (in acceptance) P_{T}; Events", 80, -5, 5.);
+   o["hResolution_RecoilInAcc_Pt_bin2"]  = hist = new TH1D("hResolution_RecoilInAcc_Pt_bin2", "bin 2; (Gen-Rec)/Gen Recoil (in acceptance) P_{T}; Events", 80, -5, 5.);
+   o["hResolution_RecoilInAcc_Pt_bin3"]  = hist = new TH1D("hResolution_RecoilInAcc_Pt_bin3", "bin 3; (Gen-Rec)/Gen Recoil (in acceptance) P_{T}; Events", 80, -5, 5.);
+   o["hResolution_RecoilInAcc_Pt_bin4"]  = hist = new TH1D("hResolution_RecoilInAcc_Pt_bin4", "bin 4; (Gen-Rec)/Gen Recoil (in acceptance) P_{T}; Events", 80, -5, 5.);
+   o["hResolution_RecoilInAcc_Pt_bin5"]  = hist = new TH1D("hResolution_RecoilInAcc_Pt_bin5", "bin 5; (Gen-Rec)/Gen Recoil (in acceptance) P_{T}; Events", 80, -5, 5.);
+   o["hResolution_RecoilInAcc_Pt_bin6"]  = hist = new TH1D("hResolution_RecoilInAcc_Pt_bin6", "bin 6; (Gen-Rec)/Gen Recoil (in acceptance) P_{T}; Events", 80, -5, 5.);
+   o["hResolution_RecoilInAcc_Pt_bin7"]  = hist = new TH1D("hResolution_RecoilInAcc_Pt_bin7", "bin 7; (Gen-Rec)/Gen Recoil (in acceptance) P_{T}; Events", 80, -5, 5.);
+
+   o["hAbsoResolution_RecoilInAcc_Pt_bin1"]  = hist = new TH1D("hAbsoResolution_RecoilInAcc_Pt_bin1", "bin 1; Gen-Rec Recoil (in acceptance) P_{T}; Events", 80, -5, 5.);
+   o["hAbsoResolution_RecoilInAcc_Pt_bin2"]  = hist = new TH1D("hAbsoResolution_RecoilInAcc_Pt_bin2", "bin 2; Gen-Rec Recoil (in acceptance) P_{T}; Events", 80, -5, 5.);
+   o["hAbsoResolution_RecoilInAcc_Pt_bin3"]  = hist = new TH1D("hAbsoResolution_RecoilInAcc_Pt_bin3", "bin 3; Gen-Rec Recoil (in acceptance) P_{T}; Events", 80, -5, 5.);
+   o["hAbsoResolution_RecoilInAcc_Pt_bin4"]  = hist = new TH1D("hAbsoResolution_RecoilInAcc_Pt_bin4", "bin 4; Gen-Rec Recoil (in acceptance) P_{T}; Events", 80, -5, 5.);
+   o["hAbsoResolution_RecoilInAcc_Pt_bin5"]  = hist = new TH1D("hAbsoResolution_RecoilInAcc_Pt_bin5", "bin 5; Gen-Rec Recoil (in acceptance) P_{T}; Events", 80, -5, 5.);
+   o["hAbsoResolution_RecoilInAcc_Pt_bin6"]  = hist = new TH1D("hAbsoResolution_RecoilInAcc_Pt_bin6", "bin 6; Gen-Rec Recoil (in acceptance) P_{T}; Events", 80, -5, 5.);
+   o["hAbsoResolution_RecoilInAcc_Pt_bin7"]  = hist = new TH1D("hAbsoResolution_RecoilInAcc_Pt_bin7", "bin 7; Gen-Rec Recoil (in acceptance) P_{T}; Events", 80, -5, 5.);
+
    o["hResolutionRap"]       = hist = new TH1D("hResolutionRap", "; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
    //hist->SetOption("hist GRIDX");
-   o["hResolutionRap_bin1"]  = hist = new TH1D("hResolutionRap_bin1", "bin 1; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
-   o["hResolutionRap_bin2"]  = hist = new TH1D("hResolutionRap_bin2", "bin 2; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
-   o["hResolutionRap_bin3"]  = hist = new TH1D("hResolutionRap_bin3", "bin 3; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
-   o["hResolutionRap_bin4"]  = hist = new TH1D("hResolutionRap_bin4", "bin 4; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
+   if (RapBins == 4) {
+      o["hResolutionRap_bin1"]  = hist = new TH1D("hResolutionRap_bin1", "bin 1; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
+      o["hResolutionRap_bin2"]  = hist = new TH1D("hResolutionRap_bin2", "bin 2; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
+      o["hResolutionRap_bin3"]  = hist = new TH1D("hResolutionRap_bin3", "bin 3; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
+      o["hResolutionRap_bin4"]  = hist = new TH1D("hResolutionRap_bin4", "bin 4; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
+   } else if (RapBins == 3) {
+      o["hResolutionRap_bin1"]  = hist = new TH1D("hResolutionRap_bin1", "bin 1; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
+      o["hResolutionRap_bin2"]  = hist = new TH1D("hResolutionRap_bin2", "bin 2; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
+      o["hResolutionRap_bin3"]  = hist = new TH1D("hResolutionRap_bin3", "bin 3; (Gen-Rec)/Gen WBoson y; Events", 80, -5, 5.);
+      o["hAbsoResolutionRap_bin1"]  = hist = new TH1D("hAbsoResolutionRap_bin1", "bin 1; Gen-Rec WBoson y; Events", 80, -1, 1.);
+      o["hAbsoResolutionRap_bin2"]  = hist = new TH1D("hAbsoResolutionRap_bin2", "bin 2; Gen-Rec WBoson y; Events", 80, -1, 1.);
+      o["hAbsoResolutionRap_bin3"]  = hist = new TH1D("hAbsoResolutionRap_bin3", "bin 3; Gen-Rec WBoson y; Events", 80, -1, 1.);
+      o["hResolution_RecoilInAcc_Rap_bin1"]  = hist = new TH1D("hResolution_RecoilInAcc_Rap_bin1", "bin 1; (Gen-Rec)/Gen Recoil (in acceptance) y; Events", 80, -5, 5.);
+      o["hResolution_RecoilInAcc_Rap_bin2"]  = hist = new TH1D("hResolution_RecoilInAcc_Rap_bin2", "bin 2; (Gen-Rec)/Gen Recoil (in acceptance) y; Events", 80, -5, 5.);
+      o["hResolution_RecoilInAcc_Rap_bin3"]  = hist = new TH1D("hResolution_RecoilInAcc_Rap_bin3", "bin 3; (Gen-Rec)/Gen Recoil (in acceptance) y; Events", 80, -5, 5.);
+      o["hAbsoResolution_RecoilInAcc_Rap_bin1"]  = hist = new TH1D("hAbsoResolution_RecoilInAcc_Rap_bin1", "bin 1; Gen-Rec Recoil (in acceptance) y; Events", 80, -1, 1.);
+      o["hAbsoResolution_RecoilInAcc_Rap_bin2"]  = hist = new TH1D("hAbsoResolution_RecoilInAcc_Rap_bin2", "bin 2; Gen-Rec Recoil (in acceptance) y; Events", 80, -1, 1.);
+      o["hAbsoResolution_RecoilInAcc_Rap_bin3"]  = hist = new TH1D("hAbsoResolution_RecoilInAcc_Rap_bin3", "bin 3; Gen-Rec Recoil (in acceptance) y; Events", 80, -1, 1.);
+   }
 
    o["hRecoVsGenLeptonPhi"] = new rh::H2I("hRecoVsGenLeptonPhi", "; Gen. Lepton #phi; Reco. Lepton #phi", 50, -M_PI, M_PI, 50, -M_PI, M_PI, "colz LOGZ");
    o["hRecoVsGenLeptonPt"]  = new rh::H2I("hRecoVsGenLeptonPt",  "; Gen. Lepton P_{T}, GeV; Reco. Lepton P_{T}, GeV", 50, 10, 60, 50, 10, 60, "colz LOGZ");
@@ -129,7 +184,7 @@ void MCHContainer::BookHists()
    o["hRecInAccMomentumX"] = new rh::H1I("hRecInAccMomentumX", "; P^{Recoil}_{x} [GeV/c]; Events", 100, -160., 160., "hist GRIDX");
    o["hRecInAccMomentumY"] = new rh::H1I("hRecInAccMomentumY", "; P^{Recoil}_{y} [GeV/c]; Events", 100, -160., 160., "hist GRIDX");
    o["hRecInAccMomentumZ"] = new rh::H1I("hRecInAccMomentumZ", "; P^{Recoil}_{z} [GeV/c]; Events", 100, -160., 160., "hist GRIDX");
-   o["hRecoilInAcceptPt"]  = new rh::H1I("hRecoilInAcceptPt", "; P^{Recoil}_{t} [GeV/c]; Events", 50, 0., 50., "hist GRIDX");
+   o["hRecoilInAcceptPt"]  = new rh::H1I("hRecoilInAcceptPt", "; P^{Recoil}_{t} [GeV/c]; Events", 50, 0., 25., "hist GRIDX");
 
    // Recoil outside of detector acceptance
    o["hRecOutAccEnergy"]    = new rh::H1I("hRecOutAccEenergy", "; Recoil energy [GeV]; Events", 100, 0., 200., "hist GRIDX");
@@ -352,9 +407,60 @@ void MCHContainer::Fill(ProtoEvent &ev)
         ((TH2*) o["hRecoVsGenWBosonRap"])             ->Fill(mcEvent->mP4WBoson.Rapidity(),   event.GetVecBosonP4().Rapidity());
         ((TH1*) o["hResolutionRap"])                  ->Fill((mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity())/mcEvent->mP4WBoson.Rapidity());
 
+	// Calculate the Pt resolution in each of the Pt bins we use for A_N
+        Double_t Wpt = mcEvent->mP4WBoson.Pt();
+        if (Wpt >= xBinsPt[0] && Wpt < xBinsPt[1]) {
+             ((TH1*) o["hResolutionPt_bin1"])     ->Fill((mcEvent->mP4WBoson.Pt()-event.GetTrackRecoilTpcNeutrals().Pt())/mcEvent->mP4WBoson.Pt());
+             ((TH1*) o["hResolutionPtCorr_bin1"]) ->Fill((mcEvent->mP4WBoson.Pt()-event.GetVecBosonP3().Pt())/mcEvent->mP4WBoson.Pt());
+      	} else if (Wpt >= xBinsPt[1] && Wpt < xBinsPt[2]) {
+             ((TH1*) o["hResolutionPt_bin2"])     ->Fill((mcEvent->mP4WBoson.Pt()-event.GetTrackRecoilTpcNeutrals().Pt())/mcEvent->mP4WBoson.Pt());
+             ((TH1*) o["hResolutionPtCorr_bin2"]) ->Fill((mcEvent->mP4WBoson.Pt()-event.GetVecBosonP3().Pt())/mcEvent->mP4WBoson.Pt());
+	} else if (Wpt >= xBinsPt[2] && Wpt < xBinsPt[3]) {
+             ((TH1*) o["hResolutionPt_bin3"])     ->Fill((mcEvent->mP4WBoson.Pt()-event.GetTrackRecoilTpcNeutrals().Pt())/mcEvent->mP4WBoson.Pt());
+             ((TH1*) o["hResolutionPtCorr_bin3"]) ->Fill((mcEvent->mP4WBoson.Pt()-event.GetVecBosonP3().Pt())/mcEvent->mP4WBoson.Pt());
+ 	} else if (Wpt >= xBinsPt[3] && Wpt < xBinsPt[4]) {
+             ((TH1*) o["hResolutionPt_bin4"])     ->Fill((mcEvent->mP4WBoson.Pt()-event.GetTrackRecoilTpcNeutrals().Pt())/mcEvent->mP4WBoson.Pt());
+             ((TH1*) o["hResolutionPtCorr_bin4"]) ->Fill((mcEvent->mP4WBoson.Pt()-event.GetVecBosonP3().Pt())/mcEvent->mP4WBoson.Pt());
+ 	} else if (Wpt >= xBinsPt[4] && Wpt < xBinsPt[5]) {
+             ((TH1*) o["hResolutionPt_bin5"])     ->Fill((mcEvent->mP4WBoson.Pt()-event.GetTrackRecoilTpcNeutrals().Pt())/mcEvent->mP4WBoson.Pt());
+             ((TH1*) o["hResolutionPtCorr_bin5"]) ->Fill((mcEvent->mP4WBoson.Pt()-event.GetVecBosonP3().Pt())/mcEvent->mP4WBoson.Pt());
+ 	} else if (Wpt >= xBinsPt[5] && Wpt < xBinsPt[6]) {
+             ((TH1*) o["hResolutionPt_bin6"])     ->Fill((mcEvent->mP4WBoson.Pt()-event.GetTrackRecoilTpcNeutrals().Pt())/mcEvent->mP4WBoson.Pt());
+             ((TH1*) o["hResolutionPtCorr_bin6"]) ->Fill((mcEvent->mP4WBoson.Pt()-event.GetVecBosonP3().Pt())/mcEvent->mP4WBoson.Pt());
+ 	} else if (Wpt >= xBinsPt[6] && Wpt < xBinsPt[7]) {
+             ((TH1*) o["hResolutionPt_bin7"])     ->Fill((mcEvent->mP4WBoson.Pt()-event.GetTrackRecoilTpcNeutrals().Pt())/mcEvent->mP4WBoson.Pt());
+             ((TH1*) o["hResolutionPtCorr_bin7"]) ->Fill((mcEvent->mP4WBoson.Pt()-event.GetVecBosonP3().Pt())/mcEvent->mP4WBoson.Pt());
+	}
+
+        Double_t RecoInAccPt = mcEvent->mP4RecoilInAccept.Pt();
+        if (RecoInAccPt >= xBinsPt[0] && RecoInAccPt < xBinsPt[1]) {
+             ((TH1*) o["hResolution_RecoilInAcc_Pt_bin1"])     ->Fill((mcEvent->mP4RecoilInAccept.Pt()-event.GetTrackRecoilTpcNeutrals().Pt())/mcEvent->mP4RecoilInAccept.Pt());
+             ((TH1*) o["hAbsoResolution_RecoilInAcc_Pt_bin1"]) ->Fill(mcEvent->mP4RecoilInAccept.Pt()-event.GetTrackRecoilTpcNeutrals().Pt());
+      	} else if (RecoInAccPt >= xBinsPt[1] && RecoInAccPt < xBinsPt[2]) {
+             ((TH1*) o["hResolution_RecoilInAcc_Pt_bin2"])     ->Fill((mcEvent->mP4RecoilInAccept.Pt()-event.GetTrackRecoilTpcNeutrals().Pt())/mcEvent->mP4RecoilInAccept.Pt());
+             ((TH1*) o["hAbsoResolution_RecoilInAcc_Pt_bin2"]) ->Fill(mcEvent->mP4RecoilInAccept.Pt()-event.GetTrackRecoilTpcNeutrals().Pt());
+	} else if (RecoInAccPt >= xBinsPt[2] && RecoInAccPt < xBinsPt[3]) {
+             ((TH1*) o["hResolution_RecoilInAcc_Pt_bin3"])     ->Fill((mcEvent->mP4RecoilInAccept.Pt()-event.GetTrackRecoilTpcNeutrals().Pt())/mcEvent->mP4RecoilInAccept.Pt());
+             ((TH1*) o["hAbsoResolution_RecoilInAcc_Pt_bin3"]) ->Fill(mcEvent->mP4RecoilInAccept.Pt()-event.GetTrackRecoilTpcNeutrals().Pt());
+ 	} else if (RecoInAccPt >= xBinsPt[3] && RecoInAccPt < xBinsPt[4]) {
+             ((TH1*) o["hResolution_RecoilInAcc_Pt_bin4"])     ->Fill((mcEvent->mP4RecoilInAccept.Pt()-event.GetTrackRecoilTpcNeutrals().Pt())/mcEvent->mP4RecoilInAccept.Pt());
+             ((TH1*) o["hAbsoResolution_RecoilInAcc_Pt_bin4"]) ->Fill(mcEvent->mP4RecoilInAccept.Pt()-event.GetTrackRecoilTpcNeutrals().Pt());
+ 	} else if (RecoInAccPt >= xBinsPt[4] && RecoInAccPt < xBinsPt[5]) {
+             ((TH1*) o["hResolution_RecoilInAcc_Pt_bin5"])     ->Fill((mcEvent->mP4RecoilInAccept.Pt()-event.GetTrackRecoilTpcNeutrals().Pt())/mcEvent->mP4RecoilInAccept.Pt());
+             ((TH1*) o["hAbsoResolution_RecoilInAcc_Pt_bin5"]) ->Fill(mcEvent->mP4RecoilInAccept.Pt()-event.GetTrackRecoilTpcNeutrals().Pt());
+ 	} else if (RecoInAccPt >= xBinsPt[5] && RecoInAccPt < xBinsPt[6]) {
+             ((TH1*) o["hResolution_RecoilInAcc_Pt_bin6"])     ->Fill((mcEvent->mP4RecoilInAccept.Pt()-event.GetTrackRecoilTpcNeutrals().Pt())/mcEvent->mP4RecoilInAccept.Pt());
+             ((TH1*) o["hAbsoResolution_RecoilInAcc_Pt_bin6"]) ->Fill(mcEvent->mP4RecoilInAccept.Pt()-event.GetTrackRecoilTpcNeutrals().Pt());
+ 	} else if (RecoInAccPt >= xBinsPt[6] && RecoInAccPt < xBinsPt[7]) {
+             ((TH1*) o["hResolution_RecoilInAcc_Pt_bin7"])     ->Fill((mcEvent->mP4RecoilInAccept.Pt()-event.GetTrackRecoilTpcNeutrals().Pt())/mcEvent->mP4RecoilInAccept.Pt());
+             ((TH1*) o["hAbsoResolution_RecoilInAcc_Pt_bin7"]) ->Fill(mcEvent->mP4RecoilInAccept.Pt()-event.GetTrackRecoilTpcNeutrals().Pt());
+	}
+
 	// Calculate the rapidity resolution in each of the rapidity bins we use for A_N
         Double_t WRap = mcEvent->mP4WBoson.Rapidity();
+        Double_t RecoInAccRap = mcEvent->mP4RecoilInAccept.Rapidity();
         if (RapBins == 4) {
+
           if (WRap >= xBinsRap[0] && WRap < xBinsRap[1]) {
              ((TH1*) o["hResolutionRap_bin1"])   ->Fill((mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity())/mcEvent->mP4WBoson.Rapidity());
       	  } else if (WRap >= xBinsRap[1] && WRap < xBinsRap[2]) {
@@ -364,14 +470,30 @@ void MCHContainer::Fill(ProtoEvent &ev)
  	  } else if (WRap >= xBinsRap[3] && WRap < xBinsRap[4]) {
              ((TH1*) o["hResolutionRap_bin4"])   ->Fill((mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity())/mcEvent->mP4WBoson.Rapidity());
 	  }
+
 	} else if (RapBins == 3) {
+
           if (WRap >= xBinsRap[0] && WRap < xBinsRap[1]) {
-             ((TH1*) o["hResolutionRap_bin1"])   ->Fill((mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity())/mcEvent->mP4WBoson.Rapidity());
+             ((TH1*) o["hResolutionRap_bin1"])     ->Fill((mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity())/mcEvent->mP4WBoson.Rapidity());
+             ((TH1*) o["hAbsoResolutionRap_bin1"]) ->Fill(mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity());
       	  } else if (WRap >= xBinsRap[1] && WRap < xBinsRap[2]) {
-             ((TH1*) o["hResolutionRap_bin2"])   ->Fill((mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity())/mcEvent->mP4WBoson.Rapidity());
+             ((TH1*) o["hResolutionRap_bin2"])     ->Fill((mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity())/mcEvent->mP4WBoson.Rapidity());
+             ((TH1*) o["hAbsoResolutionRap_bin2"]) ->Fill(mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity());
 	  } else if (WRap >= xBinsRap[2] && WRap < xBinsRap[3]) {
-             ((TH1*) o["hResolutionRap_bin3"])   ->Fill((mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity())/mcEvent->mP4WBoson.Rapidity());
+             ((TH1*) o["hResolutionRap_bin3"])     ->Fill((mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity())/mcEvent->mP4WBoson.Rapidity());
+             ((TH1*) o["hAbsoResolutionRap_bin3"]) ->Fill(mcEvent->mP4WBoson.Rapidity()-event.GetVecBosonP4().Rapidity());
  	  }
+
+          //if (RecoInAccRap >= xBinsRap[0] && RecoInAccRap < xBinsRap[1]) {
+	  //  ((TH1*) o["hResolution_RecoilInAcc_Rap_bin1"])     ->Fill((mcEvent->mP4RecoilInAccept.Rapidity()-event.GetTrackRecoilTpcNeutrals().Rapidity())/mcEvent->mP4RecoilInAccept.Rapidity());
+          //   ((TH1*) o["hAbsoResolution_RecoilInAcc_Rap_bin1"]) ->Fill(mcEvent->mP4RecoilInAccept.Rapidity()-event.GetTrackRecoilTpcNeutrals().Rapidity());
+      	  //} else if (RecoInAccRap >= xBinsRap[1] && RecoInAccRap < xBinsRap[2]) {
+          //   ((TH1*) o["hResolution_RecoilInAcc_Rap_bin2"])     ->Fill((mcEvent->mP4RecoilInAccept.Rapidity()-event.GetTrackRecoilTpcNeutrals().Rapidity())/mcEvent->mP4RecoilInAccept.Rapidity());
+          //   ((TH1*) o["hAbsoResolution_RecoilInAcc_Rap_bin2"]) ->Fill(mcEvent->mP4RecoilInAccept.Rapidity()-event.GetTrackRecoilTpcNeutrals().Rapidity());
+	  //} else if (RecoInAccRap >= xBinsRap[2] && RecoInAccRap < xBinsRap[3]) {
+          //   ((TH1*) o["hResolution_RecoilInAcc_Rap_bin3"])     ->Fill((mcEvent->mP4RecoilInAccept.Rapidity()-event.GetTrackRecoilTpcNeutrals().Rapidity())/mcEvent->mP4RecoilInAccept.Rapidity());
+          //   ((TH1*) o["hAbsoResolution_RecoilInAcc_Rap_bin3"]) ->Fill(mcEvent->mP4RecoilInAccept.Rapidity()-event.GetTrackRecoilTpcNeutrals().Rapidity());				 
+	  // }
 	}
      }
    }
@@ -612,23 +734,23 @@ void MCHContainer::PostFill()
    TH1D* hResolutionRap_bin1 = (TH1D*) o["hResolutionRap_bin1"];
    TH1D* hResolutionRap_bin2 = (TH1D*) o["hResolutionRap_bin2"];
    TH1D* hResolutionRap_bin3 = (TH1D*) o["hResolutionRap_bin3"];
-   TH1D* hResolutionRap_bin4 = (TH1D*) o["hResolutionRap_bin4"];
+   //TH1D* hResolutionRap_bin4 = (TH1D*) o["hResolutionRap_bin4"];
    //TF1 fitGaus("fitGaus", "gaus", -4, 4);
    //hResolutionRap -> Fit(&fitGaus);
    hResolutionRap_bin1 -> Fit("gaus");
    hResolutionRap_bin2 -> Fit("gaus", "","", -3, 3);
    hResolutionRap_bin3 -> Fit("gaus", "","", -3, 3);
-   hResolutionRap_bin4 -> Fit("gaus");
+   //hResolutionRap_bin4 -> Fit("gaus");
    //TF1 *fResRap = hResolutionRap -> GetFunction("gaus");
    //hResolutionRap -> GetListOfFunctions(fResRap);
    double sigma_ResoBin1 =  hResolutionRap_bin1 -> GetFunction("gaus") -> GetParameter(2);   
    double sigma_ResoBin2 =  hResolutionRap_bin2 -> GetFunction("gaus") -> GetParameter(2);      
    double sigma_ResoBin3 =  hResolutionRap_bin3 -> GetFunction("gaus") -> GetParameter(2);     
-   double sigma_ResoBin4 =  hResolutionRap_bin4 -> GetFunction("gaus") -> GetParameter(2);   
+   //double sigma_ResoBin4 =  hResolutionRap_bin4 -> GetFunction("gaus") -> GetParameter(2);   
    cout << "sigma_ResoBin1 = " << sigma_ResoBin1 << endl;   
    cout << "sigma_ResoBin2 = " << sigma_ResoBin2 << endl;   
    cout << "sigma_ResoBin3 = " << sigma_ResoBin3 << endl;   
-   cout << "sigma_ResoBin4 = " << sigma_ResoBin4 << endl;
+   //cout << "sigma_ResoBin4 = " << sigma_ResoBin4 << endl;
 
 
    // Calculate the survival probability per Rapidity bin *****************************
