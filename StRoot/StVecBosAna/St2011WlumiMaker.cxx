@@ -166,30 +166,30 @@ void St2011WlumiMaker::sortTrigger()
 
    if (weve->l2bitET) {
       //printf("ET\n");
-      hA[0]->Fill("L2W", 1);
-      hA[0]->Fill("L2Wnormal", 1);
+      //hA[0]->Fill("L2W", 1);
+      //hA[0]->Fill("L2Wnormal", 1);
    }
 
-   //if (weve->l2bitRnd) {
-   //printf("Rnd\n");
-   hA[0]->Fill("L2W", 1);
-   hA[0]->Fill("L2Wrandom", 1);
-   nBHT3_hardware_L0++;
-   if (wMK->passes_L0()) {
-      nBHT3_software_L0++;
-      // hA[1]->Fill(weve->bx7);
-      //printf("passes_L0\n");
-      for (int i = 0; i < 16; i++) {
-         //printf("AwaySum[%d]=%d\n",i,weve->trigAwaySum[i]);
-         if (weve->trigAwaySum[i] > thresh[i]) { //for bg test
-            //printf("Passes coin(%d)!\n",i);
-            nBHT3[i]++;
-            //printf("Passes coin(%d)(%d)\n",i,nBHT3[i]);
-            nBx[i][weve->bx7]++;
-         }
-      }
+   if (weve->l2bitRnd) {
+     //printf("Rnd\n");
+     //hA[0]->Fill("L2W", 1);
+     //hA[0]->Fill("L2Wrandom", 1);
+     nBHT3_hardware_L0++;
+     if (wMK->passes_L0()) {
+        nBHT3_software_L0++;
+        // hA[1]->Fill(weve->bx7);
+        //printf("passes_L0\n");
+        for (int i = 0; i < 16; i++) {
+           //printf("AwaySum[%d]=%d\n",i,weve->trigAwaySum[i]);
+           if (weve->trigAwaySum[i] > thresh[i]) { //for bg test
+              //printf("Passes coin(%d)!\n",i);
+              nBHT3[i]++;
+              //printf("Passes coin(%d)(%d)\n",i,nBHT3[i]);
+              nBx[i][weve->bx7]++;
+           }
+        }
+     }
    }
-   //}
    //printf("out of sort\n");
 }
 
