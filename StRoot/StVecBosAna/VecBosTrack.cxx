@@ -73,6 +73,12 @@ bool VecBosTrack::IsCandidate() const
 }
 
 
+bool VecBosTrack::IsCandidateNoEndcap() const
+{
+   return (HasCluster() && IsIsolatedNoEndcap() && IsUnBalanced() && HasCharge());
+}
+
+
 bool VecBosTrack::IsZelectronCandidate() const
 {
   //   return (HasCluster() && IsIsolated() && HasCharge());
@@ -454,9 +460,9 @@ void VecBosTrack::CalcEnergyInCones()
    mP3InNearCone       = mP3InNearConeBTow + mP3InNearConeETow + mP3InNearConeTpc; // XXX:ds: double counting? yes, see correction below
    mP3InNearConeNoETow = mP3InNearConeBTow + mP3InNearConeTpc;
 
-   mP3InOppsConeBTow   = mEvent->CalcP3InConeBTow(this, 1, -1); // '1'=1D cone
-   mP3InOppsConeETow   = mEvent->CalcP3InConeETow(this, 1, -1); // '1'=1D cone
-   mP3InOppsConeTpc    = mEvent->CalcP3InConeTpc (this, 1, -1); // '1'=1D cone
+   mP3InOppsConeBTow   = mEvent->CalcP3InConeBTow(this, 1, -1); // '1'=1D cone; 'scale=-1'-> we are looking to the opposite cone
+   mP3InOppsConeETow   = mEvent->CalcP3InConeETow(this, 1, -1); // '1'=1D cone; 'scale=-1'-> we are looking to the opposite cone
+   mP3InOppsConeTpc    = mEvent->CalcP3InConeTpc (this, 1, -1); // '1'=1D cone; 'scale=-1'-> we are looking to the opposite cone
 
    mP3InOppsConeTow    = mP3InOppsConeBTow + mP3InOppsConeETow;
    mP3InOppsCone       = mP3InOppsConeTow  + mP3InOppsConeTpc; // XXX:ds: double counting? yes, see correction below
@@ -470,7 +476,15 @@ void VecBosTrack::CalcEnergyInCones()
       {
          mVbType |= kUNBALANCED;
       }
+   } else if (GetClusterEnergyFracNoEndcap() >= VecBosEvent::sMinClusterEnergyFrac) {
+      mVbType |= kISOLATEDNOETOW;
+
+      if ( mP3InOppsConeTow.Mag() < sMaxEnergyInOppsCone )
+      {
+         mVbType |= kUNBALANCED;
+      }
    }
+ 
    // else {
       //mEvent->mTracksCandidate.push_back(this);
    //}

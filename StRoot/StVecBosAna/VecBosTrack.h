@@ -31,6 +31,7 @@ public:
                     kBARREL      = 0x00000010, kENDCAP   = 0x0020, // from reco algo definition
                     kHAS_CLUSTER = 0x00000100,                     // has cluster above a threshold
                     kISOLATED    = 0x00000200,                     // cluster/cone energy > 0.88
+                    kISOLATEDNOETOW = 0x00000300,               // cluster/cone energy > 0.88 (without encaps)
                     kIN_JET      = 0x00000400,                     // track belongs to a jet
                     kUNBALANCED  = 0x00000800,                     // does not have much energy in opposite direction
                     kHAS_CHARGE  = 0x00001000,                     // the charge of track can be measured
@@ -106,17 +107,25 @@ public:
    bool         IsETrack()     const { return (mVbType & kENDCAP)      == kENDCAP      ? true : false; }
    bool         HasCluster()   const { return (mVbType & kHAS_CLUSTER) == kHAS_CLUSTER ? true : false; }
    bool         IsIsolated()   const { return (mVbType & kISOLATED)    == kISOLATED    ? true : false; }
+   bool         IsIsolatedNoEndcap() const { return (mVbType & kISOLATEDNOETOW) == kISOLATEDNOETOW  ? true : false; }
    bool         IsInJet()      const { return (mVbType & kIN_JET)      == kIN_JET      ? true : false; }
    bool         IsUnBalanced() const { return (mVbType & kUNBALANCED)  == kUNBALANCED  ? true : false; }
    bool         HasCharge()    const { return (mVbType & kHAS_CHARGE)  == kHAS_CHARGE  ? true : false; }
    bool         IsCandidate()  const;
+   bool         IsCandidateNoEndcap()  const;
    bool         IsZelectronCandidate()  const;
    void         Process();
    short        GetChargeSign()         const { return mStMuTrack->charge(); }
    TVector3     GetP3AtDca()            const { return mP3AtDca; }
    TVector3     GetP3EScaled()          const { return mP3AtDca * ((Double_t) mCluster2x2.mEnergy / mP3AtDca.Mag()); }
    float        GetFitHitFrac()         const { return float(mStMuTrack->nHitsFit()) / mStMuTrack->nHitsPoss(); }
-   float        GetClusterEnergyFrac()  const { return (mCluster2x2.mEnergy + mP3AtDca.Mag()) / mP3InNearConeNoETow.Mag(); }
+
+   //float        GetClusterEnergyFrac()  const { return (mCluster2x2.mEnergy + mP3AtDca.Mag()) / mP3InNearConeNoETow.Mag(); }
+   //  s.f. Feb.19, 2015 - Lets use the encap to improve the isolation criterium 
+   //  (at least on one side of the detector) for electrons at large eta
+   float        GetClusterEnergyFrac()  const { return (mCluster2x2.mEnergy + mP3AtDca.Mag()) / mP3InNearCone.Mag(); } // s.f. Feb.19, 2015
+   float        GetClusterEnergyFracNoEndcap()  const { return (mCluster2x2.mEnergy + mP3AtDca.Mag()) / mP3InNearConeNoETow.Mag(); }
+
    float        GetClusterETFrac()      const { return (mCluster2x2.ET      + mP3AtDca.Pt())  / mP3InNearConeNoETow.Perp(); }
    TVector3     GetDistanceToCluster()  const { return mDistToCluster; }
    TVector3     CalcDistanceToCluster() const { return mCoorAtBTow - mCluster2x2.position; }
