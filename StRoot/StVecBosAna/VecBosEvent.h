@@ -82,6 +82,7 @@ public:
    VecBosVertexPtrSet      mVertices;                   ///
    VecBosTrackPtrSet       mTracks;                     ///< This container owns all tracks in the event
    VecBosCandTrackPtrSet   mTracksCandidate;            ///< Container with pointers to candidate tracks sorted by cluster energy
+   VecBosCandTrackPtrSet   mTracksCandidateNoEndcap;    ///< Container with pointers to candidate tracks sorted by cluster energy (no ETow)
    VecBosMcEvent          *mMcEvent;                    ///< Pointer to pure MC event
    TLorentzVector          mP4JetTotal;
    TLorentzVector          mP4JetFirst;
@@ -162,6 +163,7 @@ public:
    bool           HasGoodTrack()              const { return mNumGoodTracks      > 0 ? true : false; }
    bool           HasIsolatedTrack()          const { return mNumIsolatedTracks  > 0 ? true : false; }
    bool           HasCandidateEle()           const { return mTracksCandidate.size() > 0 ? true : false; }
+   bool           HasCandidateEleNoETOW()     const { return mTracksCandidateNoEndcap.size() > 0 ? true : false; }
    bool           HasJetRecoil()              const { return mP4JetRecoil.Mag()  > 0 ? true : false; }
 
    virtual void   Process();
