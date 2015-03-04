@@ -46,7 +46,7 @@ TFile *fileMCWplus     = TFile::Open(inPath + "run11_mc_Wp2enu.lis/hist/vbana_ol
 TFile *fileMCWplusR12  = TFile::Open(inPath + "run12_mc_Wp2enu.lis/hist/vbana_oldstyle.root");
 TFile *fileMCWminus    = TFile::Open(inPath + "run11_mc_Wm2enu.lis/hist/vbana_oldstyle.root");
 
-const float VecBosEvent::sMinTrackIsoDeltaR    = 0.7;  // was 0.7
+const float VecBosEvent::sMinTrackIsoDeltaR    = 0.7; 
 const float VecBosEvent::sMinTrackIsoDeltaPhi  = 0.7;
 const float VecBosEvent::sMaxVertexJetDeltaZ   = 1;    // distance between jet and vertex z coord, cm
 const float VecBosEvent::sMaxTrackJetDeltaZ    = 3;    // distance between jet and track z coord, cm
@@ -350,6 +350,9 @@ void VecBosEvent::Process()
             //utils::PrintTLorentzVector((TLorentzVector&) *track->mJet);
             mJetsWithIsoTrack.insert(track.mJet);
          }
+      } 
+      if  ( track.IsCandidateNoEndcap() ) {
+         mTracksCandidateNoEndcap.insert(*iTrack);
       }
    }
 
@@ -771,7 +774,7 @@ TVector3 VecBosEvent::CalcP3InConeBTow(VecBosTrack *vbTrack, UShort_t cone1d2d, 
    if (!vbTrack) return totalP3InCone;
 
    // Scale P3 momentum of the track
-   TVector3 trackP3 = vbTrack->mP3AtDca * scale;
+   TVector3 trackP3 = vbTrack->mP3AtDca * scale;  // s.f.: if "scale = -1" we are looking to the opposite cone
 
    // process BTOW hits
    for (int iBTow = 0; iBTow < mxBtow; iBTow++)
@@ -806,7 +809,7 @@ TVector3 VecBosEvent::CalcP3InConeETow(VecBosTrack *vbTrack, UShort_t cone1d2d, 
    if (!vbTrack) return totalP3InCone;
 
    // Scale P3 momentum of the track
-   TVector3 trackP3 = vbTrack->mP3AtDca * scale;
+   TVector3 trackP3 = vbTrack->mP3AtDca * scale; // s.f.: if "scale = -1" we are looking to the opposite cone
 
    // Loop over all phi bins
    for (int iphi = 0; iphi < mxEtowPhiBin; iphi++) {
@@ -837,7 +840,7 @@ TVector3 VecBosEvent::CalcP3InConeTpc(VecBosTrack *vbTrack, UShort_t cone1d2d, F
    if (!vbTrack) return totalP3InCone;
 
    // Scale P3 momentum of the track
-   TVector3 trackP3 = vbTrack->mP3AtDca * scale;
+   TVector3 trackP3 = vbTrack->mP3AtDca * scale; // s.f.: if "scale = -1" we are looking to the opposite cone
 
    VecBosTrackPtrSetIter iTrack = mTracks.begin();
    for ( ; iTrack != mTracks.end(); ++iTrack)
