@@ -52,8 +52,8 @@ int main(int argc, char *argv[])
      } else { // old style containers used for background and control plots
         vecBosRootFile = new VecBosRootFile(histFileName.c_str(), "recreate", vbAnaOptions.McType(), isZ);
      }
-      vecBosEvent    = new WBosEvent(vbAnaOptions.GetTracksPtMin(), vbAnaOptions.UseOtherSolution() );
-
+      vecBosEvent    = new WBosEvent(vbAnaOptions.GetTracksPtMin(), vbAnaOptions.fRhicRunId, vbAnaOptions.UseOtherSolution() );
+       cout << "vbana: vbAnaOptions.UseOtherSolution(): " << vbAnaOptions.UseOtherSolution()  << endl;
    } else if (vbAnaOptions.GetBosonType() == kZBoson)
    {
 
