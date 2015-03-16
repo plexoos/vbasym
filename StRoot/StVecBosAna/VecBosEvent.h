@@ -82,7 +82,7 @@ public:
    VecBosVertexPtrSet      mVertices;                   ///
    VecBosTrackPtrSet       mTracks;                     ///< This container owns all tracks in the event
    VecBosCandTrackPtrSet   mTracksCandidate;            ///< Container with pointers to candidate tracks sorted by cluster energy
-   VecBosCandTrackPtrSet   mTracksCandidateNoEndcap;    ///< Container with pointers to candidate tracks sorted by cluster energy (no ETow)
+   VecBosCandTrackPtrSet   mTracksCandidateNoEndcap;    //!< Container with pointers to candidate tracks sorted by cluster energy (no ETow)
    VecBosMcEvent          *mMcEvent;                    ///< Pointer to pure MC event
    TLorentzVector          mP4JetTotal;
    TLorentzVector          mP4JetFirst;
