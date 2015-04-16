@@ -129,17 +129,22 @@ void MCHContainer::BookHists()
       o["hAbsoResolution_RecoilInAcc_Rap_bin3"]  = hist = new TH1D("hAbsoResolution_RecoilInAcc_Rap_bin3", "bin 3; Gen-Rec Recoil (in acceptance) y; Events", 80, -1, 1.);
    }
 
-   o["hRecoVsGenLeptonPhi"] = new rh::H2I("hRecoVsGenLeptonPhi", "; Gen. Lepton #phi; Reco. Lepton #phi", 50, -M_PI, M_PI, 50, -M_PI, M_PI, "colz LOGZ");
-   o["hRecoVsGenLeptonPt"]  = new rh::H2I("hRecoVsGenLeptonPt",  "; Gen. Lepton P_{T}, GeV; Reco. Lepton P_{T}, GeV", 50, 10, 60, 50, 10, 60, "colz LOGZ");
-   o["hRecoVsGenLeptonPz"]  = new rh::H2I("hRecoVsGenLeptonPz",  "; Gen. Lepton P_{z}, GeV; Reco. Lepton P_{z}, GeV", 50, -50, 50, 50, -50, 50, "colz LOGZ");
-   o["hRecoVsGenLeptonEta"] = new rh::H2I("hRecoVsGenLeptonEta", "; Gen. Lepton #eta; Reco. Lepton #eta", 50, -2, 2, 50, -2, 2, "colz LOGZ");
+   o["hRecoVsGenLeptonPhi"]        = new rh::H2I("hRecoVsGenLeptonPhi", "; Gen. Lepton #phi; Reco. Lepton #phi", 50, -M_PI, M_PI, 50, -M_PI, M_PI, "colz LOGZ");
+   o["hRecoVsGenLeptonPt"]         = new rh::H2I("hRecoVsGenLeptonPt",  "; Gen. Lepton P_{T}, GeV; Reco. Lepton P_{T}, GeV", 50, 10, 60, 50, 10, 60, "colz LOGZ");
+   o["hRecoVsGenLeptonPz"]         = new rh::H2I("hRecoVsGenLeptonPz",  "; Gen. Lepton P_{z}, GeV; Reco. Lepton P_{z}, GeV", 50, -50, 50, 50, -50, 50, "colz LOGZ");
+   o["hRecoVsGenLeptonEta"]        = new rh::H2I("hRecoVsGenLeptonEta", "; Gen. Lepton #eta; Reco. Lepton #eta", 50, -2, 2, 50, -2, 2, "colz LOGZ");
+   o["hRecoVsGenLeptonEta_10bins"] = new rh::H2D("hRecoVsGenLeptonEta_10bins", "; Gen. Lepton #eta; Reco. Lepton #eta", 10, -2, 2, 10, -2, 2, "colz LOGZ");
+   o["hRecoVsGenLeptonEta_8bins"]  = new rh::H2D("hRecoVsGenLeptonEta_8bins", "; Gen. Lepton #eta; Reco. Lepton #eta", 8, -1, 1, 8, -1, 1, "colz LOGZ");
 
    o["hWBosonE"]   = new rh::H1F("hWBosonE", "; W energy [GeV]; Events", 100, 20., 200., "hist GRIDX");
    o["hWBosonPz"]  = new rh::H1F("hWBosonPz", "; P^{W}_{z} [GeV/c]; Events", 50, -80., 80., "hist GRIDX");
    o["hWBosonPt"]  = new rh::H1F("hWBosonPt", "; P^{W}_{T} [GeV/c]; Events", 40, 0., 40., "hist GRIDX");
    o["hWBosonPt_zoomin"] = new rh::H1F("hWBosonPt_zoomin", "; P^{W}_{T} [GeV/c]; Events", 20, 0., 10., "hist GRIDX");
    o["hWBosonEta"] = new rh::H1F("hWBosonEta", "; W pseudo-rapidity #eta; Events", 60, -6, 6, "hist GRIDX");
-   o["hWBosonRap"] = new rh::H1F("hWBosonRap", "; W rapidity y; Events", 60, -1.5, 1.5, "hist GRIDX");
+   o["hWBosonEta_20bins"] = new rh::H1F("hWBosonEta_20bins", "; W pseudo-rapidity #eta; Events", 20, -4, 4, "hist GRIDX");
+   o["hWBosonRap"]        = new rh::H1F("hWBosonRap", "; W rapidity y; Events", 60, -1.5, 1.5, "hist GRIDX");
+   o["hWBosonRap_20bins"] = new rh::H1F("hWBosonRap_20bins", "; W rapidity y; Events", 20, -1.5, 1.5, "hist GRIDX");
+   o["hWBosonRap_5bins"]  = new rh::H1F("hWBosonRap_5bins", "; W rapidity y; Events", 5, -0.6, 0.6, "hist GRIDX");
 
    o["hNeutrinoE"]  = new rh::H1I("hNeutrinoE", "; #nu energy [GeV]; Events", 50, 0., 200., "hist GRIDX");
    o["hNeutrinoPx"] = new rh::H1I("hNeutrinoPx", "; P^{#nu}_{x} [GeV/c]; Events", 100, -150., 150., "hist GRIDX");
@@ -148,6 +153,8 @@ void MCHContainer::BookHists()
    o["hNeutrinoPt"] = new rh::H1I("hNeutrinoPt", "; P^{#nu}_{T} [GeV/c]; Events", 100, 0., 150., "hist GRIDX");
 
    o["hLeptonE"]  = new rh::H1I("hLeptonE", "; electron energy [GeV]; Events", 80, 0., 80., "hist GRIDX");
+   o["hLeptonEta"]= new rh::H1I("hLeptonEta", "; electron pseudo-rapidity #eta; Events", 20, -2, 2, "hist GRIDX");
+   o["hLeptonEta_8bins"]= new rh::H1I("hLeptonEta_8bins", "; electron pseudo-rapidity #eta; Events", 8, -1, 1, "hist GRIDX");
    o["hLeptonPx"] = new rh::H1I("hLeptonPx", "; P^{#nu}_{x} [GeV/c]; Events", 80, -80., 80., "hist GRIDX");
    o["hLeptonPy"] = new rh::H1I("hLeptonPy", "; P^{#nu}_{y} [GeV/c]; Events", 80, -80., 80., "hist GRIDX");
    o["hLeptonPz"] = new rh::H1I("hLeptonPz", "; P^{#nu}_{z} [GeV/c]; Events", 80, -80., 80., "hist GRIDX");
@@ -213,6 +220,9 @@ void MCHContainer::BookHists()
    o["hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt_copy"] = new rh::H2I("hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt_copy", "; W Boson P_{T}; Corrected Track-based Recoil P_{T}", 50, 0., 50., 50, 0., 50., "colz LOGZ");
    o["hTrackRecoilTpcNeutralsPt_GenOverReco"] = new rh::H2F("hTrackRecoilTpcNeutralsPt_GenOverReco", ";Track-based Recoil P_{T}; Correction factor",40, 0, 40, 50, 0, 20, "colz LOGZ");
    o["hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin"] = new rh::H2F("hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin", "; Track-based Recoil P_{T}; Correction factor",20, 0, 10, 50, 0, 20, "colz LOGZ");
+   o["hTrackRecoilTpcNeutralsPt_GenOverReco_zdc100k-200k"] = new rh::H2F("hTrackRecoilTpcNeutralsPt_GenOverReco_zdc100k-200k", ";Track-based Recoil P_{T}; Correction factor",40, 0, 40, 50, 0, 20, "colz LOGZ");
+   o["hTrackRecoilTpcNeutralsPt_GenOverReco_zdc200k-300k"] = new rh::H2F("hTrackRecoilTpcNeutralsPt_GenOverReco_zdc200k-300k", ";Track-based Recoil P_{T}; Correction factor",40, 0, 40, 50, 0, 20, "colz LOGZ");
+   o["hTrackRecoilTpcNeutralsPt_GenOverReco_zdc300k-400k"] = new rh::H2F("hTrackRecoilTpcNeutralsPt_GenOverReco_zdc300k-400k", ";Track-based Recoil P_{T}; Correction factor",40, 0, 40, 50, 0, 20, "colz LOGZ");
 
    o["hJetRecoilPtRelDiff"]   = new rh::H1F("hJetRecoilPtRelDiff", "; Jet-based Recoil P_{T}, Rel. Diff.; ", 50, -2, 2., "hist");
    o["hTrackRecoilPtRelDiff"] = new rh::H1F("hTrackRecoilPtRelDiff", "; Track-based Recoil P_{T}, Rel. Diff.; ", 50, -2, 2., "hist");
@@ -269,6 +279,17 @@ void MCHContainer::BookHists()
    o["hAnEvolVsWgen_FirstSol"]  = new rh::H2D("hAnEvolVsWgen_FirstSol",  "Test well Reco events WPz_reco < 0 (GeV); Gen. W Boson P_{z}, GeV; A_{N} evol;", 1, -50, -47, 20, 0.0, 0.01, "colz LOGZ");
    } 
 
+   // Efficiency Plots
+   // -------------------------------------
+   if (mMcType == 1 || mMcType == 2) { // W+ or W- Monte Carlo 
+      
+     o["hLeptonInAccEta_TEST"]= new rh::H1I("hLeptonInAccEta_TEST", "; electron pseudo-rapidity #eta; Events", 20, -2, 2, "hist GRIDX");
+     o["hLeptonInAccEta"]= new rh::H1I("hLeptonInAccEta", "; electron pseudo-rapidity #eta; Events", 20, -2, 2, "hist GRIDX");
+     //o["hTrigEff_LeptonEta"]= new rh::H1I("hTrigEff_LeptonEta", "; electron pseudo-rapidity #eta; Events", 20, -2, 2, "hist GRIDX");
+     //o["hVertexEff_LeptonEta"]= new rh::H1I("hVertexEff_LeptonEta", "; electron pseudo-rapidity #eta; Events", 20, -2, 2, "hist GRIDX");
+   }
+   //--------------------------------------
+
 }
 
 
@@ -280,17 +301,25 @@ void MCHContainer::Fill(ProtoEvent &ev)
    WBosEvent& event = (WBosEvent&) ev;
    WBosMcEvent* mcEvent = (WBosMcEvent*) event.mMcEvent;
 
-   ((TH1*) o["hWBosonE"]) ->Fill(mcEvent->mP4WBoson.E());
-   ((TH1*) o["hWBosonPz"])->Fill(mcEvent->mP4WBoson.Pz());
-   ((TH1*) o["hWBosonPt"])->Fill(mcEvent->mP4WBoson.Pt());
+   ((TH1*) o["hWBosonE"])        ->Fill(mcEvent->mP4WBoson.E());
+   ((TH1*) o["hWBosonPz"])       ->Fill(mcEvent->mP4WBoson.Pz());
+   ((TH1*) o["hWBosonPt"])       ->Fill(mcEvent->mP4WBoson.Pt());
    ((TH1*) o["hWBosonPt_zoomin"])->Fill(mcEvent->mP4WBoson.Pt());
 
    if (mcEvent->mP4WBoson.Mag() > 0) {
-      ((TH1*) o["hWBosonEta"])->Fill(mcEvent->mP4WBoson.Eta());
-      ((TH1*) o["hWBosonRap"])->Fill(mcEvent->mP4WBoson.Rapidity());
+      ((TH1*) o["hWBosonEta"])        ->Fill(mcEvent->mP4WBoson.Eta());
+      ((TH1*) o["hWBosonEta_20bins"]) ->Fill(mcEvent->mP4WBoson.Eta());
+      ((TH1*) o["hWBosonRap"])        ->Fill(mcEvent->mP4WBoson.Rapidity());
+      ((TH1*) o["hWBosonRap_20bins"]) ->Fill(mcEvent->mP4WBoson.Rapidity());
+      if (fabs(event.GetVecBosonP4().Pz()) < 50) {   // this cut is for Pl reconstruction
+           ((TH1*) o["hWBosonRap_5bins"])  ->Fill(mcEvent->mP4WBoson.Rapidity());
+      }
    } else {
-      ((TH1*) o["hWBosonEta"])->Fill(1e5);
-      ((TH1*) o["hWBosonRap"])->Fill(1e5);
+      ((TH1*) o["hWBosonEta"])        ->Fill(1e5);
+      ((TH1*) o["hWBosonEta_20bins"]) ->Fill(1e5);
+      ((TH1*) o["hWBosonRap"])        ->Fill(1e5);
+      ((TH1*) o["hWBosonRap_20bins"]) ->Fill(1e5);
+      ((TH1*) o["hWBosonRap_5bins"])  ->Fill(1e5);
    }
 
    ((TH1*) o["hNeutrinoE"]) ->Fill(mcEvent->mP4Neutrino.E());
@@ -299,16 +328,23 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hNeutrinoPz"])->Fill(mcEvent->mP4Neutrino.Pz());
    ((TH1*) o["hNeutrinoPt"])->Fill(mcEvent->mP4Neutrino.Pz());
 
-   ((TH1*) o["hLeptonE"]) ->Fill(mcEvent->mP4Lepton.E());
-   ((TH1*) o["hLeptonPx"])->Fill(mcEvent->mP4Lepton.Px());
-   ((TH1*) o["hLeptonPy"])->Fill(mcEvent->mP4Lepton.Py());
-   ((TH1*) o["hLeptonPz"])->Fill(mcEvent->mP4Lepton.Pz());
-   ((TH1*) o["hLeptonPt"])->Fill(mcEvent->mP4Lepton.Pt());
+   ((TH1*) o["hLeptonE"])   ->Fill(mcEvent->mP4Lepton.E());
+   ((TH1*) o["hLeptonEta"]) ->Fill(mcEvent->mP4Lepton.Eta());
+   ((TH1*) o["hLeptonEta_8bins"]) ->Fill(mcEvent->mP4Lepton.Eta());
+   ((TH1*) o["hLeptonPx"])  ->Fill(mcEvent->mP4Lepton.Px());
+   ((TH1*) o["hLeptonPy"])  ->Fill(mcEvent->mP4Lepton.Py());
+   ((TH1*) o["hLeptonPz"])  ->Fill(mcEvent->mP4Lepton.Pz());
+   ((TH1*) o["hLeptonPt"])  ->Fill(mcEvent->mP4Lepton.Pt());
 
-   ((TH2*) o["hRecoVsGenLeptonPhi"])  ->Fill(mcEvent->mP4Lepton.Phi(),   event.GetElectronP3().Phi());
-   ((TH2*) o["hRecoVsGenLeptonPt"])   ->Fill(mcEvent->mP4Lepton.Pt(),    event.GetElectronP3().Pt());
-   ((TH2*) o["hRecoVsGenLeptonPz"])   ->Fill(mcEvent->mP4Lepton.Pz(),    event.GetElectronP3().Pz());
-   ((TH2*) o["hRecoVsGenLeptonEta"])  ->Fill(mcEvent->mP4Lepton.Eta(),   event.GetElectronP3().Eta());
+   ((TH2*) o["hRecoVsGenLeptonPhi"])        ->Fill(mcEvent->mP4Lepton.Phi(),   event.GetElectronP3().Phi());
+   ((TH2*) o["hRecoVsGenLeptonPt"])         ->Fill(mcEvent->mP4Lepton.Pt(),    event.GetElectronP3().Pt());
+   ((TH2*) o["hRecoVsGenLeptonPz"])         ->Fill(mcEvent->mP4Lepton.Pz(),    event.GetElectronP3().Pz());
+
+   //if (mcEvent->mP4Lepton.Mag() > 0 && event.GetElectronP3().Mag() > 0) {
+     ((TH2*) o["hRecoVsGenLeptonEta"])        ->Fill(mcEvent->mP4Lepton.Eta(),   event.GetElectronP3().Eta());
+     ((TH2*) o["hRecoVsGenLeptonEta_10bins"]) ->Fill(mcEvent->mP4Lepton.Eta(),   event.GetElectronP3().Eta());
+     ((TH2*) o["hRecoVsGenLeptonEta_8bins"] ) ->Fill(mcEvent->mP4Lepton.Eta(),   event.GetElectronP3().Eta());
+   //}
 
    ((TH2*) o["hRecoVsGenNeutrinoPhi"])->Fill(mcEvent->mP4Neutrino.Phi(), event.GetNeutrinoP3().Phi());
    ((TH2*) o["hRecoVsGenNeutrinoPt"]) ->Fill(mcEvent->mP4Neutrino.Pt(),  event.GetNeutrinoP3().Pt());
@@ -324,17 +360,24 @@ void MCHContainer::Fill(ProtoEvent &ev)
       ((TH2*) o["hRecoVsGenNeutrinoPz_f"]) ->Fill(mcEvent->mP4Neutrino.Pz(),  event.GetNeutrinoP3().Pz());
    }
 
-   ((TH2*) o["hRecoVsGenNeutrinoEta"])->Fill(mcEvent->mP4Neutrino.Eta(), event.GetNeutrinoP3().Eta());
+   if (mcEvent->mP4Neutrino.Mag() > 0 && event.GetNeutrinoP3().Mag() > 0) {
+      ((TH2*) o["hRecoVsGenNeutrinoEta"])->Fill(mcEvent->mP4Neutrino.Eta(), event.GetNeutrinoP3().Eta());
+   }
 
    ((TH2*) o["hRecoVsGenWBosonPhi"])  ->Fill(mcEvent->mP4WBoson.Phi(),   event.GetVecBosonP3().Phi());
    ((TH2*) o["hRecoVsGenWBosonPt"])   ->Fill(mcEvent->mP4WBoson.Pt(),    event.GetVecBosonP3().Pt());
    ((TH2*) o["hRecoVsGenWBosonPz"])   ->Fill(mcEvent->mP4WBoson.Pz(),    event.GetVecBosonP3().Pz());
-   ((TH2*) o["hRecoVsGenWBosonEta"])  ->Fill(mcEvent->mP4WBoson.Eta(),   event.GetVecBosonP3().Eta());
+
+   if (mcEvent->mP4WBoson.Mag() > 0 && event.GetVecBosonP3().Mag() > 0) {
+      ((TH2*) o["hRecoVsGenWBosonEta"])  ->Fill(mcEvent->mP4WBoson.Eta(),   event.GetVecBosonP3().Eta());
+   }
    ((TH1*) o["hRecoVsGenWBosonPz_FirstSol"])   ->Fill(mcEvent->mP4WBoson.Pz(),    event.GetVecBosonP3FirstSolution().Pz());
    ((TH1*) o["hRecoVsGenWBosonPz_OtherSol"])   ->Fill(mcEvent->mP4WBoson.Pz(),    event.GetVecBosonP3OtherSolution().Pz());
 
    ((TH2*) o["hGen_WBosonEtaVsElectronEta"]) -> Fill(mcEvent->mP4WBoson.Eta(), mcEvent->mP4Lepton.Eta());
-   ((TH2*) o["hReco_WBosonEtaVsElectronEta"])-> Fill(event.GetVecBosonP3().Eta(), event.GetElectronP3().Eta());
+
+   if (event.GetVecBosonP3().Mag() > 0 && event.GetElectronP3().Mag() > 0)
+      ((TH2*) o["hReco_WBosonEtaVsElectronEta"])-> Fill(event.GetVecBosonP3().Eta(), event.GetElectronP3().Eta());
 
    ((TH1*) o["hGenRecoilE"]) ->Fill(mcEvent->mP4Recoil.E());
    ((TH1*) o["hGenRecoilPz"])->Fill(mcEvent->mP4Recoil.Pz());
@@ -352,11 +395,12 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hRecOutAccMomentumZ"])->Fill(mcEvent->mP4RecoilOutAccept.Pz());
    ((TH1*) o["hRecOutAccPt"])       ->Fill(mcEvent->mP4RecoilOutAccept.Pt());
 
-   ((TH1*) o["hGenRecoilVsWBosonPt"])->Fill(mcEvent->mP4WBoson.Pt(), mcEvent->mP4Recoil.Pt());
-   ((TH1*) o["hGenRecoilInAccVsWBosonPt"])->Fill(mcEvent->mP4WBoson.Pt(), mcEvent->mP4RecoilInAccept.Pt());
+   ((TH1*) o["hGenRecoilVsWBosonPt"])      ->Fill(mcEvent->mP4WBoson.Pt(), mcEvent->mP4Recoil.Pt());
+   ((TH1*) o["hGenRecoilInAccVsWBosonPt"]) ->Fill(mcEvent->mP4WBoson.Pt(), mcEvent->mP4RecoilInAccept.Pt());
    ((TH1*) o["hGenRecoilOutAccVsWBosonPt"])->Fill(mcEvent->mP4WBoson.Pt(), mcEvent->mP4RecoilOutAccept.Pt());
-   ((TH1*) o["hGenRecoilOutVsInAccPt"])->Fill(mcEvent->mP4RecoilInAccept.Pt(), mcEvent->mP4RecoilOutAccept.Pt());
-   ((TH1*) o["hGenRecoilInOutDeltaPhi"])->Fill(mcEvent->mP4RecoilInAccept.DeltaPhi( mcEvent->mP4RecoilOutAccept ));
+   ((TH1*) o["hGenRecoilOutVsInAccPt"])    ->Fill(mcEvent->mP4RecoilInAccept.Pt(), mcEvent->mP4RecoilOutAccept.Pt());
+   ((TH1*) o["hGenRecoilInOutDeltaPhi"])   ->Fill(mcEvent->mP4RecoilInAccept.DeltaPhi( mcEvent->mP4RecoilOutAccept ));
+
 
    if (mMcType == 1 || mMcType == 2) { // W+ or W- Monte Carlo 
      if (event.GetVecBosonP3().Pt() > 0) {
@@ -552,6 +596,15 @@ void MCHContainer::Fill(ProtoEvent &ev)
    ((TH2*) o["hTrackRecoilTpcNeutralsPt_GenOverReco"])       ->Fill(event.GetTrackRecoilTpcNeutrals().Pt(), mcEvent->mP4WBoson.Pt()/event.GetTrackRecoilTpcNeutrals().Pt());
    ((TH2*) o["hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin"])->Fill(event.GetTrackRecoilTpcNeutrals().Pt(), mcEvent->mP4WBoson.Pt()/event.GetTrackRecoilTpcNeutrals().Pt());
 
+   if ( event.zdcRate > 100000 && event.zdcRate < 200000 )
+   ((TH2*) o["hTrackRecoilTpcNeutralsPt_GenOverReco_zdc100k-200k"])       ->Fill(event.GetTrackRecoilTpcNeutrals().Pt(), mcEvent->mP4WBoson.Pt()/event.GetTrackRecoilTpcNeutrals().Pt());
+
+   if ( event.zdcRate > 200000 && event.zdcRate < 300000 )
+   ((TH2*) o["hTrackRecoilTpcNeutralsPt_GenOverReco_zdc200k-300k"])       ->Fill(event.GetTrackRecoilTpcNeutrals().Pt(), mcEvent->mP4WBoson.Pt()/event.GetTrackRecoilTpcNeutrals().Pt());
+
+   if ( event.zdcRate > 300000 && event.zdcRate < 400000 )
+   ((TH2*) o["hTrackRecoilTpcNeutralsPt_GenOverReco_zdc300k-400k"])       ->Fill(event.GetTrackRecoilTpcNeutrals().Pt(), mcEvent->mP4WBoson.Pt()/event.GetTrackRecoilTpcNeutrals().Pt());
+
    Double_t recoilRelDiff = (event.GetJetRecoil().Pt() - mcEvent->mP4WBoson.Pt())/mcEvent->mP4WBoson.Pt();
    ((TH1*) o["hJetRecoilPtRelDiff"]) ->Fill( recoilRelDiff );
 
@@ -567,6 +620,28 @@ void MCHContainer::Fill(ProtoEvent &ev)
    recoilRelDiff = (event.GetTrackRecoilTpcNeutrals().Pt() - event.GetJetRecoil().Pt())/event.GetJetRecoil().Pt();
    ((TH1*) o["hJetTrackTpcNeutralsRecoilPtRelDiff"]) ->Fill( recoilRelDiff );
 
+
+
+   // Efficiency Plots
+   // -------------------------------------
+   if (mMcType == 1 || mMcType == 2) { // W+ or W- Monte Carlo 
+      if (mcEvent->mP4LeptonInAccept.Mag() > 0)   
+        ((TH1*) o["hLeptonInAccEta_TEST"])      -> Fill(mcEvent->mP4LeptonInAccept.Eta()); 
+     //if (mcEvent->mP4Lepton_TrigEff.Mag() > 0)      
+     //((TH1*) o["hTrigEff_LeptonEta"])   -> Fill(mcEvent->mP4Lepton_TrigEff.Eta());
+     
+      if (fabs(mcEvent-> mP4Lepton.Eta()) < 1.)   
+        ((TH1*) o["hLeptonInAccEta"])      -> Fill(mcEvent->mP4Lepton.Eta());
+
+       
+      //if (event.l2bitET);  //pass the trigger trig
+      //((TH1*) o["hTrigEff_LeptonEta"])   -> Fill(mcEvent->mP4Lepton.Eta());
+     
+      //if (event.mVertices.size() <= 0) return; // has a good vertex
+      //((TH1*) o["hVertexEff_LeptonEta"]) -> Fill(mcEvent->mP4Lepton.Eta());
+       
+   }
+   //--------------------------------------
 }
 
 
@@ -574,6 +649,8 @@ void MCHContainer::Fill(ProtoEvent &ev)
 void MCHContainer::PostFill()
 {
    Info("PostFill", "Called");
+
+   /*
 
    // Fit the correction curve
    TH2* hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin = (TH2*) o["hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin"];
@@ -846,6 +923,6 @@ void MCHContainer::PostFill()
      hSystematics_evol_MR -> SetBinContent(i, systMR*100);
 
    } // for
-
+   */
 
 }

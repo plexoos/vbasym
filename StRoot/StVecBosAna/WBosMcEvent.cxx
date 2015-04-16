@@ -7,6 +7,8 @@
 
 #include "PythiaParticle.h"
 
+//#include "Globals.h"
+
 ClassImp(WBosMcEvent)
 
 
@@ -15,7 +17,7 @@ using namespace std;
 
 /** */
 WBosMcEvent::WBosMcEvent() : VecBosMcEvent(), mP4WBoson(), mP4Lepton(), mP4Neutrino(),
-   mP4Total(), mP4Recoil(), mP4RecoilInAccept(), mP4RecoilOutAccept(),
+   mP4Total(), mP4Recoil(), mP4RecoilInAccept(), mP4RecoilOutAccept(), mP4LeptonInAccept(), 
    fLeptonGen(0), fLeptonIndex(0), fNeutrinoIndex(0), fEnergyRatio(0),
    fPzRatio(0), fPtRatio(0), fPtCorr(0), fPtCorrAngle(0), fPzRatioInOut(0),
    fPtRatioInOut(0)
@@ -34,7 +36,7 @@ TLorentzVector WBosMcEvent::CalcRecoP4WBoson()
 void WBosMcEvent::CalcRecoil(PythiaEvent &pyEvent)
 {
    Double_t eneTotal = 0, eneAccept = 0;
-   TLorentzVector recoilPOutAccept;
+   //TLorentzVector recoilPOutAccept;
 
    mP4Total.SetPxPyPzE(0, 0, 0, 0);
    mP4Recoil.SetPxPyPzE(0, 0, 0, 0);
@@ -55,8 +57,9 @@ void WBosMcEvent::CalcRecoil(PythiaEvent &pyEvent)
       mP4Recoil   += particleP4;
       eneTotal += particleP4.E();
 
+      if (particleP4.Eta() > -1 && particleP4.Eta() < 1) { // S.F. Feb 9, 2015 
       //if (particleP4.Eta() > -1 && particleP4.Eta() < 2)
-      if (particleP4.Eta() > -2.4 && particleP4.Eta() < 2.4) {
+      //if (particleP4.Eta() > -2.4 && particleP4.Eta() < 2.4) {
          eneAccept          += particleP4.E();
          mP4RecoilInAccept  += particleP4;
       } else {
@@ -80,6 +83,7 @@ void WBosMcEvent::CalcRecoil(PythiaEvent &pyEvent)
    // XXX:ds: z componennt should be removed
    fPtCorrAngle  = mP4RecoilInAccept.Angle(mP4Recoil.Vect());
    fPtCorr       = mP4Recoil.Pt()/mP4RecoilInAccept.Pt();
+
 }
 
 
@@ -88,7 +92,7 @@ void WBosMcEvent::CalcRecoil(StMcEvent &stMcEvent)
 {
    Double_t eneTotal  = 0;
    Double_t eneAccept = 0;
-   TLorentzVector recoilPOutAccept;
+   //TLorentzVector recoilPOutAccept;
 
    mP4Total.SetPxPyPzE(0, 0, 0, 0);
    mP4Recoil.SetPxPyPzE(0, 0, 0, 0);
@@ -150,8 +154,10 @@ void WBosMcEvent::CalcRecoil(StMcEvent &stMcEvent)
       mP4Total += particleP4;
       eneTotal += particleP4.E();
 
+      //if (particleP4.Eta() > -1 && particleP4.Eta() < 1)
       //if (particleP4.Eta() > -2.4 && particleP4.Eta() < 2.4)
-      if ( fabs(particleP4.Eta()) < 1.1 )
+      //if ( fabs(particleP4.Eta()) < 1.1 )
+      if ( fabs(particleP4.Eta()) < 1.0 )  // S.F. Feb 9, 2015 
       {
          eneAccept          += particleP4.E();
          mP4RecoilInAccept  += particleP4;
@@ -167,12 +173,16 @@ void WBosMcEvent::CalcRecoil(StMcEvent &stMcEvent)
    mP4Recoil -= mP4Lepton;
    mP4Recoil -= mP4Neutrino;
 
-   if (fabs(mP4Lepton.Eta()) < 1.1)
-      mP4RecoilInAccept -= mP4Lepton;
+   //if (fabs(mP4Lepton.Eta()) < 1.1)
+   if (fabs(mP4Lepton.Eta()) < 1.0) {   // S.F. Feb 9, 2015
+      mP4LeptonInAccept   = mP4Lepton;
+      mP4RecoilInAccept  -= mP4Lepton;
+   }
    else                                                
       mP4RecoilOutAccept -= mP4Lepton;
 
-   if (fabs(mP4Neutrino.Eta()) < 1.1)
+   //if (fabs(mP4Neutrino.Eta()) < 1.1)
+   if (fabs(mP4Neutrino.Eta()) < 1.0)   // S.F. Feb 9, 2015 
       mP4RecoilInAccept  -= mP4Neutrino;
    else 
       mP4RecoilOutAccept -= mP4Neutrino;
@@ -186,4 +196,5 @@ void WBosMcEvent::CalcRecoil(StMcEvent &stMcEvent)
    fPtCorr       = (mP4Recoil.Pt() - mP4RecoilInAccept.Pt())/mP4RecoilInAccept.Pt();
    // XXX:ds: z componennt should be removed
    fPtCorrAngle  = mP4RecoilInAccept.Angle(mP4Recoil.Vect());
+
 }

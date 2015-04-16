@@ -15,6 +15,9 @@ class WBosMcEvent : public VecBosMcEvent
 {
 public:
 
+
+  //void AttachWalgoMaker(StVecBosMaker *mk) { wMK = mk;}
+
    TLorentzVector mP4WBoson;
    TLorentzVector mP4Lepton;
    TLorentzVector mP4Neutrino;
@@ -22,6 +25,7 @@ public:
    TLorentzVector mP4Recoil;
    TLorentzVector mP4RecoilInAccept;
    TLorentzVector mP4RecoilOutAccept;
+   TLorentzVector mP4LeptonInAccept;
 
    UShort_t       fLeptonGen;
    UShort_t       fLeptonSign;
