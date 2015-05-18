@@ -43,6 +43,7 @@ void MCHContainer::BookHists()
 
    // Define the W-Pt binning
    //Double_t  xBinsPt[0] = {0.5,1,2,3,4,5,6,10}
+   /*
    xBinsPt[0] = 0.5; 
    xBinsPt[1] = 1; 
    xBinsPt[2] = 2; 
@@ -51,6 +52,14 @@ void MCHContainer::BookHists()
    xBinsPt[5] = 5; 
    xBinsPt[6] = 6; 
    xBinsPt[7] = 10;
+   */
+   xBinsPt[0] = 0.5; 
+   xBinsPt[1] = 1; 
+   xBinsPt[2] = 2.5; 
+   xBinsPt[3] = 4; 
+   xBinsPt[4] = 5.5; 
+   xBinsPt[5] = 7;  
+   xBinsPt[6] = 10;
 
    // Define the W-rapidity binning
    if (RapBins == 4) {
@@ -234,11 +243,11 @@ void MCHContainer::BookHists()
    if (mMcType == 1 ) {   // limits for W+
 
    o["hAn_evol_ZK"]  = new rh::H1F("hAn_evol_ZK", "; W A_{N}; Events", 20, -0.02, 0.0002, "hist GRIDX");
-   o["hAn_evol_ZK_Vs_PtGen"]  = new rh::H2D("hAn_evol_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 7, xBinsPt, 10, -0.02, 0.0002, "colz LOGZ");
-   o["hAn_evol_ZK_Vs_PtRec"]  = new rh::H2D("hAn_evol_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 7, xBinsPt, 10, -0.02, 0.0002, "colz LOGZ");
+   o["hAn_evol_ZK_Vs_PtGen"]  = new rh::H2D("hAn_evol_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 6, xBinsPt, 10, -0.02, 0.0002, "colz LOGZ");
+   o["hAn_evol_ZK_Vs_PtRec"]  = new rh::H2D("hAn_evol_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 6, xBinsPt, 10, -0.02, 0.0002, "colz LOGZ");
    o["hAn_noevo_ZK"]  = new rh::H1F("hAn_noevo_ZK", "; W A_{N}; Events", 20, -0.2, 0.2, "hist GRIDX");
-   o["hAn_noevo_ZK_Vs_PtGen"]  = new rh::H2D("hAn_noevo_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 7, xBinsPt, 10, -0.2, 0.2, "colz LOGZ");
-   o["hAn_noevo_ZK_Vs_PtRec"]  = new rh::H2D("hAn_noevo_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 7, xBinsPt, 10, -0.2, 0.2, "colz LOGZ");
+   o["hAn_noevo_ZK_Vs_PtGen"]  = new rh::H2D("hAn_noevo_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 6, xBinsPt, 10, -0.2, 0.2, "colz LOGZ");
+   o["hAn_noevo_ZK_Vs_PtRec"]  = new rh::H2D("hAn_noevo_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 6, xBinsPt, 10, -0.2, 0.2, "colz LOGZ");
    o["hAn_noevo_ZK_Vs_PtGen_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtGen_zoomin", "; W P_{T}^{GEN}; W A_{N}; Events", 8, 2., 15., 40, -0.2, 0.2, "colz LOGZ");
    o["hAn_noevo_ZK_Vs_PtRec_zoomin"]  = new rh::H2F("hAn_noevo_ZK_Vs_PtRec_zoomin", "; W P_{T}^{REC}; W A_{N}; Events", 8, 2., 15., 40, -0.2, 0.2, "colz LOGZ");
    o["hAn_evol_ZK_Vs_RapGen"]  = new rh::H2D("hAn_evol_ZK_Vs_RapGen", "; W y^{GEN}; W A_{N}; Events", RapBins, xBinsRap, 50, 0.0, 0.035, "colz LOGZ");
@@ -260,8 +269,8 @@ void MCHContainer::BookHists()
    } else if (mMcType == 2) {   // limits for W-
 
    o["hAn_evol_ZK"]  = new rh::H1F("hAn_evol_ZK", "; W A_{N}; Events", 20, 0.0, 0.035, "hist GRIDX");
-   o["hAn_evol_ZK_Vs_PtGen"]  = new rh::H2D("hAn_evol_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 7, xBinsPt, 50, 0.0, 0.035, "colz LOGZ");
-   o["hAn_evol_ZK_Vs_PtRec"]  = new rh::H2D("hAn_evol_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 7, xBinsPt, 50, 0.0, 0.035, "colz LOGZ");
+   o["hAn_evol_ZK_Vs_PtGen"]  = new rh::H2D("hAn_evol_ZK_Vs_PtGen", "; W P_{T}^{GEN}; W A_{N}; Events", 6, xBinsPt, 50, 0.0, 0.035, "colz LOGZ");
+   o["hAn_evol_ZK_Vs_PtRec"]  = new rh::H2D("hAn_evol_ZK_Vs_PtRec", "; W P_{T}^{REC}; W A_{N}; Events", 6, xBinsPt, 50, 0.0, 0.035, "colz LOGZ");
    o["hAn_evol_ZK_Vs_RapGen"]  = new rh::H2D("hAn_evol_ZK_Vs_RapGen", "; W y^{GEN}; W A_{N}; Events", RapBins, xBinsRap, 50, 0.0, 0.035, "colz LOGZ");
    o["hAn_evol_ZK_Vs_RapRec"]  = new rh::H2D("hAn_evol_ZK_Vs_RapRec", "; W y^{REC}; W A_{N}; Events", RapBins, xBinsRap, 50, 0.0, 0.035, "colz LOGZ");
 
@@ -471,10 +480,11 @@ void MCHContainer::Fill(ProtoEvent &ev)
  	} else if (Wpt >= xBinsPt[5] && Wpt < xBinsPt[6]) {
              ((TH1*) o["hResolutionPt_bin6"])     ->Fill((mcEvent->mP4WBoson.Pt()-event.GetTrackRecoilTpcNeutrals().Pt())/mcEvent->mP4WBoson.Pt());
              ((TH1*) o["hResolutionPtCorr_bin6"]) ->Fill((mcEvent->mP4WBoson.Pt()-event.GetVecBosonP3().Pt())/mcEvent->mP4WBoson.Pt());
- 	} else if (Wpt >= xBinsPt[6] && Wpt < xBinsPt[7]) {
-             ((TH1*) o["hResolutionPt_bin7"])     ->Fill((mcEvent->mP4WBoson.Pt()-event.GetTrackRecoilTpcNeutrals().Pt())/mcEvent->mP4WBoson.Pt());
-             ((TH1*) o["hResolutionPtCorr_bin7"]) ->Fill((mcEvent->mP4WBoson.Pt()-event.GetVecBosonP3().Pt())/mcEvent->mP4WBoson.Pt());
-	}
+ 	} 
+	//else if (Wpt >= xBinsPt[6] && Wpt < xBinsPt[7]) {
+	//             ((TH1*) o["hResolutionPt_bin7"])     ->Fill((mcEvent->mP4WBoson.Pt()-event.GetTrackRecoilTpcNeutrals().Pt())/mcEvent->mP4WBoson.Pt());
+	//             ((TH1*) o["hResolutionPtCorr_bin7"]) ->Fill((mcEvent->mP4WBoson.Pt()-event.GetVecBosonP3().Pt())/mcEvent->mP4WBoson.Pt());
+	//	}
 
         Double_t RecoInAccPt = mcEvent->mP4RecoilInAccept.Pt();
         if (RecoInAccPt >= xBinsPt[0] && RecoInAccPt < xBinsPt[1]) {
@@ -495,10 +505,11 @@ void MCHContainer::Fill(ProtoEvent &ev)
  	} else if (RecoInAccPt >= xBinsPt[5] && RecoInAccPt < xBinsPt[6]) {
              ((TH1*) o["hResolution_RecoilInAcc_Pt_bin6"])     ->Fill((mcEvent->mP4RecoilInAccept.Pt()-event.GetTrackRecoilTpcNeutrals().Pt())/mcEvent->mP4RecoilInAccept.Pt());
              ((TH1*) o["hAbsoResolution_RecoilInAcc_Pt_bin6"]) ->Fill(mcEvent->mP4RecoilInAccept.Pt()-event.GetTrackRecoilTpcNeutrals().Pt());
- 	} else if (RecoInAccPt >= xBinsPt[6] && RecoInAccPt < xBinsPt[7]) {
-             ((TH1*) o["hResolution_RecoilInAcc_Pt_bin7"])     ->Fill((mcEvent->mP4RecoilInAccept.Pt()-event.GetTrackRecoilTpcNeutrals().Pt())/mcEvent->mP4RecoilInAccept.Pt());
-             ((TH1*) o["hAbsoResolution_RecoilInAcc_Pt_bin7"]) ->Fill(mcEvent->mP4RecoilInAccept.Pt()-event.GetTrackRecoilTpcNeutrals().Pt());
-	}
+ 	}
+	// else if (RecoInAccPt >= xBinsPt[6] && RecoInAccPt < xBinsPt[7]) {
+	//             ((TH1*) o["hResolution_RecoilInAcc_Pt_bin7"])     ->Fill((mcEvent->mP4RecoilInAccept.Pt()-event.GetTrackRecoilTpcNeutrals().Pt())/mcEvent->mP4RecoilInAccept.Pt());
+	//             ((TH1*) o["hAbsoResolution_RecoilInAcc_Pt_bin7"]) ->Fill(mcEvent->mP4RecoilInAccept.Pt()-event.GetTrackRecoilTpcNeutrals().Pt());
+	//	}
 
 	// Calculate the rapidity resolution in each of the rapidity bins we use for A_N
         Double_t WRap = mcEvent->mP4WBoson.Rapidity();

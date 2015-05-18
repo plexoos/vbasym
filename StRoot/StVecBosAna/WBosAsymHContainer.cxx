@@ -46,7 +46,8 @@ void WBosAsymHContainer::BookHists()
    rh::MultiGraph *mg;
 
    DoubleSpinStateSetIter iDSS = gDoubleSpinStateSet.begin();
-   Double_t xBinsPt[8]  = {0.5, 1, 2, 3, 4, 5, 6, 10};
+   Double_t xBinsPt[7]  = {0.5, 1, 2.5, 4, 5.5, 7, 10};
+   //Double_t xBinsPt[8]  = {0.5, 1, 2, 3, 4, 5, 6, 10};
    //Double_t xBinsRap[5] = {-0.6, -0.2, 0, 0.2, 0.6};
    if (RapBins == 4) {
      xBinsRap[0] = -0.6;
@@ -77,7 +78,7 @@ void WBosAsymHContainer::BookHists()
 
       shName = "hWBosonPhiVsPt_" + sDblSpinState;
       //h2i = new rh::H2I(shName.c_str(), "; W Boson P_{T}; W Boson #phi;", 10, 0, 10, 8, -M_PI, M_PI, "colz DUMP");
-      h2i = new rh::H2I(shName.c_str(), "; W Boson P_{T}; W Boson #phi;", 7, xBinsPt, 8, -M_PI, M_PI, "colz DUMP");
+      h2i = new rh::H2I(shName.c_str(), "; W Boson P_{T}; W Boson #phi;", 6, xBinsPt, 8, -M_PI, M_PI, "colz DUMP");
       o[shName] = fYieldPhiVsPt_Dss[dss] = h2i;
    }
 
@@ -98,7 +99,7 @@ void WBosAsymHContainer::BookHists()
 
       shName = "hWBosonPhiVsPt_" + sSnglSpinState;
       //h2i = new rh::H2I(shName.c_str(), "; W Boson P_{T}; W Boson #phi;", 10, 0, 10, 8, -M_PI, M_PI, "colz DUMP");
-      h2i = new rh::H2I(shName.c_str(), "; W Boson P_{T}; W Boson #phi;", 7, xBinsPt, 8, -M_PI, M_PI, "colz DUMP");
+      h2i = new rh::H2I(shName.c_str(), "; W Boson P_{T}; W Boson #phi;", 6, xBinsPt, 8, -M_PI, M_PI, "colz DUMP");
       o[shName] = fYieldPhiVsPt_Sss[sss] = h2i;
 
       shName = "hWBosonPhi_PtProj_" + sSnglSpinState;
@@ -155,13 +156,13 @@ void WBosAsymHContainer::BookHists()
       // Asymmetry vs phi vs p_T
       shName = "hWBosonAsymVsPhiVsPt_" + sBeam;
       //h2d = new rh::H2D(shName.c_str(), "; W Boson P_{T}; W Boson #phi;", 10, 0, 10, 8, -M_PI, M_PI, "colz");
-      h2d = new rh::H2D(shName.c_str(), "; W Boson P_{T}; W Boson #phi;", 7, xBinsPt, 8, -M_PI, M_PI, "colz");
+      h2d = new rh::H2D(shName.c_str(), "; W Boson P_{T}; W Boson #phi;", 6, xBinsPt, 8, -M_PI, M_PI, "colz");
       o[shName] = fAsymVsPhiVsPt_Beam[beamId] = h2d;
 
       // Asymmetry amplitude vs p_T
       shName = "hWBosonAsymAmpVsPt_" + sBeam;
       //h1d = new rh::H1D(shName.c_str(), "; W Boson P_{T}; Asym Amp.;", 10, 0, 10, "E1 GRIDX GRIDY");
-      h1d = new rh::H1D(shName.c_str(), "; W Boson P_{T}; Asym Amp.;", 7, xBinsPt, "E1 GRIDX GRIDY");
+      h1d = new rh::H1D(shName.c_str(), "; W Boson P_{T}; Asym Amp.;", 6, xBinsPt, "E1 GRIDX GRIDY");
       h1d->GetYaxis()->SetRangeUser(-1.5, 1.5);
       o[shName] = fAsymAmpVsPt_Beam[beamId] = h1d;
 
@@ -187,7 +188,7 @@ void WBosAsymHContainer::BookHists()
 
    shName = "hWBosonAsymAmpVsPt_";
    //h1d = new rh::H1D(shName.c_str(), "; W Boson P_{T}; Asym Amp.;", 10, 0, 10, "E1 GRIDX GRIDY");
-   h1d = new rh::H1D(shName.c_str(), "; W Boson P_{T}; Asym Amp.;", 7, xBinsPt, "E1 GRIDX GRIDY");
+   h1d = new rh::H1D(shName.c_str(), "; W Boson P_{T}; Asym Amp.;", 6, xBinsPt, "E1 GRIDX GRIDY");
    h1d->GetYaxis()->SetRangeUser(-1.5, 1.5);
    o[shName] = fAsymAmpVsPt = h1d;
 }
