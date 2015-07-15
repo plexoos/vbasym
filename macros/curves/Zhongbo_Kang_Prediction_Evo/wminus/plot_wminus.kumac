@@ -1,0 +1,74 @@
+*********************************************
+*      W-
+*********************************************
+opt nbox
+set ylab 1.0
+set xlab 2.1
+set xval 0.2
+set yval 0.3
+set ndvy 510
+set ndvx 508
+set vsiz 0.4
+set asiz 0.4
+set chhe 0.4
+size 16 14
+for/file 1 w_minus.ps
+meta -1 -111
+
+n=37
+ve/cr y([n]) r; ve/cr AN_peng([n]) r; ve/cr tmp([n]) r
+ve/cr AN_noTMD([n]) r; ve/cr AN_kang([n]) r; ve/cr AN_rogers([n]) r; ve/cr AN_anselmino([n]) r
+
+ve/read y,tmp,AN_noTMD wpm-noTMD.dat
+ve/read y,AN_peng wminus-peng.dat
+ve/read y,tmp,AN_kang wpm-kang.dat
+ve/read y,tmp,AN_rogers wpm-rogers.dat
+ve/read y,tmp,AN_anselmino wpm-anselmino.dat
+
+m=0.333333
+vscale AN_noTMD [m] AN_noTMD
+
+null -2 2 -0.01 0.15
+
+set plci 1
+set dmod 1
+graph [n] y AN_noTMD c
+key -1.5 0.12 1 '0903.3629 ([\264]1/3)' 0.5 L
+
+set plci 2
+set dmod 1
+graph [n] y AN_kang c
+key -1.5 0.109 1 '1401.5078' 0.5 L
+
+set plci 3
+set dmod 1
+graph [n] y AN_peng c
+key -1.5 0.098 1 '1308.5003' 0.5 L
+
+set plci 4
+set dmod 1
+graph [n] y AN_rogers c
+key -1.5 0.087 1 '1112.4423' 0.5 L
+
+set plci 6
+set dmod 1
+graph [n] y AN_anselmino c
+key -1.5 0.076 1 '1204.1239' 0.5 L
+
+set plci 1
+set hcol 1
+set hwid 1
+set dmod 1
+**set lwid 1
+fun/plot 0 -2 2 's'
+
+itx 1.2 0.12 'W^[-]'
+
+atitle 'y' 'A?N'
+
+
+close 1
+ve/del *
+hi/del *
+
+return

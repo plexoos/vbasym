@@ -1,0 +1,43 @@
+*** Begin of history file: Mon Jul  6 10:56:26 2015
+opt nbox
+set ylab 1.0
+set xlab 2.1
+set xval 0.2
+set yval 0.3
+set ndvy 508
+set ndvx 508
+set vsiz 0.4
+set asiz 0.4
+set chhe 0.4
+size 16 14
+for/file 1 w_plus.ps
+meta -1 -111
+* n=37
+* ve/cr y([n]) r; ve/cr AN_peng([n]) r; ve/cr tmp([n]) r;
+* ve/cr AN_noTMD([n]) r; ve/cr AN_kang([n]) r; ve/cr AN_rogers([n]) r; ve/cr AN_anselmino([n]) r
+ve/cr y(37) r; ve/cr AN_peng(37) r; ve/cr tmp(37) r;
+ve/cr AN_noTMD(37) r; ve/cr AN_kang(37) r; ve/cr AN_rogers(37) r; ve/cr AN_anselmino(37) r
+ve/read y,AN_peng wplus-peng.dat
+ve/read y,AN_noTMD,tmp wpm-noTMD.dat
+opt nbox
+set ylab 1.0
+set xlab 2.1
+set xval 0.2
+set yval 0.3
+set ndvy 508
+set ndvx 508
+set vsiz 0.4
+set asiz 0.4
+set chhe 0.4
+size 16 14
+for/file 1 w_plus.ps
+meta -1 -111
+* n=37
+* ve/cr y([n]) r; ve/cr AN_peng([n]) r; ve/cr tmp([n]) r;
+* ve/cr AN_notmd([n]) r; ve/cr AN_kang([n]) r; ve/cr AN_rogers([n]) r; ve/cr AN_anselmino([n]) r
+ve/cr y(37) r; ve/cr AN_peng(37) r; ve/cr tmp(37) r;
+ve/cr AN_notmd(37) r; ve/cr AN_kang(37) r; ve/cr AN_rogers(37) r; ve/cr AN_anselmino(37) r
+ve/read y,AN_peng wplus-peng.dat
+ve/read y,AN_notmd,tmp wpm-notmd.dat
+quit
+*** End   of history file: Mon Jul  6 10:58:27 2015

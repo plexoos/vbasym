@@ -1,0 +1,54 @@
+*********************************************
+*      W-
+*      data files: 87
+*********************************************
+opt nbox
+set ylab 1.0
+set xlab 2.1
+set xval 0.2
+set yval 0.3
+set ndvy 508
+set ndvx 508
+set vsiz 0.4
+set asiz 0.4
+set chhe 0.4
+size 16 14
+for/file 1 w_minus.ps
+meta -1 -111
+
+n=37
+ve/cr y([n]) r; ve/cr AN([n]) r; ve/cr tmp([n]) r
+ve/cr ANm([n]) r; ve/cr errAN([n]) r;
+ve/cr erry([n]) r 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+
+ve/read y,tmp,tmp,AN fort.87
+ve/read y,ANm,errAN fort.870
+
+null -2 2 -0.06 0.06
+
+set dmod 1
+set hcol 5
+set htyp 144
+hplot/err y ANm erry errAN [n] 20 0.0 '3'
+
+set plci 2
+set dmod 1
+graph [n] y AN c
+
+set plci 1
+set hcol 1
+set hwid 1
+**set lwid 1
+fun/plot 0 -2 2 's'
+
+itx 1.0 0.04 'W^[-]'
+itx 0.7 -0.04 '1401.5078'
+
+atitle 'y' 'A?N'
+
+
+close 1
+ve/del *
+hi/del *
+
+return
