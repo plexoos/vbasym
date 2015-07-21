@@ -74,10 +74,11 @@ void analysis2011()
 
    float lumiDataTot       = 24.42; // pb-1
    float lumiDataEff       = 23.99; // pb-1
-   float lumiMC_Z          = 1621;  // pb-1
+   //float lumiMC_Z          = 1621;  // pb-1
+   float lumiMC_Z          = 1802;  // pb-1 // s.f. 30 Jan 2015
    float lumiMC_WpToTauTau = 1945;  // pb-1
-   float lumiMC_WmToTauTau = 1802;  // pb-1
-   //float lumiMC_WmToTauTau = 1403; // pb-1
+   //float lumiMC_WmToTauTau = 1802;  // pb-1
+   float lumiMC_WmToTauTau = 1403; // pb-1  // s.f. 30 Jan 2015
 
    /*
    // OLD version as of July (MC files from JB)
