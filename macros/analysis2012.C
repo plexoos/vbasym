@@ -1,0 +1,1750 @@
+double integrateGraph(TGraph* graph, int first=0, int last=-1) {
+
+if (first < 0) first = 0;
+   Int_t fNpoints = graph->GetN();
+   if (last < 0) last = fNpoints - 1;
+   if (last >= graph->GetN()) last = fNpoints - 1;
+   if (first >= last) return 0;
+   Int_t np = last - first + 1;
+   Double_t sum = 0.0;
+   double* fY = graph->GetY();
+   double* fX = graph->GetX();
+   //for(Int_t i=first;i<=last;i++) {
+   //   Int_t j = first + (i-first+1)%np;
+   //   sum += TMath::Abs(fX[i]*fY[j]);
+   //   sum -= TMath::Abs(fY[i]*fX[j]);
+   //}
+   for (Int_t i = first; i <= last; i++) {
+      Int_t j = first + (i - first + 1) % np;
+      sum += (fY[i] + fY[j]) * (fX[j] - fX[i]);
+   }
+   return 0.5 * TMath::Abs(sum);
+
+}
+
+
+double scaleGraph(TGraph* graph, float scale=1, int first=0, int last=-1) {
+
+if (first < 0) first = 0;
+   Int_t fNpoints = graph->GetN();
+   if (last < 0) last = fNpoints - 1;
+   if (last >= graph->GetN()) last = fNpoints - 1;
+   if (first >= last) return 0;
+   double* fX = graph->GetX();
+   double* fY = graph->GetY();
+   //vector<double> fYsc(fNpoints, 0.); // creates a vector with fNpoints and initializes it to 0
+   //cout << fX << " " << fY << " " << fYsc << endl;
+   //cout << fX << " " << fY << endl;
+
+   for (Int_t i = first; i <= last; i++) {
+      fY[i] *= scale;
+      graph->SetPoint(i,fX[i],fY[i]);
+   }
+
+}
+
+
+void analysis2012()
+{
+   std::cout.setf( std::ios::fixed, std:: ios::floatfield ); // floatfield set to fixed
+
+   //gROOT->Reset();
+
+   // Load the libraries:
+   //gROOT->Macro("/star/u/fazio/offline/users/fazio/vbasym/macros/loadLibs.C");
+
+   TString inPath        = "/star/institutions/bnl_me/fazio/vbana_out/";
+   TString inPathNew     = "/star/institutions/bnl_me/fazio/stana_out/runlists/";
+   TString outPath       = "~/vbasym_results/plots/2012/";
+   //TString outPath       = "~/vbasym_results/plots/4prelim";
+   //TString outPathPaper  = "~/vbasym_results/plots/paper";
+
+   //Styles:
+   gStyle->SetPadBottomMargin(0.15);
+   //gStyle->SetPadLeftMargin(0.13);
+   gStyle->SetPadLeftMargin(0.17);
+   gStyle->SetStatFontSize(0.05);
+   gStyle->SetOptStat("mruoi");
+   gStyle->SetPadRightMargin(0.25);
+   gStyle->SetMarkerStyle(20);
+   gStyle->SetStatX(0.99);
+   gStyle->SetOptFit(1);
+   gStyle->SetOptDate(0);
+
+
+   //float lumiDataTot       = 24.42; // pb-1
+   //float lumiDataEff       = 23.99; // pb-1
+   //float lumiMC_Z          = 1621;  // pb-1
+   //float lumiMC_WpToTauNu = 1945;  // pb-1
+   //float lumiMC_WmToTauNu = 1802;  // pb-1
+   float lumiData12Tot       = 85.853;// pb-1
+   float lumiData12Eff       = 85.853;// pb-1
+   float lumiMC12_Z          = 1045;  // pb-1
+   float lumiMC12_WpToTauNu = 1101;  // pb-1
+   float lumiMC12_WmToTauNu = 1096;  // pb-1
+   float lumiMC12_Wp        = 1106;  // pb-1
+   float lumiMC12_Wm        = 1101;  // pb-1
+
+   float scaleZ    = lumiData12Eff / lumiMC12_Z;
+   float scaleWptt = lumiData12Eff / lumiMC12_WpToTauNu;
+   float scaleWmtt = lumiData12Eff / lumiMC12_WmToTauNu;
+   float scaleWp   = lumiData12Eff / lumiMC12_Wp;
+   float scaleWm   = lumiData12Eff / lumiMC12_Wm;
+
+   cout.precision(3);
+   cout << "*****************************************" << endl;
+   cout << "SCALE FACTORS" << endl;
+   cout << "Z0 lumi scale factor =" << scaleZ << endl;
+   cout << "Wp->tv lumi scale factor =" << scaleWptt << endl;
+   cout << "Wm->tv lumi scale factor =" << scaleWmtt << endl;
+   cout << "Wp->ev lumi scale factor =" << scaleWp << endl;
+   cout << "Wm->ev lumi scale factor =" << scaleWm << endl;
+   cout << "*****************************************" << endl;
+
+   // open histogram files
+   TFile *fileData   = TFile::Open(inPathNew + "run12_pp_long_j3/hist/vbana_oldstyle.root");
+   TFile *fileMCWp   = TFile::Open(inPathNew + "run12_mc_Wp2enu.lis/hist/vbana_oldstyle.root");
+   TFile *fileMCWm   = TFile::Open(inPathNew + "run12_mc_Wm2enu.lis/hist/vbana_oldstyle.root");
+   TFile *fileMCQCD  = TFile::Open(inPathNew + "run12_QCD.lis/hist/vbana_oldstyle.root");
+   TFile *fileMCZ    = TFile::Open(inPathNew + "run12_mc_Z2ee.lis/hist/vbana_oldstyle.root");
+   TFile *fileMCWptt = TFile::Open(inPathNew + "run12_mc_Wp2tautau.lis/hist/vbana_oldstyle.root");
+   TFile *fileMCWmtt = TFile::Open(inPathNew + "run12_mc_Wm2tautau.lis/hist/vbana_oldstyle.root");
+
+   // W total (W+ + W-)
+   TH1 *hd_PtLepTPC     = (TH1*) fileData->Get("track_cand_pass_wbos/hTrackPt");
+   TH1 *hd_PtLep        = (TH1*) fileData->Get("event_pass_wbos/hCandidateTrackEScaledPt");
+   TH1 *hZ_PtLep        = (TH1*) fileMCZ->Get("event_pass_wbos/hCandidateTrackEScaledPt");
+   TH1 *hWp_PtLep       = (TH1*) fileMCWp->Get("event_pass_wbos/hCandidateTrackEScaledPt");
+   TH1 *hWm_PtLep       = (TH1*) fileMCWm->Get("event_pass_wbos/hCandidateTrackEScaledPt");
+   TH1 *hWptt_PtLep     = (TH1*) fileMCWptt->Get("event_pass_wbos/hCandidateTrackEScaledPt");
+   TH1 *hWmtt_PtLep     = (TH1*) fileMCWmtt->Get("event_pass_wbos/hCandidateTrackEScaledPt");
+   TH1 *hQ_PtLep        = (TH1*) fileMCQCD->Get("event_pass_wbos/hCandidateTrackEScaledPt");
+
+   TH1 *hd_PtLepTPCPt15 = (TH1*) fileData->Get("track_cand_pass_wbos_Pt>15/hTrackPt");
+   TH1 *hd_PtLepPt15    = (TH1*) fileData->Get("event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   TH1 *hZ_PtLepPt15    = (TH1*) fileMCZ->Get("event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   TH1 *hWp_PtLepPt15   = (TH1*) fileMCWp->Get("event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   TH1 *hWm_PtLepPt15   = (TH1*) fileMCWm->Get("event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   TH1 *hWptt_PtLepPt15 = (TH1*) fileMCWptt->Get("event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   TH1 *hWmtt_PtLepPt15 = (TH1*) fileMCWmtt->Get("event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   TH1 *hQ_PtLepPt15    = (TH1*) fileMCQCD->Get("event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+
+   //TH1 *hd_PtLepQCD     = (TH1*) fileData->Get("track_cand_pass_qcd/hEcalScaledPt");
+   TH1 *hd_PtLepQCD     = (TH1*) fileData->Get("event_pass_qcd/hCandidateTrackEScaledPt");
+   TH1 *hd_PtLepQCDPt15 = (TH1*) fileData->Get("event_pass_qcd_pt>15/hCandidateTrackEScaledPt");
+
+   hd_PtLep->Rebin(3);  // 3 GeV per bin (originally 1 GeV)
+   hZ_PtLep->Rebin(3);
+   hWp_PtLep->Rebin(3);
+   hWm_PtLep->Rebin(3);
+   hWptt_PtLep->Rebin(3);
+   hWmtt_PtLep->Rebin(3);
+   hQ_PtLep->Rebin(3);
+   hd_PtLepQCD->Rebin(3);
+   hd_PtLepPt15->Rebin(3);
+   hZ_PtLepPt15->Rebin(3);
+   hWp_PtLepPt15->Rebin(3);
+   hWm_PtLepPt15->Rebin(3);
+   hWptt_PtLepPt15->Rebin(3);
+   hWmtt_PtLepPt15->Rebin(3);
+   hQ_PtLepPt15->Rebin(3);
+   hd_PtLepQCDPt15->Rebin(3);
+
+
+   TH2 *hd_QxEtoPt_Vs_Et          = (TH2 *)fileData->Get("track_cand_pass_wbos/hQxEtoPt_Vs_Et_PrimaryTrack");
+   cout << hd_QxEtoPt_Vs_Et->ClassName() << endl;
+   TH2 *hd_QxEtoPt_Vs_Et_passCut  = (TH2 *)fileData->Get("track_cand_pass_wbos/hQxEtoPt_Vs_Et_PrimaryTrack");
+
+
+   TH2 *hd_PtNeutrinoVsEle        = (TH2*) fileData->Get("event_pass_wbos/hPtBalanceTracksNeutralsVsElecEt");
+   TH2 *hd_PtNeutrinoVsEleNocut   = (TH2*) fileData->Get("event_has_candidate_pt>15/hPtBalanceTracksNeutralsVsElecEt");
+   TH1 *hd_PtWReco                = (TH1*) fileData->Get("event_pass_wbos/hTrackRecoilWithNeutralsPt");
+
+   TH1 *hWp_PtWReco               = (TH1*) fileMCWp->Get("event_pass_wbos/hTrackRecoilWithNeutralsPt");
+   TH1 *hWp_PtWReco_zoomin        = (TH1*) fileMCWp->Get("event_pass_wbos/hTrackRecoilWithNeutralsPt_zoomin");
+   TH1 *hWp_PtWGen                = (TH1*) fileMCWp->Get("event_mc/hWBosonPt");
+   TH1 *hWp_PtWGen_zoomin         = (TH1*) fileMCWp->Get("event_mc/hWBosonPt_zoomin");
+   TH2 *hWp_PtWGenOverReco        = (TH2*) fileMCWp->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPt_GenOverReco");
+   TH2 *hWp_PtWGenOverReco_zoomin = (TH2*) fileMCWp->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin");
+   TH2 *hWp_Jets_PtWGenOverReco        = (TH2*) fileMCWp->Get("event_mc_pass_wbos/hJetRecoilPt_GenOverReco");
+   TH2 *hWp_Jets_PtWGenOverReco_zoomin = (TH2*) fileMCWp->Get("event_mc_pass_wbos/hJetRecoilPt_GenOverReco_zoomin");
+   TH1 *hd_PtWRecoCorrected       = (TH1*) fileData->Get("event_pass_wbos/hTrackRecoilWithNeutralsPtCorrected");
+   TH1 *hd_PtWRecoCorrected_zoomin= (TH1*) fileData->Get("event_pass_wbos/hTrackRecoilWithNeutralsPtCorrected_zoomin");
+
+   TH1 *hWm_PtWReco               = (TH1*) fileMCWm->Get("event_pass_wbos/hTrackRecoilWithNeutralsPt");
+   TH1 *hWm_PtWReco_zoomin        = (TH1*) fileMCWm->Get("event_pass_wbos/hTrackRecoilWithNeutralsPt_zoomin");
+   TH1 *hWm_PtWGen                = (TH1*) fileMCWm->Get("event_mc/hWBosonPt");
+   TH1 *hWm_PtWGen_zoomin         = (TH1*) fileMCWm->Get("event_mc/hWBosonPt_zoomin");
+   TH2 *hWm_PtWGenOverReco        = (TH2*) fileMCWm->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPt_GenOverReco");
+   TH2 *hWm_PtWGenOverReco_zoomin = (TH2*) fileMCWm->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPt_GenOverReco_zoomin");
+   TH2 *hWm_Jets_PtWGenOverReco        = (TH2*) fileMCWm->Get("event_mc_pass_wbos/hJetRecoilPt_GenOverReco");
+   TH2 *hWm_Jets_PtWGenOverReco_zoomin = (TH2*) fileMCWm->Get("event_mc_pass_wbos/hJetRecoilPt_GenOverReco_zoomin");
+
+   TH1 *hWp_PhiRecoil_vs_PhiWGen  = (TH1 *)fileMCWp->Get("event_mc_pass_wbos/hTrackRecoilPhiVsWBosonPhi");
+
+   TH1 *hWp_PtRecoil_vs_PtWGen    = (TH1 *)fileMCWp->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPtVsWBosonPt");
+   TH1 *hWp_PtRecoilCorr_vs_PtWGen= (TH1 *)fileMCWp->Get("event_mc_pass_wbos/hTrackRecoilTpcNeutralsPtCorrectedVsWBosonPt_copy");
+
+   TH1 *hWp_PhiRecoil_vs_PhiWGen  = (TH1 *)fileMCWp->Get("event_mc_pass_wbos/hTrackRecoilPhiVsWBosonPhi");
+
+
+// W+
+   TH1 *hd_Wp_PtLep        = (TH1 *)fileData->Get("W+_event_pass_wbos/hCandidateTrackEScaledPt");
+   TH1 *hZ_Wp_PtLep        = (TH1 *)fileMCZ->Get("W+_event_pass_wbos/hCandidateTrackEScaledPt");
+   TH1 *hWp_Wp_PtLep       = (TH1 *)fileMCWp->Get("W+_event_pass_wbos/hCandidateTrackEScaledPt");
+   TH1 *hWm_Wp_PtLep       = (TH1 *)fileMCWm->Get("W+_event_pass_wbos/hCandidateTrackEScaledPt");
+   TH1 *hWptt_Wp_PtLep     = (TH1 *)fileMCWptt->Get("W+_event_pass_wbos/hCandidateTrackEScaledPt");
+   TH1 *hQ_Wp_PtLep        = (TH1 *)fileMCQCD->Get("W+_event_pass_wbos/hCandidateTrackEScaledPt");
+
+   TH1 *hd_Wp_PtLepPt15    = (TH1*) fileData->Get("W+_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   TH1 *hZ_Wp_PtLepPt15    = (TH1*) fileMCZ->Get("W+_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   TH1 *hWp_Wp_PtLepPt15   = (TH1*) fileMCWp->Get("W+_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   TH1 *hWm_Wp_PtLepPt15   = (TH1*) fileMCWm->Get("W+_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   TH1 *hWptt_Wp_PtLepPt15 = (TH1*) fileMCWptt->Get("W+_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   TH1 *hQ_Wp_PtLepPt15    = (TH1*) fileMCQCD->Get("W+_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+
+   TH1 *hd_Wp_PtLepQCD     = (TH1 *)fileData->Get("W+_event_pass_qcd/hCandidateTrackEScaledPt");
+   TH1 *hd_Wp_PtLepQCDPt15 = (TH1 *)fileData->Get("W+_event_pass_qcd_pt>15/hCandidateTrackEScaledPt");
+
+   hd_Wp_PtLep->Rebin(3);
+   hZ_Wp_PtLep->Rebin(3);
+   hWp_Wp_PtLep->Rebin(3);
+   hWm_Wp_PtLep->Rebin(3);
+   hWptt_Wp_PtLep->Rebin(3);
+   hQ_Wp_PtLep->Rebin(3);
+   hd_Wp_PtLepQCD->Rebin(3);
+   hd_Wp_PtLepPt15->Rebin(3);
+   hZ_Wp_PtLepPt15->Rebin(3);
+   hWp_Wp_PtLepPt15->Rebin(3);
+   hWm_Wp_PtLepPt15->Rebin(3);
+   hWptt_Wp_PtLepPt15->Rebin(3);
+   hQ_Wp_PtLepPt15->Rebin(3);
+   hd_Wp_PtLepQCDPt15->Rebin(3);
+
+   TH1 *hd_Wp_PtWReco                = (TH1*) fileData->Get("W+_event_pass_wbos/hTrackRecoilWithNeutralsPt");
+   TH1 *hd_Wp_PtWReco_zoomin         = (TH1*) fileData->Get("W+_event_pass_wbos/hTrackRecoilWithNeutralsPt_zoomin");
+   TH1 *hWp_Wp_PtWReco               = (TH1*) fileMCWp->Get("W+_event_pass_wbos/hTrackRecoilWithNeutralsPt");
+   TH1 *hWp_Wp_PtWReco_zoomin        = (TH1*) fileMCWp->Get("W+_event_pass_wbos/hTrackRecoilWithNeutralsPt_zoomin");
+
+   TH1 *hd_Wp_PtWRecoCorrected          = (TH1*) fileData->Get("W+_event_pass_wbos/hTrackRecoilWithNeutralsPtCorrected");
+   TH1 *hd_Wp_PtWRecoCorrected_zoomin   = (TH1*) fileData->Get("W+_event_pass_wbos/hTrackRecoilWithNeutralsPtCorrected_zoomin");
+
+   TH2 *hWp_RecoVsGenLeptonPt           = (TH2*) fileMCWp->Get("event_mc/hRecoVsGenLeptonPt");
+
+
+// W-
+   TH1 *hd_Wm_PtLep        = (TH1 *)fileData->Get("W-_event_pass_wbos/hCandidateTrackEScaledPt");
+   TH1 *hZ_Wm_PtLep        = (TH1 *)fileMCZ->Get("W-_event_pass_wbos/hCandidateTrackEScaledPt");
+   TH1 *hWp_Wm_PtLep       = (TH1 *)fileMCWp->Get("W-_event_pass_wbos/hCandidateTrackEScaledPt");
+   TH1 *hWm_Wm_PtLep       = (TH1 *)fileMCWm->Get("W-_event_pass_wbos/hCandidateTrackEScaledPt");
+   TH1 *hWmtt_Wm_PtLep     = (TH1 *)fileMCWmtt->Get("W-_event_pass_wbos/hCandidateTrackEScaledPt");
+   TH1 *hQ_Wm_PtLep        = (TH1 *)fileMCQCD->Get("W-_event_pass_wbos/hCandidateTrackEScaledPt");
+
+   TH1 *hd_Wm_PtLepPt15    = (TH1*) fileData->Get("W-_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   TH1 *hZ_Wm_PtLepPt15    = (TH1*) fileMCZ->Get("W-_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   TH1 *hWp_Wm_PtLepPt15   = (TH1*) fileMCWp->Get("W-_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   TH1 *hWm_Wm_PtLepPt15   = (TH1*) fileMCWm->Get("W-_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   TH1 *hWmtt_Wm_PtLepPt15 = (TH1*) fileMCWmtt->Get("W-_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+   TH1 *hQ_Wm_PtLepPt15    = (TH1*) fileMCQCD->Get("W-_event_pass_wbos_pt>15/hCandidateTrackEScaledPt");
+
+   //TH1 *hd_Wm_PtLepQCD     = (TH1 *)fileData->Get("W-_track_cand_pass_qcd/hEcalScaledPt");
+   TH1 *hd_Wm_PtLepQCD     = (TH1 *)fileData->Get("W-_track_cand_pass_qcd/hCandidateTrackEScaledPt");
+   TH1 *hd_Wm_PtLepQCDPt15 = (TH1*) fileData->Get("W-_event_pass_qcd_pt>15/hCandidateTrackEScaledPt");
+
+   hd_Wm_PtLep->Rebin(3);
+   hZ_Wm_PtLep->Rebin(3);
+   hWp_Wm_PtLep->Rebin(3);
+   hWm_Wm_PtLep->Rebin(3);
+   hWmtt_Wm_PtLep->Rebin(3);
+   hQ_Wm_PtLep->Rebin(3);
+   hd_Wm_PtLepQCD->Rebin(3);
+   hd_Wm_PtLepPt15->Rebin(3);
+   hZ_Wm_PtLepPt15->Rebin(3);
+   hWp_Wm_PtLepPt15->Rebin(3);
+   hWm_Wm_PtLepPt15->Rebin(3);
+   hWmtt_Wm_PtLepPt15->Rebin(3);
+   hQ_Wm_PtLepPt15->Rebin(3);
+   hd_Wm_PtLepQCDPt15->Rebin(3);
+
+   TH1 *hd_Wm_PtWReco                = (TH1 *)fileData->Get("W-_event_pass_wbos/hTrackRecoilWithNeutralsPt");
+   TH1 *hd_Wm_PtWReco_zoomin         = (TH1*) fileData->Get("W-_event_pass_wbos/hTrackRecoilWithNeutralsPt_zoomin");
+
+   TH1 *hWm_Wm_PtWReco               = (TH1 *)fileMCWm->Get("W-_event_pass_wbos/hTrackRecoilWithNeutralsPt");
+   TH1 *hWm_Wm_PtWReco_zoomin        = (TH1*) fileMCWm->Get("W-_event_pass_wbos/hTrackRecoilWithNeutralsPt_zoomin");
+
+   TH1 *hd_Wm_PtWRecoCorrected       = (TH1*) fileData->Get("W-_event_pass_wbos/hTrackRecoilWithNeutralsPtCorrected");
+   TH1 *hd_Wm_PtWRecoCorrected_zoomin= (TH1*) fileData->Get("W-_event_pass_wbos/hTrackRecoilWithNeutralsPtCorrected_zoomin");
+
+
+   //-----------------------------------------------------------------------------------------------------------------
+
+   hd_PtLepTPC->GetXaxis()->SetTitle("P_{T}^{lep}(TPC) [GeV/c]");
+   hd_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hZ_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWp_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWptt_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWmtt_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hQ_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hd_Wp_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hZ_Wp_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWp_Wp_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWm_Wp_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWptt_Wp_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hQ_Wp_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hd_Wm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hZ_Wm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWp_Wm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWm_Wm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWmtt_Wm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hQ_Wm_PtLep->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hd_PtLepTPCPt15->GetXaxis()->SetTitle("P_{T}^{lep}(TPC)");
+   hd_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hZ_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWp_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWm_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWptt_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWmtt_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hQ_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hd_Wp_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hZ_Wp_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWp_Wp_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWm_Wp_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWptt_Wp_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hQ_Wp_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hd_Wm_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hZ_Wm_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWp_Wm_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWm_Wm_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hWmtt_Wm_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+   hQ_Wm_PtLepPt15->GetXaxis()->SetTitle("P_{T}^{lep} [GeV/c]");
+
+   hd_PtLepTPC->GetYaxis()->SetTitle("events");
+   hd_PtLep->GetYaxis()->SetTitle("events");
+   hZ_PtLep->GetYaxis()->SetTitle("events");
+   hWp_PtLep->GetYaxis()->SetTitle("events");
+   hWm_PtLep->GetYaxis()->SetTitle("events");
+   hWptt_PtLep->GetYaxis()->SetTitle("events");
+   hWmtt_PtLep->GetYaxis()->SetTitle("events");
+   hQ_PtLep->GetYaxis()->SetTitle("events");
+   hd_Wp_PtLep->GetYaxis()->SetTitle("events");
+   hZ_Wp_PtLep->GetYaxis()->SetTitle("events");
+   hWp_Wp_PtLep->GetYaxis()->SetTitle("events");
+   hWm_Wp_PtLep->GetYaxis()->SetTitle("events");
+   hWptt_Wp_PtLep->GetYaxis()->SetTitle("events");
+   hQ_Wp_PtLep->GetYaxis()->SetTitle("events");
+   hd_Wm_PtLep->GetYaxis()->SetTitle("events");
+   hZ_Wm_PtLep->GetYaxis()->SetTitle("events");
+   hWp_Wm_PtLep->GetYaxis()->SetTitle("events");
+   hWm_Wm_PtLep->GetYaxis()->SetTitle("events");
+   hWmtt_Wm_PtLep->GetYaxis()->SetTitle("events");
+   hQ_Wm_PtLep->GetYaxis()->SetTitle("events");
+   hd_PtLepTPCPt15->GetYaxis()->SetTitle("events");
+   hd_PtLepPt15->GetYaxis()->SetTitle("events");
+   hZ_PtLepPt15->GetYaxis()->SetTitle("events");
+   hWp_PtLepPt15->GetYaxis()->SetTitle("events");
+   hWm_PtLepPt15->GetYaxis()->SetTitle("events");
+   hWptt_PtLepPt15->GetYaxis()->SetTitle("events");
+   hWmtt_PtLepPt15->GetYaxis()->SetTitle("events");
+   hQ_PtLepPt15->GetYaxis()->SetTitle("events");
+   hd_Wp_PtLepPt15->GetYaxis()->SetTitle("events");
+   hZ_Wp_PtLepPt15->GetYaxis()->SetTitle("events");
+   hWp_Wp_PtLepPt15->GetYaxis()->SetTitle("events");
+   hWm_Wp_PtLepPt15->GetYaxis()->SetTitle("events");
+   hWptt_Wp_PtLepPt15->GetYaxis()->SetTitle("events");
+   hQ_Wp_PtLepPt15->GetYaxis()->SetTitle("events");
+   hd_Wm_PtLepPt15->GetYaxis()->SetTitle("events");
+   hZ_Wm_PtLepPt15->GetYaxis()->SetTitle("events");
+   hWp_Wm_PtLepPt15->GetYaxis()->SetTitle("events");
+   hWm_Wm_PtLepPt15->GetYaxis()->SetTitle("events");
+   hWmtt_Wm_PtLepPt15->GetYaxis()->SetTitle("events");
+   hQ_Wm_PtLepPt15->GetYaxis()->SetTitle("events");
+
+   hd_PtLepTPC->SetNameTitle("hd_PtLepTPC", "Data");
+   hd_PtLep->SetNameTitle("hd_PtLep", "Data");
+   hd_Wp_PtLep->SetNameTitle("hd_Wp_PtLep", "Run12 (W+)");
+   hd_Wm_PtLep->SetNameTitle("hd_Wm_PtLep", "Run12 (W-)");
+   hd_PtLepTPCPt15->SetNameTitle("hd_PtLepTPCPt15", "Data");
+   hd_PtLepPt15->SetNameTitle("hd_PtLepPt15", "Data");
+   hd_Wp_PtLepPt15->SetNameTitle("hd_Wp_PtLepPt15", "Data (W+)");
+   hd_Wm_PtLepPt15->SetNameTitle("hd_Wm_PtLepPt15", "Data (W-)");
+
+   hd_PtLepTPC->SetTitleOffset(1.3, "y");
+   hd_PtLep->SetTitleOffset(1.3, "y");
+   hd_Wp_PtLep->SetTitleOffset(1.3, "y");
+   hd_Wm_PtLep->SetTitleOffset(1.3, "y");
+   hd_PtLepTPCPt15->SetTitleOffset(1.3, "y");
+   hd_PtLepPt15->SetTitleOffset(1.3, "y");
+   hd_Wp_PtLepPt15->SetTitleOffset(1.3, "y");
+   hd_Wm_PtLepPt15->SetTitleOffset(1.3, "y");
+
+   TH1F *hd_PtLep_1 = (TH1F *)hd_PtLep->Clone("hd_PtLep_1");
+   TH1F *hZ_PtLep_1 = (TH1F *)hZ_PtLep->Clone("hZ_PtLep_1");
+   TH1F *hWptt_PtLep_1 = (TH1F *)hWptt_PtLep->Clone("hWptt_PtLep_1");
+   TH1F *hWmtt_PtLep_1 = (TH1F *)hWmtt_PtLep->Clone("hWmtt_PtLep_1");
+   TH1F *hd_Wp_PtLep_1 = (TH1F *)hd_Wp_PtLep->Clone("hd_Wp_PtLep_1");
+   TH1F *hZ_Wp_PtLep_1 = (TH1F *)hZ_Wp_PtLep->Clone("hZ_Wp_PtLep_1");
+   TH1F *hWptt_Wp_PtLep_1 = (TH1F *)hWptt_Wp_PtLep->Clone("hWptt_Wp_PtLep_1");
+   TH1F *hd_Wm_PtLep_1 = (TH1F *)hd_Wm_PtLep->Clone("hd_Wm_PtLep_1");
+   TH1F *hZ_Wm_PtLep_1 = (TH1F *)hZ_Wm_PtLep->Clone("hZ_Wm_PtLep_1");
+   TH1F *hWmtt_Wm_PtLep_1 = (TH1F *)hWmtt_Wm_PtLep->Clone("hWmtt_Wm_PtLep_1");
+
+   TH1F *hd_PtLepPt15_1 = (TH1F *)hd_PtLepPt15->Clone("hd_PtLepPt15_1");
+   TH1F *hZ_PtLepPt15_1 = (TH1F *)hZ_PtLepPt15->Clone("hZ_PtLepPt15_1");
+   TH1F *hWptt_PtLepPt15_1 = (TH1F *)hWptt_PtLepPt15->Clone("hWptt_PtLepPt15_1");
+   TH1F *hWmtt_PtLepPt15_1 = (TH1F *)hWmtt_PtLepPt15->Clone("hWmtt_PtLepPt15_1");
+   TH1F *hd_Wp_PtLepPt15_1 = (TH1F *)hd_Wp_PtLepPt15->Clone("hd_Wp_PtLepPt15_1");
+   TH1F *hZ_Wp_PtLepPt15_1 = (TH1F *)hZ_Wp_PtLepPt15->Clone("hZ_Wp_PtLepPt15_1");
+   TH1F *hWptt_Wp_PtLepPt15_1 = (TH1F *)hWptt_Wp_PtLepPt15->Clone("hWptt_Wp_PtLepPt15_1");
+   TH1F *hd_Wm_PtLepPt15_1 = (TH1F *)hd_Wm_PtLepPt15->Clone("hd_Wm_PtLepPt15_1");
+   TH1F *hZ_Wm_PtLepPt15_1 = (TH1F *)hZ_Wm_PtLepPt15->Clone("hZ_Wm_PtLepPt15_1");
+   TH1F *hWmtt_Wm_PtLepPt15_1 = (TH1F *)hWmtt_Wm_PtLepPt15->Clone("hWmtt_Wm_PtLepPt15_1");
+
+
+   TCanvas *c1 = new TCanvas("c1", "", 800, 800);
+   c1->Divide(3, 3);
+
+   c1_1->cd();
+   hd_PtLepTPC->Draw();
+   c1_2->cd();
+   hd_PtLep_1->SetNameTitle("hd_PtLep", "Data");
+   hd_PtLep_1->Draw();
+   c1_3->cd();
+   hZ_PtLep_1->SetNameTitle("hZ_PtLep", "Z^{0}->ee");
+   hZ_PtLep_1->Draw();
+   c1_4->cd();
+   hWp_PtLep->SetNameTitle("hWp_PtLep", "W^{+}->e#nu_{e}");
+   hWp_PtLep->Draw();
+   c1_5->cd();
+   hWm_PtLep->SetNameTitle("hWp_PtLep", "W^{-}->e#nu_{e}");
+   hWm_PtLep->Draw();
+   c1_6->cd();
+   hWptt_PtLep_1->SetNameTitle("hWp_PtLep", "W^{+}->#tau#nu_{#tau}");
+   hWptt_PtLep_1->Draw();
+   c1_7->cd();
+   hWmtt_PtLep_1->SetNameTitle("hWp_PtLep", "W^{-}->#tau#nu_{#tau}");
+   hWmtt_PtLep_1->Draw();
+   c1_8->cd();
+   hQ_PtLep->SetNameTitle("hQ_PtLep", "QCD");
+   hQ_PtLep->Draw();
+
+   c1->Print(outPath + "/plot_1.eps");
+   c1->Print(outPath + "/plot_1.png");
+
+
+   TCanvas *c1b = new TCanvas("c1b", "panel PT>15", 800, 800);
+   c1b->Divide(3, 3);
+
+   c1b_1->cd();
+   hd_PtLepTPCPt15->Draw();
+   c1b_2->cd();
+   hd_PtLepPt15_1->SetNameTitle("hd_PtLepPt15", "Data");
+   hd_PtLepPt15_1->Draw();
+   c1b_3->cd();
+   hZ_PtLepPt15_1->SetNameTitle("hZ_PtLepPt15", "Z^{0}->ee");
+   hZ_PtLepPt15_1->Draw();
+   c1b_4->cd();
+   hWp_PtLepPt15->SetNameTitle("hWp_PtLepPt15", "W^{+}->e#nu_{e}");
+   hWp_PtLepPt15->Draw();
+   c1b_5->cd();
+   hWm_PtLepPt15->SetNameTitle("hWp_PtLepPt15", "W^{-}->e#nu_{e}");
+   hWm_PtLepPt15->Draw();
+   c1b_6->cd();
+   hWptt_PtLepPt15_1->SetNameTitle("hWp_PtLepPt15", "W^{+}->#tau#nu_{#tau}");
+   hWptt_PtLepPt15_1->Draw();
+   c1b_7->cd();
+   hWmtt_PtLepPt15_1->SetNameTitle("hWp_PtLepPt15", "W^{-}->#tau#nu_{#tau}");
+   hWmtt_PtLepPt15_1->Draw();
+   c1b_8->cd();
+   hQ_PtLepPt15->SetNameTitle("hQ_PtLepPt15", "QCD");
+   hQ_PtLepPt15->Draw();
+
+   c1b->Print(outPath + "/plot_1b.eps");
+   c1b->Print(outPath + "/plot_1b.png");
+
+
+
+   TCanvas *c2 = new TCanvas("c2", "W TOTAL sample", 800, 800);
+
+   TH1F *hWp_PtLep_2 = (TH1F *)hWp_PtLep->Clone("hWp_PtLep_2");
+   TH1F *hWm_PtLep_2 = (TH1F *)hWm_PtLep->Clone("hWm_PtLep_2");
+
+   hZ_PtLep    -> Scale(scaleZ);
+   hWptt_PtLep -> Scale(scaleWptt);
+   hWmtt_PtLep -> Scale(scaleWmtt);
+   hWp_PtLep_2 -> Scale(scaleWp);
+   hWm_PtLep_2 -> Scale(scaleWm);
+   hd_PtLep    -> Add(hd_PtLep, hZ_PtLep, 1, -1);
+   hd_PtLep    -> Add(hd_PtLep, hWptt_PtLep, 1, -1);
+   hd_PtLep    -> Add(hd_PtLep, hWmtt_PtLep, 1, -1);
+
+   TH1F *hZ_PtLep_2    = (TH1F *)hZ_PtLep->Clone("hZ_PtLep_2");
+   TH1F *hWptt_PtLep_2 = (TH1F *)hWptt_PtLep->Clone("hWptt_PtLep_2");
+   TH1F *hWmtt_PtLep_2 = (TH1F *)hWmtt_PtLep->Clone("hWmtt_PtLep_2");
+   TH1F *hd_PtLep_2    = (TH1F *)hd_PtLep->Clone("hd_PtLep_2");
+
+   c2->Divide(2, 2);
+   c2_1->cd();
+   c2_1->SetLogy(1);
+   hZ_PtLep_2-> SetFillStyle(3448);
+   hZ_PtLep_2-> SetFillColor(kGreen);
+   hd_PtLep_1->Draw();
+   hZ_PtLep_2-> SetStats(0);
+   hWptt_PtLep_2-> SetFillStyle(3446);
+   hWptt_PtLep_2-> SetFillColor(kRed);
+   hWptt_PtLep_2-> SetStats(0);
+   hWptt_PtLep_2->Draw("same");
+   hWmtt_PtLep_2-> SetFillColor(kBlue);
+   hWmtt_PtLep_2-> SetStats(0);
+   hZ_PtLep_2->Draw("same");
+   hWmtt_PtLep_2->Draw("same");
+
+   c2_2->cd();
+   c2_2->SetLogy(1);
+   hZ_PtLep_2-> SetStats(1);
+   hZ_PtLep_2->SetNameTitle("hZ_PtLep_2", "Z^{0}->ee - norm. to data lumi");
+   hZ_PtLep_2->Draw();
+
+   c2_3->cd();
+   c2_3->SetLogy(1);
+   hWptt_PtLep_2-> SetStats(1);
+   hWptt_PtLep_2->SetNameTitle("hWptt_PtLep_2", "W^{+}->#tau#nu_{#tau} - norm. to data lumi");
+   hWptt_PtLep_2-> SetFillColor(kRed);
+   hWptt_PtLep_2->Draw();
+
+   c2_4->cd();
+   c2_4->SetLogy(1);
+   hWmtt_PtLep_2-> SetStats(1);
+   hWmtt_PtLep_2->SetNameTitle("hWmtt_PtLep_2", "W^{-}->#tau#nu_{#tau} - norm. to data lumi");
+   hWmtt_PtLep_2-> SetFillColor(kBlue);
+   hWmtt_PtLep_2->Draw();
+
+
+   c2->Print(outPath + "/plot_2.eps");
+   c2->Print(outPath + "/plot_2.png");
+
+
+   TCanvas *c2b = new TCanvas("c2b", "W TOTAL sample", 800, 800);
+
+   hZ_PtLepPt15->Scale(scaleZ);
+   hWptt_PtLepPt15->Scale(scaleWptt);
+   hWmtt_PtLepPt15->Scale(scaleWmtt);
+   hd_PtLepPt15->Add(hd_PtLepPt15, hZ_PtLepPt15, 1, -1);
+   hd_PtLepPt15->Add(hd_PtLepPt15, hWptt_PtLepPt15, 1, -1);
+   hd_PtLepPt15->Add(hd_PtLepPt15, hWmtt_PtLepPt15, 1, -1);
+
+   TH1F *hZ_PtLepPt15_2 = (TH1F *)hZ_PtLepPt15->Clone("hZ_PtLepPt15_2");
+   TH1F *hWptt_PtLepPt15_2 = (TH1F *)hWptt_PtLepPt15->Clone("hWptt_PtLepPt15_2");
+   TH1F *hWmtt_PtLepPt15_2 = (TH1F *)hWmtt_PtLepPt15->Clone("hWmtt_PtLepPt15_2");
+   TH1F *hd_PtLepPt15_2 = (TH1F *)hd_PtLepPt15->Clone("hd_PtLepPt15_2");
+
+   c2b->Divide(2, 2);
+   c2b_1->cd();
+   c2b_1->SetLogy(1);
+   hZ_PtLepPt15_2-> SetFillStyle(3448);
+   hZ_PtLepPt15_2-> SetFillColor(kGreen);
+   hd_PtLepPt15_1->Draw();
+   hZ_PtLepPt15_2-> SetStats(0);
+   hWptt_PtLepPt15_2-> SetFillStyle(3446);
+   hWptt_PtLepPt15_2-> SetFillColor(kRed);
+   hWptt_PtLepPt15_2-> SetStats(0);
+   hWptt_PtLepPt15_2->Draw("same");
+   hWmtt_PtLepPt15_2-> SetFillColor(kBlue);
+   hWmtt_PtLepPt15_2-> SetStats(0);
+   hZ_PtLepPt15_2->Draw("same");
+   hWmtt_PtLepPt15_2->Draw("same");
+
+   c2b_2->cd();
+   c2b_2->SetLogy(1);
+   hZ_PtLepPt15_2-> SetStats(1);
+   hZ_PtLepPt15_2->SetNameTitle("hZ_PtLepPt15_2", "Z^{0}->ee - norm. to data lumi");
+   hZ_PtLepPt15_2->Draw();
+
+   c2b_3->cd();
+   c2b_3->SetLogy(1);
+   hWptt_PtLepPt15_2-> SetStats(1);
+   hWptt_PtLepPt15_2->SetNameTitle("hWptt_PtLepPt15_2", "W^{+}->#tau#nu_{#tau} - norm. to data lumi");
+   hWptt_PtLepPt15_2-> SetFillColor(kRed);
+   hWptt_PtLepPt15_2->Draw();
+
+   c2b_4->cd();
+   c2b_4->SetLogy(1);
+   hWmtt_PtLepPt15_2-> SetStats(1);
+   hWmtt_PtLepPt15_2->SetNameTitle("hWmtt_PtLepPt15_2", "W^{-}->#tau#nu_{#tau} - norm. to data lumi");
+   hWmtt_PtLepPt15_2-> SetFillColor(kBlue);
+   hWmtt_PtLepPt15_2->Draw();
+
+
+   c2b->Print(outPath + "/plot_2b.eps");
+   c2b->Print(outPath + "/plot_2b.png");
+
+
+   TCanvas *c2c = new TCanvas("c2c", "W TOTAL - QCD data driven - PtEle > 15 GeV", 800, 400);
+
+
+   TH1F *hd_PtLepQCDPt15_1 = (TH1F *)hd_PtLepQCDPt15->Clone("hd_PtLepQCDPt15_1");
+
+   Double_t bin0 =  hd_PtLepPt15_2-> GetBinContent(0);
+   Double_t bin1 =  hd_PtLepPt15_2-> GetBinContent(1);
+   Double_t bin2 =  hd_PtLepPt15_2-> GetBinContent(2);
+   Double_t bin3 =  hd_PtLepPt15_2-> GetBinContent(3);
+   Double_t bin4 =  hd_PtLepPt15_2-> GetBinContent(4);
+   Double_t bin5 =  hd_PtLepPt15_2-> GetBinContent(5);
+   Double_t bin6 =  hd_PtLepPt15_2-> GetBinContent(6);
+   Double_t bin7 =  hd_PtLepPt15_2-> GetBinContent(7);
+   Double_t bin8 =  hd_PtLepPt15_2-> GetBinContent(8);
+   Double_t bin9 =  hd_PtLepPt15_2-> GetBinContent(9);
+   Double_t bin10 =  hd_PtLepPt15_2-> GetBinContent(10);
+   Double_t bin11 =  hd_PtLepPt15_2-> GetBinContent(11);
+   Double_t bin12 =  hd_PtLepPt15_2-> GetBinContent(12);
+   Double_t bin13 =  hd_PtLepPt15_2-> GetBinContent(13);
+   Double_t bin14 =  hd_PtLepPt15_2-> GetBinContent(14);
+   Double_t bin15 =  hd_PtLepPt15_2-> GetBinContent(15);
+   Double_t bin16 =  hd_PtLepPt15_2-> GetBinContent(16);
+   Double_t bin17 =  hd_PtLepPt15_2-> GetBinContent(17);
+   Double_t bin18 =  hd_PtLepPt15_2-> GetBinContent(18);
+   Double_t bin19 =  hd_PtLepPt15_2-> GetBinContent(19);
+   Double_t bin20 =  hd_PtLepPt15_2-> GetBinContent(20);
+   Double_t bin21 =  hd_PtLepPt15_2-> GetBinContent(21);
+
+   cout << "PtLep QCD bin0 = " <<  bin 0 << endl;
+   cout << "PtLep QCD bin1 = " <<  bin 1 << endl;
+   cout << "PtLep QCD bin2 = " <<  bin 2 << endl;
+   cout << "PtLep QCD bin3 = " <<  bin 3 << endl;
+   cout << "PtLep QCD bin4 = " <<  bin 4 << endl;
+   cout << "PtLep QCD bin5 = " <<  bin 5 << endl;
+   cout << "PtLep QCD bin6 = " <<  bin 6 << endl;
+   cout << "PtLep QCD bin7 = " <<  bin 7 << endl;
+   cout << "PtLep QCD bin8 = " <<  bin 8 << endl;
+   cout << "PtLep QCD bin9 = " <<  bin 9 << endl;
+   cout << "PtLep QCD bin10 = " <<  bin 10 << endl;
+   cout << "PtLep QCD bin11 = " <<  bin 11 << endl;
+   cout << "PtLep QCD bin12 = " <<  bin 12 << endl;
+   cout << "PtLep QCD bin13 = " <<  bin 13 << endl;
+   cout << "PtLep QCD bin14 = " <<  bin 14 << endl;
+   cout << "PtLep QCD bin15 = " <<  bin 15 << endl;
+   cout << "PtLep QCD bin16 = " <<  bin 16 << endl;
+   cout << "PtLep QCD bin17 = " <<  bin 17 << endl;
+   cout << "PtLep QCD bin18 = " <<  bin 18 << endl;
+   cout << "PtLep QCD bin19 = " <<  bin 19 << endl;
+   cout << "PtLep QCD bin20 = " <<  bin 20 << endl;
+   cout << "PtLep QCD bin21 = " <<  bin 21 << endl;
+
+   // Double_t integral15_18=  hd_PtLepPt15_2-> Integral(15,18);
+
+   // Double_t integralQCD15_18= hd_PtLepQCDPt15-> Integral(15,18);
+
+   Double_t integral5_6 =  hd_PtLepPt15_2-> Integral(5, 6);
+
+   Double_t integralQCD5_6 = hd_PtLepQCDPt15-> Integral(5, 6);
+
+   float scaleQCD = integral5_6 / integralQCD5_6;
+
+   cout << "Integral of bin content in the first bin for Signal = " <<  integral5_6 << endl;
+
+   cout << "Integral of bin content in the first bin for QCD = " <<  integralQCD5_6 << endl;
+
+   cout << "QCD scale factor= " << scaleQCD << endl;
+
+   hd_PtLepQCDPt15->Scale(scaleQCD);
+
+   TH1F *hd_PtLepQCDPt15_2 = (TH1F *)hd_PtLepQCDPt15->Clone("hd_PtLepQCDPt15_2");
+
+   hd_PtLepPt15->Add(hd_PtLepPt15, hd_PtLepQCDPt15, 1, -1);
+
+   TH1F *hd_PtLepPt15_3 = (TH1F *)hd_PtLepPt15->Clone("hd_PtLepPt15_3");
+   hd_PtLepPt15_3->SetNameTitle("hd_PtLepPt15_3", "data- Z^{0}->ee, W^{+-}->#tau#nu_{#tau} and QCD subtracted");
+
+
+   c2c->Divide(2, 1);
+
+   c2c_1->cd();
+   // hd_PtLepPt15_2-> SetMinimum(30.);
+   hd_PtLepPt15_2->Draw();
+   hd_PtLepQCDPt15_2-> SetFillStyle(3448);
+   hd_PtLepQCDPt15_2-> SetFillColor(kMagenta);
+   hd_PtLepQCDPt15_2->Draw("same");
+   c2c_2->cd();
+   hd_PtLepPt15_3->Draw();
+
+
+   c2c->Print(outPath + "/plot_2c.eps");
+   c2c->Print(outPath + "/plot_2c.png");
+
+
+   TCanvas *c2d = new TCanvas("c2d", "W TOTAL - QCD data driven", 800, 400);
+
+
+   TH1F *hd_PtLepQCD_1 = (TH1F *)hd_PtLepQCD->Clone("hd_PtLepQCD_1");
+
+   hd_PtLepQCD->Scale(scaleQCD);
+
+   TH1F *hd_PtLepQCD_2 = (TH1F *)hd_PtLepQCD->Clone("hd_PtLepQCD_2");
+
+   hd_PtLep->Add(hd_PtLep, hd_PtLepQCD, 1, -1);
+
+   TH1F *hd_PtLep_3 = (TH1F *)hd_PtLep->Clone("hd_PtLep_3");
+   hd_PtLep_3->SetNameTitle("hd_PtLep_3", "data- Z^{0}->ee, W^{+-}->#tau#nu_{#tau} and QCD subtracted");
+
+
+   c2d->Divide(2, 1);
+
+   c2d_1->cd();
+   hd_PtLep_2->Draw();
+   hd_PtLepQCD_2-> SetFillStyle(3448);
+   hd_PtLepQCD_2-> SetFillColor(kMagenta);
+   hd_PtLepQCD_2->Draw("same");
+   c2d_2->cd();
+   hd_PtLep_3->Draw();
+
+
+   c2d->Print(outPath + "/plot_2d.eps");
+   c2d->Print(outPath + "/plot_2d.png");
+
+
+   TCanvas *c3 = new TCanvas("c3", "W TOTAL sample summary", 800, 400);
+
+   c3->Divide(2, 1);
+
+   c3_1->cd();
+   c3_1->SetLogy(0);
+   hZ_PtLep_2-> SetFillStyle(3448);
+   hZ_PtLep_2-> SetFillColor(kGreen);
+   hd_PtLep_1->Draw();
+   hZ_PtLep_2-> SetStats(0);
+   hWptt_PtLep_2-> SetFillStyle(3446);
+   hWptt_PtLep_2-> SetFillColor(kRed);
+   hWptt_PtLep_2-> SetStats(0);
+   hWptt_PtLep_2->Draw("same");
+   hWmtt_PtLep_2-> SetFillColor(kBlue);
+   hWmtt_PtLep_2-> SetStats(0);
+   hZ_PtLep_2->Draw("same");
+   hWmtt_PtLep_2->Draw("same");
+   hd_PtLepQCD_2->Draw("same");
+
+   c3_2->cd();
+   c3_2->SetLogy(0);
+   // hd_PtLep_2->SetNameTitle("hd_PtLep","data- Z^{0}->ee and W^{+-}->#tau#nu_{#tau} subtracted");
+   hd_PtLep_3->SetMarkerStyle(20);
+   hd_PtLep_3->Draw("E0");
+
+   c3->Print(outPath + "/plot_3.eps");
+   c3->Print(outPath + "/plot_3.png");
+
+
+
+   TCanvas *c3c = new TCanvas("c3c", "W TOTAL sample summary - PtEle > 15 GeV", 800, 400);
+
+   c3c->Divide(2, 1);
+
+   c3c_1->cd();
+   c3c_1->SetLogy(0);
+   hZ_PtLepPt15_2-> SetFillStyle(3448);
+   hZ_PtLepPt15_2-> SetFillColor(kGreen);
+   hd_PtLepPt15_1->Draw();
+   hZ_PtLepPt15_2-> SetStats(0);
+   hWptt_PtLepPt15_2-> SetFillStyle(3446);
+   hWptt_PtLepPt15_2-> SetFillColor(kRed);
+   hWptt_PtLepPt15_2-> SetStats(0);
+   hWptt_PtLepPt15_2->Draw("same");
+   hWmtt_PtLepPt15_2-> SetFillColor(kBlue);
+   hWmtt_PtLepPt15_2-> SetStats(0);
+   hZ_PtLepPt15_2->Draw("same");
+   hWmtt_PtLepPt15_2->Draw("same");
+   hd_PtLepQCDPt15_2->Draw("same");
+
+   c3c_2->cd();
+   c3c_2->SetLogy(0);
+   //hd_PtLepPt15_2->SetNameTitle("hd_PtLepPt15","data- Z^{0}->ee and W^{+-}->#tau#nu_{#tau} subtracted");
+   hd_PtLepPt15_3->SetMarkerStyle(20);
+   hd_PtLepPt15_3->Draw("E0");
+
+   c3c->Print(outPath + "/plot_3c.eps");
+   c3c->Print(outPath + "/plot_3c.png");
+
+
+   // W+ sample
+
+   TCanvas *c4 = new TCanvas("c4", "W+ sample", 800, 800);
+
+   TH1F *hWp_Wp_PtLep_2 = (TH1F *)hWp_Wp_PtLep -> Clone("hWp_Wp_PtLep_2");
+
+   hZ_Wp_PtLep    -> Scale(scaleZ);
+   hWptt_Wp_PtLep -> Scale(scaleWptt);
+   hWp_Wp_PtLep_2 -> Scale(scaleWp);
+   hWp_Wp_PtLep_2 -> Add(hWp_Wp_PtLep_2, hZ_Wp_PtLep, 1, 1);
+   hWp_Wp_PtLep_2 -> Add(hWp_Wp_PtLep_2, hWptt_Wp_PtLep, 1, 1);
+   hd_Wp_PtLep    -> Add(hd_Wp_PtLep, hZ_Wp_PtLep, 1, -1);
+   hd_Wp_PtLep    -> Add(hd_Wp_PtLep, hWptt_Wp_PtLep, 1, -1);
+
+   TH1F *hZ_Wp_PtLep_2    = (TH1F *)hZ_Wp_PtLep    -> Clone("hZ_Wp_PtLep_2");
+   TH1F *hWptt_Wp_PtLep_2 = (TH1F *)hWptt_Wp_PtLep -> Clone("hWptt_Wp_PtLep_2");
+   TH1F *hd_Wp_PtLep_2    = (TH1F *)hd_Wp_PtLep    -> Clone("hd_Wp_PtLep_2");
+
+   //c4->Divide(2, 2);
+
+   TLegend *leg4 = new TLegend(0.5, 0.65, 0.75, 0.9);
+   leg4 -> AddEntry(hd_Wp_PtLep_1,"STAR data", "P");
+   leg4 -> AddEntry(hWp_Wp_PtLep_2,"PYTHIA  W^{+}-> e#nu_{e} + Bkgd ", "L" );
+   leg4 -> AddEntry(hWptt_Wp_PtLep_2,"PYTHIA W^{+}-> #tau#nu_{#tau} ", "F" );
+   leg4 -> AddEntry(hZ_Wp_PtLep_2,"PYTHIA Z^{0}-> e^{+}e^{-}", "F");
+
+   c4-> SetGrid(0,0);
+   c4-> cd();
+   c4-> SetLogy(1);
+   hd_Wp_PtLep_1    -> SetLineWidth(2);
+   hd_Wp_PtLep_1    -> SetMarkerStyle(20);
+   hZ_Wp_PtLep_2    -> SetFillStyle(3448);
+   hZ_Wp_PtLep_2    -> SetFillColor(kGreen);
+   hd_Wp_PtLep_1    -> Draw("e");
+   hZ_Wp_PtLep_2    -> SetStats(0);
+   hWptt_Wp_PtLep_2 -> SetFillStyle(3446);
+   hWptt_Wp_PtLep_2 -> SetFillColor(kRed);
+   hWptt_Wp_PtLep_2 -> SetStats(0);
+   hWptt_Wp_PtLep_2 -> Draw("same");
+   hZ_Wp_PtLep_2    -> Draw("same");
+   hWp_Wp_PtLep_2   -> SetFillStyle(0);
+   hWp_Wp_PtLep_2   -> SetLineStyle(7);
+   hWp_Wp_PtLep_2   -> SetLineWidth(2);
+   hWp_Wp_PtLep_2   -> SetLineColor(kRed);
+   hWp_Wp_PtLep_2   -> Draw("same");
+   leg4 -> Draw();
+
+   c4->Print(outPath + "/plot_4.eps");
+   c4->Print(outPath + "/plot_4.png");
+
+
+   TCanvas *c4b = new TCanvas("c4b", "W+ sample - PtEle > 15 GeV", 800, 800);
+
+   hZ_Wp_PtLepPt15->Scale(scaleZ);
+   hWptt_Wp_PtLepPt15->Scale(scaleWptt);
+   hd_Wp_PtLepPt15->Add(hd_Wp_PtLepPt15, hZ_Wp_PtLepPt15, 1, -1);
+   hd_Wp_PtLepPt15->Add(hd_Wp_PtLepPt15, hWptt_Wp_PtLepPt15, 1, -1);
+
+   TH1F *hZ_Wp_PtLepPt15_2 = (TH1F *)hZ_Wp_PtLepPt15->Clone("hZ_Wp_PtLepPt15_2");
+   TH1F *hWptt_Wp_PtLepPt15_2 = (TH1F *)hWptt_Wp_PtLepPt15->Clone("hWptt_Wp_PtLepPt15_2");
+   TH1F *hd_Wp_PtLepPt15_2 = (TH1F *)hd_Wp_PtLepPt15->Clone("hd_Wp_PtLepPt15_2");
+
+   c4b->Divide(2, 2);
+   c4b_1->cd();
+   c4b_1->SetLogy(1);
+   hZ_Wp_PtLepPt15_2-> SetFillStyle(3448);
+   hZ_Wp_PtLepPt15_2-> SetFillColor(kGreen);
+   hd_Wp_PtLepPt15_1->Draw();
+   hZ_Wp_PtLepPt15_2-> SetStats(0);
+   hWptt_Wp_PtLepPt15_2-> SetFillStyle(3446);
+   hWptt_Wp_PtLepPt15_2-> SetFillColor(kRed);
+   hWptt_Wp_PtLepPt15_2-> SetStats(0);
+   hWptt_Wp_PtLepPt15_2->Draw("same");
+   hZ_Wp_PtLepPt15_2->Draw("same");
+
+   c4b_2->cd();
+   c4b_2->SetLogy(1);
+   hZ_Wp_PtLepPt15_2-> SetStats(1);
+   hZ_Wp_PtLepPt15_2->SetNameTitle("hZ_Wp_PtLepPt15_2", "Z^{0}->ee - norm. to data lumi");
+   hZ_Wp_PtLepPt15_2->Draw();
+
+   c4b_3->cd();
+   c4b_3->SetLogy(1);
+   hWptt_Wp_PtLepPt15_2-> SetStats(1);
+   hWptt_Wp_PtLepPt15_2->SetNameTitle("hWptt_Wp_PtLepPt15_2", "W^{+}->#tau#nu_{#tau} - norm. to data lumi");
+   hWptt_Wp_PtLepPt15_2-> SetFillColor(kRed);
+   hWptt_Wp_PtLepPt15_2->Draw();
+
+
+   c4b->Print(outPath + "/plot_4b.eps");
+   c4b->Print(outPath + "/plot_4b.png");
+
+
+   TCanvas *c4c = new TCanvas("c4c", "W+ sample - QCD data driven - PtEle > 15 GeV", 800, 400);
+
+
+   // TH1F *hd_Wp_PtLepQCDPt15_1 = (TH1F *)hd_Wp_PtLepQCDPt15->Clone("hd_Wp_PtLepQCDPt15_1");
+
+   // Double_t integral_Wp_15_18=  hd_Wp_PtLepPt15_2-> Integral(15,18);
+
+   // Double_t integral_Wp_QCD15_18= hd_Wp_PtLepQCDPt15-> Integral(15,18);
+
+   Double_t integral_Wp_5_6 =  hd_Wp_PtLepPt15_2-> Integral(5, 6);
+
+   Double_t integral_Wp_QCD5_6 = hd_Wp_PtLepQCDPt15-> Integral(5, 6);
+
+   float scale_Wp_QCD = integral_Wp_5_6 / integral_Wp_QCD5_6;
+
+   cout << "W+, Integral of bin content in the first bin for Signal = " <<  integral_Wp_5_6 << endl;
+
+   cout << "W+, Integral of bin content in the first bin for QCD = " <<  integral_Wp_QCD5_6 << endl;
+
+   cout << "W+, QCD scale factor= " << scale_Wp_QCD << endl;
+
+   hd_Wp_PtLepQCDPt15->Scale(scale_Wp_QCD);
+
+   TH1F *hd_Wp_PtLepQCDPt15_2 = (TH1F *)hd_Wp_PtLepQCDPt15->Clone("hd_Wp_PtLepQCDPt15_2");
+
+   hd_Wp_PtLepPt15->Add(hd_Wp_PtLepPt15, hd_Wp_PtLepQCDPt15, 1, -1);
+
+   TH1F *hd_Wp_PtLepPt15_3 = (TH1F *)hd_Wp_PtLepPt15->Clone("hd_Wp_PtLepPt15_3");
+   hd_Wp_PtLepPt15_3->SetNameTitle("hd_Wp_PtLepPt15_3", "data- Z^{0}->ee, W^{+}->#tau#nu_{#tau} and QCD subtracted");
+
+
+   c4c->Divide(2, 1);
+
+   TLegend *leg4c = new TLegend(0.46, 0.70, 0.75, 0.9);
+   leg4c -> AddEntry(hd_Wp_PtLepPt15_2,"STAR data", "F");
+   leg4c -> AddEntry(hd_Wp_PtLepQCDPt15_2,"data driven QCD", "F" );
+
+   c4c_1->cd();
+   // hd_Wp_PtLepPt15_2-> SetMinimum(30.);
+   hd_Wp_PtLepPt15_2   -> Draw();
+   hd_Wp_PtLepQCDPt15_2-> SetFillStyle(3448);
+   hd_Wp_PtLepQCDPt15_2-> SetFillColor(kMagenta);
+   hd_Wp_PtLepQCDPt15_2-> Draw("same");
+   leg4c               -> Draw();
+
+   c4c_2->cd();
+   hd_Wp_PtLepPt15_3   -> Draw();
+
+
+   c4c->Print(outPath + "/plot_4c.eps");
+   c4c->Print(outPath + "/plot_4c.png");
+
+
+   TCanvas *c4d = new TCanvas("c4d", "W+ sample - QCD data driven", 800, 400);
+
+
+   TH1F *hd_Wp_PtLepQCD_1 = (TH1F *)hd_Wp_PtLepQCD->Clone("hd_Wp_PtLepQCD_1");
+
+   hd_Wp_PtLepQCD->Scale(scale_Wp_QCD);
+
+   TH1F *hd_Wp_PtLepQCD_2 = (TH1F *)hd_Wp_PtLepQCD->Clone("hd_Wp_PtLepQCD_2");
+
+   hd_Wp_PtLep->Add(hd_Wp_PtLep, hd_Wp_PtLepQCD, 1, -1);
+
+   TH1F *hd_Wp_PtLep_3 = (TH1F *)hd_Wp_PtLep->Clone("hd_Wp_PtLep_3");
+   hd_Wp_PtLep_3->SetNameTitle("hd_Wp_PtLep_3", "data- Z^{0}->ee, W^{+}->#tau#nu_{#tau} and QCD subtracted");
+
+
+   c4d->Divide(2, 1);
+
+   c4d_1->cd();
+   hd_Wp_PtLep_2->Draw();
+   hd_Wp_PtLepQCD_2-> SetFillStyle(3448);
+   hd_Wp_PtLepQCD_2-> SetFillColor(kMagenta);
+   hd_Wp_PtLepQCD_2->Draw("same");
+   c4d_2->cd();
+   hd_Wp_PtLep_3->Draw();
+
+
+   c4d->Print(outPath + "/plot_4d.eps");
+   c4d->Print(outPath + "/plot_4d.png");
+
+
+   TCanvas *c5 = new TCanvas("c5", "", 800, 400);
+
+   c5-> SetTitle("W+ sample summary");
+   c5->Divide(2, 1);
+
+
+   TLegend *leg5 = new TLegend(0.47, 0.6, 0.75, 0.9);
+   leg5 -> AddEntry(hd_Wp_PtLep_1,"STAR data", "F");
+   leg5 -> AddEntry(hWptt_Wp_PtLep_2,"PYTHIA W^{+}-> #tau#nu_{#tau} ", "F" );
+   leg5 -> AddEntry(hZ_Wp_PtLep_2,"PYTHIA Z^{0}-> e^{+}e^{-}", "F");;
+   leg5 -> AddEntry(hd_Wp_PtLepQCD_2,"data driven QCD", "F");
+
+   c5_1->cd();
+   c5_1->SetLogy(0);
+   hZ_Wp_PtLep_2   -> SetFillStyle(3448);
+   hZ_Wp_PtLep_2   -> SetFillColor(kGreen);
+   hd_Wp_PtLep_1   -> Draw();
+   hZ_Wp_PtLep_2   -> SetStats(0);
+   hWptt_Wp_PtLep_2-> SetFillStyle(3446);
+   hWptt_Wp_PtLep_2-> SetFillColor(kRed);
+   hWptt_Wp_PtLep_2-> SetStats(0);
+   hWptt_Wp_PtLep_2-> Draw("same");
+   hZ_Wp_PtLep_2   -> Draw("same");
+   hd_Wp_PtLepQCD_2-> Draw("same");
+   leg5            -> Draw();
+
+   c5_2->cd();
+   c5_2->SetLogy(0);
+   // hd_Wp_PtLep_2->SetNameTitle("hd_Wp_PtLep","data (W+) - [Z^{0}->ee and W^{+}->#tau#nu_{#tau} subtracted]");
+   hd_Wp_PtLep_3->SetMarkerStyle(20);
+   hd_Wp_PtLep_3->Draw("E0");
+
+   c5->Print(outPath + "/plot_5.eps");
+   c5->Print(outPath + "/plot_5.png");
+
+
+   TCanvas *c5b = new TCanvas("c5b", "", 800, 400);
+
+   c5b-> SetTitle("W+ sample summary - PtEle > 15 GeV");
+   c5b->Divide(2, 1);
+
+   c5b_1->cd();
+   c5b_1->SetLogy(0);
+   hZ_Wp_PtLepPt15_2-> SetFillStyle(3448);
+   hZ_Wp_PtLepPt15_2-> SetFillColor(kGreen);
+   hd_Wp_PtLepPt15_1->Draw();
+   hZ_Wp_PtLepPt15_2-> SetStats(0);
+   hWptt_Wp_PtLepPt15_2-> SetFillStyle(3446);
+   hWptt_Wp_PtLepPt15_2-> SetFillColor(kRed);
+   hWptt_Wp_PtLepPt15_2-> SetStats(0);
+   hWptt_Wp_PtLepPt15_2->Draw("same");
+   hZ_Wp_PtLepPt15_2->Draw("same");
+
+   c5b_2->cd();
+   c5b_2->SetLogy(0);
+   //hd_Wp_PtLepPt15_2->SetNameTitle("hd_Wp_PtLepPt15","data (W+) - [Z^{0}->ee and W^{+}->#tau#nu_{#tau} subtracted]");
+   hd_Wp_PtLepPt15_3->SetMarkerStyle(20);
+   hd_Wp_PtLepPt15_3->Draw("E0");
+
+   c5b->Print(outPath + "/plot_5b.eps");
+   c5b->Print(outPath + "/plot_5b.png");
+
+
+   // W- sample
+
+   TCanvas *c6 = new TCanvas("c6", "W- sample", 800, 800);
+
+   TH1F *hWm_Wm_PtLep_2 = (TH1F *)hWm_Wm_PtLep -> Clone("hWm_Wm_PtLep_2");
+
+   hZ_Wm_PtLep    -> Scale(scaleZ);
+   hWmtt_Wm_PtLep -> Scale(scaleWmtt);
+   hWm_Wm_PtLep_2 -> Scale(scaleWm);
+   hWm_Wm_PtLep_2 -> Add(hWm_Wm_PtLep_2, hZ_Wm_PtLep, 1, 1);
+   hWm_Wm_PtLep_2 -> Add(hWm_Wm_PtLep_2, hWmtt_Wm_PtLep, 1, 1);
+   hd_Wm_PtLep    -> Add(hd_Wm_PtLep, hZ_Wm_PtLep, 1, -1);
+   hd_Wm_PtLep    -> Add(hd_Wm_PtLep, hWmtt_Wm_PtLep, 1, -1);
+
+   TH1F *hZ_Wm_PtLep_2 = (TH1F *)hZ_Wm_PtLep->Clone("hZ_Wm_PtLep_2");
+   TH1F *hWmtt_Wm_PtLep_2 = (TH1F *)hWmtt_Wm_PtLep->Clone("hWmtt_Wm_PtLep_2");
+   TH1F *hd_Wm_PtLep_2 = (TH1F *)hd_Wm_PtLep->Clone("hd_Wm_PtLep_2");
+
+   TLegend *leg6 = new TLegend(0.5, 0.6, 0.75, 0.9);
+   leg6 -> AddEntry(hd_Wm_PtLep_1,"STAR data", "P");
+   leg6 -> AddEntry(hWm_Wm_PtLep_2,"PYTHIA  W^{-}-> e#nu_{e} + Bkgd ", "L" );
+   leg6 -> AddEntry(hWmtt_Wm_PtLep_2,"PYTHIA W^{-}-> #tau#nu_{#tau} ", "F" );
+   leg6 -> AddEntry(hZ_Wm_PtLep_2,"PYTHIA Z^{0}-> e^{+}e^{-}", "F");
+
+   //c6->Divide(2, 2);
+
+   c6-> SetGrid(0,0);
+   c6->cd();
+   c6->SetLogy(1);
+   hd_Wm_PtLep_1   -> SetLineWidth(2);
+   hd_Wm_PtLep_1   -> SetMarkerStyle(20);
+   hZ_Wm_PtLep_2   -> SetFillStyle(3448);
+   hZ_Wm_PtLep_2   -> SetFillColor(kGreen);
+   hd_Wm_PtLep_1   -> Draw("e");
+   hZ_Wm_PtLep_2   -> SetStats(0);
+   hWmtt_Wm_PtLep_2-> SetFillStyle(3446);
+   hWmtt_Wm_PtLep_2-> SetFillColor(kRed);
+   hWmtt_Wm_PtLep_2-> SetStats(0);
+   hWmtt_Wm_PtLep_2-> Draw("same");
+   hZ_Wm_PtLep_2   -> Draw("same");
+   hWm_Wm_PtLep_2  -> SetFillStyle(0);
+   hWm_Wm_PtLep_2  -> SetLineStyle(7);
+   hWm_Wm_PtLep_2  -> SetLineWidth(2);
+   hWm_Wm_PtLep_2  -> SetLineColor(kRed);
+   hWm_Wm_PtLep_2  -> Draw("same");
+   leg6            -> Draw();
+
+   c6->Print(outPath + "/plot_6.eps");
+   c6->Print(outPath + "/plot_6.png");
+
+   TCanvas *c6b = new TCanvas("c6b", "", 800, 800);
+
+   hZ_Wm_PtLepPt15->Scale(scaleZ);
+   hWmtt_Wm_PtLepPt15->Scale(scaleWmtt);
+   hd_Wm_PtLepPt15->Add(hd_Wm_PtLepPt15, hZ_Wm_PtLepPt15, 1, -1);
+   hd_Wm_PtLepPt15->Add(hd_Wm_PtLepPt15, hWmtt_Wm_PtLepPt15, 1, -1);
+
+   TH1F *hZ_Wm_PtLepPt15_2 = (TH1F *)hZ_Wm_PtLepPt15->Clone("hZ_Wm_PtLepPt15_2");
+   TH1F *hWmtt_Wm_PtLepPt15_2 = (TH1F *)hWmtt_Wm_PtLepPt15->Clone("hWmtt_Wm_PtLepPt15_2");
+   TH1F *hd_Wm_PtLepPt15_2 = (TH1F *)hd_Wm_PtLepPt15->Clone("hd_Wm_PtLepPt15_2");
+
+   c6b-> SetTitle("W- sample");
+   c6b->Divide(2, 2);
+   c6b_1->cd();
+   c6b_1->SetLogy(1);
+   hZ_Wm_PtLepPt15_2-> SetFillStyle(3448);
+   hZ_Wm_PtLepPt15_2-> SetFillColor(kGreen);
+   hd_Wm_PtLepPt15_1->Draw();
+   hZ_Wm_PtLepPt15_2-> SetStats(0);
+   hWmtt_Wm_PtLepPt15_2-> SetFillStyle(3446);
+   hWmtt_Wm_PtLepPt15_2-> SetFillColor(kRed);
+   hWmtt_Wm_PtLepPt15_2-> SetStats(0);
+   hWmtt_Wm_PtLepPt15_2->Draw("same");
+   hZ_Wm_PtLepPt15_2->Draw("same");
+
+   c6b_2->cd();
+   c6b_2->SetLogy(1);
+   hZ_Wm_PtLepPt15_2-> SetStats(1);
+
+   hZ_Wm_PtLepPt15_2->SetNameTitle("hZ_Wm_PtLepPt15_2", "Z^{0}->ee - norm. to data lumi");
+   hZ_Wm_PtLepPt15_2->Draw();
+
+   c6b_3->cd();
+   c6b_3->SetLogy(1);
+   hWmtt_Wm_PtLepPt15_2-> SetStats(1);
+   hWmtt_Wm_PtLepPt15_2->SetNameTitle("hWptt_Wm_PtLepPt15_2", "W^{-}->#tau#nu_{#tau} - norm. to data lumi");
+   hWmtt_Wm_PtLepPt15_2-> SetFillColor(kRed);
+   hWmtt_Wm_PtLepPt15_2->Draw();
+
+
+   c6b->Print(outPath + "/plot_6b.eps");
+   c6b->Print(outPath + "/plot_6b.png");
+
+
+   TCanvas *c6c = new TCanvas("c6c", "W- sample - QCD data driven - PtEle > 15 GeV", 800, 400);
+
+
+   TH1F *hd_Wm_PtLepQCDPt15_1 = (TH1F *)hd_Wm_PtLepQCDPt15->Clone("hd_Wm_PtLepQCDPt15_1");
+
+   // Double_t integral_Wm_15_18=  hd_Wm_PtLepPt15_2-> Integral(15,18);
+
+   // Double_t integral_Wm_QCD15_18= hd_Wm_PtLepQCDPt15-> Integral(15,18);
+
+   Double_t integral_Wm_5_6 =  hd_Wm_PtLepPt15_2-> Integral(5, 6);
+
+   Double_t integral_Wm_QCD5_6 = hd_Wm_PtLepQCDPt15-> Integral(5, 6);
+
+   float scale_Wm_QCD = integral_Wm_5_6 / integral_Wm_QCD5_6;
+
+   cout << "W-, Integral of bin content in the first bin for Signal = " <<  integral_Wm_5_6 << endl;
+
+   cout << "W-, Integral of bin content in the first bin for QCD = " <<  integral_Wm_QCD5_6 << endl;
+
+   cout << "W-, QCD scale factor= " << scale_Wm_QCD << endl;
+
+   hd_Wm_PtLepQCDPt15->Scale(scale_Wm_QCD);
+
+   TH1F *hd_Wm_PtLepQCDPt15_2 = (TH1F *)hd_Wm_PtLepQCDPt15->Clone("hd_Wm_PtLepQCDPt15_2");
+
+   hd_Wm_PtLepPt15->Add(hd_Wm_PtLepPt15, hd_Wm_PtLepQCDPt15, 1, -1);
+
+   TH1F *hd_Wm_PtLepPt15_3 = (TH1F *)hd_Wm_PtLepPt15->Clone("hd_Wm_PtLepPt15_3");
+   hd_Wm_PtLepPt15_3->SetNameTitle("hd_Wm_PtLepPt15_3", "data- Z^{0}->ee, W^{-}->#tau#nu_{#tau} and QCD subtracted");
+
+
+   c6c->Divide(2, 1);
+
+   TLegend *leg6c = new TLegend(0.46, 0.70, 0.75, 0.9);
+   leg6c -> AddEntry(hd_Wm_PtLepPt15_2,"STAR data", "F");
+   leg6c -> AddEntry(hd_Wm_PtLepQCDPt15_2,"data driven QCD", "F" );
+
+   c6c_1->cd();
+   // hd_Wp_PtLepPt15_2-> SetMinimum(30.);
+   hd_Wm_PtLepPt15_2    -> Draw();
+   hd_Wm_PtLepQCDPt15_2 -> SetFillStyle(3448);
+   hd_Wm_PtLepQCDPt15_2 -> SetFillColor(kMagenta);
+   hd_Wm_PtLepQCDPt15_2 -> Draw("same");
+   leg6c                -> Draw();
+
+   c6c_2->cd();
+   hd_Wm_PtLepPt15_3->Draw();
+
+
+   c6c->Print(outPath + "/plot_6c.eps");
+   c6c->Print(outPath + "/plot_6c.png");
+
+
+   TCanvas *c6d = new TCanvas("c6d", "W- sample - QCD data driven", 800, 400);
+
+
+   TH1F *hd_Wm_PtLepQCD_1 = (TH1F *)hd_Wm_PtLepQCD->Clone("hd_Wm_PtLepQCD_1");
+
+   hd_Wm_PtLepQCD->Scale(scale_Wm_QCD);
+
+   TH1F *hd_Wm_PtLepQCD_2 = (TH1F *)hd_Wm_PtLepQCD->Clone("hd_Wm_PtLepQCD_2");
+
+   hd_Wm_PtLep->Add(hd_Wm_PtLep, hd_Wm_PtLepQCD, 1, -1);
+
+   TH1F *hd_Wm_PtLep_3 = (TH1F *)hd_Wm_PtLep->Clone("hd_Wm_PtLep_3");
+   hd_Wm_PtLep_3->SetNameTitle("hd_Wm_PtLep_3", "data- Z^{0}->ee, W^{-}->#tau#nu_{#tau} and QCD subtracted");
+
+
+   c6d->Divide(2, 1);
+
+   c6d_1->cd();
+   hd_Wm_PtLep_2->Draw();
+   hd_Wm_PtLepQCD_2-> SetFillStyle(3448);
+   hd_Wm_PtLepQCD_2-> SetFillColor(kMagenta);
+   hd_Wm_PtLepQCD_2->Draw("same");
+   c6d_2->cd();
+   hd_Wm_PtLep_3->Draw();
+
+
+   c6d->Print(outPath + "/plot_6d.eps");
+   c6d->Print(outPath + "/plot_6d.png");
+
+
+   TCanvas *c7 = new TCanvas("c7", "", 800, 400);
+
+   c7-> SetTitle("W- sample summary ");
+   c7->Divide(2, 1);
+
+   TLegend *leg7 = new TLegend(0.47, 0.6, 0.75, 0.9);
+   leg7 -> AddEntry(hd_Wm_PtLep_1,"STAR data", "F");
+   leg7 -> AddEntry(hWmtt_Wm_PtLep_2,"PYTHIA W^{-}-> #tau#nu_{#tau} ", "F" );
+   leg7 -> AddEntry(hZ_Wm_PtLep_2,"PYTHIA Z^{0}-> e^{+}e^{-}", "F");;
+   leg7 -> AddEntry(hd_Wm_PtLepQCD_2,"data driven QCD", "F");
+
+   c7_1->cd();
+   c7_1->SetLogy(0);
+   hZ_Wm_PtLep_2-> SetFillStyle(3448);
+   hZ_Wm_PtLep_2-> SetFillColor(kGreen);
+   hd_Wm_PtLep_1->Draw();
+   hZ_Wm_PtLep_2-> SetStats(0);
+   hWmtt_Wm_PtLep_2-> SetFillStyle(3446);
+   hWmtt_Wm_PtLep_2-> SetFillColor(kRed);
+   hWmtt_Wm_PtLep_2-> SetStats(0);
+   hZ_Wm_PtLep_2->Draw("same");
+   hWmtt_Wm_PtLep_2->Draw("same");
+   hd_Wm_PtLepQCD_2->Draw("same");
+   leg7            ->Draw();
+
+   c7_2->cd();
+   c7_2->SetLogy(0);
+   // hd_Wm_PtLep_2->SetNameTitle("hd_Wm_PtLep","data (W-) - [Z^{0}->ee and W^{-}->#tau#nu_{#tau} subtracted]");
+   hd_Wm_PtLep_3->SetMarkerStyle(20);
+   hd_Wm_PtLep_3->Draw("E0");
+
+   c7->Print(outPath + "/plot_7.eps");
+   c7->Print(outPath + "/plot_7.png");
+
+
+   TCanvas *c7b = new TCanvas("c7b", "", 800, 400);
+
+   c7b-> SetTitle("W- sample summary - PtEle > 15 GeV");
+   c7b->Divide(2, 1);
+
+   c7b_1->cd();
+   c7b_1->SetLogy(0);
+   hZ_Wm_PtLepPt15_2-> SetFillStyle(3448);
+   hZ_Wm_PtLepPt15_2-> SetFillColor(kGreen);
+   hd_Wm_PtLepPt15_1->Draw();
+   hZ_Wm_PtLepPt15_2-> SetStats(0);
+   hWmtt_Wm_PtLepPt15_2-> SetFillStyle(3446);
+   hWmtt_Wm_PtLepPt15_2-> SetFillColor(kRed);
+   hWmtt_Wm_PtLepPt15_2-> SetStats(0);
+   hZ_Wm_PtLepPt15_2->Draw("same");
+   hWmtt_Wm_PtLepPt15_2->Draw("same");
+   hd_Wm_PtLepQCDPt15_2->Draw("same");
+
+   c7b_2->cd();
+   c7b_2->SetLogy(0);
+   //hd_Wm_PtLepPt15_2->SetNameTitle("hd_Wm_PtLepPt15","data (W-) - [Z^{0}->ee and W^{-}->#tau#nu_{#tau} subtracted]");
+   hd_Wm_PtLepPt15_3->SetMarkerStyle(20);
+   hd_Wm_PtLepPt15_3->Draw("E0");
+
+   c7b->Print(outPath + "/plot_7b.eps");
+   c7b->Print(outPath + "/plot_7b.png");
+
+
+   TCanvas *c8paper = new TCanvas("c8paper", "Data/MC summary - PAPER FIGURE", 800, 400);
+
+   c8paper -> Divide(2, 1);
+
+   TLatex *textWp = new TLatex(0.2, 0.84, "W^{+} #rightarrow e^{+} #nu_{e}");
+   textWp -> SetNDC(); 
+   textWp -> SetTextFont(32);
+   textWp -> SetTextSize(0.06);
+   TLatex *textWm = new TLatex(0.2, 0.84, "W^{-} #rightarrow e^{-} #nu_{e}");
+   textWm -> SetNDC(); 
+   textWm -> SetTextFont(32);
+   textWm -> SetTextSize(0.06);
+
+   TLegend *leg9 = new TLegend(0.51, 0.6, 0.9, 0.9);
+   leg9 -> SetFillColor(kWhite);
+   leg9 -> AddEntry(hd_Wp_PtLep_1,"STAR data", "F");
+   leg9 -> AddEntry(hWptt_Wp_PtLep_2,"PYTHIA W^{+}-> #tau#nu_{#tau} ", "F" );
+   leg9 -> AddEntry(hZ_Wp_PtLep_2,"PYTHIA Z^{0}-> e^{+}e^{-}", "F");;
+   leg9 -> AddEntry(hd_Wp_PtLepQCD_2,"data driven QCD", "F");
+
+   c8paper_1 -> cd();
+   c8paper_1 -> SetLeftMargin(0.15);
+   c8paper_1 -> SetRightMargin(0.1);
+   c8paper_1 -> SetGrid(0,0);
+   c8paper_1 -> SetLogy(1);
+   hd_Wp_PtLep_1   -> GetXaxis()->SetRangeUser(20, 81);
+   hd_Wp_PtLep_1   -> SetStats(0);
+   //hd_Wp_PtLep_1   -> SetNameTitle("hd_Wp_PtLep_1","W^{+}->e^{+}#nu_{e}");
+   hd_Wp_PtLep_1   -> SetNameTitle("hd_Wp_PtLep_1","");
+   hd_Wp_PtLep_1   -> Draw();
+   hWptt_Wp_PtLep_2-> Draw("same");
+   hZ_Wp_PtLep_2   -> Draw("same");
+   hZ_Wp_PtLep_2   -> Draw("same");
+   hd_Wp_PtLepQCD_2-> SetFillColor(kBlue);
+   hd_Wp_PtLepQCD_2-> Draw("same");
+   textWp          -> Draw();
+   leg9            -> Draw();
+
+   c8paper_2 -> cd();
+   c8paper_2 -> SetLeftMargin(0.15);
+   c8paper_2 -> SetRightMargin(0.1);
+   c8paper_2 -> SetGrid(0,0);
+   c8paper_2 -> SetLogy(1);
+   hd_Wm_PtLep_1   -> GetXaxis()->SetRangeUser(20, 81);
+   hd_Wm_PtLep_1   -> SetStats(0);
+   //hd_Wm_PtLep_1   -> SetNameTitle("hd_Wm_PtLep_1","W^{-}->e^{-}#nu_{e}");
+   hd_Wm_PtLep_1   -> SetNameTitle("hd_Wm_PtLep_1","");
+   hd_Wm_PtLep_1   -> Draw();
+   hWmtt_Wm_PtLep_2-> Draw("same");
+   hZ_Wm_PtLep_2   -> Draw("same");
+   hZ_Wm_PtLep_2   -> Draw("same");
+   hd_Wm_PtLepQCD_2-> SetFillColor(kBlue);
+   hd_Wm_PtLepQCD_2-> Draw("same");
+   textWm          -> Draw();
+   leg9            -> Draw();
+
+   c8paper -> Print(outPath + "/PapePlot_DataMC.eps");
+   c8paper -> Print(outPath + "/PaperPlot_DataMC.png");
+
+
+   // Calculate Signal/Bkgnd ratios and their errors:
+   float hd_PtLep_1_integral           = hd_PtLep_1->Integral();
+   float hZ_PtLep_2_integral           = hZ_PtLep_2->Integral();
+   float hZ_PtLep_1_integral           = hZ_PtLep_1->Integral();
+   float hZ_PtLep_2_integral_err       = scaleZ * sqrt(hZ_PtLep_1_integral);
+   float hWptt_PtLep_2_integral        = hWptt_PtLep_2->Integral();
+   float hWptt_PtLep_1_integral        = hWptt_PtLep_1->Integral();
+   float hWptt_PtLep_2_integral_err    = scaleWptt * sqrt(hWptt_PtLep_1_integral);
+   float hWmtt_PtLep_2_integral        = hWmtt_PtLep_2->Integral();
+   float hWmtt_PtLep_1_integral        = hWmtt_PtLep_1->Integral();
+   float hWmtt_PtLep_2_integral_err    = scaleWmtt * sqrt(hWmtt_PtLep_1_integral);
+   float hd_PtLepQCD_2_integral        = hd_PtLepQCD_2->Integral();
+   float hd_PtLepQCD_1_integral        = hd_PtLepQCD_1->Integral();
+   float hd_PtLepQCD_2_integral_err    = scaleQCD * sqrt(hd_PtLepQCD_1_integral);
+   float hZ_PtLep_2_BoS                = hZ_PtLep_2_integral / hd_PtLep_1_integral;
+   float hZ_PtLep_2_BoS_err            = hZ_PtLep_2_integral_err / hd_PtLep_1_integral;
+   float hWptt_PtLep_2_BoS             = hWptt_PtLep_2_integral / hd_PtLep_1_integral;
+   float hWptt_PtLep_2_BoS_err         = hWptt_PtLep_2_integral_err / hd_PtLep_1_integral;
+   float hWmtt_PtLep_2_BoS             = hWmtt_PtLep_2_integral / hd_PtLep_1_integral;
+   float hWmtt_PtLep_2_BoS_err         = hWmtt_PtLep_2_integral_err / hd_PtLep_1_integral;
+   float hd_PtLepQCD_2_BoS             = hd_PtLepQCD_2_integral / hd_PtLep_1_integral;
+   float hd_PtLepQCD_2_BoS_err         = hd_PtLepQCD_2_integral_err / hd_PtLep_1_integral;
+
+   float hd_Wp_PtLep_1_integral        = hd_Wp_PtLep_1->Integral();
+   float hZ_Wp_PtLep_2_integral        = hZ_Wp_PtLep_2->Integral();
+   float hZ_Wp_PtLep_1_integral        = hZ_Wp_PtLep_1->Integral();
+   float hZ_Wp_PtLep_2_integral_err    = scaleZ * sqrt(hZ_Wp_PtLep_1_integral);
+   float hWptt_Wp_PtLep_2_integral     = hWptt_Wp_PtLep_2->Integral();
+   float hWptt_Wp_PtLep_1_integral     = hWptt_Wp_PtLep_1->Integral();
+   float hWptt_Wp_PtLep_2_integral_err = scaleWptt * sqrt(hWptt_Wp_PtLep_1_integral);
+   float hd_Wp_PtLepQCD_2_integral     = hd_Wp_PtLepQCD_2->Integral();
+   float hd_Wp_PtLepQCD_1_integral     = hd_Wp_PtLepQCD_1->Integral();
+   float hd_Wp_PtLepQCD_2_integral_err = scale_Wp_QCD * sqrt(hd_Wp_PtLepQCD_1_integral);
+   float hZ_Wp_PtLep_2_BoS             = hZ_Wp_PtLep_2_integral / hd_Wp_PtLep_1_integral;
+   float hZ_Wp_PtLep_2_BoS_err         = hZ_Wp_PtLep_2_integral_err / hd_Wp_PtLep_1_integral;
+   float hWptt_Wp_PtLep_2_BoS          = hWptt_Wp_PtLep_2_integral / hd_Wp_PtLep_1_integral;
+   float hWptt_Wp_PtLep_2_BoS_err      = hWptt_Wp_PtLep_2_integral_err / hd_Wp_PtLep_1_integral;
+   float hd_Wp_PtLepQCD_2_BoS          = hd_Wp_PtLepQCD_2_integral / hd_Wp_PtLep_1_integral;
+   float hd_Wp_PtLepQCD_2_BoS_err      = hd_Wp_PtLepQCD_2_integral_err / hd_Wp_PtLep_1_integral;
+
+   float hd_Wm_PtLep_1_integral        = hd_Wm_PtLep_1->Integral();
+   float hZ_Wm_PtLep_2_integral        = hZ_Wm_PtLep_2->Integral();
+   float hZ_Wm_PtLep_1_integral        = hZ_Wm_PtLep_1->Integral();
+   float hZ_Wm_PtLep_2_integral_err    = scaleZ * sqrt(hZ_Wm_PtLep_1_integral);
+   float hWmtt_Wm_PtLep_2_integral     = hWmtt_Wm_PtLep_2->Integral();
+   float hWmtt_Wm_PtLep_1_integral     = hWmtt_Wm_PtLep_1->Integral();
+   float hWmtt_Wm_PtLep_2_integral_err = scaleWmtt * sqrt(hWmtt_Wm_PtLep_1_integral);
+   float hd_Wm_PtLepQCD_2_integral     = hd_Wm_PtLepQCD_2->Integral();
+   float hd_Wm_PtLepQCD_1_integral     = hd_Wm_PtLepQCD_1->Integral();
+   float hd_Wm_PtLepQCD_2_integral_err = scale_Wm_QCD * sqrt(hd_Wm_PtLepQCD_1_integral);
+   float hZ_Wm_PtLep_2_BoS             = hZ_Wm_PtLep_2_integral / hd_Wm_PtLep_1_integral;
+   float hZ_Wm_PtLep_2_BoS_err         = hZ_Wm_PtLep_2_integral_err / hd_Wm_PtLep_1_integral;
+   float hWmtt_Wm_PtLep_2_BoS          = hWmtt_Wm_PtLep_2_integral / hd_Wm_PtLep_1_integral;
+   float hWmtt_Wm_PtLep_2_BoS_err      = hWmtt_Wm_PtLep_2_integral_err / hd_Wm_PtLep_1_integral;
+   float hd_Wm_PtLepQCD_2_BoS          = hd_Wm_PtLepQCD_2_integral / hd_Wm_PtLep_1_integral;
+   float hd_Wm_PtLepQCD_2_BoS_err      = hd_Wm_PtLepQCD_2_integral_err / hd_Wm_PtLep_1_integral;
+
+
+   cout.precision(2);
+
+   cout << "************************************************ " << endl;
+   cout << "------------ " << endl;
+   cout << "TOTAL SAMPLE " << endl;
+   cout << "------------ " << endl;
+   cout << "Signal events    = " << hd_PtLep_1_integral << endl;
+   cout << "Z0 -> ee events  = " << hZ_PtLep_2_integral << " +- " << hZ_PtLep_2_integral_err << endl;
+   cout << "Z0 -> ee B/S     = " << 100 * hZ_PtLep_2_BoS << "%" << " +- " << 100 * hZ_PtLep_2_BoS_err << "%" << endl;
+   cout << "W+ -> tau events = " << hWptt_PtLep_2_integral << " +- " << hWptt_PtLep_2_integral_err << endl;
+   cout << "W+ -> tau B/S    = " << 100 * hWptt_PtLep_2_BoS << "%" << " +- " << 100 * hWptt_PtLep_2_BoS_err << "%" << endl;
+   cout << "W- -> tau events = " << hWmtt_PtLep_2_integral << " +- " << hWmtt_PtLep_2_integral_err << endl;
+   cout << "W- -> tau B/S    = " << 100 * hWmtt_PtLep_2_BoS << "%" << " +- " << 100 * hWmtt_PtLep_2_BoS_err << "%" << endl;
+   cout << "QCD events       = " << hd_PtLepQCD_2_integral << " +- " << hd_PtLepQCD_2_integral_err << endl;
+   cout << "QCD B/S          = " << 100 * hd_PtLepQCD_2_BoS << "%" << " +- " << 100 * hd_PtLepQCD_2_BoS_err << "%" << endl;
+
+   cout << " " << endl;
+   cout << " " << endl;
+
+   cout << "---------------------- " << endl;
+   cout << "POSITIVE CHARGE SAMPLE " << endl;
+   cout << "---------------------- " << endl;
+   cout << "Signal events    = " << hd_Wp_PtLep_1_integral << endl;
+   cout << "Z0 -> ee events  = " << hZ_Wp_PtLep_2_integral << " +- " << hZ_Wp_PtLep_2_integral_err << endl;
+   cout << "Z0 -> ee B/S     = " << 100 * hZ_Wp_PtLep_2_BoS << "%" << " +- " << 100 * hZ_Wp_PtLep_2_BoS_err << "%" << endl;
+   cout << "W+ -> tau events = " << hWptt_Wp_PtLep_2_integral << " +- " << hWptt_Wp_PtLep_2_integral_err << endl;
+   cout << "W+ -> tau B/S    = " << 100 * hWptt_Wp_PtLep_2_BoS << "%" << " +- " << 100 * hWptt_Wp_PtLep_2_BoS_err << "%" << endl;
+   cout << "QCD events       = " << hd_Wp_PtLepQCD_2_integral << " +- " << hd_Wp_PtLepQCD_2_integral_err << endl;
+   cout << "QCD B/S          = " << 100 * hd_Wp_PtLepQCD_2_BoS << "%" << " +- " << 100 * hd_Wp_PtLepQCD_2_BoS_err << "%" << endl;
+
+   cout << " " << endl;
+   cout << " " << endl;
+
+   cout << "---------------------- " << endl;
+   cout << "NEGATIVE CHARGE SAMPLE " << endl;
+   cout << "---------------------- " << endl;
+   cout << "Signal events    = " << hd_Wm_PtLep_1_integral << endl;
+   cout << "Z0 -> ee events  = " << hZ_Wm_PtLep_2_integral << " +- " << hZ_Wm_PtLep_2_integral_err << endl;
+   cout << "Z0 -> ee B/S     = " << 100 * hZ_Wm_PtLep_2_BoS << "%" << " +- " << 100 * hZ_Wm_PtLep_2_BoS_err << "%" << endl;
+   cout << "W- -> tau events = " << hWmtt_Wm_PtLep_2_integral << " +- " << hWmtt_Wm_PtLep_2_integral_err << endl;
+   cout << "W- -> tau B/S    = " << 100 * hWmtt_Wm_PtLep_2_BoS << "%" << " +- " << 100 * hWmtt_Wm_PtLep_2_BoS_err << "%" << endl;
+   cout << "QCD events       = " << hd_Wm_PtLepQCD_2_integral << " +- " << hd_Wm_PtLepQCD_2_integral_err << endl;
+   cout << "QCD B/S          = " << 100 * hd_Wm_PtLepQCD_2_BoS << "%" << " +- " << 100 * hd_Wm_PtLepQCD_2_BoS_err << "%" << endl;
+   cout << "************************************************ " << endl;
+
+
+
+   // plot the Q over Pt distributions:
+
+
+   TCanvas *c9 = new TCanvas("c9", "DATA QEt/Pt", 800, 400);
+
+   c9->Divide(2, 1);
+
+   c9_1->cd();
+   hd_QxEtoPt_Vs_Et->Draw();
+   //TLine *line1 = new TLine(0,0.4,c8_1->GetFrame()->GetX2(),0.4);
+   TLine *line1 = new TLine(0, 0.4, 80, 0.4);
+   line1->SetLineColor(kRed);
+   line1->SetLineWidth(2);
+   line1->Draw();
+   line1->DrawLine(0, -0.4, 80, -0.4);
+   line1->DrawLine(0, 1.8, 80, 1.8);
+   line1->DrawLine(0, -1.4, 80, -1.4);
+   c9_2->cd();
+   hd_QxEtoPt_Vs_Et_passCut->Draw();
+
+   c9->Print(outPath + "/plot_9.eps");
+   c9->Print(outPath + "/plot_9.png");
+
+
+   TCanvas *c10 = new TCanvas("c10", "", 800, 400);
+
+   c10-> SetTitle("Reco vs Gen");
+
+   c10->Divide(2, 1);
+   //c10->SetLeftMargin(0.2);
+
+   c10_1->cd();
+   //c10_1->SetLeftMargin(0.8);
+   hWp_PtWGen->SetNameTitle("hWp_PtWGen", "Generated W+");
+   hWp_PtWGen->GetYaxis()->SetTitleOffset(1.8);
+   hWp_PtWGen->SetFillColor(kYellow);
+   hWp_PtWGen->Draw();
+
+   c10_2->cd();
+   hWp_PtWReco->SetNameTitle("hWp_PtWReco", "Reconstructed W+");
+   hWp_PtWReco->GetXaxis()->SetTitle("Tracks-based recoil P_{T} [GeV/c]");
+   hWp_PtWReco->GetYaxis()->SetTitleOffset(1.8);
+   hWp_PtWReco->SetFillColor(kYellow);
+   hWp_PtWReco->Draw();
+
+   c10->Print(outPath + "/plot_10.eps");
+   c10->Print(outPath + "/plot_10.png");
+
+
+   TCanvas *c10i = new TCanvas("c10i", "", 800, 400);
+
+   c10i-> SetTitle("Reco vs Gen zoom");
+
+   c10i->Divide(2, 1);
+
+   c10i_1->cd();
+   hWp_PtWGen_zoomin->SetNameTitle("hWp_PtWGen", "Generated W+");
+   hWp_PtWGen_zoomin->GetYaxis()->SetTitleOffset(1.8);
+   hWp_PtWGen_zoomin->Draw();
+
+   c10i_2->cd();
+   hWp_PtWReco_zoomin->SetNameTitle("hWp_PtWReco", "Reconstructed W+");
+   hWp_PtWReco_zoomin->GetXaxis()->SetTitle("Tracks-based recoil P_{T} [GeV/c]");
+   hWp_PtWReco_zoomin->GetYaxis()->SetTitleOffset(1.8);
+   hWp_PtWReco_zoomin->Draw();
+
+   c10i->Print(outPath + "/plot_10i.eps");
+   c10i->Print(outPath + "/plot_10i.png");
+
+
+   TCanvas *c10b = new TCanvas("c10b", "", 800, 400);
+
+   c10b-> SetTitle("Reco vs Gen");
+
+   c10b->Divide(2, 1);
+
+   c10b_1->cd();
+   hWm_PtWGen->SetNameTitle("hWm_PtWGen", "Generated W-");
+   hWm_PtWGen->GetYaxis()->SetTitleOffset(1.8);
+   hWm_PtWGen->Draw();
+
+   c10b_2->cd();
+   hWm_PtWReco->SetNameTitle("hWm_PtWReco", "Reconstructed W-");
+   hWm_PtWReco->GetXaxis()->SetTitle("Tracks-based recoil P_{T} [GeV/c]");
+   hWm_PtWReco->GetYaxis()->SetTitleOffset(1.8);
+   hWm_PtWReco->Draw();
+
+   c10b->Print(outPath + "/plot_10b.eps");
+   c10b->Print(outPath + "/plot_10b.png");
+
+
+   TCanvas *c10bi = new TCanvas("c10bi", "", 800, 400);
+
+   c10bi-> SetTitle("Reco vs Gen zoom");
+
+   c10bi->Divide(2, 1);
+
+   c10bi_1->cd();
+   hWm_PtWGen_zoomin->SetNameTitle("hWm_PtWGen", "Generated W-");
+   hWm_PtWGen_zoomin->GetYaxis()->SetTitleOffset(1.8);
+   hWm_PtWGen_zoomin->Draw();
+
+   c10bi_2->cd();
+   hWm_PtWReco_zoomin->SetNameTitle("hWm_PtWReco", "Reconstructed W-");
+   hWm_PtWReco_zoomin->GetXaxis()->SetTitle("Tracks-based recoil P_{T} [GeV/c]");
+   hWm_PtWReco_zoomin->GetYaxis()->SetTitleOffset(1.8);
+   hWm_PtWReco_zoomin->Draw();
+
+   //c10bi->Print(outPath + "/plot_10bi.eps");
+   c10bi->Print(outPath + "/plot_10bi.png");
+
+
+   TCanvas *cLeptonPt = new TCanvas("cLeptonPt", "Wp MC sample - Lepton Pt: Reco vs Gen", 500, 500);
+
+   cLeptonPt -> cd();
+   cLeptonPt -> SetLogz(1);
+   hWp_RecoVsGenLeptonPt -> GetYaxis()->SetTitleOffset(1.3);
+   hWp_RecoVsGenLeptonPt -> SetTitle(";Gen.lepton-P_{T} (GeV); Reco. lepton-P_{T} (GeV)");
+   hWp_RecoVsGenLeptonPt -> SetStats(0);
+   hWp_RecoVsGenLeptonPt -> Draw("colz");
+
+   cLeptonPt->Print(outPath + "/plot_RecoVsGenLeptonPt.eps");
+   cLeptonPt->Print(outPath + "/plot_RecoVsGenLeptonPt.png");
+ 
+
+   TCanvas *c10c = new TCanvas("c10c", "", 1000, 400);
+
+   c10c-> SetTitle("Reco vs Gen");
+
+   c10c->Divide(3, 1);
+
+   c10c_1->cd();
+   c10c_1->SetLogz(1);
+   hWp_PtRecoil_vs_PtWGen->GetYaxis()->SetTitleOffset(1.1);
+   hWp_PtRecoil_vs_PtWGen-> SetStats(0);
+   hWp_PtRecoil_vs_PtWGen->Draw();
+
+   c10c_2->cd();
+   c10c_2->SetLogz(1);
+   hWp_PtRecoilCorr_vs_PtWGen->GetYaxis()->SetTitleOffset(1.1);
+   hWp_PtRecoilCorr_vs_PtWGen-> SetStats(0);
+   hWp_PtRecoilCorr_vs_PtWGen->Draw();
+
+   c10c_3->cd();
+   c10c_3->SetLogz(1);
+   hWp_PhiRecoil_vs_PhiWGen-> SetStats(0);
+   hWp_PhiRecoil_vs_PhiWGen->Draw();
+
+   c10c->Print(outPath + "/plot_10c.eps");
+   c10c->Print(outPath + "/plot_10c.png");
+
+
+
+   TCanvas *c10d = new TCanvas("c10d", "", 800, 400);
+
+   c10d-> SetTitle("Reco vs Gen");
+
+   c10d->Divide(2, 1);
+
+   c10d_1->cd();
+   c10d_1->SetLogz(1);
+
+   TF1 *fitPol2  = new TF1("fitPol2","pol2");
+   fitPol2 -> SetLineColor(kBlue);   
+   TF1 *fitPol3  = new TF1("fitPol3","pol3");
+   fitPol3 -> SetLineColor(kBlue);   
+   TF1 *fitPol4  = new TF1("fitPol4","pol4");
+   fitPol4 -> SetLineColor(kBlue);   
+   TF1 *fitPol5  = new TF1("fitPol5","pol5");
+   fitPol5 -> SetLineColor(kBlue);   
+   TF1 *fitPol6  = new TF1("fitPol6","pol6");
+   fitPol6 -> SetLineColor(kBlue);   
+   TF1 *fitExp  = new TF1("fitExp","expo");
+   fitExp -> SetLineColor(kBlue);
+   TF1 *fitGaus  = new TF1("fitGaus","gaus");
+   fitGaus -> SetLineColor(kBlue);
+   TF1 *fitCustom1  = new TF1("fitCustom1","pol5(5)+pol0(1)");
+   fitCustom1 -> SetLineColor(kBlue);
+
+   //hWp_Wp_PtWGenOverReco -> Fit(fitPol2);
+
+   hWp_PtWGenOverReco->GetYaxis()->SetTitleOffset(1.1);
+   //hWp_Wp_PtWGenOverReco->Draw("E1");
+   hWp_PtWGenOverReco->ProfileX("hWp_PtWGenOverReco_pfx", 0, 40);
+   hWp_Jets_PtWGenOverReco->ProfileX("hWp_Jets_PtWGenOverReco_pfx", 0, 40);
+   hWp_PtWGenOverReco_pfx->SetTitle("W+ sample - MC Correction; Tracks-based recoil P_{T} [GeV/c]; W P_{T}/Recoil P_{T}");
+   hWp_PtWGenOverReco_pfx->SetMarkerColor(kRed);
+   hWp_PtWGenOverReco_pfx->SetLineColor(kRed);
+   hWp_PtWGenOverReco_pfx->SetMarkerStyle(20);
+   //hWp_PtWGenOverReco_pfx->Fit(fitPol5,"","",0,6);
+   //hWp_PtWGenOverReco_pfx->Fit("pol0","+","",6,40);
+   hWp_PtWGenOverReco_pfx->Draw();
+   hWp_Jets_PtWGenOverReco_pfx->SetLineColor(kGreen);
+   hWp_Jets_PtWGenOverReco_pfx->Draw("same");
+
+   c10d_2->cd();
+   hd_Wp_PtWRecoCorrected->SetFillStyle(3448);
+   hd_Wp_PtWRecoCorrected->SetFillColor(kGreen);
+   hd_Wp_PtWRecoCorrected->Draw();
+   hd_Wp_PtWReco->SetTitle("Data");
+   hd_Wp_PtWReco->Draw("same");
+   hd_Wp_PtWRecoCorrected->Draw("same");
+
+   //c10d_3->cd();
+   //hd_Wp_PtWRelativeCorr->Draw();
+
+   //c10d->Print(outPath + "/plot_10d.eps");
+   c10d->Print(outPath + "/plot_10d.png");
+
+
+
+   TCanvas *c10di   = new TCanvas("c10di", "", 800, 400);
+
+   TGraph *g1       = new TGraph("./curves/0304002.Wptcurve.txt","%lg %lg");   
+   Double_t int_g1  =  integrateGraph(g1); // the method Integral() not yet implemented on TGraph in ROOT4STAR  
+   Double_t int_hd_Wp_PtWRecoCorrected_zoomin    =  hd_Wp_PtWRecoCorrected_zoomin  -> Integral(); 
+   float scale_g1   = int_hd_Wp_PtWRecoCorrected_zoomin / int_g1;
+   scaleGraph(g1, 0.5*scale_g1);
+
+   c10di-> SetTitle("Reco vs Gen zoom");
+
+   c10di->Divide(2, 1);
+
+   c10di_1->cd();
+   //hWp_Wp_PtWGenOverReco_zoomin -> Fit(fitPol2);
+   hWp_PtWGenOverReco_zoomin->GetYaxis()->SetTitleOffset(1.1);
+   //hWp_Wp_PtWGenOverReco_zoomin->Draw("E1");
+   hWp_PtWGenOverReco_zoomin->ProfileX("hWp_PtWGenOverReco_zoomin_pfx", 0, 20);
+   hWp_Jets_PtWGenOverReco_zoomin->ProfileX("hWp_Jets_PtWGenOverReco_zoomin_pfx", 0, 20);
+   hWp_PtWGenOverReco_zoomin_pfx->SetTitle("W+ sample - MC Correction; Tracks-based recoil P_{T} [GeV/c]; W P_{T}/Recoil P_{T}");
+   hWp_PtWGenOverReco_zoomin_pfx->SetLineColor(kRed);
+   hWp_PtWGenOverReco_zoomin_pfx->SetMarkerColor(kRed);
+   hWp_PtWGenOverReco_zoomin_pfx->SetMarkerStyle(20);
+   hWp_PtWGenOverReco_zoomin_pfx->Fit(fitPol3,"","",0,5);
+   hWp_PtWGenOverReco_zoomin_pfx->Fit("pol0","+","",5,10);
+   hWp_PtWGenOverReco_zoomin_pfx->Draw();
+   hWp_Jets_PtWGenOverReco_zoomin_pfx->SetLineColor(kGreen);
+   hWp_Jets_PtWGenOverReco_zoomin_pfx->Draw("same");
+
+   c10di_2->cd();
+   hd_Wp_PtWRecoCorrected_zoomin ->SetFillStyle(3448);
+   hd_Wp_PtWRecoCorrected_zoomin ->SetFillColor(kGreen);
+   hd_Wp_PtWRecoCorrected_zoomin ->Draw();
+   hd_Wp_PtWReco_zoomin          ->SetTitle("Data");
+   hd_Wp_PtWReco_zoomin          ->Draw("same");
+   hd_Wp_PtWRecoCorrected_zoomin ->Draw("same");
+   g1                            -> SetLineColor(kBlue); 
+   g1                            -> SetLineWidth(3); 
+   g1                            -> Draw("same");
+   TLegend *leg1 = new TLegend(0.45, 0.6, 0.75, 0.9);
+   leg1 -> AddEntry(hd_Wp_PtWReco_zoomin,"Before P_{T} correction", "F");
+   leg1 -> AddEntry(hd_Wp_PtWRecoCorrected_zoomin,"After P_{T} correction", "F" );
+   leg1 -> AddEntry(g1,"RhicBOS 500 GeV", "l");
+   leg1 -> Draw();
+
+   //c10di_3->cd();
+   //hd_Wp_PtWRelativeCorr_zoomin->Draw();
+
+   c10di->SaveAs(outPath + "/plot_10di.png");
+
+
+
+   TCanvas *c10e = new TCanvas("c10e", "", 800, 400);
+
+   c10e-> SetTitle("Reco vs Gen");
+
+   c10e->Divide(2, 1);
+
+   c10e_1->cd();
+   //hWm_Wm_PtWGenOverReco -> Fit(fitPol2);
+   hWm_PtWGenOverReco->GetYaxis()->SetTitleOffset(1.1);
+   //hWm_Wm_PtWGenOverReco->Draw("E1");
+   hWm_PtWGenOverReco->ProfileX("hWm_PtWGenOverReco_pfx", 0, 40);
+   hWm_Jets_PtWGenOverReco->ProfileX("hWm_Jets_PtWGenOverReco_pfx", 0, 40);
+   //hWm_PtWGenOverReco->GetYaxis()->SetTitleOffset(1.1);
+   //hWm_PtWGenOverReco->SetTitle("W- sample - MC Correction; Tracks-based recoil P_{T} [GeV/c]; W P_{T}/Recoil P_{T}");
+   hWm_PtWGenOverReco_pfx->SetTitle("W- sample - MC Correction; Tracks-based recoil P_{T} [GeV/c]; W P_{T}/Recoil P_{T}");
+   hWm_PtWGenOverReco_pfx->SetMarkerStyle(20);
+   hWm_PtWGenOverReco_pfx->SetLineColor(kRed);
+   hWm_PtWGenOverReco_pfx->SetMarkerColor(kRed);
+   //hWm_PtWGenOverReco_pfx->Fit(fitPol5,"","",0,6);
+   //hWm_PtWGenOverReco_pfx->Fit("pol0","+","",6,40);
+   hWm_PtWGenOverReco_pfx->Draw();
+   hWm_Jets_PtWGenOverReco_pfx->SetLineColor(kGreen);
+   hWm_Jets_PtWGenOverReco_pfx->Draw("same");
+   c10e_2->cd();
+   hd_Wm_PtWReco->SetNameTitle("hd_Wm_PtWReco", "Data");
+   //hd_Wm_PtWReco->Draw();
+   hd_Wm_PtWRecoCorrected->SetFillStyle(3448);
+   hd_Wm_PtWRecoCorrected->SetFillColor(kGreen);
+   hd_Wm_PtWRecoCorrected->Draw();
+   hd_Wm_PtWReco->Draw("same");
+   hd_Wm_PtWRecoCorrected->Draw("same");
+
+   //c10e_3->cd();
+   //hd_Wm_PtWRelativeCorr->Draw();
+
+   //c10e->Print(outPath + "/plot_10e.eps");
+   c10e->Print(outPath + "/plot_10e.png");
+
+
+   TCanvas *c10ei = new TCanvas("c10ei", "", 800, 400);
+
+   c10ei-> SetTitle("Reco vs Gen zoom");
+
+   c10ei->Divide(2, 1);
+
+   c10ei_1->cd();
+   //hWm_Wm_PtWGenOverReco_zoomin -> SetStats(0);
+
+   //hWm_Wm_PtWGenOverReco_zoomin -> Fit(fitPol2);
+   hWm_PtWGenOverReco_zoomin->GetYaxis()->SetTitleOffset(1.1);
+   hWm_PtWGenOverReco_zoomin->ProfileX("hWm_PtWGenOverReco_zoomin_pfx", 0, 20);
+   hWm_Jets_PtWGenOverReco_zoomin->ProfileX("hWm_Jets_PtWGenOverReco_zoomin_pfx", 0, 20);
+   //hWm_Wm_PtWGenOverReco_zoomin->Draw("E1");
+   hWm_PtWGenOverReco_zoomin_pfx->SetMarkerColor(kRed);
+   hWm_PtWGenOverReco_zoomin_pfx->SetTitle("W- sample - MC Correction; Tracks-based recoil P_{T} [GeV/c]; W P_{T}/Recoil P_{T}");
+   hWm_PtWGenOverReco_zoomin_pfx->SetMarkerStyle(20);
+   hWm_PtWGenOverReco_zoomin_pfx->SetLineColor(kRed);
+   hWm_PtWGenOverReco_zoomin_pfx->SetMarkerColor(kRed);
+   hWm_PtWGenOverReco_zoomin_pfx->Fit(fitPol3,"","",0,5);
+   hWm_PtWGenOverReco_zoomin_pfx->Fit("pol0","+","",5,10);
+   hWm_PtWGenOverReco_zoomin_pfx->Draw();
+   hWm_Jets_PtWGenOverReco_zoomin_pfx->SetLineColor(kGreen);
+   hWm_Jets_PtWGenOverReco_zoomin_pfx->Draw("same");
+
+
+   c10ei_2->cd();
+   hd_Wm_PtWRecoCorrected_zoomin->SetFillStyle(3448);
+   hd_Wm_PtWRecoCorrected_zoomin->SetFillColor(kGreen);
+   hd_Wm_PtWReco_zoomin->SetTitle("Data");
+   hd_Wm_PtWRecoCorrected_zoomin->Draw();
+   hd_Wm_PtWReco_zoomin->Draw("same");
+   hd_Wm_PtWRecoCorrected_zoomin->Draw("same");
+
+   //c10ei_3->cd();
+   //hd_Wm_PtWRelativeCorr_zoomin->Draw();
+
+   c10ei->SaveAs(outPath + "/plot_10ei.png");
+
+}
