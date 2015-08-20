@@ -20,7 +20,7 @@ VbAnaOptions::VbAnaOptions() : AnaOptions(),
       ("max-events,n",    po::value<uint32_t>(&fMaxEventsUser)->default_value(0), "Maximum number of events to process")
       ("save-graphs,g",   po::value<bool>(&fSaveGraphs)->implicit_value(true), "Process input as Monte-Carlo")
       ("tpm,t",           po::value<float>(&fTracksPtMin)->default_value(0.2), "Minimum Pt for each track and cluster in the Recoil")
-      ("mctype,t",        po::value<int>(&fMcType)->default_value(0), "Type of MC - 0 -> real data (default)")
+      ("mctype,t",        po::value<int>(&fMcType)->default_value(0), "Type of MC - 0 -> real data (default), 1 -> W+ MC, 2 -> W- MC, 3 -> Any other Mc")
       ("rhicrun,r",       po::value<unsigned short>(&fRhicRunId)->default_value(11), "RHIC run id, e.g. 9, 11, 12, 13, ... (run 11 default)")
       ("monte-carlo,m",   po::value<bool>(&fIsMc)->implicit_value(true), "Process input as Monte-Carlo")
       ("wboson,w",        "Process input events as W boson events. Mutually exclusive with --zboson")
