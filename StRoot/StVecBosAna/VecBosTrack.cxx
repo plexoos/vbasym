@@ -201,7 +201,7 @@ void VecBosTrack::Clear(const Option_t*)
    sPtBalance_noEEMC      = 0;
    mMinDeltaZToJet        = -1;
    mMinDeltaRToJet        = -1;
-   mDistToCluster         = -1;
+   mDistToCluster.SetXYZ(0, 0, 0);
 
    //hitSector              = -1;
    //esmdXPcentroid.SetXYZ(0, 0, 0);
