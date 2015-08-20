@@ -50,7 +50,7 @@ void VecBosCluster::BuildAroundTower(VecBosTrack &track)
       for (int iPhiBin = towerPhiBin-1; iPhiBin < towerPhiBin+1+mSize-1; iPhiBin+=mSize+1)
       {
          // Wrap up in the phi-direction
-         int   iPhiBin = (iPhiBin + mxBTphiBin) % mxBTphiBin;  // keep it always positive
+         iPhiBin = (iPhiBin + mxBTphiBin) % mxBTphiBin;  // keep it always positive
          int   towerId = gMapBTowEtaPhiBin2Id[ iEtaBin + iPhiBin * mxBTetaBin];
          float energy  = vbEvent->bemc.eneTile[kBTow][towerId - 1];
 
