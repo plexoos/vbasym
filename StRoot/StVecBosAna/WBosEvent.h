@@ -30,7 +30,7 @@ public:
    TVector3     GetNeutrinoP3() const;
    TVector3     GetNeutrinoP3Other() const;
    TVector3     CalcMissingEnergyP3() const;
-   TVector3     CalcSignedPtBalance() const;
+   double       CalcSignedPtBalance() const;
    TVector3     GetVecBosonP3() const;
    TVector3     GetVecBosonP3FirstSolution() const;
    TVector3     GetVecBosonP3OtherSolution() const;
