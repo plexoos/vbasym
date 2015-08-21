@@ -11,8 +11,8 @@ using namespace std;
 bool WBosEvent::sUseOtherSolution = false;
 const float WBosEvent::sMinElectronPtLight = 15;
 const float WBosEvent::sMinElectronPtHard  = 25;
-const float WBosEvent::sMinNeutrinoPt      = 18;
-const float WBosEvent::sMinRecoilPt        = 0.5;  // Minimum P_T of the recoil before correction
+const float WBosEvent::sMinNeutrinoPt      = 18;  // In Justin's Note was set at 15 GeV 
+const float WBosEvent::sMinRecoilPt        = 0.5; // Minimum P_T of the recoil before correction
 const float WBosEvent::sMaxRecoilPt        = 40;  // Maximum P_T of the recoil before correction
 
 //FILE  *fAnEvol  = fopen("/direct/star+u/fazio/vbasym/macros/curves/ZK_evolution_Wp_asymmetry.txt","r");
@@ -107,11 +107,11 @@ void WBosEvent::ProcessPersistent()
    //if ( !PassedCutWBos() ) return;
    if ( !HasCandidateEle() ) return;
 
-   mElectronP3 = GetElectronTrack().GetP3EScaled();
-   mNeutrinoP3 = CalcMissingEnergyP3(); // here we set only x and y components, and reconstruct the z one later
-   mNeutrinoP3Other = mNeutrinoP3;
+      mElectronP3 = GetElectronTrack().GetP3EScaled();
+      mNeutrinoP3 = CalcMissingEnergyP3(); // here we set only x and y components, and reconstruct the z one later
+      mNeutrinoP3Other = mNeutrinoP3;
 
-   ReconstructNeutrinoZ();
+      ReconstructNeutrinoZ();
 }
 
 
@@ -138,6 +138,7 @@ void WBosEvent::Clear(const Option_t* opt)
    VecBosEvent::Clear();
    mElectronP3.SetXYZ(0, 0, 0);
    mNeutrinoP3.SetXYZ(0, 0, 0);
+   mNeutrinoP3Other.SetXYZ(0, 0, 0);
 }
 
 
@@ -165,7 +166,26 @@ bool WBosEvent::PassedCutWBos(float minElePt) const
         mP3TrackRecoilTpcNeutralsCorrected.Pt() < sMaxRecoilPt &&
         mPtBalanceCosPhiFromTracks >= sMinNeutrinoPt &&
         //mNeutrinoP3.Pt() >= sMinNeutrinoPt &&
-        mElectronP3.Pt() >= minElePt)
+        mElectronP3.Pt() >= minElePt &&
+        fabs(mElectronP3.Eta()) <= 1.0 )
+   {
+      return true;
+   }
+
+   return false;
+}
+
+
+bool WBosEvent::PassedCutWBosNoEndcap(float minElePt) const
+{
+   if ( HasCandidateEleNoETOW() &&
+        mP3TrackRecoilTpcNeutrals.Pt() > sMinRecoilPt &&
+        mP3TrackRecoilTpcNeutralsCorrected.Pt() > sMinRecoilPt &&
+        mP3TrackRecoilTpcNeutrals.Pt() < sMaxRecoilPt &&
+        mP3TrackRecoilTpcNeutralsCorrected.Pt() < sMaxRecoilPt &&
+        mPtBalanceCosPhiFromTracks >= sMinNeutrinoPt &&
+        mElectronP3.Pt() >= minElePt &&
+        fabs(mElectronP3.Eta()) <= 1.0 )
    {
       return true;
    }
@@ -180,10 +200,35 @@ bool WBosEvent::PassedCutWBosPlus(float minElePt) const
 }
 
 
+bool WBosEvent::PassedCutWBosPlusNoEndcap(float minElePt) const
+{
+   return PassedCutWBosNoEndcap(minElePt) && GetElectronTrack().GetChargeSign() > 0;
+}
+
+
+bool WBosEvent::PassedCutWBosPlusPl(float minElePt) const
+{
+  return PassedCutWBosPlus(minElePt) && fabs(GetVecBosonP3().Pz()) < 50;
+}
+
+
 bool WBosEvent::PassedCutWBosMinus(float minElePt) const
 {
    return PassedCutWBos(minElePt) && GetElectronTrack().GetChargeSign() < 0;
 }
+
+
+bool WBosEvent::PassedCutWBosMinusNoEndcap(float minElePt) const
+{
+   return PassedCutWBosNoEndcap(minElePt) && GetElectronTrack().GetChargeSign() < 0;
+}
+
+
+bool WBosEvent::PassedCutWBosMinusPl(float minElePt) const
+{
+  return PassedCutWBosMinus(minElePt) && fabs(GetVecBosonP3().Pz()) < 50;
+}
+
 
 bool WBosEvent::PassedCutWPlusAn(float minElePt) const
 {
@@ -198,8 +243,16 @@ bool WBosEvent::PassedCutWMinusAn(float minElePt) const
 
 bool WBosEvent::PassedCutQcdBkg(float minElePt) const
 {
-   if ( HasCandidateEle() && mPtBalanceCosPhiFromTracks < sMinNeutrinoPt &&
-        mElectronP3.Pt() >= minElePt)
+  //if ( HasCandidateEle() && mPtBalanceCosPhiFromTracks < sMinNeutrinoPt &&
+  // S.F. Feb. 17, 2015 - To study the QCD background we set the Pt balance cut back to 15. as in Justin's note, this will select a region dominated by QCD events
+   if ( HasCandidateEle() && 
+        mP3TrackRecoilTpcNeutrals.Pt() > sMinRecoilPt &&
+        mP3TrackRecoilTpcNeutralsCorrected.Pt() > sMinRecoilPt &&
+        mP3TrackRecoilTpcNeutrals.Pt() < sMaxRecoilPt &&
+        mP3TrackRecoilTpcNeutralsCorrected.Pt() < sMaxRecoilPt &&
+        mPtBalanceCosPhiFromTracks < 15. &&   // S.F. Feb. 17, 2015 - Pt imblance cut set to 15
+        mElectronP3.Pt() >= minElePt &&
+        fabs(mElectronP3.Eta()) <= 1.0 )
    {
       return true;
    }
@@ -207,6 +260,15 @@ bool WBosEvent::PassedCutQcdBkg(float minElePt) const
    return false;
 }
 
+bool WBosEvent::PassedCutQcdBkgPlus(float minElePt) const
+{
+   return PassedCutQcdBkg(minElePt) && GetElectronTrack().GetChargeSign() > 0;
+}
+
+bool WBosEvent::PassedCutQcdBkgMinus(float minElePt) const
+{
+   return PassedCutQcdBkg(minElePt) && GetElectronTrack().GetChargeSign() < 0;
+}
 
 void WBosEvent::ReconstructNeutrinoZ()
 {
@@ -267,7 +329,7 @@ void WBosEvent::PredictionAnEvol(int McType)
 
    //std::unique_ptr<WBosMcEvent> mWMcEvent(new WBosMcEvent());
    Float_t PtGen       = ((WBosMcEvent*) mMcEvent) -> mP4WBoson.Pt();
-   Float_t RapidityGen = ((WBosMcEvent*) mMcEvent) ->mP4WBoson.Rapidity();
+   Float_t RapidityGen = ((WBosMcEvent*) mMcEvent) -> mP4WBoson.Rapidity();
 
    cout << "W Pt Generated = "       << PtGen       << " GeV" << endl;
    cout << "W Rapidity Generated = " << RapidityGen << " GeV" << endl;

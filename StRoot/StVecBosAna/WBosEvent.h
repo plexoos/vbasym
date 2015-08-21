@@ -44,11 +44,18 @@ public:
    virtual void Clear(const Option_t* opt="");
    virtual void Print(const Option_t* opt="") const;
    bool         PassedCutWBos(float minElePt=sMinElectronPtLight) const;
+   bool         PassedCutWBosNoEndcap(float minElePt=sMinElectronPtLight) const;
    bool         PassedCutWBosPlus(float minElePt=sMinElectronPtLight) const;
+   bool         PassedCutWBosPlusNoEndcap(float minElePt=sMinElectronPtLight) const;
+   bool         PassedCutWBosPlusPl(float minElePt=sMinElectronPtLight) const;
    bool         PassedCutWBosMinus(float minElePt=sMinElectronPtLight) const;
+   bool         PassedCutWBosMinusNoEndcap(float minElePt=sMinElectronPtLight) const;
+   bool         PassedCutWBosMinusPl(float minElePt=sMinElectronPtLight) const;
    bool         PassedCutWPlusAn(float minElePt=sMinElectronPtLight) const;
    bool         PassedCutWMinusAn(float minElePt=sMinElectronPtLight) const;
    bool         PassedCutQcdBkg(float minElePt=sMinElectronPtLight) const;
+   bool         PassedCutQcdBkgPlus(float minElePt=sMinElectronPtLight) const;
+   bool         PassedCutQcdBkgMinus(float minElePt=sMinElectronPtLight) const;
    //Double_t     An_evol_ZK;
 
    static bool sUseOtherSolution;          //!< If true calculates the W kinematics using the second choice solution for the z-component
