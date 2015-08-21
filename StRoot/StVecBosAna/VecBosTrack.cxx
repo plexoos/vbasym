@@ -201,7 +201,7 @@ void VecBosTrack::Clear(const Option_t*)
    sPtBalance_noEEMC      = 0;
    mMinDeltaZToJet        = -1;
    mMinDeltaRToJet        = -1;
-   mDistToCluster         = -1;
+   mDistToCluster.SetXYZ(0, 0, 0);
 
    //hitSector              = -1;
    //esmdXPcentroid.SetXYZ(0, 0, 0);
@@ -390,57 +390,31 @@ bool VecBosTrack::MatchTrack2BarrelCluster()
    //printf("******* matchCluster() nVert=%d\n",mVecBosEvent->mVertices.size());
    //float trackPT = mStMuTrack->momentum().perp();
 
-   //mCluster1x1.BuildAroundTower(*this);
 
    // Choose 2x2 cluster with maximum ET
    mCluster2x2 = mEvent->FindMaxBTow2x2(mMatchedTower.iEta, mMatchedTower.iPhi, mVertex->mPosition.Z());
-
-   //hA[33] ->Fill(mCluster2x2.ET);
-   //hA[34] ->Fill(mCluster2x2.adcSum, trackPT);
-   //hA[110]->Fill(mCluster2x2.ET);
 
    // Compute surroinding cluster energy. 4x4 cluster lower left tower
    mCluster4x4 = mEvent->SumBTowPatch(mCluster2x2.iEta - 1, mCluster2x2.iPhi - 1, 4, 4, mVertex->mPosition.Z()); // needed for lumi monitor
 
    //if (mCluster2x2.ET < mMinBClusterEnergy) continue; // too low energy
 
-   //hA[20] ->Fill("cluster", 1.);
-   //hA[206]->Fill(mCluster2x2.position.PseudoRapidity(), mCluster2x2.ET);
-   //hA[37] ->Fill(mCluster4x4.ET);
-   //hA[38] ->Fill(mCluster2x2.mEnergy, mCluster4x4.mEnergy - mCluster2x2.mEnergy);
-
    //float frac24 = mCluster2x2.ET / mCluster4x4.ET;
 
-   //hA[39]->Fill(frac24);
-
    //if (frac24 < mMinBClusterEnergyIsoRatio) continue;
-
-   //hA[20]->Fill("fr24", 1.);
 
    // spacial separation (track - cluster)
    mDistToCluster = mCoorAtBTow - mCluster2x2.position;
 
-   //hA[43]->Fill(mCluster2x2.mEnergy,       mDistToCluster.Mag());
-   //hA[44]->Fill(mCluster2x2.position.z(), mDistToCluster.z());
-
    //float deltaPhi = mCoorAtBTow.DeltaPhi(mCluster2x2.position);
 
    // printf("aaa %f %f %f   phi=%f\n", mDistToCluster.x(), mDistToCluster.y(), mDistToCluster.z(),deltaPhi);
-   //hA[45]->Fill(mCluster2x2.mEnergy, nomBTowRadius * deltaPhi); // wrong?
-   //hA[46]->Fill(mDistToCluster.Mag());
-   //hA[199]->Fill(mCluster2x2.position.PseudoRapidity(), mDistToCluster.Mag());
-   //hA[207]->Fill(mCluster2x2.position.PseudoRapidity(), mCluster2x2.ET);
 
    if (mDistToCluster.Mag() <= sMaxTrackClusterDist)
    {
       mVbType |= kHAS_CLUSTER;
       return true;
    }
-
-   //hA[20]->Fill("#Delta R", 1.);
-   //hA[111]->Fill(mCluster2x2.ET);
-   //hA[208]->Fill(mCluster2x2.position.PseudoRapidity(), mCluster2x2.ET);
-   //hA[0]->Fill("Tr2Cl", 1.0);
 
    return false;
 }
@@ -489,52 +463,6 @@ void VecBosTrack::CalcEnergyInCones()
       //mEvent->mTracksCandidate.push_back(this);
    //}
 
-   // sum TPC-near component
-   //if (mStMuDstMaker)
-   //else
-   //   mP3InNearConeTpc = SumTpcConeFromTree(iv, mP3AtDca, 2, mMatchedTower.id);
-
-   // fill histos separately for 2 types of events
-   //if (mMatchedTower.id > 0) { //only barrel towers
-
-   // Correct for double counting of electron track in near cone rarely
-   // primTrPT<10 GeV & globPT>10 - handle this here
-   //if (mP3AtDca.Pt() > mEvent->sMinBTrackPt) mP3InNearCone -= mEvent->sMinBTrackPt;
-   //else                                      mP3InNearCone -= mP3AtDca.Pt();
-
-   //float nearTotETfrac = mCluster2x2.ET / mP3InNearCone;
-
-   //hA[40]->Fill(mP3InNearConeTow);
-   //hA[41]->Fill(mCluster2x2.ET, mP3InNearConeTow - mCluster2x2.ET);
-   //hA[42]->Fill(nearTotETfrac);
-   //hA[47]->Fill(mP3InNearConeTpc);
-   //hA[48]->Fill(mP3InNearConeTow, mP3InNearConeTpc);
-   //hA[49]->Fill(mP3InNearCone);
-   //hA[250]->Fill(mCluster2x2.ET, nearTotETfrac);
-
-   //// check east/west yield diff
-   //hA[210]->Fill(mCluster2x2.position.PseudoRapidity(), mP3InNearConeETow);
-
-   //if (mCluster2x2.position.PseudoRapidity() > 0) hA[211]->Fill(mCluster2x2.position.Phi(), mP3InNearConeETow);
-   //else                                           hA[212]->Fill(mCluster2x2.position.Phi(), mP3InNearConeETow);
-
-   //} else if (mMatchedTower.id < 0) { //only endcap towers
-
-   //   // Correct for double counting of electron track in near cone rarely primTrPT<10 GeV & globPT>10 - handle this here
-   //   if (mP3AtDca.Pt() > mMinETrackPt) mP3InNearCone -= mMinETrackPt;
-   //   else                              mP3InNearCone -= mP3AtDca.Pt();
-
-   //   mP3InNearCone       = mP3InNearCone;
-   //   mP3InNearConeNoETow = mP3InNearCone - mP3InNearConeETow;
-   //   float nearTotETfrac = mCluster2x2.ET / mP3InNearCone;
-
-   //   hE[40]->Fill(mP3InNearConeTow);
-   //   hE[41]->Fill(mCluster2x2.ET, mP3InNearConeTow - mCluster2x2.ET);
-   //   hE[42]->Fill(nearTotETfrac);
-   //   hE[47]->Fill(mP3InNearConeTpc);
-   //   hE[48]->Fill(mP3InNearConeTow, mP3InNearConeTpc);
-   //   hE[49]->Fill(mP3InNearCone);
-   //}
 }
 
 

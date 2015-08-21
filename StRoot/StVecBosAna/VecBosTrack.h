@@ -120,10 +120,7 @@ public:
    TVector3     GetP3EScaled()          const { return mP3AtDca * ((Double_t) mCluster2x2.mEnergy / mP3AtDca.Mag()); }
    float        GetFitHitFrac()         const { return float(mStMuTrack->nHitsFit()) / mStMuTrack->nHitsPoss(); }
 
-   //float        GetClusterEnergyFrac()  const { return (mCluster2x2.mEnergy + mP3AtDca.Mag()) / mP3InNearConeNoETow.Mag(); }
-   //  s.f. Feb.19, 2015 - Lets use the encap to improve the isolation criterium 
-   //  (at least on one side of the detector) for electrons at large eta
-   float        GetClusterEnergyFrac()  const { return (mCluster2x2.mEnergy + mP3AtDca.Mag()) / mP3InNearCone.Mag(); } // s.f. Feb.19, 2015
+   float        GetClusterEnergyFrac()  const { return (mCluster2x2.mEnergy + mP3AtDca.Mag()) / mP3InNearConeNoETow.Mag(); } // as for the DIS 2014 preliminary results
    float        GetClusterEnergyFracNoEndcap()  const { return (mCluster2x2.mEnergy + mP3AtDca.Mag()) / mP3InNearConeNoETow.Mag(); }
 
    float        GetClusterETFrac()      const { return (mCluster2x2.ET      + mP3AtDca.Pt())  / mP3InNearConeNoETow.Perp(); }

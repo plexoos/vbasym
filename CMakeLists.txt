@@ -20,7 +20,6 @@ IF(FORCE_32BIT)
    SET_PROPERTY(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS OFF)
 ENDIF()
 
-#INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/Site-Config.cmake)
 
 # Find boost headers and library locations
 set(Boost_USE_MULTITHREADED OFF)
@@ -41,9 +40,9 @@ ADD_SUBDIRECTORY(contrib/root-helper)
 include_directories(
    ${Boost_INCLUDE_DIRS}
    ${ROOT_INCLUDE_DIR}
+   ${CMAKE_CURRENT_SOURCE_DIR}/StRoot
    ${CMAKE_CURRENT_SOURCE_DIR}/src
    ${CMAKE_CURRENT_SOURCE_DIR}
-   $ENV{VBASYM_DIR}/StRoot
    /afs/rhic.bnl.gov/star/packages/$ENV{STAR_VERSION}/.$ENV{STAR_HOST_SYS}/include
    /afs/rhic.bnl.gov/star/packages/$ENV{STAR_VERSION}/StRoot
    /afs/rhic.bnl.gov/star/packages/$ENV{STAR_VERSION}/StRoot/StJetMaker/tracks
@@ -53,7 +52,7 @@ include_directories(
 link_directories(
    ${Boost_LIBRARY_DIRS}
    ${ROOT_LIBRARY_DIR}
-   $ENV{VBASYM_DIR}/.$ENV{STAR_HOST_SYS}/lib
+   ${CMAKE_CURRENT_SOURCE_DIR}/.$ENV{STAR_HOST_SYS}/lib
    $ENV{STAR_LIB}
    /afs/rhic.bnl.gov/star/packages/$ENV{STAR_VERSION}/.$ENV{STAR_HOST_SYS}/LIB
    $ENV{OPTSTAR}/lib
@@ -122,13 +121,13 @@ StVecBosAna
 
 
 add_executable( stana src/stana.cc )
-target_link_libraries( stana ${Boost_LIBRARIES} ${STAR_LIBRARIES} ${MYSQL_LIBRARY} root-helper-utils-shared ${ROOT_LIBRARIES} Table Geom )
+target_link_libraries( stana ${Boost_LIBRARIES} ${STAR_LIBRARIES} ${MYSQL_LIBRARY} root-helper-utils-shared ${ROOT_LIBRARIES} Table Geom pthread)
 
 add_executable( vbana src/vbana.cc )
-target_link_libraries( vbana ${Boost_LIBRARIES} ${STAR_LIBRARIES} ${MYSQL_LIBRARY} root-helper-utils-shared ${ROOT_LIBRARIES} Table Geom )
+target_link_libraries( vbana ${Boost_LIBRARIES} ${STAR_LIBRARIES} ${MYSQL_LIBRARY} root-helper-utils-shared ${ROOT_LIBRARIES} Table Geom pthread)
 
 add_executable( lumi_calc src/lumi_calc.cc )
-target_link_libraries( lumi_calc root-helper-utils-shared ${ROOT_LIBRARIES} )
+target_link_libraries( lumi_calc root-helper-utils-shared ${ROOT_LIBRARIES} pthread)
 
 add_executable( events_calc src/events_calc.cc )
 

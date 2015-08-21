@@ -55,7 +55,7 @@ TVector3 WBosEvent::CalcMissingEnergyP3() const
 }
 
 
-TVector3 WBosEvent::CalcSignedPtBalance() const
+double WBosEvent::CalcSignedPtBalance() const
 {
    return mPtBalanceCosPhiFromTracks;
 }
