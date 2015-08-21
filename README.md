@@ -26,14 +26,11 @@ STAR.
 How to configure and build vbasym
 =================================
 
-The best way to start with the analysis is to clone the latest version of the
-code from the git repository. From the location where the package will be
+To start with the analysis copy the latest version of the
+code from the CVS repository. From the location where the package will be
 installed on your machine issue the following command:
 
-    git clone git@github.com:plexoos/vbasym.git
-    cd vbasym
-    git submodule init
-    git submodule update
+    cvs co -P -d WeakBosonTSSA offline/paper/psn0624
 
 Before you can build and run the program the following environment variables must
 be set:
@@ -63,12 +60,22 @@ To build the library run a slightly modified `cons` command in the terminal
          EXTRA_CXXFLAGS="-I${OPTSTAR}/include -Icontrib/root-helper" \
          CPPPATH="#:#StRoot:#.sl64_gcc447/include:${ROOTSYS}/include:./contrib/root-helper"
 
+If you want to use the fpermissive flag, run:
+
+    cd $VBASYM_DIR
+    cons CXXFLAGS="-m32 -fPIC -pipe -Wall -Woverloaded-virtual -Wno-long-long -fpermissive" \
+         EXTRA_CXXFLAGS="-I${OPTSTAR}/include -Icontrib/root-helper" \
+         CPPPATH="#:#StRoot:#.sl64_gcc447/include:${ROOTSYS}/include:./contrib/root-helper"
+
 The binaries are compiled by issuing the following command:
 
     mkdir build
     cd build
     cmake28 .. -DBOOST_ROOT=${OPTSTAR}
     make
+
+If you want to use the fpermissive flag, run:
+cmake28 .. -DBOOST_ROOT=${OPTSTAR} -DCMAKE_CXX_FLAGS="-m32 -fpermissive" ../
 
 How to split the Monte-Carlo file lists
 =======================================
