@@ -34,11 +34,17 @@ void W_Asymmetry()
    // take the histograms
 
    TH1 *hd_Wp_AsymAmpSqrtVsEta          = (TH1*) fileData->Get("asym/asym_wp_phys/hWBosonAsymAmpVsEta_");
+        hd_Wp_AsymAmpSqrtVsEta -> SetMarkerStyle(22);
    TH1 *hd_Wp_AsymAmpSqrtVsRap          = (TH1*) fileData->Get("asym/asym_wp_phys/hWBosonAsymAmpVsRap_");
+        hd_Wp_AsymAmpSqrtVsRap -> SetMarkerStyle(22);
    TH1 *hd_Wp_AsymAmpSqrtVsPt           = (TH1*) fileData->Get("asym/asym_wp_phys/hWBosonAsymAmpVsPt_");
+        hd_Wp_AsymAmpSqrtVsPt  -> SetMarkerStyle(22);
    TH1 *hd_Wm_AsymAmpSqrtVsEta          = (TH1*) fileData->Get("asym/asym_wm_phys/hWBosonAsymAmpVsEta_");
+        hd_Wm_AsymAmpSqrtVsEta -> SetMarkerStyle(23);
    TH1 *hd_Wm_AsymAmpSqrtVsRap          = (TH1*) fileData->Get("asym/asym_wm_phys/hWBosonAsymAmpVsRap_");
+        hd_Wm_AsymAmpSqrtVsRap -> SetMarkerStyle(23);
    TH1 *hd_Wm_AsymAmpSqrtVsPt           = (TH1*) fileData->Get("asym/asym_wm_phys/hWBosonAsymAmpVsPt_");
+        hd_Wm_AsymAmpSqrtVsPt  -> SetMarkerStyle(23);
    TH1 *hd_Z0_AsymAmpSqrtVsEta          = (TH1*) fileDataZ0->Get("asym/asym_z_phys/hZBosonAsymAmpVsEta_");
    TH1 *hd_Z0_AsymAmpSqrtVsRap          = (TH1*) fileDataZ0->Get("asym/asym_z_phys/hZBosonAsymAmpVsRap_");
    TH1 *hd_Z0_AsymAmpSqrtVsPt           = (TH1*) fileDataZ0->Get("asym/asym_z_phys/hZBosonAsymAmpVsPt_");
@@ -520,7 +526,7 @@ void W_Asymmetry()
   hd_Wp_AsymAmpSqrtVsRap -> GetYaxis() -> SetTitleOffset(1.3);
   //hd_Wp_AsymAmpSqrtVsRap -> GetXaxis() -> SetLabelOffset(1.3);
   hd_Wp_AsymAmpSqrtVsRap -> SetStats(0);
-  hd_Wp_AsymAmpSqrtVsRap -> SetMarkerStyle(20);
+  //hd_Wp_AsymAmpSqrtVsRap -> SetMarkerStyle(20);
   hd_Wp_AsymAmpSqrtVsRap -> SetTitle("; y^{W}; A_{N}");
   hd_Wp_AsymAmpSqrtVsRap -> GetXaxis() -> SetRangeUser(-1., 0.99);
   //hd_Wp_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textSTAR);
@@ -600,7 +606,7 @@ void W_Asymmetry()
   hd_Wp_AsymAmpSqrtVsPt -> GetYaxis() -> SetTitleOffset(1.3);
   hd_Wp_AsymAmpSqrtVsPt -> GetXaxis() -> SetLabelOffset(1.3);
   hd_Wp_AsymAmpSqrtVsPt -> SetStats(0);
-  hd_Wp_AsymAmpSqrtVsPt -> SetMarkerStyle(20);
+  //hd_Wp_AsymAmpSqrtVsPt -> SetMarkerStyle(20);
   hd_Wp_AsymAmpSqrtVsPt -> SetTitle("; P_{T}^{W}; A_{N}");
   //hd_Wp_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textSTAR);
   //hd_Wp_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textWp);
@@ -693,7 +699,7 @@ void W_Asymmetry()
   //hd_Wm_AsymAmpSqrtVsRap -> GetXaxis() -> SetLabelOffset(1.3);
   hd_Wm_AsymAmpSqrtVsRap -> SetStats(0);
   hd_Wm_AsymAmpSqrtVsRap -> SetTitle("; y^{W}; A_{N}");
-  hd_Wm_AsymAmpSqrtVsRap -> SetMarkerStyle(20);
+  //hd_Wm_AsymAmpSqrtVsRap -> SetMarkerStyle(20);
   //hd_Wm_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textSTAR);
   //hd_Wm_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textWm);
   //hd_Wm_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textPtLim);
@@ -756,7 +762,7 @@ void W_Asymmetry()
   //hd_Wm_AsymAmpSqrtVsPt -> GetXaxis() -> SetLabelOffset(1.3);
   hd_Wm_AsymAmpSqrtVsPt -> SetStats(0);
   hd_Wm_AsymAmpSqrtVsPt -> SetTitle("; P_{T}^{W}; A_{N}");
-  hd_Wm_AsymAmpSqrtVsPt -> SetMarkerStyle(20);
+  //hd_Wm_AsymAmpSqrtVsPt -> SetMarkerStyle(23);
   //hd_Wm_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textSTAR);
   //hd_Wm_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textWm);
   // hd_Wm_AsymAmpSqrtVsPt -> GetListOfFunctions() -> Add(textRapLim);
@@ -821,7 +827,7 @@ void W_Asymmetry()
   hd_Wm_AsymAmpSqrtVsPt -> GetXaxis() -> SetRangeUser(1, 10);
   hd_Wm_AsymAmpSqrtVsPt -> Draw("E0");
   hd_Wm_AbsSystematics_Pt     -> Draw("same E2");
-  hd_Wm_AsymAmpSqrtVsPt_clone -> SetMarkerStyle(20);
+  //hd_Wm_AsymAmpSqrtVsPt_clone -> SetMarkerStyle(20);
   hd_Wm_AsymAmpSqrtVsPt_clone -> SetMarkerColor(kBlue);
   hd_Wm_AsymAmpSqrtVsPt_clone -> SetMarkerSize(1.3);
   hd_Wm_AsymAmpSqrtVsPt_clone -> SetLineColor(kBlue);
@@ -836,7 +842,7 @@ void W_Asymmetry()
   hd_Wp_AsymAmpSqrtVsPt -> GetXaxis() -> SetRangeUser(1, 10);
   hd_Wp_AsymAmpSqrtVsPt -> Draw("same E0");
   hd_Wp_AbsSystematics_Pt     -> Draw("same E2");
-  hd_Wp_AsymAmpSqrtVsPt_clone -> SetMarkerStyle(20);
+  //hd_Wp_AsymAmpSqrtVsPt_clone -> SetMarkerStyle(20);
   hd_Wp_AsymAmpSqrtVsPt_clone -> SetMarkerColor(kRed);
   hd_Wp_AsymAmpSqrtVsPt_clone -> SetMarkerSize(1.3);
   hd_Wp_AsymAmpSqrtVsPt_clone -> SetLineColor(kRed);
@@ -896,7 +902,7 @@ void W_Asymmetry()
   hd_Wm_AsymAmpSqrtVsRap -> SetLineWidth(2);
   hd_Wm_AsymAmpSqrtVsRap -> Draw("E0");
   hd_Wm_AbsSystematics_Rap     -> Draw("same E2");
-  hd_Wm_AsymAmpSqrtVsRap_clone -> SetMarkerStyle(20);
+  //hd_Wm_AsymAmpSqrtVsRap_clone -> SetMarkerStyle(20);
   hd_Wm_AsymAmpSqrtVsRap_clone -> SetMarkerColor(kBlue);
   hd_Wm_AsymAmpSqrtVsRap_clone -> SetMarkerSize(1.3);
   hd_Wm_AsymAmpSqrtVsRap_clone -> SetLineColor(kBlue);
@@ -908,7 +914,7 @@ void W_Asymmetry()
   hd_Wp_AsymAmpSqrtVsRap -> SetLineWidth(2);
   hd_Wp_AsymAmpSqrtVsRap -> Draw("same E0");
   hd_Wp_AbsSystematics_Rap     -> Draw("same E2");
-  hd_Wp_AsymAmpSqrtVsRap_clone -> SetMarkerStyle(20);
+  //hd_Wp_AsymAmpSqrtVsRap_clone -> SetMarkerStyle(20);
   hd_Wp_AsymAmpSqrtVsRap_clone -> SetMarkerColor(kRed);
   hd_Wp_AsymAmpSqrtVsRap_clone -> SetMarkerSize(1.3);
   hd_Wp_AsymAmpSqrtVsRap_clone -> SetLineColor(kRed);
@@ -1051,8 +1057,53 @@ void W_Asymmetry()
   cPaperFig_3 -> cd();
   gPad -> SetGrid(0,0);
   cPaperFig_3 -> SetRightMargin(0.1);
+
+  // Open a temporary TGraphError to store the 4 inputs of the ASCII file 
+  // 1. -> y, 2. -> central, 3. mean, 4. error 
+  // the asymmetric error is calculated as:
+  // "mean + error" = upper bound of the band, "mean - error" = lower bound of the band.
+  TGraphErrors *gWp_NoEvo_SeaQuarks_temporary  = new TGraphErrors("./curves/Zhongbo_Kang_Prediction_NoEvo_squarks/w_plus.dat","%lg %lg %lg %lg");
+  TGraphErrors *gWm_NoEvo_SeaQuarks_temporary  = new TGraphErrors("./curves/Zhongbo_Kang_Prediction_NoEvo_squarks/w_minus.dat","%lg %lg %lg %lg");
+  TGraphAsymmErrors *gWp_NoEvo_SeaQuarks  = new TGraphAsymmErrors(gWp_NoEvo_SeaQuarks_temporary -> GetN());
+  gWp_NoEvo_SeaQuarks -> SetLineWidth(2);
+  gWp_NoEvo_SeaQuarks -> SetFillColor(18);
+  gWp_NoEvo_SeaQuarks -> SetFillStyle(1001);
+  TGraphAsymmErrors *gWm_NoEvo_SeaQuarks  = new TGraphAsymmErrors(gWp_NoEvo_SeaQuarks_temporary -> GetN());
+  gWm_NoEvo_SeaQuarks -> SetLineWidth(2);
+  gWm_NoEvo_SeaQuarks -> SetFillColor(18);
+  gWm_NoEvo_SeaQuarks -> SetFillStyle(1001);
+
+    for(Int_t i=0; i < gWp_NoEvo_SeaQuarks_temporary -> GetN(); i++) {
+      Double_t y;
+      Double_t central;
+      Double_t mean  = gWp_NoEvo_SeaQuarks_temporary -> GetErrorX(i);
+      Double_t error = gWp_NoEvo_SeaQuarks_temporary -> GetErrorY(i);
+      gWp_NoEvo_SeaQuarks_temporary -> GetPoint(i, y, central);
+      cout << "y = "<< y << ",central =" << central << ",mean =" << mean << ",error =" << error << endl;
+      Double_t YerrorHigh = fabs(mean + error);
+      Double_t YerrorLow  = fabs(mean - error);
+      cout << "YerrorLow  = "<< YerrorLow  << ",YerrorHigh  =" << YerrorHigh << endl;
+      gWp_NoEvo_SeaQuarks -> SetPoint(i, y, central);
+      gWp_NoEvo_SeaQuarks -> SetPointError(i, 0, 0, YerrorLow, YerrorHigh);      
+    }
+
+    for(Int_t i=0; i < gWm_NoEvo_SeaQuarks_temporary -> GetN(); i++) {
+      Double_t y;
+      Double_t central;
+      Double_t mean  = gWm_NoEvo_SeaQuarks_temporary -> GetErrorX(i);
+      Double_t error = gWm_NoEvo_SeaQuarks_temporary -> GetErrorY(i);
+      gWm_NoEvo_SeaQuarks_temporary -> GetPoint(i, y, central);
+      //cout << "y = "<< y << ",central =" << central << ",mean =" << mean << ",error =" << error << endl;
+      Double_t YerrorHigh = fabs(mean + error);
+      Double_t YerrorLow  = fabs(mean - error);
+      //cout << "YerrorLow  = "<< YerrorLow  << ",YerrorHigh  =" << YerrorHigh << endl;
+      gWm_NoEvo_SeaQuarks -> SetPoint(i, y, central);
+      gWm_NoEvo_SeaQuarks -> SetPointError(i, 0, 0, YerrorLow, YerrorHigh);      
+    }
+
   hd_Wp_AsymAmpSqrtVsRap -> GetYaxis() -> SetRangeUser(-0.6, 0.6);
   hd_Wp_AsymAmpSqrtVsRap       -> Draw("E0");
+  gWp_NoEvo_SeaQuarks          -> Draw("3");
   hd_Wp_AbsSystematics_Rap     -> Draw("same E2");
   hd_Wp_AsymAmpSqrtVsRap_clone -> Draw("same E1");
   //textStarName                 -> DrawLatex(0.2, 0.83, "STAR");
@@ -1106,7 +1157,8 @@ void W_Asymmetry()
   //leg_Wp_hSysMean -> AddEntry(gWp_1401_5078,"M. G. Echevarria et al., TMD evolved", "l");
   //leg_Wp_hSysMean -> AddEntry(gWp_NoEvo,"arXiv:0903.3629 - no TMD evol.", "l");
   //leg_Wp_hSysMean -> AddEntry(gWp_1401_5078,"arXiv:1401.5078 - TMD evolved", "l");
-  leg_Wp_hSysMean -> AddEntry(gWp_NoEvo,"KQ - no TMD evol.", "l");
+  //leg_Wp_hSysMean -> AddEntry(gWp_NoEvo,"KQ - no TMD evol.", "l");
+  leg_Wp_hSysMean -> AddEntry(gWp_NoEvo_SeaQuarks,"KQ - no TMD evol.", "lf");
   leg_Wp_hSysMean -> AddEntry(gWp_1401_5078,"EIKV - TMD evolved", "l");
   leg_Wp_hSysMean -> Draw();
 
@@ -1118,6 +1170,7 @@ void W_Asymmetry()
   //cPaperFig_4 -> SetLeftMargin(0.15);
   hd_Wm_AsymAmpSqrtVsRap -> GetYaxis() -> SetRangeUser(-1, 1);
   hd_Wm_AsymAmpSqrtVsRap -> Draw("E0");
+  gWm_NoEvo_SeaQuarks          -> Draw("3");
   hd_Wm_AbsSystematics_Rap     -> Draw("same E2");
   hd_Wm_AsymAmpSqrtVsRap_clone -> Draw("same E1");
   //textStarName                 -> DrawLatex(0.2, 0.83, "STAR");
@@ -1162,8 +1215,9 @@ void W_Asymmetry()
   leg_Wm_hSysMean -> SetBorderSize(0);
   leg_Wm_hSysMean -> SetTextSize(0.05);
   leg_Wm_hSysMean -> AddEntry(hd_Wm_AsymAmpSqrtVsPt,"W^{-} #rightarrow l^{-} #nu", "lepf");
-  leg_Wm_hSysMean -> AddEntry(gWp_NoEvo,"KQ - no TMD evol.", "l");
-  leg_Wm_hSysMean -> AddEntry(gWp_1401_5078,"EIKV - TMD evolved", "l");
+  //leg_Wm_hSysMean -> AddEntry(gWm_NoEvo,"KQ - no TMD evol.", "l");
+  leg_Wm_hSysMean -> AddEntry(gWm_NoEvo_SeaQuarks,"KQ - no TMD evol.", "lf");
+  leg_Wm_hSysMean -> AddEntry(gWm_1401_5078,"EIKV - TMD evolved", "l");
   leg_Wm_hSysMean -> Draw();
 
   hd_Wm_AsymAmpSqrtVsRap -> Draw("same E0");
@@ -1173,6 +1227,14 @@ void W_Asymmetry()
   cPaperFig -> SaveAs(outPath + "/hd_PaperFig.eps");
 
 
+
+  TCanvas *cTEST  = new TCanvas("cTEST", "TEEEEEEEEEEEEST", 800, 500);
+  cTEST -> Divide(1,2);
+  cTEST_1-> cd();
+  gWp_NoEvo_SeaQuarks -> Draw("a3");
+  gWp_NoEvo_SeaQuarks -> Draw("C");
+  cTEST_2-> cd();
+  gWm_NoEvo_SeaQuarks -> Draw("a3");
 
   TCanvas *cPaperFig2_extra  = new TCanvas("cPaperFig2_extra", "Paper Figure 2 EXTRA", 800, 500);
   cPaperFig2_extra -> Divide(2,1);
