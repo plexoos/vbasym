@@ -212,7 +212,7 @@ void WBosAsymHContainer::Fill(ProtoEvent &ev)
       TLorentzVector wBoson = event.GetVecBosonP4();
       string shName;
 
-    if ( wBoson.Pt() < 7 ) {
+    if ( wBoson.Pt() < 10 ) { // S.F. 25Aug2015 (was 7)
       shName = "hWBosonPhiVsEta_" + sDblSpinState;
       ((TH2*) o[shName])->Fill(wBoson.Eta(), wBoson.Phi());
 
