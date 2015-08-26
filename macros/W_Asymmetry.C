@@ -45,6 +45,10 @@ void W_Asymmetry()
         hd_Wm_AsymAmpSqrtVsRap -> SetMarkerStyle(23);
    TH1 *hd_Wm_AsymAmpSqrtVsPt           = (TH1*) fileData->Get("asym/asym_wm_phys/hWBosonAsymAmpVsPt_");
         hd_Wm_AsymAmpSqrtVsPt  -> SetMarkerStyle(23);
+
+   TH1 *hd_Wp_WBosonPt                  = (TH1*) fileData->Get("event_wp/hWBosonPt");
+   TH1 *hd_Wm_WBosonPt                  = (TH1*) fileData->Get("event_wm/hWBosonPt");
+
    TH1 *hd_Z0_AsymAmpSqrtVsEta          = (TH1*) fileDataZ0->Get("asym/asym_z_phys/hZBosonAsymAmpVsEta_");
    TH1 *hd_Z0_AsymAmpSqrtVsRap          = (TH1*) fileDataZ0->Get("asym/asym_z_phys/hZBosonAsymAmpVsRap_");
    TH1 *hd_Z0_AsymAmpSqrtVsPt           = (TH1*) fileDataZ0->Get("asym/asym_z_phys/hZBosonAsymAmpVsPt_");
@@ -59,6 +63,7 @@ void W_Asymmetry()
    TH1 *hAbsSysRapGMean                 = (TH1*) fileAbsSystGMeanRap ->Get("hAbsoluteSystematicsGMean_evol");
    //TH1 *hSysRapPR                       = (TH1*) fileMCWm->Get("event_mc/hSystematics_evol_PR");
    //TH1 *hSysRapMR                       = (TH1*) fileMCWm->Get("event_mc/hSystematics_evol_MR");
+
 
    // Clone the histograms with only statistical errors
    TH1D *hd_Wp_AsymAmpSqrtVsRap_clone = (TH1D*)hd_Wp_AsymAmpSqrtVsRap -> Clone("hd_Wp_AsymAmpSqrtVsRap_clone");
@@ -415,7 +420,7 @@ void W_Asymmetry()
    textZ0 -> SetNDC(); 
    textZ0 -> SetTextFont(32);
    textZ0 -> SetTextSize(0.07);
-   TLatex *textPtLim = new TLatex(xLeg, yLeg-0.05, "0.5 < P_{T} < 7 GeV");
+   TLatex *textPtLim = new TLatex(xLeg, yLeg-0.05, "0.5 < P_{T} < 10 GeV");
    textPtLim -> SetNDC(); 
    textPtLim -> SetTextFont(32);
    textPtLim -> SetTextSize(0.04);
@@ -482,6 +487,24 @@ void W_Asymmetry()
    textLetter_1w -> SetTextFont(32);
    textLetter_1w -> SetTextSize(0.06);
 
+  TCanvas *cStatistics   = new TCanvas("cStatistics", "STATISTICS", 600, 600);
+
+  cStatistics    -> Divide(1,2);
+  cStatistics_1  -> cd();
+  hd_Wp_WBosonPt -> Draw();
+  cStatistics_2  -> cd();
+  hd_Wm_WBosonPt -> Draw();
+
+  // Calculate statistics for W boson Pt < 10 GeV
+  Double_t Wp_events = hd_Wp_WBosonPt -> Integral(1,10);
+  Double_t Wm_events = hd_Wm_WBosonPt -> Integral(1,10);
+
+  cout << "**********************************" << endl;
+  cout << "STATISTICS" << endl;
+  cout << "W+ events = " << Wp_events << endl;
+  cout << "W- events = " << Wm_events << endl;
+  cout << "**********************************" << endl;
+
    /*  
   TCanvas *cWpAmpEta   = new TCanvas("cWpAmpEta", "An Wp Eta", 600, 600);
 
@@ -531,7 +554,7 @@ void W_Asymmetry()
   hd_Wp_AsymAmpSqrtVsRap -> GetXaxis() -> SetRangeUser(-1., 0.99);
   //hd_Wp_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textSTAR);
   textSTAR  -> DrawLatex(xLeg, yLeg, "STAR p-p 500 GeV #intL = 25 pb^{-1}");
-  textPtLim -> DrawLatex(xLeg, yLeg-0.05, "0 < P_{T} < 25 GeV");
+  textPtLim -> DrawLatex(xLeg, yLeg-0.05, "0.5 < P_{T} < 10 GeV");
   textLSys  -> DrawLatex(xLeg, yLeg-0.1, "3.4% beam pol. uncertainty not shown");
   //hd_Wp_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textWp);
   //hd_Wp_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textPtLim);
@@ -707,7 +730,7 @@ void W_Asymmetry()
   //hd_Wm_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textStarPrel);
   //hd_Wm_AsymAmpSqrtVsRap -> GetListOfFunctions() -> Add(textLetter);
   textSTAR  -> DrawLatex(xLeg, yLeg, "STAR p-p 500 GeV #intL = 25 pb^{-1}");
-  textPtLim -> DrawLatex(xLeg, yLeg-0.05, "0 < P_{T} < 25 GeV");
+  textPtLim -> DrawLatex(xLeg, yLeg-0.05, "0.5 < P_{T} < 10 GeV");
   textLSys  -> DrawLatex(xLeg, yLeg-0.1, "3.4% beam pol. uncertainty not shown");
   hd_Wm_AsymAmpSqrtVsRap -> GetXaxis() -> SetRangeUser(-1., 0.99);
   hd_Wm_AsymAmpSqrtVsRap -> Draw("E0");
@@ -925,7 +948,7 @@ void W_Asymmetry()
   textStarName -> DrawLatex(0.2, 0.83, "STAR");
   //textStarName -> DrawLatex(0.2, 0.83, "STAR");
   textSTAR   -> DrawLatex(xLeg, yLeg, "STAR p-p 500 GeV #intL = 25 pb^{-1}");
-  textPtLim  -> DrawLatex(xLeg, yLeg-0.05, "0.5 < P_{T} < 7 GeV");
+  textPtLim  -> DrawLatex(xLeg, yLeg-0.05, "0.5 < P_{T} < 10 GeV");
   textLSys   -> DrawLatex(xLeg, yLeg-0.1, "3.4% beam pol. uncertainty not shown");
   line1 -> DrawLine(hd_Wm_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmin(), 0, hd_Wm_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmax(), 0);
 
@@ -990,7 +1013,7 @@ void W_Asymmetry()
   //line1 -> DrawLine(hd_Z0_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmin(), 0, hd_Z0_AsymAmpSqrtVsRap -> GetXaxis() -> GetXmax(), 0);
 
   textSTAR  -> DrawLatex(0.2, 0.3, "STAR p-p 500 GeV #intL = 25 pb^{-1}");
-  textPtLim -> DrawLatex(0.2, 0.25, "0 < P_{T} < 25 GeV");
+  textPtLim -> DrawLatex(0.2, 0.25, "0.5 < P_{T} < 10 GeV");
   textLSys  -> DrawLatex(0.2, 0.2, "3.4% beam pol. uncertainty not shown");
   //textLetter_1w -> DrawText(0.2, 0.07, "(e)");
   //hd_Z0_AsymAmpSqrtVsRap -> GetYaxis() -> SetRangeUser(-1.49, 1.49);
@@ -1021,7 +1044,7 @@ void W_Asymmetry()
   textLSys   -> SetTextSize(0.045);
   textLSys   -> DrawLatex(xLeg, yLeg-0.1, "3.4% beam pol. uncertainty not shown");
   line1 -> SetLineStyle(3);
-  line1 -> DrawLine(hd_Wm_AsymAmpSqrtVsPt -> GetXaxis() -> GetXmin(), 0, hd_Wm_AsymAmpSqrtVsPt -> GetXaxis() -> GetXmax(), 0);
+  line1 -> DrawLine(hd_Wm_AsymAmpSqrtVsPt -> GetXaxis() -> GetXmin()+0.5, 0, hd_Wm_AsymAmpSqrtVsPt -> GetXaxis() -> GetXmax(), 0);
 
   TLegend *leg_hSysMean2 = new TLegend(0.2, 0.28, 0.55, 0.4);
   leg_hSysMean2 -> SetFillColor(0);
@@ -1042,7 +1065,7 @@ void W_Asymmetry()
   //textStarName -> DrawLatex(0.2, 0.83, "STAR"); 
   textSTAR  -> DrawLatex(0.2, 0.85, "#color[2]{STAR} p-p 500 GeV (L = 25 pb^{-1})");
   textPtLim -> SetTextSize(0.05);
-  textPtLim -> DrawLatex(0.2, 0.85-0.055, "0 < P_{T}^{Z^{0}} < 25 GeV");
+  textPtLim -> DrawLatex(0.2, 0.85-0.055, "0.5 < P_{T}^{Z^{0}} < 10 GeV");
   textLSys  -> DrawLatex(0.2, 0.2, "3.4% beam pol. uncertainty not shown");
 
   TLegend *leg_Z0 = new TLegend(0.2, 0.28+0.075, 0.55, 0.4);
@@ -1143,7 +1166,7 @@ void W_Asymmetry()
 
   textSTAR  -> DrawLatex(0.2, 0.85, "#color[2]{STAR} p-p 500 GeV (L = 25 pb^{-1})");
   textPtLim -> SetTextSize(0.05);
-  textPtLim -> DrawLatex(0.2, 0.85-0.055, "0 < P_{T}^{W} < 25 GeV");
+  textPtLim -> DrawLatex(0.2, 0.85-0.055, "0.5 < P_{T}^{W} < 10 GeV");
   textLSys  -> DrawLatex(0.2, 0.2, "3.4% beam pol. uncertainty not shown");
 
   TLegend *leg_Wp_hSysMean = new TLegend(0.2, 0.23, 0.55, 0.35+0.075);
@@ -1205,7 +1228,7 @@ void W_Asymmetry()
 
   textSTAR  -> DrawLatex(0.2, 0.85, "#color[2]{STAR} p-p 500 GeV (L = 25 pb^{-1})");
   textPtLim -> SetTextSize(0.05);
-  textPtLim -> DrawLatex(0.2, 0.85-0.055, "0 < P_{T}^{W} < 25 GeV");
+  textPtLim -> DrawLatex(0.2, 0.85-0.055, "0.5 < P_{T}^{W} < 10 GeV");
   textLSys  -> DrawLatex(0.2, 0.2, "3.4% beam pol. uncertainty not shown");
 
   TLegend *leg_Wm_hSysMean = new TLegend(0.2, 0.23, 0.55, 0.35+0.075);
@@ -1226,8 +1249,7 @@ void W_Asymmetry()
   cPaperFig -> SaveAs(outPath + "/hd_PaperFig.png");
   cPaperFig -> SaveAs(outPath + "/hd_PaperFig.eps");
 
-
-
+  /*
   TCanvas *cTEST  = new TCanvas("cTEST", "TEEEEEEEEEEEEST", 800, 500);
   cTEST -> Divide(1,2);
   cTEST_1-> cd();
@@ -1235,6 +1257,7 @@ void W_Asymmetry()
   gWp_NoEvo_SeaQuarks -> Draw("C");
   cTEST_2-> cd();
   gWm_NoEvo_SeaQuarks -> Draw("a3");
+  */
 
   TCanvas *cPaperFig2_extra  = new TCanvas("cPaperFig2_extra", "Paper Figure 2 EXTRA", 800, 500);
   cPaperFig2_extra -> Divide(2,1);
@@ -1362,14 +1385,14 @@ void W_Asymmetry()
     Wm_chi2_OppSign_1401_5078 += pow(chi_1401_5078_OppSign,2);
   }
 
-  TLatex *text_Wp_chi2_NoEvo         = new TLatex(0.25, 0.3, Form("#chi^{2}/d.o.f. = %-6.3f/%i", Wp_chi2_NoEvo,  Wp_NPoints) );
+  TLatex *text_Wp_chi2_NoEvo         = new TLatex(0.25, 0.3, Form("#chi^{2}/d.o.f. = %-6.2f/%i", Wp_chi2_NoEvo,  Wp_NPoints) );
   text_Wp_chi2_NoEvo         -> SetNDC();
-  TLatex *text_Wp_chi2_NoEvo_OppSign = new TLatex(0.25, 0.2, Form("#chi^{2} = %-6.3f", Wp_chi2_OppSign_NoEvo) );
+  TLatex *text_Wp_chi2_NoEvo_OppSign = new TLatex(0.25, 0.2, Form("#chi^{2} = %-6.2f", Wp_chi2_OppSign_NoEvo) );
   text_Wp_chi2_NoEvo_OppSign -> SetNDC();
   text_Wp_chi2_NoEvo_OppSign -> SetTextColor(kGreen);
-  TLatex *text_Wm_chi2_NoEvo         = new TLatex(0.25, 0.3, Form("#chi^{2} = %-6.3f", Wm_chi2_NoEvo) );
+  TLatex *text_Wm_chi2_NoEvo         = new TLatex(0.25, 0.3, Form("#chi^{2} = %-6.2f", Wm_chi2_NoEvo) );
   text_Wm_chi2_NoEvo         -> SetNDC();
-  TLatex *text_Wm_chi2_NoEvo_OppSign = new TLatex(0.25, 0.2, Form("#chi^{2} = %-6.3f", Wm_chi2_OppSign_NoEvo) );
+  TLatex *text_Wm_chi2_NoEvo_OppSign = new TLatex(0.25, 0.2, Form("#chi^{2} = %-6.2f", Wm_chi2_OppSign_NoEvo) );
   text_Wm_chi2_NoEvo_OppSign -> SetNDC();
   text_Wm_chi2_NoEvo_OppSign -> SetTextColor(kGreen);
 
@@ -1380,8 +1403,8 @@ void W_Asymmetry()
   leg_Wp_chi2 -> SetBorderSize(0);
   leg_Wp_chi2 -> SetTextSize(0.05);
   leg_Wp_chi2 -> AddEntry(hd_Wp_AsymAmpSqrtVsPt,"#scale[1.1]{W^{+} #rightarrow l^{+} #nu}", "lepf");
-  leg_Wp_chi2 -> AddEntry(gWp_NoEvo,Form("#scale[0.85]{#splitline{KQ (assuming ``sign change'')}{Global #chi^{2}/d.o.f. = %-6.3f/%-i}}",  Wp_chi2_NoEvo + Wm_chi2_NoEvo, total_NPoints), "l");
-  leg_Wp_chi2 -> AddEntry(gWp_NoEvo_OppSign,Form("#scale[0.85]{#splitline{KQ (no ``sign change'')}{Global #chi^{2}/d.o.f. = %-7.3f/%-i}}", Wp_chi2_OppSign_NoEvo + Wm_chi2_OppSign_NoEvo, total_NPoints), "l");
+  leg_Wp_chi2 -> AddEntry(gWp_NoEvo,Form("#scale[0.85]{#splitline{KQ (assuming ``sign change'')}{Global #chi^{2}/d.o.f. = %-5.2f/%-i}}",  Wp_chi2_NoEvo + Wm_chi2_NoEvo, total_NPoints), "l");
+  leg_Wp_chi2 -> AddEntry(gWp_NoEvo_OppSign,Form("#scale[0.85]{#splitline{KQ (no ``sign change'')}{Global #chi^{2}/d.o.f. = %-6.2f/%-i}}", Wp_chi2_OppSign_NoEvo + Wm_chi2_OppSign_NoEvo, total_NPoints), "l");
 
 
   TLegend *leg_Wm_chi2_1401_5078 = new TLegend(0.2, 0.18, 0.6, 0.36+0.075);
@@ -1391,8 +1414,8 @@ void W_Asymmetry()
   leg_Wm_chi2_1401_5078 -> SetBorderSize(0);
   leg_Wm_chi2_1401_5078 -> SetTextSize(0.05);
   leg_Wm_chi2_1401_5078 -> AddEntry(hd_Wm_AsymAmpSqrtVsPt,"#scale[1.1]{W^{-} #rightarrow l^{-} #nu}", "lepf");
-  leg_Wm_chi2_1401_5078 -> AddEntry(gWm_1401_5078,Form("#scale[0.85]{#splitline{EIKV (assuming ``sign change'')}{Global #chi^{2}/d.o.f. = %-6.3f/%-i}}",  Wp_chi2_1401_5078 + Wm_chi2_1401_5078, total_NPoints), "l");
-  leg_Wm_chi2_1401_5078 -> AddEntry(gWm_1401_5078_OppSign,Form("#scale[0.85]{#splitline{EIKV (no ``sign change'')}{Global #chi^{2}/d.o.f. = %-7.3f/%-i}}", Wp_chi2_OppSign_1401_5078 + Wm_chi2_OppSign_1401_5078, total_NPoints), "l");
+  leg_Wm_chi2_1401_5078 -> AddEntry(gWm_1401_5078,Form("#scale[0.85]{#splitline{EIKV (assuming ``sign change'')}{Global #chi^{2}/d.o.f. = %-5.2f/%-i}}",  Wp_chi2_1401_5078 + Wm_chi2_1401_5078, total_NPoints), "l");
+  leg_Wm_chi2_1401_5078 -> AddEntry(gWm_1401_5078_OppSign,Form("#scale[0.85]{#splitline{EIKV (no ``sign change'')}{Global #chi^{2}/d.o.f. = %-6.2f/%-i}}", Wp_chi2_OppSign_1401_5078 + Wm_chi2_OppSign_1401_5078, total_NPoints), "l");
 
 
   cPaperFig2_extra_1 -> cd();
@@ -1414,7 +1437,7 @@ void W_Asymmetry()
   //leg_hSysMean2                -> Draw();
   leg_Wp_chi2                  -> Draw();
   textSTAR  -> DrawLatex(0.2, 0.85, "#color[2]{STAR} p-p 500 GeV (L = 25 pb^{-1})");
-  textPtLim -> DrawLatex(0.2, 0.85-0.055, "0 < P_{T}^{W} < 25 GeV");
+  textPtLim -> DrawLatex(0.2, 0.85-0.055, "0.5 < P_{T}^{W} < 10 GeV");
   //textLSys  -> DrawLatex(0.2, 0.2, "3.4% beam pol. uncertainty not shown");
 
   cPaperFig2_extra_2 -> cd();
@@ -1433,7 +1456,7 @@ void W_Asymmetry()
   //text_Wm_chi2_NoEvo_OppSign   ->Draw();
   leg_Wm_chi2_1401_5078        -> Draw();
   textSTAR  -> DrawLatex(0.2, 0.85, "#color[2]{STAR} p-p 500 GeV (L = 25 pb^{-1})");
-  textPtLim -> DrawLatex(0.2, 0.85-0.055, "0 < P_{T}^{W} < 25 GeV");
+  textPtLim -> DrawLatex(0.2, 0.85-0.055, "0.5 < P_{T}^{W} < 10 GeV");
 
   cPaperFig2_extra -> SaveAs(outPath + "/hd_PaperFig2_extra.png");
   cPaperFig2_extra -> SaveAs(outPath + "/hd_PaperFig2_extra.eps");
@@ -1452,7 +1475,7 @@ void W_Asymmetry()
   leg_Wp_PaperFig2 -> SetBorderSize(0);
   leg_Wp_PaperFig2 -> SetTextSize(0.05);
   leg_Wp_PaperFig2 -> AddEntry(hd_Wp_AsymAmpSqrtVsPt,"#scale[1.1]{W^{+} #rightarrow l^{+} #nu}", "lepf");
-  leg_Wp_PaperFig2 -> AddEntry(gWp_NoEvo,Form("#scale[0.85]{#splitline{KQ (assuming ``sign change'')}{Global #chi^{2}/d.o.f. = %-6.3f/%-i}}",  Wp_chi2_NoEvo + Wm_chi2_NoEvo, total_NPoints), "l");
+  leg_Wp_PaperFig2 -> AddEntry(gWp_NoEvo,Form("#scale[0.85]{#splitline{KQ (assuming ``sign change'')}{Global #chi^{2}/d.o.f. = %-5.2f/%-i}}",  Wp_chi2_NoEvo + Wm_chi2_NoEvo, total_NPoints), "l");
   //leg_Wp_PaperFig2 -> AddEntry(gWp_NoEvo_OppSign,Form("#scale[0.85]{#splitline{KQ (no ``sign change'')}{Global #chi^{2}/d.o.f. = %-7.3f/%-i}}", Wp_chi2_OppSign_NoEvo + Wm_chi2_OppSign_NoEvo, total_NPoints), "l");
 
 
@@ -1464,7 +1487,7 @@ void W_Asymmetry()
   leg_Wm_PaperFig2 -> SetTextSize(0.05);
   leg_Wm_PaperFig2 -> AddEntry(hd_Wm_AsymAmpSqrtVsPt,"#scale[1.1]{W^{-} #rightarrow l^{-} #nu}", "lepf");
   //leg_Wm_PaperFig2 -> AddEntry(gWm_1401_5078,Form("#scale[0.85]{#splitline{EIKV (assuming ``sign change'')}{Global #chi^{2}/d.o.f. = %-6.3f/%-i}}",  Wp_chi2_1401_5078 + Wm_chi2_1401_5078, total_NPoints), "l");
-  leg_Wm_PaperFig2 -> AddEntry(gWm_NoEvo_OppSign,Form("#scale[0.85]{#splitline{KQ (no ``sign change'')}{Global #chi^{2}/d.o.f. = %-7.3f/%-i}}", Wp_chi2_OppSign_NoEvo + Wm_chi2_OppSign_NoEvo, total_NPoints), "l");
+  leg_Wm_PaperFig2 -> AddEntry(gWm_NoEvo_OppSign,Form("#scale[0.85]{#splitline{KQ (no ``sign change'')}{Global #chi^{2}/d.o.f. = %-6.2f/%-i}}", Wp_chi2_OppSign_NoEvo + Wm_chi2_OppSign_NoEvo, total_NPoints), "l");
   //leg_Wm_PaperFig2 -> AddEntry(gWm_1401_5078_OppSign,Form("#scale[0.85]{#splitline{EIKV (no ``sign change'')}{Global #chi^{2}/d.o.f. = %-7.3f/%-i}}", Wp_chi2_OppSign_1401_5078 + Wm_chi2_OppSign_1401_5078, total_NPoints), "l");
 
   cPaperFig2_1 -> cd();
@@ -1481,7 +1504,7 @@ void W_Asymmetry()
   hd_Wp_AsymAmpSqrtVsRap       -> Draw("sameaxis");
   leg_Wp_PaperFig2             -> Draw();
   textSTAR  -> DrawLatex(0.2, 0.85, "#color[2]{STAR} p-p 500 GeV (L = 25 pb^{-1})");
-  textPtLim -> DrawLatex(0.2, 0.85-0.055, "0 < P_{T}^{W} < 25 GeV");
+  textPtLim -> DrawLatex(0.2, 0.85-0.055, "0.5 < P_{T}^{W} < 10 GeV");
   textLSys  -> DrawLatex(0.2, 0.2, "3.4% beam pol. uncertainty not shown");
 
   cPaperFig2_2 -> cd();
@@ -1498,7 +1521,7 @@ void W_Asymmetry()
   hd_Wm_AsymAmpSqrtVsRap       -> Draw("sameaxis");
   leg_Wm_PaperFig2             -> Draw();
   textSTAR  -> DrawLatex(0.2, 0.85, "#color[2]{STAR} p-p 500 GeV (L = 25 pb^{-1})");
-  textPtLim -> DrawLatex(0.2, 0.85-0.055, "0 < P_{T}^{W} < 25 GeV");
+  textPtLim -> DrawLatex(0.2, 0.85-0.055, "0.5 < P_{T}^{W} < 10 GeV");
   textLSys  -> DrawLatex(0.2, 0.2, "3.4% beam pol. uncertainty not shown");
 
   cPaperFig2 -> SaveAs(outPath + "/hd_PaperFig2.png");
@@ -1535,7 +1558,7 @@ void W_Asymmetry()
   //leg_Wp_chi2 -> Draw();
   leg_hSysMean2 -> Draw();
   textSTAR  -> DrawLatex(0.2, 0.85, "#color[2]{STAR} p-p 500 GeV (L = 25 pb^{-1})");
-  textPtLim -> DrawLatex(0.2, 0.85-0.055, "0 < P_{T}^{W} < 25 GeV");
+  textPtLim -> DrawLatex(0.2, 0.85-0.055, "0.5 < P_{T}^{W} < 10 GeV");
   textLSys  -> DrawLatex(0.2, 0.2, "3.4% beam pol. uncertainty not shown");
 
   cChi2_evol_2 -> cd();
@@ -1550,7 +1573,7 @@ void W_Asymmetry()
   hd_Wm_AsymAmpSqrtVsRap       -> Draw("sameaxis");
   leg_Wm_chi2_1401_5078        -> Draw();
   textSTAR  -> DrawLatex(0.2, 0.85, "#color[2]{STAR} p-p 500 GeV (L = 25 pb^{-1})");
-  textPtLim -> DrawLatex(0.2, 0.85-0.055, "0 < P_{T}^{W} < 25 GeV");
+  textPtLim -> DrawLatex(0.2, 0.85-0.055, "0.5 < P_{T}^{W} < 10 GeV");
 
   cChi2_evol -> SaveAs(outPath + "/hd_Chi2_evol.png");
   cChi2_evol -> SaveAs(outPath + "/hd_Chi2_evol.eps");
@@ -1693,7 +1716,7 @@ void W_Asymmetry()
   leg1_wm -> AddEntry(hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb,"W^{-} #rightarrow l^{-} #nu", "lp");
   //leg1_wm -> AddEntry(hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb,"W^{-} - \\int L(del.) = 400 pb^{-1}", "lp");
 
-  TLegend *leg2a_zoom = new TLegend(0.18, 0.2, 0.9, 0.35);
+  TLegend *leg2a_zoom = new TLegend(0.18, 0.18, 0.9, 0.4);
   leg2a_zoom -> SetFillColor(0);
   leg2a_zoom -> SetFillStyle(0);
   leg2a_zoom -> SetLineColor(0);
@@ -1705,6 +1728,7 @@ void W_Asymmetry()
   //leg2a_zoom -> AddEntry(gWp_1401_5078,"arXiv:1401.5078 - evolved", "l");
   leg2a_zoom -> AddEntry(gShade_wp,"#splitline{Uncertainty}{due to TMD evolution}", "f");
   //leg2a_zoom -> AddEntry(gWp_Evo_squarks,"Uncertainty on sea quarks", "f");
+  leg2a_zoom -> AddEntry(gWp_NoEvo_SeaQuarks,"Uncertainty on sea quarks", "f");
 
   TLegend *leg2b_zoom = new TLegend(0.18, 0.2, 0.9, 0.35);
   leg2b_zoom -> SetFillColor(0);
@@ -1729,6 +1753,7 @@ void W_Asymmetry()
   hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> GetXaxis() -> SetLabelFont(62);
   hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> GetXaxis() -> SetTitleFont(62);
   hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> Draw("E1");
+  gWp_NoEvo_SeaQuarks                 -> Draw("3");
   hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> GetYaxis() -> SetRangeUser(-0.2, 0.2);
   gWp_Evo_squarks                     -> Draw("3");
   line1 -> DrawLine(hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> GetXaxis() -> GetXmin(), 0, hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> GetXaxis() -> GetXmax(), 0);
@@ -1763,6 +1788,7 @@ void W_Asymmetry()
   hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb -> SetLineColor(kBlue);
   hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb -> Draw("E1");
   hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb -> GetYaxis() -> SetRangeUser(-0.35, 0.35);
+  gWm_NoEvo_SeaQuarks                 -> Draw("3");
   gWm_Evo_squarks                     -> Draw("3");
   line1 -> DrawLine(hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb -> GetXaxis() -> GetXmin(), 0, hd_Wm_AsymAmpSqrtVsRap_2016Pr_400pb -> GetXaxis() -> GetXmax(), 0);
   gShade_wm                           -> Draw("f");
