@@ -348,7 +348,7 @@ void VecBosEvent::Process()
          if ( track.IsInJet() ) {
             //Info("Process()", "Track is a candidate and within jet: %f <= %f. Saving jet...", track.mMinDeltaRToJet, sMinTrackIsoDeltaR);
             //utils::PrintTLorentzVector((TLorentzVector&) *track->mJet);
-            mJetsWithIsoTrack.insert(track.mJet);
+            ////mJetsWithIsoTrack.insert(track.mJet);  // a bug?!?!?!
          }
       } 
       if  ( track.IsCandidateNoEndcap() ) {
