@@ -313,7 +313,7 @@ void PtCorrPlot()
 
    c2->cd();
    hWp_PtReco_zoomin -> GetYaxis() -> SetTitleOffset(1.8);
-   hWp_PtReco_zoomin -> GetXaxis() -> SetTitle("Recoil P_{T}");
+   hWp_PtReco_zoomin -> GetXaxis() -> SetTitle("Recoil P_{T} (GeV/c)");
    hWp_PtRecoCorrected_zoomin ->SetFillStyle(3448);
    hWp_PtRecoCorrected_zoomin ->SetFillColor(kGreen);
    //hWp_PtRecoCorrected_zoomin ->Draw();
@@ -367,7 +367,7 @@ void PtCorrPlot()
 
    c2b->cd();
    hWp_PtReco_zoomin ->GetYaxis()-> SetTitleOffset(1.8);
-   hWp_PtReco_zoomin -> GetXaxis() -> SetTitle("Recoil P_{T}");
+   hWp_PtReco_zoomin -> GetXaxis() -> SetTitle("Recoil P_{T} (GeV/c)");
    hWp_PtRecoCorrected_zoomin -> SetFillStyle(3448);
    hWp_PtRecoCorrected_zoomin -> SetLineColor(kGreen);
    hWp_PtRecoCorrected_zoomin -> SetFillColor(kGreen);
@@ -422,8 +422,9 @@ void PtCorrPlot()
 
    TCanvas *c2b_paper   = new TCanvas("c2b_paper", "W+ Paper Fig", 400, 400);
 
-   c2b_paper-> cd();
-   c2b_paper-> SetGrid(0,0);
+   c2b_paper -> cd();
+   c2b_paper -> SetGrid(0,0);
+   c2b_paper -> SetRightMargin(0.1);
    //hWp_PtReco_zoomin ->GetYaxis()->SetTitleOffset(1.8);
    //hWp_PtReco_zoomin -> GetXaxis() -> SetTitle("Recoil P_{T}");
    //hWp_PtRecoCorrected_zoomin ->SetFillStyle(3448);
@@ -435,13 +436,23 @@ void PtCorrPlot()
    //hWp_PtWGen_zoomin           ->SetFillStyle(0);
    //hWp_PtWGen_zoomin           ->SetLineColor(kRed);
    hWp_PtRecoCorrected_zoomin -> Draw("same");
-   hWp_PtWGen_zoomin          -> Draw("same"); 
+   hWp_PtWGen_zoomin          -> Draw("same");
+   g1                         -> SetLineStyle(7); 
    g1                         -> Draw("same");
-   TLegend *leg2_paper = new TLegend(0.45, 0.6, 0.75, 0.9);
-   leg2_paper -> AddEntry(hWp_PtReco_zoomin,"Before P_{T} correction", "F");
-   leg2_paper -> AddEntry(hWp_PtRecoCorrected_zoomin,"After P_{T} correction", "F" );
-   leg2_paper -> AddEntry(hWp_PtWGen_zoomin,"PHYTHIA Generated", "L");;
-   leg2_paper -> AddEntry(g1,"RhicBOS 500 GeV", "L");
+   hWp_PtReco_zoomin          -> Draw("sameaxis");
+   TLegend *leg2_paper = new TLegend(0.47, 0.6, 0.888, 0.9);
+   leg2_paper -> SetFillColor(0);
+   leg2_paper -> SetFillStyle(0);
+   leg2_paper -> SetLineColor(0);
+   leg2_paper -> SetBorderSize(0);
+   //leg2_paper -> AddEntry(hWp_PtReco_zoomin,"Before P_{T} correction", "F");
+   leg2_paper -> AddEntry(hWp_PtReco_zoomin,"PYTHIA before correction", "F");
+   //leg2_paper -> AddEntry(hWp_PtRecoCorrected_zoomin,"After P_{T} correction", "F" );
+   leg2_paper -> AddEntry(hWp_PtRecoCorrected_zoomin,"PYTHIA after correction", "F" );
+   //leg2_paper -> AddEntry(hWp_PtWGen_zoomin,"PHYTHIA Generated", "L");
+   leg2_paper -> AddEntry(hWp_PtWGen_zoomin,"P_{T}^{W} - PYTHIA Generated", "L");
+   //leg2_paper -> AddEntry(g1,"RhicBOS 500 GeV", "L");
+   leg2_paper -> AddEntry(g1,"P_{T}^{W} - RhicBOS 500 GeV", "L");
    leg2_paper -> Draw();
 
 
@@ -2018,6 +2029,13 @@ void CalcSyst_evol_Rapidity(TString outPath)
    cout << "Rpidity: relDiff_evol_pjy3: " << relDiff_evol_pjy3 << endl;  
    //cout << "Rpidity: relDiff_evol_pjy4: " << relDiff_evol_pjy4 << endl; 
 
+   Double_t systFromMean_evol_pjy1  = fabs(diff_mean_evol_pjy1) / mean_Gen_evol_pjy1 ;
+   Double_t systFromMean_evol_pjy2  = fabs(diff_mean_evol_pjy2) / mean_Gen_evol_pjy2 ;
+   Double_t systFromMean_evol_pjy3  = fabs(diff_mean_evol_pjy3) / mean_Gen_evol_pjy3 ;
+   cout << "Rpidity: systFromMean_evol_pjy1: " << systFromMean_evol_pjy1 << endl;  
+   cout << "Rpidity: systFromMean_evol_pjy2: " << systFromMean_evol_pjy2 << endl;  
+   cout << "Rpidity: systFromMean_evol_pjy3: " << systFromMean_evol_pjy3 << endl;
+
 
    //Double_t xBinsRap[5] = {-0.6, -0.25, 0, 0.25, 0.6};
    static const int RapBins = 3;
@@ -2115,6 +2133,12 @@ void CalcSyst_evol_Rapidity(TString outPath)
    //cout << "Rpidity: syst_evol_pjy4: " << syst_evol_pjy4 << endl; 
 
 
+ 
+   TH1D* hSystematicsMean_evol = new TH1D("hSystematicsMean_evol", "; y; systematic uncertainty (%)", RapBins, xBinsRap);
+   hSystematicsMean_evol -> SetBinContent(1, systFromMean_evol_pjy1*100);
+   hSystematicsMean_evol -> SetBinContent(2, systFromMean_evol_pjy2*100);
+   hSystematicsMean_evol -> SetBinContent(3, systFromMean_evol_pjy3*100);
+
    TH1D* hAbsoluteSystematicsGMean_evol = new TH1D("hAbsoluteSystematicsGMean_evol", "; y; Absolute systematic uncertainty", RapBins, xBinsRap);
    hAbsoluteSystematicsGMean_evol -> SetBinContent(1, diff_gmean_evol_pjy1);
    hAbsoluteSystematicsGMean_evol -> SetBinContent(2, diff_gmean_evol_pjy2);
@@ -2162,7 +2186,23 @@ void CalcSyst_evol_Rapidity(TString outPath)
    cAbsSysFromGMean->SaveAs(outPath + "/plot_absolute_systematicsGMean_evol_Rap.png");
    cAbsSysFromGMean->SaveAs(outPath + "/plot_absolute_systematicsGMean_evol_Rap.eps");
 
-   TCanvas *cSysFromGMean   = new TCanvas("cSysFromGMean", "Systematics (From GMean) evol. Vs Rapidity", 500, 500);
+
+   TCanvas *cSysFromMean   = new TCanvas("cSysFromMean", "Systematics (From Mean) evol. Vs Rapidity", 500, 500);
+   cSysFromMean->cd();
+   hSystematicsMean_evol -> GetYaxis() -> SetTitleOffset(1.5);
+   hSystematicsMean_evol -> SetMarkerStyle(20);
+   hSystematicsMean_evol -> SetMarkerColor(kRed);
+   hSystematicsMean_evol -> SetStats(0);
+   hSystematicsMean_evol -> Draw("P");
+
+   TFile fileSysMean("histSysMeanRap.root", "recreate"); 
+   hSystematicsMean_evol -> Write(); 
+
+   cSysFromMean->SaveAs(outPath + "/plot_systematicsMean_evol_Rap.png");
+   cSysFromMean->SaveAs(outPath + "/plot_systematicsMean_evol_Rap.eps");
+
+
+   TCanvas *cSysFromGMean   = new TCanvas("cSysFromGMean", "Systematics (From Gaussian Mean) evol. Vs Rapidity", 500, 500);
    cSysFromGMean->cd();
    hSystematicsGMean_evol -> GetYaxis() -> SetTitleOffset(1.5);
    hSystematicsGMean_evol -> SetMarkerStyle(20);
