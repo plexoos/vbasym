@@ -95,6 +95,12 @@ void TrackHContainer::BookHists()
    o["hTrackClusterEnergyFrac"] = hist = new TH1I("hTrackClusterEnergyFrac", "; Isolation, Cluster Energy Frac.; Num. of Tracks", 55, 0, 1.1);
    hist->SetOption("hist GRIDX GRIDY XY");
 
+   o["hTrackClusterEnergyFrac_noEleP"] = hist = new TH1I("hTrackClusterEnergyFrac_noEleP", "; Isolation, Cluster Energy Frac.; Num. of Tracks", 55, 0, 1.1);
+   hist->SetOption("hist GRIDX GRIDY XY");
+
+   o["hTrackClusterETFrac"] = hist = new TH1I("hTrackClusterETFrac", "; Isolation, Cluster E_{T} Frac.; Num. of Tracks", 55, 0, 1.1);
+   hist->SetOption("hist GRIDX GRIDY XY");
+
    o["hChargePrimaryTrack"] = hist = new TH1I("hChargePrimaryTrack", "; Charge of the primary track; Num. of Tracks", 10, -2, 2);
    o["hQoPt_PrimaryTrack"] = hist = new TH1F("hQoPt_PrimaryTrack", "; Q/P_{T} of the primary track; Num. of Tracks", 50, -0.1, 0.1);
 
@@ -116,8 +122,10 @@ void TrackHContainer::Fill(ProtoEvent &ev)
 {
    VecBosEvent& event = (VecBosEvent&) ev;
 
-   VecBosTrackPtrSetIter iTrack = event.mTracks.begin();
-   for ( ; iTrack!=event.mTracks.end(); ++iTrack)
+   //VecBosTrackPtrSetIter iTrack = event.mTracks.begin();
+   //for ( ; iTrack!=event.mTracks.end(); ++iTrack)
+   VecBosTrackPtrSetIter iTrack = event.mTracksCandidate.begin();
+   for ( ; iTrack!=event.mTracksCandidate.end(); ++iTrack)
    {
       Fill(**iTrack);
    }
@@ -149,6 +157,8 @@ void TrackHContainer::Fill(VecBosTrack &track)
    ((TH1*) o["hTrackCluster4x4Et"])->Fill(track.mCluster4x4.ET);
    ((TH1*) o["hTrackBClusterEnergyIsoRatio"])->Fill(track.mCluster2x2.ET/track.mCluster4x4.ET);
    ((TH1*) o["hTrackClusterEnergyFrac"])->Fill(track.GetClusterEnergyFrac());
+   ((TH1*) o["hTrackClusterEnergyFrac_noEleP"])->Fill(track.GetClusterEnergyFrac_noEleP());
+   ((TH1*) o["hTrackClusterETFrac"])->Fill(track.GetClusterETFrac());
    ((TH1*) o["hTrackDistanceToCluster"])->Fill(track.CalcDistanceToCluster().Mag());
    ((TH1*) o["hChargePrimaryTrack"])->Fill(track.mStMuTrack->charge());
    ((TH1*) o["hQoPt_PrimaryTrack"])->Fill(track.mStMuTrack->charge()/track.GetP3EScaled().Pt());

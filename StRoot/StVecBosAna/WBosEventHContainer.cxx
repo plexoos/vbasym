@@ -34,6 +34,7 @@ void WBosEventHContainer::BookHists()
 
    fDir->cd();
 
+   o["hRunId"]            = hist = new TH1I("hRunId", "; Run Id; Events", 61100, 12038000.5, 12099000.5);
    o["hElectronPt"]       = hist = new TH1D("hElectronPt", "; Electron P_{T}; Events", 20, 15, 55);
    o["hElectronPhi"]      = hist = new TH1D("hElectronPhi", "; Electron #phi; Events", 16, -M_PI, M_PI);
    o["hElectronEta"]      = hist = new TH1D("hElectronEta", "; Electron #eta; Events", 20, -2, 2);
@@ -91,6 +92,7 @@ void WBosEventHContainer::Fill(ProtoEvent &ev)
 {
    WBosEvent& event = (WBosEvent&) ev;
 
+   ((TH1*) o["hRunId"])->Fill(event.GetRunId());
    ((TH1*) o["hElectronPt"])->Fill (event.GetElectronP3().Pt());
    ((TH1*) o["hElectronPhi"])->Fill(event.GetElectronP3().Phi());
    ((TH1*) o["hElectronEta"])->Fill(event.GetElectronP3().Eta());

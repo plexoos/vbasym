@@ -34,7 +34,7 @@ void EventHContainer::BookHists()
 
    fDir->cd();
 
-   o["hRunId"]                 = h = new TH1I("hRunId", "; Run Id; Events", 20, 0, 20);
+   o["hRunId"]                 = h = new TH1I("hRunId", "; Run Id; Events", 60100, 12038000, 12098100);
    h->SetOption("hist GRIDX");
    o["hZdcRate"]               = h = new TH1I("hZdcRate", "; ZDC Rate; Events", 50, 100e3, 200e3);
    h->SetOption("hist GRIDX");
