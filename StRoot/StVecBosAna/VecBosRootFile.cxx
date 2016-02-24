@@ -83,11 +83,17 @@ void VecBosRootFile::BookHists()
    fHists->d["W-_event_pass_wbos_pt>15"] = ph = new EventHContainer(new TDirectoryFile("W-_event_pass_wbos_pt>15", "W-_event_pass_wbos_pt>15", "", this));
    fHistCuts[kCUT_NEGATIVE_EVENT_PASS_WBOS_PT15].insert(ph);
 
-   fHists->d["W+_event_pass_wbos"] = ph = new EventHContainer(new TDirectoryFile("W+_event_pass_wbos", "W+_event_pass_wbos_pt>15", "", this));
+   fHists->d["W+_event_pass_wbos"] = ph = new EventHContainer(new TDirectoryFile("W+_event_pass_wbos", "W+_event_pass_wbos", "", this));
    fHistCuts[kCUT_POSITIVE_EVENT_PASS_WBOS].insert(ph);
 
-   fHists->d["W-_event_pass_wbos"] = ph = new EventHContainer(new TDirectoryFile("W-_event_pass_wbos", "W-_event_pass_wbos_pt>15", "", this));
+   fHists->d["W-_event_pass_wbos"] = ph = new EventHContainer(new TDirectoryFile("W-_event_pass_wbos", "W-_event_pass_wbos", "", this));
    fHistCuts[kCUT_NEGATIVE_EVENT_PASS_WBOS].insert(ph);
+
+   fHists->d["W+_event_pass_wbos_noendcap"] = ph = new EventHContainer(new TDirectoryFile("W+_event_pass_wbos_noendcap", "W+_event_pass_wbos_noendcap", "", this));
+   fHistCuts[kCUT_POSITIVE_EVENT_PASS_WBOS_NOETOW].insert(ph);
+
+   fHists->d["W-_event_pass_wbos_noendcap"] = ph = new EventHContainer(new TDirectoryFile("W-_event_pass_wbos_noendcap", "W-_event_pass_wbos_noendcap", "", this));
+   fHistCuts[kCUT_NEGATIVE_EVENT_PASS_WBOS_NOETOW].insert(ph);
 
    fHists->d["event_pass_wbos"] = ph = new EventHContainer(new TDirectoryFile("event_pass_wbos", "event_pass_wbos", "", this));
    fHistCuts[kCUT_EVENT_PASS_WBOS].insert(ph);
@@ -252,6 +258,12 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
      if ( event.PassedCutWBosMinus(WBosEvent::sMinElectronPtHard) ) 
         Fill(ev, kCUT_NEGATIVE_EVENT_PASS_WBOS);
 
+     if ( event.PassedCutWBosPlusNoEndcap(WBosEvent::sMinElectronPtHard) ) 
+        Fill(ev, kCUT_POSITIVE_EVENT_PASS_WBOS_NOETOW);
+
+     if ( event.PassedCutWBosMinusNoEndcap(WBosEvent::sMinElectronPtHard) ) 
+        Fill(ev, kCUT_NEGATIVE_EVENT_PASS_WBOS_NOETOW);
+
 
    // Fill vertex histos
    VecBosVertexPtrSetIter iVertex = event.mVertices.begin();
@@ -305,12 +317,12 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
             ((TrackHContainer *) fHists->d["track_cand_pass_qcd"])->Fill(track);
 
             if ( track.mStMuTrack->charge() > 0.){
-               Fill(ev, kCUT_POSITIVE_EVENT_PASS_QCD);
+	       Fill(ev, kCUT_POSITIVE_EVENT_PASS_QCD);
                ((TrackHContainer *) fHists->d["W+_track_cand_pass_qcd"])->Fill(track);
             }
 
             if ( track.mStMuTrack->charge() < 0.){
-               Fill(ev, kCUT_NEGATIVE_EVENT_PASS_QCD);
+	       Fill(ev, kCUT_NEGATIVE_EVENT_PASS_QCD);
                ((TrackHContainer *) fHists->d["W-_track_cand_pass_qcd"])->Fill(track);
             }
       } // end QCD events
@@ -318,17 +330,13 @@ void VecBosRootFile::Fill(ProtoEvent &ev)
 
       if ( event.PassedCutWBos(WBosEvent::sMinElectronPtHard) ) {
 
-	//Fill(ev, kCUT_EVENT_PASS_WBOS);
-
             ((TrackHContainer *) fHists->d["track_cand_pass_wbos"])->Fill(track);
 
             if ( event.PassedCutWBosPlus(WBosEvent::sMinElectronPtHard) ) {
-	      //Fill(ev, kCUT_POSITIVE_EVENT_PASS_WBOS);
                ((TrackHContainer *) fHists->d["W+_track_cand_pass_wbos"])->Fill(track);
             }
 
             if ( event.PassedCutWBosMinus(WBosEvent::sMinElectronPtHard) ) {
-	      //Fill(ev, kCUT_NEGATIVE_EVENT_PASS_WBOS);
                ((TrackHContainer *) fHists->d["W-_track_cand_pass_wbos"])->Fill(track);
             }
       }

@@ -92,7 +92,7 @@ void PtCorrPlot()
    TFile *fileMCWp          = TFile::Open(inPath_TSSA + "run11_mc_Wp2enu.lis/hist/vbana.root");
    TFile *fileMCWp_ZDChigh  = TFile::Open(inPathNew + "run11_mc_Wp2enu_ZDCrate_gt_90k.lis/hist/vbana.root");
    TFile *fileMCWp_TuneA    = TFile::Open(inPathNew + "run11_mc_Wp2enu_tuneA.lis/hist/vbana.root");
-   TFile *fileMCWpOld       = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_vbana_OldStylePtCorr.root");
+   //TFile *fileMCWpOld       = TFile::Open(inPath + "run11_mc_Wp2enu.lis_-m_-w_--jpm_0.5_vbana_OldStylePtCorr.root");
    //TFile *fileMCWm          = TFile::Open(inPathNew + "run11_mc_Wm2enu.lis/hist/vbana.root");
    TFile *fileMCWm          = TFile::Open(inPath_TSSA + "run11_mc_Wm2enu.lis/hist/vbana.root");
 
@@ -425,36 +425,38 @@ void PtCorrPlot()
    c2b_paper -> cd();
    c2b_paper -> SetGrid(0,0);
    c2b_paper -> SetRightMargin(0.1);
-   //hWp_PtReco_zoomin ->GetYaxis()->SetTitleOffset(1.8);
-   //hWp_PtReco_zoomin -> GetXaxis() -> SetTitle("Recoil P_{T}");
-   //hWp_PtRecoCorrected_zoomin ->SetFillStyle(3448);
-   //hWp_PtRecoCorrected_zoomin ->SetLineColor(kGreen);
-   //hWp_PtRecoCorrected_zoomin ->SetFillColor(kGreen);
    hWp_PtReco_zoomin          -> SetTitle("");
    hWp_PtReco_zoomin          -> SetStats(0);
    hWp_PtReco_zoomin          -> Draw();
-   //hWp_PtWGen_zoomin           ->SetFillStyle(0);
-   //hWp_PtWGen_zoomin           ->SetLineColor(kRed);
    hWp_PtRecoCorrected_zoomin -> Draw("same");
-   hWp_PtWGen_zoomin          -> Draw("same");
+   //hWp_PtWGen_zoomin          -> Draw("same");
    g1                         -> SetLineStyle(7); 
    g1                         -> Draw("same");
    hWp_PtReco_zoomin          -> Draw("sameaxis");
-   TLegend *leg2_paper = new TLegend(0.47, 0.6, 0.888, 0.9);
+   //TLegend *leg2_paper = new TLegend(0.47, 0.6, 0.888, 0.9);
+   TLegend *leg2_paper = new TLegend(0.4, 0.7, 0.888, 0.9);
    leg2_paper -> SetFillColor(0);
    leg2_paper -> SetFillStyle(0);
    leg2_paper -> SetLineColor(0);
    leg2_paper -> SetBorderSize(0);
-   //leg2_paper -> AddEntry(hWp_PtReco_zoomin,"Before P_{T} correction", "F");
    leg2_paper -> AddEntry(hWp_PtReco_zoomin,"PYTHIA before correction", "F");
-   //leg2_paper -> AddEntry(hWp_PtRecoCorrected_zoomin,"After P_{T} correction", "F" );
    leg2_paper -> AddEntry(hWp_PtRecoCorrected_zoomin,"PYTHIA after correction", "F" );
-   //leg2_paper -> AddEntry(hWp_PtWGen_zoomin,"PHYTHIA Generated", "L");
-   leg2_paper -> AddEntry(hWp_PtWGen_zoomin,"P_{T}^{W} - PYTHIA Generated", "L");
-   //leg2_paper -> AddEntry(g1,"RhicBOS 500 GeV", "L");
+   //leg2_paper -> AddEntry(hWp_PtWGen_zoomin,"P_{T}^{W} - PYTHIA Generated", "L");
    leg2_paper -> AddEntry(g1,"P_{T}^{W} - RhicBOS 500 GeV", "L");
    leg2_paper -> Draw();
 
+   // Write the output of the vectors in Paper Fig. 1
+   cout << " " << endl;
+   cout << "----------------- PAPER FIGURE 1 ----------------" << endl;
+   for(Int_t i=1; i <=  hWp_PtReco_zoomin -> GetNbinsX(); i++) {
+     Double_t eval_x  = hWp_PtReco_zoomin          -> GetBinCenter(i);
+     Double_t val_y   = hWp_PtReco_zoomin          -> GetBinContent(i);
+     Double_t val_corrected_y   = hWp_PtRecoCorrected_zoomin -> GetBinContent(i);
+     cout << "bin= " << i << " -> " << "Recoil_Pt = " << eval_x <<"; #Events(no correction) = " << val_y <<
+       "; #Events(corrected) = " << val_corrected_y << endl;
+   }
+   cout << "-------------------------------------------------" << endl;
+   cout << " " << endl;
 
    c2b_paper->SaveAs(outPathPaper + "/PaperPlot_PtCorr.png");
    c2b_paper->SaveAs(outPathPaper + "/PaperPlot_PtCorr.eps");

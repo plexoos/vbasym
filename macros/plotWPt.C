@@ -44,8 +44,10 @@ if (first < 0) first = 0;
 }
 
 
-void plotWPt()
-{
+void plotWPt() {
+
+// Load the libraries:
+//gROOT->Macro("/star/u/fazio/vbasym/macros/loadLibs.C");{
 
    //gROOT->Reset();
 
@@ -72,22 +74,35 @@ void plotWPt()
   TChain WpMCPerugiaChain("t");
 
   //WpMCTuneAChain.Add("/star/data05/scratch/fazio/runlists/run11_mc_Wp2enu.lis_-m_--jpm_0.5/tree/run11_mc_Wp2enu_*_tree.root");
-   WpMCTuneAChain.Add("/star/data05/scratch/fazio/runlists/run11_mc_Wp2enu.lis_-m_--jpm_0.5/tree/run11_mc_Wp2enu_00_tree.root"); 
-   WpMCTuneAChain.Add("/star/data05/scratch/fazio/runlists/run11_mc_Wp2enu.lis_-m_--jpm_0.5/tree/run11_mc_Wp2enu_01_tree.root"); 
-   WpMCTuneAChain.Add("/star/data05/scratch/fazio/runlists/run11_mc_Wp2enu.lis_-m_--jpm_0.5/tree/run11_mc_Wp2enu_02_tree.root"); 
+  //WpMCTuneAChain.Add("/star/data05/scratch/fazio/runlists/run11_mc_Wp2enu.lis_-m_--jpm_0.5/tree/run11_mc_Wp2enu_00_tree.root"); 
+  //WpMCTuneAChain.Add("/star/data05/scratch/fazio/runlists/run11_mc_Wp2enu.lis_-m_--jpm_0.5/tree/run11_mc_Wp2enu_01_tree.root"); 
+  //WpMCTuneAChain.Add("/star/data05/scratch/fazio/runlists/run11_mc_Wp2enu.lis_-m_--jpm_0.5/tree/run11_mc_Wp2enu_02_tree.root");
+  WpMCTuneAChain.Add("/star/institutions/bnl_me/fazio/stana_out/runlists/run11_mc_Wp2enu.lis/tree/run11_mc_Wp2enu_00_tree.root"); 
+  WpMCTuneAChain.Add("/star/institutions/bnl_me/fazio/stana_out/runlists/run11_mc_Wp2enu.lis/tree/run11_mc_Wp2enu_01_tree.root"); 
+  WpMCTuneAChain.Add("/star/institutions/bnl_me/fazio/stana_out/runlists/run11_mc_Wp2enu.lis/tree/run11_mc_Wp2enu_02_tree.root"); 
+  //TFile *WpMCTuneA   = TFile::Open("/star/institutions/bnl_me/fazio/stana_out/runlists/run11_mc_Wp2enu.lis/hist/vbana.root"); 
   
-   WpMCPerugiaChain.Add("/star/data05/scratch/fazio/runlists/run12_mc_Wp2enu.lis_-m_--jpm_0.5/tree/run12_mc_Wp2enu_00_tree.root");  
-   WpMCPerugiaChain.Add("/star/data05/scratch/fazio/runlists/run12_mc_Wp2enu.lis_-m_--jpm_0.5/tree/run12_mc_Wp2enu_01_tree.root");  
-   WpMCPerugiaChain.Add("/star/data05/scratch/fazio/runlists/run12_mc_Wp2enu.lis_-m_--jpm_0.5/tree/run12_mc_Wp2enu_02_tree.root"); 
-   WpMCPerugiaChain.Add("/star/data05/scratch/fazio/runlists/run12_mc_Wp2enu.lis_-m_--jpm_0.5/tree/run12_mc_Wp2enu_03_tree.root");
+   //WpMCPerugiaChain.Add("/star/data05/scratch/fazio/runlists/run12_mc_Wp2enu.lis_-m_--jpm_0.5/tree/run12_mc_Wp2enu_00_tree.root");  
+   //WpMCPerugiaChain.Add("/star/data05/scratch/fazio/runlists/run12_mc_Wp2enu.lis_-m_--jpm_0.5/tree/run12_mc_Wp2enu_01_tree.root");  
+   //WpMCPerugiaChain.Add("/star/data05/scratch/fazio/runlists/run12_mc_Wp2enu.lis_-m_--jpm_0.5/tree/run12_mc_Wp2enu_02_tree.root"); 
+   //WpMCPerugiaChain.Add("/star/data05/scratch/fazio/runlists/run12_mc_Wp2enu.lis_-m_--jpm_0.5/tree/run12_mc_Wp2enu_03_tree.root");
+  WpMCPerugiaChain.Add("/star/institutions/bnl_me/fazio/stana_out/runlists/run12_mc_Wp2enu.lis/tree/run12_mc_Wp2enu_00_tree.root");
+  WpMCPerugiaChain.Add("/star/institutions/bnl_me/fazio/stana_out/runlists/run12_mc_Wp2enu.lis/tree/run12_mc_Wp2enu_01_tree.root");
+  WpMCPerugiaChain.Add("/star/institutions/bnl_me/fazio/stana_out/runlists/run12_mc_Wp2enu.lis/tree/run12_mc_Wp2enu_02_tree.root");
+  WpMCPerugiaChain.Add("/star/institutions/bnl_me/fazio/stana_out/runlists/run12_mc_Wp2enu.lis/tree/run12_mc_Wp2enu_03_tree.root");
+  //TFile *WpMCPerugia = TFile::Open("/star/institutions/bnl_me/fazio/stana_out/runlists/run12_mc_Wp2enu.lis/hist/vbana.root");
 
+   // fill histograms
+  TH1F *htuneA_WPt     = new TH1F("htuneA_WPt","TUNE A kt=1; P^{W}_{T} (GeV); events",40,0.,20);
+  TH1F *hperugia0_WPt     = new TH1F("hperugia0_WPt","Perugia0 510GeV; P^{W}_{T} (GeV); events",40,0.,20);
+  //WpMCTuneAChain.Project("htuneA_WPt","e.mWEvent.mP4WBoson.Pt()");
+  //WpMCPerugiaChain.Project("hperugia0_WPt","e.mWEvent.mP4WBoson.Pt()"); 
+  WpMCTuneAChain.Project("htuneA_WPt","e.mP3TrackRecoilTpcNeutrals.Pt()");
+  WpMCPerugiaChain.Project("hperugia0_WPt","e.mP3TrackRecoilTpcNeutrals.Pt()"); 
 
-TH1F *htuneA_WPt     = new TH1F("htuneA_WPt","TUNE A kt=1; P^{W}_{T} (GeV); events",40,0.,20);
-TH1F *hperugia0_WPt     = new TH1F("hperugia0_WPt","Perugia0 510GeV; P^{W}_{T} (GeV); events",40,0.,20);
+  //TH1 *htuneA_WPt        = (TH1*) WpMCTuneA   -> Get("event_mc/hWBosonPt_zoomin");
+  //TH1 *hperugia0_WPt     = (TH1*) WpMCPerugia -> Get("event_mc/hWBosonPt_zoomin");
 
-
- WpMCTuneAChain.Project("htuneA_WPt","e.mWEvent.mP4WBoson.Pt()"); 
- WpMCPerugiaChain.Project("hperugia0_WPt","e.mWEvent.mP4WBoson.Pt()"); 
 
  TGraph *g1 = new TGraph("./curves/0304002.Wptcurve.txt","%lg %lg");
  TGraph *g2 = new TGraph("./curves/Altarelli.530GeV.txt","%lg %lg");
@@ -241,5 +256,6 @@ TH1F *hperugia0_WPt     = new TH1F("hperugia0_WPt","Perugia0 510GeV; P^{W}_{T} (
    leg1          -> Draw();
 
    c2->Print(outPath + "/plot_WPT_2.png");  
+   c2->Print(outPath + "/plot_WPT_2.eps");  
 
 }

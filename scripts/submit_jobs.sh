@@ -9,7 +9,7 @@
 #
 # Usage example:
 #
-# submit_jobs.sh run11_pp_transverse -z -o -m -n 1000
+# ./submit_jobs.sh run11_mc_Wp2enu.lis -w --mctype 1 --jets
 #
 # Current usage tips:
 #

@@ -37,18 +37,38 @@ void WBosEventHContainer::BookHists()
    o["hRunId"]            = hist = new TH1I("hRunId", "; Run Id; Events", 61100, 12038000.5, 12099000.5);
    o["hElectronPt"]       = hist = new TH1D("hElectronPt", "; Electron P_{T}; Events", 20, 15, 55);
    o["hElectronPhi"]      = hist = new TH1D("hElectronPhi", "; Electron #phi; Events", 16, -M_PI, M_PI);
+   o["hElectronPhi_shift"]      = hist = new TH1D("hElectronPhi_shift", "; Electron #phi; Events", 16, 0, 2*M_PI);
    o["hElectronEta"]      = hist = new TH1D("hElectronEta", "; Electron #eta; Events", 20, -2, 2);
    o["hNeutrinoPt"]       = hist = new TH1D("hNeutrinoPt", " ; Neutrino P_{T}; Events", 20, 15, 55);
    o["hNeutrinoPhi"]      = hist = new TH1D("hNeutrinoPhi", "; Neutrino #phi; Events", 16, -M_PI, M_PI);
    o["hNeutrinoEta"]      = hist = new TH1D("hNeutrinoEta", "; Neutrino #eta; Events", 20, -2, 2);
+   o["hWBosonPt_bin1"]    = hist = new TH1D("hWBosonPt_bin1", ";  W Boson P_{T}; Events", 10, 0.5, 1);
+   o["hWBosonPt_bin2"]    = hist = new TH1D("hWBosonPt_bin2", ";  W Boson P_{T}; Events", 10, 1, 2.5);
+   o["hWBosonPt_bin3"]    = hist = new TH1D("hWBosonPt_bin3", ";  W Boson P_{T}; Events", 10, 2.5, 4);
+   o["hWBosonPt_bin4"]    = hist = new TH1D("hWBosonPt_bin4", ";  W Boson P_{T}; Events", 10, 4, 5.5);
+   o["hWBosonPt_bin5"]    = hist = new TH1D("hWBosonPt_bin5", ";  W Boson P_{T}; Events", 10, 5.5, 7);
+   o["hWBosonPt_bin6"]    = hist = new TH1D("hWBosonPt_bin6", ";  W Boson P_{T}; Events", 10, 7, 10);
+   o["hWBosonPt_ybin1"]   = hist = new TH1D("hWBosonPt_ybin1", "; W Boson P_{T}; Events", 20, 0, 20);
+   o["hWBosonPt_ybin2"]   = hist = new TH1D("hWBosonPt_ybin2", "; W Boson P_{T}; Events", 20, 0, 20);
+   o["hWBosonPt_ybin3"]   = hist = new TH1D("hWBosonPt_ybin3", "; W Boson P_{T}; Events", 20, 0, 20);
    o["hWBosonPt"]         = hist = new TH1D("hWBosonPt", "; W Boson P_{T}; Events", 20, 0, 20);
    o["hWBosonPt_zoomin"]  = hist = new TH1D("hWBosonPt_zoomin", "   ; W Boson P_{T}; Events", 20, 0, 10);
    o["hWBosonPz"]         = hist = new TH1D("hWBosonPz", "; W Boson P_{z}; Events", 30, -60, 60);
    o["hWBosonPz_zoomin"]  = hist = new TH1D("hWBosonPz_zoomin", "   ; W Boson P_{z}; Events", 10, -20, 20);
    o["hWBosonPhi"]        = hist = new TH1D("hWBosonPhi", "; W Boson #phi; Events", 16, -M_PI, M_PI);
+   o["hWBosonPhi_shift"]        = hist = new TH1D("hWBosonPhi_shift", "; W Boson #phi; Events", 16, 0, 2*M_PI);
    o["hWBosonEta"]        = hist = new TH1D("hWBosonEta", "; W Boson #eta; Events", 20, -4, 4);
-   o["hWBosonRapidity"]   = hist = new TH1D("hWBosonRapidity", "; W Boson Rapidity; Events", 20, -1.5, 1.5);
-   o["hWBosonPzVsRapidity"]   = hist = new TH2D("hWBosonPzVsRapidity", "; W Boson P_{z}; W Boson Rapidity", 60, -60, 60, 40, -1, 1);
+   o["hWBosonRapidity_bin1"]   = hist = new TH1D("hWBosonRapidity_bin1", "; W Boson Rapidity; Events", 10, -0.6, -0.2);
+   o["hWBosonRapidity_bin2"]   = hist = new TH1D("hWBosonRapidity_bin2", "; W Boson Rapidity; Events", 10, -0.2, 0.2);
+   o["hWBosonRapidity_bin3"]   = hist = new TH1D("hWBosonRapidity_bin3", "; W Boson Rapidity; Events", 10, 0.2, 0.6);
+   o["hWBosonRapidity_ptbin1"] = hist = new TH1D("hWBosonRapidity_ptbin1", "; W Boson Rapidity; Events", 20, -1.5, 1.5);
+   o["hWBosonRapidity_ptbin2"] = hist = new TH1D("hWBosonRapidity_ptbin2", "; W Boson Rapidity; Events", 20, -1.5, 1.5);
+   o["hWBosonRapidity_ptbin3"] = hist = new TH1D("hWBosonRapidity_ptbin3", "; W Boson Rapidity; Events", 20, -1.5, 1.5);
+   o["hWBosonRapidity_ptbin4"] = hist = new TH1D("hWBosonRapidity_ptbin4", "; W Boson Rapidity; Events", 20, -1.5, 1.5);
+   o["hWBosonRapidity_ptbin5"] = hist = new TH1D("hWBosonRapidity_ptbin5", "; W Boson Rapidity; Events", 20, -1.5, 1.5);
+   o["hWBosonRapidity_ptbin6"] = hist = new TH1D("hWBosonRapidity_ptbin6", "; W Boson Rapidity; Events", 20, -1.5, 1.5);
+   o["hWBosonRapidity"]        = hist = new TH1D("hWBosonRapidity", "; W Boson Rapidity; Events", 20, -1.5, 1.5);
+   o["hWBosonPzVsRapidity"]    = hist = new TH2D("hWBosonPzVsRapidity", "; W Boson P_{z}; W Boson Rapidity", 60, -60, 60, 40, -1, 1);
    hist->SetOption("colz LOGZ");
    o["hWBosonEtaVsElectronEta"]   = hist = new TH2D("hWBosonEtaVsElectronEta", "; W Boson #eta; Electron #eta", 20, -4, 4, 20, -2, 2);
    hist->SetOption("colz LOGZ");
@@ -95,18 +115,57 @@ void WBosEventHContainer::Fill(ProtoEvent &ev)
    ((TH1*) o["hRunId"])->Fill(event.GetRunId());
    ((TH1*) o["hElectronPt"])->Fill (event.GetElectronP3().Pt());
    ((TH1*) o["hElectronPhi"])->Fill(event.GetElectronP3().Phi());
+   ((TH1*) o["hElectronPhi_shift"])->Fill(event.GetElectronP3().Phi());
    ((TH1*) o["hElectronEta"])->Fill(event.GetElectronP3().Eta());
    ((TH1*) o["hNeutrinoPt"])->Fill (event.GetNeutrinoP3().Pt());
    ((TH1*) o["hNeutrinoPhi"])->Fill(event.GetNeutrinoP3().Phi());
    ((TH1*) o["hNeutrinoEta"])->Fill(event.GetNeutrinoP3().Eta());
-   ((TH1*) o["hWBosonPt"])->Fill (event.GetVecBosonP3().Pt());
-   ((TH1*) o["hWBosonPt_zoomin"])->Fill (event.GetVecBosonP3().Pt());
+   ((TH1*) o["hWBosonPt_bin1"])  -> Fill (event.GetVecBosonP3().Pt());
+   ((TH1*) o["hWBosonPt_bin2"])  -> Fill (event.GetVecBosonP3().Pt());
+   ((TH1*) o["hWBosonPt_bin3"])  -> Fill (event.GetVecBosonP3().Pt());
+   ((TH1*) o["hWBosonPt_bin4"])  -> Fill (event.GetVecBosonP3().Pt());
+   ((TH1*) o["hWBosonPt_bin5"])  -> Fill (event.GetVecBosonP3().Pt());
+   ((TH1*) o["hWBosonPt_bin6"])  -> Fill (event.GetVecBosonP3().Pt());
+
+   if (event.GetVecBosonP4().Rapidity() > -0.6 && event.GetVecBosonP4().Rapidity() < -0.2)
+      ((TH1*) o["hWBosonPt_ybin1"])       -> Fill (event.GetVecBosonP3().Pt()); 
+   if (event.GetVecBosonP4().Rapidity() > -0.2 && event.GetVecBosonP4().Rapidity() < 0.2)
+      ((TH1*) o["hWBosonPt_ybin2"])       -> Fill (event.GetVecBosonP3().Pt());
+   if (event.GetVecBosonP4().Rapidity() > 0.2 && event.GetVecBosonP4().Rapidity() < 0.6)
+      ((TH1*) o["hWBosonPt_ybin3"])       -> Fill (event.GetVecBosonP3().Pt());
+
+   ((TH1*) o["hWBosonPt"])       -> Fill (event.GetVecBosonP3().Pt());
+   ((TH1*) o["hWBosonPt_zoomin"])-> Fill (event.GetVecBosonP3().Pt());
    ((TH1*) o["hWBosonPz"])->Fill (event.GetVecBosonP4().Pz());
    ((TH1*) o["hWBosonPz_zoomin"])->Fill (event.GetVecBosonP4().Pz());
    ((TH1*) o["hWBosonPhi"])->Fill(event.GetVecBosonP3().Phi());
+   ((TH1*) o["hWBosonPhi_shift"])->Fill(event.GetVecBosonP3().Phi());
    ((TH1*) o["hWBosonEta"])->Fill(event.GetVecBosonP3().Eta());
-   ((TH1*) o["hWBosonRapidity"])->Fill(event.GetVecBosonP4().Rapidity());
-   ((TH2*) o["hWBosonPzVsRapidity"])->Fill(event.GetVecBosonP4().Pz(), event.GetVecBosonP4().Rapidity());
+   ((TH1*) o["hWBosonRapidity_bin1"]) -> Fill(event.GetVecBosonP4().Rapidity());
+   ((TH1*) o["hWBosonRapidity_bin2"]) -> Fill(event.GetVecBosonP4().Rapidity());
+   ((TH1*) o["hWBosonRapidity_bin3"]) -> Fill(event.GetVecBosonP4().Rapidity());
+
+   if (event.GetVecBosonP3().Pt() > 0.5 && event.GetVecBosonP3().Pt() < 1)
+      ((TH1*) o["hWBosonRapidity_ptbin1"]) -> Fill(event.GetVecBosonP4().Rapidity());
+
+   if (event.GetVecBosonP3().Pt() > 1 && event.GetVecBosonP3().Pt() < 2.5)
+      ((TH1*) o["hWBosonRapidity_ptbin2"]) -> Fill(event.GetVecBosonP4().Rapidity());
+
+   if (event.GetVecBosonP3().Pt() > 2.5 && event.GetVecBosonP3().Pt() < 4)
+      ((TH1*) o["hWBosonRapidity_ptbin3"]) -> Fill(event.GetVecBosonP4().Rapidity());
+
+   if (event.GetVecBosonP3().Pt() > 4 && event.GetVecBosonP3().Pt() < 5.5)
+      ((TH1*) o["hWBosonRapidity_ptbin4"]) -> Fill(event.GetVecBosonP4().Rapidity());
+
+   if (event.GetVecBosonP3().Pt() > 5.5 && event.GetVecBosonP3().Pt() < 7)
+      ((TH1*) o["hWBosonRapidity_ptbin5"]) -> Fill(event.GetVecBosonP4().Rapidity());
+
+   if (event.GetVecBosonP3().Pt() > 7 && event.GetVecBosonP3().Pt() < 10)
+      ((TH1*) o["hWBosonRapidity_ptbin6"]) -> Fill(event.GetVecBosonP4().Rapidity());
+
+   ((TH1*) o["hWBosonRapidity"])      -> Fill(event.GetVecBosonP4().Rapidity());
+ 
+   ((TH2*) o["hWBosonPzVsRapidity"])  -> Fill(event.GetVecBosonP4().Pz(), event.GetVecBosonP4().Rapidity());
    ((TH2*) o["hWBosonEtaVsElectronEta"])->Fill(event.GetVecBosonP3().Eta(), event.GetElectronP3().Eta());
    ((TH1*) o["hWBosonMassInv"])->Fill(event.GetVecBosonP4().M());
 

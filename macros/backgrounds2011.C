@@ -723,6 +723,8 @@ void backgrounds2011()
    c7b->Print(outPath + "/plot_7b.eps");
    c7b->Print(outPath + "/plot_7b.png");
 
+   //TCanvas *c8TEST = new TCanvas("c8TEST", "Data/MC summary - PAPER FIGURE", 500, 400);
+   //hd_Wp_PtLep_1 -> Draw("e");
 
    TCanvas *c8paper = new TCanvas("c8paper", "Data/MC summary - PAPER FIGURE", 500, 400);
 
@@ -930,6 +932,45 @@ void backgrounds2011()
    line1 -> DrawLine(25, 0, 25, hd_Wm_PtLepPt15_1   -> GetMaximum());
    hd_Wm_PtLepPt15_1   -> Draw("sameaxis");
    textWm          -> Draw();
+
+   // Write the output of the vectors in Paper Fig. 2 (PAER FIGURE ptEle > 15 GeV)
+   cout << " " << endl;
+   cout << "----------------- PAPER FIGURE 2 UP ----------------" << endl;
+   cout << " W+ -> e v " << endl;
+   for(Int_t i=1; i <= hd_Wp_PtLepPt15_1 -> GetNbinsX(); i++) {
+     Double_t eval_x   = hd_Wp_PtLepPt15_1     -> GetBinCenter(i);
+     Double_t data_y   = hd_Wp_PtLepPt15_1     -> GetBinContent(i);
+     Double_t data_error_y   = hd_Wp_PtLepPt15_1 -> GetBinError(i);
+     Double_t WpBg_y   = hWp_Wp_PtLepPt15_3    -> GetBinContent(i);
+     Double_t Wptt_y   = hWptt_Wp_PtLepPt15_2  -> GetBinContent(i);
+     Double_t Z_Wp_y   = hZ_Wp_PtLepPt15_2     -> GetBinContent(i);
+     Double_t QCD_Wp_y = hd_Wp_PtLepQCDPt15_2  -> GetBinContent(i);
+     cout << "bin= " << i << " -> " << "PtEle = " << eval_x <<
+       "; #Events(STAR data) = " << data_y << " +- " << data_error_y <<
+       "; #Events(PYTHIA MC + Bg) = " << WpBg_y <<
+       "; #Events(PYTHIA Wp to tt) = " << Wptt_y <<
+       "; #Events(PYTHIA Z0 to ee) = " << Z_Wp_y <<
+       "; #Events(data driven QCD) = " << QCD_Wp_y << endl;
+   }
+   cout << "----------------- PAPER FIGURE 2 DOWN ----------------" << endl;
+   cout << " W- -> e v " << endl;
+   for(Int_t i=1; i <= hd_Wm_PtLepPt15_1 -> GetNbinsX(); i++) {
+     Double_t eval_x   = hd_Wm_PtLepPt15_1     -> GetBinCenter(i);
+     Double_t data_y   = hd_Wm_PtLepPt15_1     -> GetBinContent(i);
+     Double_t data_error_y   = hd_Wm_PtLepPt15_1 -> GetBinError(i);
+     Double_t WpBg_y   = hWm_Wm_PtLepPt15_3    -> GetBinContent(i);
+     Double_t Wptt_y   = hWmtt_Wm_PtLepPt15_2  -> GetBinContent(i);
+     Double_t Z_Wp_y   = hZ_Wm_PtLepPt15_2     -> GetBinContent(i);
+     Double_t QCD_Wp_y = hd_Wm_PtLepQCDPt15_2  -> GetBinContent(i);
+     cout << "bin= " << i << " -> " << "PtEle = " << eval_x <<
+       "; #Events(STAR data) = " << data_y << " +- " << data_error_y <<
+       "; #Events(PYTHIA MC + Bg) = " << WpBg_y <<
+       "; #Events(PYTHIA Wp to tt) = " << Wptt_y <<
+       "; #Events(PYTHIA Z0 to ee) = " << Z_Wp_y <<
+       "; #Events(data driven QCD) = " << QCD_Wp_y << endl;
+   }
+   cout << "-------------------------------------------------" << endl;
+   cout << " " << endl;
 
    c8paper15 -> Print(outPathPaper + "/PaperPlot_DataMC_Pt15.eps");
    c8paper15 -> Print(outPathPaper + "/PaperPlot_DataMC_Pt15.png");

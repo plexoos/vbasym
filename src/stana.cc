@@ -211,7 +211,7 @@ int analyzeMuDst(AnaOptions &anaOptions, bool findZ)
       // Get TriggerMaker
       StTriggerSimuMaker *simuTrig = new StTriggerSimuMaker("StarTrigSimu");
       simuTrig->setHList(HList);
-      //simuTrig->useOfflineDB();
+      //simuTrig->useOfflineDB(); //should we turn this on for 2013 embedded?
       //simuTrig->setMC(isMC); // must be before individual detectors, to be passed
       simuTrig->setMC(2); // must be before individual detectors, to be passed
       simuTrig->useBbc();

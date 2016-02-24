@@ -57,5 +57,6 @@ void loadLibs()
    gSystem->Load("StEEmcSimulatorMaker");
    gSystem->Load("StEpcMaker");
 
-   gSystem->Load("~/vbasym/.sl53_gcc432/lib/libStVecBosAna.so");
+   //gSystem->Load("~/vbasym/.sl53_gcc432/lib/libStVecBosAna.so");
+   gSystem->Load("~/vbasym/.sl64_gcc447/lib/libStVecBosAna.so");
 }

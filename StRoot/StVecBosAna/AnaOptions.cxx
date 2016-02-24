@@ -187,8 +187,8 @@ void AnaOptions::ProcessOptions(int argc, char **argv)
          Info("ProcessOptions", "Found fMcType: %d", fMcType);
          // fMcType = 0 -> data
          // fMcType = 1 -> W+ MC
-         // fMcType = 2 -> W- Mc
-         // fMcType > 3 -> Any other Mc
+         // fMcType = 2 -> W- MC
+         // fMcType > 3 -> Any other MC
          break;
 
       case 'm':

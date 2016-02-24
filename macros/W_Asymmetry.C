@@ -206,6 +206,11 @@ void W_Asymmetry()
    }
 
 
+     Double_t Z0_AsymBin    = hd_Z0_AsymAmpSqrtVsRap -> GetBinContent(1);
+     Double_t Z0_errStatBin = hd_Z0_AsymAmpSqrtVsRap -> GetBinError(1);
+     cout  << "Z0 one bin: " << " AsymBin= " << Z0_AsymBin << " errStatBin= " << Z0_errStatBin << endl;
+     cout  << " -------------- END RESULTS -----------------------------" << endl;
+
    /*
    TCanvas *cTEST   = new TCanvas("cTEST", "TEST!!!", 600, 650);
    cTEST -> Divide(2,2);
@@ -380,7 +385,7 @@ void W_Asymmetry()
    for (int i = 0; i <= hd_Z0_AsymAmpSqrtVsPt_2016Pr->GetNbinsX(); ++i) { // loop over Pt bins  
      Double_t binVal = hd_Z0_AsymAmpSqrtVsPt_2016Pr -> GetBinContent(i);
      Double_t errBin = hd_Z0_AsymAmpSqrtVsPt_2016Pr -> GetBinError(i);
-     cout << "Z0 Rt binVal = " << binVal << endl;
+     cout << "Z0 Pt binVal = " << binVal << endl;
      cout << "Z0 Pt errBin = " << errBin << endl;
      //Double_t errProj2016Bin = (errBin/projFactor2016) * asymScaleFromYelds;;
      Double_t errProj2016Bin = errBin / projFactor2016_Z0;
@@ -1828,122 +1833,37 @@ void W_Asymmetry()
   cWAmpProjRapZoom->SaveAs(outPath + "/hd_WAsym2016ProjRap_zoom.eps");
 
 
-  /*
-  TCanvas *cWAmpProjPt   = new TCanvas("cWAmpProjPt", "W An 2016 projection Pt", 600, 650);
 
-  TPad*    upperPad_WPtProj = new TPad("upperPad_WPtProj", "upperPad_WPtProj", .005, .25, .995, .995);
-  TPad*    lowerPad_WPtProj = new TPad("lowerPad_WPtProj", "lowerPad_WPtProj", .005, .005, .995, .25);
-  upperPad_WPtProj -> SetBottomMargin(0.0);
-  lowerPad_WPtProj -> SetTopMargin(0.0);
-  lowerPad_WPtProj -> SetBottomMargin(0.35);
-  upperPad_WPtProj -> Draw();
-  lowerPad_WPtProj -> Draw();
+  TCanvas *cWpSeaQuark   = new TCanvas("cWpSeaQuark", "W+ sea-quarks uncertainty", 600, 600);
 
-  upperPad_WPtProj->cd();
-  upperPad_WPtProj-> SetGrid(0,0);
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> GetYaxis() -> SetTitleOffset(1.3);
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> GetXaxis() -> SetLabelOffset(1.3);
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetStats(0);
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetTitle("; P_{T}^{W}; A_{N}");
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> GetYaxis() -> SetRangeUser(-1.49, 1.49);
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetMarkerStyle(20);
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetMarkerSize(1);
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetMarkerColor(kRed);
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetLineColor(kRed);
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> SetLineWidth(2);
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> Draw("E1");
-
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> GetYaxis() -> SetTitleOffset(1.3);
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> GetXaxis() -> SetLabelOffset(1.3);
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> SetStats(0);
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> SetTitle("; P_{T}^{W}; A_{N}");
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> SetMarkerStyle(20);
-  //hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> GetListOfFunctions() -> Add(textStarProj);
-  //hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> GetListOfFunctions() -> Add(textStarProjBis);
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> GetYaxis() -> SetLabelFont(62);
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> GetYaxis() -> SetTitleFont(62);
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> SetMarkerColor(kBlue);
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> SetLineColor(kBlue);
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> SetLineWidth(2);
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> Draw("same E1");
-
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> GetYaxis() -> SetTitleOffset(1.3);
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> GetXaxis() -> SetLabelOffset(1.3);
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> SetStats(0);
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> SetTitle("; P_{T}^{W}; A_{N}");
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> SetMarkerStyle(20);
-  //hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> GetListOfFunctions() -> Add(textStarProj);
-  //hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> GetListOfFunctions() -> Add(textStarProjBis);
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> GetYaxis() -> SetLabelFont(62);
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> GetYaxis() -> SetTitleFont(62);
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> SetMarkerColor(kRed);
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> SetLineColor(kRed);
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> SetLineWidth(2);
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> SetLineStyle(2);
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> Draw("same E1");
-
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> GetYaxis() -> SetTitleOffset(1.3);
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> GetXaxis() -> SetLabelOffset(1.3);
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> SetStats(0);
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> SetTitle("; P_{T}^{W}; A_{N}");
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> SetMarkerStyle(20);
-  //hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> GetListOfFunctions() -> Add(textStarProj);
-  //hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> GetListOfFunctions() -> Add(textStarProjBis);
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> GetYaxis() -> SetLabelFont(62);
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> GetYaxis() -> SetTitleFont(62);
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> SetMarkerColor(kBlue);
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> SetLineColor(kBlue);
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> SetLineWidth(2);
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> SetLineStyle(2);
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> Draw("same E1");
- 
-  line1 -> DrawLine(hd_Wp_AsymAmpSqrtVsPt_2016Pr -> GetXaxis() -> GetXmin(), 0, hd_Wp_AsymAmpSqrtVsPt_2016Pr -> GetXaxis() -> GetXmax(), 0);
-  leg1  -> Draw();
-
-  lowerPad_WPtProj->cd();
-  gPad -> SetGrid(0);
-  gPad-> Modified();
-  hSysMeanPt   -> Draw("P");
-  textArrow    -> Draw();
-
-  cWAmpProjPt -> Update();  
-  cWAmpProjPt->SaveAs(outPath + "/hd_WAsym2016ProjPt.png");
-  cWAmpProjPt->SaveAs(outPath + "/hd_WAsym2016ProjPt.eps");
+  TLegend *leg2_squark = new TLegend(0.18, 0.18, 0.9, 0.35);
+  leg2_squark -> SetFillColor(0);
+  leg2_squark -> SetFillStyle(0);
+  leg2_squark -> SetLineColor(0);
+  leg2_squark -> SetBorderSize(0);
+  leg2_squark -> SetTextSize(0.04);
+  leg2_squark -> AddEntry(gWp_NoEvo,"#splitline{KQ [arXiv:0903.3629]}{no TMD evolution}", "l");
+  leg2_squark -> AddEntry(gWp_NoEvo_SeaQuarks,"Uncertainty on sea quarks", "f");
 
 
-  TCanvas *cWAmpProjPtZoom   = new TCanvas("cWAmpProjPtZoom", "W An 2016 projection Pt Zoom", 600, 650);
+  cWpSeaQuark -> cd();
+  cWpSeaQuark -> SetGrid(0,0);
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> Draw("axis");
+  gWp_NoEvo_SeaQuarks                 -> SetFillColor(kYellow);
+  gWp_NoEvo_SeaQuarks                 -> Draw("3");
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> GetYaxis() -> SetRangeUser(-0.3, 0.3);
+  //gWp_Evo_squarks                     -> Draw("3");
+  line1 -> DrawLine(hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> GetXaxis() -> GetXmin(), 0, hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> GetXaxis() -> GetXmax(), 0);
+  gWp_NoEvo                           -> Draw("same"); 
+  hd_Wp_AsymAmpSqrtVsRap_2016Pr_400pb -> Draw("sameaxis");
+  //leg1_wp                             -> Draw();
+  textStarName                        -> SetTextColor(1);
+  textStarName                        -> DrawLatex(0.6, 0.82, "W^{+} #rightarrow l^{+} #nu");
+  leg2_squark                         -> Draw();
 
-  TPad*    upperPad_WPtProjZoom = new TPad("upperPad_WPtProjZoom", "upperPad_WPtProjZoom", .005, .25, .995, .995);
-  TPad*    lowerPad_WPtProjZoom = new TPad("lowerPad_WPtProjZoom", "lowerPad_WPtProjZoom", .005, .005, .995, .25);
-  upperPad_WPtProjZoom -> SetBottomMargin(0.0);
-  lowerPad_WPtProjZoom -> SetTopMargin(0.0);
-  lowerPad_WPtProjZoom -> SetBottomMargin(0.35);
-  upperPad_WPtProjZoom -> Draw();
-  lowerPad_WPtProjZoom -> Draw();
-
-  upperPad_WPtProjZoom->cd();
-  upperPad_WPtProjZoom-> SetGrid(0,0);
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> GetYaxis() -> SetRangeUser(-0.49, 0.49);
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr -> Draw("E1");
-
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_shift -> Draw("same E1");
-  hd_Wp_AsymAmpSqrtVsPt_2016Pr_400pb -> Draw("same E1");
-  hd_Wm_AsymAmpSqrtVsPt_2016Pr_400pb_shift -> Draw("same E1");
- 
-  line1 -> DrawLine(hd_Wp_AsymAmpSqrtVsPt_2016Pr -> GetXaxis() -> GetXmin(), 0, hd_Wp_AsymAmpSqrtVsPt_2016Pr -> GetXaxis() -> GetXmax(), 0);
-  leg1  -> Draw();
-
-  lowerPad_WPtProjZoom->cd();
-  gPad -> SetGrid(0);
-  gPad -> Modified();
-  hSysMeanPt   -> Draw("P");
-  textArrow    -> Draw();
-
-  cWAmpProjPtZoom -> Update();  
-  cWAmpProjPtZoom->SaveAs(outPath + "/hd_WAsym2016ProjPt_zoom.png");
-  cWAmpProjPtZoom->SaveAs(outPath + "/hd_WAsym2016ProjPt_zoom.eps");
-
-  */
+  cWpSeaQuark -> Update();  
+  cWpSeaQuark -> SaveAs(outPath + "/hd_WpSeaQuark.png");
+  cWpSeaQuark -> SaveAs(outPath + "/hd_WpSeaQuark.eps");
 
 
   TCanvas *cZ0AmpProjPt   = new TCanvas("cZ0AmpProjPt", "Z0 An 2017 projection Pt", 550, 650);
